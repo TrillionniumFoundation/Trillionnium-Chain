@@ -39,6 +39,62 @@ fn limits(path: &Path) {
 }
 
 #[test]
+fn writer_reasserts_pager_policy_and_preserves_committed_wal_after_close() {
+    use rusqlite::config::DbConfig;
+
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("pager-policy.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    assert!(!cache
+        .connection
+        .set_db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE, false)
+        .unwrap());
+    cache
+        .connection
+        .pragma_update(None, "cache_spill", true)
+        .unwrap();
+    cache
+        .connection
+        .pragma_update(None, "wal_autocheckpoint", 1)
+        .unwrap();
+    cache
+        .connection
+        .pragma_update(None, "synchronous", "NORMAL")
+        .unwrap();
+    let policy = || {
+        ["cache_spill", "wal_autocheckpoint", "synchronous"].map(|name| {
+            cache
+                .connection
+                .pragma_query_value(None, name, |r| r.get::<_, u64>(0))
+                .unwrap()
+        })
+    };
+    let poisoned = policy();
+    assert!(poisoned[0] > 0);
+    assert_eq!((poisoned[1], poisoned[2]), (1, 1));
+
+    let (first, payload) = chunk(1, 16_384);
+    cache.put_chunk(&first, &payload).unwrap();
+    assert_eq!(policy(), [0, 0, 2]);
+    assert!(cache
+        .connection
+        .db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE)
+        .unwrap());
+    let usage = cache.cache_usage().unwrap();
+    let committed_wal = bytes(&path, "-wal");
+    assert!(committed_wal > 32);
+    limits(&path);
+    drop(cache);
+    assert_eq!(bytes(&path, "-wal"), committed_wal);
+
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    assert_eq!(reopened.chunk(first.sha256).unwrap(), Some(payload));
+    assert_eq!(reopened.cache_usage().unwrap(), usage);
+    assert_eq!(bytes(&path, "-wal"), committed_wal);
+    limits(&path);
+}
+
+#[test]
 fn maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("maximum.sqlite");

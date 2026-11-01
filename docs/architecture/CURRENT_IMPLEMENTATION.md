@@ -7,7 +7,7 @@ Regenerate with `python3 scripts/ci/report_current_implementation.py --write`;
 the repository checker rejects stale output. Historical measurements retain their original source.
 
 Selected target: `pon-nakamoto-v1`. Registered stage: `invariant-driven-native-application-candidate`.
-Actual inventoried workspace: **25 packages**;
+Actual inventoried workspace: **26 packages**;
 registered procedures: **39**.
 
 ## Implementation inventory
@@ -32,7 +32,7 @@ A zero product-entrypoint count does not mean that the native development CLI is
 | M12 | native-component-with-reference-caller: 2 | `trnm-escrow-vault`, `trnm-service-settlement` | 0 | false | false |
 | M13 | native-development-owner: 2 | `trnm-state-import` | 0 | false | false |
 | M14 | native-development-owner: 1; pure-component: 1 | responsibility owned by composition | 0 | false | false |
-| M15 | controlled-experiment: 1; native-development-owner: 2 | `trnm-pon-node`, `trnm-release-bundle` | 0 | false | false |
+| M15 | controlled-experiment: 1; native-development-owner: 2 | `trnm-pon-node`, `trnm-release-bundle`, `trnm-sqlite-io-boundary` | 0 | false | false |
 | M16 | controlled-experiment: 2 | `trnm-control-plane` | 0 | false | false |
 | M17 | pure-component: 2 | `trnm-audit-events`, `trnm-bench` | 0 | false | false |
 

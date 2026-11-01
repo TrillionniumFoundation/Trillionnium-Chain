@@ -1,0 +1,49 @@
+{
+  "schema": "pn-module-log-reader-check-v1",
+  "scope": "synthetic parser controls only; no native module execution",
+  "tests": [
+    {
+      "case": "count_fixture_only",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "case": "duplicate_name",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stderr": "current authenticated module requires 58 retained and 15 post-write executions in one log\n"
+    },
+    {
+      "case": "missing_postwrite",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stderr": "current authenticated module requires 58 retained and 15 post-write executions in one log\n"
+    },
+    {
+      "case": "duplicate_run",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stderr": "current authenticated module requires 58 retained and 15 post-write executions in one log\n"
+    },
+    {
+      "case": "old_58_summary",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stderr": "current authenticated module requires 58 retained and 15 post-write executions in one log\n"
+    },
+    {
+      "case": "truncated",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stderr": "current authenticated module requires 58 retained and 15 post-write executions in one log\n"
+    }
+  ],
+  "workflow_sha256": "611baefab215e6131bd2d6187655a581b42463f5df89ec5413040e5f52b53a02"
+}

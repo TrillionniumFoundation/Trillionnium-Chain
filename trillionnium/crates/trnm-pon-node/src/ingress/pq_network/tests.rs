@@ -555,20 +555,39 @@ fn revocation_survives_actual_branch_reorg_and_cold_reopen() {
             .to_string(),
         "PQ_NETWORK_REVOKED"
     );
+    // Revocation is not refunded by reorg, and rejecting this signed request
+    // still consumes the real inbound verification attempt before authorization.
+    let mut after_rejection = before.clone();
+    after_rejection["inbound_signature_attempts"] =
+        json!(before["inbound_signature_attempts"].as_u64().unwrap() + 1);
+    assert_eq!(
+        owner.lock().unwrap().pq_network_status(&policy).unwrap(),
+        after_rejection
+    );
     drop(owner);
     let reopened = Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap();
     assert_eq!(reopened.active().unwrap().0, b_child_id);
-    assert_eq!(reopened.pq_network_status(&policy).unwrap(), before);
+    assert_eq!(
+        reopened.pq_network_status(&policy).unwrap(),
+        after_rejection
+    );
+    let reopened = Mutex::new(reopened);
     assert_eq!(
         server
             .handle(
-                &Mutex::new(reopened),
+                &reopened,
                 request.wire(),
                 Instant::now() + Duration::from_secs(2)
             )
             .unwrap_err()
             .to_string(),
         "PQ_NETWORK_REVOKED"
+    );
+    after_rejection["inbound_signature_attempts"] =
+        json!(before["inbound_signature_attempts"].as_u64().unwrap() + 2);
+    assert_eq!(
+        reopened.lock().unwrap().pq_network_status(&policy).unwrap(),
+        after_rejection
     );
 }
 

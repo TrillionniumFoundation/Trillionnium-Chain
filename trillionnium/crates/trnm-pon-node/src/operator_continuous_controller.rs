@@ -256,6 +256,44 @@ fn packet(value: &str, settings: &crate::Settings) -> Result<Packet> {
     ensure(hex::encode(&raw) == value, "OWNER_CONTINUOUS_PACKET_HEX")?;
     Packet::decode_for_settings(&raw, settings)
 }
+/// The already authenticated launch constructs these immutable Settings. Input
+/// prefixes cannot select a wider wire or fall back to classical acceptance.
+fn search_transactions(values: &[String], settings: &crate::Settings) -> Result<Vec<Vec<u8>>> {
+    let pq = settings.is_native_pq_application_v6();
+    ensure(
+        pq || !settings.app.is_pq_account_profile(),
+        "OWNER_CONTINUOUS_TX_PROFILE",
+    )?;
+    let (count, maximum, profile) = if pq {
+        let wire = trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6;
+        (
+            wire.maximum_transactions(),
+            wire.maximum_bytes(),
+            crate::operator_pq_auth::Profile::PqV3,
+        )
+    } else {
+        (256, 2048, crate::operator_pq_auth::Profile::ClassicalV2)
+    };
+    ensure(values.len() <= count, "OWNER_CONTINUOUS_TX_LIMIT")?;
+    let mut total = 0usize;
+    let mut raws = Vec::with_capacity(values.len());
+    for value in values {
+        total = total
+            .checked_add(value.len())
+            .ok_or("OWNER_CONTINUOUS_TX_LIMIT")?;
+        ensure(
+            value.len() <= 2 * maximum && total <= 2 * 524_288,
+            "OWNER_CONTINUOUS_TX_LIMIT",
+        )?;
+        let bytes = hex::decode(value).map_err(|_| "OWNER_CONTINUOUS_TX_HEX")?;
+        ensure(hex::encode(&bytes) == *value, "OWNER_CONTINUOUS_TX_HEX")?;
+        raws.push(bytes);
+    }
+    // Includes the 64-attempt total (two for task/settlement, three for dispute)
+    // before an expensive owner search or any native signature verification.
+    policy::transactions_sha256(profile, &raws).map_err(|_| "OWNER_CONTINUOUS_TX_PROFILE")?;
+    Ok(raws)
+}
 struct Completion {
     parent: Option<String>,
     generation: Option<u64>,
@@ -419,14 +457,7 @@ impl Controller {
                     operation_id,
                     transactions,
                 } => {
-                    ensure(transactions.len() <= 256, "OWNER_CONTINUOUS_TX_LIMIT")?;
-                    let mut raws = Vec::new();
-                    for value in transactions {
-                        ensure(value.len() <= 4096, "OWNER_CONTINUOUS_TX_LIMIT")?;
-                        let bytes = hex::decode(&value).map_err(|_| "OWNER_CONTINUOUS_TX_HEX")?;
-                        ensure(hex::encode(&bytes) == value, "OWNER_CONTINUOUS_TX_HEX")?;
-                        raws.push(bytes);
-                    }
+                    let raws = search_transactions(&transactions, node.settings())?;
                     let found = node.search_owned_continuous_window(ContinuousSearchRequest {
                         operation_id: &operation_id,
                         transactions: raws,

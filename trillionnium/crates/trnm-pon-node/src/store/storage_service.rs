@@ -330,20 +330,34 @@ impl Node {
         })
     }
 
-    /// Only the current native chain height can release this local obligation.
-    /// Caller-supplied heights and old receipts do not free physical capacity.
+    /// Only the original journal's current native chain height can release this
+    /// completed local obligation. An unrelated Node's height, unknown intent
+    /// or supplied receipt cannot free its physical capacity.
     pub fn retire_native_cell(
-        &self,
+        &mut self,
+        budgets: &NativeBudgetStoreV1,
         retention: &mut CellRetentionStoreV1,
         operation: Hash,
         successor: Option<&mut CellRetentionStoreV1>,
         deadline: Instant,
     ) -> Result<CellRetentionReadbackV1> {
-        // The absent task lookup is used only to obtain an authenticated
-        // current anchor through the same owner path on every backend.
-        let current = self.native_funding_observation(NativeFundingSourceV1::Task([0; 32]))?;
+        let contract = retention.contract(operation).map_err(owner_error)?;
+        let effect = contract.commitment(retention.store_id());
+        let target_receipt = hash(b"trnm.native-cell-initial-readback.v1\0", &[&effect]);
+        // Reuse the existing M12 effect and chain pins. Funding may have become
+        // absent; reconciliation must neither redispatch nor adopt another chain.
+        let current = budgets
+            .reobserve_completed_effect(
+                self,
+                contract.funding_operation,
+                contract.operation,
+                effect,
+                Some((contract.retain_from_height, contract.retain_until_height)),
+                target_receipt,
+            )
+            .map_err(owner_error)?;
         retention
-            .retire(operation, current.anchor.height, successor, deadline)
+            .retire(operation, current.height, successor, deadline)
             .map_err(owner_error)
     }
 }

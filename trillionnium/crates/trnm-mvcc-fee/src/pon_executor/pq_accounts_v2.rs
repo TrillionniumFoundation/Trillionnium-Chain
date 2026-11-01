@@ -1051,6 +1051,10 @@ mod tests;
 mod tasks_v4_tests;
 
 #[cfg(test)]
+#[path = "../../../trnm-protocol/tests/support/native_pq_task_fixture_v5.rs"]
+mod task_fixture_v5;
+
+#[cfg(test)]
 mod application_v6_tests;
 #[cfg(test)]
 mod tasks_v5_tests;

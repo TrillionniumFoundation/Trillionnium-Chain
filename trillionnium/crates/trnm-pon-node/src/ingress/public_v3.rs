@@ -723,7 +723,7 @@ pub struct PublicServer {
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
-        Self::new_identity(SigningIdentity::Classical(identity), policy)
+        Self::new_identity(SigningIdentity::Classical(Box::new(identity)), policy)
     }
     fn new_identity(identity: SigningIdentity, policy: PublicPolicy) -> Result<Self> {
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
@@ -3034,6 +3034,9 @@ fn call_public_authenticated(
     let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();
     let result = (|| -> Result<PublicReply> {
+        if !pq {
+            super::require_classical_network_settings(settings)?;
+        }
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }

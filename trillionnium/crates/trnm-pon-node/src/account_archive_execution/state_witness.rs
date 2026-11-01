@@ -551,6 +551,26 @@ fn commitment(
     account_balance: u64,
     non_accounts: &State,
 ) -> Result<StateCommitment> {
+    commitment_with_non_account_root(
+        context,
+        state_root,
+        account_root,
+        account_count,
+        account_balance,
+        non_accounts,
+        pon_executor::root,
+    )
+}
+
+fn commitment_with_non_account_root(
+    context: Context,
+    state_root: Hash,
+    account_root: Hash,
+    account_count: u64,
+    account_balance: u64,
+    non_accounts: &State,
+    calculate_root: impl FnOnce(&State) -> pon_executor::Result<Hash>,
+) -> Result<StateCommitment> {
     let (escrow_balance, reward_balance, issued) = components(non_accounts)?;
     if total([account_balance, escrow_balance, reward_balance].into_iter())? != issued {
         return Err(StateWitnessError::Conservation.into());
@@ -564,7 +584,7 @@ fn commitment(
         account_root,
         account_count,
         account_balance,
-        non_account_root: relation(pon_executor::root(non_accounts))?,
+        non_account_root: relation(calculate_root(non_accounts))?,
         non_account_count: non_accounts.len() as u64,
         escrow_balance,
         reward_balance,
@@ -635,8 +655,28 @@ pub(crate) fn commitment_from_complete_state_with_root(
     lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
     calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
 ) -> Result<StateCommitment> {
+    commitment_from_complete_state_with_roots(
+        settings,
+        state,
+        lifts,
+        calculate_root,
+        pon_executor::root,
+    )
+}
+
+/// Internal complete-state arithmetic at both original grammar positions.
+/// The non-account callback receives the actual complete partition constructed
+/// here, after account parsing, the full root and conservation checks. It may
+/// reuse only root arithmetic; all commitment fields still come from actual rows.
+pub(crate) fn commitment_from_complete_state_with_roots(
+    settings: &Settings,
+    state: &State,
+    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
+    calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
+    calculate_non_account_root: impl FnOnce(&State) -> pon_executor::Result<Hash>,
+) -> Result<StateCommitment> {
     let account_values = accounts(state)?;
-    commitment(
+    commitment_with_non_account_root(
         Context {
             network: settings.network(),
             parameters: settings.parameters(),
@@ -652,6 +692,7 @@ pub(crate) fn commitment_from_complete_state_with_root(
         account_values.len() as u64,
         total(account_values.values().map(|value| value.balance))?,
         &non_accounts(state),
+        calculate_non_account_root,
     )
 }
 

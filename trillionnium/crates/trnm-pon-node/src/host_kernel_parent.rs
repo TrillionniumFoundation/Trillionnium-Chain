@@ -60,6 +60,7 @@ mod kernel_parent {
     use super::KernelResourceSample;
     use std::{
         fs,
+        io::{self, Read},
         net::SocketAddr,
         os::unix::fs::{MetadataExt, PermissionsExt},
         path::{Path, PathBuf},
@@ -123,6 +124,54 @@ mod kernel_parent {
             memory_bytes: memory,
             tasks,
         })
+    }
+
+    const MAX_LIMIT_BYTES: usize = 128;
+
+    fn read_limit_text<'a>(
+        reader: &mut impl Read,
+        bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+    ) -> Result<&'a str> {
+        let mut used = 0;
+        loop {
+            // At least one byte remains until overflow is rejected. A short
+            // read is not EOF, including at the original 128-byte boundary.
+            let count = match reader.read(&mut bytes[used..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(_) => return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into()),
+            };
+            if count == 0 {
+                return std::str::from_utf8(&bytes[..used])
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"));
+            }
+            used += count;
+            if used > MAX_LIMIT_BYTES {
+                return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+            }
+        }
+    }
+
+    fn read_limit<'a>(path: &Path, bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1]) -> Result<&'a str> {
+        // Reopen the actual path on EVERY observation. No descriptor, file
+        // contents or prior resource decision survives this read. The bounded
+        // stack buffer needs no file-size metadata or heap String allocation.
+        let mut file = fs::File::open(path)
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+        read_limit_text(&mut file, bytes)
+    }
+
+    fn read_limits(parent: &Path) -> Result<Limits> {
+        let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
+        // Preserve the original read order and parse only AFTER all five
+        // complete reads, including the original I/O-before-parse error order.
+        validate_limits(
+            read_limit(&parent.join("cpu.max"), cpu)?,
+            read_limit(&parent.join("cpu.max.burst"), burst)?,
+            read_limit(&parent.join("memory.max"), memory)?,
+            read_limit(&parent.join("memory.swap.max"), swap)?,
+            read_limit(&parent.join("pids.max"), pids)?,
+        )
     }
 
     fn own_cgroup() -> Result<String> {
@@ -234,21 +283,7 @@ mod kernel_parent {
             if current != parent_rel && !current.starts_with(&format!("{parent_rel}/")) {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let read = |name: &str| -> Result<String> {
-                let text = fs::read_to_string(self.parent.join(name))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
-                if text.len() > 128 {
-                    return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
-                }
-                Ok(text)
-            };
-            let observed = validate_limits(
-                &read("cpu.max")?,
-                &read("cpu.max.burst")?,
-                &read("memory.max")?,
-                &read("memory.swap.max")?,
-                &read("pids.max")?,
-            )?;
+            let observed = read_limits(&self.parent)?;
             if observed != self.limits {
                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
             }
@@ -335,6 +370,198 @@ mod kernel_parent {
     #[cfg(test)]
     mod tests {
         use super::*;
+
+        struct ShortReads<'a> {
+            remaining: &'a [u8],
+            interrupts: usize,
+            calls: usize,
+            eof_seen: bool,
+        }
+        impl Read for ShortReads<'_> {
+            fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
+                assert!(!buffer.is_empty(), "empty buffer cannot establish EOF");
+                self.calls += 1;
+                if self.interrupts > 0 && !self.calls.is_multiple_of(2) {
+                    self.interrupts -= 1;
+                    return Err(io::ErrorKind::Interrupted.into());
+                }
+                if self.remaining.is_empty() {
+                    self.eof_seen = true;
+                    return Ok(0);
+                }
+                buffer[0] = self.remaining[0];
+                self.remaining = &self.remaining[1..];
+                Ok(1)
+            }
+        }
+
+        struct ReadError(io::ErrorKind);
+        impl Read for ReadError {
+            fn read(&mut self, _: &mut [u8]) -> io::Result<usize> {
+                Err(self.0.into())
+            }
+        }
+
+        #[test]
+        fn limit_reader_waits_for_real_eof_after_short_reads_and_interruptions() {
+            for input in [b"".as_slice(), b"25000 100000\n", &[b' '; 128]] {
+                let mut reader = ShortReads {
+                    remaining: input,
+                    interrupts: input.len() + 1,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+                assert_eq!(
+                    read_limit_text(&mut reader, &mut bytes).unwrap().as_bytes(),
+                    input
+                );
+                assert!(reader.eof_seen);
+                assert_eq!(reader.interrupts, 0);
+                assert_eq!(reader.calls, 2 * (input.len() + 1));
+            }
+        }
+
+        #[test]
+        fn limit_reader_keeps_exact_128_byte_bound_and_rejects_long_prefixes() {
+            for length in [0, 1, 127, 128, 129, 130, 4096] {
+                let input = vec![b' '; length];
+                let mut reader = io::Cursor::new(input.as_slice());
+                let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+                let result = read_limit_text(&mut reader, &mut bytes);
+                if length <= MAX_LIMIT_BYTES {
+                    assert_eq!(result.unwrap().as_bytes(), input);
+                    assert_eq!(reader.position(), length as u64);
+                } else {
+                    assert_eq!(
+                        result.unwrap_err().to_string(),
+                        "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+                    );
+                    assert_eq!(reader.position(), (MAX_LIMIT_BYTES + 1) as u64);
+                }
+            }
+        }
+
+        #[test]
+        fn limit_reader_checks_complete_utf8_after_fragmented_reads() {
+            let valid = format!("{}λ", " ".repeat(126));
+            let invalid = [
+                vec![0xff],
+                b"25000 100000\xff".to_vec(),
+                b"\xf0\x9f".to_vec(),
+                [vec![b' '; 127], vec![0xce]].concat(),
+            ];
+            for input in std::iter::once(valid.as_bytes()).chain(invalid.iter().map(Vec::as_slice))
+            {
+                let mut reader = ShortReads {
+                    remaining: input,
+                    interrupts: 0,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+                let result = read_limit_text(&mut reader, &mut bytes);
+                match std::str::from_utf8(input) {
+                    Ok(expected) => assert_eq!(result.unwrap(), expected),
+                    Err(_) => assert_eq!(
+                        result.unwrap_err().to_string(),
+                        "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+                    ),
+                }
+                assert!(reader.eof_seen);
+            }
+        }
+
+        #[test]
+        fn limit_reader_never_accepts_a_valid_prefix_before_a_read_error() {
+            for prefix in [b"".as_slice(), b"25000 100000\n", &[b' '; 128]] {
+                for kind in [
+                    io::ErrorKind::PermissionDenied,
+                    io::ErrorKind::UnexpectedEof,
+                    io::ErrorKind::Other,
+                ] {
+                    let mut reader = io::Cursor::new(prefix).chain(ReadError(kind));
+                    let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+                    assert_eq!(
+                        read_limit_text(&mut reader, &mut bytes)
+                            .unwrap_err()
+                            .to_string(),
+                        "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+                    );
+                }
+            }
+        }
+
+        #[test]
+        fn limit_reader_reopens_the_current_path_and_propagates_open_failure() {
+            // Ordinary temporary files exercise this reader only. They cannot
+            // qualify as the fixed root-owned cgroup or its resource budget.
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("cpu.max");
+            let replacement = dir.path().join("replacement");
+            fs::write(&path, b"25000 100000\n").unwrap();
+            let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+            assert_eq!(read_limit(&path, &mut bytes).unwrap(), "25000 100000\n");
+            let before = fs::metadata(&path).unwrap();
+            fs::write(&replacement, b"10000 100000\n").unwrap();
+            fs::rename(&replacement, &path).unwrap();
+            let after = fs::metadata(&path).unwrap();
+            assert_ne!((before.dev(), before.ino()), (after.dev(), after.ino()));
+            assert_eq!(read_limit(&path, &mut bytes).unwrap(), "10000 100000\n");
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                read_limit(&path, &mut bytes).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+            );
+        }
+
+        #[test]
+        fn limit_reader_keeps_all_five_reads_before_validation_and_observes_changes() {
+            let dir = tempfile::tempdir().unwrap();
+            let values = [
+                ("cpu.max", "25000 100000\n"),
+                ("cpu.max.burst", "0\n"),
+                ("memory.max", "268435456\n"),
+                ("memory.swap.max", "0\n"),
+                ("pids.max", "32\n"),
+            ];
+            for (name, value) in values {
+                fs::write(dir.path().join(name), value).unwrap();
+            }
+            let initial = read_limits(dir.path()).unwrap();
+            assert_eq!(
+                initial,
+                validate_limits("25000 100000\n", "0\n", "268435456\n", "0\n", "32\n").unwrap()
+            );
+            for (name, value) in values {
+                let path = dir.path().join(name);
+                let mut padded = value.as_bytes().to_vec();
+                padded.resize(MAX_LIMIT_BYTES, b' ');
+                fs::write(&path, &padded).unwrap();
+                assert_eq!(read_limits(dir.path()).unwrap(), initial);
+                padded.push(b' ');
+                fs::write(&path, &padded).unwrap();
+                assert_eq!(
+                    read_limits(dir.path()).unwrap_err().to_string(),
+                    "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+                );
+                fs::write(&path, value).unwrap();
+            }
+            fs::write(dir.path().join("cpu.max"), b"10000 100000\n").unwrap();
+            assert_ne!(read_limits(dir.path()).unwrap(), initial);
+            fs::write(dir.path().join("cpu.max"), b"malformed").unwrap();
+            fs::remove_file(dir.path().join("pids.max")).unwrap();
+            assert_eq!(
+                read_limits(dir.path()).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_UNAVAILABLE",
+                "late I/O failure still precedes parsing an early malformed value"
+            );
+            fs::write(dir.path().join("pids.max"), b"32\n").unwrap();
+            assert_eq!(
+                read_limits(dir.path()).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_LIMITS"
+            );
+        }
 
         const CPU_SAMPLE: &str = "usage_usec 600\nuser_usec 400\nsystem_usec 200\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\nnr_bursts 0\n";
         #[test]

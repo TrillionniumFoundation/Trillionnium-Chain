@@ -335,7 +335,13 @@ fn page(
 }
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
-fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
+fn admit_page(
+    node: &Mutex<Node>,
+    packet: Packet,
+    end: Instant,
+    stop: &AtomicBool,
+    activate: Option<Hash>,
+) -> Result<(bool, Option<Hash>)> {
     {
         let owner = lock(node, end, stop)?;
         ensure(
@@ -346,7 +352,13 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         // owner must already have bound this original CPU domain.
         owner.public_service_cpu_domain()?;
     }
-    ingress::history_import::admit_shared_packet(node, packet, end, &|| progress(end, stop))
+    ingress::history_import::admit_shared_packet(
+        node,
+        packet,
+        end,
+        &|| progress(end, stop),
+        activate,
+    )
 }
 
 struct PollContext<'a> {
@@ -589,7 +601,7 @@ impl Engine {
                 }
             };
             if known {
-                self.complete(index, node, end, stop, observe)?;
+                self.complete(index, node, end, stop, None, observe)?;
             }
             return Ok(false);
         }
@@ -603,9 +615,13 @@ impl Engine {
             }
         };
         let mut verified = false;
+        let mut active = None;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
-                Ok(value) => verified = value,
+            match admit_page(node, packet, end, stop, complete.then_some(target)) {
+                Ok((inserted, activated)) => {
+                    verified = inserted;
+                    active = activated;
+                }
                 Err(error) => {
                     self.reject(
                         index,
@@ -644,7 +660,7 @@ impl Engine {
             observe,
         )?;
         if complete {
-            self.complete(index, node, end, stop, observe)?;
+            self.complete(index, node, end, stop, active, observe)?;
         }
         Ok(true)
     }
@@ -654,17 +670,22 @@ impl Engine {
         node: &Mutex<Node>,
         end: Instant,
         stop: &AtomicBool,
+        already_activated: Option<Hash>,
         observe: &mut F,
     ) -> Result<()>
     where
         F: FnMut(&PeerPollingEvent) -> Result<()>,
     {
         let target = self.states[index].target.ok_or("PEER_TARGET")?;
-        let activated = (|| -> Result<Hash> {
-            let mut owner = lock(node, end, stop)?;
-            // Native accumulated work chooses; lower/equal work never takes over.
-            owner.activate_observed(target, ingress::now()?)
-        })();
+        // A final nonempty page already activated inside its original paid W1
+        // operation. Known locators and empty completion pages retain the same
+        // existing CPU domain and durable History epoch, without new proof work.
+        let activated = match already_activated {
+            Some(active) => Ok(active),
+            None => {
+                ingress::history_import::complete_shared(node, target, end, &|| progress(end, stop))
+            }
+        };
         let active = match activated {
             Ok(active) => active,
             Err(error) => {
@@ -952,6 +973,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         )
         .unwrap_err();
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
@@ -1014,6 +1036,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         )
         .unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");

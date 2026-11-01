@@ -34,6 +34,53 @@ fn check(v: bool, e: PolicyError) -> Result<()> {
 fn sha(v: &[u8]) -> String {
     hex::encode(Sha256::digest(v))
 }
+/// Exact NPQ6 command-list commitment for externally signed continuous views.
+/// Parse/length/count checks do not verify signatures or authorize execution.
+pub fn pq_transactions_sha256(raws: &[Vec<u8>]) -> Result<String> {
+    use trnm_protocol::pq_native_accounts_v2::{
+        AccountProfile, UnverifiedEnvelope, MAX_TRANSACTION_BYTES,
+    };
+    let profile = AccountProfile::ApplicationV6;
+    check(
+        raws.len() <= profile.maximum_transactions(),
+        PolicyError::Capacity,
+    )?;
+    let mut bytes = 0usize;
+    let mut verifications = 0usize;
+    let mut digest = Sha256::new();
+    digest.update(b"TRNM/PoN/ContinuousOrderedTransactions/PQ/v6\0");
+    digest.update((raws.len() as u32).to_le_bytes());
+    for raw in raws {
+        bytes = bytes.checked_add(raw.len()).ok_or(PolicyError::Capacity)?;
+        check(
+            bytes <= MAX_TRANSACTION_BYTES && raw.len() <= profile.maximum_bytes(),
+            PolicyError::Capacity,
+        )?;
+        let command =
+            UnverifiedEnvelope::decode_for_profile(raw, profile).map_err(|_| PolicyError::Input)?;
+        verifications = verifications
+            .checked_add(command.verification_count())
+            .ok_or(PolicyError::Capacity)?;
+        check(
+            verifications <= profile.maximum_verifications(),
+            PolicyError::Capacity,
+        )?;
+        digest.update((raw.len() as u32).to_le_bytes());
+        digest.update(raw);
+    }
+    Ok(hex::encode(digest.finalize()))
+}
+pub(crate) fn transactions_sha256(
+    profile: crate::operator_pq_auth::Profile,
+    raws: &[Vec<u8>],
+) -> Result<String> {
+    match profile {
+        crate::operator_pq_auth::Profile::ClassicalV2 => {
+            crate::operator_mining_policy::transactions_sha256(raws)
+        }
+        crate::operator_pq_auth::Profile::PqV3 => pq_transactions_sha256(raws),
+    }
+}
 fn io<T>(v: std::io::Result<T>) -> Result<T> {
     v.map_err(|_| PolicyError::Journal)
 }
@@ -323,7 +370,7 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
         PolicyError::NativeBinding,
     )?;
     if let Some(edge) = &b.lease_edge {
-        edge.payload()?;
+        edge.payload_for(b.identity.profile()?)?;
         hex_id(
             b.lease_transition_operation
                 .as_ref()
@@ -392,7 +439,7 @@ impl VerifiedView {
             && self.body.previous_digest.as_deref() == Some(old.digest.as_str())
     }
     pub fn check_transactions(&self, raws: &[Vec<u8>]) -> Result<()> {
-        crate::operator_mining_policy::transactions_sha256(raws)?;
+        transactions_sha256(self.body.identity.profile()?, raws)?;
         check(
             raws.iter().all(|raw| {
                 self.body
@@ -433,6 +480,7 @@ pub(crate) struct HeldCatalog {
     rows: Vec<HeldMaterialRow>,
     roles: Vec<String>,
     catalog_sha256: String,
+    domain: &'static [u8],
 }
 impl HeldCatalog {
     pub(crate) fn path_role(&self, role: &str) -> Result<PathBuf> {
@@ -497,7 +545,12 @@ impl HeldCatalog {
                 && inputs.materials.len() == self.rows.len(),
             PolicyError::NativeBinding,
         )?;
-        let mut catalog = b"TRNM-RESTRICTED-NODE-CATALOG1".to_vec();
+        let (roles, domain) = catalog_profile(view.body.identity.profile()?);
+        check(
+            self.domain == domain && roles.len() == self.roles.len(),
+            PolicyError::NativeBinding,
+        )?;
+        let mut catalog = domain.to_vec();
         for (row, (path, file, identity)) in inputs.materials.iter().zip(&self.rows) {
             check(
                 &row.path == path
@@ -516,6 +569,28 @@ impl HeldCatalog {
         )
     }
 }
+fn catalog_profile(
+    profile: crate::operator_pq_auth::Profile,
+) -> (&'static [&'static str], &'static [u8]) {
+    match profile {
+        crate::operator_pq_auth::Profile::ClassicalV2 => (
+            &[
+                "activation",
+                "bootstrap",
+                "checkpoint",
+                "input",
+                "model",
+                "spec",
+            ],
+            b"TRNM-RESTRICTED-NODE-CATALOG1",
+        ),
+        crate::operator_pq_auth::Profile::PqV3 => (
+            &["bootstrap", "input", "model", "spec"],
+            crate::operator_pq_startup::CATALOG_DOMAIN,
+        ),
+    }
+}
+
 pub(crate) fn verify_catalog(
     inputs: &Inputs,
     permit: &Permit,
@@ -527,22 +602,15 @@ pub(crate) fn verify_catalog(
         PolicyError::ExternalContext,
     )?;
     let permission = permit.allocation.claim();
-    const ROLES: [&str; 6] = [
-        "activation",
-        "bootstrap",
-        "checkpoint",
-        "input",
-        "model",
-        "spec",
-    ];
+    let (roles, domain) = catalog_profile(permit.view.body.identity.profile()?);
     check(
-        inputs.materials.len() == ROLES.len(),
+        inputs.materials.len() == roles.len(),
         PolicyError::NativeBinding,
     )?;
-    let mut catalog = b"TRNM-RESTRICTED-NODE-CATALOG1".to_vec();
+    let mut catalog = domain.to_vec();
     let mut total = 0u64;
     let mut held_rows = Vec::new();
-    for (row, role) in inputs.materials.iter().zip(ROLES) {
+    for (row, &role) in inputs.materials.iter().zip(roles) {
         check(
             row.role == role && row.path.is_absolute() && row.bytes > 0,
             PolicyError::NativeBinding,
@@ -633,8 +701,9 @@ pub(crate) fn verify_catalog(
     )?;
     Ok(HeldCatalog {
         rows: held_rows,
-        roles: ROLES.iter().map(|r| (*r).to_owned()).collect(),
+        roles: roles.iter().map(|r| (*r).to_owned()).collect(),
         catalog_sha256: sha(&catalog),
+        domain,
     })
 }
 

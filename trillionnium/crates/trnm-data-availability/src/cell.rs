@@ -7,6 +7,7 @@ use std::{fmt, io};
 
 mod cache_budget;
 mod cache_wal;
+mod closure;
 pub mod discovery;
 #[cfg(test)]
 mod historical_tcl3_cache_budget;
@@ -18,6 +19,10 @@ mod retention;
 mod store;
 
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
+pub use closure::{
+    CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
+    MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
+};
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
     MAX_CHUNK_BYTES,
@@ -27,7 +32,8 @@ pub use network::{
     CellPeerLimitsV1, CellServeLimitsV1, CellServeReportV1,
 };
 pub use release::{
-    fetch_release_to_file, read_pinned_release, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
+    fetch_closure_to_file, fetch_release_to_file, read_pinned_release, CellClosureFetchReportV1,
+    CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
@@ -120,3 +126,6 @@ mod tests;
 
 #[cfg(test)]
 mod release_tests;
+
+#[cfg(test)]
+mod closure_tests;

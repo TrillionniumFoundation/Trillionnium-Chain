@@ -1,0 +1,195 @@
+{
+  "schema": "pn1-negative-cache-malformed-width-cost-v1",
+  "scope": "public Rust library API only; ordinary and PQ wire decoders already require exact width",
+  "measurements": "all calls at fixed repetitions; no timing pass threshold; not independent hardware qualification",
+  "allocation_and_cache_setup": "outside call timing and reported separately",
+  "stubs": false,
+  "no_work_hardness_or_public_service_qualification": true,
+  "prior_invalid_attempt": "invalid-shared-target-cost-attempt/length-cost-report.json",
+  "runs": [
+    {
+      "label": "baseline",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/workspace/scratch/295b0f1bca6b/pn1-w1-baseline-harness/Cargo.toml",
+        "--example",
+        "length_cost"
+      ],
+      "build_exit": 0,
+      "build_elapsed_seconds": 10.099840879440308,
+      "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "profile": "default release; opt-level=3; no RUSTFLAGS present",
+      "cargo_build_jobs": 2,
+      "fresh_independent_target": "/workspace/scratch/295b0f1bca6b/target/pn1-baseline-cost",
+      "binary_sha256": "4137b14657e7016e5b547f0782436ad4eac9ca69285824d3322b6a410fa57978",
+      "binary_bytes": 487048,
+      "harness_manifest_sha256": "472340b3002afdd9ee4d08cc9329584847134ecf61001091c6aea221912c956c",
+      "harness_lock_sha256": "621078f5a423076fc568e94f2d0d88af115717fce48bf07dc4dc3e687f6e7932",
+      "source_manifest_sha256": "0b1cae26993a8a16772edfbfdb50316566c7754610952ecb20368273e4656f27",
+      "compiler_fingerprints": [
+        {
+          "artifact": "example-length_cost.json",
+          "rustc": 7458672600737419911,
+          "profile": 2040997289075261528,
+          "rustflags": [],
+          "config": 8247474407144887393
+        },
+        {
+          "artifact": "lib-pn1_w1_source_harness.json",
+          "rustc": 7458672600737419911,
+          "profile": 2040997289075261528,
+          "rustflags": [],
+          "config": 8247474407144887393
+        }
+      ],
+      "run_exit": 0,
+      "observations": [
+        {
+          "length": 3,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 181,
+          "cache_setup_wall_ns": 260,
+          "calls_cpu_ns": 119477,
+          "calls_wall_ns": 120679,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 49187,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 16304,
+          "cache_setup_wall_ns": 70,
+          "calls_cpu_ns": 7430460,
+          "calls_wall_ns": 11461820,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 1048576,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 447634,
+          "cache_setup_wall_ns": 290,
+          "calls_cpu_ns": 161599659,
+          "calls_wall_ns": 361612539,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 16777216,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 13684605,
+          "cache_setup_wall_ns": 781,
+          "calls_cpu_ns": 2519313497,
+          "calls_wall_ns": 5627797147,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        }
+      ]
+    },
+    {
+      "label": "patched",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/workspace/scratch/295b0f1bca6b/pn1-w1-harness/Cargo.toml",
+        "--example",
+        "length_cost"
+      ],
+      "build_exit": 0,
+      "build_elapsed_seconds": 10.419967889785767,
+      "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "profile": "default release; opt-level=3; no RUSTFLAGS present",
+      "cargo_build_jobs": 2,
+      "fresh_independent_target": "/workspace/scratch/295b0f1bca6b/target/pn1-patched-cost",
+      "binary_sha256": "157477825943c484e44fa240f1d449b76b632bf7d837ea63fe64889c67f204c5",
+      "binary_bytes": 487272,
+      "harness_manifest_sha256": "472340b3002afdd9ee4d08cc9329584847134ecf61001091c6aea221912c956c",
+      "harness_lock_sha256": "621078f5a423076fc568e94f2d0d88af115717fce48bf07dc4dc3e687f6e7932",
+      "source_manifest_sha256": "e999d277ab78d4a2466489762fa4447b0c3b0f37b1b82f96bd05b43f01042bc0",
+      "compiler_fingerprints": [
+        {
+          "artifact": "example-length_cost.json",
+          "rustc": 7458672600737419911,
+          "profile": 2040997289075261528,
+          "rustflags": [],
+          "config": 8247474407144887393
+        },
+        {
+          "artifact": "lib-pn1_w1_source_harness.json",
+          "rustc": 7458672600737419911,
+          "profile": 2040997289075261528,
+          "rustflags": [],
+          "config": 8247474407144887393
+        }
+      ],
+      "run_exit": 0,
+      "observations": [
+        {
+          "length": 3,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 140,
+          "cache_setup_wall_ns": 281,
+          "calls_cpu_ns": 4627,
+          "calls_wall_ns": 5878,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 49187,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 26008,
+          "cache_setup_wall_ns": 50,
+          "calls_cpu_ns": 3756,
+          "calls_wall_ns": 4016,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 1048576,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 646188,
+          "cache_setup_wall_ns": 200,
+          "calls_cpu_ns": 3865,
+          "calls_wall_ns": 4447,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        },
+        {
+          "length": 16777216,
+          "repetitions": 256,
+          "length_errors": 256,
+          "progress_callbacks": 0,
+          "input_allocation_wall_ns": 10919879,
+          "cache_setup_wall_ns": 1512,
+          "calls_cpu_ns": 7681,
+          "calls_wall_ns": 197593,
+          "allocation_and_cache_setup_in_calls_timing": false,
+          "clock_overhead_retained": true
+        }
+      ]
+    }
+  ]
+}

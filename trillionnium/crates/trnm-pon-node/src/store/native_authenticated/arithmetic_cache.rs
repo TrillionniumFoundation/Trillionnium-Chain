@@ -4,7 +4,7 @@
 #[cfg(test)]
 use super::complete;
 use super::StateCommitment;
-use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_root;
+use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_roots;
 use crate::account_archive_prototype::native_store::LiftCache;
 use crate::{Result, Settings};
 use std::cell::RefCell;
@@ -15,6 +15,9 @@ use trnm_protocol::pon_wire::Hash;
 
 mod root_arithmetic;
 use root_arithmetic::RootArithmetic;
+
+#[cfg(test)]
+mod large_input_tests;
 
 // The normal parent, child and genesis may all be revisited during one commit.
 const MAX_COMPLETE_ENTRIES: usize = 3;
@@ -70,6 +73,7 @@ impl ArithmeticCache {
         &self,
         settings: &Settings,
         state: &State,
+        current_bytes: Option<&[u8]>,
     ) -> trnm_mvcc_fee::pon_executor::Result<Hash> {
         let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
         // The separate root entry is genesis arithmetic. It must not evict the
@@ -80,10 +84,14 @@ impl ArithmeticCache {
             settings.parameters(),
             settings.genesis(),
         ];
-        if let (Some(bytes), Ok(entry)) = (bounded_bytes(state), self.root.try_borrow()) {
-            if let Some(entry) = entry.as_ref().filter(|entry| {
-                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
-            }) {
+        // complete() already encoded this same immutably borrowed State. Reuse
+        // that exact input, including an oversize miss, without a second bounded
+        // serialization. The original root calculation still runs on a miss.
+        if let (Some(bytes), Ok(entry)) = (current_bytes, self.root.try_borrow()) {
+            if let Some(entry) = entry
+                .as_ref()
+                .filter(|entry| entry.context == context && entry.bytes.as_slice() == bytes)
+            {
                 self.root_arithmetic.exact_root_hit();
                 return Ok(entry.value);
             }
@@ -118,7 +126,7 @@ impl ArithmeticCache {
         }
     }
 
-    /// Reuse exact complete bytes or derive from the same bounded opaque M06
+    /// Reuse exact complete bytes or derive from the bounded opaque tree/hash
     /// arithmetic used by complete_root. Unlike `complete`, a miss does not run
     /// account/conservation checks before the original state-root grammar.
     /// Caller-owned State is serialized anew; no SQL observation is reused.
@@ -189,7 +197,8 @@ impl ArithmeticCache {
         ];
         // Serialize actual complete input, not a caller's root or Value equality:
         // signed zero and integer/float representations must remain distinct.
-        // Oversize input uses the original full calculation without retention.
+        // Oversize input never retains a complete commitment verdict. Its full
+        // account/conservation checks still run with bounded root arithmetic.
         let bytes = bounded_bytes(state);
         if let (Some(bytes), Ok(entries)) = (bytes.as_ref(), self.complete.try_borrow()) {
             if let Some(entry) = entries.iter().find(|entry| {
@@ -202,13 +211,19 @@ impl ArithmeticCache {
             }
         }
         self.root_arithmetic.complete_computation();
-        let value =
-            commitment_from_complete_state_with_root(settings, state, Some(&self.lifts), || {
-                self.complete_root(settings, state)
-            })
-            .map_err(|error| {
-                crate::Error::from(format!("NATIVE_STATE_COMMITMENT:{error:?}")).local_integrity()
-            })?;
+        let value = commitment_from_complete_state_with_roots(
+            settings,
+            state,
+            Some(&self.lifts),
+            || self.complete_root(settings, state, bytes.as_deref()),
+            |partition| {
+                self.root_arithmetic
+                    .calculate_non_accounts(settings, partition)
+            },
+        )
+        .map_err(|error| {
+            crate::Error::from(format!("NATIVE_STATE_COMMITMENT:{error:?}")).local_integrity()
+        })?;
         if let (Some(bytes), Ok(mut entries)) = (bytes, self.complete.try_borrow_mut()) {
             if entries.len() == MAX_COMPLETE_ENTRIES {
                 entries.pop_front();

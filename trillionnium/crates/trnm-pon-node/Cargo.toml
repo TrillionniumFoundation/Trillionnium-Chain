@@ -19,6 +19,7 @@ default = []
 pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "trnm-mvcc-fee/pq-native-openssl", "dep:openssl"]
 
 [dependencies]
+trnm-sqlite-io-boundary = { version = "=0.1.0", path = "../trnm-sqlite-io-boundary" }
 trnm-data-availability = { version = "=0.1.0", path = "../trnm-data-availability" }
 trnm-service-settlement = { version = "=0.1.0", path = "../trnm-service-settlement" }
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
@@ -33,7 +34,7 @@ fs2 = "0.4"
 libc = "0.2"
 rustix = { version = "1.1.4", features = ["fs", "process", "time"] }
 sha2 = "0.10"
-rusqlite = { version = "0.32", features = ["bundled", "hooks"] }
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint", "hooks"] }
 openssl = { version = "=0.10.81", optional = true }
 zeroize = "=1.8.2"
 

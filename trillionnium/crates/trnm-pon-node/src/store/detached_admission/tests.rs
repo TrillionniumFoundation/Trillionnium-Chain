@@ -539,6 +539,7 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     assert_eq!(node.read_active().unwrap(), before);
     let original = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
     node.bind_public_service_cpu_domain(&original).unwrap();
+    let arithmetic_before = node.authenticated_arithmetic.observation();
     let owner = Mutex::new(node);
     let end = Instant::now() + std::time::Duration::from_secs(10);
     let result = crate::ingress::dispatch_shared_with_metered_w1(
@@ -550,6 +551,11 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
         &|| ensure(Instant::now() < end, "PUBLIC_REQUEST_DEADLINE"),
     )
     .unwrap();
+    let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
+    println!(
+        "{}",
+        serde_json::json!({"schema":"native-large-parent-arithmetic-stages-v1", "authenticated_backend":authenticated, "before":arithmetic_before, "after":arithmetic_after, "measurement_scope":"existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"})
+    );
     println!(
         "{}",
         serde_json::json!({"schema":"native-large-parent-schedule-parity-v1", "authenticated_backend":authenticated, "genesis_fixture":"2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth", "genesis":hex::encode(settings.genesis()), "genesis_state_root":hex::encode(initial_root), "admitted_parent":hex::encode(parent), "complete_key_utf8_and_canonical_value_bytes":actual_payload, "early_capacity_observed_lower_bound_bytes":observed_payload_bytes, "original_cpu_receipt":result.cpu, "native_result":result.native.as_ref().map(|_|"ok").map_err(ToString::to_string), "host_qualified":false, "budget_depletion_demonstrated":false, "all_honest_service_qualified":false})

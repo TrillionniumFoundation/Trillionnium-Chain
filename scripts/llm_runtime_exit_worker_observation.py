@@ -22,6 +22,12 @@ class _Recapture(Exception):
     """Only a newly proved original worker retirement can request recapture."""
 
 
+class _CountDecreased(Exception):
+    """A fully checked task read needs a new held-worker retirement proof."""
+    def __init__(self, reported_threads):
+        self.reported_threads = reported_threads
+
+
 class WorkerPidfdObservation(base.ExitOnlyObservation):
     def __init__(self, pid, held_pidfd, owner_token, initial_leader, missing_sample_ns):
         self.baseline_qualified = self.failed = False
@@ -64,10 +70,12 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         base._require(base._one(fields, 'Pid') == int(name) and
             base._one(fields, 'Tgid') == self.visible and
             base._one(fields, 'PPid') == self.parent and
-            base._one(fields, 'Threads') == count and
             tuple(base._namespace(fields, 'NStgid')) == self.namespace and
             namespace[0] == int(name) and len(namespace) == len(self.namespace),
             'exit-task-identity')
+        reported_threads = base._one(fields, 'Threads')
+        decreased = self.baseline_qualified and 0 < reported_threads < count
+        base._require(reported_threads == count or decreased, 'exit-task-identity')
         base._require(len(fields['State'][0]) == 1 and
             fields['State'][0] in 'RSDTtXZPI' and 'VmRSS' not in fields,
             'exit-task-not-exit-only')
@@ -77,13 +85,24 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             base._require(fields['State'][0] == 'Z', 'exit-worker-remaining-not-zombie')
         if self.failure_context is not None:
             self.failure_context['reading_component'] = 'stat'
-        observed = base._stat(base._read(self.task_fds[name], 'stat'))
+        try:
+            raw_stat = base._read(self.task_fds[name], 'stat')
+        except OSError:
+            # A changed count needs the complete task read before recapture.
+            # A later ENOENT cannot erase an inconsistent reported count.
+            base._require(not decreased, 'exit-worker-frontier-change')
+            raise
+        observed = base._stat(raw_stat)
         base._require(observed['pid'] == int(name) and observed['ppid'] == self.parent and
             observed['flags'] & base.PF_EXITING and not observed['flags'] & base.PF_KTHREAD and
             observed['vsize'] == observed['rss'] == 0, 'exit-task-not-exit-only')
         base._require(observed['starttime'] == self.baseline_starts[name], 'exit-task-starttime')
         if int(name) == self.visible or shrinking:
             base._require(observed['state'] == 'Z', 'exit-worker-remaining-not-zombie')
+        if decreased:
+            # Do not discard any observed bad identity, memory, state or stat.
+            # This complete task read is still not a complete frontier.
+            raise _CountDecreased(reported_threads)
         return namespace, observed
 
     def _bind_workers(self):
@@ -146,11 +165,13 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             read_errno=error_errno, scope='worker kernel terminal event; not physical RSS release')
         self.failure_context['candidate_retirements'] = dict(candidate)
 
-    def _names(self, candidate):
+    def _names(self, candidate, maximum_count=None):
         active, preceding = self.active_names, set(candidate)
         count = self._leader(base._status(base._read(self.group_fd, 'status')))
         names = base._task_names(self.tasks_fd)
         self.failure_context.update(reported_threads=count, observed_tasks=list(names))
+        base._require(maximum_count is None or count <= maximum_count,
+                      'exit-worker-frontier-change')
         base._require(str(self.visible) in names and set(names) <= set(active) and
             not set(names) & set(candidate), 'exit-worker-task-set')
         for name in active:
@@ -174,6 +195,17 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         for name in names:
             try:
                 _, result[name] = self._fields(name, count, shrinking)
+            except _CountDecreased as error:
+                preceding = set(candidate)
+                after, _ = self._names(candidate, maximum_count=error.reported_threads)
+                newly_proved = [task for task in names if task in candidate and task not in preceding]
+                base._require(set(after) < set(names) and newly_proved,
+                              'exit-worker-frontier-change')
+                self.failure_context['count_interruption'] = dict(prior_active_tasks=list(names),
+                    reported_threads=error.reported_threads, observed_tasks=list(after),
+                    newly_proved_retired_tasks=newly_proved,
+                    scope='discarded incomplete frontier; not success or resource evidence')
+                raise _Recapture from error
             except OSError as error:
                 if error.errno not in (errno.ENOENT, errno.ESRCH):
                     raise

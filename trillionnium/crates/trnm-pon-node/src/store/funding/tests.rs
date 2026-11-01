@@ -28,7 +28,9 @@ fn settings(backend: StateBackend) -> crate::Settings {
 }
 fn open(path: &Path, backend: StateBackend) -> Node {
     match backend {
-        StateBackend::PqNetworkV2 => panic!("use the independently pinned PQ network fixture"),
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+            panic!("use the independently pinned PQ network fixture")
+        }
         StateBackend::Legacy => Node::open(path, settings(backend), 1).unwrap(),
         StateBackend::AuthenticatedV1 => {
             Node::open_with_authenticated_state(path, settings(backend), 1).unwrap()

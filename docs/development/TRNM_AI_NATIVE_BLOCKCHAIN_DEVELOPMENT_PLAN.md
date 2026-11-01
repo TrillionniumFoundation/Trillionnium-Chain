@@ -4224,3 +4224,67 @@ complete proof-system audit, independent sustained WAN and the model product
 loop remain explicit gates. Prior unavailable work copies and test claims are
 not inherited. The qualification record preserves actual failures, exact source
 windows and the subsequent fixes without replacing this sole development plan.
+
+### 2026-10-31 profile compatibility checkpoint within PN0–PN6
+
+The source and configuration review is recorded in the existing-plan companion
+[compatibility matrix](../../qualification/pn-convergence-20261031/PROFILE_COMPATIBILITY.md)
+and [implementation record](../../qualification/pn-convergence-20261031/README.md).
+The [ordinary Cell host handoff](specs/pon/CELL_ORDINARY_HOST_HANDOFF_V2.md)
+uses independently supplied original-owner pins and an actual native exec. It
+does not issue its own installation, FinalUse or learning qualification.
+
+The separate [W1 actual-reuse V3 observation](specs/pon/W1_ACTUAL_REUSE_OBSERVATION_V3.md)
+retains all thirteen producer arms and nine input classes. It measures one real
+setup followed by four independent searches, with all attempted proof streams
+and both verifiers, while preserving V2's original campaign. Diagnostic builds,
+the committed-source default-release runner and independent hardware acceptance
+remain distinct; no work-hardness or public-service qualification is inferred.
+
+**PN0 remains HOLD.** The current candidate is the explicit composition of Chain
+#632 (`622f9d50f081f6807408e401b790a7c7255b8f08`) and #634
+(`6e43cae914e3fe16b6439539dc5d00ff01952f13`) with the reviewed local runtime
+changes, alongside Hepta #4497 (`39775e10083ebfb3df63a587375b4be7d493b109`).
+The separately reviewed same-budget Hepta runtime successor is
+`3ba22376cc496d9bb1129ad0fa1146b32f1f73d8`; its current native outcomes are
+not inferred from the earlier head. The integration owner must insert the final
+Chain commit/tree, any later Hepta
+overlay, exact locks/binaries/configurations and actual native outcomes here.
+Source identity is a prerequisite for interpreting evidence, not PN0 acceptance.
+
+Hepta #4497 retains #4491's original Chain source tuple: source
+`c16507147b65285ea94dead22d3b93c5db7295af`, base
+`1d11f875493f8125e36b9adceacb342df108e5e5`, merge
+`d1b8ae970bb5e014b6feaa49030823e1d8228c90`. Official comparison from
+`bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3` to c165 is diverged, ahead 130 and
+behind 189, with merge base `4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251`.
+That historical pair cannot qualify the new joint source. Hepta PQ #4368
+`a575cf03e2bc871a2f48021859c03ace806421c8` is not merged into this pair.
+
+The actual configurations remain distinct. PNQ2 transport, NPQ6 application and
+fresh PqContinuousV3 startup are explicitly selected owner profiles. The native
+PermanentAccountGrowthV2 backend cannot be presented as that same PQ/continuous
+backend. The continuous History follow-up admits one exact complete extension
+under the original signed receiver allocation pair and durable interval; general
+multi-page, arbitrary-fork and shared-poller authorization remains closed. Research
+authenticated archives still refuse PQ application profiles.
+
+TCD1 retrieval preserves independently supplied closure/context/generation pins,
+original aggregate budgets and explicit content-cache-v1 or cell-pq-v2 selection.
+CPR2 authenticates embedded TCR1; TCD metadata still needs its independent owner
+pin. Hepta's explicit ordinary cell-v2 route consumes the original product
+qualification, CURRENT/selector and fixed eleven-object byte profile. The reviewed successor carries one original startup deadline and cancellation
+owner across blocking queueing, Cell verification, FinalUse and physical loading;
+remaining-time admission does not restart the budget. OS-blocked reads retain
+their owner until return and cannot be reported as immediately preempted. It uses
+the existing UnixFinalUseAuthorizer::open V1/Ed25519 owner. A separately
+available open_ml_dsa65_v2 API and an unmerged PQ branch do not make this route
+end-to-end PQ, and a fetched marker does not publish or install a new generation.
+
+PN0 evidence must name the final source-head and base-merge lanes, actual protected
+profile/backend and each required positive/refusal path. Compilation, source pins,
+component tests and correct rejections cannot be pooled into same-configuration
+joint acceptance. Retain failures, unavailable runs, SIGKILL and unknown effects
+with their original source and meaning. PN1–PN6 exits, budgets, migration boundaries
+and the existing release/activation authority remain unchanged; no deployment or
+whole-chain PQ acceptance is granted by this checkpoint.

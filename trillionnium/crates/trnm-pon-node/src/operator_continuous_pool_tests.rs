@@ -108,7 +108,9 @@ fn mode5_all_seven_pool_commands_reject_unknown_fields_and_cross_purpose() {
         assert!(serde_json::from_str::<Command>(wire).is_err());
     }
     let command: Command = serde_json::from_str(r#"{"command":"reconcile"}"#).unwrap();
-    assert!(command.check_selection(&selection()).is_err());
+    assert!(command
+        .check_selection(&selection(), crate::operator_pq_auth::Profile::ClassicalV2)
+        .is_err());
     let v = verified(selection());
     assert!(v.check_internal_command("submit-bundle", &[raw(1)]).is_ok());
     assert!(v.check_internal_command("enable-pool", &[raw(1)]).is_err());

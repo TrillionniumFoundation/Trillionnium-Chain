@@ -104,8 +104,8 @@ fn exact_fresh_frame_sizes_include_every_key_and_both_proofs() {
         assert_eq!(parsed.common, common);
         assert_eq!(parsed.payload, payload);
         assert_eq!(parsed.witnesses().len(), keys.len());
+        assert_eq!(&raw[..5], b"NPQ2\x02");
         assert!(crate::pon_wire::Envelope::decode(&raw).is_err());
-        assert!(crate::pq_native_transfer_v1::UnverifiedEnvelope::decode(&raw).is_err());
     }
     let (common, mut payload, keys) = case(1);
     payload[40..42].copy_from_slice(&512_u16.to_be_bytes());
@@ -201,12 +201,26 @@ fn closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse() {
     let (common, payload, mut keys) = case(REGISTER);
     keys[0].spki = None;
     assert!(signing_core(&common, REGISTER, &payload, &keys).is_err());
-    let old = crate::pq_native_transfer_v1::encode(
-        include_bytes!("../../tests/fixtures/pq_transfer/transfer.bin"),
-        SPKI,
-    )
-    .unwrap();
-    assert!(UnverifiedEnvelope::decode(&old).is_err());
+    // Probe old QTX1/classical namespaces and a downgraded NPQ2 version at an
+    // otherwise valid current frame length. The selected decoder must reject
+    // the encoding itself, not only an undersized fixture. These are rejection
+    // probes, not claims of valid legacy signatures or a restored v1 parser.
+    for prefix in [b"QTX1\x01", b"PNX1\x01", b"NPQ2\x01"] {
+        let mut old = raw.clone();
+        old[..5].copy_from_slice(prefix);
+        for profile in [
+            AccountProfile::AccountsV2,
+            AccountProfile::QuotaV3,
+            AccountProfile::TasksV4,
+            AccountProfile::TasksV5,
+            AccountProfile::ApplicationV6,
+        ] {
+            assert!(matches!(
+                UnverifiedEnvelope::decode_for_profile(&old, profile),
+                Err(Error::Encoding)
+            ));
+        }
+    }
 }
 
 #[test]

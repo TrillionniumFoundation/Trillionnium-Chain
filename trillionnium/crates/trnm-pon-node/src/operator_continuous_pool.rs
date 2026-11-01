@@ -169,6 +169,7 @@ pub(crate) struct VerifiedSelection {
     body: Selection,
     groups: BTreeMap<String, (String, String)>,
     allowed_raws: BTreeSet<String>,
+    profile: crate::operator_pq_auth::Profile,
 }
 impl VerifiedSelection {
     pub(crate) fn authenticate(body: &Selection, permission: &VerifiedAllocation) -> Result<Self> {
@@ -187,6 +188,7 @@ impl VerifiedSelection {
             body: body.clone(),
             groups: BTreeMap::new(),
             allowed_raws: BTreeSet::new(),
+            profile: permission.body().identity.profile()?,
         })
     }
     pub(crate) fn body(&self) -> &Selection {
@@ -206,7 +208,7 @@ impl VerifiedSelection {
         raws: &[Vec<u8>],
     ) -> Result<()> {
         self.check_retained(group, original_operation, raws)?;
-        let digest = crate::operator_mining_policy::transactions_sha256(raws)?;
+        let digest = crate::operator_continuous_policy::transactions_sha256(self.profile, raws)?;
         check(
             self.groups
                 .insert(hex::encode(group), (original_operation.to_owned(), digest))
@@ -221,11 +223,11 @@ impl VerifiedSelection {
         check(self.groups.len() == self.body.retained_groups.len())
     }
     pub(crate) fn check_prefix(&self, raws: &[Vec<u8>]) -> Result<()> {
-        crate::operator_mining_policy::transactions_sha256(raws)?;
+        crate::operator_continuous_policy::transactions_sha256(self.profile, raws)?;
         check(raws.iter().all(|raw| self.allowed_raws.contains(&sha(raw))))
     }
     pub(crate) fn check_bound_group(&self, raws: &[Vec<u8>]) -> Result<()> {
-        let actual = crate::operator_mining_policy::transactions_sha256(raws)?;
+        let actual = crate::operator_continuous_policy::transactions_sha256(self.profile, raws)?;
         check(self.groups.values().any(|(_, digest)| digest == &actual))
     }
     pub(crate) fn check_internal_command(&self, command: &str, raws: &[Vec<u8>]) -> Result<()> {
@@ -262,7 +264,7 @@ impl VerifiedSelection {
         check(self.body.purpose != Purpose::SubmitBundle || !raws.is_empty())?;
         check(
             self.body.exact_new_transactions_sha256
-                == crate::operator_mining_policy::transactions_sha256(raws)?,
+                == crate::operator_continuous_policy::transactions_sha256(self.profile, raws)?,
         )
     }
     pub(crate) fn check_retained(
@@ -280,7 +282,7 @@ impl VerifiedSelection {
         check(
             row.original_admission_operation == original_operation
                 && row.exact_transactions_sha256
-                    == crate::operator_mining_policy::transactions_sha256(raws)?,
+                    == crate::operator_continuous_policy::transactions_sha256(self.profile, raws)?,
         )
     }
 }
@@ -301,7 +303,7 @@ fn raws(values: &[String], limit: usize) -> crate::Result<Vec<Vec<u8>>> {
         .iter()
         .map(|value| {
             crate::ensure(
-                (318..=4096).contains(&value.len()),
+                (318..=32768).contains(&value.len()),
                 "OWNER_CONTINUOUS_POOL_RAW",
             )?;
             let raw = hex::decode(value).map_err(|_| "OWNER_CONTINUOUS_POOL_HEX")?;
@@ -376,10 +378,14 @@ impl Command {
             _ => Ok(Vec::new()),
         }
     }
-    pub(crate) fn check_selection(&self, s: &Selection) -> crate::Result<()> {
+    pub(crate) fn check_selection(
+        &self,
+        s: &Selection,
+        profile: crate::operator_pq_auth::Profile,
+    ) -> crate::Result<()> {
         crate::ensure(self.purpose() == s.purpose, "OWNER_CONTINUOUS_POOL_PURPOSE")?;
         crate::ensure(
-            crate::operator_mining_policy::transactions_sha256(&self.new_bundle()?)
+            crate::operator_continuous_policy::transactions_sha256(profile, &self.new_bundle()?)
                 .map_err(|_| "OWNER_CONTINUOUS_POOL_RAW")?
                 == s.exact_new_transactions_sha256,
             "OWNER_CONTINUOUS_POOL_NEW_BUNDLE",
@@ -398,7 +404,8 @@ impl Command {
             ),
             Self::ValidateBatch { batch } => crate::ensure(
                 Some(
-                    crate::operator_mining_policy::transactions_sha256(
+                    crate::operator_continuous_policy::transactions_sha256(
+                        profile,
                         &batch.actual()?.transactions,
                     )
                     .map_err(|_| "OWNER_CONTINUOUS_POOL_BATCH")?,

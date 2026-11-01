@@ -848,3 +848,128 @@ fn authenticated_archive_delta_encoding_preserves_present_null_and_exact_before(
         Err(Error::CorruptRecord)
     ));
 }
+
+#[test]
+fn authenticated_archive_pq_application_refuses_before_filesystem_or_retained_writes() {
+    use crate::ingress::pq_network::PqNetworkPolicy;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
+    use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{application_v6, GenesisAccount};
+    use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+    use zeroize::Zeroizing;
+
+    let key = |seed| {
+        let seed = Zeroizing::new([seed; 32]);
+        let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
+        let id = ml_dsa_65_key_id_from_spki(&spki).unwrap();
+        PqNativeSigningKey::from_owned_seed(seed, id).unwrap()
+    };
+    let accounts: Vec<_> = [1, 2, 3]
+        .into_iter()
+        .map(|seed| GenesisAccount {
+            spki: key(seed).public_spki().to_vec(),
+            balance: 100_000_000,
+        })
+        .collect();
+    let settings = Settings::native_pq_application_v6(
+        &accounts,
+        1000,
+        &application_v6::ApplicationPolicy {
+            evaluators: BTreeSet::from([key(2).public_key_id(), key(3).public_key_id()]),
+            evaluation_profile: trnm_mvcc_fee::public_evaluation::PROFILE.into(),
+            model_profile: "linear-expert-dev-v1".into(),
+        },
+    )
+    .unwrap();
+    let policy = PqNetworkPolicy::new(
+        &settings,
+        key(71).public_spki(),
+        1,
+        [key(72).public_spki().to_vec()],
+    )
+    .unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let pq_node =
+        Node::open_with_pq_network(&dir.path().join("node"), settings, 1, &policy).unwrap();
+    let callbacks = AtomicUsize::new(0);
+    let progress = |_| {
+        callbacks.fetch_add(1, Ordering::SeqCst);
+        true
+    };
+    // A file in an existing directory would previously initialize a new
+    // classical archive; a missing parent must not be created either.
+    for path in [
+        dir.path().join("fresh.sqlite"),
+        dir.path().join("never-created").join("fresh.sqlite"),
+    ] {
+        assert!(matches!(
+            AuthenticatedStateArchive::open_with_progress(
+                &path,
+                &pq_node,
+                Limits::default(),
+                &progress,
+            ),
+            Err(Error::UnsupportedProfile)
+        ));
+        assert!(!path.exists());
+    }
+    assert!(!dir.path().join("never-created").exists());
+    // Even an existing empty file must stay empty, rather than gaining a
+    // namespace before a later native packet discovers its unsupported codec.
+    let empty = dir.path().join("existing-empty.sqlite");
+    std::fs::write(&empty, []).unwrap();
+    assert!(matches!(
+        AuthenticatedStateArchive::open_with_progress(
+            &empty,
+            &pq_node,
+            Limits::default(),
+            &progress,
+        ),
+        Err(Error::UnsupportedProfile)
+    ));
+    assert!(std::fs::read(&empty).unwrap().is_empty());
+    assert!(!dir.path().join("existing-empty.sqlite-wal").exists());
+    assert!(!dir.path().join("existing-empty.sqlite-shm").exists());
+
+    let classic = Fixture::new();
+    let before_rows = rows(&classic.path);
+    let snapshot = || {
+        ["", "-wal", "-shm"].map(|suffix| {
+            let path = PathBuf::from(format!("{}{suffix}", classic.path.display()));
+            match std::fs::read(path) {
+                Ok(bytes) => Some(bytes),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+                Err(error) => panic!("archive snapshot: {error}"),
+            }
+        })
+    };
+    let before = snapshot();
+    assert!(matches!(
+        AuthenticatedStateArchive::open_with_progress(
+            &classic.path,
+            &pq_node,
+            Limits::default(),
+            &progress,
+        ),
+        Err(Error::UnsupportedProfile)
+    ));
+    assert!(matches!(
+        classic.archive.read_active(&pq_node),
+        Err(Error::UnsupportedProfile)
+    ));
+    assert!(matches!(
+        classic
+            .archive
+            .read_with_progress(&pq_node, classic.genesis.id(), &progress),
+        Err(Error::UnsupportedProfile)
+    ));
+    assert_eq!(snapshot(), before);
+    assert_eq!(callbacks.load(Ordering::SeqCst), 0);
+    assert_eq!(rows(&classic.path), before_rows);
+    let reopened =
+        AuthenticatedStateArchive::open(&classic.path, &classic.node, Limits::default()).unwrap();
+    assert_eq!(
+        reopened.read_active(&classic.node).unwrap(),
+        classic.archive.read_active(&classic.node).unwrap(),
+    );
+}

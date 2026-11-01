@@ -21,6 +21,8 @@ fn node() -> (tempfile::TempDir, tempfile::TempDir, Node) {
         active: Arc::new(Mutex::new(None)),
         startup_scope: "aa".repeat(32),
         sink,
+        pq_startup: None,
+        startup_import: Arc::new(AtomicBool::new(false)),
     });
     (root, dir, node)
 }

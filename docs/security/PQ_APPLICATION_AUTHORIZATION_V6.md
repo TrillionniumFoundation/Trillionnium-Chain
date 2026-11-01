@@ -11,6 +11,8 @@
 提交和测试结果不能作为本轮证据。NPQ2–NPQ5 账户、额度、任务和续约源文件逐项取自
 Chain `42ab57f1c5065d50f981cc337c417ef0ab7dc096`；没有把其分叉分支整体覆盖到本基线。
 源输入、实际失败和最终验证结果由 [资格记录](../../qualification/full-pq-v6-r2/README.md) 维护。
+后续 R3 源码、原容量失败的重新测量及新验证由
+[R3 资格记录](../../qualification/full-pq-r3/README.md) 单独维护，不能继承未保留源码的通过结论。
 
 ## 2. 一条规范集成路径
 
@@ -90,9 +92,12 @@ PQ 评估存储使用独立 revision 6/7 和 `ev-pq-v6` 命名空间。完整签
 规范分块保存，每项至多 65,536 字节，元数据包含长度、块数和 SHA-384。重组恢复时检查
 精确覆盖、顺序、长度、规范编码和摘要；缺块、多块和错块均拒绝。状态根继续承诺全部叶。
 
-Cell 采用相同原则：由被授权发布者签 manifest／Merkle root，块通过内容摘要和 Merkle
-关系验证。一个块的多个下载来源不需要各自拥有模型发布权限，也不应为每个块添加独立
-大型 PQ 签名。现有 configured-peer 目录与持久撤回能支持可核验的取回，但不等于已经
+当前 Rust Cell 的 `CPR2` 发布声明签名绑定 `TCR1` release manifest 内容 ID，后者绑定
+排序、唯一的 `TCM1` Cell manifest ID；Cell manifest 再绑定有序块的长度、SHA-256 和
+完整 payload 摘要。该原生路径没有 Merkle sibling 证明、BEP 52 或 magnet/DHT 协议，
+不能用另一个 PCC1/PCQ1/PCR1 研究实现的 Merkle 证明来描述它。一个块的多个下载来源
+不需要各自拥有模型发布权限，现有原生路径也没有为每个下载块附加独立大型 PQ 签名。
+现有 configured-peer 目录与持久撤回能支持可核验的取回，但不等于已经
 完成开放 DHT、抗 Sybil、跨故障域副本、长期留存激励和所有历史版本的可用性证明。
 
 ## 6. 身份认证与保密是两个门槛
@@ -107,10 +112,11 @@ IETF 状态处理，不能把草案标成已发布标准。应用签名也不能
 
 ## 7. 不能由本轮局部测试关闭的门槛
 
-1. **continuous owner 与 NPQ6 的完整组合。** 当前 checkpoint/bootstrap 的 genesis、
-   `DemandLeaseV2` 和续约仍有经典协议绑定。把含 genesis 绑定签名的任务直接放入决定
-   genesis 的状态会出现循环。需要明确的 PQ startup manifest 与真实 bootstrap 链，或
-   单独审议的新 genesis 语义，并贯穿 catalog、TaskV5、原 Journal 初始化和恢复。
+1. **continuous owner 与 NPQ6 的产品验收。** R3 的
+   [独立启动契约](PQ_CONTINUOUS_STARTUP_V3.md) 先固定只含公钥配置的 genesis，再导入真实
+   签名的 OPEN/REGISTER 工作块；catalog、TaskV5、原 Journal、Controller 非空搜索和
+   续约使用各自明确 PQ 域。它仍是受保护目录下的受限 owner，不自动切换 bootstrap 前缀，
+   不把普通 History 改成 continuous Journal，也不证明全网任意分叉同步已完成。
 2. **运行中网络迁移。** 新 namespace 不能证明旧链终局、旧钥匙先验可信或源余额锁定。
 3. **密码实现与证明审计。** 差分成功不等于独立审计；全部证明关系、Fiat–Shamir 的
    QROM 假设、哈希宽度、批量／递归组合及工作标识必须另行审计。
@@ -121,9 +127,11 @@ IETF 状态处理，不能把草案标成已发布标准。应用签名也不能
 6. **Hepta 产品闭环与独立运维。** 原安装读回、撤销、失效、崩溃恢复、合法 no-update，
    以及原计划规定的至少三组独立管理员和 72 小时 WAN 证据，仍需各自实际证据。
 7. **未迁移的实际入口。** Chain 的研究 authenticated archive、主 CLI 的经典提交／
-   父恢复、continuous 的 PQ bootstrap 仍需单独接线。Hepta 的 AuthBus message／time／
-   settlement、RunStart／ObjectiveStart、automation PoN caller、旧 plasticity bootstrap
-   和独立 intelligence authority 仍有经典授权；不能从 learning、CURRENT 或 FinalUse
+   父恢复仍需单独接线。Hepta R3 的 AuthBus message／time／settlement 采用独立 PQ-only
+   owner 域、一次性时间挑战和持久 issuer/replay 屏障，需以对应 Hepta 版本的实际验证为准。
+   RunStart／ObjectiveStart、automation PoN caller、旧 plasticity bootstrap 和独立
+   intelligence authority 的覆盖必须逐个核实，未迁移的经典接口在 PQ-only 域内应明确拒绝；
+   不能从 learning、CURRENT 或 FinalUse
    局部通过推导整仓迁移完成。Cell 缓存 stdout 收据也不是跨进程安装授权。
 
 因此，“9.6”只能作为用户提出的验收目标；本候选不自行授予该分数。

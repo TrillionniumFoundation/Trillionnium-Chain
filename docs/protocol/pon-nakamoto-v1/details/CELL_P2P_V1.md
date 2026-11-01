@@ -212,7 +212,7 @@ calls remain cooperative, so this is not a hard elapsed-time guarantee.
 
 Every connection disables close-time checkpoints, every writer disables automatic
 checkpoints and dirty-page spill, and `synchronous=FULL` remains required. Only
-this writer gate checkpoints. For the locked bundled SQLite 3.46.0 backend, one
+this writer gate checkpoints. For the locked bundled SQLite 3.51.3 backend, one
 transaction from an empty WAL has at most one frame per main-image page plus up
 to 16 FULL-sync padding frames. With main cap `C` and 4096-byte pages, the WAL
 file-length allowance is `32 + (C/4096 + 16) * 4120` bytes. Its separate SHM
@@ -221,6 +221,18 @@ the shorter first wal-index region. Existing oversized sidecars are refused;
 post-write checks are invariant diagnostics, not the preventive limit. Prevention
 comes from serialized zero-WAL admission and the spill-free bounded transaction.
 A backend-version substitution fails closed pending new qualification.
+
+The 3.51.3 pin includes SQLite's
+[upstream WAL-reset fix](https://www.sqlite.org/releaselog/3_51_3.html).
+The exact locked 3.46.0
+and 3.51.3 amalgamations have byte-identical `walFrames`, `walRestartLog`,
+`sqlite3SectorSize` and `unixShmMap` bodies and the same frame, sector and wal-index
+constants used above. That source comparison does not inherit an old runtime
+PASS. Qualification on the actual new backend reruns the held-reader refusal,
+dirty-transaction bounds, crash recovery and cold-reopen controls, plus a real
+connection-policy pollution control: the next ordinary write must restore the
+spill/checkpoint/FULL-sync policy, retain its committed WAL across last close,
+and recover the same chunk and counters through a read-only reopen.
 
 These are logical file-length bounds, not allocated-block reservation, guaranteed
 free space, a filesystem/global quota, or I05 funding. New-cache rollback-journal

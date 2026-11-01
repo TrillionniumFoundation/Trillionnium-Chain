@@ -101,10 +101,11 @@ pub(super) fn remaining(deadline: Instant) -> CellResultV1<Duration> {
 }
 
 pub(super) fn configure(connection: &Connection) -> CellResultV1<()> {
-    // The frame/padding bound is qualified against this exact locked backend;
-    // an upgraded or substituted pager requires a new source qualification.
+    // Pin the locked SQLite 3.51.3 backend, including its WAL-reset fix. Its
+    // walFrames, sector-size clamp and unixShmMap bodies retain the original
+    // frame/padding bound; another pager requires new source qualification.
     require(
-        rusqlite::version_number() == 3_046_000,
+        rusqlite::version_number() == 3_051_003,
         "cache WAL backend version",
     )?;
     require(

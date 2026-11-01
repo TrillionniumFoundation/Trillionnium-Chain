@@ -1364,6 +1364,7 @@ pub fn call_public_protected_v2_with_deadline(
     policy: PublicPolicy,
     outer_deadline: Option<Instant>,
 ) -> Result<PublicReply> {
+    super::require_classical_network_settings(settings)?;
     let started_call = Instant::now();
     let total_deadline = outer_deadline
         .map_or(started_call + Duration::from_millis(OVERALL_MS), |outer| {

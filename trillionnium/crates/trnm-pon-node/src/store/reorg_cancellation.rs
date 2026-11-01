@@ -68,8 +68,11 @@ struct CleanupSqlGuard<'a> {
 impl Drop for CleanupSqlGuard<'_> {
     fn drop(&mut self) {
         self.db
-            .authorizer(None::<fn(AuthContext<'_>) -> Authorization>);
-        self.db.progress_handler(0, None::<fn() -> bool>);
+            .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
+            .expect("Node owns the SQLite connection when removing its authorizer");
+        self.db
+            .progress_handler(0, None::<fn() -> bool>)
+            .expect("Node owns the SQLite connection when removing its progress handler");
         // Restoring the same connection policy grants no work authority. A
         // panic still rolls back the transaction and poisons its outer owner.
         let _ = self
@@ -396,8 +399,8 @@ impl Node {
             prior_busy_ms,
         };
         self.db
-            .progress_handler(100, Some(reorg_cleanup_interrupt()?));
-        self.db.authorizer(Some(cancellation_authorizer));
+            .progress_handler(100, Some(reorg_cleanup_interrupt()?))?;
+        self.db.authorizer(Some(cancellation_authorizer))?;
         cut(hook, "cancel-before-transaction")?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,

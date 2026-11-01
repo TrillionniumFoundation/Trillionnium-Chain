@@ -1,0 +1,326 @@
+{
+  "schema": "trnm-pn-ci-cost-environment-followup-v1",
+  "recorded_utc": "2026-11-01T08:28:27.259663+00:00",
+  "base_candidate": "acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9",
+  "inherited_base": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "source_state": "uncommitted-reviewable-followup",
+  "scope": "Restore the original no-override environment at exactly five frozen release-cost invocation sites. Local contract controls only; no new native cost campaign or qualification.",
+  "changed_sources": [
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "base_git_blob": "7b2f6c3c330a534d9f84436074eaaeb67a182248",
+      "tested_working_source_git_blob": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "tested_working_source_sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "base_git_blob": "0dde48c65dcddf25a0c1fc73d88ef1d1a84b1ee1",
+      "tested_working_source_git_blob": "5fb225abfbcd43afef71eb01a4f602596a4b5eff",
+      "tested_working_source_sha256": "33b60896c8ec38905b546a1133e8c4c36efaee1e8ddd35bff2ccafc1f3d945f0"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "base_git_blob": "3c479fcd0691411798df1d3413ed6959c75dff2a",
+      "tested_working_source_git_blob": "706b3c69548aab53e684fa151b048b8f54a12d42",
+      "tested_working_source_sha256": "04f524dbfddef5225698620720e6ca696e78bb46a34efda7603064ca1df75b6c"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "base_git_blob": "afe34340911c6bb57501a2af1e625de5c70336f1",
+      "tested_working_source_git_blob": "f6f70b5ba77c8e38752185e51c050558deb6ded3",
+      "tested_working_source_sha256": "1049f43fd5752faa92e6f1441111822ead830d51c181dfbd47e8121f24913ed9"
+    }
+  ],
+  "unchanged_guards_profiles_budgets": [
+    {
+      "path": "scripts/ci/run_cross_arch_cost.py",
+      "git_blob": "8d2fb7d1624d82138ca1d54efbad9107c175e048",
+      "sha256": "647533d30fcd18c89a9127d750646f19c17b237e1d09bbdea3589daa97636d66",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "scripts/ci/run_w1_reused_cost_v3.py",
+      "git_blob": "7171e55ac36ec717c7f3cb66331978df5ec8c1e1",
+      "sha256": "2179520b353e940adac0a6530adc216fed74ad8f5f278ec98a9781c767223887",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "scripts/ci/check_cross_arch_cost.py",
+      "git_blob": "5fbdbbf4c1ace9af059c3fbcb85ea9977e27f4ea",
+      "sha256": "f8f0f99c1f4a48d16d51f9257472645532626fc5202faa08c1453eaab9f4984f",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "git_blob": "9149433d76a08fdb5dc8e35949b8cbe9b5a31c31",
+      "sha256": "2d1d39e3a6c9fe69b50a6cad1ab78cb65f7b09a1835c5f5991fad05b0308d95b",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "git_blob": "5394cc36cb3db977ad658e17d1e6ae15b48a6026",
+      "sha256": "d61a307a7d72f84c34ee7dbbb69fe67bb552e8e6ef39d3a4c13f14e7464df569",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519",
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+      "unchanged_from_base": true
+    }
+  ],
+  "inherited_conflict_evidence": [
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "git_blob": "7b2f6c3c330a534d9f84436074eaaeb67a182248",
+      "byte_equal_between_cea95fb_and_acd8f79": true
+    },
+    {
+      "path": "scripts/ci/run_cross_arch_cost.py",
+      "git_blob": "8d2fb7d1624d82138ca1d54efbad9107c175e048",
+      "byte_equal_between_cea95fb_and_acd8f79": true
+    },
+    {
+      "path": "scripts/ci/run_w1_reused_cost_v3.py",
+      "git_blob": "7171e55ac36ec717c7f3cb66331978df5ec8c1e1",
+      "byte_equal_between_cea95fb_and_acd8f79": true
+    }
+  ],
+  "local_commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:34.950322+00:00",
+      "wall_ns": 73819284,
+      "stdout": "ci-01.stdout",
+      "stderr": "ci-01.stderr",
+      "reported_test_count": null
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:35.024481+00:00",
+      "wall_ns": 4605079905,
+      "stdout": "ci-02.stdout",
+      "stderr": "ci-02.stderr",
+      "reported_test_count": 95
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:39.629963+00:00",
+      "wall_ns": 23869210080,
+      "stdout": "ci-03.stdout",
+      "stderr": "ci-03.stderr",
+      "reported_test_count": 67
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:34.955246+00:00",
+      "wall_ns": 2885423146,
+      "stdout": "guard-01.stdout",
+      "stderr": "guard-01.stderr",
+      "reported_test_count": 34
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_cross_arch_cost.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:37.841030+00:00",
+      "wall_ns": 1018154910,
+      "stdout": "guard-02.stdout",
+      "stderr": "guard-02.stderr",
+      "reported_test_count": 47
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_run_w1_reused_cost_v3.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:38.859614+00:00",
+      "wall_ns": 157405110,
+      "stdout": "guard-03.stdout",
+      "stderr": "guard-03.stderr",
+      "reported_test_count": 24
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:39.017251+00:00",
+      "wall_ns": 128326995,
+      "stdout": "guard-04.stdout",
+      "stderr": "guard-04.stderr",
+      "reported_test_count": null
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/ci/ci_job.sh"
+      ],
+      "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+      "exit_code": 0,
+      "started_utc": "2026-11-01T08:26:39.145891+00:00",
+      "wall_ns": 2773422,
+      "stdout": "guard-05.stdout",
+      "stderr": "guard-05.stderr",
+      "reported_test_count": null
+    }
+  ],
+  "local_control_logs": [
+    {
+      "file": "controls/ci-01.stderr.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/ci-01.stdout.gz",
+      "raw_bytes": 154,
+      "raw_sha256": "88d7c7d834083181b3f7925dc3fa34d3ea78e122da3c2001e4927173c80d2b24",
+      "gzip_sha256": "6898549bc1ac864ec77f97388c17286d7d4f438e787d9f33926bba96a019aea9"
+    },
+    {
+      "file": "controls/ci-02.stderr.gz",
+      "raw_bytes": 15864,
+      "raw_sha256": "019fea67cee3234a8e7ae7a5f1beaa2e7bf9249a2640d9eea43d7ef9b5de219e",
+      "gzip_sha256": "afda0de1de6aab14b514a0e79e294654faba44ede1c233a5ce9bdea75e8a44b2"
+    },
+    {
+      "file": "controls/ci-02.stdout.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/ci-03.stderr.gz",
+      "raw_bytes": 10687,
+      "raw_sha256": "21b53c28a88ff0cdeab8535f5e3cffe0888924565bd7944b121f5147f5f59aa3",
+      "gzip_sha256": "a96bcfc996edbcfc2b266fe2681e5cc2b6df66346f60506a0b8c915eabcb905c"
+    },
+    {
+      "file": "controls/ci-03.stdout.gz",
+      "raw_bytes": 484,
+      "raw_sha256": "5827ee2ea50db5922658760853ae759a7c7109c1a8295ccb2fef304b3dead64d",
+      "gzip_sha256": "2cc880decf6e441a5d8185cfa6115e17adc01d45c1f84c235c524bf196dbe7cc"
+    },
+    {
+      "file": "controls/guard-01.stderr.gz",
+      "raw_bytes": 5025,
+      "raw_sha256": "9aa1780adbd8a9766024ea3bac5d12dc60facca145fb727e2272db82629948fe",
+      "gzip_sha256": "af7443dcc45fe627b17b88b7cc6980467ae1886cbe3bab1fe61929ab71f23b93"
+    },
+    {
+      "file": "controls/guard-01.stdout.gz",
+      "raw_bytes": 484,
+      "raw_sha256": "1b75945d3ec3236363959de739a7c7c4d234a0f5f3ed4e78a542bf107328b8ba",
+      "gzip_sha256": "954bf6cd13f4c8b6deab3805fc66080aa5b51b7c6c4a32dc53f855717345f928"
+    },
+    {
+      "file": "controls/guard-02.stderr.gz",
+      "raw_bytes": 7215,
+      "raw_sha256": "b399685940de5b24c5b0862f024d0d60e08fe7c6498dcaecd59dfeeb2e2ec26f",
+      "gzip_sha256": "169a9887982630442621b227c3ad4acfa5843f96cb697b5e08c36dc9451e7fc3"
+    },
+    {
+      "file": "controls/guard-02.stdout.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/guard-03.stderr.gz",
+      "raw_bytes": 4047,
+      "raw_sha256": "d257dcc99a11e40ca2efdcbb4a7d405b2113d00ccbea295c3357ed27121a2232",
+      "gzip_sha256": "0e54a6ded4e53f8c6fbbde53ac4107ba0943230df67e31ea34b64bbabc624ad9"
+    },
+    {
+      "file": "controls/guard-03.stdout.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/guard-04.stderr.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/guard-04.stdout.gz",
+      "raw_bytes": 557,
+      "raw_sha256": "0c693e64e1f86fc235194f12f687db50ef83fafbdd1ccf58157887dee40555c1",
+      "gzip_sha256": "b3417095d0dde993c3123a8ed50c500e175228856f45c2875a7da6cee0418eb2"
+    },
+    {
+      "file": "controls/guard-05.stderr.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "file": "controls/guard-05.stdout.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    }
+  ],
+  "shell_command_observations": "controls/five-cost-command-shell-syntax.json",
+  "original_guard_environment_observations": "controls/original-guard-environment-observation.json",
+  "suite_count_note": "test_ci_execution imports source-integrity tests; suite counts are not disjoint and must not be summed as unique tests.",
+  "remote_observation": "remote-observation.json",
+  "remote_old_head_overall_result": "FAIL",
+  "remote_old_head_confirmation_failure": "finite_target_met=false",
+  "remote_old_head_named_tests_passed": 5,
+  "native_cost_campaign_executed_for_followup": false,
+  "new_head_native_execution_qualification_inherited": false,
+  "activation": false,
+  "independent_wan_accepted": false,
+  "work_hardness_accepted": false,
+  "pq_qualified": false,
+  "independent_read_only_review": {
+    "file": "independent-review.json",
+    "sha256": "033ee9eb6353e646212b4f0329d1ff51e8d413c116606e2bf813ed84d91c4ef2",
+    "source": "parent-preserved independent wan_acceptance read-only review",
+    "scope": "No must-fix found in the actual five source files; reviewer did not rerun the suites."
+  }
+}

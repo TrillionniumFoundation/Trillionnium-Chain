@@ -13,13 +13,17 @@ use crate::{consensus, ensure, sequence_root, Error, Packet, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::BTreeMap;
 use trnm_mvcc_fee::pon_executor::{root, State};
 use trnm_protocol::pon_wire::{hash, Hash};
+use trnm_sqlite_io_boundary::TransactionScope;
 
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
 pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
+mod post_write_readback;
+pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
@@ -650,29 +654,73 @@ pub(crate) fn verify_state_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
-    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
-    progress()?;
-    let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
-    verify_record(db, settings, &record, progress, cache)?;
-    local(ensure(
-        record.state
-            == match cache {
-                Some(cache) => cache.complete(settings, state)?,
-                None => complete(settings, state)?,
-            },
-        "NATIVE_STATE_ROOT",
-    ))?;
-    {
-        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
-        native_store::verify_with_lifts(
-            db,
-            &record.accounts,
-            state,
-            progress,
-            cache.map(|c| &c.lifts),
-        )?;
+    verify_state_with_readback(db, settings, block, state, progress, cache, None)
+}
+
+pub(super) fn verify_state_with_readback(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+    mut readback: Option<&mut PostWriteReadback<'_>>,
+) -> Result<()> {
+    let result = (|| {
+        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
+        progress()?;
+        if let Some(scope) = readback.as_deref_mut() {
+            scope.current(db)?;
+        }
+        let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
+        verify_record(db, settings, &record, progress, cache)?;
+        local(ensure(
+            record.state
+                == match cache {
+                    Some(cache) => cache.complete(settings, state)?,
+                    None => complete(settings, state)?,
+                },
+            "NATIVE_STATE_ROOT",
+        ))?;
+        let reused = match readback.as_deref_mut() {
+            Some(scope) => scope.matches(db, settings, &record)?,
+            None => false,
+        };
+        if !reused {
+            let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
+            native_store::verify_with_lifts(
+                db,
+                &record.accounts,
+                state,
+                progress,
+                cache.map(|c| &c.lifts),
+            )?;
+        }
+        // Keep the original boundary checkpoint. A scoped graph hit creates no
+        // synthetic progress events; every real traversal keeps every node check.
+        progress()?;
+        if let Some(scope) = readback.as_deref_mut() {
+            if reused {
+                if !scope.matches(db, settings, &record)? {
+                    // A final callback wrote after the match. Reuse stays disabled;
+                    // repeat the original verifier, never mint a replacement scope.
+                    return verify_state_with_cache(db, settings, block, state, progress, cache);
+                }
+                scope.consumed = true;
+                #[cfg(test)]
+                {
+                    scope.hits += 1;
+                }
+            } else {
+                scope.remember(db, record)?;
+            }
+        }
+        Ok(())
+    })();
+    match readback {
+        Some(scope) => scope.finish(result),
+        None => result,
     }
-    progress()
 }
 
 /// Seal and verify every delta record needed to reconstruct a retained branch.
@@ -693,6 +741,17 @@ pub(crate) fn verify_history_with_cache(
     block: Hash,
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
+) -> Result<()> {
+    verify_history_with_readback(db, settings, block, progress, cache, None)
+}
+
+pub(super) fn verify_history_with_readback(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+    readback: Option<&mut PostWriteReadback<'_>>,
 ) -> Result<()> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
     let mut current = block;
@@ -722,7 +781,9 @@ pub(crate) fn verify_history_with_cache(
                     canonical(&state)? == bytes && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
-                return verify_state_with_cache(db, settings, current, &state, progress, cache);
+                return verify_state_with_readback(
+                    db, settings, current, &state, progress, cache, readback,
+                );
             }
         }
     }
@@ -778,6 +839,24 @@ pub(crate) fn publish_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    publish_with_readback(
+        db, settings, parent, block, before, after, progress, cache, None,
+    )
+    .map(|_| ())
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(super) fn publish_with_readback<'db>(
+    db: &'db Connection,
+    settings: &Settings,
+    parent: Hash,
+    block: Hash,
+    before: &State,
+    after: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+    original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
+) -> Result<Option<PostWriteReadback<'db>>> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
     verify_state_with_cache(db, settings, parent, before, progress, cache)?;
     let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
@@ -814,8 +893,29 @@ pub(crate) fn publish_with_cache(
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
     save(db, &mut record)?;
-    verify_state_with_cache(db, settings, block, after, progress, cache)?;
-    verify_history_with_cache(db, settings, block, progress, cache)
+    // Begin the readback epoch after the last account/record write, while the
+    // original pre-write transaction owner still proves the same writer.
+    let mut readback = original_owner
+        .map(|(owner, expected)| PostWriteReadback::new(db, settings, block, owner, expected))
+        .transpose()?
+        .flatten();
+    let result = verify_state_with_readback(
+        db,
+        settings,
+        block,
+        after,
+        progress,
+        cache,
+        readback.as_mut(),
+    )
+    .and_then(|()| {
+        verify_history_with_readback(db, settings, block, progress, cache, readback.as_mut())
+    });
+    match &readback {
+        Some(scope) => scope.finish(result)?,
+        None => result?,
+    }
+    Ok(readback)
 }
 
 #[cfg(test)]

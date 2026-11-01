@@ -1,0 +1,55 @@
+[
+  {
+    "case": "original-inherited-zero",
+    "argv": [
+      "python3",
+      "-B",
+      "-c",
+      "import json,sys;sys.path.insert(0,\"scripts/ci\");from run_cross_arch_cost import build_environment_overrides;print(json.dumps(build_environment_overrides(dict(__import__(\"os\").environ)),sort_keys=True))"
+    ],
+    "exit_code": 0,
+    "observed_original_guard": {
+      "CARGO_INCREMENTAL": "0"
+    },
+    "stdout": "{\"CARGO_INCREMENTAL\": \"0\"}\n",
+    "stderr": "",
+    "native_campaign_executed": false
+  },
+  {
+    "case": "approved-unset-only",
+    "argv": [
+      "env",
+      "-u",
+      "CARGO_INCREMENTAL",
+      "python3",
+      "-B",
+      "-c",
+      "import json,sys;sys.path.insert(0,\"scripts/ci\");from run_cross_arch_cost import build_environment_overrides;print(json.dumps(build_environment_overrides(dict(__import__(\"os\").environ)),sort_keys=True))"
+    ],
+    "exit_code": 0,
+    "observed_original_guard": {},
+    "stdout": "{}\n",
+    "stderr": "",
+    "native_campaign_executed": false
+  },
+  {
+    "case": "other-overrides-still-rejected",
+    "argv": [
+      "env",
+      "-u",
+      "CARGO_INCREMENTAL",
+      "python3",
+      "-B",
+      "-c",
+      "import json,sys;sys.path.insert(0,\"scripts/ci\");from run_cross_arch_cost import build_environment_overrides;print(json.dumps(build_environment_overrides(dict(__import__(\"os\").environ)),sort_keys=True))"
+    ],
+    "exit_code": 0,
+    "observed_original_guard": {
+      "CARGO_BUILD_INCREMENTAL": "true",
+      "RUSTFLAGS": "-C opt-level=0"
+    },
+    "stdout": "{\"CARGO_BUILD_INCREMENTAL\": \"true\", \"RUSTFLAGS\": \"-C opt-level=0\"}\n",
+    "stderr": "",
+    "native_campaign_executed": false
+  }
+]

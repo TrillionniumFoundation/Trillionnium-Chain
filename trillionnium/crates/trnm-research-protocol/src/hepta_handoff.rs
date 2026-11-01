@@ -8,6 +8,12 @@
 //! receipt.  Chain reorganization may revoke a chain entitlement, but it must
 //! never turn this envelope into permission to replay a local effect.
 
+mod pq;
+pub use pq::{
+    PqHeptaAuthorityPinV2, PqHeptaAuthoritySetV2, PqHeptaHandoffError, SignedHeptaAdmissionV2,
+    HEPTA_PQ_HANDOFF_VERSION, MAX_HEPTA_PQ_AUTHORITY_PINS, MAX_HEPTA_PQ_HANDOFF_BYTES,
+};
+
 use crate::canonical::{CanonicalCbor, CanonicalDecodeError, Decoder, Encoder, CANONICAL_ENCODING};
 use crate::command::AuthorityRole;
 use crate::state::AuthoritySetV1;

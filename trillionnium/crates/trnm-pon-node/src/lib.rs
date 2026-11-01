@@ -20,6 +20,7 @@ pub mod operator_deployment;
 pub mod operator_mining_controller;
 pub mod operator_mining_policy;
 pub(crate) mod operator_pq_auth;
+pub mod operator_pq_startup;
 pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod pq_application_v6;

@@ -153,6 +153,7 @@ pub fn solve_admission_challenge(
     request_wire: &[u8],
     settings: &Settings,
 ) -> Result<(AdmissionSolution, u64)> {
+    require_classical_network_settings(settings)?;
     let policy =
         AdmissionPolicy::new(challenge.bits, Duration::from_millis(challenge.lifetime_ms))?;
     ensure(
@@ -361,12 +362,35 @@ fn peer_identity(public: &str) -> Result<Hash> {
     Ok(hash(b"native-authenticated-peer-v1", &[&key.to_bytes()]))
 }
 
+// A pinned classical peer is still a downgrade when the ledger Settings require
+// PQ accounts. Apply this before any classical or anonymous client sends bytes,
+// signs a request, or spends admission work. Explicit PQ transports may also
+// serve classical ledgers; this is deliberately a one-way compatibility rule.
+fn require_classical_network_settings(settings: &Settings) -> Result<()> {
+    ensure(
+        !settings.app.is_pq_account_profile(),
+        "AUTH_CLASSICAL_FOR_PQ_PROFILE",
+    )
+}
+
+fn require_classical_network_owner(node: &Node) -> Result<()> {
+    require_classical_network_settings(node.settings())?;
+    // A PQ transport owner can also serve a classical account ledger. Its
+    // recorded policy still forbids classical outbox and history fallbacks.
+    node.require_classical_network_profile()
+}
+
 pub fn authenticated_session(
     settings: &Settings,
     peer: &str,
     server: &str,
     generation: u64,
 ) -> Result<AuthSession> {
+    // This shared constructor is used by both the classical client signer and
+    // the classical server verifier. Never let either endpoint manufacture or
+    // accept an Ed25519 session under a Settings-selected PQ account profile.
+    // The PNQ2 transport owns the separate pinned ML-DSA session namespace.
+    require_classical_network_settings(settings)?;
     ensure(
         (1..=i64::MAX as u64).contains(&generation),
         "AUTH_GENERATION",
@@ -2071,6 +2095,7 @@ pub fn call_protected(
     request: &Request,
     settings: &Settings,
 ) -> Result<Value> {
+    require_classical_network_settings(settings)?;
     let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
@@ -2229,6 +2254,7 @@ pub fn pending_authenticated_request(
     node: &Node,
     client: &AuthenticatedClient,
 ) -> Result<Option<Request>> {
+    require_classical_network_owner(node)?;
     let settings = node.settings();
     let session = authenticated_session(
         settings,
@@ -2272,6 +2298,7 @@ fn call_authenticated_durable_inner(
     protected: bool,
     outer_deadline: Option<Instant>,
 ) -> Result<Value> {
+    require_classical_network_owner(node)?;
     // Deadline-aware History uses the unprotected authenticated transport.
     ensure(!protected || outer_deadline.is_none(), "PUBLIC_OPERATION")?;
     let settings = node.settings().clone();
@@ -2556,6 +2583,7 @@ pub fn sync_from(
     mut after: Hash,
     page_budget: usize,
 ) -> Result<Hash> {
+    require_classical_network_owner(node)?;
     let deadline = Instant::now() + history_import::SYNC_BUDGET;
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
@@ -2615,6 +2643,7 @@ pub fn sync_from_authenticated(
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
+    require_classical_network_owner(node)?;
     let deadline = Instant::now() + history_import::SYNC_BUDGET;
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
@@ -2666,6 +2695,7 @@ pub fn sync_from_authenticated_durable(
     page_budget: usize,
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
+    require_classical_network_owner(node)?;
     let deadline = Instant::now() + history_import::SYNC_BUDGET;
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,

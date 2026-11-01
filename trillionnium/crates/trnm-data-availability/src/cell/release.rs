@@ -14,8 +14,8 @@ use std::{
 use super::{
     manifest::MAX_MANIFEST_BYTES,
     network::{fetch_cell_in_session, fetch_manifest, RequestContext, ResponseBudget},
-    require, CellDigestV1, CellErrorV1, CellPeerLimitsV1, CellReleaseLimitsV1,
-    CellReleaseManifestV1, CellResultV1, CellStoreV1,
+    require, CellDigestV1, CellErrorV1, CellLoaderContextV1, CellPeerLimitsV1,
+    CellReleaseClosureV1, CellReleaseLimitsV1, CellReleaseManifestV1, CellResultV1, CellStoreV1,
 };
 
 static MARKER_SEQUENCE: AtomicU64 = AtomicU64::new(0);
@@ -41,6 +41,48 @@ pub struct CellReleaseFetchReportV1 {
     pub connection_attempts: u64,
     pub rejected_responses: usize,
     pub supplying_peers: BTreeSet<SocketAddr>,
+}
+
+/// Complete declared bytes, not an installation or a storage duty receipt.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellClosureFetchReportV1 {
+    pub closure_id: CellDigestV1,
+    pub selected_generation: u64,
+    pub release: CellReleaseFetchReportV1,
+}
+
+/// Fetch an owner-pinned dependency plan through the original TCR1/TCL4 path.
+/// Every TCM1 is checked against its file mapping before payload acquisition.
+/// One original transport reservation covers all manifests, chunks and retries.
+/// The published marker contains canonical TCD1 bytes, never CURRENT/FinalUse.
+pub fn fetch_closure_to_file(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    mut limits: CellReleaseFetchLimitsV1,
+    output: &Path,
+) -> CellResultV1<CellClosureFetchReportV1> {
+    closure.verify_for_loader(expected)?;
+    limits.release.max_payload_bytes = limits
+        .release
+        .max_payload_bytes
+        .min(expected.max_payload_bytes);
+    limits.release.max_chunks = limits.release.max_chunks.min(expected.max_chunks);
+    let release = fetch_release_checked(
+        store,
+        closure.release(),
+        closure.release().id(),
+        peers,
+        limits,
+        output,
+        Some(closure),
+    )?;
+    Ok(CellClosureFetchReportV1 {
+        closure_id: closure.id(),
+        selected_generation: closure.selected_generation(),
+        release,
+    })
 }
 
 /// Read an externally supplied TCR1 object, bounded before allocation, then
@@ -87,6 +129,18 @@ pub fn fetch_release_to_file(
     peers: &[SocketAddr],
     limits: CellReleaseFetchLimitsV1,
     output: &Path,
+) -> CellResultV1<CellReleaseFetchReportV1> {
+    fetch_release_checked(store, release, pinned, peers, limits, output, None)
+}
+
+fn fetch_release_checked(
+    store: &CellStoreV1,
+    release: &CellReleaseManifestV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    output: &Path,
+    closure: Option<&CellReleaseClosureV1>,
 ) -> CellResultV1<CellReleaseFetchReportV1> {
     release.validate()?;
     require(release.id() == pinned, "release manifest digest")?;
@@ -143,6 +197,9 @@ pub fn fetch_release_to_file(
             manifest.context() == release.context(),
             "release cell context",
         )?;
+        if let Some(closure) = closure {
+            closure.verify_manifest(&manifest)?;
+        }
         report.rejected_responses += rejected;
         report.payload_bytes = report
             .payload_bytes
@@ -181,7 +238,8 @@ pub fn fetch_release_to_file(
     report.connection_attempts =
         limits.peer.max_connections - requests_left.load(Ordering::Relaxed);
     report.received_response_bytes = responses.received()?;
-    publish_marker(release, output, deadline)?;
+    let marker = closure.map_or_else(|| release.encode(), CellReleaseClosureV1::encode);
+    publish_marker(&marker, output, deadline)?;
     Ok(report)
 }
 
@@ -189,11 +247,7 @@ fn check_deadline(deadline: Instant) -> CellResultV1<()> {
     require(Instant::now() <= deadline, "release fetch deadline")
 }
 
-fn publish_marker(
-    release: &CellReleaseManifestV1,
-    output: &Path,
-    deadline: Instant,
-) -> CellResultV1<()> {
+fn publish_marker(wire: &[u8], output: &Path, deadline: Instant) -> CellResultV1<()> {
     check_deadline(deadline)?;
     let parent = output
         .parent()
@@ -209,7 +263,7 @@ fn publish_marker(
         .create_new(true)
         .open(&temporary)?;
     let result: CellResultV1<()> = (|| {
-        file.write_all(&release.encode())?;
+        file.write_all(wire)?;
         file.sync_all()?;
         #[cfg(test)]
         super::release_tests::before_marker_publication(deadline);
