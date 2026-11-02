@@ -1,0 +1,126 @@
+{
+  "host-controls.log": {
+    "bytes": 127,
+    "sha256": "8cfb1df5053d9dca1a0b54e47185afc0cc161737aefb509e9db61978a98f1793"
+  },
+  "outbox-runner-controls.log": {
+    "bytes": 116,
+    "sha256": "9feda7a334e515ff3c6e0662faa0c948029cf6984a4daf411be872b1c7fee337"
+  },
+  "preflight.log": {
+    "bytes": 133,
+    "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+  },
+  "qualified-native-host/actual-systemd-parent.log": {
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+  },
+  "qualified-native-host/after-provision.json": {
+    "bytes": 1624,
+    "sha256": "f680e3a95e158620bf98b1a080f8de661c996d9e73e226fd373f2ccf2b262249"
+  },
+  "qualified-native-host/before-provision.json": {
+    "bytes": 2791,
+    "sha256": "d0a609a81ebbf5683ae3b48d6f1cb5f47c5e081426ab2ebe9b97a3138c30564d"
+  },
+  "qualified-native-host/child-final-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  "qualified-native-host/child-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  "qualified-native-host/child-result.json": {
+    "bytes": 376,
+    "sha256": "eabbb97fa507f062578738a9b86faacb1dcba80b2fd33b7382fa428123345daf"
+  },
+  "qualified-native-host/controller-result.json": {
+    "bytes": 4385,
+    "sha256": "4c54a19e9e5e7a2f28fa6e327f6c1e5202585b3ebd1eef43d974b0c73ea716c4"
+  },
+  "qualified-native-host/inside-after.json": {
+    "bytes": 1690,
+    "sha256": "bc330b96ec72daa8f8a26b7cc8f3329bf726b1fd5afd8eaa4f63143f35f83778"
+  },
+  "qualified-native-host/inside-before.json": {
+    "bytes": 1678,
+    "sha256": "3147f957c874a85aeee27b80b1812ca12b62386a6dc4ab6eff10578201d0df96"
+  },
+  "qualified-native-host/install-reviewed-unit.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "qualified-native-host/outside-after.json": {
+    "bytes": 1656,
+    "sha256": "6274a29019312dfe25aa7264e7dc74e83c9b884fa557e7a590904702d18241cb"
+  },
+  "qualified-native-host/parent-properties.log": {
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343"
+  },
+  "qualified-native-host/prepare-build.json": {
+    "bytes": 3073,
+    "sha256": "214a013230e9c693576d2792b6a4d5641f86c5f0bba7aee5f035eee1a7506b4b"
+  },
+  "qualified-native-host/prepare-build/process.json": {
+    "bytes": 891,
+    "sha256": "144e8ebc116a485b6eb223ee51ed2b24c94416e7fd81d45df0f31872fbbd0bc3"
+  },
+  "qualified-native-host/prepare-build/stderr": {
+    "bytes": 277,
+    "sha256": "1e2426a2b0a0c0bc2684cef9e4b432319c46f03ccc914722e0cd5f061ecb58e9"
+  },
+  "qualified-native-host/prepare-build/stdout": {
+    "bytes": 111352,
+    "sha256": "f361aa9f7ffd2eba03e03956d3e39aedc5fecd5392c1431631e0af8594a46fa4"
+  },
+  "qualified-native-host/start-fixed-parent.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "qualified-native-host/systemd-reload.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "qualified-native-host/systemd-run.log": {
+    "bytes": 279,
+    "sha256": "987559d8717bccd5b438fb0ab9f2537e09e30a87d0f1c7001853edc41be7f2fc"
+  },
+  "qualified-native-host/unprovisioned-parent.json": {
+    "bytes": 229,
+    "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+  },
+  "qualified-native/build.log": {
+    "bytes": 111414,
+    "sha256": "db749ce6e13ee4dc8bfec0d9a040683693bfe7b6507b515ddb608c25e055be72"
+  },
+  "qualified-native/cli.elf": {
+    "bytes": 14179416,
+    "sha256": "bdf5fc8e52f12a2d157ff2877f5fbb0df30d32b3139f2e475e20f7e776bc4ab6"
+  },
+  "qualified-native/manifest.json": {
+    "bytes": 9621,
+    "sha256": "a48dd01b812628f0a7e1c6841c5fa9fa50755c679d1ba6d4edfff3f04e711144"
+  },
+  "qualified-native/native.log": {
+    "bytes": 1387,
+    "sha256": "ac5e380f00b7457f8c85df78d1a6f338fd8fbaa83981dba800a58f8566747751"
+  },
+  "qualified-native/test.elf": {
+    "bytes": 9867032,
+    "sha256": "3adfdb543cf14a8238a39f8c0479af767baa98e421dab21eb56266ab7995e63b"
+  },
+  "source-after.json": {
+    "bytes": 421,
+    "sha256": "805235a7b29199d9251bb82f6fc1428d7f380be2474bbb78e8ea169deb5825f1"
+  },
+  "source-before.json": {
+    "bytes": 421,
+    "sha256": "805235a7b29199d9251bb82f6fc1428d7f380be2474bbb78e8ea169deb5825f1"
+  },
+  "unprovisioned-native.log": {
+    "bytes": 8309,
+    "sha256": "245bac5055e5e4b1fc922f934b184cb993cf9c2d89925c8f87f1de783b6d64be"
+  }
+}

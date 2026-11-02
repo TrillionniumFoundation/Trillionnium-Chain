@@ -1,0 +1,1651 @@
+{
+  "all_artifact_zip_and_member_hashes_verified": true,
+  "all_four_cost_jobs_succeeded": true,
+  "both_original_service_jobs_failed": true,
+  "correct_product_binary_matches_head_and_merge_per_architecture": true,
+  "exact_sources_checked": true,
+  "head": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+  "independent_lanes_do_not_multiply_statistical_samples": true,
+  "lanes": [
+    {
+      "actual_preparations": 72,
+      "all_three_cost_manifests": [
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "d2a7644f89861838350494ade6fcc21eb56c3b4c12919796f37f6caf70b30ba2",
+          "directory": "w1-false-trace-reuse-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "d2a7644f89861838350494ade6fcc21eb56c3b4c12919796f37f6caf70b30ba2",
+          "directory": "w1-full-limb-reuse-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "a41739c04cbab230c28c877de37f5a520b2b07be0f1d889173e10946b875d47a",
+          "directory": "w1-correct-product-false-trace-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        }
+      ],
+      "architecture": "arm64",
+      "artifact_bytes": 9738819,
+      "artifact_id": 13109151056,
+      "artifact_member_count": 56,
+      "artifact_member_inventory_sha256": "7ae6a636d78dc86567273f2c9e021376614f8e46dc40a423580c868194951201",
+      "artifact_name": "w1-false-trace-head-arm64-477cc47d75ac88583d35f0ddaa7be354a804c49f-1",
+      "artifact_uncompressed_bytes": 92871500,
+      "attempts": 577,
+      "class_results": [
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 58,
+          "class": "periodic-dense-fixture",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2178592,
+            "wall_ns": 2179338
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 10.147184970843554
+          },
+          "search": {
+            "cpu_ns": 375512,
+            "wall_ns": 373236
+          },
+          "setup": {
+            "cpu_ns": 1777608,
+            "wall_ns": 1776673
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22106576,
+              "wall_ns": 22104445
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 71,
+          "class": "full-rank-field",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2457232,
+            "wall_ns": 2467197
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 8.991681697129128
+          },
+          "search": {
+            "cpu_ns": 324208,
+            "wall_ns": 321774
+          },
+          "setup": {
+            "cpu_ns": 2109736,
+            "wall_ns": 2117423
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22094648,
+              "wall_ns": 22096384
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 70,
+          "class": "zero",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2091560,
+            "wall_ns": 2092140
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 10.552930826751325
+          },
+          "search": {
+            "cpu_ns": 295328,
+            "wall_ns": 293250
+          },
+          "setup": {
+            "cpu_ns": 1773856,
+            "wall_ns": 1772702
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22072088,
+              "wall_ns": 22073107
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "identity",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1926552,
+            "wall_ns": 1927815
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.473862112208755
+          },
+          "search": {
+            "cpu_ns": 140144,
+            "wall_ns": 138525
+          },
+          "setup": {
+            "cpu_ns": 1763336,
+            "wall_ns": 1762587
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22104992,
+              "wall_ns": 22107093
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 62,
+          "class": "rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1934104,
+            "wall_ns": 1935607
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.423009310771292
+          },
+          "search": {
+            "cpu_ns": 144112,
+            "wall_ns": 142245
+          },
+          "setup": {
+            "cpu_ns": 1767056,
+            "wall_ns": 1765796
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22093288,
+              "wall_ns": 22093726
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "sparse-diagonal",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1934520,
+            "wall_ns": 1935720
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.419903645348716
+          },
+          "search": {
+            "cpu_ns": 137056,
+            "wall_ns": 135694
+          },
+          "setup": {
+            "cpu_ns": 1772776,
+            "wall_ns": 1771610
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22092032,
+              "wall_ns": 22093899
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 54,
+          "class": "continuity-maintenance-v1",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1923104,
+            "wall_ns": 1924032
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.502171489425429
+          },
+          "search": {
+            "cpu_ns": 137528,
+            "wall_ns": 135767
+          },
+          "setup": {
+            "cpu_ns": 1763848,
+            "wall_ns": 1762747
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22119872,
+              "wall_ns": 22121707
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 49,
+          "class": "one-zero-left-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1927064,
+            "wall_ns": 1928391
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.448018332551488
+          },
+          "search": {
+            "cpu_ns": 134104,
+            "wall_ns": 130327
+          },
+          "setup": {
+            "cpu_ns": 1764424,
+            "wall_ns": 1763475
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22061064,
+              "wall_ns": 22062812
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 83,
+          "class": "one-zero-right-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1973384,
+            "wall_ns": 1974900
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.186169544295485
+          },
+          "search": {
+            "cpu_ns": 168816,
+            "wall_ns": 165955
+          },
+          "setup": {
+            "cpu_ns": 1780848,
+            "wall_ns": 1779851
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22074608,
+              "wall_ns": 22082451
+            }
+          }
+        }
+      ],
+      "correct_product_false_traces_rejected": 288,
+      "correct_product_manifest_sha256": "c45ca13a49111dfb4c77eede07df678176cf603963f0251de8b79db00da5b818",
+      "correct_product_raw_bytes": 29557343,
+      "correct_product_raw_sha256": "d7f0d3902fee7194a026c768ec9f9b634ee29f3934e748469cca278cae9a7fd6",
+      "false_qualification_flags": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "full_attacker_cpu_ns": 18346112,
+      "independent_raw_reader_equals_captured_report": true,
+      "job_conclusion": "success",
+      "job_id": 125035478117,
+      "native_control_names": [
+        "tests::correct_product_false_traces_still_owe_every_original_transcript_tile",
+        "tests::correct_public_product_is_canonical_without_any_valid_transcript",
+        "tests::separate_challenge_domain_binds_every_search_without_relabelling_old_capture",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "native_control_test_count": 5,
+      "per_class_cpu_ratio_max": 11.502171489425429,
+      "per_class_cpu_ratio_min": 8.991681697129128,
+      "production_cpu_over_complete_measured_attacker_cpu": 10.83712821550419,
+      "production_rejection_cpu_ns": 198819168,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 288
+      },
+      "searches": 288,
+      "semantic_alerts": [],
+      "source_before": {
+        "base": null,
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "head",
+      "zip_digest_matches_github": true,
+      "zip_sha256": "d1cffdc50f3d41e1caa69e0a9247fd0ef1c986fbbb26f678bc99c3de4b640564"
+    },
+    {
+      "actual_preparations": 72,
+      "all_three_cost_manifests": [
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "d2a7644f89861838350494ade6fcc21eb56c3b4c12919796f37f6caf70b30ba2",
+          "directory": "w1-false-trace-reuse-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "d2a7644f89861838350494ade6fcc21eb56c3b4c12919796f37f6caf70b30ba2",
+          "directory": "w1-full-limb-reuse-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "a41739c04cbab230c28c877de37f5a520b2b07be0f1d889173e10946b875d47a",
+          "directory": "w1-correct-product-false-trace-v1",
+          "elf_machine": 183,
+          "result": "PASS",
+          "source_before_after_equal": true
+        }
+      ],
+      "architecture": "arm64",
+      "artifact_bytes": 9738013,
+      "artifact_id": 13108377545,
+      "artifact_member_count": 56,
+      "artifact_member_inventory_sha256": "d1dae218cdd1aa4d0ad24819b29ff7a7cc240da5c12590d09ba08ea9a9f7787c",
+      "artifact_name": "w1-false-trace-prospective-merge-arm64-5da0d8c2666bf080feb482bd995e55d2c12d49f3-1",
+      "artifact_uncompressed_bytes": 92871701,
+      "attempts": 577,
+      "class_results": [
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 58,
+          "class": "periodic-dense-fixture",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2154656,
+            "wall_ns": 2155484
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 10.280672181545453
+          },
+          "search": {
+            "cpu_ns": 362080,
+            "wall_ns": 360650
+          },
+          "setup": {
+            "cpu_ns": 1767776,
+            "wall_ns": 1766950
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22151312,
+              "wall_ns": 22152834
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 71,
+          "class": "full-rank-field",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2447168,
+            "wall_ns": 2447952
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 9.033808876219368
+          },
+          "search": {
+            "cpu_ns": 321056,
+            "wall_ns": 319478
+          },
+          "setup": {
+            "cpu_ns": 2104336,
+            "wall_ns": 2103738
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22107248,
+              "wall_ns": 22107586
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 70,
+          "class": "zero",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2093480,
+            "wall_ns": 2094329
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 10.552354930546267
+          },
+          "search": {
+            "cpu_ns": 293024,
+            "wall_ns": 291402
+          },
+          "setup": {
+            "cpu_ns": 1775928,
+            "wall_ns": 1775287
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22091144,
+              "wall_ns": 22093159
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "identity",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1918048,
+            "wall_ns": 1918963
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.511490849029848
+          },
+          "search": {
+            "cpu_ns": 139080,
+            "wall_ns": 137396
+          },
+          "setup": {
+            "cpu_ns": 1757048,
+            "wall_ns": 1756494
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22079592,
+              "wall_ns": 22081070
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 62,
+          "class": "rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1916496,
+            "wall_ns": 1917652
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.501456825372973
+          },
+          "search": {
+            "cpu_ns": 135784,
+            "wall_ns": 134118
+          },
+          "setup": {
+            "cpu_ns": 1757816,
+            "wall_ns": 1756958
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22042496,
+              "wall_ns": 22043936
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "sparse-diagonal",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1918192,
+            "wall_ns": 1919276
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.491062417109445
+          },
+          "search": {
+            "cpu_ns": 136736,
+            "wall_ns": 135190
+          },
+          "setup": {
+            "cpu_ns": 1759520,
+            "wall_ns": 1759019
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22042064,
+              "wall_ns": 22044257
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 54,
+          "class": "continuity-maintenance-v1",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1926200,
+            "wall_ns": 1926894
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.456912054822968
+          },
+          "search": {
+            "cpu_ns": 124800,
+            "wall_ns": 123244
+          },
+          "setup": {
+            "cpu_ns": 1778384,
+            "wall_ns": 1777567
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22068304,
+              "wall_ns": 22081480
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 49,
+          "class": "one-zero-left-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1901416,
+            "wall_ns": 1902761
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.60696239013451
+          },
+          "search": {
+            "cpu_ns": 118112,
+            "wall_ns": 116733
+          },
+          "setup": {
+            "cpu_ns": 1760424,
+            "wall_ns": 1759715
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22069664,
+              "wall_ns": 22071199
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 83,
+          "class": "one-zero-right-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 1966704,
+            "wall_ns": 1967804
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 11.225066913984005
+          },
+          "search": {
+            "cpu_ns": 163008,
+            "wall_ns": 161301
+          },
+          "setup": {
+            "cpu_ns": 1780472,
+            "wall_ns": 1779653
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 22076384,
+              "wall_ns": 22076888
+            }
+          }
+        }
+      ],
+      "correct_product_false_traces_rejected": 288,
+      "correct_product_manifest_sha256": "68a97a3b4a385849044363aeedb57c86bb818f5087acbaf60e7ce22c1b6c1b2a",
+      "correct_product_raw_bytes": 29557337,
+      "correct_product_raw_sha256": "ba83a4eefece9f26e3f4cb5bbb3c91092f95c9d8c14ccd10feb36a302dae5f50",
+      "false_qualification_flags": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "full_attacker_cpu_ns": 18242360,
+      "independent_raw_reader_equals_captured_report": true,
+      "job_conclusion": "success",
+      "job_id": 125035478255,
+      "native_control_names": [
+        "tests::correct_product_false_traces_still_owe_every_original_transcript_tile",
+        "tests::correct_public_product_is_canonical_without_any_valid_transcript",
+        "tests::separate_challenge_domain_binds_every_search_without_relabelling_old_capture",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "native_control_test_count": 5,
+      "per_class_cpu_ratio_max": 11.60696239013451,
+      "per_class_cpu_ratio_min": 9.033808876219368,
+      "production_cpu_over_complete_measured_attacker_cpu": 10.89377734021256,
+      "production_rejection_cpu_ns": 198728208,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 288
+      },
+      "searches": 288,
+      "semantic_alerts": [],
+      "source_before": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "prospective-merge",
+        "prospective_merge": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "prospective-merge",
+      "zip_digest_matches_github": true,
+      "zip_sha256": "b109a3bfefc1ea1bd41facd0f5ed9657b662f6f88cf9d474beeb151e7e3a688f"
+    },
+    {
+      "actual_preparations": 72,
+      "all_three_cost_manifests": [
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "80bd74b190070476aa3827a382f5dcd2ef71ff2ee48cb46d8954bed10fd340bf",
+          "directory": "w1-false-trace-reuse-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "80bd74b190070476aa3827a382f5dcd2ef71ff2ee48cb46d8954bed10fd340bf",
+          "directory": "w1-full-limb-reuse-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "88710db9884ed8f8c9d7ced6a81fdb393d3641812ff0a9518b98b44ca96fbd69",
+          "directory": "w1-correct-product-false-trace-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        }
+      ],
+      "architecture": "x64",
+      "artifact_bytes": 9778549,
+      "artifact_id": 13108583249,
+      "artifact_member_count": 56,
+      "artifact_member_inventory_sha256": "85511183c9ce14761d254f8bc4a1e76c622c6cf9928d95ee6cc71ba5663bae58",
+      "artifact_name": "w1-false-trace-head-x64-477cc47d75ac88583d35f0ddaa7be354a804c49f-1",
+      "artifact_uncompressed_bytes": 92832536,
+      "attempts": 577,
+      "class_results": [
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 58,
+          "class": "periodic-dense-fixture",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 3502059,
+            "wall_ns": 3503599
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 4.595147597456239
+          },
+          "search": {
+            "cpu_ns": 657739,
+            "wall_ns": 652497
+          },
+          "setup": {
+            "cpu_ns": 2797172,
+            "wall_ns": 2794185
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 16092478,
+              "wall_ns": 16089187
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 71,
+          "class": "full-rank-field",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2555549,
+            "wall_ns": 2556531
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 4.990480323406047
+          },
+          "search": {
+            "cpu_ns": 468454,
+            "wall_ns": 465668
+          },
+          "setup": {
+            "cpu_ns": 2049296,
+            "wall_ns": 2048484
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12753417,
+              "wall_ns": 12754591
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 70,
+          "class": "zero",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2507021,
+            "wall_ns": 2507680
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.091032344762968
+          },
+          "search": {
+            "cpu_ns": 431324,
+            "wall_ns": 428736
+          },
+          "setup": {
+            "cpu_ns": 2039327,
+            "wall_ns": 2038584
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12763325,
+              "wall_ns": 12765135
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "identity",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2190328,
+            "wall_ns": 2190918
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.7636500104094
+          },
+          "search": {
+            "cpu_ns": 141627,
+            "wall_ns": 139101
+          },
+          "setup": {
+            "cpu_ns": 2013148,
+            "wall_ns": 2012417
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12624284,
+              "wall_ns": 12627888
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 62,
+          "class": "rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2212099,
+            "wall_ns": 2212769
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.841644519526477
+          },
+          "search": {
+            "cpu_ns": 136916,
+            "wall_ns": 134559
+          },
+          "setup": {
+            "cpu_ns": 2039748,
+            "wall_ns": 2038968
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12922296,
+              "wall_ns": 12935713
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "sparse-diagonal",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2275859,
+            "wall_ns": 2276480
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.522837750493331
+          },
+          "search": {
+            "cpu_ns": 140282,
+            "wall_ns": 137838
+          },
+          "setup": {
+            "cpu_ns": 2099349,
+            "wall_ns": 2098587
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12569200,
+              "wall_ns": 12570701
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 54,
+          "class": "continuity-maintenance-v1",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2166734,
+            "wall_ns": 2167524
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.84047372681649
+          },
+          "search": {
+            "cpu_ns": 125314,
+            "wall_ns": 123149
+          },
+          "setup": {
+            "cpu_ns": 2005932,
+            "wall_ns": 2005363
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12654753,
+              "wall_ns": 12682362
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 49,
+          "class": "one-zero-left-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2273774,
+            "wall_ns": 2274455
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.529928656058166
+          },
+          "search": {
+            "cpu_ns": 126981,
+            "wall_ns": 124652
+          },
+          "setup": {
+            "cpu_ns": 2110512,
+            "wall_ns": 2109797
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12573808,
+              "wall_ns": 12576583
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 83,
+          "class": "one-zero-right-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2196520,
+            "wall_ns": 2197372
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.769838653870668
+          },
+          "search": {
+            "cpu_ns": 160044,
+            "wall_ns": 157684
+          },
+          "setup": {
+            "cpu_ns": 2000786,
+            "wall_ns": 2000144
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12673566,
+              "wall_ns": 12674592
+            }
+          }
+        }
+      ],
+      "correct_product_false_traces_rejected": 288,
+      "correct_product_manifest_sha256": "f2f40b0d3049882d7291e7f5a7c4a6eb8fb9a47e34a9704d1785111b062f8080",
+      "correct_product_raw_bytes": 29557331,
+      "correct_product_raw_sha256": "6e7cf6bb6dd5d2b1184b6845922ed79c963327d73d243d916c1890b226f07839",
+      "false_qualification_flags": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "full_attacker_cpu_ns": 21879943,
+      "independent_raw_reader_equals_captured_report": true,
+      "job_conclusion": "success",
+      "job_id": 125035478276,
+      "native_control_names": [
+        "tests::correct_product_false_traces_still_owe_every_original_transcript_tile",
+        "tests::correct_public_product_is_canonical_without_any_valid_transcript",
+        "tests::separate_challenge_domain_binds_every_search_without_relabelling_old_capture",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "native_control_test_count": 5,
+      "per_class_cpu_ratio_max": 5.841644519526477,
+      "per_class_cpu_ratio_min": 4.595147597456239,
+      "production_cpu_over_complete_measured_attacker_cpu": 5.376025294032988,
+      "production_rejection_cpu_ns": 117627127,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 288
+      },
+      "searches": 288,
+      "semantic_alerts": [],
+      "source_before": {
+        "base": null,
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "head",
+      "zip_digest_matches_github": true,
+      "zip_sha256": "0b45e88a8634680d7d974dda85c11e3db4b8ca41db7af50f00a4592390e31c66"
+    },
+    {
+      "actual_preparations": 72,
+      "all_three_cost_manifests": [
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "80bd74b190070476aa3827a382f5dcd2ef71ff2ee48cb46d8954bed10fd340bf",
+          "directory": "w1-false-trace-reuse-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "80bd74b190070476aa3827a382f5dcd2ef71ff2ee48cb46d8954bed10fd340bf",
+          "directory": "w1-full-limb-reuse-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        },
+        {
+          "all_member_hashes_verified": true,
+          "all_observed_processes_exit_zero": true,
+          "binary_sha256": "88710db9884ed8f8c9d7ced6a81fdb393d3641812ff0a9518b98b44ca96fbd69",
+          "directory": "w1-correct-product-false-trace-v1",
+          "elf_machine": 62,
+          "result": "PASS",
+          "source_before_after_equal": true
+        }
+      ],
+      "architecture": "x64",
+      "artifact_bytes": 9778619,
+      "artifact_id": 13108772889,
+      "artifact_member_count": 56,
+      "artifact_member_inventory_sha256": "4f8ff3dd73e66d2896f6a98d4014b21ed60c753af4c4c090f1333b8acbd19b41",
+      "artifact_name": "w1-false-trace-prospective-merge-x64-5da0d8c2666bf080feb482bd995e55d2c12d49f3-1",
+      "artifact_uncompressed_bytes": 92832729,
+      "attempts": 577,
+      "class_results": [
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 58,
+          "class": "periodic-dense-fixture",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2644106,
+            "wall_ns": 2645475
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 4.77968545890369
+          },
+          "search": {
+            "cpu_ns": 558015,
+            "wall_ns": 555662
+          },
+          "setup": {
+            "cpu_ns": 2032313,
+            "wall_ns": 2031501
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12637995,
+              "wall_ns": 12639813
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 71,
+          "class": "full-rank-field",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2596174,
+            "wall_ns": 2597168
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 4.8750187776320075
+          },
+          "search": {
+            "cpu_ns": 457635,
+            "wall_ns": 455247
+          },
+          "setup": {
+            "cpu_ns": 2100577,
+            "wall_ns": 2099418
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12656397,
+              "wall_ns": 12656975
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 70,
+          "class": "zero",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2478465,
+            "wall_ns": 2479357
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.023174424492579
+          },
+          "search": {
+            "cpu_ns": 412880,
+            "wall_ns": 410754
+          },
+          "setup": {
+            "cpu_ns": 2028946,
+            "wall_ns": 2028123
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12449762,
+              "wall_ns": 12453568
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "identity",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2182725,
+            "wall_ns": 2183845
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.8556061803479595
+          },
+          "search": {
+            "cpu_ns": 145589,
+            "wall_ns": 143090
+          },
+          "setup": {
+            "cpu_ns": 2001275,
+            "wall_ns": 2000662
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12781178,
+              "wall_ns": 12780660
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 62,
+          "class": "rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2224310,
+            "wall_ns": 2225022
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.5899505914193615
+          },
+          "search": {
+            "cpu_ns": 142205,
+            "wall_ns": 139380
+          },
+          "setup": {
+            "cpu_ns": 2045494,
+            "wall_ns": 2044556
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12433783,
+              "wall_ns": 12437489
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 65,
+          "class": "sparse-diagonal",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2213640,
+            "wall_ns": 2214741
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.8774050884516
+          },
+          "search": {
+            "cpu_ns": 142707,
+            "wall_ns": 140343
+          },
+          "setup": {
+            "cpu_ns": 2034717,
+            "wall_ns": 2034165
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 13010459,
+              "wall_ns": 13009390
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 54,
+          "class": "continuity-maintenance-v1",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2166334,
+            "wall_ns": 2167143
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.752678949783367
+          },
+          "search": {
+            "cpu_ns": 127119,
+            "wall_ns": 124783
+          },
+          "setup": {
+            "cpu_ns": 2003118,
+            "wall_ns": 2002627
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12462224,
+              "wall_ns": 12467658
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 49,
+          "class": "one-zero-left-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2340277,
+            "wall_ns": 2341008
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.3912242012377165
+          },
+          "search": {
+            "cpu_ns": 132086,
+            "wall_ns": 129800
+          },
+          "setup": {
+            "cpu_ns": 2171764,
+            "wall_ns": 2169888
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12616958,
+              "wall_ns": 12618476
+            }
+          }
+        },
+        {
+          "actual_candidates": 32,
+          "actual_searches": 32,
+          "actual_setup_calls": 8,
+          "attempts": 83,
+          "class": "one-zero-right-rank-one",
+          "exhausted_searches": 0,
+          "full_attacker_cohort_total": {
+            "cpu_ns": 2209094,
+            "wall_ns": 2210245
+          },
+          "outcome_counts": {
+            "production": {
+              "Transcript": 32
+            }
+          },
+          "receiver_rejection_cpu_over_full_attacker_cpu": {
+            "production": 5.698346924123645
+          },
+          "search": {
+            "cpu_ns": 156008,
+            "wall_ns": 153354
+          },
+          "setup": {
+            "cpu_ns": 2017404,
+            "wall_ns": 2016756
+          },
+          "verification": {
+            "production": {
+              "cpu_ns": 12588184,
+              "wall_ns": 12591621
+            }
+          }
+        }
+      ],
+      "correct_product_false_traces_rejected": 288,
+      "correct_product_manifest_sha256": "2df1c7a8c222fef547ecc92697f9c69ba225e838f916005b1c44dcc32e4ce15f",
+      "correct_product_raw_bytes": 29557333,
+      "correct_product_raw_sha256": "bbfe33298cbd2240182a47a3033039b0bf27be841390e845322f6baf2798466e",
+      "false_qualification_flags": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "full_attacker_cpu_ns": 21055125,
+      "independent_raw_reader_equals_captured_report": true,
+      "job_conclusion": "success",
+      "job_id": 125035478378,
+      "native_control_names": [
+        "tests::correct_product_false_traces_still_owe_every_original_transcript_tile",
+        "tests::correct_public_product_is_canonical_without_any_valid_transcript",
+        "tests::separate_challenge_domain_binds_every_search_without_relabelling_old_capture",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "native_control_test_count": 5,
+      "per_class_cpu_ratio_max": 5.8774050884516,
+      "per_class_cpu_ratio_min": 4.77968545890369,
+      "production_cpu_over_complete_measured_attacker_cpu": 5.397115429141361,
+      "production_rejection_cpu_ns": 113636940,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 288
+      },
+      "searches": 288,
+      "semantic_alerts": [],
+      "source_before": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "prospective-merge",
+        "prospective_merge": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "prospective-merge",
+      "zip_digest_matches_github": true,
+      "zip_sha256": "31f691259fd7ddae1f675615b22d28417b418693327844f5318d1888fbc7b7ca"
+    }
+  ],
+  "lanes_repeat_identical_deterministic_search_streams": true,
+  "limits": [
+    "Four lanes repeat the same 288 deterministic streams and 577 attempts; they are not 1152 independent challenge streams.",
+    "Attacker cohort costs include actual scalar AB preparation, all hash misses, trial hex/retention and winning proof clone; later retained-buffer destruction, evidence output and network transmission are excluded.",
+    "Only the fixed easy target and four-search reuse horizon were measured; structured algorithms and longer amortization may be cheaper.",
+    "Production rejection still replays the original transcript. No product-first verifier or altered work relation was enabled.",
+    "Cost-job success does not override either failed original-resource service job or qualify hardness, hardware, quantum competition, useful-model economics or production."
+  ],
+  "prospective_merge": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+  "run_id": 41369097548,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41369097548",
+  "schema": "pon-correct-product-hosted-independent-readback-v1",
+  "scope": "Finite hosted primitive observations on nine public tasks with four searches per actual scalar-AB preparation; raw evidence is independently reconstructed, not a cheapest-adversary bound or public-service qualification.",
+  "tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+  "unique_attempts_across_all_four_lanes": 577,
+  "unique_search_streams_across_all_four_lanes": 288
+}

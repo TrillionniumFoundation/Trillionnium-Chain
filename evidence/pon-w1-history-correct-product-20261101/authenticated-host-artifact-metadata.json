@@ -1,0 +1,22 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": 13110835162,
+      "artifact_zip_bytes": 9469367,
+      "artifact_zip_sha256": "f6e5612cac3948fc6c4eeab8d4408a7a3af75a7e74996efe88bc436ad8551dc2",
+      "commit": "dddad3988a665814fd2e331597f605d6ffa608f2",
+      "job_id": 125047190444,
+      "lane": "head"
+    },
+    {
+      "artifact_id": 13109787948,
+      "artifact_zip_bytes": 9469512,
+      "artifact_zip_sha256": "48a6df69798996dfbfa7e1b9c9152518d6306553dde03fa6a3bde0276570154b",
+      "commit": "a0bd4d81e16f3ff849048a9a03aea77729aa4426",
+      "job_id": 125047190218,
+      "lane": "prospective-merge"
+    }
+  ],
+  "run_id": 41372976388,
+  "zip_containers_included": false
+}

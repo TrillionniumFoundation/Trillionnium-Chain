@@ -1,0 +1,18 @@
+{
+  "README.md": {
+    "bytes": 445,
+    "sha256": "a6e9e4c6fb6541119686e1791953a37ed0ba1722f49e97a7b0734e9840ef186e"
+  },
+  "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+    "bytes": 92365,
+    "sha256": "d229caea563f2fdb41e19cc4cfe8db0b6988ea5a33d0ab9018d6219209d02dcf"
+  },
+  "trillionnium/crates/trnm-crypto-primitives/src/pon_work/attempt_v2.rs": {
+    "bytes": 922,
+    "sha256": "6d639150950cf50a171a7d2d53d9fcc1b83aee96b3f7edd3e9d5f615edda52e3"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/pon_w1_correct_product_v2.rs": {
+    "bytes": 7938,
+    "sha256": "1f933def3c980797701d7923d5c5cd7c86e9ed353b39bb4fc599a17c6a4b093b"
+  }
+}

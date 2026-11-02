@@ -1,0 +1,3101 @@
+{
+  "artifact_root": "/tmp/pon-service-hosted-477",
+  "head": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+  "native_campaign_workflow_run": 41369097681,
+  "native_original_three_run_campaign": {
+    "all_eight_source_snapshots_equal": true,
+    "all_original_members_verified": true,
+    "artifact_file_list_sha256": "675d1643ff83ad74255cfad89fda26ce30e44221ff7df57e1cef56f62d9921b2",
+    "artifact_id": 13108522194,
+    "artifact_name": "pon-native-campaign-x64-head-release-477cc47d75ac88583d35f0ddaa7be354a804c49f-1",
+    "binary_before_after_equal": true,
+    "controller_limits": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "denominators": {
+      "actually_executed_runs": 3,
+      "confirmed_rounds": 0,
+      "observed_confirmation_rounds": 9,
+      "phases": 9,
+      "predeclared_complete_runs": 3,
+      "scheduled_confirmation_rounds": 27,
+      "unobserved_scheduled_rounds": 18
+    },
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "finalization_failures": [],
+    "member_inventory_sha256": "4a13c9ad6f5dda8bd4a332a4caa3723f43197ccfd2b1781a113ef828f9e3990a",
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "original_member_count": 1766,
+    "public_phase_placement": {
+      "attacker_processes_remain_in_original_controller_domain": true,
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+      "original_3x3_workload_and_depletion_predicates_changed": false,
+      "profile": "fixed-public-phase-external-actors-v1",
+      "receiver_and_verifier_cpu_max": "25000 100000",
+      "receiver_and_verifier_memory_max": "2147483648"
+    },
+    "retained_binary_sha256": "6e3e047bb617559cf6fdbf111ad81a30b92ad80028527c0bd6206333523ff382",
+    "runs": [
+      {
+        "complete_success": false,
+        "independent_phase_reader_matches_captured": true,
+        "number": 1,
+        "original_criteria_met": false,
+        "phases": [
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 0,
+              "attempts": 0,
+              "calling_process_cpu_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {}
+            },
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30002454860,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1000056048
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "cpu_in_flight_zero": true,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 578974901,
+              "discarded_refill_ns": 320137733,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 587031084,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 587039261,
+              "remaining_paid_credit_ns": 1991935640,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 587039261,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 8177,
+              "stored_credit_ns": 1991935640,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1991935640,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 0,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 4260898,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 20836184
+                },
+                "min_ns": 2570164,
+                "p50_nearest_rank_ns": 2802644,
+                "p95_nearest_rank_ns": 4260898,
+                "sum_known_ns": 20836184,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 84422392,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 223792830
+                },
+                "min_ns": 11791983,
+                "p50_nearest_rank_ns": 12174780,
+                "p95_nearest_rank_ns": 84422392,
+                "sum_known_ns": 223792830,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "5939e6e2bc4065b164fe271d58828356bb0bccaac165f5bc15f65dd33d50b463",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 10,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 10,
+              "retained_business_packet_rows_after_seed": 6,
+              "stored_rows_including_genesis": 11
+            },
+            "mode": "baseline",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 351,
+                "cpu_nr_throttled": 336,
+                "cpu_throttled_usec": 46074684,
+                "cpu_usage_usec": 8515962,
+                "memory_current_bytes": 79835136,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 5,
+                "cpu_nr_throttled": 4,
+                "cpu_throttled_usec": 276652,
+                "cpu_usage_usec": 112212,
+                "memory_current_bytes": 19271680,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-4949.service",
+              "phase_pid": 5025,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 98474446,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 656743001
+                },
+                "min_ns": 88185489,
+                "p50_nearest_rank_ns": 93257503,
+                "p95_nearest_rank_ns": 98474446,
+                "sum_known_ns": 656743001,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 399467403,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 2594167733
+                },
+                "min_ns": 305590575,
+                "p50_nearest_rank_ns": 393216734,
+                "p95_nearest_rank_ns": 399467403,
+                "sum_known_ns": 2594167733,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1236,
+              "calling_process_cpu_ns": {
+                "known_count": 1236,
+                "max_ns": 1378990,
+                "mean_known_ns": {
+                  "denominator": 1236,
+                  "numerator": 1203771594
+                },
+                "min_ns": 396379,
+                "p50_nearest_rank_ns": 984035,
+                "p95_nearest_rank_ns": 1136548,
+                "sum_known_ns": 1203771594,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1236,
+                "max_ns": 802147301,
+                "mean_known_ns": {
+                  "denominator": 1236,
+                  "numerator": 719484826344
+                },
+                "min_ns": 14585303,
+                "p50_nearest_rank_ns": 600511644,
+                "p95_nearest_rank_ns": 710448999,
+                "sum_known_ns": 719484826344,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Transcript": 1212
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1212
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30080774027,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1001487093
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4252303804,
+              "discarded_refill_ns": 3295065626,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4251072410,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4252536554,
+              "remaining_paid_credit_ns": 1999767250,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4252536554,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1464144,
+              "stored_credit_ns": 1999767250,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1999767250,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1212,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 28377574,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 80137621
+                },
+                "min_ns": 24062832,
+                "p50_nearest_rank_ns": 27697215,
+                "p95_nearest_rank_ns": 28377574,
+                "sum_known_ns": 80137621,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 105095491,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 300845399
+                },
+                "min_ns": 94650605,
+                "p50_nearest_rank_ns": 101099303,
+                "p95_nearest_rank_ns": 105095491,
+                "sum_known_ns": 300845399,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "from-zero",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 710,
+                "cpu_nr_throttled": 691,
+                "cpu_throttled_usec": 134941114,
+                "cpu_usage_usec": 17436599,
+                "memory_current_bytes": 139333632,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 358,
+                "cpu_nr_throttled": 341,
+                "cpu_throttled_usec": 46397508,
+                "cpu_usage_usec": 8659565,
+                "memory_current_bytes": 27660288,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5045.service",
+              "phase_pid": 5050,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 191078583,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1274765365
+                },
+                "min_ns": 175291694,
+                "p50_nearest_rank_ns": 182666461,
+                "p95_nearest_rank_ns": 191078583,
+                "sum_known_ns": 1274765365,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 794187970,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5185702743
+                },
+                "min_ns": 700219768,
+                "p50_nearest_rank_ns": 709247953,
+                "p95_nearest_rank_ns": 794187970,
+                "sum_known_ns": 5185702743,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1113,
+              "calling_process_cpu_ns": {
+                "known_count": 1113,
+                "max_ns": 1292358,
+                "mean_known_ns": {
+                  "denominator": 1113,
+                  "numerator": 1096683940
+                },
+                "min_ns": 405928,
+                "p50_nearest_rank_ns": 992671,
+                "p95_nearest_rank_ns": 1147419,
+                "sum_known_ns": 1096683940,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1113,
+                "max_ns": 889791011,
+                "mean_known_ns": {
+                  "denominator": 1113,
+                  "numerator": 719599887992
+                },
+                "min_ns": 19188774,
+                "p50_nearest_rank_ns": 698328269,
+                "p95_nearest_rank_ns": 799253434,
+                "sum_known_ns": 719599887992,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Product": 1089
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1089
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30063443346,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1061589772
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4354660002,
+              "discarded_refill_ns": 3190023134,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4353436701,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4354776381,
+              "remaining_paid_credit_ns": 1999883621,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4354776381,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1339680,
+              "stored_credit_ns": 1999883621,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1999883621,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1091,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 26628138,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 71060359
+                },
+                "min_ns": 21863837,
+                "p50_nearest_rank_ns": 22568384,
+                "p95_nearest_rank_ns": 26628138,
+                "sum_known_ns": 71060359,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 101596963,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 299169197
+                },
+                "min_ns": 95991070,
+                "p50_nearest_rank_ns": 101581164,
+                "p95_nearest_rank_ns": 101596963,
+                "sum_known_ns": 299169197,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "late-product",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 1069,
+                "cpu_nr_throttled": 1047,
+                "cpu_throttled_usec": 225793557,
+                "cpu_usage_usec": 26364865,
+                "memory_current_bytes": 148127744,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 718,
+                "cpu_nr_throttled": 697,
+                "cpu_throttled_usec": 135312141,
+                "cpu_usage_usec": 17600553,
+                "memory_current_bytes": 39116800,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5144.service",
+              "phase_pid": 5149,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 201771031,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1366950836
+                },
+                "min_ns": 188830498,
+                "p50_nearest_rank_ns": 195001540,
+                "p95_nearest_rank_ns": 201771031,
+                "sum_known_ns": 1366950836,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 803850419,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5421289461
+                },
+                "min_ns": 717241325,
+                "p50_nearest_rank_ns": 793248447,
+                "p95_nearest_rank_ns": 803850419,
+                "sum_known_ns": 5421289461,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          }
+        ],
+        "process_exit_code": 101,
+        "report_sha256": "9dcc63a1df4020218b9ddecc6f3d16f8aaa1ba8585344f1867d413cf7fed4f7e"
+      },
+      {
+        "complete_success": false,
+        "independent_phase_reader_matches_captured": true,
+        "number": 2,
+        "original_criteria_met": false,
+        "phases": [
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 0,
+              "attempts": 0,
+              "calling_process_cpu_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {}
+            },
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30002543511,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1000426319
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "cpu_in_flight_zero": true,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 600128622,
+              "discarded_refill_ns": 344166255,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 602304151,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 602313009,
+              "remaining_paid_credit_ns": 1997815613,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 602313009,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 8858,
+              "stored_credit_ns": 1997815613,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1997815613,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 0,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 4267729,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 21141522
+                },
+                "min_ns": 2309010,
+                "p50_nearest_rank_ns": 2820931,
+                "p95_nearest_rank_ns": 4267729,
+                "sum_known_ns": 21141522,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 80834779,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 221955346
+                },
+                "min_ns": 11745625,
+                "p50_nearest_rank_ns": 12531017,
+                "p95_nearest_rank_ns": 80834779,
+                "sum_known_ns": 221955346,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "5939e6e2bc4065b164fe271d58828356bb0bccaac165f5bc15f65dd33d50b463",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 10,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 10,
+              "retained_business_packet_rows_after_seed": 6,
+              "stored_rows_including_genesis": 11
+            },
+            "mode": "baseline",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 1424,
+                "cpu_nr_throttled": 1386,
+                "cpu_throttled_usec": 273837528,
+                "cpu_usage_usec": 34930648,
+                "memory_current_bytes": 113934336,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 1077,
+                "cpu_nr_throttled": 1053,
+                "cpu_throttled_usec": 226157522,
+                "cpu_usage_usec": 26526192,
+                "memory_current_bytes": 50294784,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5274.service",
+              "phase_pid": 5279,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 100733824,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 675134768
+                },
+                "min_ns": 92595398,
+                "p50_nearest_rank_ns": 96256498,
+                "p95_nearest_rank_ns": 100733824,
+                "sum_known_ns": 675134768,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 399667541,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 2700249280
+                },
+                "min_ns": 322174613,
+                "p50_nearest_rank_ns": 395194002,
+                "p95_nearest_rank_ns": 399667541,
+                "sum_known_ns": 2700249280,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1210,
+              "calling_process_cpu_ns": {
+                "known_count": 1210,
+                "max_ns": 1401192,
+                "mean_known_ns": {
+                  "denominator": 1210,
+                  "numerator": 1202301383
+                },
+                "min_ns": 459817,
+                "p50_nearest_rank_ns": 1005045,
+                "p95_nearest_rank_ns": 1157698,
+                "sum_known_ns": 1202301383,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1210,
+                "max_ns": 811061801,
+                "mean_known_ns": {
+                  "denominator": 1210,
+                  "numerator": 719454787573
+                },
+                "min_ns": 18787688,
+                "p50_nearest_rank_ns": 601540845,
+                "p95_nearest_rank_ns": 788195690,
+                "sum_known_ns": 719454787573,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Transcript": 1186
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1186
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30022319465,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1021898943
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4203269634,
+              "discarded_refill_ns": 3340762029,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4203120543,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4204572722,
+              "remaining_paid_credit_ns": 1998696912,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4204572722,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1452179,
+              "stored_credit_ns": 1998696912,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1998696912,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1188,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 27676986,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 68445823
+                },
+                "min_ns": 19418569,
+                "p50_nearest_rank_ns": 21350268,
+                "p95_nearest_rank_ns": 27676986,
+                "sum_known_ns": 68445823,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 106125151,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 299422750
+                },
+                "min_ns": 93756200,
+                "p50_nearest_rank_ns": 99541399,
+                "p95_nearest_rank_ns": 106125151,
+                "sum_known_ns": 299422750,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "from-zero",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 1782,
+                "cpu_nr_throttled": 1740,
+                "cpu_throttled_usec": 362926221,
+                "cpu_usage_usec": 43831528,
+                "memory_current_bytes": 169959424,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 1431,
+                "cpu_nr_throttled": 1391,
+                "cpu_throttled_usec": 274156371,
+                "cpu_usage_usec": 35073513,
+                "memory_current_bytes": 59179008,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5294.service",
+              "phase_pid": 5299,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 189417430,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1279491458
+                },
+                "min_ns": 178287708,
+                "p50_nearest_rank_ns": 182767806,
+                "p95_nearest_rank_ns": 189417430,
+                "sum_known_ns": 1279491458,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 788515557,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5113432846
+                },
+                "min_ns": 705967834,
+                "p50_nearest_rank_ns": 708148789,
+                "p95_nearest_rank_ns": 788515557,
+                "sum_known_ns": 5113432846,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1111,
+              "calling_process_cpu_ns": {
+                "known_count": 1111,
+                "max_ns": 1369394,
+                "mean_known_ns": {
+                  "denominator": 1111,
+                  "numerator": 1108756049
+                },
+                "min_ns": 376983,
+                "p50_nearest_rank_ns": 1011134,
+                "p95_nearest_rank_ns": 1160855,
+                "sum_known_ns": 1108756049,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1111,
+                "max_ns": 1096929146,
+                "mean_known_ns": {
+                  "denominator": 1111,
+                  "numerator": 719531930229
+                },
+                "min_ns": 15797380,
+                "p50_nearest_rank_ns": 697785746,
+                "p95_nearest_rank_ns": 801134513,
+                "sum_known_ns": 719531930229,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Product": 1087
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1087
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30050046527,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1002018337
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4392468159,
+              "discarded_refill_ns": 3152547239,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4391708237,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4393029205,
+              "remaining_paid_credit_ns": 1999438954,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4393029205,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1320968,
+              "stored_credit_ns": 1999438954,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1999438954,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1089,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 29146159,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 79074182
+                },
+                "min_ns": 23436991,
+                "p50_nearest_rank_ns": 26491032,
+                "p95_nearest_rank_ns": 29146159,
+                "sum_known_ns": 79074182,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 105804917,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 305775935
+                },
+                "min_ns": 98778746,
+                "p50_nearest_rank_ns": 101192272,
+                "p95_nearest_rank_ns": 105804917,
+                "sum_known_ns": 305775935,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "late-product",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 2142,
+                "cpu_nr_throttled": 2097,
+                "cpu_throttled_usec": 453703944,
+                "cpu_usage_usec": 52788532,
+                "memory_current_bytes": 179073024,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 1790,
+                "cpu_nr_throttled": 1746,
+                "cpu_throttled_usec": 363274233,
+                "cpu_usage_usec": 43995322,
+                "memory_current_bytes": 70316032,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5365.service",
+              "phase_pid": 5370,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 210421336,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1394232767
+                },
+                "min_ns": 184185751,
+                "p50_nearest_rank_ns": 202325063,
+                "p95_nearest_rank_ns": 210421336,
+                "sum_known_ns": 1394232767,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 886348181,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5646362297
+                },
+                "min_ns": 708596106,
+                "p50_nearest_rank_ns": 802444150,
+                "p95_nearest_rank_ns": 886348181,
+                "sum_known_ns": 5646362297,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          }
+        ],
+        "process_exit_code": 101,
+        "report_sha256": "7c91a3f0347a82092b3c8d029734c3103f82d41e311fee62187b21f6e5b9ad18"
+      },
+      {
+        "complete_success": false,
+        "independent_phase_reader_matches_captured": true,
+        "number": 3,
+        "original_criteria_met": false,
+        "phases": [
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 0,
+              "attempts": 0,
+              "calling_process_cpu_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 0,
+                "max_ns": null,
+                "mean_known_ns": null,
+                "min_ns": null,
+                "p50_nearest_rank_ns": null,
+                "p95_nearest_rank_ns": null,
+                "sum_known_ns": 0,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {}
+            },
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30001982093,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": false,
+                "round": 0,
+                "started_ns": 1000283380
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "cpu_in_flight_zero": true,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 601565089,
+              "discarded_refill_ns": 323679771,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 608980746,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 608989071,
+              "remaining_paid_credit_ns": 1992576018,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 608989071,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 8325,
+              "stored_credit_ns": 1992576018,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1992576018,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 0,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 3289963,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 19731612
+                },
+                "min_ns": 2666041,
+                "p50_nearest_rank_ns": 2704623,
+                "p95_nearest_rank_ns": 3289963,
+                "sum_known_ns": 19731612,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 12209670,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 83742922
+                },
+                "min_ns": 11622187,
+                "p50_nearest_rank_ns": 11944043,
+                "p95_nearest_rank_ns": 12209670,
+                "sum_known_ns": 83742922,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "5939e6e2bc4065b164fe271d58828356bb0bccaac165f5bc15f65dd33d50b463",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 10,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 10,
+              "retained_business_packet_rows_after_seed": 6,
+              "stored_rows_including_genesis": 11
+            },
+            "mode": "baseline",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 2497,
+                "cpu_nr_throttled": 2436,
+                "cpu_throttled_usec": 500984088,
+                "cpu_usage_usec": 61378708,
+                "memory_current_bytes": 144887808,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 2150,
+                "cpu_nr_throttled": 2103,
+                "cpu_throttled_usec": 454045959,
+                "cpu_usage_usec": 52954595,
+                "memory_current_bytes": 81719296,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5495.service",
+              "phase_pid": 5500,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 102289878,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 681185496
+                },
+                "min_ns": 93729273,
+                "p50_nearest_rank_ns": 98020275,
+                "p95_nearest_rank_ns": 102289878,
+                "sum_known_ns": 681185496,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 401894078,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 2698649534
+                },
+                "min_ns": 318792738,
+                "p50_nearest_rank_ns": 395172881,
+                "p95_nearest_rank_ns": 401894078,
+                "sum_known_ns": 2698649534,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1226,
+              "calling_process_cpu_ns": {
+                "known_count": 1226,
+                "max_ns": 1396315,
+                "mean_known_ns": {
+                  "denominator": 1226,
+                  "numerator": 1214753133
+                },
+                "min_ns": 449017,
+                "p50_nearest_rank_ns": 995536,
+                "p95_nearest_rank_ns": 1158980,
+                "sum_known_ns": 1214753133,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1226,
+                "max_ns": 801366600,
+                "mean_known_ns": {
+                  "denominator": 1226,
+                  "numerator": 719504160456
+                },
+                "min_ns": 16650426,
+                "p50_nearest_rank_ns": 600567650,
+                "p95_nearest_rank_ns": 793783771,
+                "sum_known_ns": 719504160456,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Transcript": 1202
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1202
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30069495716,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1066104323
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4257729350,
+              "discarded_refill_ns": 3287815914,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4256995986,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4258449856,
+              "remaining_paid_credit_ns": 1999279494,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4258449856,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1453870,
+              "stored_credit_ns": 1999279494,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1999279494,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1203,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 31003568,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 88484128
+                },
+                "min_ns": 27577482,
+                "p50_nearest_rank_ns": 29903078,
+                "p95_nearest_rank_ns": 31003568,
+                "sum_known_ns": 88484128,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 107253832,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 307196217
+                },
+                "min_ns": 98945408,
+                "p50_nearest_rank_ns": 100996977,
+                "p95_nearest_rank_ns": 107253832,
+                "sum_known_ns": 307196217,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "from-zero",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 2857,
+                "cpu_nr_throttled": 2792,
+                "cpu_throttled_usec": 590806788,
+                "cpu_usage_usec": 70317870,
+                "memory_current_bytes": 201953280,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 2505,
+                "cpu_nr_throttled": 2442,
+                "cpu_throttled_usec": 501378008,
+                "cpu_usage_usec": 61532226,
+                "memory_current_bytes": 89825280,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5533.service",
+              "phase_pid": 5538,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 195961828,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1320238572
+                },
+                "min_ns": 179850758,
+                "p50_nearest_rank_ns": 190217794,
+                "p95_nearest_rank_ns": 195961828,
+                "sum_known_ns": 1320238572,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 798270186,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5222345013
+                },
+                "min_ns": 705559120,
+                "p50_nearest_rank_ns": 717395059,
+                "p95_nearest_rank_ns": 798270186,
+                "sum_known_ns": 5222345013,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "actual_failed_criteria": [
+              "all_signed_rounds_confirmed_in_window",
+              "receiver_client_state_equal",
+              "no_verifier_errors",
+              "genuine_budget_depletion_observed",
+              "attack_overlap_count_is_three_rounds",
+              "at_least_21_business_blocks_full_work_accepted",
+              "some_round_has_paid_credit_depletion"
+            ],
+            "attack_calls": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 0,
+              "all_calls_returned_after_window": 24,
+              "attempts": 1105,
+              "calling_process_cpu_ns": {
+                "known_count": 1105,
+                "max_ns": 1414358,
+                "mean_known_ns": {
+                  "denominator": 1105,
+                  "numerator": 1104445634
+                },
+                "min_ns": 429661,
+                "p50_nearest_rank_ns": 1004763,
+                "p95_nearest_rank_ns": 1179238,
+                "sum_known_ns": 1104445634,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 1105,
+                "max_ns": 893212667,
+                "mean_known_ns": {
+                  "denominator": 1105,
+                  "numerator": 719503779323
+                },
+                "min_ns": 6216834,
+                "p50_nearest_rank_ns": 696846429,
+                "p95_nearest_rank_ns": 800706953,
+                "sum_known_ns": 719503779323,
+                "unknown_count": 0
+              },
+              "errors": {
+                "IO: Resource temporarily unavailable (os error 11)": 24
+              },
+              "on_time_unique_packet_indices": [],
+              "refusals": {
+                "WORK:Product": 1081
+              },
+              "status_counts": {
+                "error": 24,
+                "refused": 1081
+              }
+            },
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "budget_depletion_observed": false,
+            "confirmation_rounds": [
+              {
+                "confirmed_inside_pressure_window": false,
+                "ended_ns": 30089690997,
+                "paid_credit_depletion_observed_during_round": false,
+                "receiver_hostile_work_rejected_during_round": true,
+                "round": 0,
+                "started_ns": 1001347950
+              }
+            ],
+            "confirmed_rounds": 0,
+            "criteria_predicates_from_original_frozen_source": {
+              "accounting_available": true,
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_24_attackers_ready": true,
+              "all_observed_rounds_have_receiver_hostile_rejection": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "at_least_21_business_blocks_full_work_accepted": false,
+              "attack_overlap_count_is_three_rounds": false,
+              "cpu_in_flight_zero": true,
+              "each_observed_round_has_hostile_overlap": true,
+              "genuine_budget_depletion_observed": false,
+              "mutation_cpu_clock_failures_zero": true,
+              "no_verifier_errors": false,
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "service_outcome_ok": true,
+              "some_full_work_rejected": true,
+              "some_round_has_paid_credit_depletion": false
+            },
+            "final_actual_flow": {
+              "balance_identity_verified": true,
+              "booked_reservation_ns": 0,
+              "credited_refill_ns": 4377917618,
+              "discarded_refill_ns": 3191085744,
+              "initial_credit_ns": 2000000000,
+              "live_debited_cpu_ns": 4378235085,
+              "live_owners": 0,
+              "paid_cpu_debit_ns": 4379580115,
+              "remaining_paid_credit_ns": 1998337503,
+              "schema": "public-v3-local-actual-cpu-flow-v1",
+              "settled_full_cpu_ns": 4379580115,
+              "settlement_discard_ns": 0,
+              "settlement_residual_cpu_ns": 1345030,
+              "stored_credit_ns": 1998337503,
+              "unsettled_known_live_cpu_ns": 0
+            },
+            "final_cpu_meter": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 1998337503,
+              "worker_limit": 2
+            },
+            "full_work_accepted": 7,
+            "full_work_failed": 1082,
+            "history": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 3,
+              "all_calls_returned_after_window": 0,
+              "attempts": 3,
+              "calling_process_cpu_ns": {
+                "known_count": 3,
+                "max_ns": 30274724,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 81539939
+                },
+                "min_ns": 22262433,
+                "p50_nearest_rank_ns": 29002782,
+                "p95_nearest_rank_ns": 30274724,
+                "sum_known_ns": 81539939,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 3,
+                "max_ns": 103780444,
+                "mean_known_ns": {
+                  "denominator": 3,
+                  "numerator": 302022831
+                },
+                "min_ns": 95870514,
+                "p50_nearest_rank_ns": 102371873,
+                "p95_nearest_rank_ns": 103780444,
+                "sum_known_ns": 302022831,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [],
+              "refusals": {},
+              "status_counts": {
+                "ok": 3
+              }
+            },
+            "independent_client": {
+              "active_height": 4,
+              "active_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+              "database_sha256": "76ec1ddf1a2ccf3c1e87ebcf284a466a81df937d3977aa5ed52aff850e7055dc",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 6,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 6,
+              "retained_business_packet_rows_after_seed": 2,
+              "stored_rows_including_genesis": 7
+            },
+            "mode": "late-product",
+            "native_phase_criteria_met": false,
+            "native_verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "observed_confirmation_rounds": 1,
+            "phase_process_context": {
+              "attackers_launched_by_external_controller": true,
+              "controller_cgroup": "/system.slice/trnm-native-campaign-41369097681-1.service",
+              "host_after": {
+                "cpu_nr_periods": 3217,
+                "cpu_nr_throttled": 3149,
+                "cpu_throttled_usec": 682108750,
+                "cpu_usage_usec": 79253499,
+                "memory_current_bytes": 209457152,
+                "pids_current": 3
+              },
+              "host_before": {
+                "cpu_nr_periods": 2865,
+                "cpu_nr_throttled": 2798,
+                "cpu_throttled_usec": 591156816,
+                "cpu_usage_usec": 70483507,
+                "memory_current_bytes": 101539840,
+                "pids_current": 3
+              },
+              "independent_administration": false,
+              "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41369097681-1-original-campaign-5599.service",
+              "phase_pid": 5604,
+              "runtime_business_deadline_changed": false,
+              "same_original_receiver_and_verifier_owners": true,
+              "scalar_policy_changed": false,
+              "schema": "fixed-public-phase-external-actors-v1",
+              "wan_qualified": false
+            },
+            "receiver": {
+              "active_height": 11,
+              "active_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "database_sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910",
+              "every_stored_packet_matches_retained_honest_producer_bytes": true,
+              "maximum_stored_height": 11,
+              "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+              "retained_admitted_honest_packet_rows": 11,
+              "retained_business_packet_rows_after_seed": 7,
+              "stored_rows_including_genesis": 12
+            },
+            "scheduled_business_blocks": 21,
+            "scheduled_confirmation_rounds": 3,
+            "startup_or_campaign_error": null,
+            "submissions": {
+              "acknowledged_after_window": 0,
+              "acknowledged_on_time": 7,
+              "all_calls_returned_after_window": 0,
+              "attempts": 7,
+              "calling_process_cpu_ns": {
+                "known_count": 7,
+                "max_ns": 207172686,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 1403692588
+                },
+                "min_ns": 195967629,
+                "p50_nearest_rank_ns": 200763006,
+                "p95_nearest_rank_ns": 207172686,
+                "sum_known_ns": 1403692588,
+                "unknown_count": 0
+              },
+              "elapsed_wall_ns": {
+                "known_count": 7,
+                "max_ns": 883930968,
+                "mean_known_ns": {
+                  "denominator": 7,
+                  "numerator": 5691450553
+                },
+                "min_ns": 796587004,
+                "p50_nearest_rank_ns": 803430017,
+                "p95_nearest_rank_ns": 883930968,
+                "sum_known_ns": 5691450553,
+                "unknown_count": 0
+              },
+              "errors": {},
+              "on_time_unique_packet_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "refusals": {},
+              "status_counts": {
+                "ok": 7
+              }
+            },
+            "unobserved_scheduled_rounds": 2
+          }
+        ],
+        "process_exit_code": 101,
+        "report_sha256": "73c3ad51d9635865787ceef8e4426a0c63fd0cd5694e6acd34435677f3fd74d1"
+      }
+    ],
+    "source_before": {
+      "base": null,
+      "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+      "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 792696617,
+      "tracked_entries": 6880,
+      "tracked_worktree_verified": true
+    },
+    "strict_qualification_reader_refusal": "original step did not complete successfully inside its budget",
+    "zip_bytes": 49745745,
+    "zip_digest_matches_github": true,
+    "zip_sha256": "37b2b0139a507c3c77f9548c7780f02853ac0f45e4033f1df8d6c24d4ade5714"
+  },
+  "production_activation": false,
+  "prospective_merge": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+  "qualified": false,
+  "schema": "pon-hosted-service-independent-readback-v1",
+  "scope": "Actual frozen477 hosted failures and raw SQLite readbacks; ACK, stored packet, active height and confirmation are separate outcomes. No later-source or post-window qualification.",
+  "small_service": [
+    {
+      "all_original_members_verified": true,
+      "artifact_id": 13108976332,
+      "artifact_name": "w1-fresh-service-head-477cc47d75ac88583d35f0ddaa7be354a804c49f-1",
+      "binary_before_after_equal": true,
+      "manifest_sha256": "b7bba0280324df72167839861ab5c840d2cea2a7f7723624dfdb24c729873adf",
+      "member_inventory_sha256": "5ba8cb61aba91582a5e4686a9ad4df181167fd8830ef5d75c6d7cfb23d40bb15",
+      "named_process_results": [
+        {
+          "exit_code": 0,
+          "failure": "CONFIRMATION_TARGET",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "timed_out": false
+        },
+        {
+          "exit_code": 101,
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "timed_out": false
+        }
+      ],
+      "observations": [
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 0,
+          "completed_false_calls_at_confirmation_or_window_end": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_latency_ns": 3322325573,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "experiment": "original",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1998858413,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "paid_cpu_charged_ns": 52870830,
+          "phase": "baseline",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "c63001226607229497d7ca87976eae0ab837fae512fd19152bbef802a51559bb",
+          "requested_window_ns": 4000000000,
+          "verification_errors": []
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 16,
+          "completed_false_calls_at_confirmation_or_window_end": 197,
+          "completed_false_calls_before_business": 1,
+          "confirmation_latency_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "experiment": "original",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999199369,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 1,
+            "attempts": 1,
+            "errors": {},
+            "status_counts": {
+              "ok": 1
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 0,
+            "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 0,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 0,
+            "retained_business_packet_rows_after_seed": 0,
+            "stored_rows_including_genesis": 1
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "paid_cpu_charged_ns": 512266330,
+          "phase": "pressure",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "c63001226607229497d7ca87976eae0ab837fae512fd19152bbef802a51559bb",
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 0,
+          "completed_false_calls_at_confirmation_or_window_end": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_latency_ns": 3316651646,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "experiment": "fresh",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1997281256,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "paid_cpu_charged_ns": 52196742,
+          "phase": "baseline",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "ae4f5ffcebb64eb2f1c689dec28e404e41ac56d6f78cc51ea6f2a2aea6b40277",
+          "requested_window_ns": 4000000000,
+          "verification_errors": []
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 16,
+          "completed_false_calls_at_confirmation_or_window_end": 188,
+          "completed_false_calls_before_business": 1,
+          "confirmation_latency_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "experiment": "fresh",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999931054,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 1,
+            "attempts": 1,
+            "errors": {},
+            "status_counts": {
+              "ok": 1
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 0,
+            "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 0,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 0,
+            "retained_business_packet_rows_after_seed": 0,
+            "stored_rows_including_genesis": 1
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "paid_cpu_charged_ns": 477110654,
+          "phase": "pressure",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "ae4f5ffcebb64eb2f1c689dec28e404e41ac56d6f78cc51ea6f2a2aea6b40277",
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "original_member_count": 53,
+      "retained_binary_sha256": "e3d505b832dfc7b09031526b138b7ada35f3503cd702e78c573b8f55ac031598",
+      "runner_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "source_before": {
+        "base": null,
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "head",
+      "zip_bytes": 4983734,
+      "zip_digest_matches_github": true,
+      "zip_sha256": "65c1ab69eeceaaa723c8a7478007e36f23863513db4db0aa90259a4e778c9c34"
+    },
+    {
+      "all_original_members_verified": true,
+      "artifact_id": 13108054829,
+      "artifact_name": "w1-fresh-service-prospective-merge-5da0d8c2666bf080feb482bd995e55d2c12d49f3-1",
+      "binary_before_after_equal": true,
+      "manifest_sha256": "4d9474daf9a5e36475aac666d69086145b87ea5ef7213c30571dd74e7d862df6",
+      "member_inventory_sha256": "355626ed6a91993efa0dc80720b119e64c6daf11bf337444e9e6c0071978a79d",
+      "named_process_results": [
+        {
+          "exit_code": 0,
+          "failure": "CONFIRMATION_TARGET",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "timed_out": false
+        },
+        {
+          "exit_code": 101,
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "timed_out": false
+        }
+      ],
+      "observations": [
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 0,
+          "completed_false_calls_at_confirmation_or_window_end": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_latency_ns": 3394824345,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "experiment": "original",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1990259884,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "paid_cpu_charged_ns": 53849955,
+          "phase": "baseline",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "e451ac1cd07d787a3b110ff0ab1ca24ee77b784527931923b5495c3f50205e48",
+          "requested_window_ns": 4000000000,
+          "verification_errors": []
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 16,
+          "completed_false_calls_at_confirmation_or_window_end": 208,
+          "completed_false_calls_before_business": 3,
+          "confirmation_latency_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "experiment": "original",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999873352,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 1,
+            "attempts": 1,
+            "errors": {},
+            "status_counts": {
+              "ok": 1
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 0,
+            "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 0,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 0,
+            "retained_business_packet_rows_after_seed": 0,
+            "stored_rows_including_genesis": 1
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "paid_cpu_charged_ns": 515803917,
+          "phase": "pressure",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "e451ac1cd07d787a3b110ff0ab1ca24ee77b784527931923b5495c3f50205e48",
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 0,
+          "completed_false_calls_at_confirmation_or_window_end": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_latency_ns": 3384687693,
+          "confirmed_before_original_window_end": true,
+          "confirmed_transactions": 1,
+          "experiment": "fresh",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1997819559,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "paid_cpu_charged_ns": 53962329,
+          "phase": "baseline",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "bd70d7805062c0ae26add487a628ed710bafe25a4a99afb5eccbc8e9095fbab4",
+          "requested_window_ns": 4000000000,
+          "verification_errors": []
+        },
+        {
+          "actual_host_limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "attack_workers": 16,
+          "completed_false_calls_at_confirmation_or_window_end": 184,
+          "completed_false_calls_before_business": 1,
+          "confirmation_latency_ns": null,
+          "confirmed_before_original_window_end": false,
+          "confirmed_transactions": 0,
+          "experiment": "fresh",
+          "final_cpu_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999338738,
+            "worker_limit": 2
+          },
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_history": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 1,
+            "attempts": 1,
+            "errors": {},
+            "status_counts": {
+              "ok": 1
+            }
+          },
+          "honest_submissions": {
+            "acknowledged_after_original_window_end": 0,
+            "acknowledged_before_original_window_end": 7,
+            "attempts": 7,
+            "errors": {},
+            "status_counts": {
+              "ok": 7
+            }
+          },
+          "independent_client": {
+            "active_height": 0,
+            "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "database_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 0,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 0,
+            "retained_business_packet_rows_after_seed": 0,
+            "stored_rows_including_genesis": 1
+          },
+          "invariant_target_met": true,
+          "mutation_cpu_refusals": 0,
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "paid_cpu_charged_ns": 461821950,
+          "phase": "pressure",
+          "receiver": {
+            "active_height": 7,
+            "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+            "database_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+            "every_stored_packet_matches_retained_honest_producer_bytes": true,
+            "maximum_stored_height": 7,
+            "query_scope": "read-only actual SQLite; packet bytes matched to retained admitted producer chain, no new native proof replay",
+            "retained_admitted_honest_packet_rows": 7,
+            "retained_business_packet_rows_after_seed": 7,
+            "stored_rows_including_genesis": 8
+          },
+          "report_sha256": "bd70d7805062c0ae26add487a628ed710bafe25a4a99afb5eccbc8e9095fbab4",
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "original_member_count": 53,
+      "retained_binary_sha256": "e3d505b832dfc7b09031526b138b7ada35f3503cd702e78c573b8f55ac031598",
+      "runner_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "source_before": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "477cc47d75ac88583d35f0ddaa7be354a804c49f",
+        "kind": "prospective-merge",
+        "prospective_merge": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5da0d8c2666bf080feb482bd995e55d2c12d49f3",
+        "tested_tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792696617,
+        "tracked_entries": 6880,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "source_kind": "prospective-merge",
+      "zip_bytes": 4982008,
+      "zip_digest_matches_github": true,
+      "zip_sha256": "4745b3c453541a5fe0253b6234afcb639f7991d8b1a4f2441b8fe09d81b84438"
+    }
+  ],
+  "small_service_workflow_run": 41369097548,
+  "tree": "0fd484dd12849e48f6f92442c14d96fa1d9f0fb7",
+  "zip_sizes_digests_and_all_members_verified": true
+}

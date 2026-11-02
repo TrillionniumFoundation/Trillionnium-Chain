@@ -1,0 +1,235 @@
+{
+  "lanes": [
+    {
+      "all_assertions_recomputed": "PASS",
+      "artifact_id": 13110835162,
+      "artifact_zip_bytes": 9469367,
+      "artifact_zip_sha256": "f6e5612cac3948fc6c4eeab8d4408a7a3af75a7e74996efe88bc436ad8551dc2",
+      "cli_binary_sha256": "bdf5fc8e52f12a2d157ff2877f5fbb0df30d32b3139f2e475e20f7e776bc4ab6",
+      "commit": "dddad3988a665814fd2e331597f605d6ffa608f2",
+      "host_before_after_identity_limits_equal": true,
+      "host_boot_id": "9ae89a2f-c77c-454c-92b7-4b5d23b8ad85",
+      "host_controls_passed": 28,
+      "host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_parent_identity": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7004,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "host_service": "trnm-from-zero-41372976388-1-original-host-4325.service",
+      "job_id": 125047190444,
+      "lane": "head",
+      "manifest_sha256": "a48dd01b812628f0a7e1c6841c5fa9fa50755c679d1ba6d4edfff3f04e711144",
+      "native_log_sha256": "ac5e380f00b7457f8c85df78d1a6f338fd8fbaa83981dba800a58f8566747751",
+      "negative_durable_tables_unchanged": true,
+      "negative_error": "PUBLIC_HOST_KERNEL_PARENT",
+      "negative_named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "test_authenticated_cli_sync_without_host_refuses_without_changing_durable_outbox"
+      },
+      "positive_fixture": {
+        "authenticated_outbox_pending": 0,
+        "authenticated_requests": 3,
+        "original_server_lifetime_seconds": 4,
+        "perpid_cgroups": [
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4325.service",
+            "cgroup_observation_error": null,
+            "pid": 4664,
+            "role": "test"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4325.service",
+            "cgroup_observation_error": null,
+            "pid": 4666,
+            "role": "server"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4325.service",
+            "cgroup_observation_error": null,
+            "pid": 4667,
+            "role": "push-first"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4325.service",
+            "cgroup_observation_error": null,
+            "pid": 4671,
+            "role": "push-replay"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4325.service",
+            "cgroup_observation_error": null,
+            "pid": 4672,
+            "role": "sync"
+          }
+        ],
+        "production_activation": false,
+        "public_network_ready": false,
+        "push_pids": [
+          4667,
+          4671
+        ],
+        "replayed_responses": 0,
+        "schema": "trnm-authenticated-outbox-host-fixture-v1",
+        "server_pid": 4666,
+        "sync_pid": 4672,
+        "sync_success": true,
+        "test_pid": 4664,
+        "verified_tip": "47575d747f6bca82c4d18def9900f197983089e392e314f0f1ee30c55fae386c"
+      },
+      "positive_libtest_reported_seconds": "4.02",
+      "positive_named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+      },
+      "positive_process_observation_elapsed_ns": 9905101666,
+      "process_elapsed_scope": "CI command owner includes source checks and orchestration; not a measured sync latency",
+      "runner_controls_passed": 17,
+      "source_before_after_equal": true,
+      "test_binary_sha256": "3adfdb543cf14a8238a39f8c0479af767baa98e421dab21eb56266ab7995e63b",
+      "tracked_bytes": 792761591,
+      "tracked_entries": 6883,
+      "tree": "425ab179a70b1a24921348436d81ac8ee440a6ac",
+      "verified_original_members": 31
+    },
+    {
+      "all_assertions_recomputed": "PASS",
+      "artifact_id": 13109787948,
+      "artifact_zip_bytes": 9469512,
+      "artifact_zip_sha256": "48a6df69798996dfbfa7e1b9c9152518d6306553dde03fa6a3bde0276570154b",
+      "cli_binary_sha256": "bdf5fc8e52f12a2d157ff2877f5fbb0df30d32b3139f2e475e20f7e776bc4ab6",
+      "commit": "a0bd4d81e16f3ff849048a9a03aea77729aa4426",
+      "host_before_after_identity_limits_equal": true,
+      "host_boot_id": "3d9c08c5-0b51-4949-828d-8bea026a8828",
+      "host_controls_passed": 28,
+      "host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_parent_identity": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7190,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "host_service": "trnm-from-zero-41372976388-1-original-host-4872.service",
+      "job_id": 125047190218,
+      "lane": "prospective-merge",
+      "manifest_sha256": "ea6216cbc0c830771ce82d3df265f6f6316ab580ec23321c93ca712958990e25",
+      "native_log_sha256": "9604bc6d9d19c0e943d973bedd6c5954b2346ddd47bfa5af1cde434fa723869b",
+      "negative_durable_tables_unchanged": true,
+      "negative_error": "PUBLIC_HOST_KERNEL_PARENT",
+      "negative_named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "test_authenticated_cli_sync_without_host_refuses_without_changing_durable_outbox"
+      },
+      "positive_fixture": {
+        "authenticated_outbox_pending": 0,
+        "authenticated_requests": 3,
+        "original_server_lifetime_seconds": 4,
+        "perpid_cgroups": [
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4872.service",
+            "cgroup_observation_error": null,
+            "pid": 5215,
+            "role": "test"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4872.service",
+            "cgroup_observation_error": null,
+            "pid": 5217,
+            "role": "server"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4872.service",
+            "cgroup_observation_error": null,
+            "pid": 5218,
+            "role": "push-first"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4872.service",
+            "cgroup_observation_error": null,
+            "pid": 5222,
+            "role": "push-replay"
+          },
+          {
+            "cgroup": "0::/trnmponpublic.slice/trnm-from-zero-41372976388-1-original-host-4872.service",
+            "cgroup_observation_error": null,
+            "pid": 5223,
+            "role": "sync"
+          }
+        ],
+        "production_activation": false,
+        "public_network_ready": false,
+        "push_pids": [
+          5218,
+          5222
+        ],
+        "replayed_responses": 0,
+        "schema": "trnm-authenticated-outbox-host-fixture-v1",
+        "server_pid": 5217,
+        "sync_pid": 5223,
+        "sync_success": true,
+        "test_pid": 5215,
+        "verified_tip": "b92a5e791ff3ace2af2edc62d736f0c949882de3f392cbba794e0fc33475102e"
+      },
+      "positive_libtest_reported_seconds": "4.03",
+      "positive_named_execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+      },
+      "positive_process_observation_elapsed_ns": 12105246650,
+      "process_elapsed_scope": "CI command owner includes source checks and orchestration; not a measured sync latency",
+      "runner_controls_passed": 17,
+      "source_before_after_equal": true,
+      "test_binary_sha256": "3adfdb543cf14a8238a39f8c0479af767baa98e421dab21eb56266ab7995e63b",
+      "tracked_bytes": 792761591,
+      "tracked_entries": 6883,
+      "tree": "425ab179a70b1a24921348436d81ac8ee440a6ac",
+      "verified_original_members": 31
+    }
+  ],
+  "production_activation": false,
+  "public_network_ready": false,
+  "remaining_gates": [
+    "four-second six-depth independent confirmation under sixteen hostile W1 producers",
+    "full 30-second original business campaign",
+    "original large-state CPU and 4105-block History acceptance",
+    "cheapest legal work and broad hardware/algorithm/quantum costs",
+    "whole-chain PQ qualification",
+    "production activation"
+  ],
+  "run_id": 41372976388,
+  "schema": "trnm-authenticated-outbox-hosted-independent-summary-v1",
+  "scope": "Exact-source head and prospective-merge x64 real fixed-Host authenticated CLI push/replay/sync fixture, plus separately named absent-Host refusal; no hostile-work service, work-hardness or production qualification.",
+  "tested_base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+  "tested_candidate": "dddad3988a665814fd2e331597f605d6ffa608f2",
+  "tree": "425ab179a70b1a24921348436d81ac8ee440a6ac",
+  "workflow_conclusion": "success"
+}
