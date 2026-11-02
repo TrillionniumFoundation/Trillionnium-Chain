@@ -54,6 +54,11 @@ def native_build_command() -> list[str]:
             '--no-run', '--message-format=json']
 
 
+def format_copy_command(path: Path) -> list[str]:
+    """Format only the diagnostic copy; cargo fmt checks the original module tree."""
+    return ['rustfmt', '--edition', '2021', '--config', 'skip_children=true', str(path)]
+
+
 def select_binary(lines: list[str]) -> Path:
     paths = []
     for line in lines:
@@ -367,32 +372,30 @@ def validate_sustained_report(path: Path) -> dict:
             'scope': 'retained local report consistency; no independent work/state oracle, saturation or fairness qualification'}
 
 
-def validate_confirmation_report(path: Path) -> dict:
-    """Recompute bounded report consistency; native owners retain all authority."""
-    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
-    with path.open('rb') as stream:
-        raw = stream.read(REPORT_LIMIT + 1)
-    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
-    doc = json_load(raw)
-    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
-            'CONFIRMATION_SCHEMA')
+class ConfirmationReportChecks:
+    """Shared unchanged wire, timing and scalar report predicates."""
 
+    @staticmethod
     def number(value):
         require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
         return value
 
+    @staticmethod
     def flags(value, yes=(), no=()):
         require(isinstance(value, dict), 'CONFIRMATION_OBJECT')
         require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')
         require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')
 
+    @staticmethod
     def hexadecimal(value, width=None):
         require(isinstance(value, str) and len(value) % 2 == 0
                 and (width is None or len(value) == width * 2)
                 and re.fullmatch('[0-9a-f]+', value) is not None, 'CONFIRMATION_HEX')
         return bytes.fromhex(value)
 
+    @staticmethod
     def packet_metadata(value):
+        hexadecimal = ConfirmationReportChecks.hexadecimal
         data = hexadecimal(value)
         require(318 + 2 + 49188 <= len(data) <= 1048576, 'CONFIRMATION_PACKET_LIMIT')
         header = header_decode(data[:318])
@@ -415,7 +418,9 @@ def validate_confirmation_report(path: Path) -> dict:
                 'CONFIRMATION_TASK_BINDING')
         return header, transactions, H('block', data[:318], proof[-32:])
 
+    @staticmethod
     def call(value, window):
+        number = ConfirmationReportChecks.number
         require(isinstance(value, dict) and value.get('status') in ('ok', 'refused', 'error'),
                 'CONFIRMATION_CALL')
         start, end = number(value.get('started_ns')), number(value.get('ended_ns'))
@@ -432,7 +437,10 @@ def validate_confirmation_report(path: Path) -> dict:
         return value['status'] == 'ok' and value['returned_after_deadline'] is False \
             and value['returned_after_window'] is False and end < window
 
+    @staticmethod
     def compact_request(value, request, packet_index):
+        number = ConfirmationReportChecks.number
+        hexadecimal = ConfirmationReportChecks.hexadecimal
         # compact_pressure_call serializes the request after converting it to a
         # serde_json Value, whose default object map sorts keys. This is the
         # recorded-request domain, not the transport response body digest.
@@ -445,76 +453,23 @@ def validate_confirmation_report(path: Path) -> dict:
                 and hexadecimal(value.get('recorded_request_digest'), 32)
                 == H('pressure-recorded-request-v1', encoded), 'CONFIRMATION_REQUEST_BINDING')
 
-    flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
-          no=('public_network_ready', 'work_profile_qualified', 'production_activation',
-              'strongest_honest_producer_used'))
-    context = {key: hexadecimal(doc.get(key), 32) for key in (
-        'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
-    require(context['target'] != bytes(32), 'CONFIRMATION_CONTEXT')
-    require(doc.get('honest_chain_aggregate_cpu_ns', 'missing') is None, 'CONFIRMATION_SCOPE_PROMOTION')
-    number(doc.get('honest_chain_acquisition_wall_ns'))
-    number(doc.get('attacker_construction_cpu_ns'))
-    number(doc.get('attacker_construction_wall_ns'))
-    # Optional successor reports separately measure whole-process acquisition.
-    if 'honest_chain_process_cpu_ns' in doc:
-        if doc['honest_chain_process_cpu_ns'] is not None:
-            number(doc['honest_chain_process_cpu_ns'])
-        require(isinstance(doc.get('honest_chain_process_cpu_scope'), str)
-                and 0 < len(doc['honest_chain_process_cpu_scope']) <= 2048, 'CONFIRMATION_CPU_SCOPE')
-    packets = doc.get('signed_honest_packets')
-    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_PACKET_SEQUENCE')
-    metadata = [packet_metadata(packet) for packet in packets]
-    parent = context['genesis']
-    for height, (header, transactions, block_id) in enumerate(metadata, 1):
-        require(header['network'] == context['network'] and header['parameters'] == context['parameters']
-                and header['target'] == context['target'] and header['work_task'] == context['task'],
-                'CONFIRMATION_CONTEXT')
-        require(header['height'] == height and header['parent'] == parent
-                and len(transactions) == (1 if height == 1 else 0), 'CONFIRMATION_PACKET_SEQUENCE')
-        parent = block_id
+
+def validate_confirmation_phases(doc, context, packets, metadata, resolve_attack):
+    """Original full phase checks shared by retained and fresh attack sources.
+
+    The caller validates its construction namespace and resolves each exact
+    attack packet; all business, timing, overlap, CPU and observer checks
+    below remain common. This is consistency, not a native State oracle.
+    """
+    number = ConfirmationReportChecks.number
+    flags = ConfirmationReportChecks.flags
+    hexadecimal = ConfirmationReportChecks.hexadecimal
+    packet_metadata = ConfirmationReportChecks.packet_metadata
+    call = ConfirmationReportChecks.call
+    compact_request = ConfirmationReportChecks.compact_request
+
+    parent = metadata[-1][2]
     transaction_id = H('tx-id', metadata[0][1][0]).hex()
-    constructions = doc.get('from_zero_construction')
-    require(isinstance(constructions, list) and len(constructions) == 16, 'CONFIRMATION_CONSTRUCTIONS')
-    for construction in constructions:
-        require(isinstance(construction, dict) and construction.get('status') in (
-            'target_hit_unverified', 'exhausted'), 'CONFIRMATION_CONSTRUCTIONS')
-        header_bytes = hexadecimal(construction.get('header'), 318)
-        header = header_decode(header_bytes)
-        require(header['target'] == context['target'] and header['work_task'] == context['task']
-                and header['network'] == context['network'] and header['parameters'] == context['parameters'],
-                'CONFIRMATION_CONTEXT')
-        require(header['height'] == 1 and header['parent'] == context['genesis'],
-                'CONFIRMATION_CONSTRUCTIONS')
-        challenge = H('challenge', header_bytes)
-        require(hexadecimal(construction.get('challenge'), 32) == challenge
-                and number(construction.get('attempt_budget')) == 4096
-                and number(construction.get('setup_calls')) == 1, 'CONFIRMATION_CONSTRUCTIONS')
-        attempts = construction.get('attempts')
-        require(isinstance(attempts, list) and 0 < len(attempts) <= 4096,
-                'CONFIRMATION_CONSTRUCTIONS')
-        for ordinal, attempt in enumerate(attempts):
-            require(isinstance(attempt, dict) and number(attempt.get('nonce')) == ordinal,
-                    'CONFIRMATION_CONSTRUCTIONS')
-            trace = H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
-            ticket = H('ticket', challenge, trace)
-            require(hexadecimal(attempt.get('trace'), 32) == trace
-                    and hexadecimal(attempt.get('ticket'), 32) == ticket
-                    and attempt.get('target_hit') is (ticket <= context['target']),
-                    'CONFIRMATION_CONSTRUCTIONS')
-        hit = construction['status'] == 'target_hit_unverified'
-        require(not any(attempt['target_hit'] for attempt in attempts[:-1])
-                and attempts[-1]['target_hit'] is hit, 'CONFIRMATION_CONSTRUCTIONS')
-        if hit:
-            require(number(construction.get('winner_nonce')) == len(attempts) - 1,
-                    'CONFIRMATION_CONSTRUCTIONS')
-            packet_header, transactions, _ = packet_metadata(construction.get('packet'))
-            require(packet_header == header and not transactions
-                    and hexadecimal(construction['packet'])[-32:]
-                    == hexadecimal(attempts[-1]['trace'], 32), 'CONFIRMATION_CONSTRUCTION_PACKET')
-        else:
-            require(construction.get('packet', 'missing') is None
-                    and construction.get('winner_nonce', 'missing') is None
-                    and len(attempts) == 4096, 'CONFIRMATION_CONSTRUCTIONS')
     phases = doc.get('phases')
     require(isinstance(phases, list) and len(phases) == 2, 'CONFIRMATION_PHASES')
     observations = []
@@ -603,11 +558,9 @@ def validate_confirmation_report(path: Path) -> dict:
             rows = worker.get('calls')
             require(isinstance(rows, list) and len(rows) < 1024, 'CONFIRMATION_ATTACKS')
             previous_end = 0
-            for row in rows:
+            for attempt_index, row in enumerate(rows):
                 require(isinstance(row, dict), 'CONFIRMATION_ATTACKS')
-                packet_index = number(row.get('packet_index'))
-                require(packet_index == worker_index, 'CONFIRMATION_REQUEST_BINDING')
-                construction = constructions[packet_index]
+                construction, packet_index = resolve_attack(worker_index, attempt_index, row)
                 if row.get('status') == 'not_submitted_exhausted':
                     require(construction['status'] == 'exhausted', 'CONFIRMATION_CONSTRUCTIONS')
                     continue
@@ -680,6 +633,102 @@ def validate_confirmation_report(path: Path) -> dict:
                 'CONFIRMATION_OBSERVATION_COMPLETENESS')
         observations.append({'mode': phase['mode'], 'latency_ns': end - start,
                              'attacks': len(attack_calls), 'overlapping_false_calls': overlapping})
+    return observations
+
+
+def validate_confirmation_report(path: Path) -> dict:
+    """Recompute bounded report consistency; native owners retain all authority."""
+    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(REPORT_LIMIT + 1)
+    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
+    doc = json_load(raw)
+    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
+            'CONFIRMATION_SCHEMA')
+
+    number = ConfirmationReportChecks.number
+    flags = ConfirmationReportChecks.flags
+    hexadecimal = ConfirmationReportChecks.hexadecimal
+    packet_metadata = ConfirmationReportChecks.packet_metadata
+    call = ConfirmationReportChecks.call
+    compact_request = ConfirmationReportChecks.compact_request
+
+    flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
+          no=('public_network_ready', 'work_profile_qualified', 'production_activation',
+              'strongest_honest_producer_used'))
+    context = {key: hexadecimal(doc.get(key), 32) for key in (
+        'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
+    require(context['target'] != bytes(32), 'CONFIRMATION_CONTEXT')
+    require(doc.get('honest_chain_aggregate_cpu_ns', 'missing') is None, 'CONFIRMATION_SCOPE_PROMOTION')
+    number(doc.get('honest_chain_acquisition_wall_ns'))
+    number(doc.get('attacker_construction_cpu_ns'))
+    number(doc.get('attacker_construction_wall_ns'))
+    # Optional successor reports separately measure whole-process acquisition.
+    if 'honest_chain_process_cpu_ns' in doc:
+        if doc['honest_chain_process_cpu_ns'] is not None:
+            number(doc['honest_chain_process_cpu_ns'])
+        require(isinstance(doc.get('honest_chain_process_cpu_scope'), str)
+                and 0 < len(doc['honest_chain_process_cpu_scope']) <= 2048, 'CONFIRMATION_CPU_SCOPE')
+    packets = doc.get('signed_honest_packets')
+    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_PACKET_SEQUENCE')
+    metadata = [packet_metadata(packet) for packet in packets]
+    parent = context['genesis']
+    for height, (header, transactions, block_id) in enumerate(metadata, 1):
+        require(header['network'] == context['network'] and header['parameters'] == context['parameters']
+                and header['target'] == context['target'] and header['work_task'] == context['task'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == height and header['parent'] == parent
+                and len(transactions) == (1 if height == 1 else 0), 'CONFIRMATION_PACKET_SEQUENCE')
+        parent = block_id
+    transaction_id = H('tx-id', metadata[0][1][0]).hex()
+    constructions = doc.get('from_zero_construction')
+    require(isinstance(constructions, list) and len(constructions) == 16, 'CONFIRMATION_CONSTRUCTIONS')
+    for construction in constructions:
+        require(isinstance(construction, dict) and construction.get('status') in (
+            'target_hit_unverified', 'exhausted'), 'CONFIRMATION_CONSTRUCTIONS')
+        header_bytes = hexadecimal(construction.get('header'), 318)
+        header = header_decode(header_bytes)
+        require(header['target'] == context['target'] and header['work_task'] == context['task']
+                and header['network'] == context['network'] and header['parameters'] == context['parameters'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == 1 and header['parent'] == context['genesis'],
+                'CONFIRMATION_CONSTRUCTIONS')
+        challenge = H('challenge', header_bytes)
+        require(hexadecimal(construction.get('challenge'), 32) == challenge
+                and number(construction.get('attempt_budget')) == 4096
+                and number(construction.get('setup_calls')) == 1, 'CONFIRMATION_CONSTRUCTIONS')
+        attempts = construction.get('attempts')
+        require(isinstance(attempts, list) and 0 < len(attempts) <= 4096,
+                'CONFIRMATION_CONSTRUCTIONS')
+        for ordinal, attempt in enumerate(attempts):
+            require(isinstance(attempt, dict) and number(attempt.get('nonce')) == ordinal,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            trace = H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
+            ticket = H('ticket', challenge, trace)
+            require(hexadecimal(attempt.get('trace'), 32) == trace
+                    and hexadecimal(attempt.get('ticket'), 32) == ticket
+                    and attempt.get('target_hit') is (ticket <= context['target']),
+                    'CONFIRMATION_CONSTRUCTIONS')
+        hit = construction['status'] == 'target_hit_unverified'
+        require(not any(attempt['target_hit'] for attempt in attempts[:-1])
+                and attempts[-1]['target_hit'] is hit, 'CONFIRMATION_CONSTRUCTIONS')
+        if hit:
+            require(number(construction.get('winner_nonce')) == len(attempts) - 1,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            packet_header, transactions, _ = packet_metadata(construction.get('packet'))
+            require(packet_header == header and not transactions
+                    and hexadecimal(construction['packet'])[-32:]
+                    == hexadecimal(attempts[-1]['trace'], 32), 'CONFIRMATION_CONSTRUCTION_PACKET')
+        else:
+            require(construction.get('packet', 'missing') is None
+                    and construction.get('winner_nonce', 'missing') is None
+                    and len(attempts) == 4096, 'CONFIRMATION_CONSTRUCTIONS')
+    def resolve_attack(worker_index, _attempt_index, row):
+        packet_index = number(row.get('packet_index'))
+        require(packet_index == worker_index, 'CONFIRMATION_REQUEST_BINDING')
+        return constructions[packet_index], packet_index
+
+    observations = validate_confirmation_phases(doc, context, packets, metadata, resolve_attack)
     result = {'sha256': digest(raw), 'schema': doc['schema'], 'phases': observations,
               'finite_target_met': True, 'scope': 'bounded native report consistency; no independent work/state oracle, WAN, fairness or scientific acceptance'}
     if 'honest_chain_process_cpu_ns' in doc:
@@ -720,10 +769,11 @@ def run(out: Path) -> dict:
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
-        # A copy gives a reproducible formatting repair without changing checkout.
+        # The isolated diagnostic copy has no relative module tree. Format only
+        # this file; the separate cargo fmt below checks the actual full source.
         shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
         result['format_copy'] = run_child(
-            ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+            format_copy_command(out / 'formatted.rs'), out / 'format-copy', 60)
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],

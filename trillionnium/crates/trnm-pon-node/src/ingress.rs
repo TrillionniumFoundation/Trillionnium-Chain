@@ -2378,24 +2378,6 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-// A fixed cgroup is enforced by the kernel. Recheck current worker and
-// unchanged Host limits at original W1 stage boundaries: at most 64 transcript
-// tiles proceed without a physical owner recheck. These are resource checks,
-// not mathematical W1 validity or blockchain authorization.
-fn history_kernel_work_checkpoint(
-    point: trnm_crypto_primitives::pon_work::VerificationProgress,
-) -> bool {
-    use trnm_crypto_primitives::pon_work::VerificationProgress;
-    match point {
-        VerificationProgress::BeforeReplay
-        | VerificationProgress::BeforeProduct
-        | VerificationProgress::BeforeVerifiedWork => true,
-        VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
-        VerificationProgress::MatrixRow { row } => row % 32 == 0,
-        VerificationProgress::TranscriptTile { column, inner, .. } => column == 0 && inner == 0,
-    }
-}
-
 pub(crate) mod history_import;
 
 // Retained native test fixtures used the old local five-argument reader.
@@ -3361,41 +3343,6 @@ mod tests {
         // Host error is local, not mathematical Invalid. Later reuse of the
         // exact valid W1 must succeed after the resource owner is restored.
         assert_eq!(node.admit(&packet, now().unwrap()).unwrap(), id);
-    }
-
-    #[test]
-    fn kernel_progress_rechecks_original_host_at_most_every_64_tiles() {
-        use trnm_crypto_primitives::pon_work::VerificationProgress;
-        let mut owner_checks = Vec::new();
-        for ordinal in 0..512_usize {
-            let point = VerificationProgress::TranscriptTile {
-                row: ordinal / 64,
-                column: (ordinal / 8) % 8,
-                inner: ordinal % 8,
-            };
-            if history_kernel_work_checkpoint(point) {
-                owner_checks.push(ordinal);
-            }
-        }
-        assert_eq!(owner_checks, vec![0, 64, 128, 192, 256, 320, 384, 448]);
-        for point in [
-            VerificationProgress::BeforeReplay,
-            VerificationProgress::BeforeProduct,
-            VerificationProgress::BeforeVerifiedWork,
-            VerificationProgress::Noise {
-                label: 1,
-                counter: 0,
-            },
-            VerificationProgress::MatrixRow { row: 0 },
-        ] {
-            assert!(history_kernel_work_checkpoint(point));
-        }
-        assert!(!history_kernel_work_checkpoint(
-            VerificationProgress::Noise {
-                label: 1,
-                counter: 1
-            }
-        ));
     }
 
     #[test]

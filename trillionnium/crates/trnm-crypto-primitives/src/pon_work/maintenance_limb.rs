@@ -1,7 +1,8 @@
 //! Separate complete maintenance producer using bounded split-limb accumulation.
 //! The number of scalar products and the complete W1 relation are unchanged.
-//! This arithmetic experiment is not selected by the native producer or default verifier.
-//! Its bounded dot product is shared with the explicit verifier research comparison.
+//! The maintenance producer remains explicitly selected, not the native producer default.
+//! Its bounded dot products are shared with the default full-limb verifier and explicit
+//! arithmetic comparisons; producer selection and verifier selection are independent.
 use super::{
     expand_with_progress, maintenance_periodic::MaintenancePeriodicPreparedTask, Hash,
     PreparedGenerationError, PreparedGenerationProgress, PreparedTask, VerificationError,
@@ -21,6 +22,33 @@ pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
     let mut high = 0_u64;
     for k in 0..R {
         let product = u64::from(left[k]) * u64::from(right[k]);
+        low += u64::from(product as u32);
+        high += product >> 32;
+    }
+    let sum = low + 5 * high;
+    let folded = u64::from(sum as u32) + 5 * (sum >> 32);
+    if folded >= Q as u64 {
+        (folded - Q as u64) as u32
+    } else {
+        folded as u32
+    }
+}
+
+// The full verifier also has 64-term correction products. For 1<=m<=64,
+// B=2^32 and canonical inputs, L<(m+1)B, H<mB and S=L+5H<(6m+1)B.
+// Thus S<385B<2^41 and F=(S mod B)+5 floor(S/B)<B+1920<2q.
+// All products and sums fit u64, and one subtraction produces the exact
+// canonical remainder. For m=0 it returns the canonical prior unchanged.
+// This helper retains the existing dot8 implementation
+// as the independently measured transcript-only comparison.
+#[inline]
+pub(super) fn dot_bounded(left: &[u32], right: &[u32], prior: u32) -> u32 {
+    debug_assert_eq!(left.len(), right.len());
+    debug_assert!(left.len() <= N);
+    let mut low = u64::from(prior);
+    let mut high = 0_u64;
+    for (&a, &b) in left.iter().zip(right) {
+        let product = u64::from(a) * u64::from(b);
         low += u64::from(product as u32);
         high += product >> 32;
     }
@@ -244,6 +272,50 @@ mod tests {
             let right = unpack(right_hash);
             for prior in values {
                 assert_eq!(dot8(&left, &right, prior), scalar(&left, &right, prior));
+            }
+        }
+    }
+
+    #[test]
+    fn bounded_limb_all_lengths_extremes_and_carries_match_independent_remainder() {
+        let values = [0, 1, 2, 1 << 16, 1 << 31, Q as u32 - 2, Q as u32 - 1];
+        for length in 0..=N {
+            for a in values {
+                for b in values {
+                    for prior in values {
+                        let left = vec![a; length];
+                        let right = vec![b; length];
+                        assert_eq!(
+                            dot_bounded(&left, &right, prior),
+                            scalar(&left, &right, prior)
+                        );
+                    }
+                }
+            }
+        }
+        let mut seed = 0x243f_6a88_85a3_08d3_u64;
+        for _ in 0..128 {
+            let mut word = || {
+                seed = seed
+                    .wrapping_mul(6_364_136_223_846_793_005)
+                    .wrapping_add(1_442_695_040_888_963_407);
+                ((seed >> 32) % Q as u64) as u32
+            };
+            let left: Vec<_> = (0..N).map(|_| word()).collect();
+            let right: Vec<_> = (0..N).map(|_| word()).collect();
+            for length in 0..=N {
+                for prior in [0, Q as u32 - 1, left[length % N]] {
+                    assert_eq!(
+                        dot_bounded(&left[..length], &right[..length], prior),
+                        scalar(&left[..length], &right[..length], prior)
+                    );
+                }
+            }
+            for prior in values {
+                assert_eq!(
+                    dot_bounded(&left[..R], &right[..R], prior),
+                    dot8(&left[..R], &right[..R], prior)
+                );
             }
         }
     }

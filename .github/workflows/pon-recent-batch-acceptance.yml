@@ -64,14 +64,14 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 969b53e94a22fec545477a5481189c866dc3a7f3
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 47e79b691442a58a457a510f0ce3b2897baebd2c
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c01ca1e0756ec8e041e628bcbdad933e338da772
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c0c492d166caf62b29df6090ab5ff697d685cd6e
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d8a84be950eda77104d91fc389166c2581e5cd88
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
-          test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
-          test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
+          test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = e3ec8bf4bdd510f3fe718e63a4df595d342c61c6
+          test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 526f155f2215184aa607da6d453423ca6930ded2
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = c4bb9dbf6854f06b61089aaa01ff918804fbdad0
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = c57097ef243a9476498221e44549dfd9f66e09cc
@@ -88,7 +88,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 formal/pon-nakamoto-v1/test_work_query_bound.py -v 2>&1 | tee "$OUT/query-bound.log"
-          grep -E '^Ran 14 tests in ' "$OUT/query-bound.log"
+          grep -E '^Ran 21 tests in ' "$OUT/query-bound.log"
           grep -x 'OK' "$OUT/query-bound.log"
       - name: Reject incomplete, ambiguous or incorrectly bound cache observations
         shell: bash

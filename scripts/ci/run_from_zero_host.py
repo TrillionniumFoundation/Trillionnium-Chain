@@ -69,8 +69,11 @@ def validate_unprovisioned_parent(raw: str) -> dict[str, str]:
 
 
 def validate_command(command: list[str]) -> Path:
-    require(len(command) == 4 and command[:3] == [
-        'python3', 'scripts/ci/run_from_zero_native.py', '--out'], 'ORIGINAL_ARGV_REQUIRED')
+    require(len(command) == 4 and command[:3] in ([
+        'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
+        'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
+        'python3', 'scripts/ci/run_authenticated_outbox_native_v1.py', '--out']),
+        'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -168,12 +171,173 @@ def bind_prepared_execution(prepared: dict, output: Path) -> dict:
             'runtime_limits_or_deadlines_changed': False}
 
 
+def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
+    """Separate exact successor; never substitute its two tests for the old five."""
+    import run_w1_fresh_service_v1 as fresh
+    expected = os.environ.get('TRNM_EXPECTED_SOURCE_SHA')
+    require(type(expected) is str and re.fullmatch('[0-9a-f]{40}', expected) is not None,
+            'FRESH_EXPECTED_SOURCE_REQUIRED')
+    require(prepared.get('completed') is True, 'NATIVE_PREPARATION_INCOMPLETE')
+    path = output / 'manifest.json'
+    require(path.is_file() and not path.is_symlink(), 'FRESH_NATIVE_MANIFEST_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(native.REPORT_LIMIT + 1)
+    require(len(raw) <= native.REPORT_LIMIT, 'FRESH_NATIVE_MANIFEST_BOUND')
+    result = native.json_load(raw)
+    require(result.get('schema') == fresh.SCHEMA, 'FRESH_NATIVE_MANIFEST_SCHEMA')
+    require(result.get('source_expected') == expected
+            and prepared['source_before']['commit'] == expected,
+            'FRESH_EXPECTED_SOURCE_MISMATCH')
+    require(prepared['source_before'] == prepared['source_after']
+            == result['source_before'] == result['source_after'],
+            'PREPARATION_AND_EXECUTION_SOURCE_MISMATCH')
+    require(prepared['binary_sha256'] == result['binary_sha256_before']
+            == result['binary_sha256_after']
+            == native.digest((output / native.TARGET).read_bytes()),
+            'PREPARATION_AND_EXECUTION_BINARY_MISMATCH')
+    require(result.get('requested_window_ns') == 4_000_000_000
+            and result.get('attack_workers') == 16
+            and result.get('passed') is True and result.get('all_named_tests_passed') is True
+            and result.get('execution_finished') is True and result.get('source_recompiled') is True
+            and result.get('failures') == []
+            and [row['name'] for row in result['runs']] == list(fresh.SELECTORS),
+            'FRESH_NATIVE_ACCEPTANCE_REQUIRED')
+    for index, row in enumerate(result['runs']):
+        name = 'original' if index == 0 else 'fresh'
+        require(row.get('passed') is True and row.get('report_path') == name + '/report.json'
+                and row['process'].get('expected_source') == result['source_before']['commit'],
+                'FRESH_EXACT_EXECUTION_BINDING')
+        log = output / (name + '.log')
+        require(row.get('log_sha256') == native.digest(log.read_bytes()), 'FRESH_LOG_CHANGED')
+        verified = fresh.validate_execution(row['process'], log, row['name'],
+                                            output / row['report_path'])
+        require(verified['named_execution'] == row.get('named_execution')
+                and verified['report'] == row.get('report'), 'FRESH_REPORT_BINDING')
+    return {'schema': 'trnm-ci-fresh-native-build-execution-binding-v1',
+            'manifest_sha256': native.digest(raw), 'source_commit': prepared['source_before']['commit'],
+            'binary_sha256': prepared['binary_sha256'], 'exact_selectors': list(fresh.SELECTORS),
+            'original_five_test_runner_replaced': False,
+            'runtime_limits_or_deadlines_changed': False}
+
+
+def prepare_authenticated_outbox_build(receipts: Path) -> dict:
+    """Explicit native_node/CLI build; never substitute it for a W1 target."""
+    import run_authenticated_outbox_native_v1 as outbox
+    result = {'schema': 'trnm-ci-authenticated-outbox-build-preparation-v1',
+              'source_before': None, 'source_after': None, 'process': None,
+              'test_binary_sha256': None, 'cli_binary_sha256': None,
+              'failure_type': None, 'source_error': None, 'completed': False,
+              'native_tests_executed': False, 'service_resource_observation': False,
+              'consensus_or_model_authority': False}
+    try:
+        result['source_before'] = outbox.source_identity()
+        outbox.expected_source(result['source_before']['commit'])
+        outbox.require_original_build_environment()
+        result['process'] = native.run_child(
+            outbox.native_build_command(), receipts / 'prepare-build', 900)
+        require(result['process']['exit_code'] == 0
+                and result['process']['timed_out'] is False,
+                'AUTHENTICATED_OUTBOX_PREPARATION_FAILED')
+        test, cli = outbox.select_binaries(
+            (receipts / 'prepare-build/stdout').read_text().splitlines())
+        result['test_binary_path'] = str(test)
+        result['cli_binary_path'] = str(cli)
+        result['test_binary_sha256'] = native.digest(test.read_bytes())
+        result['cli_binary_sha256'] = native.digest(cli.read_bytes())
+    except BaseException as error:
+        result['failure_type'] = type(error).__name__
+        raise
+    finally:
+        try:
+            result['source_after'] = outbox.source_identity()
+        except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
+            result['source_error'] = type(error).__name__
+        result['completed'] = (result['failure_type'] is None
+                               and result['source_error'] is None
+                               and result['test_binary_sha256'] is not None
+                               and result['cli_binary_sha256'] is not None
+                               and result['source_before'] == result['source_after'])
+        write_new(receipts / 'prepare-build.json', result)
+    require(result['completed'], 'AUTHENTICATED_OUTBOX_PREPARATION_SOURCE_CHANGED')
+    return result
+
+
+def bind_prepared_authenticated_outbox_execution(prepared: dict, output: Path) -> dict:
+    """Bind the separately selected native_node test AND its actual CLI ELF."""
+    import run_authenticated_outbox_native_v1 as outbox
+    require(prepared.get('schema') == 'trnm-ci-authenticated-outbox-build-preparation-v1'
+            and prepared.get('completed') is True,
+            'AUTHENTICATED_OUTBOX_PREPARATION_INCOMPLETE')
+    path = output / 'manifest.json'
+    require(path.is_file() and not path.is_symlink(),
+            'AUTHENTICATED_OUTBOX_MANIFEST_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(native.REPORT_LIMIT + 1)
+    require(len(raw) <= native.REPORT_LIMIT, 'AUTHENTICATED_OUTBOX_MANIFEST_BOUND')
+    result = native.json_load(raw)
+    require(result.get('schema') == 'trnm-authenticated-outbox-native-execution-v1',
+            'AUTHENTICATED_OUTBOX_MANIFEST_SCHEMA')
+    require(prepared['source_before'] == prepared['source_after']
+            == result.get('source_before') == result.get('source_after'),
+            'AUTHENTICATED_OUTBOX_SOURCE_MISMATCH')
+    require(result.get('source_expected')
+            == outbox.expected_source(prepared['source_before']['commit']),
+            'AUTHENTICATED_OUTBOX_EXPECTED_SOURCE_MISMATCH')
+    for label in ('test', 'cli'):
+        require(prepared.get(label + '_binary_path') == result.get(label + '_binary_path')
+                and prepared[label + '_binary_sha256']
+                == result.get(label + '_binary_sha256_before')
+                == result.get(label + '_binary_sha256_after'),
+                'AUTHENTICATED_OUTBOX_' + label.upper() + '_ELF_MISMATCH')
+    require(result.get('passed') is True and result.get('failures') == []
+            and result.get('source_recompiled') is True
+            and result.get('execution_finished') is True
+            and result.get('all_named_tests_passed') is True
+            and all(result.get(key) is False for key in (
+                'production_activation', 'public_network_ready', 'physical_power_loss_accepted')),
+            'AUTHENTICATED_OUTBOX_NATIVE_ACCEPTANCE_REQUIRED')
+    process = result.get('process')
+    require(type(process) is dict and type(process.get('command')) is list
+            and process['command'][:1] == [result['test_binary_path']]
+            and process.get('expected_source') == result['source_expected'],
+            'AUTHENTICATED_OUTBOX_EXACT_PROCESS_BINDING')
+    require(result.get('native_log_sha256')
+            == native.digest((output / 'native.log').read_bytes()),
+            'AUTHENTICATED_OUTBOX_NATIVE_LOG_MISMATCH')
+    verified = outbox.validate_execution(process, output / 'native.log')
+    require(verified.get('named_execution') == result.get('named_execution')
+            and verified.get('host_fixture') == result.get('host_fixture'),
+            'AUTHENTICATED_OUTBOX_NATIVE_BINDING')
+    before, after = result.get('host_before'), result.get('host_after')
+    require(type(before) is dict and type(after) is dict,
+            'AUTHENTICATED_OUTBOX_HOST_OBSERVATIONS_REQUIRED')
+    for sample in (before, after):
+        require(not validate(sample, inside=True, uid=os.getuid(), gid=os.getgid(),
+                             cwd=str(ROOT), reference=before),
+                'AUTHENTICATED_OUTBOX_HOST_CONTEXT_MISMATCH')
+    require(verified['host_fixture']['perpid_cgroups'][0]['cgroup'] == before['thread_cgroup'],
+            'AUTHENTICATED_OUTBOX_FIXTURE_HOST_MISMATCH')
+    for label in ('test', 'cli'):
+        binary = output / (label + '.elf')
+        require(binary.is_file() and not binary.is_symlink()
+                and native.digest(binary.read_bytes()) == prepared[label + '_binary_sha256'],
+                'AUTHENTICATED_OUTBOX_RETAINED_' + label.upper() + '_ELF_MISMATCH')
+    return {'schema': 'trnm-ci-authenticated-outbox-build-execution-binding-v1',
+            'manifest_sha256': native.digest(raw),
+            'source_commit': prepared['source_before']['commit'],
+            'test_binary_sha256': prepared['test_binary_sha256'],
+            'cli_binary_sha256': prepared['cli_binary_sha256'],
+            'runtime_limits_or_deadlines_changed': False}
+
+
 def inside(receipts: Path, service: str, uid: int, gid: int, command: list[str]) -> int:
     validate_command(command)
     before = capture('inside-before-native', service)
     errors = validate(before, inside=True, uid=uid, gid=gid, cwd=str(ROOT))
     write_new(receipts / 'inside-before.json', before)
-    result = {'schema': 'trnm-ci-original-public-host-child-v1', 'command_argv': command,
+    result = {'schema': ('trnm-ci-authenticated-outbox-host-child-v1'
+                         if command[1] == 'scripts/ci/run_authenticated_outbox_native_v1.py'
+                         else 'trnm-ci-original-public-host-child-v1'), 'command_argv': command,
               'native_child_exit': None, 'host_errors': errors,
               'host_readiness_only': True, 'consensus_or_model_authority': False}
     try:
@@ -216,7 +380,9 @@ def outer(command: list[str]) -> int:
     service = f'trnm-from-zero-{run}-{attempt}-{job}-{os.getpid()}.service'
     receipts = output.with_name(output.name + '-host')
     receipts.mkdir(parents=True, exist_ok=False)
-    result = {'schema': 'trnm-ci-original-public-host-controller-v2',
+    result = {'schema': ('trnm-ci-authenticated-outbox-host-controller-v1'
+                         if command[1] == 'scripts/ci/run_authenticated_outbox_native_v1.py'
+                         else 'trnm-ci-original-public-host-controller-v2'),
               'service': service, 'command_argv': command, 'uid': uid, 'gid': gid,
               'cwd': str(ROOT), 'systemd_run_exit': None, 'failure': None,
               'cleanup': None, 'passed': False, 'host_readiness_only': True,
@@ -254,7 +420,10 @@ def outer(command: list[str]) -> int:
         # Compilation is setup, not public service. Keep its entire cost and
         # failure outside the service denominator, in this same invocation.
         # The child retains the original build command and every native gate.
-        result['preparation'] = prepare_native_build(receipts)
+        result['preparation'] = (
+            prepare_authenticated_outbox_build(receipts)
+            if command[1] == 'scripts/ci/run_authenticated_outbox_native_v1.py'
+            else prepare_native_build(receipts))
         require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
                 and not PARENT.exists() and not PARENT.is_symlink(),
                 'PARENT_CHANGED_BEFORE_INSTALL')
@@ -292,7 +461,12 @@ def outer(command: list[str]) -> int:
                     'PROVISIONED_CHILD_CONTEXT_CHANGED:' + name)
         result['passed'] = result['systemd_run_exit'] == 0 and child['native_child_exit'] == 0
         if result['passed']:
-            result['preparation_execution_binding'] = bind_prepared_execution(
+            binder = (
+                bind_prepared_authenticated_outbox_execution
+                if command[1] == 'scripts/ci/run_authenticated_outbox_native_v1.py'
+                else bind_prepared_fresh_execution if command[1]
+                == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
+            result['preparation_execution_binding'] = binder(
                 result['preparation'], output)
     except HostSignal as error:
         result['failure'] = 'SIGNAL_' + str(error.number)

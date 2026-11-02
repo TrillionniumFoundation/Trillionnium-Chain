@@ -14,6 +14,28 @@ First moment. E[w_i*I_i | past] <= 1. Consequently E[L_tau] <= E[tau]
 for bounded stopping times tau. Splitting a fixed total query budget between
 identities changes neither bound. Excluding delegated work invalidates it.
 
+Rounding and cost conversion. This upper bound is not equality at every target.
+Write d=T+1 and eta(T)=d*floor(M/d)/M. If T<=P and k=floor(M/(P+1)),
+then k/(k+1)<eta(T)<=1: for w=floor(M/d), d>M/(w+1), so
+eta(T)>w/(w+1)>=k/(k+1). For the current P=M/2-1 this gives 2/3<eta<=1.
+At T=M/3 rounded down, w=2 and eta=2*(floor(M/3)+1)/M, approaching
+2/3 as bits increases. At T=M/2-1, eta=1. Distinct-target per-query
+credit therefore need not match even if the full legal attempt costs match.
+
+In a conditional constant-rate comparison, q denotes the attacker's share of
+one additive resource and s its complete legal attempt rate per resource unit
+relative to the honest rate. The ratio of expected credited-work rates is
+    q_eff = q*s*eta_A / (q*s*eta_A + (1-q)*eta_H).
+The equal-mean-work resource share is eta_H/(s*eta_A+eta_H). If s already
+means credited-work rate per resource, eta is absorbed and must NOT be applied
+twice. For any targets bounded by P, q<k/(k+(k+1)*s) is a sufficient
+condition for honest expected work to exceed attacker expected work in this
+model. It is neither necessary nor a common-prefix/finality theorem. Current
+DAA targets are branch-derived; this arithmetic does not show that an attacker
+can select or sustain either target, account for transitions/withholding, or
+measure s. The lower bound applies to fully legal attempts whose wins can be
+credited, not fabricated traces, delegated validation or unavailable blocks.
+
 Tail and anytime bound. Suppose a deterministic W >= 1 bounds every w_i and
 r>1. Convexity on [0,W] gives r**w-1 <= (w/W)*(r**W-1). Therefore
     E[r**(w_i*I_i) | past] <= 1 + (r**W-1)/W =: m.
@@ -47,6 +69,46 @@ def parameters(target: int, bits: int = 256) -> tuple[int, int]:
 def expected_first_query_credit(target: int, bits: int = 256) -> Fraction:
     modulus, work = parameters(target, bits)
     return Fraction((target + 1) * work, modulus)
+
+
+def strict_credit_lower_bound(pow_limit: int, bits: int = 256) -> Fraction:
+    """Strict lower bound for eta over 1<=T<=pow_limit, not attained generally."""
+    _, minimum_weight = parameters(pow_limit, bits)
+    return Fraction(minimum_weight, minimum_weight + 1)
+
+
+def _rate(value: Fraction, name: str, *, share: bool = False) -> Fraction:
+    if not isinstance(value, Fraction) or (not 0 <= value <= 1 if share else value <= 0):
+        raise ValueError(name)
+    return value
+
+
+def conditional_mean_work_share(resource_share: Fraction, attempt_rate_advantage: Fraction,
+                                attacker_target: int, honest_target: int,
+                                bits: int = 256) -> Fraction:
+    """Ratio of mean credited-work rates; no chain-race success probability."""
+    q = _rate(resource_share, "RESOURCE_SHARE", share=True)
+    s = _rate(attempt_rate_advantage, "ATTEMPT_RATE_ADVANTAGE")
+    attack = q * s * expected_first_query_credit(attacker_target, bits)
+    honest = (1 - q) * expected_first_query_credit(honest_target, bits)
+    return attack / (attack + honest)
+
+
+def equal_mean_work_share(attempt_rate_advantage: Fraction, attacker_target: int,
+                          honest_target: int, bits: int = 256) -> Fraction:
+    """Resource share at equal expected work rates under the stated cost model."""
+    s = _rate(attempt_rate_advantage, "ATTEMPT_RATE_ADVANTAGE")
+    attack = s * expected_first_query_credit(attacker_target, bits)
+    honest = expected_first_query_credit(honest_target, bits)
+    return honest / (attack + honest)
+
+
+def sufficient_mean_work_share(attempt_rate_advantage: Fraction, pow_limit: int,
+                               bits: int = 256) -> Fraction:
+    """Any smaller q gives honest mean-work dominance; not protocol security."""
+    s = _rate(attempt_rate_advantage, "ATTEMPT_RATE_ADVANTAGE")
+    honest_lower = strict_credit_lower_bound(pow_limit, bits)
+    return honest_lower / (s + honest_lower)
 
 
 def union_bound(target: int, own_queries: int, delegated_queries: int = 0,

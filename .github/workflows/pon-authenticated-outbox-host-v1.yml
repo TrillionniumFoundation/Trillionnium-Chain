@@ -1,0 +1,100 @@
+name: PoN authenticated outbox original Host
+on:
+  pull_request:
+    paths:
+      - trillionnium/**
+      - scripts/ci/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
+      - .github/workflows/pon-authenticated-outbox-host-v1.yml
+permissions:
+  contents: read
+concurrency:
+  group: pon-authenticated-outbox-host-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  CI: "true"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  original-host:
+    name: Authenticated outbox original Host (x64, ${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact observed source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve observations and verify ordered source
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/authenticated-outbox-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-authenticated-outbox\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-authenticated-outbox\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+      - name: Install exact original compiler
+        id: toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+      - name: Execute source, ELF and missing Host refusal controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_from_zero_host_ci.py 2>&1 | tee "$OUT/host-controls.log"
+          python3 scripts/ci/test_run_authenticated_outbox_native_v1.py 2>&1 | tee "$OUT/outbox-runner-controls.log"
+      - name: Execute actual unprovisioned Host refusal before provisioning
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /sys/fs/cgroup/trnmponpublic.slice
+          test ! -L /sys/fs/cgroup/trnmponpublic.slice
+          selector=test_authenticated_cli_sync_without_host_refuses_without_changing_durable_outbox
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node "$selector" -- --exact --show-output 2>&1 | tee "$OUT/unprovisioned-native.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/unprovisioned-native.log" --test "$selector"
+      - name: Execute original positive under one fixed Host on this fresh VM
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_authenticated_outbox_native_v1.py --out "$OUT/qualified-native"
+      - name: Verify observed source after execution
+        if: always() && steps.source.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+      - name: Retain all original Host observations and native outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: authenticated-outbox-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/authenticated-outbox-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

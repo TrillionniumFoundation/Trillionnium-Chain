@@ -1,0 +1,34 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/41dfa6d31b4e/pon-security/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 40s
+     Running unittests src/lib.rs (/tmp/trnm-pon-security-target/debug/deps/trnm_crypto_primitives-99102bf85b5fd691)
+
+running 7 tests
+test pon_work::rejection_cache::tests::contended_cache_retains_caller_cancellation_and_cheap_errors ... ok
+test pon_work::rejection_cache::tests::contended_lookup_and_publication_keep_complete_native_replay ... ok
+test pon_work::rejection_cache::tests::false_transcript_replay_is_skipped_but_real_proof_still_passes ... ok
+test pon_work::rejection_cache::tests::four_distinct_from_zero_false_traces_each_owe_first_full_replay ... ok
+test pon_work::rejection_cache::tests::local_cancellation_cannot_use_a_cached_fact_as_a_verdict ... ok
+test pon_work::rejection_cache::tests::malformed_width_has_no_cache_key_and_retains_native_length_precedence ... ok
+test pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation ... ok
+
+successes:
+
+---- pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation stdout ----
+
+thread '<unnamed>' (457) panicked at crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs:290:21:
+intentional rejection-cache poison control
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+successes:
+    pon_work::rejection_cache::tests::contended_cache_retains_caller_cancellation_and_cheap_errors
+    pon_work::rejection_cache::tests::contended_lookup_and_publication_keep_complete_native_replay
+    pon_work::rejection_cache::tests::false_transcript_replay_is_skipped_but_real_proof_still_passes
+    pon_work::rejection_cache::tests::four_distinct_from_zero_false_traces_each_owe_first_full_replay
+    pon_work::rejection_cache::tests::local_cancellation_cannot_use_a_cached_fact_as_a_verdict
+    pon_work::rejection_cache::tests::malformed_width_has_no_cache_key_and_retains_native_length_precedence
+    pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 112 filtered out; finished in 0.03s
+
