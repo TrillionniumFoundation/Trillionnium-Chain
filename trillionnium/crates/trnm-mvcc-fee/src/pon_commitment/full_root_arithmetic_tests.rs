@@ -328,8 +328,12 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
                 let run = |parent: &CheckedExecutionParent<'_>| {
                     let trace = Mutex::new(Vec::new());
                     let result = parent.execute_with_progress(request(), &cfg, &|point| {
+                        // Parallel callbacks must not contend with the probe's own
+                        // temporary arithmetic guard. Production lock retention
+                        // still makes the unchanged try_lock assertion fail.
+                        let mut trace = trace.lock().unwrap();
                         assert!(arithmetic.0.try_lock().is_ok());
-                        trace.lock().unwrap().push(point);
+                        trace.push(point);
                         if point == stop {
                             Err("cancel-original-checkpoint")
                         } else {
@@ -348,4 +352,131 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
         }
     }
     assert_eq!(pon_executor::root(&state).unwrap(), root);
+}
+
+#[test]
+fn arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback() {
+    // Small semantic fixture with a legal forced fallback, not an 8 MiB or
+    // CPU-budget experiment. The original None API is the full-root oracle.
+    let (state, cfg, raws) = tests::preview_fixture();
+    let parent_root = pon_executor::root(&state).unwrap();
+    let limits = CacheLimits {
+        max_payload_bytes: 0,
+        ..CacheLimits::default()
+    };
+    let arithmetic = FullRootArithmetic::default();
+    let make_prefix = |with_arithmetic| {
+        let (parent, observation) = if with_arithmetic {
+            CheckedExecutionParent::check_and_bind_with_arithmetic(
+                &state,
+                parent_root,
+                None,
+                limits,
+                &arithmetic,
+            )
+        } else {
+            CheckedExecutionParent::check_and_bind(&state, parent_root, None, limits)
+        }
+        .unwrap();
+        assert_eq!(
+            observation.method,
+            CommitmentMethod::FullRoot(FullRootReason::PayloadBudget)
+        );
+        let progress = |_| Ok::<(), &'static str>(());
+        parent
+            .into_prefix_with_control(
+                pon_executor::PrefixContext {
+                    timestamp: None,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                },
+                &cfg,
+                &pon_executor::ExecutionControl::new(&progress, &()),
+            )
+            .unwrap()
+    };
+    let mut actual = make_prefix(true);
+    let mut reference = make_prefix(false);
+    let append = |prefix: &mut CheckedTransactionPrefix<'_>,
+                  transactions: &[Vec<u8>],
+                  stop: Option<ExecutionProgress>| {
+        let trace = Mutex::new(Vec::new());
+        let progress = |point| {
+            assert!(arithmetic.0.try_lock().is_ok());
+            trace.lock().unwrap().push(point);
+            if Some(point) == stop {
+                Err("cancel-prefix-after-original-root")
+            } else {
+                Ok(())
+            }
+        };
+        let result = prefix.execute_with_control(
+            transactions,
+            &pon_executor::ExecutionControl::new(&progress, &()),
+        );
+        (result, trace.into_inner().unwrap())
+    };
+    let compare = |actual: &StagedOutput, reference: &StagedOutput| {
+        assert_eq!(actual.output.state, reference.output.state);
+        assert_eq!(actual.output.root, reference.output.root);
+        assert_eq!(actual.output.receipts, reference.output.receipts);
+        equal(&actual.commitment, &reference.commitment);
+        assert!(actual.commitment.snapshot.is_none());
+        assert_eq!(
+            actual.commitment.observation.method,
+            CommitmentMethod::FullRoot(FullRootReason::PayloadBudget)
+        );
+        assert_eq!(
+            actual.output.root,
+            pon_executor::root(&actual.output.state).unwrap()
+        );
+        assert_eq!(actual.output.metrics.signature_verifications, 1);
+        assert_eq!(actual.output.metrics.committed_without_replay, 1);
+    };
+
+    let (first, first_trace) = append(&mut actual, &raws[..1], None);
+    let (first_reference, reference_trace) = append(&mut reference, &raws[..1], None);
+    let first = first.unwrap();
+    compare(&first, &first_reference.unwrap());
+    assert_eq!(first_trace, reference_trace);
+    assert_eq!(actual.len(), 1);
+    assert_eq!(reference.len(), 1);
+    // This also catches accidentally dropping arithmetic from the prefix
+    // wrapper: the parent had fewer keys than this real successor.
+    assert!(first.output.state.len() > state.len());
+    assert_eq!(
+        arithmetic.0.lock().unwrap().observation().input_keys,
+        first.output.state.len()
+    );
+
+    // Abort the second append AFTER its actual root calculation has warmed
+    // the mathematical cache. Neither prefix may publish that scratch state.
+    let cut = ExecutionProgress::AfterCommitment;
+    let (cancelled, cancelled_trace) = append(&mut actual, &raws[..2], Some(cut));
+    let (cancelled_reference, reference_trace) = append(&mut reference, &raws[..2], Some(cut));
+    assert_eq!(
+        cancelled.err(),
+        Some(ExecutionError::Cancelled(
+            "cancel-prefix-after-original-root"
+        ))
+    );
+    assert_eq!(
+        cancelled_reference.err(),
+        Some(ExecutionError::Cancelled(
+            "cancel-prefix-after-original-root"
+        ))
+    );
+    assert_eq!(cancelled_trace, reference_trace);
+    assert_eq!(cancelled_trace.last(), Some(&cut));
+    assert_eq!(actual.len(), 1);
+    assert_eq!(reference.len(), 1);
+
+    let (second, second_trace) = append(&mut actual, &raws[..2], None);
+    let (second_reference, reference_trace) = append(&mut reference, &raws[..2], None);
+    compare(&second.unwrap(), &second_reference.unwrap());
+    assert_eq!(second_trace, reference_trace);
+    assert_eq!(actual.len(), 2);
+    assert_eq!(reference.len(), 2);
+    assert_eq!(pon_executor::root(&state).unwrap(), parent_root);
 }

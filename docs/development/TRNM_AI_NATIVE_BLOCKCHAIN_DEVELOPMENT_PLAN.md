@@ -4465,3 +4465,126 @@ next-task execution, admissibility and measured learning benefit are separate.
 Legal no-update remains valid. No local reservation becomes external funding,
 no synthetic or single-administrator run becomes independent WAN acceptance,
 and no deployment or PQ activation is authorized by this continuation.
+### Exact branch-encoding guard follow-up
+
+At `3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129`, all four branch-encoding
+lanes in run `41330488644` stopped at the old `pon_wire.rs` blob guard before
+executing the wire suite. The same step also retained the older 17-pass count.
+The reviewed new Header binding regression changes that blob from
+`6b0e3687c7c1348dec11fd5fff91b7eda884d561` to
+`46bb09a69d68318580e2856116267376489aaf78`; actual wire execution at that
+source produces 18 passed and the same one intentionally ignored observation.
+This follow-up binds the new exact blob and count and separately requires the
+new named Header test through the existing exact-execution reader. It refreshes
+the corpus pin for that workflow. Every Rust source, Cargo input, legal-cost
+runner/reader and resource/deadline predicate remains byte-identical to `3bbc`.
+
+The original four CI failures remain failures. The separate finality ARM-head
+attempt stopped at a rustup Clippy component installation conflict, and the
+original native three-run campaign executed but failed its original criteria.
+Neither is reclassified by this workflow repair. The `3bbc` four original-budget
+fresh-service scenarios likewise still fail independent six-depth confirmation
+under pressure despite seven receiver ACKs each. Cost, callback and source
+checks do not supersede those failures, and no new-source execution is inferred
+from a byte-equivalent native subset.
+
+### Nonblocking rejection reuse and Host allocation continuation
+
+Continue exact PR #675 head `9cd91ed69a0c69df42f8d7812d32d271df6e1998`,
+tree `60a521c7299febfe26a8c7d38d3420d490d07cd8`. The optional W1 rejection
+cache previously used blocking mutex acquisition before the next cancellation
+callback and after a completed replay. Lookup/publication now use `try_lock`;
+contention and poison retain the original complete verifier or skip optional
+publication. New held-lock controls compare exact native results and callback
+streams for warm/cold false traces, false products, valid work and cancellation.
+An intentional poisoned-lock control retains complete native verification.
+
+The kernel-parent checker removes temporary CPU-token and membership-prefix
+allocations, keeping every original current-file read, grammar, refusal and
+resource check. Token-edge Unicode trimming remains legal under the original
+numeric parser; embedded Unicode separators remain refused. The existing
+cross-branch corpus records the actual changed Host source blob. No namespace,
+work relation, chainwork, target, accepted proof, budget or deadline changes.
+
+These bounded scheduling changes require their own exact-source execution.
+The full-work cost lower bound, fresh-identity service, original four-second
+independent confirmation, quantum costs, model utility and production gates
+remain unqualified. Prior failed business and expensive-refusal observations
+are retained; local module tests cannot replace the original hosted campaigns.
+### 2026-11-01 native PQ admission, policy renewal and external witness continuation
+
+Continue the existing PN0–PN6 work from Chain #678 at
+`5606a97104f9cd3243befc2921ccace3fae2c369`. The
+[security continuation record](../security/PQ_SYSTEM_CONTINUATION_20261101.md)
+binds the native live-admission correction, explicit three-table PNQ2 witness
+namespace and Hepta #4558 policy-bound renewal to their separate evidence. The
+[command records](../../evidence/pon-pq-system-continuation-20261101/README.md)
+must identify actual source, original compiler/lockfiles, real positive effects,
+negative cases and recovery. Reconstructed unpublished source is re-executed;
+lost historical test records do not qualify it.
+
+PN0 and all six whole-chain PQ gates remain HOLD. The witness does not cover all
+Node or Hepta state, is not deployed WAN trust and does not complete uncertain
+commit recovery. Ordinary Cell/FinalUse composition, versioned PQ RunStart and
+ObjectiveStart, migration of historic ownership/liabilities, proof security,
+quantum W1/DAA/fork choice, original capacity and independent sustained joint
+acceptance remain required. Existing budgets and activation authority are
+unchanged. This is an entry in the sole plan, not a new release lane.
+
+The continuation also composes #678's later `64cb26b5` full-root arithmetic
+changes without dropping either constructor field or original workspace CPU
+controls. The initial `ed31b019` local build was terminated by SIGKILL; its
+unchanged source, raw failure and zero native executions are retained. The
+combined current source requires new native evidence. Hepta's checkpoint
+serialization follow-up keeps actual stale-witness rejection and healthy
+recovery under the existing owner lock. These changes do not close PN0–PN6.
+
+The first combined native run executed all 37 meaningful controls: 36 passed,
+with the slow-drip write retaining a real absolute-deadline failure. Replace
+that blocking call with per-call nonblocking I/O; preserve the original 40 ms,
+8 MiB and 500 ms control. The existing Rustix package gains only Node-local
+net functionality, with locked versions and original profiles/budgets intact.
+Synchronize the exact public-readiness V4 source contract, retain legacy-only
+evidence semantics, and serialize the M06 test's own concurrent lock probes.
+Record fresh source/feature identities and native outcomes; PN0–PN6 stay HOLD.
+
+
+## 2026-11-01 PN blocker continuation: combined candidate
+
+This continuation retains actual published source ancestry from PN convergence
+`41742ba49ed25add9a136cff25b03d5fb4cea869`, work security
+`93a70b7939413ac31717b1198a4569ec5248274f`, original-budget system service
+`456d23a778d91b6f3cfee60ee997f8f51d3216bc`, and durable PQ witness
+`0959b694539b2e6427c6bfc2422b45c23b63cde4`. The combined source is a new
+candidate and does not inherit those branches' runtime acceptance. Both forms
+of the allocation-free Host parsing are retained without removing current reads.
+
+The producer now computes every original W1 transcript and progress checkpoint
+before deciding whether to serialize a proof. Complete target misses are still
+paid attempts. The old proof-retaining APIs and V1/V2 cost campaigns retain their
+original behavior. The separate fixed 64-pair development observation reduced
+proof payload serialization but did not establish total acceleration: setup plus
+attempt wall time was 421.240079 ms versus 423.507656 ms. Its source-byte window
+and original negative result are retained separately; it is not a cheapest-work,
+CPU, quantum, public-service or this final combined-source result.
+
+Authenticated History may reuse at most four owner-nominated, fully verified
+suffixes inside the same unchanged original WRITE transaction. A repeat still
+loads and verifies the actual anchor and crosses a real cancellation checkpoint.
+Callback writes, unknown writes, schema changes and transaction ABA retain their
+existing refusal or complete-recheck behavior. Nine new native controls accompany
+this path and the fifteen original graph-readback controls remain unchanged.
+The first traversal still reaches genesis: this does not close the long-term
+O(H) hot-scan condition or add a persistent checkpoint trust root.
+
+The original 35-second complete-release acquisition, cache-only materialization
+and final readback are extracted into a shared callable path for the real eleven-
+object owner handoff. Retrieval does not grant installation, CURRENT selection,
+FinalUse, learning benefit, funding or production authority. The separate Hepta
+composition must bind its own exact native source/configuration and host.
+
+Original CPU/deadline/confirmation limits, failure denominators, raw source and
+ELF evidence, legal no-update, all PN0-PN6 HOLD/NOT RUN boundaries and the disabled
+activation state remain. Three independently controlled administrators, 72 hours
+of physical WAN operation, real funds/effects and governed migration cannot be
+replaced by component tests or source-reader controls.

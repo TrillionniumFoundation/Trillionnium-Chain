@@ -46,14 +46,20 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
     Ok(Some(rows.collect::<rusqlite::Result<_>>()?))
 }
 
-/// At most four named graph results inside one ordinary authenticated admission
-/// transaction: child, genesis, that verified child's parent and the actual
-/// active tip nominated by the existing Node reader. Nomination is not proof.
+/// At most four named graph and history results inside one ordinary
+/// authenticated admission or reorganization WRITE transaction: child, genesis,
+/// that verified child's parent and the actual active tip nominated by the
+/// existing Node reader.
+/// Nomination is not proof.
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
-/// authority. Every use still loads current SQL State/records/deltas and runs
-/// the ORIGINAL complete(settings, current State) comparison before this graph
-/// result can match. Its Record binds the full State commitment, not just an
-/// account root. Writes disable reuse for the remainder of this local scope.
+/// authority. Every graph use still loads current SQL State/records/deltas and
+/// runs the ORIGINAL complete(settings, current State) comparison. History
+/// suffixes become reusable only after the complete original path to genesis
+/// and its full State/graph check succeed in this same unchanged writer. The
+/// next use rereads and verifies its actual anchor Record/deltas before matching.
+/// Its Record binds the full State commitment, not just an account root. Writes
+/// disable both kinds of reuse for the remainder of this local scope. The first
+/// history traversal still costs O(H); no cross-transaction prefix is retained.
 pub(in crate::store) struct PostWriteReadback<'db> {
     db: &'db Connection,
     scope: TransactionScope<'db>,
@@ -61,14 +67,19 @@ pub(in crate::store) struct PostWriteReadback<'db> {
     schema: ReadbackSchema,
     ids: [Option<Hash>; 4],
     graphs: [Option<Record>; 4],
+    histories: [Option<Record>; 4],
     enabled: bool,
     pub(super) consumed: bool,
     #[cfg(test)]
     pub(super) hits: usize,
+    #[cfg(test)]
+    pub(super) history_hits: usize,
+    #[cfg(test)]
+    history_match_epoch_checks: usize,
 }
 
 impl<'db> PostWriteReadback<'db> {
-    pub(super) fn new(
+    pub(in crate::store) fn new(
         db: &'db Connection,
         settings: &Settings,
         child: Hash,
@@ -121,10 +132,15 @@ impl<'db> PostWriteReadback<'db> {
             schema,
             ids: [Some(child), Some(settings.genesis()), None, None],
             graphs: [None, None, None, None],
+            histories: [None, None, None, None],
             enabled: true,
             consumed: false,
             #[cfg(test)]
             hits: 0,
+            #[cfg(test)]
+            history_hits: 0,
+            #[cfg(test)]
+            history_match_epoch_checks: 0,
         }))
     }
 
@@ -139,7 +155,8 @@ impl<'db> PostWriteReadback<'db> {
         if !same || self.enabled && readback_schema(db)?.as_ref() != Some(&self.schema) {
             self.enabled = false;
             self.graphs = [None, None, None, None];
-            // A previous caller has already consumed a successful graph hit.
+            self.histories = [None, None, None, None];
+            // A previous caller already consumed a successful graph/history hit.
             // Merely disabling FUTURE hits cannot validate its result after a
             // later outer callback writes. The owning transaction must refuse.
             if self.consumed {
@@ -151,6 +168,17 @@ impl<'db> PostWriteReadback<'db> {
 
     pub(in crate::store) fn validate_consumed(&mut self, db: &Connection) -> Result<()> {
         self.current(db).map(|_| ())
+    }
+
+    /// A reorganization tail has no legitimate writes left. Unlike admission's
+    /// consumed-hit fence, any disabled epoch refuses this tail, including a
+    /// callback write before the first hit. Never clear or re-stamp this scope.
+    pub(in crate::store) fn require_unchanged_after_last_write(
+        &mut self,
+        db: &Connection,
+    ) -> Result<()> {
+        crate::ensure(self.current(db)?, "NATIVE_POST_WRITE_CHANGED")
+            .map_err(Error::local_integrity)
     }
 
     /// Only the original Node active reader supplies this already-read tip.
@@ -204,6 +232,97 @@ impl<'db> PostWriteReadback<'db> {
         Ok(())
     }
 
+    /// Candidate anchors are bounded nominations, not successful history facts.
+    /// The caller can publish them only after the COMPLETE original traversal
+    /// reaches a verified genesis or an already verified suffix in this scope.
+    pub(super) fn nominate_history_candidate(
+        &self,
+        record: &Record,
+        candidates: &mut [Option<Record>; 4],
+    ) {
+        for (id, candidate) in self.ids.iter().zip(candidates) {
+            if *id == Some(record.block) {
+                *candidate = Some(record.clone());
+            }
+        }
+    }
+
+    pub(super) fn history_matches(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        record: &Record,
+    ) -> Result<bool> {
+        if self.context
+            != [
+                settings.network(),
+                settings.parameters(),
+                settings.genesis(),
+            ]
+        {
+            return Ok(false);
+        }
+        let matches = self
+            .ids
+            .iter()
+            .position(|id| *id == Some(record.block))
+            .is_some_and(|index| self.histories[index].as_ref() == Some(record));
+        // A miss supplies no fact: avoid a schema query at every record of the
+        // mandatory first O(H) scan. A possible hit still checks the actual
+        // writer/SQL/schema epoch before it can omit any original traversal.
+        if matches {
+            #[cfg(test)]
+            {
+                // Counts only this actual current() call. Final publication,
+                // graph and owner fences remain separate; this is not total SQL.
+                self.history_match_epoch_checks += 1;
+            }
+            self.current(db)
+        } else {
+            Ok(false)
+        }
+    }
+
+    /// Recheck AFTER the hit's last actual caller checkpoint, then mark that a
+    /// result depended on the stable suffix. Any later write must refuse the
+    /// enclosing transaction through its existing consumed-result fence.
+    pub(super) fn consume_history(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        record: &Record,
+    ) -> Result<bool> {
+        if !self.history_matches(db, settings, record)? {
+            return Ok(false);
+        }
+        self.consumed = true;
+        #[cfg(test)]
+        {
+            self.history_hits += 1;
+        }
+        Ok(true)
+    }
+
+    pub(super) fn remember_histories(
+        &mut self,
+        db: &Connection,
+        candidates: [Option<Record>; 4],
+    ) -> Result<()> {
+        // This follows the original successful final genesis check or the
+        // suffix hit's last checkpoint. No partial/error/cancelled traversal can
+        // supply a result, and a callback write cannot re-stamp the epoch.
+        if self.current(db)? {
+            for ((id, retained), candidate) in
+                self.ids.iter().zip(&mut self.histories).zip(candidates)
+            {
+                if let Some(record) = candidate.filter(|record| *id == Some(record.block)) {
+                    *retained = Some(record);
+                }
+            }
+        }
+        Ok(())
+    }
+
     pub(super) fn finish<T>(&self, result: Result<T>) -> Result<T> {
         // Even a native cancellation/error cannot hide a replaced transaction.
         match self.scope.same_write_snapshot(self.db) {
@@ -222,5 +341,7 @@ pub(in crate::store) fn readback_scope_error(
     Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", error)
 }
 
+#[cfg(test)]
+mod history_readback_tests;
 #[cfg(test)]
 mod tests;

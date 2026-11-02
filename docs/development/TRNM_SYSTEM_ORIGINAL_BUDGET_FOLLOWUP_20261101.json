@@ -1,0 +1,1829 @@
+{
+  "schema": "trnm-system-original-budget-followup-v1",
+  "observed_at": "2026-11-01T18:27:12.639871+00:00",
+  "acceptance": "HOLD",
+  "scope": "Source-bound observations; no full-chain TPS, complete PQ, original-business or later-commit acceptance",
+  "observations": {
+    "original_test_profile_cpu": {
+      "schema": "trnm-original-test-profile-attempt2-readback-v1",
+      "run_id": 41332424883,
+      "run_attempt": 2,
+      "job_id": 124930286370,
+      "artifact_id": 13094428721,
+      "artifact_zip": "original-profile-x64-head.zip",
+      "archive_bytes": 86992,
+      "archive_sha256": "8032f55d06b6f789caa35f1ad0307664814040d27c765cf456c13a80c5f3fe1a",
+      "archive_members": 49,
+      "readback_time_utc": "2026-11-01T18:12:51.713089+00:00",
+      "source": {
+        "base": null,
+        "candidate": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781110220,
+        "tracked_entries": 6777,
+        "tracked_worktree_verified": true
+      },
+      "evidence_consistency": "VERIFIED",
+      "checks": {
+        "archive_size_digest_crc": true,
+        "source_before_after_identical": true,
+        "exact_head_tree": true,
+        "source_worktree_verified": true,
+        "full_workspace_all_targets_all_features_command": true,
+        "build_exit_zero": true,
+        "actual_cargo_finished_success": true,
+        "binary_record_in_actual_cargo_messages": true,
+        "all_retained_profile_records_in_actual_cargo_messages": true,
+        "node3_m061_debug_overflow_profiles": true,
+        "build_contract_checks_exit_zero": true,
+        "binary_before_after_exit_zero": true,
+        "binary_hashes_paths_equal": true,
+        "binary_before_after_runner_readback_ok": true,
+        "provider_prepare_smoke_record_pass": true,
+        "provider_matches_build_environment": true,
+        "provider_actual_positive_and_negative_log": true,
+        "all_four_execution_receipts_consistent": true,
+        "aggregate_test_step_preserves_failure": true
+      },
+      "native_acceptance": "FAIL",
+      "build": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "build_exit": 0,
+        "actual_compiler_artifact_records": 520,
+        "actual_workspace_packages": 26,
+        "node_profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "node_features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "m06_profiles": [
+          {
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": false
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "executable": null
+          },
+          {
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "executable": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_mvcc_fee-2afc0265afb18a0d"
+          }
+        ],
+        "serde_json": [
+          {
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+            "profile": {
+              "opt_level": "0",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": false
+            },
+            "features": [
+              "arbitrary_precision",
+              "default",
+              "std"
+            ]
+          }
+        ],
+        "elf_sha256_from_equal_before_after_receipts": "9efe8d51fe01c4ea5d87b8efd90ab3eb612113d13cc448e85b4d4a222eb5a583",
+        "elf_path": "/home/runner/work/_temp/target-original-workspace-test-cpu/debug/deps/trnm_pon_node-9c3372ac58be3827",
+        "elf_body_in_archive": false,
+        "whole_workspace_tests_executed": false
+      },
+      "provider": {
+        "version": "3.5.9",
+        "cli_sha256": "6c6eec07e71de3252ba882a4ecfbd514d43abdd6846489e3da5461e0910be035",
+        "source_digest_verified": true,
+        "actual_positive_and_negative_smoke_log_seen": true,
+        "result": "PREPARED_AND_SMOKE_VERIFIED",
+        "native_rust_pq_tests_run_by_preparation": false,
+        "upstream_full_tests_run": false,
+        "whole_chain_quantum_security_qualified": false
+      },
+      "executions": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "native_exit": 101,
+          "tee_exit": 0,
+          "reader_exit": 1,
+          "native_result_lines": [
+            "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 864 filtered out; finished in 13.82s"
+          ],
+          "reader_json": null,
+          "reader_json_bytes": 0,
+          "reader_stderr": "required-native-test: expected one passed, zero failed/ignored/measured\n",
+          "record_consistency_verified": true,
+          "native_outcome": "FAIL_CPU_BUDGET",
+          "authenticated_backend": false,
+          "complete_state_bytes": 8625548,
+          "cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2656801488,
+            "live_refused": true,
+            "owner_cpu_ns": 2656524064,
+            "residual_cpu_ns": 4016,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 281440,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2656805504
+          },
+          "outer_dispatch_result": {
+            "Ok": "ok"
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "cpu_budget_before": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 2000000000,
+            "worker_limit": 2
+          },
+          "actual_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 626746999,
+            "discarded_refill_ns": 37810928,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2656801488,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2656805504,
+            "remaining_paid_credit_ns": -30058505,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2656805504,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4016,
+            "stored_credit_ns": -30058505,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "dispatch_wall_ns": 2658033258,
+          "budget_balance_reconciles": true,
+          "active_state_unchanged_on_refusal": null,
+          "refusal_readback_error": null,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "budget_depletion_demonstrated": false,
+          "first_selector_authenticated_backend": "NOT_EXECUTED_AFTER_LEGACY_PANIC"
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "native_exit": 101,
+          "tee_exit": 0,
+          "reader_exit": 1,
+          "native_result_lines": [
+            "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 864 filtered out; finished in 28.53s"
+          ],
+          "reader_json": null,
+          "reader_json_bytes": 0,
+          "reader_stderr": "required-native-test: expected one passed, zero failed/ignored/measured\n",
+          "record_consistency_verified": true,
+          "native_outcome": "FAIL_CPU_BUDGET",
+          "authenticated_backend": true,
+          "complete_state_bytes": 8625548,
+          "cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2623305448,
+            "live_refused": true,
+            "owner_cpu_ns": 2623045509,
+            "residual_cpu_ns": 3765,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 263704,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2623309213
+          },
+          "outer_dispatch_result": {
+            "Ok": "ok"
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "cpu_budget_before": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 2000000000,
+            "worker_limit": 2
+          },
+          "actual_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 620740593,
+            "discarded_refill_ns": 35343496,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2623305448,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2623309213,
+            "remaining_paid_credit_ns": -2568620,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2623309213,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 3765,
+            "stored_credit_ns": -2568620,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "dispatch_wall_ns": 2624081785,
+          "budget_balance_reconciles": true,
+          "active_state_unchanged_on_refusal": null,
+          "refusal_readback_error": null,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "budget_depletion_demonstrated": false
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "native_exit": 0,
+          "tee_exit": 0,
+          "reader_exit": 0,
+          "native_result_lines": [
+            "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 864 filtered out; finished in 0.04s"
+          ],
+          "reader_json": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop"
+          },
+          "reader_json_bytes": 174,
+          "reader_stderr": "",
+          "record_consistency_verified": true,
+          "native_outcome": "PASS"
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "native_exit": 0,
+          "tee_exit": 0,
+          "reader_exit": 0,
+          "native_result_lines": [
+            "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 864 filtered out; finished in 0.02s"
+          ],
+          "reader_json": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+          },
+          "reader_json_bytes": 176,
+          "reader_stderr": "",
+          "record_consistency_verified": true,
+          "native_outcome": "PASS"
+        }
+      ],
+      "stage_deltas": {
+        "note": "Inclusive/nested stage differences; do not add rows. Current-thread stage CPU excludes scoped worker CPU.",
+        "measurements": [
+          {
+            "selector": "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "authenticated_backend": false,
+            "measurement_scope": "existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes",
+            "stage_deltas": [
+              {
+                "stage": "record",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "packet",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "delta",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "verify_state",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "verify_history",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "publish",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "read_active",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "state_at",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "execute",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "admission",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "activation",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "complete_commitment",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "complete_state_root",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "account_graph",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "persisted_state_root",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "execution_parent_binding",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            ],
+            "counter_deltas": {
+              "delta_leaf_computations": 0,
+              "delta_leaf_hits": 0,
+              "delta_payload_bytes_observed": 0,
+              "delta_rows_observed": 0,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 0,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 0,
+              "packet_computations": 0,
+              "packet_hits": 0,
+              "record_bytes_observed": 0,
+              "record_computations": 0,
+              "record_hits": 0
+            },
+            "after_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "before_stage_observation_failed": false,
+            "after_stage_observation_failed": false
+          },
+          {
+            "selector": "authenticated_large_parent_original_schedule_supplementary_denominator",
+            "authenticated_backend": true,
+            "measurement_scope": "existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes",
+            "stage_deltas": [
+              {
+                "stage": "record",
+                "calls": 13,
+                "cpu_known_calls": 13,
+                "cpu_ns": 305005,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 313522
+              },
+              {
+                "stage": "packet",
+                "calls": 8,
+                "cpu_known_calls": 8,
+                "cpu_ns": 240971854,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 240986879
+              },
+              {
+                "stage": "delta",
+                "calls": 7,
+                "cpu_known_calls": 7,
+                "cpu_ns": 394187,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 397789
+              },
+              {
+                "stage": "verify_state",
+                "calls": 4,
+                "cpu_known_calls": 4,
+                "cpu_ns": 1091192656,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 1091293085
+              },
+              {
+                "stage": "verify_history",
+                "calls": 1,
+                "cpu_known_calls": 1,
+                "cpu_ns": 521810222,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 521848494
+              },
+              {
+                "stage": "publish",
+                "calls": 1,
+                "cpu_known_calls": 1,
+                "cpu_ns": 1250197330,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 1250334258
+              },
+              {
+                "stage": "read_active",
+                "calls": 2,
+                "cpu_known_calls": 2,
+                "cpu_ns": 511341955,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 511363523
+              },
+              {
+                "stage": "state_at",
+                "calls": 2,
+                "cpu_known_calls": 2,
+                "cpu_ns": 511367414,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 511388712
+              },
+              {
+                "stage": "execute",
+                "calls": 1,
+                "cpu_known_calls": 1,
+                "cpu_ns": 835147840,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 835487131
+              },
+              {
+                "stage": "admission",
+                "calls": 2,
+                "cpu_known_calls": 2,
+                "cpu_ns": 2620870793,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 2621364496
+              },
+              {
+                "stage": "activation",
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              },
+              {
+                "stage": "complete_commitment",
+                "calls": 5,
+                "cpu_known_calls": 5,
+                "cpu_ns": 1206653171,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 1206788347
+              },
+              {
+                "stage": "complete_state_root",
+                "calls": 5,
+                "cpu_known_calls": 5,
+                "cpu_ns": 599297054,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 599384825
+              },
+              {
+                "stage": "account_graph",
+                "calls": 4,
+                "cpu_known_calls": 4,
+                "cpu_ns": 732593,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 736148
+              },
+              {
+                "stage": "persisted_state_root",
+                "calls": 2,
+                "cpu_known_calls": 2,
+                "cpu_ns": 240576637,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 240590694
+              },
+              {
+                "stage": "execution_parent_binding",
+                "calls": 1,
+                "cpu_known_calls": 1,
+                "cpu_ns": 355868312,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 355928178
+              }
+            ],
+            "counter_deltas": {
+              "delta_leaf_computations": 7,
+              "delta_leaf_hits": 19,
+              "delta_payload_bytes_observed": 2708,
+              "delta_rows_observed": 26,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 1,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 300063,
+              "packet_computations": 1,
+              "packet_hits": 5,
+              "record_bytes_observed": 27336,
+              "record_computations": 1,
+              "record_hits": 12
+            },
+            "after_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "before_stage_observation_failed": false,
+            "after_stage_observation_failed": false
+          }
+        ]
+      },
+      "interpretation": [
+        "The original-dispatch diagnostic Ok is the outer Result<MeteredResult>, not native or commit success; result.native is the actual CPU-budget refusal.",
+        "The first selector failed during Legacy and did not execute its later Authenticated branch. The second independent selector did execute Authenticated and failed.",
+        "Authenticated stage deltas are inclusive/nested and must not be added. Zero activation calls do not establish completed zero-cost activation. Legacy authenticated-stage counters are not a Legacy profile.",
+        "Both active-state-on-refusal readbacks are null: the test checks that readback only when the outer attempt is Err, whereas these attempts returned a metered wrapper containing native Err. Do not infer unchanged active state from null.",
+        "The original burst/refill limits remain unchanged. CPU-budget errors are actual native failures; empty reader JSON and rejecting reader stderr correctly retain them.",
+        "Build/source/provider receipts do not qualify whole-chain PQ, honest service, throughput, or original confirmation targets."
+      ],
+      "detail_files": [
+        "receipt-readback.json",
+        "stage-deltas.json",
+        "focus-build-artifacts.json",
+        "download-verification.json"
+      ]
+    },
+    "default_release": {
+      "schema": "trnm-release-large-state-artifact-readback-v1",
+      "run_id": 41332424790,
+      "overall_run_conclusion": "failure",
+      "head": "64cb26b53ed82be14049000387040ba119f00e1e",
+      "prospective_merge": "2c3a3aaa29e1ff75bc919694c2817c84873d7b77",
+      "tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+      "readback_time_utc": "2026-11-01T18:00:00.201755+00:00",
+      "profile": "release; original test-profile run 41332424883 remains separate",
+      "selectors": {
+        "large_state_both_backends": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "large_state_authenticated": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "reactor_lifetime": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "reactor_external_stop": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      },
+      "verified_artifacts": 3,
+      "actual_native_tee_reader_receipts": 12,
+      "artifacts": [
+        {
+          "artifact_id": 13094162141,
+          "lane": "x64-head",
+          "job_id": 124925137190,
+          "zip": "x64-head.zip",
+          "zip_bytes": 27424,
+          "zip_sha256": "c82bcf9b26d7455936d0b889f25a2512efb3688e4aac8b8b3bb4b5d93eed2415",
+          "member_count": 29,
+          "result": "VERIFIED",
+          "all_source_binary_build_and_receipt_checks_pass": true,
+          "failed_checks": [],
+          "source": {
+            "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+            "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+            "kind": "head",
+            "tracked_entries": 6777,
+            "tracked_bytes": 781110220
+          },
+          "elf_sha256_from_matching_receipts": "bb1db1c1da9462b8387477e98fb43983809ca84582d9252d83afb52f4239b11a",
+          "compiler_host": "x86_64-unknown-linux-gnu",
+          "actual_execution_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_lifetime",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_external_stop",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            }
+          ],
+          "large_state_cpu_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": false,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 462585433,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 788400772,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 789697906,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            }
+          ]
+        },
+        {
+          "artifact_id": 13093014501,
+          "lane": "x64-prospective-merge",
+          "job_id": 124925137242,
+          "zip": "x64-prospective-merge.zip",
+          "zip_bytes": 27529,
+          "zip_sha256": "64785003fc220d222c362ec9cf7861dbbf8a09e2968e72cb5b4a96697505bf05",
+          "member_count": 29,
+          "result": "VERIFIED",
+          "all_source_binary_build_and_receipt_checks_pass": true,
+          "failed_checks": [],
+          "source": {
+            "tested_commit": "2c3a3aaa29e1ff75bc919694c2817c84873d7b77",
+            "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+            "kind": "prospective-merge",
+            "tracked_entries": 6777,
+            "tracked_bytes": 781110220
+          },
+          "elf_sha256_from_matching_receipts": "bb1db1c1da9462b8387477e98fb43983809ca84582d9252d83afb52f4239b11a",
+          "compiler_host": "x86_64-unknown-linux-gnu",
+          "actual_execution_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_lifetime",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_external_stop",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            }
+          ],
+          "large_state_cpu_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": false,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 450387023,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 758142158,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 759344342,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            }
+          ]
+        },
+        {
+          "artifact_id": 13093788956,
+          "lane": "arm64-prospective-merge",
+          "job_id": 124925137010,
+          "zip": "arm64-prospective-merge.zip",
+          "zip_bytes": 27610,
+          "zip_sha256": "343b36349016ee009b3471c188c5608245e689e720bcb71eb9027b44ddb4e3f1",
+          "member_count": 29,
+          "result": "VERIFIED",
+          "all_source_binary_build_and_receipt_checks_pass": true,
+          "failed_checks": [],
+          "source": {
+            "tested_commit": "2c3a3aaa29e1ff75bc919694c2817c84873d7b77",
+            "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+            "kind": "prospective-merge",
+            "tracked_entries": 6777,
+            "tracked_bytes": 781110220
+          },
+          "elf_sha256_from_matching_receipts": "07f1860890c9998bb628e7b15887f4eb0dbe5eb4bdfde1ed52831151f968d5ea",
+          "compiler_host": "aarch64-unknown-linux-gnu",
+          "actual_execution_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_lifetime",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            },
+            {
+              "test_id": "reactor_external_stop",
+              "native_exit": 0,
+              "tee_exit": 0,
+              "reader_exit": 0,
+              "reader_result": "PASS",
+              "executed_tests": 1,
+              "reader_stderr_bytes": 0
+            }
+          ],
+          "large_state_cpu_receipts": [
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": false,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 676575708,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_both_backends",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 1088010908,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            },
+            {
+              "test_id": "large_state_authenticated",
+              "authenticated_backend": true,
+              "complete_state_bytes": 8625548,
+              "total_cpu_ns": 1077918824,
+              "native_result": {
+                "Ok": "ok"
+              },
+              "live_refused": false,
+              "accounting_unavailable": false
+            }
+          ]
+        }
+      ],
+      "compiler_profile": {
+        "rustc": "1.95.0",
+        "cargo": "1.95.0",
+        "features": [
+          "default"
+        ],
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test_harness": true,
+        "rust_flags_or_compiler_overrides": false
+      },
+      "arm64_head": {
+        "job_id": 124925137238,
+        "job_conclusion": "cancelled",
+        "artifact": "MISSING",
+        "raw_reader_json_and_tsv_read": false,
+        "upload_error": "Failed to CreateArtifact: Received non-retryable error: Failed request: (403) Forbidden: job is completed",
+        "cancellation_root_cause": "unknown; not inferred from artifact failure",
+        "native_log_result_from_prior_readonly_audit": "four named tests each passed; retained separately from missing artifact"
+      },
+      "limitations": [
+        "Original ZIP bytes were downloaded and SHA-256/size/CRC verified. No replacement ARM head artifact was created.",
+        "ELF hash/path receipts agree with actual Cargo compiler-artifact messages. ELF body is absent from these archives and was not independently rehashed locally.",
+        "Release native tests do not certify original test-profile, full-capacity, 4105 History, hostile business confirmation, Host qualification, or depletion."
+      ],
+      "actions": "Read/download/parse only; no CI rerun/cancel, permission changes, compilation or performance experiment.",
+      "detail_files": [
+        "validated-receipts.json",
+        "receipt-readback.json",
+        "download-verification.json"
+      ]
+    },
+    "original_4105_history": {
+      "complete": true,
+      "full_record": {
+        "path": "/tmp/trnm-history-41296585278-final/sqlite-summary.json",
+        "sha256": "de6717b0a760e7c5f9a26c3fd943544c7125352cd53152abf1ae087a6beea97c",
+        "size_in_bytes": 78592
+      },
+      "jobs": [
+        {
+          "artifact_id": 13082484183,
+          "artifact_name": "priority-ubuntu-24.04-head-history-5606a97104f9cd3243befc2921ccace3fae2c369-1",
+          "databases": {
+            "confirmer": {
+              "active_rows": [
+                {
+                  "active_height": 0,
+                  "generation": 0,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "9dc302ec2d213acbe6013899812143f88e01beee914561267a209e066461e9c1"
+                }
+              ],
+              "archive_member": "long-history/confirmer/native.sqlite",
+              "maximum_packet_height": 3041,
+              "maximum_stored_height": 3041,
+              "packet_rows": 3041,
+              "path": "/tmp/trnm-history-41296585278-final/x64-head/confirmer-native.sqlite",
+              "sha256": "a32c3db270ee003b39f439976625d5065e6db631e924c583613ba3cd0a698a9f",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 163143680,
+              "stored_block_rows": 3042
+            },
+            "validator": {
+              "active_rows": [
+                {
+                  "active_height": 4105,
+                  "generation": 4105,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "d894f526bfcc332acc95bb584353686e4be97c21ea0f3dd29222a146d3c54d9b"
+                }
+              ],
+              "archive_member": "long-history/validator/native.sqlite",
+              "maximum_packet_height": 4105,
+              "maximum_stored_height": 4105,
+              "packet_rows": 4105,
+              "path": "/tmp/trnm-history-41296585278-final/x64-head/validator-native.sqlite",
+              "sha256": "f557a7ac09b6a70bf0810bd3546fb70706e27bef7c59f8e09bfbb55cd2657883",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 220770304,
+              "stored_block_rows": 4106
+            }
+          },
+          "job_id": 124837031111,
+          "job_log_test_result": "2026-11-01T12:28:20.0988663Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2821.72s",
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41296585278/job/124837031111",
+          "kind": "x64-head",
+          "last_printed_independent_progress": {
+            "elapsed_ns": 2794517335816,
+            "height": 3000,
+            "kind": "independent-native-fullsync-progress"
+          },
+          "native_observation": {
+            "error": "IO: Connection refused (os error 111)",
+            "hardness_accepted": false,
+            "independent_accepted": false,
+            "passed": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "schema": "native-ancestry-long-sync-observation-v1"
+          },
+          "retained_packet_files": {
+            "count": 4105,
+            "exactly_1_through_4105": true,
+            "maximum": 4105,
+            "minimum": 1
+          },
+          "server_exit": {
+            "configured_lifetime_seconds": 1800,
+            "loop_exit_before_internal_shutdown": {
+              "configured_lifetime_ns": 1800000000000,
+              "elapsed_ns": 1800000815044,
+              "lifetime_reached_before_shutdown": true,
+              "reason": "lifetime_expired",
+              "stop_requested_before_shutdown": false
+            },
+            "production_activation": false,
+            "schema": "native-ancestry-public-server-exit-evidence-v1",
+            "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+            "server_exit_error": null,
+            "server_exit_ok": true,
+            "service_elapsed_ns": 1800079525328,
+            "stop_requested_when_exited": true
+          },
+          "sqlite_sidecar_members": [],
+          "sync_exit": {
+            "elapsed_ns": 2821722666699,
+            "production_activation": false,
+            "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+            "scope": "observed signed full-history replay, not a qualification verdict",
+            "sync_error": "IO: Connection refused (os error 111)"
+          },
+          "tested_commit": "5606a97104f9cd3243befc2921ccace3fae2c369",
+          "tested_tree": "49c498986a2538b726b118af3a867ad71d048335",
+          "zip": {
+            "digest_matches": true,
+            "path": "/tmp/trnm-history-41296585278-final/x64-head.zip",
+            "sha256": "599eec8536f9eb1b1a7f7440bd495b8345932dbdcc1d2154d6b61b8f7de52243",
+            "size_in_bytes": 54853105,
+            "size_matches": true
+          }
+        },
+        {
+          "artifact_id": 13083299389,
+          "artifact_name": "priority-ubuntu-24.04-prospective-merge-history-5606a97104f9cd3243befc2921ccace3fae2c369-1",
+          "databases": {
+            "confirmer": {
+              "active_rows": [
+                {
+                  "active_height": 0,
+                  "generation": 0,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "57a10895b8aa3e4d4c662baad7faaeeb5ab8dd9eaedf55d52652a9523e8d478e"
+                }
+              ],
+              "archive_member": "long-history/confirmer/native.sqlite",
+              "maximum_packet_height": 3190,
+              "maximum_stored_height": 3190,
+              "packet_rows": 3190,
+              "path": "/tmp/trnm-history-41296585278-final/x64-merge/confirmer-native.sqlite",
+              "sha256": "00b7d2cf152c003bee69372150e8efdbf6556b4103703683578664d76c9a77b2",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 171126784,
+              "stored_block_rows": 3191
+            },
+            "validator": {
+              "active_rows": [
+                {
+                  "active_height": 4105,
+                  "generation": 4105,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "630cb2b8009be35b3cb0783635b94d2ff7a3655041896eed716a764b5f00bfc6"
+                }
+              ],
+              "archive_member": "long-history/validator/native.sqlite",
+              "maximum_packet_height": 4105,
+              "maximum_stored_height": 4105,
+              "packet_rows": 4105,
+              "path": "/tmp/trnm-history-41296585278-final/x64-merge/validator-native.sqlite",
+              "sha256": "0f6a1094222493a2baac9729f9cbc2e65e8a1d170603c894bc372915f0857c52",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 220643328,
+              "stored_block_rows": 4106
+            }
+          },
+          "job_id": 124837030883,
+          "job_log_test_result": "2026-11-01T12:27:29.5927694Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2784.04s",
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41296585278/job/124837030883",
+          "kind": "x64-merge",
+          "last_printed_independent_progress": {
+            "elapsed_ns": 2670220488263,
+            "height": 3000,
+            "kind": "independent-native-fullsync-progress"
+          },
+          "native_observation": {
+            "error": "IO: Connection refused (os error 111)",
+            "hardness_accepted": false,
+            "independent_accepted": false,
+            "passed": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "schema": "native-ancestry-long-sync-observation-v1"
+          },
+          "retained_packet_files": {
+            "count": 4105,
+            "exactly_1_through_4105": true,
+            "maximum": 4105,
+            "minimum": 1
+          },
+          "server_exit": {
+            "configured_lifetime_seconds": 1800,
+            "loop_exit_before_internal_shutdown": {
+              "configured_lifetime_ns": 1800000000000,
+              "elapsed_ns": 1800000594233,
+              "lifetime_reached_before_shutdown": true,
+              "reason": "lifetime_expired",
+              "stop_requested_before_shutdown": false
+            },
+            "production_activation": false,
+            "schema": "native-ancestry-public-server-exit-evidence-v1",
+            "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+            "server_exit_error": null,
+            "server_exit_ok": true,
+            "service_elapsed_ns": 1800001076674,
+            "stop_requested_when_exited": true
+          },
+          "sqlite_sidecar_members": [],
+          "sync_exit": {
+            "elapsed_ns": 2784039894823,
+            "production_activation": false,
+            "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+            "scope": "observed signed full-history replay, not a qualification verdict",
+            "sync_error": "IO: Connection refused (os error 111)"
+          },
+          "tested_commit": "004e03f053e67e0774c2ac991c3f6c24b61a885f",
+          "tested_tree": "49c498986a2538b726b118af3a867ad71d048335",
+          "zip": {
+            "digest_matches": true,
+            "path": "/tmp/trnm-history-41296585278-final/x64-merge.zip",
+            "sha256": "b5142aece51f64c05eed00543cf79695cdd84f74e5e01406f1249470b84ae785",
+            "size_in_bytes": 55676932,
+            "size_matches": true
+          }
+        },
+        {
+          "artifact_id": 13083902750,
+          "artifact_name": "priority-ubuntu-24.04-arm-head-history-5606a97104f9cd3243befc2921ccace3fae2c369-1",
+          "databases": {
+            "confirmer": {
+              "active_rows": [
+                {
+                  "active_height": 0,
+                  "generation": 0,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "440e648176f45fd2565379d4767cc6c57b5948b6995a053aab9385f463eee74c"
+                }
+              ],
+              "archive_member": "long-history/confirmer/native.sqlite",
+              "maximum_packet_height": 2503,
+              "maximum_stored_height": 2503,
+              "packet_rows": 2503,
+              "path": "/tmp/trnm-history-41296585278-final/arm-head/confirmer-native.sqlite",
+              "sha256": "62dbbb433b757bf8317ee9a4e8715e32c77c8257f6683b2142c491631788c3cd",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 134074368,
+              "stored_block_rows": 2504
+            },
+            "validator": {
+              "active_rows": [
+                {
+                  "active_height": 4105,
+                  "generation": 4105,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "97ec1800a7fc0006d5747faf4b818c3e57d51795b78e682041de27c9fb5e53e6"
+                }
+              ],
+              "archive_member": "long-history/validator/native.sqlite",
+              "maximum_packet_height": 4105,
+              "maximum_stored_height": 4105,
+              "packet_rows": 4105,
+              "path": "/tmp/trnm-history-41296585278-final/arm-head/validator-native.sqlite",
+              "sha256": "d415a04979096a391828dc3875ff88fe88f4e61a81b7f36289ed533484599b60",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 220762112,
+              "stored_block_rows": 4106
+            }
+          },
+          "job_id": 124837030908,
+          "job_log_test_result": "2026-11-01T12:44:50.0847331Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3755.17s",
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41296585278/job/124837030908",
+          "kind": "arm-head",
+          "last_printed_independent_progress": {
+            "elapsed_ns": 3752852895796,
+            "height": 2500,
+            "kind": "independent-native-fullsync-progress"
+          },
+          "native_observation": {
+            "error": "IO: Connection refused (os error 111)",
+            "hardness_accepted": false,
+            "independent_accepted": false,
+            "passed": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "schema": "native-ancestry-long-sync-observation-v1"
+          },
+          "retained_packet_files": {
+            "count": 4105,
+            "exactly_1_through_4105": true,
+            "maximum": 4105,
+            "minimum": 1
+          },
+          "server_exit": {
+            "configured_lifetime_seconds": 1800,
+            "loop_exit_before_internal_shutdown": {
+              "configured_lifetime_ns": 1800000000000,
+              "elapsed_ns": 1800000349999,
+              "lifetime_reached_before_shutdown": true,
+              "reason": "lifetime_expired",
+              "stop_requested_before_shutdown": false
+            },
+            "production_activation": false,
+            "schema": "native-ancestry-public-server-exit-evidence-v1",
+            "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+            "server_exit_error": null,
+            "server_exit_ok": true,
+            "service_elapsed_ns": 1800001610046,
+            "stop_requested_when_exited": true
+          },
+          "sqlite_sidecar_members": [],
+          "sync_exit": {
+            "elapsed_ns": 3755164452463,
+            "production_activation": false,
+            "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+            "scope": "observed signed full-history replay, not a qualification verdict",
+            "sync_error": "IO: Connection refused (os error 111)"
+          },
+          "tested_commit": "5606a97104f9cd3243befc2921ccace3fae2c369",
+          "tested_tree": "49c498986a2538b726b118af3a867ad71d048335",
+          "zip": {
+            "digest_matches": true,
+            "path": "/tmp/trnm-history-41296585278-final/arm-head.zip",
+            "sha256": "fb27f5647c7e81f96352c4d6c807d449e39065ed289cee9711935665283ce53c",
+            "size_in_bytes": 51764726,
+            "size_matches": true
+          }
+        },
+        {
+          "artifact_id": 13083658670,
+          "artifact_name": "priority-ubuntu-24.04-arm-prospective-merge-history-5606a97104f9cd3243befc2921ccace3fae2c369-1",
+          "databases": {
+            "confirmer": {
+              "active_rows": [
+                {
+                  "active_height": 0,
+                  "generation": 0,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "63a96a0e0ae20ebca5458d5626fbce6953e8d5acde074ea6f7720b14360b2c37"
+                }
+              ],
+              "archive_member": "long-history/confirmer/native.sqlite",
+              "maximum_packet_height": 2522,
+              "maximum_stored_height": 2522,
+              "packet_rows": 2522,
+              "path": "/tmp/trnm-history-41296585278-final/arm-merge/confirmer-native.sqlite",
+              "sha256": "7cca183a17d9f26efdfeb6789d82e2f69213655116f649614e9d1a599fcd99f9",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 135127040,
+              "stored_block_rows": 2523
+            },
+            "validator": {
+              "active_rows": [
+                {
+                  "active_height": 4105,
+                  "generation": 4105,
+                  "singleton": 1,
+                  "state_slot": 0,
+                  "tip": "0c3104cb915634be4a094ee193ee276f29f3ae3fd3a17be5ecb4defc5e9bec06"
+                }
+              ],
+              "archive_member": "long-history/validator/native.sqlite",
+              "maximum_packet_height": 4105,
+              "maximum_stored_height": 4105,
+              "packet_rows": 4105,
+              "path": "/tmp/trnm-history-41296585278-final/arm-merge/validator-native.sqlite",
+              "sha256": "4adc044ef62774a58ae050cc657d9c8c70b60a905481a6dc41644a702a0e285e",
+              "sha256_unchanged_after_read": true,
+              "size_in_bytes": 220659712,
+              "stored_block_rows": 4106
+            }
+          },
+          "job_id": 124837030757,
+          "job_log_test_result": "2026-11-01T12:44:38.6774858Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3743.19s",
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41296585278/job/124837030757",
+          "kind": "arm-merge",
+          "last_printed_independent_progress": {
+            "elapsed_ns": 3724470959118,
+            "height": 2500,
+            "kind": "independent-native-fullsync-progress"
+          },
+          "native_observation": {
+            "error": "IO: Connection reset by peer (os error 104)",
+            "hardness_accepted": false,
+            "independent_accepted": false,
+            "passed": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "schema": "native-ancestry-long-sync-observation-v1"
+          },
+          "retained_packet_files": {
+            "count": 4105,
+            "exactly_1_through_4105": true,
+            "maximum": 4105,
+            "minimum": 1
+          },
+          "server_exit": {
+            "configured_lifetime_seconds": 1800,
+            "loop_exit_before_internal_shutdown": {
+              "configured_lifetime_ns": 1800000000000,
+              "elapsed_ns": 1800000144421,
+              "lifetime_reached_before_shutdown": true,
+              "reason": "lifetime_expired",
+              "stop_requested_before_shutdown": false
+            },
+            "production_activation": false,
+            "schema": "native-ancestry-public-server-exit-evidence-v1",
+            "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+            "server_exit_error": null,
+            "server_exit_ok": true,
+            "service_elapsed_ns": 1800000866474,
+            "stop_requested_when_exited": true
+          },
+          "sqlite_sidecar_members": [],
+          "sync_exit": {
+            "elapsed_ns": 3743191305150,
+            "production_activation": false,
+            "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+            "scope": "observed signed full-history replay, not a qualification verdict",
+            "sync_error": "IO: Connection reset by peer (os error 104)"
+          },
+          "tested_commit": "004e03f053e67e0774c2ac991c3f6c24b61a885f",
+          "tested_tree": "49c498986a2538b726b118af3a867ad71d048335",
+          "zip": {
+            "digest_matches": true,
+            "path": "/tmp/trnm-history-41296585278-final/arm-merge.zip",
+            "sha256": "0c79405edda82ff9ee7661ecedb1b6a6028e497a2c3a37476cb26f713207212d",
+            "size_in_bytes": 51873509,
+            "size_matches": true
+          }
+        }
+      ],
+      "native_tests_rerun": false,
+      "queries": {
+        "active": "SELECT a.singleton, lower(hex(a.tip)) AS tip, b.height AS active_height, a.generation, a.state_slot FROM active AS a LEFT JOIN blocks AS b ON b.id=a.tip ORDER BY a.singleton",
+        "blocks": "SELECT COUNT(*) AS stored_block_rows, MIN(height) AS minimum_stored_height, MAX(height) AS maximum_stored_height, COUNT(DISTINCT height) AS distinct_stored_heights, SUM(CASE WHEN height=0 THEN 1 ELSE 0 END) AS genesis_rows, COUNT(packet) AS non_null_packet_rows, SUM(CASE WHEN packet IS NOT NULL AND length(packet)>0 THEN 1 ELSE 0 END) AS nonempty_packet_rows, MAX(CASE WHEN packet IS NOT NULL AND length(packet)>0 THEN height END) AS maximum_packet_height FROM blocks"
+      },
+      "read_only_sqlite": true,
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "run_id": 41296585278,
+      "schema": "trnm-history-retained-final-observation-v1",
+      "scope": "Retained failed-run ZIP and SQLite observations only. Stored packet counts and maximum stored height do not establish independent confirmation, complete native verification, reopen success, or readiness.",
+      "sqlite_uri_options": "mode=ro&immutable=1"
+    },
+    "local_m06_semantic_controls": {
+      "schema": "trnm-bounded-root-m06-controls-v1",
+      "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+      "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+      "scope": "Additional package-only M06 semantic controls; not original full-workspace or Node CPU/public-business acceptance",
+      "source_before_after_equal": true,
+      "native_exit": 0,
+      "passed": 29,
+      "failed": 0,
+      "ignored": 5,
+      "new_controls_passed": [
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot"
+      ],
+      "original_ignored_names": [
+        "pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost",
+        "pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing",
+        "pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation",
+        "pon_commitment::tests::immutable_parent_preview_component_timing",
+        "pon_commitment::tests::warm_parent_binding_component_timing"
+      ],
+      "actual_build_artifact": {
+        "artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "manifest_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "1",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/tmp/trnm-bounded-math-target/debug/deps/trnm_mvcc_fee-9fed1d7ef0e6ab59"
+          ],
+          "executable": "/tmp/trnm-bounded-math-target/debug/deps/trnm_mvcc_fee-9fed1d7ef0e6ab59",
+          "fresh": false
+        },
+        "sha256": "6309aa5e7a0047e39e3ea9d7a92ae4ae54d8944f02ec8b15f664833cad5936f7"
+      },
+      "elapsed_ns": 27541064418,
+      "receipt_sha256": {
+        "native.log": "27b946e1150370a1348a9edc94ba1adb515dd24247ed53e75b5c63c8354ffd64",
+        "build-command.json": "0228535f5076f31fdedb062b377980a53cae81cb6e672a86d4a935fed7c778aa",
+        "native-binary.json": "471c706074fbfec42e9a34477948d4390a191543c6fe71bc9fcac7ebbc85d175",
+        "build.stdout": "6be714b76e8cecd5335a33f78a7f53eab2955fc98e86b639f2f26d7dcb3d8c08",
+        "registry.txt": "090a3728e3ac13f83a9274e34bb7e122f5984861d11e76adb4e16ea307d13cb8",
+        "source-after.json": "d62cff8b2a26e082369dd8e3acc51cab2f222352a80d8176a92a6ea28a46a46a",
+        "build-exit.json": "a2c3a3e751b66a5a5325bb25551c8b93c30a2ddb3747857ee210aef68c1ccc57",
+        "driver.py": "04d2e3daf5c0b72ce6095f68fcd23a5c62b4442878c713ae7d4256c5122a6d7c",
+        "native-command.json": "e6c6c4385aad4014336d01cccffe0a1bd669dc2e3563ce92a38131ec4f40f0fa",
+        "native-exit.json": "c7820fb82543959a477b0ce425a24e1123d14434b9735bac9cabb84309bf3e18",
+        "source-before.json": "d62cff8b2a26e082369dd8e3acc51cab2f222352a80d8176a92a6ea28a46a46a",
+        "build.stderr": "438ad08645b9c5a4915ffa045c92a5faeb7147576e3bc043655aa65092b435c7"
+      }
+    },
+    "local_node_integration_controls": {
+      "schema": "trnm-bounded-root-node-integration-controls-v1",
+      "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+      "scope": "Completed integration ELFs from the interrupted original full-graph build; not full-build acceptance, Node libtest CPU acceptance or public-business qualification",
+      "original_build_exit": {
+        "returncode": 101,
+        "elapsed_ns": 1602586930588
+      },
+      "source_before_after_equal": true,
+      "results": [
+        {
+          "target": "derived_commitment",
+          "argv": [
+            "/tmp/trnm-bounded-math-target/debug/deps/derived_commitment-8cf74467921a0609",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cwd": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node",
+          "artifact": {
+            "reason": "compiler-artifact",
+            "package_id": "path+file:///tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node#0.1.0",
+            "manifest_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "target": {
+              "kind": [
+                "test"
+              ],
+              "crate_types": [
+                "bin"
+              ],
+              "name": "derived_commitment",
+              "src_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs",
+              "edition": "2021",
+              "doc": false,
+              "doctest": false,
+              "test": true
+            },
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "filenames": [
+              "/tmp/trnm-bounded-math-target/debug/deps/derived_commitment-8cf74467921a0609"
+            ],
+            "executable": "/tmp/trnm-bounded-math-target/debug/deps/derived_commitment-8cf74467921a0609",
+            "fresh": false
+          },
+          "native_exit": 0,
+          "expected_tests": 5,
+          "actual_summary": "test result: ok. 5 passed; 0 failed; 0 ignored;",
+          "valid": true,
+          "elapsed_ns": 51151897666,
+          "elf_before": "2c5cc896e115452e15dcf506ca48fdac08dbaef54fbdc462fd05cba5a93e14dc",
+          "elf_after": "2c5cc896e115452e15dcf506ca48fdac08dbaef54fbdc462fd05cba5a93e14dc"
+        },
+        {
+          "target": "native_node",
+          "argv": [
+            "/tmp/trnm-bounded-math-target/debug/deps/native_node-82992ec9fd3e39f9",
+            "test_active_state_",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cwd": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node",
+          "artifact": {
+            "reason": "compiler-artifact",
+            "package_id": "path+file:///tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node#0.1.0",
+            "manifest_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "target": {
+              "kind": [
+                "test"
+              ],
+              "crate_types": [
+                "bin"
+              ],
+              "name": "native_node",
+              "src_path": "/tmp/chain-original-budget-5606a971/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+              "edition": "2021",
+              "doc": false,
+              "doctest": false,
+              "test": true
+            },
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "filenames": [
+              "/tmp/trnm-bounded-math-target/debug/deps/native_node-82992ec9fd3e39f9"
+            ],
+            "executable": "/tmp/trnm-bounded-math-target/debug/deps/native_node-82992ec9fd3e39f9",
+            "fresh": false
+          },
+          "native_exit": 0,
+          "expected_tests": 2,
+          "actual_summary": "test result: ok. 2 passed; 0 failed; 0 ignored;",
+          "valid": true,
+          "elapsed_ns": 35881127,
+          "elf_before": "76e113874c8c8558154aec8fd40363058d84bea9da24d3f1b8146270e1514746",
+          "elf_after": "76e113874c8c8558154aec8fd40363058d84bea9da24d3f1b8146270e1514746"
+        }
+      ]
+    }
+  },
+  "input_summary_sha256": {
+    "original_test_profile_cpu": "535c3037f97b785f44f94180ff561a94a313f8cc8158c486f67a0ec1227f7f67",
+    "default_release": "6932b0a3ca7c4efcdf73013ae630447e1a8138a1fde8f59b8bcd6c40668936e8",
+    "original_4105_history": "78aa6db66dbbecbf06c33976f11af4235b32abc0ff3f0b70b115ac857fa08c70",
+    "local_m06_semantic_controls": "aebab1d5ed43ca074a97ff661fc717de1d9412d0d85f2abf91f6fd6013b1c3c6",
+    "local_node_integration_controls": "172044094d07c0dcb2a8bc6f91d52292c567831be03989898e0f73830ff23598"
+  },
+  "raw_hosted_sources": {
+    "original_profile_cpu": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332424883/artifacts/13094428721",
+    "default_release_run": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332424790",
+    "original_4105_history_run": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41296585278",
+    "quality_job": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332424801/job/124931986054"
+  },
+  "local_native_logs": {
+    "m06_pon_commitment": {
+      "sha256": "27b946e1150370a1348a9edc94ba1adb515dd24247ed53e75b5c63c8354ffd64",
+      "text": "\nrunning 34 tests\ntest pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification\ntest pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges ... ok\ntest pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget ... ok\ntest pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking\ntest pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits ... ok\ntest pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root ... ok\ntest pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors ... ok\ntest pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes ... ok\ntest pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput\ntest pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback ... ok\ntest pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits ... ok\ntest pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material ... ok\ntest pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks ... ok\ntest pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback ... ok\ntest pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root ... \nthread 'pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root' (447) panicked at crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs:256:9:\npoison mathematical material only\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nok\ntest pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order ... ok\ntest pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot ... ok\ntest pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join ... \nthread 'pon-exec-0' (455) panicked at crates/trnm-mvcc-fee/src/pon_commitment.rs:1862:33:\ntest worker unwind\nok\ntest pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent ... ok\ntest pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps ... ok\ntest pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return ... ok\ntest pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers ... ok\ntest pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order ... {\"case\":\"disjoint-delta-allocation-order\",\"changed_keys\":65536,\"complete_root_and_delta_parity\":true,\"method\":\"CheckedApply\",\"stages\":[\"budget-selected\",\"changes-allocation\",\"tree-allocation\"]}\n{\"case\":\"disjoint-delta-allocation-order\",\"changed_keys\":65537,\"complete_root_and_delta_parity\":true,\"method\":\"FullRoot(DeltaBudget)\",\"stages\":[\"budget-selected\",\"full-root-completed\",\"changes-allocation\"]}\nok\ntest pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution ... ok\ntest pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait\ntest pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind ... ok\ntest pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot ... ok\ntest pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones ... ok\ntest pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones ... resource-allocation-order-control: {\"allocator_or_RSS_measurement\":false,\"cached\":[\"budget-selected\",\"changes-allocation\",\"tree-allocation\"],\"changed_keys\":32,\"fallback\":[\"budget-selected\",\"full-root-completed\",\"changes-allocation\"],\"logical_change_bytes\":256288}\nok\ntest pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity ... ok\ntest pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry ... ok\ntest pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks\ntest pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order ... ok\ntest pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison ... ok\n\ntest result: ok. 29 passed; 0 failed; 5 ignored; 0 measured; 64 filtered out; finished in 27.47s\n\n"
+    },
+    "node_derived_commitment": {
+      "sha256": "3e3030335c61d40abd8330511d4dbb6d91450a9f224ce0c704dc1fa8fb374427",
+      "text": "\nrunning 5 tests\ntest actual_heavier_fork_cut_invalidates_then_recovers_full_canonical_state ... ok\ntest actual_valid_growth_above_previous_8192_budget_keeps_checked_snapshot_and_reopens ... ok\ntest inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution ... ok\ntest valid_proof_wrong_state_and_sql_failure_never_publish_staged_cache ... ok\ntest warm_cache_still_reads_same_tip_actual_kv_and_rejects_external_corruption ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.15s\n\n"
+    },
+    "node_active_state": {
+      "sha256": "f2d3454b198243b8acecc28a538cb2ba3ffae930475211216d138950bfd130a2",
+      "text": "\nrunning 2 tests\ntest test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation ... ok\ntest test_active_state_rechecks_generation_before_publishing_a_derived_snapshot ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.03s\n\n"
+    }
+  },
+  "local_build_failures": {
+    "8a77-build": {
+      "build-exit.json": {
+        "returncode": 101,
+        "elapsed_ns": 198426139898
+      },
+      "source-before.json": {
+        "base": null,
+        "candidate": "8a77adb141d7c3ffbff1093e15a450de1a433f17",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8a77adb141d7c3ffbff1093e15a450de1a433f17",
+        "tested_tree": "e69289c935597d1477d88ef313d180177e830104",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781089981,
+        "tracked_entries": 6776,
+        "tracked_worktree_verified": true
+      },
+      "source-after.json": {
+        "base": null,
+        "candidate": "8a77adb141d7c3ffbff1093e15a450de1a433f17",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8a77adb141d7c3ffbff1093e15a450de1a433f17",
+        "tested_tree": "e69289c935597d1477d88ef313d180177e830104",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781089981,
+        "tracked_entries": 6776,
+        "tracked_worktree_verified": true
+      },
+      "stderr_sha256": "13d932ee073d98350bd63ec094ed5c67207f74b993b23c833998224572cafb40"
+    },
+    "64cb26b5-build": {
+      "build-exit.json": {
+        "returncode": 101,
+        "elapsed_ns": 337784864376
+      },
+      "source-before.json": {
+        "base": null,
+        "candidate": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781110220,
+        "tracked_entries": 6777,
+        "tracked_worktree_verified": true
+      },
+      "source-after.json": {
+        "base": null,
+        "candidate": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781110220,
+        "tracked_entries": 6777,
+        "tracked_worktree_verified": true
+      },
+      "resources-after-sigkill.json": {
+        "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 1609693\noom 18\noom_kill 2\noom_group_kill 0\n",
+        "/sys/fs/cgroup/memory.current": "8587894784\n",
+        "/sys/fs/cgroup/memory.peak": "8592056320\n",
+        "/sys/fs/cgroup/memory.max": "8589934592\n",
+        "/sys/fs/cgroup/cpu.max": "800000 100000\n"
+      },
+      "stderr_sha256": "09baf84c7087c681b0f0922a7f2abd75c8911661d930461b083a82dde1eed06d"
+    },
+    "64cb26b5-build-one-job": {
+      "build-exit.json": {
+        "returncode": 101,
+        "elapsed_ns": 1602586930588
+      },
+      "source-before.json": {
+        "base": null,
+        "candidate": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781110220,
+        "tracked_entries": 6777,
+        "tracked_worktree_verified": true
+      },
+      "source-after.json": {
+        "base": null,
+        "candidate": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "tested_tree": "1eccfeefc4f68f3b82e721ba08b9a80248e2860e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781110220,
+        "tracked_entries": 6777,
+        "tracked_worktree_verified": true
+      },
+      "resources-after-sigkill.json": {
+        "observed_at": "2026-11-01T17:56:51.607399+00:00",
+        "scope": "post-failed-attempt environment snapshot; no starting counter, no exclusive cgroup ownership inferred",
+        "cgroup": {
+          "memory.max": "8589934592",
+          "memory.current": "8323256320",
+          "memory.peak": "8596496384",
+          "memory.events": "low 0\nhigh 0\nmax 5406506\noom 26\noom_kill 7\noom_group_kill 0",
+          "cpu.max": "800000 100000"
+        }
+      },
+      "stderr_sha256": "84b18dd7cf70c5bd76004342274bb0725a1ab4866c3efdda8f212a759f740802"
+    }
+  },
+  "initial_ci_interruption": {
+    "run_id": 41332424883,
+    "attempt": 1,
+    "source": "64cb26b53ed82be14049000387040ba119f00e1e",
+    "jobs": [
+      124925137208,
+      124925137366,
+      124925137393,
+      124925137480
+    ],
+    "observed": "runner shutdown during build at 2026-11-01 17:43:33-34 UTC",
+    "initiator_and_root_cause": "unknown",
+    "original_cpu_tests_executed": false,
+    "cancel_action_issued_by_this_work": false
+  },
+  "candidate_controls_in_this_snapshot": {
+    "ascii": "source-reviewed, not executed in observations above",
+    "reorg_tail": "source-reviewed, not executed in observations above",
+    "prepared_sql": "source-reviewed, not executed in observations above",
+    "profile_budget_lifetime_changes": false
+  },
+  "local_evidence_retention": {
+    "observed_at": "2026-11-01T18:35:40.550162+00:00",
+    "build_cache_directory_present": false,
+    "bounded_cleanup_result": "stopped at initial path assertion, no deletion or archival executed by that command",
+    "cause_of_directory_disappearance": "not established",
+    "source_and_native_logs_present": true,
+    "execution_time_before_after_elf_hash_receipts_present": true,
+    "local_elf_body_archival_claimed": false
+  }
+}

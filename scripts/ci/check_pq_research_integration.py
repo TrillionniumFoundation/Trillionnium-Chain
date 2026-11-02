@@ -48,6 +48,17 @@ PQ_SOURCE_DIRS = (
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    ".github/workflows/pon-pq-system-continuation.yml",
+    "config/pon/pq-system-required-tests-v1.json",
+    "scripts/ci/record_pq_native_command.py",
+    "scripts/ci/test_record_pq_native_command.py",
+    "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md",
+    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
     "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md",
     "docs/security/PQ_NATIVE_NETWORK_OWNER_V2.md",
     "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",

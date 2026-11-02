@@ -1085,6 +1085,32 @@ pub enum PreparedGenerationError<E> {
     Cancelled(E),
 }
 
+/// One completely computed producer attempt. A target miss retains the exact
+/// trace/ticket but allocates no proof bytes. This is not VerifiedWork or target
+/// authorization; the caller still needs the branch's required target and full
+/// native admission for any returned proof.
+#[derive(Debug, PartialEq, Eq)]
+pub struct PreparedSearchAttempt {
+    trace: Hash,
+    ticket: Hash,
+    proof: Option<Vec<u8>>,
+}
+
+impl PreparedSearchAttempt {
+    pub fn trace(&self) -> Hash {
+        self.trace
+    }
+    pub fn ticket(&self) -> Hash {
+        self.ticket
+    }
+    pub fn proof(&self) -> Option<&[u8]> {
+        self.proof.as_deref()
+    }
+    pub fn into_proof(self) -> Option<Vec<u8>> {
+        self.proof
+    }
+}
+
 impl PreparedTask {
     /// Cached mathematical result bytes for producer root planning. This is not
     /// a verified-work capability; admission still replays the original relation.
@@ -1122,6 +1148,51 @@ impl PreparedTask {
         challenge: Hash,
         mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
     ) -> Result<Vec<u8>, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, &mut progress)?;
+        progress(PreparedGenerationProgress::BeforeProof)
+            .map_err(PreparedGenerationError::Cancelled)?;
+        let mut out = self.prefix.clone();
+        out.extend_from_slice(&transcript.finalize());
+        Ok(out)
+    }
+
+    /// Compute every original arithmetic/transcript step and checkpoint, then
+    /// serialize only a threshold hit. Misses are complete paid attempts, not
+    /// early exits from the work relation. The ordinary prove APIs and their
+    /// proof-retaining callers keep their original behavior.
+    pub fn search_attempt_with_progress<E>(
+        &self,
+        challenge: Hash,
+        target: Hash,
+        mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<PreparedSearchAttempt, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, &mut progress)?;
+        // Keep this original final cancellation fence before finalizing or
+        // exposing an attempt, including attempts that will miss the target.
+        progress(PreparedGenerationProgress::BeforeProof)
+            .map_err(PreparedGenerationError::Cancelled)?;
+        let trace: Hash = transcript.finalize().into();
+        let ticket = hash(b"ticket", &[&challenge, &trace]);
+        let proof = if ticket <= target {
+            let mut proof = Vec::with_capacity(PROOF_BYTES);
+            proof.extend_from_slice(&self.prefix);
+            proof.extend_from_slice(&trace);
+            Some(proof)
+        } else {
+            None
+        };
+        Ok(PreparedSearchAttempt {
+            trace,
+            ticket,
+            proof,
+        })
+    }
+
+    fn transcript_with_progress<E>(
+        &self,
+        challenge: Hash,
+        progress: &mut impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<Sha256, PreparedGenerationError<E>> {
         progress(PreparedGenerationProgress::BeforeReplay)
             .map_err(PreparedGenerationError::Cancelled)?;
         let mut noise = |label| {
@@ -1202,17 +1273,147 @@ impl PreparedTask {
                 }
             }
         }
-        progress(PreparedGenerationProgress::BeforeProof)
-            .map_err(PreparedGenerationError::Cancelled)?;
-        let mut out = self.prefix.clone();
-        out.extend_from_slice(&transcript.finalize());
-        Ok(out)
+        Ok(transcript)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn target_aware_generation_matches_scalar_bytes_and_exact_threshold_edges() {
+        let dense: Vec<u32> = (0..CELLS)
+            .map(|i| ((i * 97 + i / N * 31 + 11) as u128 % Q) as u32)
+            .collect();
+        let extreme: Vec<u32> = (0..CELLS)
+            .map(|i| if i % 3 == 0 { (Q - 1) as u32 } else { i as u32 })
+            .collect();
+        let rank_one: Vec<u32> = (0..CELLS)
+            .map(|i| ((i / N + 1) * (i % N + 2)) as u32)
+            .collect();
+        for (a, b) in [
+            (vec![0; CELLS], vec![0; CELLS]),
+            (dense.clone(), extreme.clone()),
+            (extreme, dense),
+            (rank_one, vec![0; CELLS]),
+        ] {
+            let producer = PreparedTask::new(&a, &b).unwrap();
+            let task = task_id(&a, &b).unwrap();
+            for challenge in [[17; 32], [31; 32]] {
+                // The scalar producer is an independent arithmetic kernel; the
+                // old PreparedTask wrapper is also retained as a byte control.
+                let scalar = prove(challenge, &a, &b).unwrap();
+                let mut original_points = Vec::new();
+                let original = producer
+                    .prove_with_progress(challenge, |point| {
+                        original_points.push(point);
+                        Ok::<_, ()>(())
+                    })
+                    .unwrap();
+                assert_eq!(original, scalar);
+                let trace: Hash = scalar[PROOF_BYTES - 32..].try_into().unwrap();
+                let ticket = hash(b"ticket", &[&challenge, &trace]);
+                let mut below = ticket;
+                for byte in below.iter_mut().rev() {
+                    let (value, borrow) = byte.overflowing_sub(1);
+                    *byte = value;
+                    if !borrow {
+                        break;
+                    }
+                }
+                assert!(
+                    below < ticket,
+                    "the chosen complete ticket must be positive"
+                );
+                let mut one = [0; 32];
+                one[31] = 1;
+                for target in [[0; 32], one, below, ticket, [255; 32]] {
+                    let mut points = Vec::new();
+                    let attempt = producer
+                        .search_attempt_with_progress(challenge, target, |point| {
+                            points.push(point);
+                            Ok::<_, ()>(())
+                        })
+                        .unwrap();
+                    assert_eq!(points, original_points);
+                    assert_eq!(attempt.trace(), trace);
+                    assert_eq!(attempt.ticket(), ticket);
+                    assert_eq!(attempt.proof().is_some(), ticket <= target);
+                    if let Some(proof) = attempt.into_proof() {
+                        assert_eq!(proof, scalar);
+                        let verified = verify_reference(challenge, task, target, &proof).unwrap();
+                        assert_eq!(verified.ticket(), ticket);
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn target_aware_generation_keeps_cancelled_attempts_unpublished_and_retryable() {
+        use PreparedGenerationProgress as Point;
+        let (a, b) = matrices();
+        let producer = PreparedTask::new(&a, &b).unwrap();
+        let challenge = [87; 32];
+        let original = producer.prove(challenge).unwrap();
+        for target in [[0; 32], [255; 32]] {
+            for cut in [
+                Point::BeforeReplay,
+                Point::Noise {
+                    label: 0,
+                    counter: 0,
+                },
+                Point::Noise {
+                    label: 3,
+                    counter: 63,
+                },
+                Point::NoiseRow { operand: 0, row: 0 },
+                Point::NoiseRow {
+                    operand: 1,
+                    row: 63,
+                },
+                Point::TranscriptTile {
+                    row: 0,
+                    column: 0,
+                    inner: 0,
+                },
+                Point::TranscriptTile {
+                    row: 7,
+                    column: 7,
+                    inner: 7,
+                },
+                Point::BeforeProof,
+            ] {
+                let mut old_points = Vec::new();
+                let old = producer.prove_with_progress(challenge, |point| {
+                    old_points.push(point);
+                    if point == cut {
+                        Err("CUT")
+                    } else {
+                        Ok(())
+                    }
+                });
+                let mut new_points = Vec::new();
+                let new = producer.search_attempt_with_progress(challenge, target, |point| {
+                    new_points.push(point);
+                    if point == cut {
+                        Err("CUT")
+                    } else {
+                        Ok(())
+                    }
+                });
+                assert_eq!(old, Err(PreparedGenerationError::Cancelled("CUT")));
+                assert_eq!(new, Err(PreparedGenerationError::Cancelled("CUT")));
+                assert_eq!(new_points, old_points);
+                assert_eq!(new_points.last(), Some(&cut));
+            }
+            let retry = producer
+                .search_attempt_with_progress(challenge, [255; 32], |_| Ok::<_, ()>(()))
+                .unwrap();
+            assert_eq!(retry.into_proof().unwrap(), original);
+        }
+    }
 
     #[test]
     fn proof_statement_precheck_rejects_task_and_ticket_without_replay() {

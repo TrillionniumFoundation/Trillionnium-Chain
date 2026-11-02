@@ -1,0 +1,63 @@
+{
+  "schema": "trnm-pq-reconstructed-red-members-v1",
+  "result": "EXPECTED_BEHAVIOR_FAILURES",
+  "source_commit": "e34f2d2f63ea0d10232b3440e93ce20e508e8a73",
+  "source_tree": "64e27258405f82aa41b80d040a581626c19b0f6b",
+  "passed": 1,
+  "failed": 4,
+  "ignored": 0,
+  "sandbox_socket_denials": 0,
+  "files": [
+    {
+      "path": "recovered-network-red-binary.json",
+      "bytes": 1594,
+      "sha256": "58cc6e82dbe0996c318340899bf34ce14d4ca6c8bb87e7b7b65b5d0ce7ec8c7b"
+    },
+    {
+      "path": "recovered-network-red-build-runner.json",
+      "bytes": 509,
+      "sha256": "bdea3591791031f19dffb3849f4145b5c6cc3c4aa3521e34529be8a17b3e3ce5"
+    },
+    {
+      "path": "recovered-network-red-build.json",
+      "bytes": 2383,
+      "sha256": "c0b759afd990ed27f8cf945b8f4edd9101b0c61de3fd713082eb25d00081e43c"
+    },
+    {
+      "path": "recovered-network-red-build.log",
+      "bytes": 104823,
+      "sha256": "9a18fef8e8bed5b500913663cf0ae80646098eb6f8d378a5ecbb77a7f0ba0281"
+    },
+    {
+      "path": "recovered-network-red-runner.json",
+      "bytes": 509,
+      "sha256": "bdea3591791031f19dffb3849f4145b5c6cc3c4aa3521e34529be8a17b3e3ce5"
+    },
+    {
+      "path": "recovered-network-red.json",
+      "bytes": 2435,
+      "sha256": "0ad938deea03d949969f79a86cb4730309f17ef8df8e21755f2be175f056e338"
+    },
+    {
+      "path": "recovered-network-red.log",
+      "bytes": 20445,
+      "sha256": "96241cdbf5807442db2bc863656b6ef4facf90bcde54fee15aa7bfc1ba346fa5"
+    },
+    {
+      "path": "red-source-bundle-encoding.json",
+      "bytes": 273,
+      "sha256": "764e3411eee78dd59e4d426a63814ce5b8fc550244b8a9af43a3866d8b5ea0d7"
+    },
+    {
+      "path": "red-source.bundle.base64",
+      "bytes": 3830,
+      "sha256": "d91086111f3965a84420ee8268dce3adf34226dae2a4699eff19ab7eb6f24860"
+    },
+    {
+      "path": "tests-only.patch",
+      "bytes": 10899,
+      "sha256": "8f80bec57f10343f0a7b8c7bf5c8e2b0252647edacf19e1166e2aedd6402831b"
+    }
+  ],
+  "whole_chain_pq_qualified": false
+}

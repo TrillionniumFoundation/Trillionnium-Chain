@@ -125,6 +125,21 @@ class TestClaimGuard(unittest.TestCase):
         (self.root / 'scripts/ci/pq_external_rollback_oracle.py').unlink()
         self.refused()
 
+    def test_native_witness_and_live_admission_sources_cannot_disappear(self):
+        for path in (
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs',
+            'docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md',
+        ):
+            with self.subTest(path=path):
+                original = (self.root / path).read_bytes()
+                (self.root / path).unlink()
+                self.refused()
+                self.put(path, original)
+
     def test_missing_quantum_daa_model_refused(self):
         (self.root / 'scripts/ci/pq_quantum_daa_scenarios.py').unlink()
         self.refused()

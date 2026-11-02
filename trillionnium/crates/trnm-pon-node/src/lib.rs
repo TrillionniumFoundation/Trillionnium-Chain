@@ -24,6 +24,7 @@ pub mod operator_pq_startup;
 pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod pq_application_v6;
+pub mod pq_rollback_witness;
 pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;

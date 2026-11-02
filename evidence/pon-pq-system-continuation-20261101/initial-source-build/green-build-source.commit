@@ -1,0 +1,6 @@
+tree f5cdc9a1c46ef01a722ab472e89a2a7b80ca17aa
+parent 5606a97104f9cd3243befc2921ccace3fae2c369
+author OpenAI Codex <codex@openai.com> 1793554626 -0800
+committer OpenAI Codex <codex@openai.com> 1793554650 -0800
+
+Guard PQ network admission and native rollback witness transitions

@@ -164,19 +164,23 @@ impl PreparedCandidate {
         for nonce in 0..attempts {
             self.header.nonce = nonce;
             let challenge = self.header.challenge();
-            let proof = match self.prepared.prove_with_progress(challenge, &mut progress) {
-                Ok(proof) => proof,
+            let attempt = match self.prepared.search_attempt_with_progress(
+                challenge,
+                self.header.target,
+                &mut progress,
+            ) {
+                Ok(attempt) => attempt,
                 Err(PreparedGenerationError::Relation(error)) => {
                     return Err(format!("WORK:{error:?}").into());
                 }
                 Err(PreparedGenerationError::Cancelled(())) => {
-                    // This field has always counted COMPLETE proof trials.
+                    // Count complete work trials, including every target miss.
                     // Search elapsed time still includes the abandoned partial
-                    // attempt. Do not invent a completed trial or refund work.
+                    // attempt. No incomplete trial is credited or refunded.
                     return Ok(SearchOutcome::Stopped(nonce));
                 }
             };
-            if hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) <= self.header.target {
+            if let Some(proof) = attempt.into_proof() {
                 return Ok(SearchOutcome::Found(Box::new(Packet {
                     header: self.header,
                     transactions: self.transactions,
@@ -1111,5 +1115,42 @@ mod cooperative_search_tests {
             .unwrap();
         assert_eq!(starts, 2);
         assert!(matches!(result, SearchOutcome::Stopped(1)));
+    }
+
+    #[test]
+    fn cooperative_search_exhaustion_keeps_every_complete_miss_and_checkpoint() {
+        // This deliberately unachievable finite fixture target exercises the
+        // search accounting only; it is not an admitted ledger target.
+        let target = [0; 32];
+        let mut reference = candidate(target);
+        let mut expected_points = Vec::new();
+        for nonce in 0..3 {
+            reference.header.nonce = nonce;
+            let challenge = reference.header.challenge();
+            let proof = reference
+                .prepared
+                .prove_with_progress(challenge, |point| {
+                    expected_points.push(point);
+                    Ok::<_, ()>(())
+                })
+                .unwrap();
+            assert!(hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) > target);
+        }
+        let mut actual_points = Vec::new();
+        let result = candidate(target)
+            .search_with_progress(3, |point| {
+                actual_points.push(point);
+                Ok(())
+            })
+            .unwrap();
+        assert!(matches!(result, SearchOutcome::Exhausted(3)));
+        assert_eq!(actual_points, expected_points);
+        assert_eq!(
+            actual_points
+                .iter()
+                .filter(|point| **point == Point::BeforeProof)
+                .count(),
+            3
+        );
     }
 }
