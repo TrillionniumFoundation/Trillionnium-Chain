@@ -104,12 +104,13 @@ mod kernel_parent {
         swap: &str,
         pids: &str,
     ) -> Result<Limits> {
-        let parts: Vec<_> = cpu.split_ascii_whitespace().collect();
-        if parts.len() != 2 {
-            return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
-        }
-        let quota = numeric(parts[0], 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
-        let period = numeric(parts[1], 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let mut parts = cpu.split_ascii_whitespace();
+        let (quota, period) = match (parts.next(), parts.next(), parts.next()) {
+            (Some(quota), Some(period), None) => (quota, period),
+            _ => return Err("PUBLIC_HOST_KERNEL_LIMITS".into()),
+        };
+        let quota = numeric(quota, 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let period = numeric(period, 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let memory = numeric(memory, MAX_MEMORY_BYTES).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let tasks = numeric(pids, MAX_TASKS).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         if quota.checked_mul(4).is_none_or(|value| value > period)
@@ -199,6 +200,13 @@ mod kernel_parent {
         Ok(relative.to_owned())
     }
 
+    fn within_parent(current: &str, parent: &str) -> bool {
+        current == parent
+            || current
+                .strip_prefix(parent)
+                .is_some_and(|suffix| suffix.starts_with('/'))
+    }
+
     /// Accept additional future kernel cpu.stat keys, but never fabricate the
     /// four required counters, accept duplicates or accept malformed/huge input.
     /// The actual sysfs files are read only after the fixed parent was checked.
@@ -280,7 +288,7 @@ mod kernel_parent {
                 .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
                 .trim_start_matches('/');
             let current = own_cgroup()?;
-            if current != parent_rel && !current.starts_with(&format!("{parent_rel}/")) {
+            if !within_parent(&current, parent_rel) {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
             let observed = read_limits(&self.parent)?;
@@ -763,6 +771,82 @@ mod kernel_parent {
                 assert!(validate_limits("25000 100000", burst, mem, swap, pids).is_err());
             }
             assert!(validate_limits("1000 10000", "0", "33554432", "0", "4").is_ok());
+        }
+
+        #[test]
+        fn cpu_limit_requires_exactly_two_ascii_whitespace_tokens() {
+            let expected = validate_limits("25000 100000", "0", "268435456", "0", "32").unwrap();
+            for cpu in [
+                "25000 100000",
+                " \t25000\t100000 \r\n",
+                "\u{c}25000\u{c}100000",
+                // Original numeric() trims Unicode at each token's edges.
+                "\u{a0}25000 100000\u{a0}",
+            ] {
+                assert_eq!(
+                    validate_limits(cpu, "0", "268435456", "0", "32").unwrap(),
+                    expected,
+                    "{cpu:?}"
+                );
+            }
+            for cpu in [
+                "",
+                " \t\r\n",
+                "25000",
+                "25000 100000 0",
+                "25000 100000\tinvalid\nmore",
+                "25000\u{b}100000",
+                "25000\u{a0}100000",
+                "25000 100000 \0",
+            ] {
+                assert_eq!(
+                    validate_limits(cpu, "0", "268435456", "0", "32")
+                        .unwrap_err()
+                        .to_string(),
+                    "PUBLIC_HOST_KERNEL_LIMITS",
+                    "{cpu:?}"
+                );
+            }
+        }
+
+        #[test]
+        fn membership_requires_exact_parent_or_slash_delimited_descendant() {
+            for current in [
+                "trnmponpublic.slice",
+                "trnmponpublic.slice/worker.service",
+                "trnmponpublic.slice/worker.service/thread",
+            ] {
+                assert!(within_parent(current, PARENT_NAME), "{current}");
+            }
+            for current in [
+                "",
+                "trnmponpublic.slic",
+                "trnmponpublic.slice-other/worker.service",
+                "trnmponpublic.slice2/worker.service",
+                "other/trnmponpublic.slice",
+                "trnmponpublic.slice\\worker.service",
+                "/trnmponpublic.slice",
+            ] {
+                assert!(!within_parent(current, PARENT_NAME), "{current}");
+            }
+            // This helper preserves the original string relationship only.
+            // own_cgroup separately validates empty, dot and trailing segments.
+            // These edge forms must not gain implicit path normalization.
+            for (current, parent, expected) in [
+                ("trnmponpublic.slice/", PARENT_NAME, true),
+                ("trnmponpublic.slice//worker", PARENT_NAME, true),
+                ("trnmponpublic.slice/worker", "trnmponpublic.slice/", false),
+                ("trnmponpublic.slice//worker", "trnmponpublic.slice/", true),
+                ("", "", true),
+                ("worker", "", false),
+                ("/worker", "", true),
+            ] {
+                assert_eq!(
+                    within_parent(current, parent),
+                    expected,
+                    "{current:?} / {parent:?}"
+                );
+            }
         }
         #[test]
         fn canonical_systemd_slice_name_maps_to_the_actual_root_cgroup() {

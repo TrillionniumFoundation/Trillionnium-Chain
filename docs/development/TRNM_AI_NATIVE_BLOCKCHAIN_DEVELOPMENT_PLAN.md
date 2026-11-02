@@ -4442,3 +4442,50 @@ pre-existing stale pin: #675's last recent-batch workflow edit changed its blob
 to `e1820626477ab613217e84d9f6805019d4657a09` while the corpus still named
 `96ef7b370deb0f1067adfdb47a77a958ac584952`. The original positive checker and
 negative source controls remain mandatory; pin agreement is not PQ acceptance.
+
+### Exact branch-encoding guard follow-up
+
+At `3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129`, all four branch-encoding
+lanes in run `41330488644` stopped at the old `pon_wire.rs` blob guard before
+executing the wire suite. The same step also retained the older 17-pass count.
+The reviewed new Header binding regression changes that blob from
+`6b0e3687c7c1348dec11fd5fff91b7eda884d561` to
+`46bb09a69d68318580e2856116267376489aaf78`; actual wire execution at that
+source produces 18 passed and the same one intentionally ignored observation.
+This follow-up binds the new exact blob and count and separately requires the
+new named Header test through the existing exact-execution reader. It refreshes
+the corpus pin for that workflow. Every Rust source, Cargo input, legal-cost
+runner/reader and resource/deadline predicate remains byte-identical to `3bbc`.
+
+The original four CI failures remain failures. The separate finality ARM-head
+attempt stopped at a rustup Clippy component installation conflict, and the
+original native three-run campaign executed but failed its original criteria.
+Neither is reclassified by this workflow repair. The `3bbc` four original-budget
+fresh-service scenarios likewise still fail independent six-depth confirmation
+under pressure despite seven receiver ACKs each. Cost, callback and source
+checks do not supersede those failures, and no new-source execution is inferred
+from a byte-equivalent native subset.
+
+### Nonblocking rejection reuse and Host allocation continuation
+
+Continue exact PR #675 head `9cd91ed69a0c69df42f8d7812d32d271df6e1998`,
+tree `60a521c7299febfe26a8c7d38d3420d490d07cd8`. The optional W1 rejection
+cache previously used blocking mutex acquisition before the next cancellation
+callback and after a completed replay. Lookup/publication now use `try_lock`;
+contention and poison retain the original complete verifier or skip optional
+publication. New held-lock controls compare exact native results and callback
+streams for warm/cold false traces, false products, valid work and cancellation.
+An intentional poisoned-lock control retains complete native verification.
+
+The kernel-parent checker removes temporary CPU-token and membership-prefix
+allocations, keeping every original current-file read, grammar, refusal and
+resource check. Token-edge Unicode trimming remains legal under the original
+numeric parser; embedded Unicode separators remain refused. The existing
+cross-branch corpus records the actual changed Host source blob. No namespace,
+work relation, chainwork, target, accepted proof, budget or deadline changes.
+
+These bounded scheduling changes require their own exact-source execution.
+The full-work cost lower bound, fresh-identity service, original four-second
+independent confirmation, quantum costs, model utility and production gates
+remain unqualified. Prior failed business and expensive-refusal observations
+are retained; local module tests cannot replace the original hosted campaigns.
