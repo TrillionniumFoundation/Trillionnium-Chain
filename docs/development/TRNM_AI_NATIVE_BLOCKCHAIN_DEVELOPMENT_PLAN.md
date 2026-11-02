@@ -4489,3 +4489,34 @@ The full-work cost lower bound, fresh-identity service, original four-second
 independent confirmation, quantum costs, model utility and production gates
 remain unqualified. Prior failed business and expensive-refusal observations
 are retained; local module tests cannot replace the original hosted campaigns.
+
+### V3 factorial capture and separate false-trace economics — 2026-11-02
+
+Exact source `2b250859e7c07088e6c3c01f75006372c684de61`, tree
+`12c414a565f58fde6e98ec6eba503d9389ddd06f`, completes all 30 original V3
+shards with eight samples and four matched eager/lazy × Transposed/FullLimb
+cells. Retained execution pays 960 setups, 23,360 searches and 389,788 complete
+attempts; the native paths produce 93,440 legal `Accepted` results and 93,440
+final-product `Product` refusals. V1 and V2 evidence identities remain separate.
+Aggregate lazy FullLimb producer CPU is +1.440539% versus eager FullLimb; the
+zero/target-0/reuse-64 shard is +105.0876%. Both are retained, un-attributed
+observations; neither supports uniform lazy speedup or a stable regression.
+
+The separate nine-class false-trace capture pays 72 setups and 573 hash attempts
+for 288 candidates; all 1,440 native calls refuse with `Transcript`. Default
+receiver/attacker CPU ratios span 18.34–27.21 by class; the ratio of campaign
+sums is 20.726834889, so the original `<= 1` local economic condition remains
+unsatisfied. This is not a controlled comparison with the historical 6.86–7.90
+conditions or a public-network amplification measurement. The earlier `d78`
+18/30 attempt remains failed and is preserved in full, without prefix splicing.
+
+See [retained evidence](../../evidence/pon-w1-factorial-v3-20261102/README.md).
+These captures use a local eight-CPU-equivalent/8-GiB environment, not the
+original 0.25-CPU/2-GiB Host. Selected native regression validation completes 198 passing tests and two
+existing ignored entries; strict all-target/all-feature lint passes. The initial
+Node lib-test compiler SIGKILL and managed interruption remain retained, with the
+remaining controls passing at Cargo build concurrency one. The SQLite I/O
+`UNQUALIFIED` observation is retained. Work-cost
+security, original-budget service, hardware, model utility, whole-chain quantum
+cost and production gates remain HOLD; no budget, deadline or business criterion
+changes.

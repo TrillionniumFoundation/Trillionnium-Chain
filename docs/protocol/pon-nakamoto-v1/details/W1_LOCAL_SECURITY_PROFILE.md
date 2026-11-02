@@ -247,3 +247,26 @@ also do not prove PoN economic hardness, unique useful-task demand, training/dat
 custody, model improvement, or authorization for validators to replace their own
 consensus rules. No automatic PoW/BFT fallback or new business authority follows
 from this report.
+
+## Complete factorial and separate rejection observations — 2026-11-02
+
+The separate [V3 evidence bundle](../../../../evidence/pon-w1-factorial-v3-20261102/README.md)
+pins source `2b250859e7c07088e6c3c01f75006372c684de61`. All 30 fixed
+eager/lazy × Transposed/FullLimb shards completed: 960 actual setups, 23,360
+searches, 389,788 complete attempts, and 93,440 calls each returning legal
+`Accepted` or final-product `Product` refusal. All samples remain retained,
+including the un-attributed zero/target-0/reuse-64 timing variation.
+
+The separate nine-class false-trace capture retained 72 setups, 573 hash attempts
+and 288 candidates. All 1,440 native calls refused with `Transcript`. Default
+receiver/attacker CPU ratios were 18.34–27.21 by class; the ratio of all campaign
+sums was 20.726834889. The original local `<= 1` rejection-economics condition
+remains unsatisfied. This is neither a public-network amplification coefficient
+nor a controlled comparison with earlier 6.86–7.90 observations.
+
+These measurements use one local eight-CPU-equivalent/8-GiB environment, not the
+original 0.25-CPU/2-GiB public Host. The complete earlier d78 18/30 failed attempt
+is retained separately. Selected native controls and strict lint pass after the
+retained compiler/interruption failure, while SQLite I/O qualification remains
+UNQUALIFIED. Work cost, resource fairness, original-budget independent confirmation,
+hardware, model utility, whole-chain quantum cost and production gates stay HOLD.

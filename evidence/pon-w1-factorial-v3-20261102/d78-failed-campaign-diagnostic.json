@@ -1,0 +1,249 @@
+{
+  "analyzer_refusal": {
+    "exit_code": 1,
+    "no_full_analysis_directory_created": true,
+    "reason": "INCOMPLETE: final full-grid readback required"
+  },
+  "cheapest_legal_cost_bound": false,
+  "completed_pass_count": 18,
+  "completed_pass_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "failed_launches": [
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 18,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 19,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 20,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 21,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 22,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-left-rank-one",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 23,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 24,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 25,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "exit_code": null,
+      "index": 26,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 27,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 28,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    },
+    {
+      "configuration": {
+        "class": "one-zero-right-rank-one",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "exit_code": null,
+      "index": 29,
+      "launch_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+      "reader_error": "missing complete end",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0,
+      "timed_out": false
+    }
+  ],
+  "full_grid_pass": false,
+  "live_binary_after_hash_available": false,
+  "manifest_sha256": "91333482096caae0d8e9c155dcb1663767c2a4cab7dfe4aac3bd70a9cb45c28d",
+  "missing_native_verdicts_imputed": false,
+  "notes": [
+    "18/30 is a failed full campaign, not full-grid success.",
+    "The last twelve native launches failed with missing executable; their exit codes remain null, not measured verifier rejects.",
+    "No inference identifies the actor or cause that removed the executable.",
+    "The retained ELF can still be archived and matches its earlier hash; this does not supply the missing live-path after-execution hash.",
+    "The future full rerun must retain this failure and must not splice these eighteen shards into another source/run."
+  ],
+  "original_manifest_error": "[Errno 2] No such file or directory: '/tmp/pon-next-target/x86_64-unknown-linux-gnu/release/examples/pon_w1_legal_strategy_v3'",
+  "original_public_host_acceptance": false,
+  "original_reader_error": "missing complete end",
+  "partial_costs_promoted_to_complete_grid": false,
+  "partial_retained_record_counts": {
+    "campaign": 18,
+    "candidate": 3504,
+    "cohort": 576,
+    "end": 18,
+    "material": 18,
+    "product_mutation": 14016,
+    "search": 14016,
+    "verifier": 112128
+  },
+  "partial_semantic_alerts": [],
+  "planned_shards": 30,
+  "qualification_status": "HOLD",
+  "result": "FAIL",
+  "retained_binary_current_sha256": "b5ce25e8853e14c03c2c03d62179280fbe807c0740cfbac0f36a31a80644e690",
+  "retained_current_hash_is_original_live_binary_after_hash": false,
+  "retained_matches_before": true,
+  "schema": "pon-factorial-incomplete-local-campaign-diagnostic-v1",
+  "source_after": {
+    "commit": "d78b67d7bd2b1e194e7679c46dc77ac1ffed286c",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792621165,
+    "tracked_entries": 6862,
+    "tracked_worktree_verified": true,
+    "tree": "227461709207a8015584ae33ddb7ce06c8001105"
+  },
+  "source_before": {
+    "commit": "d78b67d7bd2b1e194e7679c46dc77ac1ffed286c",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792621165,
+    "tracked_entries": 6862,
+    "tracked_worktree_verified": true,
+    "tree": "227461709207a8015584ae33ddb7ce06c8001105"
+  },
+  "source_endpoints_equal": true
+}
