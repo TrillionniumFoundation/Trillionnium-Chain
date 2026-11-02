@@ -243,6 +243,122 @@ jobs:
           path: ${{ runner.temp }}/${{ env.LEGAL_CAPTURE_PREFIX }}-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
+  legal-factorial:
+    name: W1 factorial legal strategies v3 (${{ matrix.arch }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        source: [head, prospective-merge]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact measured source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve observations and verify ordered source identity
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-legal-factorial-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-w1-legal-factorial\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-w1-legal-factorial\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+      - name: Install exact original compiler and tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Verify retained and factorial readers and command-owner failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/retained-legal-reader-controls.log"
+          python3 scripts/ci/test_pon_w1_legal_strategy_reader_v3.py 2>&1 | tee "$OUT/factorial-reader-controls.log"
+          python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
+          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-rejection-controls.log"
+      - name: Verify actual locked graph and original formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Execute native producer, header, History and CPU cancellation controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib pon_work::legal_attempt:: -- --test-threads=1 2>&1 | tee "$OUT/factorial-kernel-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v3 -- --test-threads=1 2>&1 | tee "$OUT/factorial-example-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test work_header_binding -- --test-threads=1 2>&1 | tee "$OUT/header-binding-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-w1-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-import-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/cpu-completion-tests.log"
+          python3 - "$OUT" <<'PYTEST'
+          from pathlib import Path
+          import re, sys
+          root = Path(sys.argv[1])
+          # The one ignored History entry is the existing subprocess fixture;
+          # its parent control selects real SIGKILL cuts. It is not a skipped gate.
+          expected = {"factorial-kernel-tests": (6, 0), "factorial-example-tests": (6, 0),
+              "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
+              "history-import-tests": (20, 1), "cpu-completion-tests": (11, 0)}
+          for name, counts in expected.items():
+              text = (root / (name + ".log")).read_text()
+              rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
+              if rows != [tuple(map(str, counts))]:
+                  raise SystemExit(name + ': exact native controls did not execute')
+          PYTEST
+      - name: Prepare pinned provider required by native all-feature controls
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
+      - name: Run strict native lint for all affected owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee "$OUT/factorial-kernel-clippy.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/factorial-node-clippy.log"
+      - name: Execute all thirty separate v3 shards under the original per-shard budget
+        if: always() && steps.source.outcome == 'success'
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --legal-strategy-v3
+      - name: Verify measured source after execution
+        if: always() && steps.source.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+      - name: Retain costs, binaries and all failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-legal-factorial-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-legal-factorial-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
   fresh-challenge-service:
     name: W1 fresh challenge service (x64, ${{ matrix.source }})
     runs-on: ubuntu-24.04
