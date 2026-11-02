@@ -4511,3 +4511,40 @@ auditable. This countercontrol prevents a product-only rejection improvement
 from being mistaken for a generic forged-trace defense. None of these changes
 closes cheapest-work, public-service, quantum-cost or production qualification
 without the corresponding source-specific native evidence.
+
+### Explicit authenticated-sync Host fixture continuation
+
+The complete local `native_node` target at `477cc47d75ac88583d35f0ddaa7be354a804c49f`
+exposed an existing fixture-context failure: authenticated sync correctly returns
+`PUBLIC_HOST_KERNEL_PARENT` on a machine without the fixed administrator-owned
+Host. That run remains 30 passed, one failed and one ignored. The original
+positive fixture's name, success assertions and four-second server lifetime are
+retained; it is now explicitly Host-required and executed by a dedicated exact
+head/prospective-merge Host workflow. A separate default negative executes real
+push/replay and proves exact missing-Host refusal without outbox/replay/audit,
+active or KV mutation. Refusal is not counted as successful authenticated sync.
+
+The separate native runner and strict third Host-controller entry bind current
+source, both test and CLI ELF identities, actual commands, complete named test
+execution and original fixed kernel-parent observations. Short-lived child PID
+inspection failures remain null with their actual errors; no extra sleep or
+service lifetime is introduced for observation. The two original controller
+entries, original service budgets and native business gates remain unchanged.
+Real Host success requires its own hosted execution; local negative or mocked
+controller controls cannot substitute for it.
+
+The same full target also retained an intermittent exact `BUSY:Duplicate`
+response between serial identical private ConfirmMany calls while the prior
+response's admission guard was still held. The test consumer now retries only
+that exact transient refusal within one absolute five-second success deadline
+and 64 attempts, counting every retry against the server's busy metric. Late
+success and every other error still fail. Original 32 transcript refusals,
+16 actual confirmed batches, 30-second server lifetime and runtime guards are
+retained. This is not a relaxed public four-second confirmation requirement.
+
+The original 4,105-block sync contract still forbids early partial activation.
+Per-prefix activation is not introduced as a purported performance repair.
+Legacy already retains periodic snapshots and Authenticated retains recent
+per-block snapshots; current full ancestry-clock/readback costs remain separate
+from bounded scratch-locator storage. Private continuation/freshness work needs
+its own exact owner and invalidation proof, not blind epoch restamping.

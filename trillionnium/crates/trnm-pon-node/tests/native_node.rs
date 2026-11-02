@@ -1288,6 +1288,7 @@ fn test_native_batch_cli_uses_the_real_persisted_owner() {
 }
 #[test]
 fn test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry() {
+    use std::time::Instant;
     use trnm_protocol::pon_wire::hash;
     let temp = tempfile::tempdir().unwrap();
     let clock = ingress::now().unwrap();
@@ -1325,6 +1326,7 @@ fn test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry() 
     let server = std::thread::spawn(move || {
         ingress::serve(listener, source, Duration::from_secs(30), child_stop)
     });
+    let mut busy_retries = 0_u64;
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
         std::thread::scope(|scope| {
             let attack = scope.spawn(|| {
@@ -1345,7 +1347,33 @@ fn test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry() 
                         })
                         .collect(),
                 };
-                let batch = ingress::call(address, &request).unwrap();
+                // The prior identical response can arrive before its server
+                // permit drops. Retry only that exact transient refusal, with
+                // 64 attempts and one original five-second success deadline
+                // for the whole batch. call() retains its existing I/O waits;
+                // this check rejects late success, not preemptively caps waits.
+                let deadline = Instant::now() + Duration::from_secs(5);
+                let mut completed = None;
+                for _ in 0..64 {
+                    assert!(Instant::now() < deadline, "batch RPC deadline expired");
+                    let response = ingress::call(address, &request);
+                    assert!(
+                        Instant::now() < deadline,
+                        "batch RPC returned after deadline"
+                    );
+                    match response {
+                        Ok(batch) => {
+                            completed = Some(batch);
+                            break;
+                        }
+                        Err(error) if error.to_string() == r#"REMOTE:"BUSY:Duplicate""# => {
+                            busy_retries += 1;
+                            std::thread::yield_now();
+                        }
+                        Err(error) => panic!("batch RPC failed: {error}"),
+                    }
+                }
+                let batch = completed.expect("batch RPC attempt cap exhausted");
                 assert_eq!(batch["ancestry_checked"], 7);
                 assert!(batch["observations"]
                     .as_array()
@@ -1362,7 +1390,8 @@ fn test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry() 
     result.unwrap();
     assert_eq!(metrics.rejected_requests, 32);
     assert_eq!(metrics.completed_requests, 16);
-    println!("actual native loopback: 32 ticket-passing false transcripts rejected; 16 four-query batches served; not public/Sybil qualification");
+    assert_eq!(metrics.busy_requests, busy_retries);
+    println!("actual native loopback: 32 ticket-passing false transcripts rejected; 16 four-query batches served; {busy_retries} exact duplicate refusals counted; not public/Sybil qualification");
 }
 
 #[test]
@@ -1535,7 +1564,89 @@ fn test_authentication_options_are_scoped_to_network_commands() {
 }
 
 #[test]
+#[ignore = "requires the fixed administrator-owned Host; run by pon-authenticated-outbox-host-v1"]
 fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
+    let host = trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+        "127.0.0.1:1".parse().unwrap(),
+        Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )
+    .unwrap()
+    .expect("the positive fixture requires its actual fixed Host");
+    host.verify().unwrap();
+    authenticated_cli_outbox_fixture(true);
+    host.verify().unwrap();
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+fn test_authenticated_cli_sync_without_host_refuses_without_changing_durable_outbox() {
+    let parent = trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT;
+    assert!(
+        matches!(
+            fs::symlink_metadata(parent),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound
+        ),
+        "the unprovisioned fixture requires the fixed Host to be absent"
+    );
+    let error = match trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+        "127.0.0.1:1".parse().unwrap(),
+        Some(parent),
+    ) {
+        Err(error) => error,
+        Ok(_) => panic!("an absent fixed Host cannot qualify this fixture"),
+    };
+    assert_eq!(error.to_string(), "PUBLIC_HOST_KERNEL_PARENT");
+    authenticated_cli_outbox_fixture(false);
+}
+
+fn authenticated_cli_process(pid: u32, role: &str) -> Value {
+    // A real short-lived child may finish before /proc is observed. Retain
+    // its actual Child::id and the failed observation; never hold it alive or
+    // fabricate membership. The Host controller owns the complete process
+    // subtree and the actual sync CLI independently enforces its own Host.
+    let (cgroup, observation_error) = match fs::read_to_string(format!("/proc/{pid}/cgroup")) {
+        Ok(raw) if !raw.trim().is_empty() => (Some(raw.trim().to_owned()), None),
+        Ok(_) => (None, Some("empty cgroup observation".to_owned())),
+        Err(error) => (None, Some(error.to_string())),
+    };
+    serde_json::json!({
+        "pid":pid,"role":role,
+        "cgroup":cgroup,"cgroup_observation_error":observation_error,
+    })
+}
+
+fn authenticated_cli_durable_rows(path: &Path) -> Vec<(String, Vec<Vec<rusqlite::types::Value>>)> {
+    let db = rusqlite::Connection::open_with_flags(
+        path.join("native.sqlite"),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    [
+        "peer_outbox",
+        "peer_replay",
+        "peer_request_audit",
+        "active",
+        "kv",
+    ]
+    .into_iter()
+    .map(|table| {
+        let mut statement = db
+            .prepare(&format!("SELECT * FROM {table} ORDER BY 1,2"))
+            .unwrap();
+        let columns = statement.column_count();
+        let rows = statement
+            .query_map([], |row| {
+                (0..columns).map(|column| row.get(column)).collect()
+            })
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<Vec<rusqlite::types::Value>>>>()
+            .unwrap();
+        (table.to_owned(), rows)
+    })
+    .collect()
+}
+
+fn authenticated_cli_outbox_fixture(qualified_host: bool) {
     use trnm_crypto_primitives::{public_key_hex, signing_key_from_hex};
     use trnm_protocol::pon_wire::hash;
 
@@ -1594,6 +1705,12 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
+    let test_pid = std::process::id();
+    let server_pid = server.id();
+    let mut processes = vec![
+        authenticated_cli_process(test_pid, "test"),
+        authenticated_cli_process(server_pid, "server"),
+    ];
     let stdout = server.stdout.take().unwrap();
     let mut server_stdout = BufReader::new(stdout);
     let mut listening = String::new();
@@ -1605,8 +1722,8 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     assert_eq!(listening["scope"], "authenticated-development-private");
 
     let client_store = temp.path().join("client-store");
-    let push = || {
-        Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+    let push = |role: &str| {
+        let child = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
             .args(["push", "--development", "--store"])
             .arg(&client_store)
             .args(["--packet"])
@@ -1621,10 +1738,16 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
             .arg(&client_key)
             .args(["--server-public", &server_public])
             .args(["--session-generation", "1"])
-            .output()
-            .unwrap()
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let observation = authenticated_cli_process(child.id(), role);
+        (child.wait_with_output().unwrap(), observation)
     };
-    let first = push();
+    let (first, first_process) = push("push-first");
+    processes.push(first_process);
     assert!(
         first.status.success(),
         "{}",
@@ -1634,7 +1757,8 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     assert_eq!(first["state"]["authenticated_outbox_pending"], 0);
     let tip = first["response"]["block"].as_str().unwrap().to_owned();
 
-    let replay = push();
+    let (replay, replay_process) = push("push-replay");
+    processes.push(replay_process);
     assert!(
         replay.status.success(),
         "{}",
@@ -1644,6 +1768,7 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     assert_eq!(replay["response"], first["response"]);
     assert_eq!(replay["state"]["authenticated_outbox_pending"], 0);
 
+    let before_sync = authenticated_cli_durable_rows(&client_store);
     let sync = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
         .args(["sync", "--development", "--store"])
         .arg(&client_store)
@@ -1653,17 +1778,33 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
         .arg(&client_key)
         .args(["--server-public", &server_public])
         .args(["--session-generation", "1"])
-        .output()
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
         .unwrap();
-    assert!(
-        sync.status.success(),
-        "{}",
-        String::from_utf8_lossy(&sync.stderr)
-    );
-    let sync: Value = serde_json::from_slice(&sync.stdout).unwrap();
-    assert_eq!(sync["result"]["verified_tip"], tip);
-    assert_eq!(sync["result"]["state"]["authenticated_outbox_pending"], 0);
-    assert_eq!(sync["result"]["state"]["height"], 1);
+    let sync_pid = sync.id();
+    processes.push(authenticated_cli_process(sync_pid, "sync"));
+    let sync = sync.wait_with_output().unwrap();
+    if qualified_host {
+        assert!(
+            sync.status.success(),
+            "{}",
+            String::from_utf8_lossy(&sync.stderr)
+        );
+        let sync: Value = serde_json::from_slice(&sync.stdout).unwrap();
+        assert_eq!(sync["result"]["verified_tip"], tip);
+        assert_eq!(sync["result"]["state"]["authenticated_outbox_pending"], 0);
+        assert_eq!(sync["result"]["state"]["height"], 1);
+    } else {
+        assert!(!sync.status.success());
+        assert!(sync.stdout.is_empty());
+        assert_eq!(
+            String::from_utf8(sync.stderr).unwrap().trim(),
+            "PUBLIC_HOST_KERNEL_PARENT"
+        );
+        assert_eq!(authenticated_cli_durable_rows(&client_store), before_sync);
+    }
 
     let mut remainder = String::new();
     server_stdout.read_to_string(&mut remainder).unwrap();
@@ -1679,5 +1820,43 @@ fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     let final_line = remainder.lines().last().unwrap();
     let final_value: Value = serde_json::from_str(final_line).unwrap();
     assert_eq!(final_value["result"]["replayed_responses"], 0);
-    assert_eq!(final_value["result"]["authenticated_requests"], 3);
+    if qualified_host {
+        assert_eq!(final_value["result"]["authenticated_requests"], 3);
+        let original_cgroup = processes[0]["cgroup"].as_str().unwrap();
+        assert!(original_cgroup.starts_with("0::/trnmponpublic.slice/"));
+        assert!(!original_cgroup.contains('\n'));
+        for process in &processes {
+            if let Some(observed) = process["cgroup"].as_str() {
+                assert_eq!(observed, original_cgroup);
+            } else {
+                assert!(process["cgroup_observation_error"].is_string());
+            }
+        }
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema":"trnm-authenticated-outbox-host-fixture-v1",
+                "test_pid":test_pid,"server_pid":server_pid,
+                "push_pids":[processes[2]["pid"],processes[3]["pid"]],
+                "sync_pid":sync_pid,"perpid_cgroups":processes,
+                "sync_success":true,"original_server_lifetime_seconds":4,
+                "verified_tip":tip,"authenticated_requests":3,
+                "replayed_responses":0,"authenticated_outbox_pending":0,
+                "production_activation":false,"public_network_ready":false,
+            })
+        );
+    } else {
+        assert_eq!(final_value["result"]["authenticated_requests"], 2);
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema":"trnm-authenticated-outbox-unprovisioned-refusal-v1",
+                "test_pid":test_pid,"server_pid":server_pid,"sync_pid":sync_pid,
+                "sync_success":false,"error":"PUBLIC_HOST_KERNEL_PARENT",
+                "durable_outbox_replay_audit_active_kv_unchanged":true,
+                "authenticated_requests":2,"perpid_cgroups":processes,
+                "production_activation":false,"public_network_ready":false,
+            })
+        );
+    }
 }

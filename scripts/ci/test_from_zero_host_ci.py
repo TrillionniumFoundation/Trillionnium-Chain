@@ -325,5 +325,182 @@ class OriginalHostControls(unittest.TestCase):
                 check_from_zero_host_call(changed, block)
 
 
+class AuthenticatedOutboxHostControls(unittest.TestCase):
+    command = ['python3', 'scripts/ci/run_authenticated_outbox_native_v1.py',
+               '--out', '/tmp/authenticated-outbox-native']
+
+    def test_only_exact_separate_outbox_argv_is_added(self):
+        self.assertEqual(host.validate_command(self.command), Path(self.command[-1]))
+        for changed in [self.command + ['--ignored'], self.command + ['--skip'],
+                        [*self.command[:2], '--other', self.command[3]],
+                        [*self.command[:3], 'relative'],
+                        [*self.command[:3], str(host.ROOT / 'out')],
+                        ['python3', 'scripts/ci/other_outbox.py', '--out', '/tmp/out']]:
+            with self.subTest(command=changed), self.assertRaises(ValueError):
+                host.validate_command(changed)
+
+    def test_missing_real_host_blocks_outbox_child_before_execution(self):
+        sample = synthetic_sample()
+        sample['parent'] = None
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(host, 'capture', return_value=sample), \
+                patch.object(host.subprocess, 'run') as run:
+            result = host.inside(Path(temporary), sample['service'], 1001, 1001, self.command)
+            self.assertEqual(result, 1)
+            run.assert_not_called()
+            saved = json.loads((Path(temporary) / 'child-result.json').read_text())
+            self.assertEqual(saved['schema'], 'trnm-ci-authenticated-outbox-host-child-v1')
+            self.assertIsNone(saved['native_child_exit'])
+
+    def test_local_outbox_command_never_provisions_a_host(self):
+        with patch.dict(host.os.environ, {'CI': 'true', 'GITHUB_ACTIONS': 'false'}, clear=True), \
+                patch.object(host.subprocess, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'HOSTED_CI_ONLY_NO_LOCAL_PROVISION'):
+                host.outer(self.command)
+            run.assert_not_called()
+
+    def prepare(self, folder, *, after=None, process=None, override=None):
+        import run_authenticated_outbox_native_v1 as outbox
+        source = {'commit': 'a' * 40, 'tree': 'b' * 40}
+        test = folder / 'test-build.elf'
+        cli = folder / 'cli-build.elf'
+        test.write_bytes(b'synthetic test ELF input')
+        cli.write_bytes(b'synthetic CLI ELF input')
+        (folder / 'prepare-build').mkdir()
+        (folder / 'prepare-build/stdout').write_text('synthetic compiler output\n')
+        with patch.object(outbox, 'source_identity', side_effect=[source, after or source]), \
+                patch.object(outbox, 'expected_source', return_value=source['commit']), \
+                patch.object(outbox, 'require_original_build_environment', side_effect=override), \
+                patch.object(outbox, 'select_binaries', return_value=(test, cli)), \
+                patch.object(host.native, 'run_child', return_value=process or {
+                    'exit_code': 0, 'timed_out': False}) as run:
+            result = host.prepare_authenticated_outbox_build(folder)
+        run.assert_called_once_with(outbox.native_build_command(), folder / 'prepare-build', 900)
+        return result
+
+    def test_separate_preparation_pins_test_and_cli_without_running_native(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            result = self.prepare(folder)
+            self.assertEqual(result['schema'], 'trnm-ci-authenticated-outbox-build-preparation-v1')
+            self.assertIs(result['completed'], True)
+            self.assertIs(result['native_tests_executed'], False)
+            self.assertIs(result['service_resource_observation'], False)
+            for label in ('test', 'cli'):
+                self.assertEqual(result[label + '_binary_sha256'],
+                                 hashlib.sha256(Path(result[label + '_binary_path']).read_bytes()).hexdigest())
+
+    def test_source_drift_failed_build_and_override_keep_failed_preparation(self):
+        cases = [dict(after={'commit': 'c' * 40, 'tree': 'b' * 40}),
+                 dict(process={'exit_code': 1, 'timed_out': False}),
+                 dict(process={'exit_code': 0, 'timed_out': True}),
+                 dict(override=ValueError('synthetic forbidden compiler override'))]
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                folder = Path(temporary)
+                with self.assertRaises(ValueError):
+                    self.prepare(folder, **case)
+                saved = json.loads((folder / 'prepare-build.json').read_text())
+                self.assertIs(saved['completed'], False)
+
+    def binder_case(self, folder):
+        source = {'commit': 'a' * 40, 'tree': 'b' * 40}
+        prepared = {'schema': 'trnm-ci-authenticated-outbox-build-preparation-v1',
+                    'completed': True, 'source_before': source, 'source_after': source}
+        result = {'schema': 'trnm-authenticated-outbox-native-execution-v1',
+                  'source_expected': source['commit'], 'source_before': source,
+                  'source_after': source, 'passed': True, 'failures': [],
+                  'source_recompiled': True, 'execution_finished': True,
+                  'all_named_tests_passed': True,
+                  'production_activation': False, 'public_network_ready': False,
+                  'physical_power_loss_accepted': False,
+                  'process': {'exit_code': 0, 'expected_source': source['commit']},
+                  'named_execution': {'executed_tests': 1},
+                  'host_fixture': {'schema': 'synthetic fixture; not native evidence'}}
+        for label in ('test', 'cli'):
+            binary = folder / (label + '.elf')
+            binary.write_bytes(('synthetic ' + label + ' artifact').encode())
+            sha = hashlib.sha256(binary.read_bytes()).hexdigest()
+            prepared[label + '_binary_path'] = result[label + '_binary_path'] = str(binary)
+            prepared[label + '_binary_sha256'] = sha
+            result[label + '_binary_sha256_before'] = result[label + '_binary_sha256_after'] = sha
+        result['process']['command'] = [result['test_binary_path'], 'synthetic argv']
+        sample = synthetic_sample()
+        sample.update(uid=host.os.getuid(), gid=host.os.getgid())
+        result['host_before'] = copy.deepcopy(sample)
+        result['host_after'] = copy.deepcopy(sample)
+        result['host_fixture']['perpid_cgroups'] = [{'cgroup': sample['thread_cgroup']}]
+        (folder / 'native.log').write_text('synthetic execution transcript input\n')
+        result['native_log_sha256'] = hashlib.sha256((folder / 'native.log').read_bytes()).hexdigest()
+        return prepared, result
+
+    def test_binder_requires_source_test_cli_log_and_actual_named_acceptance(self):
+        import run_authenticated_outbox_native_v1 as outbox
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            prepared, result = self.binder_case(folder)
+            manifest = folder / 'manifest.json'
+            verified = {key: result[key] for key in ('named_execution', 'host_fixture')}
+            with patch.object(outbox, 'expected_source', return_value='a' * 40), \
+                    patch.object(outbox, 'validate_execution', return_value=verified):
+                manifest.write_text(json.dumps(result))
+                self.assertEqual(host.bind_prepared_authenticated_outbox_execution(
+                    prepared, folder)['source_commit'], 'a' * 40)
+                cases = [('source_after', {'commit': 'c' * 40}),
+                         ('source_expected', 'c' * 40),
+                         ('test_binary_sha256_before', 'c' * 64),
+                         ('cli_binary_sha256_after', 'c' * 64),
+                         ('test_binary_path', '/tmp/another-test'),
+                         ('cli_binary_path', '/tmp/another-cli'),
+                         ('native_log_sha256', 'c' * 64),
+                         ('passed', False), ('failures', ['actual refusal']),
+                         ('source_recompiled', False), ('execution_finished', False),
+                         ('all_named_tests_passed', False), ('production_activation', True),
+                         ('host_before', None),
+                         ('host_after', dict(result['host_after'], thread_cgroup='0::/other')),
+                         ('process', dict(result['process'], expected_source='c' * 40)),
+                         ('process', dict(result['process'], command=['/tmp/other-ELF'])),
+                         ('named_execution', {'executed_tests': 0})]
+                for key, value in cases:
+                    changed = dict(result, **{key: value})
+                    manifest.write_text(json.dumps(changed))
+                    with self.subTest(key=key), self.assertRaises(ValueError):
+                        host.bind_prepared_authenticated_outbox_execution(prepared, folder)
+                manifest.write_text(json.dumps(result))
+                for label in ('test', 'cli'):
+                    binary = folder / (label + '.elf')
+                    original = binary.read_bytes()
+                    binary.write_bytes(b'changed retained ELF')
+                    with self.subTest(elf=label), self.assertRaises(ValueError):
+                        host.bind_prepared_authenticated_outbox_execution(prepared, folder)
+                    binary.write_bytes(original)
+
+    def test_binder_cannot_accept_a_failed_or_zero_test_validator(self):
+        import run_authenticated_outbox_native_v1 as outbox
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            prepared, result = self.binder_case(folder)
+            (folder / 'manifest.json').write_text(json.dumps(result))
+            with patch.object(outbox, 'expected_source', return_value='a' * 40), \
+                    patch.object(outbox, 'validate_execution', side_effect=ValueError('zero actual tests')):
+                with self.assertRaisesRegex(ValueError, 'zero actual tests'):
+                    host.bind_prepared_authenticated_outbox_execution(prepared, folder)
+
+    def test_workflow_uses_two_fresh_jobs_and_one_original_host_invocation(self):
+        text = (host.ROOT / '.github/workflows/pon-authenticated-outbox-host-v1.yml').read_text()
+        self.assertIn('runs-on: ubuntu-24.04\n', text)
+        self.assertIn('source: [head, prospective-merge]\n', text)
+        self.assertIn('cancel-in-progress: false\n', text)
+        self.assertIn('          ref: ${{ env.EXPECTED_SOURCE }}\n', text)
+        self.assertEqual(text.count('run: python3 scripts/ci/run_from_zero_host.py -- '
+                                    'python3 scripts/ci/run_authenticated_outbox_native_v1.py --out '
+                                    '"$OUT/qualified-native"\n'), 1)
+        self.assertEqual(text.count('python3 scripts/ci/run_from_zero_host.py'), 1)
+        self.assertIn('cargo +1.95.0 test --locked --release', text)
+        self.assertIn('-- --exact --show-output', text)
+        self.assertNotIn('CARGO_INCREMENTAL:', text)
+        self.assertNotIn('CPUQuota=', text)
+
+
 if __name__ == '__main__':
     unittest.main()
