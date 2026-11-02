@@ -10,6 +10,7 @@ pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
+mod history_locator_path;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
@@ -45,7 +46,7 @@ use std::{
     cell::{Cell, RefCell},
     collections::BTreeMap,
     fs::{self, File, OpenOptions},
-    io::{Read, Seek, SeekFrom, Write},
+    io::{Read, Write},
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -2321,18 +2322,15 @@ impl Node {
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
             .db
-            .query_row(
-                "SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |r| {
-                    Ok((
-                        optional_fixed_blob::<32>(r, 0)?,
-                        r.get::<_, u64>(1)?,
-                        fixed_blob::<64>(r, 2)?,
-                        fixed_blob::<32>(r, 3)?,
-                    ))
-                },
-            )
+            .prepare_cached("SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?")?
+            .query_row([id.as_slice()], |r| {
+                Ok((
+                    optional_fixed_blob::<32>(r, 0)?,
+                    r.get::<_, u64>(1)?,
+                    fixed_blob::<64>(r, 2)?,
+                    fixed_blob::<32>(r, 3)?,
+                ))
+            })
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         Ok(Record {
@@ -3051,7 +3049,7 @@ impl Node {
         progress()?;
         let mut stmt = self
             .db
-            .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            .prepare_cached("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
         let rows = stmt.query_map([id.as_slice()], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
         let mut out = Vec::new();
         for row in rows {
@@ -3092,21 +3090,17 @@ impl Node {
         if tip == self.active()?.0 {
             return Ok(self.read_active_with_readback(progress, readback)?.2);
         }
-        let mut path = tempfile::tempfile()?;
-        let mut count = 0u64;
+        let mut path = history_locator_path::LocatorPath::new();
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
             let row = self.record(cur)?;
-            if let Some(bytes) = self
+            let snapshot = self
                 .db
-                .query_row(
-                    "SELECT state FROM snapshots WHERE block=?",
-                    [cur.as_slice()],
-                    |r| r.get::<_, Vec<u8>>(0),
-                )
-                .optional()?
-            {
+                .prepare_cached("SELECT state FROM snapshots WHERE block=?")?
+                .query_row([cur.as_slice()], |r| r.get::<_, Vec<u8>>(0))
+                .optional()?;
+            if let Some(bytes) = snapshot {
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
                 ensure(canonical(&state)? == bytes, "STATE_BYTES")
@@ -3129,15 +3123,11 @@ impl Node {
                 }
                 break (state, commitment);
             }
-            path.write_all(&cur)?;
-            count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+            path.push(cur)?;
             cur = self.parent(cur)?;
         };
-        for i in (0..count).rev() {
-            progress()?;
-            path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
-            let mut id = [0; 32];
-            path.read_exact(&mut id)?;
+        let mut path = path.reverse();
+        while let Some(id) = path.pop(progress)? {
             for (index, (key, before, after)) in self
                 .delta_rows_with_progress(id, progress)?
                 .into_iter()

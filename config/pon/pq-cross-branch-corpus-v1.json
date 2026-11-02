@@ -231,6 +231,7 @@
     "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
     "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/history_locator_path.rs",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs",
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
@@ -287,7 +288,7 @@
   ],
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "50936c3203f97a550d65ae422e3b660634616eb4",
-    ".github/workflows/pon-recent-batch-acceptance.yml": "e1820626477ab613217e84d9f6805019d4657a09",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "eda85ecedf960a3e3e6292b3ca42d089983d506e",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
@@ -576,7 +577,7 @@
     "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs": "80e747c9db26eae011813255f88b901b5007f6b9",
     "trillionnium/crates/trnm-pon-node/src/peer_polling.rs": "cb8ee16131be79e01a8c053235c8c145abfae27a",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "b31b7e857e3fa62aba829d8b53b4165fc9c99e4b",
-    "trillionnium/crates/trnm-pon-node/src/store.rs": "969b53e94a22fec545477a5481189c866dc3a7f3",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "47e79b691442a58a457a510f0ce3b2897baebd2c",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "7f419e25cc2a40e6b490f1028d6677f49b1a1d5b",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs": "93f14af5f15018c4cf05269ce63e369411b2f555",
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
@@ -631,7 +632,8 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs": "6cde50a98a7574ba9d4d3a9c3f94128779f224de",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs": "1d33eb39cf1c449ed981b1e1681c5aca5145e428",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
-    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba"
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
+    "trillionnium/crates/trnm-pon-node/src/store/history_locator_path.rs": "d834a5019531afc685c3affeb95ca826ea48b412"
   },
   "assertions": {
     "production_activation": false,

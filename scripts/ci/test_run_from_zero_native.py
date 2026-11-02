@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Execution-driver negative controls; compiler/test processes are simulated here.
+"""Execution-driver controls; compiler/native-test processes are simulated here.
 
-These tests verify result handling, not Rust compilation or public service.
+The copy-format regression invokes real rustfmt. No test here proves native
+compilation or public service.
 """
 from __future__ import annotations
 import copy
@@ -9,6 +10,7 @@ from contextlib import redirect_stdout
 import io
 import json
 import os
+import shutil
 import struct
 from pathlib import Path
 import tempfile
@@ -305,6 +307,40 @@ class BinarySelectionTests(unittest.TestCase):
                 driver.validate_service_report(link)
             with self.assertRaisesRegex(ValueError, 'DUPLICATE_JSON_KEY'):
                 driver.validate_service_report(target)
+
+
+class CopyFormattingTests(unittest.TestCase):
+    def test_real_rustfmt_formats_isolated_path_module_copy_without_mutating_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'source/tests/original.rs'
+            source.parent.mkdir(parents=True)
+            child = root / 'source/examples/support/child.rs'
+            child.parent.mkdir(parents=True)
+            original = b'#[path = "../examples/support/child.rs"]\nmod child;\nfn main(){let x=1;}\n'
+            child_bytes = b'pub fn child(){let y=2;}\n'
+            source.write_bytes(original)
+            child.write_bytes(child_bytes)
+            copy = root / 'isolated/formatted.rs'
+            copy.parent.mkdir()
+            shutil.copyfile(source, copy)
+            missing_child = copy.parent / '../examples/support/child.rs'
+            self.assertFalse(missing_child.exists())
+
+            # Reproduce the actual old failure, then execute the driver's fixed
+            # command. Both receipts retain real exits and complete stderr.
+            old = driver.run_child(['rustfmt', '--edition', '2021', str(copy)], root / 'old', 60)
+            self.assertFalse(old['timed_out'])
+            self.assertNotEqual(old['exit_code'], 0)
+            self.assertIn('child.rs', (root / 'old/stderr').read_text())
+            actual = driver.run_child(driver.format_copy_command(copy), root / 'fixed', 60)
+            self.assertFalse(actual['timed_out'])
+            self.assertEqual(actual['exit_code'], 0, (root / 'fixed/stderr').read_text())
+            self.assertNotEqual(copy.read_bytes(), original)
+            self.assertIn(b'fn main() {\n    let x = 1;\n}', copy.read_bytes())
+            self.assertEqual(source.read_bytes(), original)
+            self.assertEqual(child.read_bytes(), child_bytes)
+            self.assertEqual(json.loads((root / 'fixed/process.json').read_text()), actual)
 
 
 class ExecutionBoundaryTests(unittest.TestCase):

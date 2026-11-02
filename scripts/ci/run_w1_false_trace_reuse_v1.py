@@ -26,7 +26,14 @@ from pon_w1_false_trace_reuse_reader_v1 import FALSE_FLAGS, SELECTOR, analyze
 
 EXAMPLE = "pon_w1_false_trace_reuse_v1"
 LEGAL_EXAMPLE = "pon_w1_legal_strategy_v1"
+CORRECT_PRODUCT_EXAMPLE = "pon_w1_false_trace_correct_product_v1"
 FULL_LIMB_SELECTOR = "--false-trace-full-limb-v1"
+
+
+def correct_product_reader():
+    # Separate opt-in counterexperiment; the original schemas stay immutable.
+    import pon_w1_false_trace_correct_product_reader_v1
+    return pon_w1_false_trace_correct_product_reader_v1
 
 
 def legal_strategy_reader(version="v1"):
@@ -106,17 +113,23 @@ def main():
     modes.add_argument("--legal-strategy", action="store_true")
     modes.add_argument("--legal-strategy-v2", action="store_true")
     modes.add_argument("--full-limb", action="store_true")
+    modes.add_argument("--correct-product", action="store_true")
     args = parser.parse_args()
     spec = ARCHITECTURES[args.arch]
     legal_version = "v2" if args.legal_strategy_v2 else "v1" if args.legal_strategy else None
     reader = legal_strategy_reader(legal_version) if legal_version is not None else None
-    example = LEGAL_EXAMPLE if reader is not None else EXAMPLE
+    product_reader = correct_product_reader() if args.correct_product else None
+    example = (CORRECT_PRODUCT_EXAMPLE if product_reader is not None else
+        LEGAL_EXAMPLE if reader is not None else EXAMPLE)
     receipt = ("w1-legal-strategy-" + legal_version if reader is not None else
+        "w1-correct-product-false-trace-v1" if product_reader is not None else
         "w1-full-limb-reuse-v1" if args.full_limb else "w1-false-trace-reuse-v1")
     schema = ("trnm-w1-legal-strategy-execution-" + legal_version if reader is not None else
+        "trnm-w1-correct-product-false-trace-execution-v1" if product_reader is not None else
         "trnm-w1-full-limb-reuse-execution-v1" if args.full_limb else
         "trnm-w1-false-trace-reuse-execution-v1")
-    flags = reader.FALSE_FLAGS if reader is not None else FALSE_FLAGS
+    flags = (product_reader.FALSE_FLAGS if product_reader is not None else
+        reader.FALSE_FLAGS if reader is not None else FALSE_FLAGS)
     output = receipt_root(receipt)
     observations = []
     report = {"schema": schema, "result": "FAIL",
@@ -187,6 +200,11 @@ def main():
         failed = False
         if reader is not None:
             failed = legal_campaign(binary, output, observations, report, reader)
+        elif product_reader is not None:
+            checked([str(binary), product_reader.SELECTOR], "campaign", COST_CAMPAIGN_TIMEOUT_SECONDS)
+            report["reader"] = product_reader.analyze(output / "campaign.stdout")
+            if report["reader"]["semantic_alerts"]:
+                raise ValueError("retained native verifier disagreement")
         else:
             selector = FULL_LIMB_SELECTOR if args.full_limb else SELECTOR
             checked([str(binary), selector], "campaign", COST_CAMPAIGN_TIMEOUT_SECONDS)

@@ -4476,3 +4476,38 @@ The full-work cost lower bound, fresh-identity service, original four-second
 independent confirmation, quantum costs, model utility and production gates
 remain unqualified. Prior failed business and expensive-refusal observations
 are retained; local module tests cannot replace the original hosted campaigns.
+
+### Current-row History reads and correct-product false traces
+
+Continue exact #675 `93a70b7939413ac31717b1198a4569ec5248274f` / tree
+`9b8bde366e8f18157fa97bd620a4e7a0f0a0c74f`. Its completed hosted strict
+quality checks passed, while the full Node suite retained 829 passed, two actual
+`PUBLIC_MUTATION_CPU_BUDGET` failures and 21 ignored tests. The original/fresh
+four-second pressure cases and original three-run campaign also remain failed.
+
+The candidate now keeps at most 128 ancestry locator hashes in one fixed 4 KiB
+array per State reconstruction. The 129th locator creates the original anonymous
+tempfile and writes the retained prefix; all later writes, seeks and reads keep
+their original failure propagation. These are scratch addresses only, never
+retained State, record/root or validation verdicts. Each reverse locator keeps
+its original progress check before access. Actual SQL, delta, State and root
+checks remain. This adds bounded stack payload plus fixed metadata, not an RSS
+allowance or a new history/CPU/deadline limit.
+
+Three current-row History queries use prepared SQL statements: block record,
+ordered deltas and snapshot bytes. The narrow source comes from committed #678
+`456d23a778d91b6f3cfee60ee997f8f51d3216bc`, together with capacity 0/1/16,
+foreign/same-connection write/rollback, schema and authorizer controls. Every
+call binds the current id and reads actual rows. No FullRootArithmetic or reorg
+scope is imported; #678's own original CPU failures remain failures and do not
+qualify this new composition.
+
+The isolated rustfmt diagnostic copy now skips relative child-module traversal;
+the actual source tree still runs its original cargo-format check. The new
+correct-product false-trace experiment has its own
+[fixed contract](specs/pon/W1_CORRECT_PRODUCT_FALSE_TRACE_V1.md): public AB setup,
+all failed trials, actual reuse and full verifier results remain charged and
+auditable. This countercontrol prevents a product-only rejection improvement
+from being mistaken for a generic forged-trace defense. None of these changes
+closes cheapest-work, public-service, quantum-cost or production qualification
+without the corresponding source-specific native evidence.

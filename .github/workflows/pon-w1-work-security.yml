@@ -79,6 +79,14 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py 2>&1 | tee "$OUT/reader-controls.log"
+          python3 scripts/ci/test_pon_w1_false_trace_correct_product_reader_v1.py 2>&1 | tee "$OUT/correct-product-reader-controls.log"
+          python3 - "$OUT/correct-product-reader-controls.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          if re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['19'] or text.splitlines()[-1] != 'OK':
+              raise SystemExit('nineteen correct-product reader controls did not execute successfully')
+          PY
           python3 scripts/ci/test_work_rejection_report.py 2>&1 | tee "$OUT/retained-rejection-reader-controls.log"
           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
           python3 formal/pon-nakamoto-v1/test_work_query_bound.py 2>&1 | tee "$OUT/query-work-controls.log"
@@ -121,6 +129,28 @@ jobs:
           PY
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee "$OUT/w1-clippy.log"
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_rejection_cost -- -D warnings 2>&1 | tee "$OUT/retained-rejection-clippy.log"
+      - name: Run complete correct-product native controls and strict example lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_false_trace_correct_product_v1 -- --test-threads=1 2>&1 | tee "$OUT/correct-product-native-controls.log"
+          python3 - "$OUT/correct-product-native-controls.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
+          actual = re.findall(r'^test ([^ ]+) \.\.\. ok$', text, re.M)
+          expected = {
+              'tests::correct_public_product_is_canonical_without_any_valid_transcript',
+              'tests::correct_product_false_traces_still_owe_every_original_transcript_tile',
+              'tests::separate_challenge_domain_binds_every_search_without_relabelling_old_capture',
+              'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',
+              'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
+          }
+          if rows != ['5'] or len(actual) != 5 or set(actual) != expected:
+              raise SystemExit('all five exact correct-product native controls did not execute successfully')
+          PY
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_false_trace_correct_product_v1 -- -D warnings 2>&1 | tee "$OUT/correct-product-clippy.log"
       - name: Execute complete false trace reuse campaign
         if: always() && steps.source.outcome == 'success'
         # This frozen release runner rejects even a workflow-wide incremental
@@ -129,6 +159,9 @@ jobs:
       - name: Execute additional complete full-limb comparison
         if: always() && steps.source.outcome == 'success'
         run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --full-limb
+      - name: Execute complete correct-product fresh false-trace counterexperiment
+        if: always() && steps.source.outcome == 'success'
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --correct-product
       - name: Verify measured source after execution
         if: always() && steps.source.outcome == 'success'
         shell: bash
@@ -282,7 +315,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
           bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
       - name: Install original pinned compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
       - name: Run refusal controls for original Host and fresh successor
         shell: bash
         run: |

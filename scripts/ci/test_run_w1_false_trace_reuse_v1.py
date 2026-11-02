@@ -40,7 +40,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 config_dir.mkdir(exist_ok=True)
                 config_file.write_text(configuration)
             commands = []
-            example = runner.LEGAL_EXAMPLE if mode in ("legal-strategy", "legal-strategy-v2") else runner.EXAMPLE
+            example = (runner.CORRECT_PRODUCT_EXAMPLE if mode == "correct-product" else
+                runner.LEGAL_EXAMPLE if mode in ("legal-strategy", "legal-strategy-v2") else runner.EXAMPLE)
             native = target / "x86_64-unknown-linux-gnu/release/examples" / example
             source = {"source_state": "committed-clean", "commit": "a" * 40}
 
@@ -70,6 +71,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 FALSE_FLAGS={key: value for key, value in runner.FALSE_FLAGS.items()
                              if key != "valid_proof_acquisition_used"},
                 analyze_shard=analyze_shard, analyze=analyze_grid)
+            product_reader = SimpleNamespace(SELECTOR="--false-trace-correct-product-v1",
+                FALSE_FLAGS=runner.FALSE_FLAGS.copy(),
+                analyze=mock.Mock(side_effect=reader_error, return_value={"semantic_alerts": alerts or []}))
 
             def capture(command, destination, name, *, timeout, cwd):
                 self.assertEqual(cwd, checkout)
@@ -125,15 +129,100 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  mock.patch.object(runner, "analyze", side_effect=reader_error,
                     return_value={"semantic_alerts": alerts or []}) as original_reader, \
                  mock.patch.object(runner, "legal_strategy_reader", return_value=legal_reader), \
+                 mock.patch.object(runner, "correct_product_reader", return_value=product_reader), \
                  redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = runner.main()
                 receipts.assert_called_once_with("w1-legal-strategy-v2" if mode == "legal-strategy-v2" else
                     "w1-legal-strategy-v1" if mode == "legal-strategy" else
+                    "w1-correct-product-false-trace-v1" if mode == "correct-product" else
                     "w1-full-limb-reuse-v1" if mode == "full-limb" else "w1-false-trace-reuse-v1")
                 if original_reader.called:
                     expected = {"full_limb": True} if mode == "full-limb" else {}
                     self.assertEqual(original_reader.call_args.kwargs, expected)
+                if product_reader.analyze.called:
+                    self.assertEqual(mode, "correct-product")
+                    product_reader.analyze.assert_called_once_with(output / "campaign.stdout")
+                    original_reader.assert_not_called()
             return code, json.loads((output / "manifest.json").read_text()), commands
+
+    def test_correct_product_mode_uses_separate_fixed_native_example_reader_and_receipt(self):
+        code, report, commands = self.observe(mode="correct-product")
+        self.assertEqual(code, 0)
+        self.assertEqual(report["schema"], "trnm-w1-correct-product-false-trace-execution-v1")
+        self.assertIn(["cargo", "+1.95.0", "build", "--locked", "--release", "--manifest-path",
+            "trillionnium/Cargo.toml", "--target", "x86_64-unknown-linux-gnu", "-p", "trnm-pon-node",
+            "--example", runner.CORRECT_PRODUCT_EXAMPLE], commands)
+        self.assertEqual(commands[-1][-1], "--false-trace-correct-product-v1")
+        self.assertEqual(report["observations"][-1]["timeout_seconds"], runner.COST_CAMPAIGN_TIMEOUT_SECONDS)
+        self.assertTrue(report["default_release_configuration_checked"])
+        self.assertFalse(report["source_changed"])
+        self.assertEqual({report[key] for key in ("binary_sha256_before", "binary_sha256_after",
+            "retained_binary_sha256_before", "retained_binary_sha256_after")},
+            {report["artifact_sha256"][runner.CORRECT_PRODUCT_EXAMPLE]})
+        for flag in runner.FALSE_FLAGS:
+            self.assertIs(report[flag], False)
+
+    def test_correct_product_native_failures_and_timeouts_are_retained(self):
+        for changed in ({"campaign_exit": 23}, {"campaign_timeout": True}):
+            with self.subTest(changed=changed):
+                code, report, commands = self.observe(mode="correct-product", **changed)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands[-1][-1], "--false-trace-correct-product-v1")
+                self.assertNotIn("reader", report)
+                self.assertIn("campaign failed", report["error"])
+                self.assertIn("campaign.stdout", report["artifact_sha256"])
+
+    def test_correct_product_malformed_or_disagreeing_records_cannot_pass(self):
+        for changed, message in (({"reader_error": ValueError("correct AB mismatch")}, "correct AB"),
+                                 ({"alerts": [{"actual": "Accepted"}]}, "verifier disagreement")):
+            with self.subTest(changed=changed):
+                code, report, _ = self.observe(mode="correct-product", **changed)
+                self.assertNotEqual(code, 0)
+                self.assertIn(message, report["error"])
+                self.assertIn("campaign.stdout", report["artifact_sha256"])
+
+    def test_correct_product_binary_tampering_keeps_original_refusals(self):
+        for changed, message in (({"copy_mismatch": True}, "copy differs before execution"),
+                                 ({"change_copy_during_campaign": True}, "copy changed during execution"),
+                                 ({"change_binary_during_campaign": True}, "measured binary changed")):
+            with self.subTest(changed=changed):
+                code, report, _ = self.observe(mode="correct-product", **changed)
+                self.assertNotEqual(code, 0)
+                self.assertIn(message, report["error"])
+                self.assertIn(runner.CORRECT_PRODUCT_EXAMPLE, report["artifact_sha256"])
+
+    def test_correct_product_source_binding_cannot_be_bypassed(self):
+        for changed, message in (({"before": {"source_state": "dirty-candidate"}}, "committed source"),
+                                 ({"environment": {"TRNM_EXPECTED_SOURCE_SHA": "b" * 40}}, "expected source"),
+                                 ({"environment": {"TRNM_EXPECTED_SOURCE_SHA": "bad"}}, "40 lowercase")):
+            with self.subTest(changed=changed):
+                code, report, commands = self.observe(mode="correct-product", **changed)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertIn(message, report["error"])
+        code, report, _ = self.observe(mode="correct-product",
+            after={"source_state": "committed-clean", "commit": "b" * 40})
+        self.assertNotEqual(code, 0)
+        self.assertTrue(report["source_changed"])
+
+    def test_correct_product_preserves_original_compiler_configuration_and_host_guards(self):
+        for changed in ({"environment": {"CARGO_INCREMENTAL": "0"}},
+                        {"configuration": '[profile.release]\nopt-level = 0\n'},
+                        {"machine": "aarch64"}, {"elf": 183},
+                        {"compiler_release": "1.96.0"}, {"local": False}):
+            with self.subTest(changed=changed):
+                code, report, commands = self.observe(mode="correct-product", **changed)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(any(command[-1] == "--false-trace-correct-product-v1" for command in commands))
+                self.assertNotIn("reader", report)
+
+    def test_correct_product_cannot_be_combined_with_existing_modes(self):
+        for other in ("--full-limb", "--legal-strategy", "--legal-strategy-v2"):
+            with self.subTest(other=other), \
+                 mock.patch.object(sys, "argv", ["runner", "--arch", "x64", "--correct-product", other]), \
+                 redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as stopped:
+                runner.main()
+            self.assertEqual(stopped.exception.code, 2)
 
     def test_explicit_original_release_command_and_selector_are_retained(self):
         code, report, commands = self.observe()

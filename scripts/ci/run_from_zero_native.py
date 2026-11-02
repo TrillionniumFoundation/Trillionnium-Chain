@@ -54,6 +54,11 @@ def native_build_command() -> list[str]:
             '--no-run', '--message-format=json']
 
 
+def format_copy_command(path: Path) -> list[str]:
+    """Format only the diagnostic copy; cargo fmt checks the original module tree."""
+    return ['rustfmt', '--edition', '2021', '--config', 'skip_children=true', str(path)]
+
+
 def select_binary(lines: list[str]) -> Path:
     paths = []
     for line in lines:
@@ -764,10 +769,11 @@ def run(out: Path) -> dict:
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
-        # A copy gives a reproducible formatting repair without changing checkout.
+        # The isolated diagnostic copy has no relative module tree. Format only
+        # this file; the separate cargo fmt below checks the actual full source.
         shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
         result['format_copy'] = run_child(
-            ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+            format_copy_command(out / 'formatted.rs'), out / 'format-copy', 60)
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
