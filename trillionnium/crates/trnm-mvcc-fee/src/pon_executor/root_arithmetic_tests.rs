@@ -156,11 +156,16 @@ fn arithmetic_root_preserves_complete_grammar_before_all_wire_limits() {
     assert_eq!(root_with_arithmetic(&valid, &mut arithmetic), root(&valid));
     let retained = arithmetic.observation();
     for invalid in [json!(0.0), json!(-0.0), json!("λ"), json!({"λ":0})] {
-        let state = State::from([("a".repeat(161), json!(0)), ("zz-last".into(), invalid)]);
-        let original = root(&state);
-        assert!(original.is_err() && original != Err("LIMIT"));
-        assert_eq!(root_with_arithmetic(&state, &mut arithmetic), original);
-        assert_eq!(arithmetic.observation(), retained);
+        for early in [
+            ("a".repeat(161), json!(0)),
+            ("a".into(), json!("x".repeat(4095))),
+        ] {
+            let state = State::from([early, ("zz-last".into(), invalid.clone())]);
+            let original = root(&state);
+            assert!(original.is_err() && original != Err("LIMIT"));
+            assert_eq!(root_with_arithmetic(&state, &mut arithmetic), original);
+            assert_eq!(arithmetic.observation(), retained);
+        }
     }
     let mut over: State = (0..65_537)
         .map(|index| (format!("key-{index:05}"), Value::Null))
@@ -173,6 +178,50 @@ fn arithmetic_root_preserves_complete_grammar_before_all_wire_limits() {
     assert_eq!(arithmetic.observation(), retained);
     assert_eq!(root_with_arithmetic(&valid, &mut arithmetic), root(&valid));
     assert_eq!(arithmetic.observation().computed_partitions, 0);
+}
+
+#[test]
+fn arithmetic_root_ascii_encoding_matches_independent_serde_reference() {
+    let mut state = State::new();
+    for length in [
+        0, 1, 7, 8, 9, 126, 127, 128, 129, 255, 256, 257, 4078, 4080, 4094,
+    ] {
+        for fill in [b'x', b' ', 0x7f] {
+            state.insert(
+                format!("ascii:{length:04}:{fill:03}"),
+                json!(String::from_utf8(vec![fill; length]).unwrap()),
+            );
+        }
+    }
+    for (index, value) in [
+        json!("quote\"backslash\\control\u{0000}\u{001f}\n\r\t"),
+        json!(["plain", "escaped\"", null, false, 0]),
+        json!({"z":"plain", "a\"":"escaped", "n":-1}),
+        json!(i64::MIN),
+        json!(u64::MAX),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        state.insert(format!("fallback:{index}"), value);
+    }
+    // The original root keeps its independent serde encoder. Check complete
+    // mixed views both without retained arithmetic and with a warm cache.
+    let expected = root(&state).unwrap();
+    for budget in [0, 2 * 1024 * 1024] {
+        let mut arithmetic = StateRootArithmetic::new(budget);
+        assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+        assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+        let mut changed = state.clone();
+        changed.insert("ascii:4080:120".into(), json!("z".repeat(4080)));
+        let changed_expected = root(&changed).unwrap();
+        assert_ne!(changed_expected, expected);
+        assert_eq!(
+            root_with_arithmetic(&changed, &mut arithmetic),
+            Ok(changed_expected)
+        );
+        assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    }
 }
 
 #[test]

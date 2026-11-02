@@ -280,6 +280,12 @@ fn append_unescaped_string(bytes: &mut Vec<u8>, value: &str) -> std::io::Result<
 
 pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
     validate_canonical(v)?;
+    canonical_after_validation(v)
+}
+
+// Callers must finish their original grammar pass before encoding. In
+// particular, a complete State must be validated before any wire boundary.
+fn canonical_after_validation(v: &Value) -> Result<Vec<u8>> {
     if let Some(value) = unescaped_string(v) {
         // Keep the original serde_json::to_vec initial capacity as well as its
         // write sequence; byte equivalence alone is not capacity equivalence.
@@ -341,9 +347,7 @@ pub fn root_with_arithmetic(
     }
     arithmetic
         .root_from_entries(state.iter().map(|(key, value)| {
-            serde_json::to_vec(value)
-                .map(|bytes| (key.as_bytes(), bytes))
-                .map_err(|_| "NONCANONICAL")
+            canonical_after_validation(value).map(|bytes| (key.as_bytes(), bytes))
         }))
         .map_err(|error| match error {
             StateRootInputError::Input(error) => error,
