@@ -1,4 +1,4 @@
-use super::task_fixture_v5 as fixture;
+use super::fixture_v5 as fixture;
 use super::*;
 use crate::pon_executor::{self as exec, BlockExecution, ExecutionControl};
 use fixture::{Key, Witness};

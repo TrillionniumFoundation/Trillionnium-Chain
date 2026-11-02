@@ -82,6 +82,16 @@ impl PqHeptaAuthoritySetV2 {
                 // cannot be made valid by including both keys in the roster.
                 return Err(PqHeptaHandoffError::InvalidPin);
             }
+            // A second DID using the same PQ key is not a second independent
+            // trust principal. Refuse key aliases even when DIDs and signer
+            // generations differ: otherwise a single compromised signing key
+            // can satisfy distinct operator identities in a downstream roster.
+            if entries
+                .iter()
+                .any(|(existing, _)| existing.key_id == pin.key_id)
+            {
+                return Err(PqHeptaHandoffError::InvalidPin);
+            }
             let verifier = pin.validate()?;
             entries.push((pin, verifier));
         }
