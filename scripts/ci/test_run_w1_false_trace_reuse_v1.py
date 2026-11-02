@@ -40,7 +40,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 config_dir.mkdir(exist_ok=True)
                 config_file.write_text(configuration)
             commands = []
-            example = runner.LEGAL_EXAMPLE if mode in ("legal-strategy", "legal-strategy-v2") else runner.EXAMPLE
+            example = (runner.LEGAL_V3_EXAMPLE if mode == "legal-strategy-v3" else
+                runner.LEGAL_EXAMPLE if mode in ("legal-strategy", "legal-strategy-v2") else runner.EXAMPLE)
             native = target / "x86_64-unknown-linux-gnu/release/examples" / example
             source = {"source_state": "committed-clean", "commit": "a" * 40}
 
@@ -66,7 +67,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 return {"semantic_alerts": alerts or [], "synthetic_paths_seen": [path.name for path in paths]}
 
             legal_reader = SimpleNamespace(CLASSES=classes, TARGETS=("7f" + "ff" * 31, "07" + "ff" * 31),
-                HORIZONS=(1, 8, 64), SELECTOR=("--legal-strategy-v2" if mode == "legal-strategy-v2" else "--legal-strategy-v1"),
+                HORIZONS=(1, 8, 64),
+                SELECTOR=("--legal-strategy-v3" if mode == "legal-strategy-v3" else
+                    "--legal-strategy-v2" if mode == "legal-strategy-v2" else "--legal-strategy-v1"),
                 FALSE_FLAGS={key: value for key, value in runner.FALSE_FLAGS.items()
                              if key != "valid_proof_acquisition_used"},
                 analyze_shard=analyze_shard, analyze=analyze_grid)
@@ -124,12 +127,22 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  mock.patch.object(runner.shutil, "copyfile", side_effect=copy), \
                  mock.patch.object(runner, "analyze", side_effect=reader_error,
                     return_value={"semantic_alerts": alerts or []}) as original_reader, \
-                 mock.patch.object(runner, "legal_strategy_reader", return_value=legal_reader), \
+                 mock.patch.object(runner, "legal_strategy_reader", return_value=legal_reader) as versioned_reader, \
+                 mock.patch.object(runner, "legal_strategy_v3_reader", return_value=legal_reader) as factorial_reader, \
                  redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = runner.main()
-                receipts.assert_called_once_with("w1-legal-strategy-v2" if mode == "legal-strategy-v2" else
+                receipts.assert_called_once_with("w1-legal-strategy-v3" if mode == "legal-strategy-v3" else
+                    "w1-legal-strategy-v2" if mode == "legal-strategy-v2" else
                     "w1-legal-strategy-v1" if mode == "legal-strategy" else
                     "w1-full-limb-reuse-v1" if mode == "full-limb" else "w1-false-trace-reuse-v1")
+                if mode in ("legal-strategy", "legal-strategy-v2"):
+                    versioned_reader.assert_called_once_with("v2" if mode == "legal-strategy-v2" else "v1")
+                else:
+                    versioned_reader.assert_not_called()
+                if mode == "legal-strategy-v3":
+                    factorial_reader.assert_called_once_with()
+                else:
+                    factorial_reader.assert_not_called()
                 if original_reader.called:
                     expected = {"full_limb": True} if mode == "full-limb" else {}
                     self.assertEqual(original_reader.call_args.kwargs, expected)
@@ -541,14 +554,14 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertIn("verifier disagreement", report["reader_error"])
 
     def test_separate_modes_preserve_source_binary_and_retained_copy_guards(self):
-        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "legal-strategy-v3", "full-limb"):
             for fields in ({"after": {"source_state": "committed-clean", "commit": "b" * 40}},
                            {"change_binary_during_campaign": True},
                            {"change_copy_during_campaign": True}):
                 with self.subTest(mode=mode, fields=fields):
                     code, report, commands = self.observe(mode=mode, **fields)
                     self.assertNotEqual(code, 0)
-                    self.assertEqual(len(commands), 34 if mode in ("legal-strategy", "legal-strategy-v2") else 5)
+                    self.assertEqual(len(commands), 5 if mode == "full-limb" else 34)
                     self.assertEqual(report["result"], "FAIL")
                     if "after" in fields:
                         self.assertTrue(report["source_changed"])
@@ -556,7 +569,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                         self.assertIn("binary", report["error"])
 
     def test_separate_modes_cannot_bypass_original_early_guards(self):
-        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "legal-strategy-v3", "full-limb"):
             for fields in ({"before": {"source_state": "dirty-candidate"}},
                            {"environment": {"TRNM_EXPECTED_SOURCE_SHA": "b" * 40}},
                            {"environment": {"RUSTFLAGS": "-C opt-level=0"}},
@@ -570,7 +583,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     self.assertNotIn("reader", report)
 
     def test_separate_modes_cannot_bypass_original_elf_or_copy_guards(self):
-        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "legal-strategy-v3", "full-limb"):
             for fields in ({"elf": 183}, {"copy_mismatch": True}):
                 with self.subTest(mode=mode, fields=fields):
                     code, report, commands = self.observe(mode=mode, **fields)
@@ -580,15 +593,99 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     self.assertNotIn("reader", report)
 
     def test_separate_modes_are_mutually_exclusive_before_any_receipt_or_command(self):
-        with mock.patch.object(sys, "argv", ["runner", "--arch", "x64", "--local",
-                                             "--legal-strategy", "--full-limb"]), \
-             mock.patch.object(runner, "receipt_root") as receipts, \
-             mock.patch.object(runner, "capture") as capture, \
-             redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
-            runner.main()
-        self.assertEqual(error.exception.code, 2)
-        receipts.assert_not_called()
-        capture.assert_not_called()
+        for modes in (("--legal-strategy", "--full-limb"),
+                      ("--legal-strategy-v3", "--full-limb"),
+                      ("--legal-strategy", "--legal-strategy-v3"),
+                      ("--legal-strategy-v2", "--legal-strategy-v3")):
+            with self.subTest(modes=modes), \
+                 mock.patch.object(sys, "argv", ["runner", "--arch", "x64", "--local", *modes]), \
+                 mock.patch.object(runner, "receipt_root") as receipts, \
+                 mock.patch.object(runner, "capture") as capture, \
+                 redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+                runner.main()
+            self.assertEqual(error.exception.code, 2)
+            receipts.assert_not_called()
+            capture.assert_not_called()
+
+    def test_factorial_v3_has_separate_example_schema_and_all_original_budget_shards(self):
+        code, report, commands = self.observe(mode="legal-strategy-v3")
+        self.assertEqual(code, 0)
+        self.assertEqual(report["schema"], "trnm-w1-legal-strategy-execution-v3")
+        self.assertEqual(commands[3][-1], runner.LEGAL_V3_EXAMPLE)
+        self.assertEqual(len(report["shards"]), 30)
+        self.assertEqual(len(report["observations"]), 34)
+        self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+        self.assertEqual([item["timeout_seconds"] for item in report["observations"]],
+                         [30, 30, 30, 900] + [300] * 30)
+        self.assertEqual({row["result"] for row in report["shards"]}, {"PASS"})
+        self.assertNotIn("valid_proof_acquisition_used", report)
+        for command, row in zip(commands[4:], report["shards"]):
+            selection = row["configuration"]
+            self.assertEqual(command[1:], ["--legal-strategy-v3", "--class", selection["class"],
+                "--target-index", str(selection["target_index"]),
+                "--reuse-winners", str(selection["reuse_winners"])])
+        self.assertEqual({report[key] for key in (
+            "binary_sha256_before", "binary_sha256_after",
+            "retained_binary_sha256_before", "retained_binary_sha256_after")},
+            {report["artifact_sha256"][runner.LEGAL_V3_EXAMPLE]})
+        for flag in ("hardness_accepted", "work_profile_qualified", "public_network_ready",
+                     "production_activation"):
+            self.assertIs(report[flag], False)
+
+    def test_factorial_reader_does_not_reinterpret_retained_two_sample_v1_contract(self):
+        historical = runner.legal_strategy_reader()
+        eight_sample = runner.legal_strategy_reader("v2")
+        factorial = runner.legal_strategy_v3_reader()
+        self.assertIsNot(historical, factorial)
+        self.assertEqual((historical.SELECTOR, historical.SAMPLES), ("--legal-strategy-v1", 2))
+        self.assertEqual((eight_sample.SELECTOR, eight_sample.SAMPLES), ("--legal-strategy-v2", 8))
+        self.assertEqual((factorial.SELECTOR, factorial.SAMPLES), ("--legal-strategy-v3", 8))
+        self.assertNotEqual(historical.SCHEMA, factorial.SCHEMA)
+        self.assertNotEqual(eight_sample.SCHEMA, factorial.SCHEMA)
+        self.assertEqual(historical.STRATEGIES, eight_sample.STRATEGIES)
+        self.assertEqual((len(eight_sample.STRATEGIES), len(factorial.STRATEGIES)), (2, 4))
+        self.assertEqual(runner.LEGAL_EXAMPLE, "pon_w1_legal_strategy_v1")
+        self.assertEqual(runner.LEGAL_V3_EXAMPLE, "pon_w1_legal_strategy_v3")
+
+    def test_factorial_v3_attempts_all_shards_and_cannot_accept_a_successful_prefix(self):
+        cases = [{"shard_exits": {index: 7}} for index in (0, 14, 29)]
+        cases += [{"shard_timeouts": (index,)} for index in (0, 14, 29)]
+        cases += [{"capture_error_shards": (0, 29)}, {"campaign_exit": 1}]
+        for fields in cases:
+            with self.subTest(fields=fields):
+                code, report, commands = self.observe(mode="legal-strategy-v3", **fields)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(len(commands), 34)
+                self.assertEqual(len(report["shards"]), 30)
+                self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+                self.assertIn("complete-grid checks failed", report["error"])
+                failed = [index for index, row in enumerate(report["shards"]) if row["result"] == "FAIL"]
+                expected = (list(range(30)) if "campaign_exit" in fields else
+                    list(fields.get("shard_exits", fields.get("shard_timeouts", fields.get("capture_error_shards", ())))))
+                self.assertEqual(failed, expected)
+                for index in failed:
+                    row = report["shards"][index]
+                    for extension in ("stdout", "stderr"):
+                        self.assertIn(f"campaign-{index:02d}.{extension}", report["artifact_sha256"])
+                    if index in fields.get("capture_error_shards", ()):
+                        self.assertIn("capture_error", row)
+                        self.assertNotIn("observation", row)
+                    elif index in fields.get("shard_timeouts", ()):
+                        self.assertEqual(row["observation"]["exit_code"], 0)
+                        self.assertTrue(row["observation"]["timed_out"])
+
+    def test_factorial_v3_reader_failures_or_semantic_alerts_remain_failures(self):
+        for fields in ({"shard_reader_error": 0}, {"shard_reader_error": 29},
+                       {"wrong_shard_selection": 0}, {"wrong_shard_selection": 29},
+                       {"grid_reader_error": ValueError("incomplete factorial grid")},
+                       {"alerts": [{"outcome": "Product"}]}):
+            with self.subTest(fields=fields):
+                code, report, commands = self.observe(mode="legal-strategy-v3", **fields)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(len(commands), 34)
+                self.assertEqual(len(report["shards"]), 30)
+                self.assertEqual(report["result"], "FAIL")
+                self.assertEqual(report["binary_sha256_before"], report["binary_sha256_after"])
 
 
 if __name__ == "__main__":

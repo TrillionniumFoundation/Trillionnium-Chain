@@ -265,6 +265,207 @@ fn history_w1_original_deadline_precedes_resource_and_complete_work() {
 }
 
 #[test]
+fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {
+    use trnm_crypto_primitives::pon_work::{self, VerificationProgress, WorkError};
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let mut false_trace = packet.clone();
+    let trace_start = pon_work::PROOF_BYTES - 32;
+    let mut ticket_passed = false;
+    for attempt in 0..4096_u64 {
+        let trace = pon_work::hash(b"history-host-count-false-trace", &[&attempt.to_le_bytes()]);
+        if trace.as_slice() == &packet.proof[trace_start..] {
+            continue;
+        }
+        false_trace.proof[trace_start..].copy_from_slice(&trace);
+        if pon_work::precheck_proof_statement(
+            false_trace.header.challenge(),
+            false_trace.header.work_task,
+            false_trace.header.target,
+            &false_trace.proof,
+        )
+        .is_ok()
+        {
+            ticket_passed = true;
+            break;
+        }
+    }
+    assert!(ticket_passed, "exercise actual full false-trace rejection");
+    for (name, packet) in [("valid", packet), ("false-trace", false_trace)] {
+        // The retained scalar relation independently supplies the complete
+        // boundary count, including data-dependent noise rejection sampling.
+        let mut reference_points = Vec::new();
+        let reference = pon_work::verify_reference_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |point| {
+                reference_points.push(point);
+                Ok::<_, crate::Error>(())
+            },
+        );
+        if name == "false-trace" {
+            assert!(matches!(
+                reference.unwrap_err(),
+                pon_work::VerificationError::Relation(WorkError::Transcript)
+            ));
+        } else {
+            reference.unwrap();
+        }
+        assert_eq!(
+            reference_points
+                .iter()
+                .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+                .count(),
+            512
+        );
+        for owns_node_mutex in [false, true] {
+            // This control counts callbacks, not physical cgroup reads or
+            // public-service latency. The original standalone burst avoids
+            // refill so each mathematical checkpoint must check Host once.
+            let domain = public_v3::ServiceMutationCpuDomain::standalone();
+            let initial = domain.observe().unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                calls.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            };
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let operation = domain.begin().unwrap();
+            operation.bind_history_request(control.deadline).unwrap();
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &control,
+            );
+            if name == "false-trace" {
+                assert_eq!(result.err().unwrap().to_string(), "WORK:Transcript");
+            } else {
+                assert!(result.is_ok(), "{name}/{owns_node_mutex}");
+            }
+            assert_eq!(calls.load(Ordering::SeqCst), reference_points.len());
+            let receipt = operation.finish();
+            assert!(!receipt.accounting_unavailable);
+            assert!(!receipt.live_refused);
+            let flow = domain.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert!(flow.balance_identity_verified);
+            println!(
+                "{}",
+                serde_json::json!({"schema":"history-w1-host-boundary-count-v1",
+                "case":name,"owns_node_mutex":owns_node_mutex,
+                "reference_boundaries":reference_points.len(),
+                "resource_calls":calls.load(Ordering::SeqCst),
+                "physical_host_measurement":false,"receipt":receipt,"flow":flow})
+            );
+        }
+    }
+}
+
+#[test]
+fn history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account() {
+    use trnm_crypto_primitives::pon_work::{self, VerificationProgress};
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let mut reference_points = Vec::new();
+    pon_work::verify_reference_with_progress(
+        packet.header.challenge(),
+        packet.header.work_task,
+        packet.header.target,
+        &packet.proof,
+        &mut |point| {
+            reference_points.push(point);
+            Ok::<_, crate::Error>(())
+        },
+    )
+    .unwrap();
+    let cuts: Vec<_> = reference_points
+        .iter()
+        .enumerate()
+        .filter_map(|(index, point)| {
+            let selected = match point {
+                VerificationProgress::BeforeReplay
+                | VerificationProgress::BeforeProduct
+                | VerificationProgress::BeforeVerifiedWork => true,
+                VerificationProgress::Noise { label, counter } => {
+                    (*label, *counter) == (0, 0) || (*label, *counter) == (3, 63)
+                }
+                VerificationProgress::MatrixRow { row } => *row == 63,
+                VerificationProgress::TranscriptTile { row, column, inner } => {
+                    [(0, 0, 0), (4, 0, 0), (7, 7, 7)].contains(&(*row, *column, *inner))
+                }
+            };
+            selected.then_some(index)
+        })
+        .collect();
+    for owns_node_mutex in [false, true] {
+        for cut in cuts.iter().copied().map(Some).chain([None]) {
+            let domain = public_v3::ServiceMutationCpuDomain::standalone();
+            let initial = domain.observe().unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                let index = calls.fetch_add(1, Ordering::SeqCst);
+                ensure(Some(index) != cut, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+            };
+            let control = Control {
+                deadline: if cut.is_some() {
+                    Instant::now() + Duration::from_secs(10)
+                } else {
+                    Instant::now() + Duration::from_millis(100)
+                },
+                resource: &resource,
+            };
+            let operation = domain.begin().unwrap();
+            operation.bind_history_request(control.deadline).unwrap();
+            if cut.is_none() {
+                // Binding rejects an already expired request. Bind while the
+                // original deadline is live, then let that same deadline pass
+                // before entering W1; never rewrite or renew the binding.
+                while Instant::now() < control.deadline {
+                    thread::sleep(control.deadline.saturating_duration_since(Instant::now()));
+                }
+            }
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &control,
+            );
+            assert_eq!(
+                result.err().unwrap().to_string(),
+                if cut.is_some() {
+                    "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+                } else {
+                    "PUBLIC_REQUEST_DEADLINE"
+                }
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), cut.map_or(0, |n| n + 1));
+            // A cancelled relation never acquires completion priority; its
+            // actual partial CPU still settles into the original account.
+            assert_eq!(
+                domain
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                0
+            );
+            let receipt = operation.finish();
+            assert!(!receipt.accounting_unavailable);
+            let flow = domain.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert!(flow.balance_identity_verified);
+        }
+    }
+}
+
+#[test]
 fn pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one() {
     let (_directory, settings, node, packet, _clock) = fixture();
     let owner = Mutex::new(node);

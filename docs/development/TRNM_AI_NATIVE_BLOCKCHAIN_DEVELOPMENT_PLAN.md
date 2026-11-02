@@ -52,6 +52,19 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### W1 factorial legal-attempt continuation — 2026-11-01
+
+The separate [V3 factorial experiment](specs/pon/W1_LEGAL_STRATEGY_V3.md) compares
+Transposed/FullLimb arithmetic with eager/target-hit proof materialization, using
+eight samples in each of thirty fixed shards. It pays actual setup, every miss
+and successful PNW1 serialization, and records evidence overhead separately.
+V1 captures retain their original identities and are not V3 baselines. Related
+History work removes selected duplicate Host checks while retaining every original
+boundary and refill check; approximately 2.3%/2.7% source callback-count reductions
+are not measured service gains. Original budgets and all HOLD meanings remain.
+These additions require exact-source cost and business execution; they supply
+no cheapest-work, security, independent-hardware or production qualification.
+
 #### W1 complete arithmetic and legal strategy continuation — 2026-11-01
 
 Continue the actual work-security candidate `c041564b8a6bb0b98ca9c30e7871878427e5d9a4`

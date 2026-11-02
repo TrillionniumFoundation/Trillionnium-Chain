@@ -26,6 +26,7 @@ from pon_w1_false_trace_reuse_reader_v1 import FALSE_FLAGS, SELECTOR, analyze
 
 EXAMPLE = "pon_w1_false_trace_reuse_v1"
 LEGAL_EXAMPLE = "pon_w1_legal_strategy_v1"
+LEGAL_V3_EXAMPLE = "pon_w1_legal_strategy_v3"
 FULL_LIMB_SELECTOR = "--false-trace-full-limb-v1"
 
 
@@ -39,6 +40,12 @@ def legal_strategy_reader(version="v1"):
         raise ValueError("fixed legal strategy version required")
     import pon_w1_legal_strategy_reader_v1
     return pon_w1_legal_strategy_reader_v1
+
+
+def legal_strategy_v3_reader():
+    # Factorial arithmetic/materialization has a separate schema from v1/v2.
+    import pon_w1_legal_strategy_reader_v3
+    return pon_w1_legal_strategy_reader_v3
 
 
 def legal_campaign(binary, output, observations, report, reader):
@@ -105,12 +112,16 @@ def main():
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--legal-strategy", action="store_true")
     modes.add_argument("--legal-strategy-v2", action="store_true")
+    modes.add_argument("--legal-strategy-v3", action="store_true")
     modes.add_argument("--full-limb", action="store_true")
     args = parser.parse_args()
     spec = ARCHITECTURES[args.arch]
-    legal_version = "v2" if args.legal_strategy_v2 else "v1" if args.legal_strategy else None
-    reader = legal_strategy_reader(legal_version) if legal_version is not None else None
-    example = LEGAL_EXAMPLE if reader is not None else EXAMPLE
+    legal_version = ("v3" if args.legal_strategy_v3 else "v2" if args.legal_strategy_v2 else
+        "v1" if args.legal_strategy else None)
+    reader = (legal_strategy_v3_reader() if legal_version == "v3" else
+        legal_strategy_reader(legal_version) if legal_version is not None else None)
+    example = (LEGAL_V3_EXAMPLE if legal_version == "v3" else
+        LEGAL_EXAMPLE if reader is not None else EXAMPLE)
     receipt = ("w1-legal-strategy-" + legal_version if reader is not None else
         "w1-full-limb-reuse-v1" if args.full_limb else "w1-false-trace-reuse-v1")
     schema = ("trnm-w1-legal-strategy-execution-" + legal_version if reader is not None else
