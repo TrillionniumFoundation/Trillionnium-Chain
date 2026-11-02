@@ -151,3 +151,33 @@ execution/cancellation/reference comparisons remain in place.
 The CI uploads completed native-control records before the retained full Node
 suite, making a failed control inspectable while longer regressions continue.
 The complete original suite and strict Clippy remain required.
+
+## Exact 0959 controls and the later upstream composition
+
+Published source `0959b694539b2e6427c6bfc2422b45c23b63cde4`, tree
+`49ffbac079b5c549050b5e876b02f70ce5b37d14`, was executed locally and on all four
+x64/ARM source-head/actual-merge lanes. Each execution passed all **37 / 37**
+meaningful controls; the unchanged slow-write counterexample passed. The tested
+base was `64cb26b53ed82be14049000387040ba119f00e1e`, with actual prospective merge
+`2c1235118b4962c00efc7a774dbb0532cf46cf24`. This is 37 distinct controls and 148
+hosted executions. The local artifact's before/after SHA-256 is
+`428d91424bfaf99eb32945e82299852837bf5690c32b1671f34fc59ad4c5c773`.
+Exact local strict Clippy, formatting, the retained M06 callback control and 55
+public-readiness reader tests also passed. These are component results, not an
+independent combined Chain/Hepta or whole-chain acceptance.
+
+The same 0959 source still failed all eight original-workspace large-state
+executions with `PUBLIC_MUTATION_CPU_BUDGET`; all eight reactor-exit controls
+passed. All four from-zero lanes passed their five native controls but failed
+`CONFIRMATION_TARGET`: the original pressure window confirmed 0/1 while each
+attack-free baseline confirmed 1/1. Complete source-bound records are retained
+separately from the candidate so its tested source is not rewritten.
+
+During this collection, #678 advanced to `456d23a778d91b6f3cfee60ee997f8f51d3216bc`.
+Its canonical encoding, prepared history queries and guarded post-write readback
+changes are composed without replacing the PNQ2 Current/root/CAS guard. The only
+merge conflicts are overlapping derived workflow/source hashes, recomputed from
+the actual combined bytes. The original capacity budgets, 4,105-block lifetime,
+35 upstream semantic controls, 37 PQ controls and all HOLD flags remain intact.
+The earlier 0959 results cannot qualify this new combination; fresh native
+source-head and actual prospective-merge records are required.

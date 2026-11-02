@@ -22,6 +22,8 @@ pub(crate) mod pq_rollback_witness;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod reorg_cancellation;
+#[cfg(test)]
+mod reorg_readback_tests;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
@@ -2310,14 +2312,6 @@ impl Node {
         }
         Ok(())
     }
-    fn check_persisted_state(
-        &self,
-        id: Hash,
-        state: &State,
-        progress: &mut dyn FnMut() -> Result<()>,
-    ) -> Result<()> {
-        self.check_persisted_state_with_readback(id, state, progress, None)
-    }
     fn check_persisted_state_with_readback(
         &self,
         id: Hash,
@@ -2413,18 +2407,15 @@ impl Node {
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
             .db
-            .query_row(
-                "SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |r| {
-                    Ok((
-                        optional_fixed_blob::<32>(r, 0)?,
-                        r.get::<_, u64>(1)?,
-                        fixed_blob::<64>(r, 2)?,
-                        fixed_blob::<32>(r, 3)?,
-                    ))
-                },
-            )
+            .prepare_cached("SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?")?
+            .query_row([id.as_slice()], |r| {
+                Ok((
+                    optional_fixed_blob::<32>(r, 0)?,
+                    r.get::<_, u64>(1)?,
+                    fixed_blob::<64>(r, 2)?,
+                    fixed_blob::<32>(r, 3)?,
+                ))
+            })
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         Ok(Record {
@@ -3166,7 +3157,7 @@ impl Node {
         progress()?;
         let mut stmt = self
             .db
-            .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            .prepare_cached("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
         let rows = stmt.query_map([id.as_slice()], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
         let mut out = Vec::new();
         for row in rows {
@@ -3213,15 +3204,12 @@ impl Node {
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
             let row = self.record(cur)?;
-            if let Some(bytes) = self
+            let snapshot = self
                 .db
-                .query_row(
-                    "SELECT state FROM snapshots WHERE block=?",
-                    [cur.as_slice()],
-                    |r| r.get::<_, Vec<u8>>(0),
-                )
-                .optional()?
-            {
+                .prepare_cached("SELECT state FROM snapshots WHERE block=?")?
+                .query_row([cur.as_slice()], |r| r.get::<_, Vec<u8>>(0))
+                .optional()?;
+            if let Some(bytes) = snapshot {
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
                 ensure(canonical(&state)? == bytes, "STATE_BYTES")
@@ -5031,6 +5019,79 @@ impl Node {
         // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
     }
+    /// Only reorganization closures return readback from their explicit final
+    /// write boundary. The original writer predates every callback and write;
+    /// neither it nor any graph result survives this one transaction.
+    fn atomic_reorg_with_readback<'db>(
+        &'db self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        run: impl FnOnce(
+            &mut dyn FnMut() -> Result<()>,
+            Option<&trnm_sqlite_io_boundary::TransactionScope<'db>>,
+        ) -> Result<Option<native_authenticated::PostWriteReadback<'db>>>,
+    ) -> Result<()> {
+        progress()?;
+        let tx = rusqlite::Transaction::new_unchecked(
+            &self.db,
+            rusqlite::TransactionBehavior::Immediate,
+        )?;
+        let original_owner = (self.state_backend == StateBackend::AuthenticatedV1)
+            .then(|| {
+                trnm_sqlite_io_boundary::TransactionScope::capture(&self.db)
+                    .map_err(native_authenticated::readback_scope_error)
+            })
+            .transpose()?;
+        let transaction_result: Result<()> = (|| {
+            let mut readback = run(progress, original_owner.as_ref())?;
+            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
+            self.continuous_scope_checkpoint()?;
+            self.mining_scope_checkpoint()?;
+            progress()?;
+            if let Some(scope) = readback.as_mut() {
+                // No legitimate write remains after the closure's explicit
+                // boundary. This must follow the LAST caller callback, even
+                // when no duplicate graph was consumed by the atomic tail.
+                scope.require_unchanged_after_last_write(&self.db)?;
+            }
+            Ok(())
+        })();
+        // As in admission, a callback's transaction replacement cannot hide
+        // behind an ordinary error/cancellation. Preserve that first error as
+        // the source; a write alone does not override a failing callback.
+        let transaction_result = match original_owner
+            .as_ref()
+            .map(|owner| owner.same_write_snapshot(&self.db))
+            .transpose()
+        {
+            Ok(_) => transaction_result,
+            Err(error) => Err(match transaction_result {
+                Ok(()) => native_authenticated::readback_scope_error(error),
+                Err(first) => Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", first),
+            }),
+        };
+        transaction_result?;
+        tx.commit()?;
+        Ok(())
+    }
+    fn reorg_post_write_readback<'db>(
+        &'db self,
+        block: Hash,
+        original_owner: Option<&trnm_sqlite_io_boundary::TransactionScope<'_>>,
+    ) -> Result<Option<native_authenticated::PostWriteReadback<'db>>> {
+        original_owner
+            .zip(self.post_write_schema.as_ref())
+            .map(|(owner, expected)| {
+                native_authenticated::PostWriteReadback::new(
+                    &self.db,
+                    &self.settings,
+                    block,
+                    owner,
+                    expected,
+                )
+            })
+            .transpose()
+            .map(Option::flatten)
+    }
     fn apply_delta_with_progress(
         &self,
         id: Hash,
@@ -5165,7 +5226,7 @@ impl Node {
         self.invalidate_commitment();
         let mut cancellation =
             self.reserve_reorg_cancellation(old, target, next, termination_cpu)?;
-        self.atomic_with_progress(progress, |progress| {
+        self.atomic_reorg_with_readback(progress, |progress, original_owner| {
             // Reclaim abandoned staging only inside this original paid native
             // transaction, before any new durable intent exists. Cancellation
             // of this transaction retains the prior terminal lifecycle. This
@@ -5217,12 +5278,14 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, next, 0, 0)?;
-            self.check_persisted_state(
+            let mut readback = self.reorg_post_write_readback(old, original_owner)?;
+            self.check_persisted_state_with_readback(
                 old,
                 &self.slot_state_with_progress(next, progress)?,
                 progress,
+                readback.as_mut(),
             )?;
-            Ok(())
+            Ok(readback)
         })?;
         let outcome = (|| {
             cut(&mut hook, "intent")?;
@@ -5415,7 +5478,7 @@ impl Node {
                 |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),
             )?;
             let id = bytes32(bytes)?;
-            self.atomic_with_progress(progress, |progress| {
+            self.atomic_reorg_with_readback(progress, |progress, original_owner| {
                 self.apply_delta_with_progress(id, g, kind == 0, progress)?;
                 ensure(
                     self.db
@@ -5426,12 +5489,14 @@ impl Node {
                 .map_err(Error::local_integrity)?;
                 self.check_reorg_row(old, target, g, index + 1, 0)?;
                 let resulting = if kind == 0 { self.parent(id)? } else { id };
-                self.check_persisted_state(
+                let mut readback = self.reorg_post_write_readback(resulting, original_owner)?;
+                self.check_persisted_state_with_readback(
                     resulting,
                     &self.slot_state_with_progress(g, progress)?,
                     progress,
+                    readback.as_mut(),
                 )?;
-                Ok(())
+                Ok(readback)
             })?;
             cut(
                 hook,
@@ -5449,7 +5514,7 @@ impl Node {
         .map_err(Error::local_integrity)?;
         progress()?;
         cut(hook, "before-publish")?;
-        self.atomic_with_progress(progress, |progress| {
+        self.atomic_reorg_with_readback(progress, |progress, original_owner| {
             let expected: Vec<(u64, u64, Hash)> = self
                 .db
                 .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
@@ -5498,12 +5563,14 @@ impl Node {
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
             self.check_events_with_progress(g, &expected, progress)?;
-            self.check_persisted_state(
+            let mut readback = self.reorg_post_write_readback(target, original_owner)?;
+            self.check_persisted_state_with_readback(
                 target,
                 &self.slot_state_with_progress(g, progress)?,
                 progress,
+                readback.as_mut(),
             )?;
-            Ok(())
+            Ok(readback)
         })?;
         cut(hook, "published")?;
         Ok(target)

@@ -13,6 +13,14 @@ original controls and separate workspace CPU workflow. Both Node constructor
 fields and all upstream changes are retained; source pins identify the actual
 combined bytes. The first local build on the earlier source received SIGKILL
 and executed no native tests. Its full failure record remains in the evidence.
+The next composition preserves [456d23a7 upstream](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/456d23a778d91b6f3cfee60ee997f8f51d3216bc), including its canonical ASCII encoding,
+prepared history queries, transaction-scoped reorganization readback and 35
+original-budget semantic controls. These changes do not replace the separate
+PNQ2 witness guard, extend its protected tables or change any business budget.
+The previously tested `0959b694` / `64cb26b5` combination has 37/37 controls on
+all four native lanes, but still fails original capacity and confirmation gates.
+Those results are retained with that exact source; this new combination requires
+its own source-head and actual prospective-merge execution.
 The paired Hepta policy fix is [#4558](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4558),
 initially based on #4552 at `0f7c63418a7eec6cff5e4348e8cdc733850f8386`.
 Neither input is the default main branch. Separate candidate passes cannot be
@@ -94,8 +102,10 @@ the owner-policy floor exists. The transaction is the policy linearization point
 revocation after commit and before a remote effect remains a separate problem.
 
 The final Hepta follow-up also serializes ordinary replay-checkpoint sync with
-trust refresh under the existing owner mutex. A real ARM product failure exposed
-two callers reading the same external predecessor before one advanced it. The
+trust refresh under the existing owner mutex. After a real ARM product failure,
+source review identified a possible interleaving where two callers read the same
+external predecessor before one advances it. The historical run did not record
+the exact interleaving. The
 new deterministic concurrency control requires both valid callers to complete,
 rejects a genuinely old witness and then restores signed service after exact
 witness repair. It does not weaken rollback checks or extend test timeouts.

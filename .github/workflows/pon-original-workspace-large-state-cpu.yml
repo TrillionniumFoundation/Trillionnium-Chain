@@ -1,5 +1,5 @@
 # Additional exact-source observation lane. The existing release and required runtime workflows remain unchanged.
-# Build the full original workspace graph; execute only the named unchanged tests.
+# Build the full original workspace graph; execute original CPU tests and selected semantic controls.
 # No profile, feature, CPU-budget, service-lifetime or cgroup policy override is introduced.
 name: PoN original workspace test-profile CPU acceptance
 'on':
@@ -181,10 +181,30 @@ jobs:
         }, indent=2) + "\n")
         (root / "binary.sha256").write_text(digest + "  " + str(binary) + "\n")
         (root / "binary.txt").write_text(str(binary) + "\n")
+        m06_tests = [row for row in selected["trnm-mvcc-fee"]
+                     if row["profile"]["test"] is True and row.get("executable")]
+        assert len(m06_tests) == 1, "expected one M06 library test executable"
+        m06_artifact = m06_tests[0]
+        m06_binary = Path(m06_artifact["executable"])
+        assert m06_binary.is_absolute() and m06_binary.is_file() and not m06_binary.is_symlink()
+        assert m06_binary.resolve().parent == target / "debug/deps", "unexpected M06 executable profile/target directory"
+        assert m06_binary.resolve() != binary.resolve(), "Node and M06 test executables must be distinct"
+        with m06_binary.open("rb") as stream:
+            assert stream.read(4) == b"\x7fELF"
+            stream.seek(0)
+            m06_digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        (root / "m06-binary.json").write_text(json.dumps({
+            "artifact": m06_artifact, "sha256": m06_digest,
+            "dependency_artifact": m06_dependencies[0],
+            "package_cwd": str(workspace / "trillionnium/crates/trnm-mvcc-fee"),
+            "scope": "selected M06 semantic controls from the same original complete workspace build; not the complete M06/runtime suite"
+        }, indent=2) + "\n")
+        (root / "m06-binary.sha256").write_text(m06_digest + "  " + str(m06_binary) + "\n")
+        (root / "m06-binary.txt").write_text(str(m06_binary) + "\n")
         print(json.dumps({"result": "PASS", "scope": "build profiles, feature sets and ELF identity only",
                           "node_opt_level": "3", "m06_opt_level": "1", "debug_assertions": True,
                           "overflow_checks": True, "features": ["default", "pq-native-openssl"],
-                          "binary_sha256": digest}, sort_keys=True))
+                          "binary_sha256": digest, "m06_binary_sha256": m06_digest}, sort_keys=True))
         PYART
         artifact_reader=$?
         set -e
@@ -230,6 +250,144 @@ jobs:
         printf '%s\n' "$status" > "$TRNM_CI_RECEIPT_DIR/test-step.exit"
         exit "$status"
       id: native_tests
+    - name: Execute selected arithmetic canonical and reorg semantic controls
+      id: semantic_controls
+      if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        controls="$TRNM_CI_RECEIPT_DIR/semantic-controls"
+        mkdir -p "$controls"
+        node_binary="$(cat "$TRNM_CI_RECEIPT_DIR/binary.txt")"
+        m06_binary="$(cat "$TRNM_CI_RECEIPT_DIR/m06-binary.txt")"
+        status=0
+        printf 'crate\treader_exit\n' > "$controls/elf-before-exits.tsv"
+        for crate in node m06; do
+          if [ "$crate" = node ]; then
+            binary="$node_binary"
+            receipt=binary
+          else
+            binary="$m06_binary"
+            receipt=m06-binary
+          fi
+          sha256sum "$binary" > "$controls/$crate-binary-before.sha256"
+          set +e
+          sha256sum -c "$TRNM_CI_RECEIPT_DIR/$receipt.sha256" > "$controls/$crate-binary-before.log" 2>&1
+          reader=$?
+          set -e
+          printf '%s\t%s\n' "$crate" "$reader" >> "$controls/elf-before-exits.tsv"
+          if [ "$reader" -ne 0 ]; then status=1; fi
+        done
+        if [ "$status" -ne 0 ]; then
+          printf '%s\n' "$status" > "$controls/semantic-step.exit"
+          exit "$status"
+        fi
+        printf 'crate\tnative_exit\tlog_exit\n' > "$controls/registry-exits.tsv"
+        for crate in m06 node; do
+          if [ "$crate" = m06 ]; then
+            binary="$m06_binary"
+            cd "$GITHUB_WORKSPACE/trillionnium/crates/trnm-mvcc-fee"
+          else
+            binary="$node_binary"
+            cd "$GITHUB_WORKSPACE/trillionnium/crates/trnm-pon-node"
+          fi
+          pwd > "$controls/$crate-cwd.txt"
+          set +e
+          "$binary" --list --format terse 2>&1 | tee "$controls/$crate-registry.log"
+          codes=("${PIPESTATUS[@]}")
+          set -e
+          printf '%s\t%s\t%s\n' "$crate" "${codes[0]}" "${codes[1]}" >> "$controls/registry-exits.tsv"
+          if [ "${codes[0]}" -ne 0 ] || [ "${codes[1]}" -ne 0 ]; then status=1; fi
+        done
+        set +e
+        python3 - > "$controls/registry-check.json" 2> "$controls/registry-check.stderr" <<'PYREGISTRY'
+        import json, os, re
+        from pathlib import Path
+        root = Path(os.environ["TRNM_CI_RECEIPT_DIR"]) / "semantic-controls"
+        registries = {}
+        for crate in ("m06", "node"):
+            names = []
+            for line in (root / f"{crate}-registry.log").read_text().splitlines():
+                match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_:]*): test", line)
+                if match:
+                    names.append(match[1])
+            assert names and len(names) == len(set(names)), "empty or duplicate libtest registry: " + crate
+            registries[crate] = set(names)
+        selected = []
+        groups = []
+        def prefix(crate, group, name, count):
+            names = sorted(test for test in registries[crate] if test.startswith(name))
+            assert len(names) == count, f"{group}: expected {count} actual registered controls, got {len(names)}"
+            groups.append({"crate": crate, "group": group, "prefix": name, "expected_count": count, "tests": names})
+            selected.extend((crate, group, test) for test in names)
+        def exact(crate, group, names):
+            assert names and len(names) == len(set(names))
+            assert all(test in registries[crate] for test in names), "missing exact control: " + group
+            groups.append({"crate": crate, "group": group, "expected_count": len(names), "tests": names})
+            selected.extend((crate, group, test) for test in names)
+        prefix("m06", "full-root-arithmetic", "pon_commitment::full_root_arithmetic_tests::", 5)
+        exact("m06", "canonical-ascii", [
+            "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+            "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+            "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+            "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+            "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        ])
+        prefix("node", "reorg-tail", "store::reorg_readback_tests::", 6)
+        exact("node", "current-sql-root", [
+            "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        ])
+        exact("node", "prepared-current-history", [
+            "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+            "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+            "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+        ])
+        prefix("node", "postwrite-readback", "store::native_authenticated::post_write_readback::tests::", 15)
+        assert len({(crate, test) for crate, group, test in selected}) == len(selected)
+        (root / "selected-tests.tsv").write_text("".join(f"{crate}\t{group}\t{test}\n" for crate, group, test in selected))
+        print(json.dumps({"result": "PASS", "scope": "exact libtest registry selection only; no execution verdict and not the complete runtime suite",
+                          "registry_counts": {crate: len(names) for crate, names in registries.items()},
+                          "selected_count": len(selected), "groups": groups}, indent=2))
+        PYREGISTRY
+        reader=$?
+        set -e
+        printf '%s\n' "$reader" > "$controls/registry-check.exit"
+        if [ "$reader" -ne 0 ]; then status=1; fi
+        if [ "$status" -ne 0 ]; then
+          printf '%s\n' "$status" > "$controls/semantic-step.exit"
+          exit "$status"
+        fi
+        printf 'crate\tgroup\tselector\tnative_exit\tlog_exit\treader_exit\n' > "$controls/test-exits.tsv"
+        expected_count="$(wc -l < "$controls/selected-tests.tsv")"
+        index=0
+        while IFS=$'\t' read -r crate group selector; do
+          if [ "$crate" = m06 ]; then
+            binary="$m06_binary"
+            cd "$GITHUB_WORKSPACE/trillionnium/crates/trnm-mvcc-fee"
+          elif [ "$crate" = node ]; then
+            binary="$node_binary"
+            cd "$GITHUB_WORKSPACE/trillionnium/crates/trnm-pon-node"
+          else
+            printf 'unknown selected crate: %s\n' "$crate" >&2
+            exit 1
+          fi
+          index=$((index + 1))
+          name="$(printf '%02d-%s-%s' "$index" "$crate" "${selector##*::}")"
+          log="$controls/$name.log"
+          pwd > "$controls/$name.cwd.txt"
+          set +e
+          /usr/bin/time -v -o "$controls/$name.resources.txt" "$binary" "$selector" --exact --nocapture --test-threads=1 < /dev/null 2>&1 | tee "$log"
+          codes=("${PIPESTATUS[@]}")
+          python3 "$GITHUB_WORKSPACE/scripts/ci/check_required_native_test.py" "$log" --test "$selector" > "$controls/$name.execution.json" 2> "$controls/$name.execution.stderr"
+          reader=$?
+          set -e
+          printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$crate" "$group" "$selector" "${codes[0]}" "${codes[1]}" "$reader" >> "$controls/test-exits.tsv"
+          if [ "${codes[0]}" -ne 0 ] || [ "${codes[1]}" -ne 0 ] || [ "$reader" -ne 0 ]; then status=1; fi
+        done < "$controls/selected-tests.tsv"
+        if [ "$index" -eq 0 ] || [ "$index" -ne "$expected_count" ]; then status=1; fi
+        printf '%s\n' "$index" > "$controls/executed-selector-count.txt"
+        printf '%s\n' "$status" > "$controls/semantic-step.exit"
+        exit "$status"
     - name: Recheck the same test ELF after success or failure
       if: ${{ always() && steps.build.outcome == 'success' }}
       shell: bash
@@ -242,6 +400,19 @@ jobs:
         binary_check=$?
         set -e
         printf '%s\n' "$binary_check" > "$TRNM_CI_RECEIPT_DIR/binary-after.exit"
+        exit "$binary_check"
+    - name: Recheck the same M06 test ELF after success or failure
+      if: ${{ always() && steps.build.outcome == 'success' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        binary="$(cat "$TRNM_CI_RECEIPT_DIR/m06-binary.txt")"
+        sha256sum "$binary" > "$TRNM_CI_RECEIPT_DIR/m06-binary-after.sha256"
+        set +e
+        sha256sum -c "$TRNM_CI_RECEIPT_DIR/m06-binary.sha256" > "$TRNM_CI_RECEIPT_DIR/m06-binary-after.log" 2>&1
+        binary_check=$?
+        set -e
+        printf '%s\n' "$binary_check" > "$TRNM_CI_RECEIPT_DIR/m06-binary-after.exit"
         exit "$binary_check"
     - name: Reverify exact source after every outcome
       if: always()

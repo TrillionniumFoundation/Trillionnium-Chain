@@ -4325,3 +4325,13 @@ net functionality, with locked versions and original profiles/budgets intact.
 Synchronize the exact public-readiness V4 source contract, retain legacy-only
 evidence semantics, and serialize the M06 test's own concurrent lock probes.
 Record fresh source/feature identities and native outcomes; PN0–PN6 stay HOLD.
+
+The exact published `0959b694` candidate and its actual `2c123511` merge against
+`64cb26b5` now pass all 37 named PQ controls in each x64/ARM lane. Original
+workspace CPU and pressure-confirmation gates still fail; retain those raw
+results without promoting whole-chain flags. Preserve the later concurrent
+`456d23a7` canonical-encoding/history/readback changes and all 35 associated
+semantic controls in a new combined source. Recompute only overlapping derived
+source identities, keep the independent PNQ2 witness guard and all original
+budgets, and execute the new source and actual merge independently. Neither old
+passes nor the new composition close PN0–PN6.
