@@ -30,7 +30,7 @@ fn open_node(path: &Path, backend: StateBackend) -> Node {
     )
     .unwrap();
     match backend {
-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV4 => {
             panic!("use the independently pinned PQ network fixture")
         }
         StateBackend::Legacy => Node::open(path, settings, 1).unwrap(),

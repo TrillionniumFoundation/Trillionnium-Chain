@@ -18,6 +18,7 @@ mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
 pub(crate) mod pq_network;
+pub(crate) mod pq_rollback_witness;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod reorg_cancellation;
@@ -100,6 +101,24 @@ CREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL 
 CREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)));";
 fn ddl() -> String {
     format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)
+}
+// The guarded namespace compares cold-open pins inside SQLite. Unknown stored
+// BLOB widths are never materialized into an unbounded Rust Vec for this check;
+// this is not a bound on SQLite's internal page/schema memory.
+fn witness_metadata_matches(db: &Connection, key: &str, expected: Option<&[u8]>) -> Result<bool> {
+    let actual: Option<bool> =
+        if let Some(value) = expected {
+            db.query_row(
+            "SELECT typeof(value)='blob' AND length(value)=? AND value=? FROM metadata WHERE key=?",
+            params![value.len(), value, key], |row| row.get(0),
+        ).optional()?
+        } else {
+            db.query_row("SELECT 0 FROM metadata WHERE key=?", [key], |row| {
+                row.get(0)
+            })
+            .optional()?
+        };
+    Ok(actual == expected.map(|_| true))
 }
 fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
     bytes.try_into().map_err(|_| "STORAGE_HASH".into())
@@ -771,6 +790,7 @@ pub struct Node {
     #[cfg(test)]
     cancel_next_activation_intent: bool,
     pq_network_epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
+    pq_witness: Option<RefCell<crate::pq_rollback_witness::WitnessClient>>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
@@ -779,6 +799,7 @@ enum StateBackend {
     PermanentAccountGrowthV2,
     PqNetworkV2,
     PqContinuousV3,
+    PqWitnessV4,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -787,6 +808,9 @@ impl StateBackend {
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
             Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),
+            Self::PqWitnessV4 => {
+                format!("{}{}{}", ddl(), pq_network::DDL, pq_rollback_witness::DDL)
+            }
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -806,6 +830,7 @@ impl StateBackend {
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
             Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",
             Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",
+            Self::PqWitnessV4 => b"native-pq-network-witness-schema-v4",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -815,6 +840,7 @@ struct NativeOwners {
     mining: Option<operator_mining_owner::MiningOwner>,
     continuous: Option<operator_continuous_owner::ContinuousOwner>,
     pq_network: Option<Vec<u8>>,
+    pq_witness: Option<crate::pq_rollback_witness::WitnessClient>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -973,7 +999,9 @@ impl Node {
             ensure(
                 matches!(
                     self.state_backend,
-                    StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+                    StateBackend::PqNetworkV2
+                        | StateBackend::PqContinuousV3
+                        | StateBackend::PqWitnessV4
                 ),
                 "PQ_NETWORK_BACKEND",
             )?;
@@ -984,7 +1012,9 @@ impl Node {
         ensure(
             !matches!(
                 self.state_backend,
-                StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+                StateBackend::PqNetworkV2
+                    | StateBackend::PqContinuousV3
+                    | StateBackend::PqWitnessV4
             ),
             "PQ_NETWORK_REQUIRED",
         )?;
@@ -1061,6 +1091,7 @@ impl Node {
                 mining: None,
                 continuous: None,
                 pq_network: None,
+                pq_witness: None,
             },
             StateBackend::AuthenticatedV1,
             false,
@@ -1196,6 +1227,7 @@ impl Node {
                 mining: mining_owner,
                 continuous: continuous_owner,
                 pq_network: None,
+                pq_witness: None,
             },
             StateBackend::Legacy,
             false,
@@ -1231,6 +1263,7 @@ impl Node {
             mining: mining_owner,
             continuous: continuous_owner,
             pq_network,
+            pq_witness,
         } = owners;
         if growth_profile_v2::enabled(&settings.app) {
             ensure(
@@ -1245,10 +1278,22 @@ impl Node {
 
         let pq_selected = matches!(
             state_backend,
-            StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+            StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV4
         );
 
         ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
+        ensure(
+            (state_backend == StateBackend::PqWitnessV4) == pq_witness.is_some(),
+            "PQ_WITNESS_BACKEND",
+        )?;
+        if let Some(client) = pq_witness.as_ref() {
+            ensure(
+                pq_network
+                    .as_deref()
+                    .is_some_and(|policy| client.binding().matches_policy(policy)),
+                "PQ_WITNESS_POLICY",
+            )?;
+        }
         ensure(
             !settings.app.is_pq_account_profile() || pq_selected,
             "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER",
@@ -1258,7 +1303,9 @@ impl Node {
                 || (owner_policy.is_none()
                     && mining_owner.is_none()
                     && match state_backend {
-                        StateBackend::PqNetworkV2 => continuous_owner.is_none(),
+                        StateBackend::PqNetworkV2 | StateBackend::PqWitnessV4 => {
+                            continuous_owner.is_none()
+                        }
                         StateBackend::PqContinuousV3 => {
                             continuous_owner
                                 .as_ref()
@@ -1368,39 +1415,75 @@ impl Node {
                 ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             } else {
                 ensure(current == expected_schema, "SCHEMA")?;
-                let required: Option<Vec<u8>> = probe
-                    .query_row(
-                        "SELECT value FROM metadata WHERE key='operator_task_policy'",
-                        [],
-                        |r| r.get(0),
-                    )
-                    .optional()?;
+                if state_backend == StateBackend::PqWitnessV4 {
+                    ensure(
+                        witness_metadata_matches(
+                            &probe,
+                            "operator_task_policy",
+                            required_owner_marker,
+                        )?,
+                        "OWNER_TASK_POLICY_REQUIRED",
+                    )?;
+                    ensure(
+                        witness_metadata_matches(
+                            &probe,
+                            "pq_network_owner_v2",
+                            pq_network.as_deref(),
+                        )?,
+                        "PQ_NETWORK_POLICY_REQUIRED",
+                    )?;
+                } else {
+                    let required: Option<Vec<u8>> = probe
+                        .query_row(
+                            "SELECT value FROM metadata WHERE key='operator_task_policy'",
+                            [],
+                            |r| r.get(0),
+                        )
+                        .optional()?;
+                    ensure(
+                        required.as_deref() == required_owner_marker,
+                        "OWNER_TASK_POLICY_REQUIRED",
+                    )?;
+                    let recorded_pq: Option<Vec<u8>> = probe
+                        .query_row(
+                            "SELECT value FROM metadata WHERE key='pq_network_owner_v2'",
+                            [],
+                            |row| row.get(0),
+                        )
+                        .optional()?;
+                    ensure(recorded_pq == pq_network, "PQ_NETWORK_POLICY_REQUIRED")?;
+                }
                 ensure(
-                    required.as_deref() == required_owner_marker,
-                    "OWNER_TASK_POLICY_REQUIRED",
+                    witness_metadata_matches(
+                        &probe,
+                        pq_rollback_witness::KEY,
+                        pq_witness
+                            .as_ref()
+                            .map(|client| client.binding().canonical()),
+                    )?,
+                    "PQ_WITNESS_BINDING_REQUIRED",
                 )?;
-                let recorded_pq: Option<Vec<u8>> = probe
-                    .query_row(
-                        "SELECT value FROM metadata WHERE key='pq_network_owner_v2'",
-                        [],
-                        |row| row.get(0),
-                    )
-                    .optional()?;
-                ensure(recorded_pq == pq_network, "PQ_NETWORK_POLICY_REQUIRED")?;
                 for (key, value) in [
                     ("schema", schema_id),
                     ("parameters", settings.parameters()),
                     ("genesis", settings.genesis()),
                 ] {
-                    let recorded: Option<Vec<u8>> = probe
-                        .query_row("SELECT value FROM metadata WHERE key=?", [key], |r| {
-                            r.get(0)
-                        })
-                        .optional()?;
-                    ensure(
-                        recorded.as_deref() == Some(value.as_slice()),
-                        "STORAGE_CONTEXT",
-                    )?;
+                    if state_backend == StateBackend::PqWitnessV4 {
+                        ensure(
+                            witness_metadata_matches(&probe, key, Some(value.as_slice()))?,
+                            "STORAGE_CONTEXT",
+                        )?;
+                    } else {
+                        let recorded: Option<Vec<u8>> = probe
+                            .query_row("SELECT value FROM metadata WHERE key=?", [key], |r| {
+                                r.get(0)
+                            })
+                            .optional()?;
+                        ensure(
+                            recorded.as_deref() == Some(value.as_slice()),
+                            "STORAGE_CONTEXT",
+                        )?;
+                    }
                 }
                 initialized = true;
             }
@@ -1459,6 +1542,9 @@ impl Node {
                     [policy],
                 )?;
                 pq_network::seed(&tx, policy)?;
+            }
+            if let Some(client) = pq_witness.as_ref() {
+                pq_rollback_witness::seed(&tx, client.binding())?;
             }
             if let Some(marker) = required_owner_marker {
                 tx.execute(
@@ -1545,7 +1631,9 @@ impl Node {
             #[cfg(test)]
             cancel_next_activation_intent: false,
             pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
+            pq_witness: pq_witness.map(RefCell::new),
         };
+        node.check_pq_witness_open()?;
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
             // Complete-State reference budget records cannot be silently ignored
             // by this backend. Validate/refuse them before any growth recovery.

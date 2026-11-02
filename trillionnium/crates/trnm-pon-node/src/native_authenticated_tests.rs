@@ -57,7 +57,7 @@ fn make(node: &Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Packet {
 }
 fn open(path: &Path, backend: StateBackend) -> Node {
     match backend {
-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV4 => {
             panic!("use the independently pinned PQ network fixture")
         }
         StateBackend::PermanentAccountGrowthV2 => {

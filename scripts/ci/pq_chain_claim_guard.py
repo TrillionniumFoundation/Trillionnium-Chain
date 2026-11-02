@@ -30,6 +30,8 @@ GATES = {
     'authorization': (
         'trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress.rs',
+        'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+        'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
@@ -66,6 +68,11 @@ GATES = {
         'scripts/ci/pq_external_rollback_oracle.py',
         'scripts/ci/test_pq_external_rollback_oracle.py',
         'docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md',
+        'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs',
+        'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs',
+        'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs',
+        'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs',
+        'docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md',
     ),
     'capacity_and_invalid_input': (
         'trillionnium/crates/trnm-protocol/src/pq_frame.rs',
