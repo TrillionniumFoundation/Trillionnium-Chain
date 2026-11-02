@@ -4335,3 +4335,35 @@ semantic controls in a new combined source. Recompute only overlapping derived
 source identities, keep the independent PNQ2 witness guard and all original
 budgets, and execute the new source and actual merge independently. Neither old
 passes nor the new composition close PN0–PN6.
+
+### 2026-11-02 preserve failed recovery evidence and compose the later M06 source
+
+The immutable [0959 phase 2 evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/1fa9526d139945f97a4a6823f08550439a6d19d9/evidence/pon-pq-system-continuation-20261101/final0959-phase2)
+completes the earlier four-lane collection: each full Node suite reports
+879 passed, 2 failed and 22 ignored, with both original large-parent CPU budget
+failures retained. Its phase 1 references reconstruct all original artifact
+bytes. The archive is evidence-only and does not change candidate activation.
+
+The subsequent exact source `473a7b9bbff5215600950067b46da05cfd31bf5e`, tree
+`4582411d869113af3aac356d078d8adf4440c612`, and actual merge
+`ee78bb676f60865735ee4bef37a165a6f8bd1fd7` against `456d23a7` have a failed
+PQ recovery positive case: x64 head, x64 merge and ARM merge each passed 37/37,
+while ARM head passed 36/37. After witness outage, successful cold reopen and
+matching external head, the first legal 31-byte ingress charge exceeded the
+original 250 ms exchange bound and returned `PQ_WITNESS_DEADLINE`. Preserve
+that exact receipt; no rerun, deadline increase or attribution to an unobserved
+host condition replaces it. The [continuation record](../security/PQ_SYSTEM_CONTINUATION_20261101.md)
+identifies the exact selector and raw-log hash. Early control artifacts do not
+establish that the complete `473a7b9b` suites passed.
+
+Compose the concurrent `9ceff0e073f001e6ea4ac9ea929f477aca8ebf36` successor of
+`456d23a7` without losing PQ source bindings or the callback test's own-probe
+serialization. Retain its real-held-lock refusal, four concurrent probes,
+actual worker-count assertions, equivalent canonical encoding after the full
+State grammar pass and independent serde reference. Its two additional exact
+semantic selectors extend the same original workspace lane; they do not lower
+budgets or replace the original capacity, History and business gates. Keep the
+upstream [456d original outcomes](TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md)
+with that historical source. This new combined source has not yet been built
+or accepted; it requires fresh exact-head and actual-merge evidence. All eight
+machine assertions remain false and PN0-PN6 remain HOLD.

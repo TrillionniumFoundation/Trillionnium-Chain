@@ -275,6 +275,18 @@ fn full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_origina
 
 #[test]
 fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks() {
+    fn unlocked_at_callback(arithmetic: &FullRootArithmetic, probes: &Mutex<()>) -> bool {
+        // Worker callbacks run concurrently. A successful try_lock probe itself
+        // owns a guard, so serialize only these probes, not execution/callbacks.
+        // Production arithmetic never takes this gate: a real retained guard
+        // must still fail the probe, including on the calling thread.
+        let _probe = probes.lock().unwrap();
+        let attempted = arithmetic.0.try_lock();
+        let unlocked = attempted.is_ok();
+        drop(attempted);
+        unlocked
+    }
+
     let (state, cfg, raws) = tests::preview_fixture();
     let root = pon_executor::root(&state).unwrap();
     let limits = CacheLimits {
@@ -282,6 +294,22 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
         ..CacheLimits::default()
     };
     let arithmetic = FullRootArithmetic::default();
+    let callback_probes = Mutex::new(());
+    {
+        let held = arithmetic.0.lock().unwrap();
+        assert!(!unlocked_at_callback(&arithmetic, &callback_probes));
+        drop(held);
+    }
+    assert!(unlocked_at_callback(&arithmetic, &callback_probes));
+    let start = std::sync::Barrier::new(4);
+    std::thread::scope(|scope| {
+        for _ in 0..4 {
+            scope.spawn(|| {
+                start.wait();
+                assert!(unlocked_at_callback(&arithmetic, &callback_probes));
+            });
+        }
+    });
     let (reference, original_observation) =
         CheckedExecutionParent::check_and_bind(&state, root, None, limits).unwrap();
     let (actual, observation) = CheckedExecutionParent::check_and_bind_with_arithmetic(
@@ -313,6 +341,19 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
                     assert_eq!(a.output.state, b.output.state);
                     assert_eq!(a.output.receipts, b.output.receipts);
                     assert_eq!(a.output.root, b.output.root);
+                    assert_eq!(
+                        a.output.metrics.workers_spawned,
+                        b.output.metrics.workers_spawned
+                    );
+                    let expected_workers = workers.min(txs.len());
+                    assert_eq!(
+                        a.output.metrics.workers_spawned,
+                        if expected_workers > 1 {
+                            expected_workers
+                        } else {
+                            0
+                        }
+                    );
                     equal(&a.commitment, &b.commitment);
                 }
                 (Err(a), Err(b)) => assert_eq!(a, b),
@@ -328,12 +369,10 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
                 let run = |parent: &CheckedExecutionParent<'_>| {
                     let trace = Mutex::new(Vec::new());
                     let result = parent.execute_with_progress(request(), &cfg, &|point| {
-                        // Parallel callbacks must not contend with the probe's own
-                        // temporary arithmetic guard. Production lock retention
-                        // still makes the unchanged try_lock assertion fail.
-                        let mut trace = trace.lock().unwrap();
-                        assert!(arithmetic.0.try_lock().is_ok());
-                        trace.push(point);
+                        // Executor workers are joined before owner commitment;
+                        // only peer probes can legitimately contend here.
+                        assert!(unlocked_at_callback(&arithmetic, &callback_probes));
+                        trace.lock().unwrap().push(point);
                         if point == stop {
                             Err("cancel-original-checkpoint")
                         } else {

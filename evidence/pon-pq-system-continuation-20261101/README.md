@@ -181,3 +181,75 @@ the actual combined bytes. The original capacity budgets, 4,105-block lifetime,
 35 upstream semantic controls, 37 PQ controls and all HOLD flags remain intact.
 The earlier 0959 results cannot qualify this new combination; fresh native
 source-head and actual prospective-merge records are required.
+
+## Exact 473 controls: preserve the recovery deadline failure
+
+The subsequent source is `473a7b9bbff5215600950067b46da05cfd31bf5e`, tree
+`4582411d869113af3aac356d078d8adf4440c612`. Its tested base is
+`456d23a778d91b6f3cfee60ee997f8f51d3216bc`; the actual prospective merge
+`ee78bb676f60865735ee4bef37a165a6f8bd1fd7` has the same application tree.
+The [PQ run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41367207755)
+and [original workspace run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41367207721)
+retain their first-attempt source identities and unmodified selectors.
+
+| Exact lane | PQ controls | Selected original-workspace semantic controls | Reactor-exit controls | Original capacity controls |
+| --- | --- | --- | --- | --- |
+| x64 source head | 37 / 37 PASS | 35 / 35 PASS | 2 / 2 PASS | Both FAIL |
+| x64 actual merge | 37 / 37 PASS | 35 / 35 PASS | 2 / 2 PASS | Both FAIL |
+| ARM source head | **36 / 37** | 35 / 35 PASS | 2 / 2 PASS | Both FAIL |
+| ARM actual merge | 37 / 37 PASS | 35 / 35 PASS | 2 / 2 PASS | Both FAIL |
+
+The ARM-head failure is
+`store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota`.
+Cold reopen and equality with the retained external head succeeded. The first
+legal 31-byte charge after that reopen returned `PQ_WITNESS_DEADLINE` at
+`store/pq_rollback_witness/tests.rs:274`; the final charged-byte assertion was
+not reached. The exact raw log SHA256 is
+`726f88a35e0f95a4807058634c9d41410bc006d4c53096f8b6bf8752540fc887`.
+This phase uses the ordinary in-process witness fixture with no injected delay.
+The original 250 ms per-exchange limit remains unchanged. The receipt does not
+locate the internal Current/CAS deadline site or establish an environmental
+cause; earlier successes cannot replace this failed recovery positive case.
+
+Each original workspace lane built the complete locked Rust 1.95 workspace
+with `--workspace --all-targets --all-features --no-run` in the original test
+profile. The actual compiler records retain Node opt-level 3, M06 opt-level 1,
+debug assertions and overflow checks. All eight large-state capacity executions
+failed `PUBLIC_MUTATION_CPU_BUDGET`; all eight reactor-exit controls and all 140
+executions of the 35 semantic controls passed. This is selected execution from
+the full workspace build, not a complete runtime-suite result.
+
+The four [from-zero business lanes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41367207809)
+(protocol head/merge and cost x64/ARM) each passed their five exact native tests
+but failed `CONFIRMATION_TARGET`. Each attack-free baseline confirmed 1/1;
+each 16-worker pressure phase confirmed 0/1 in the original four-second window.
+There is no post-window drain credit or changed deadline. At this checkpoint,
+the complete `473` Node-suite outcomes remain pending; no local command still
+running is represented as a completed pass.
+
+The earlier `0959` complete Node outcomes are independently preserved in the
+[immutable phase 2 archive](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/1fa9526d139945f97a4a6823f08550439a6d19d9/evidence/pon-pq-system-continuation-20261101/final0959-phase2):
+879 passed, 2 failed and 22 ignored in each of its four lanes, with strict Clippy
+success. That delta verifies its 568 unchanged phase 1 file references and 16
+new raw Node/Clippy files, reconstructing all 584 complete artifact files.
+Its evidence-only publication tree is not a newly tested application source.
+
+## Preserve the concurrent 9ceff source without inheriting acceptance
+
+The next composition adds `9ceff0e073f001e6ea4ac9ea929f477aca8ebf36`, tree
+`d2aa5d52f02ecc3e3e9780b064c9b814f8280fe4`, whose parent is the same `456d` base.
+Its full-root arithmetic reuses equivalent canonical encoding only after the
+complete State grammar pass and retains the independent serde root. It adds
+two exact semantic selectors to the same original workspace workflow. Its
+callback test uses a separate probe mutex, preserving our own-probe serialization
+while adding real-held-lock refusal, four concurrent probes and actual
+worker-count assertions. The production arithmetic lock, worker execution,
+original CPU/state/History/business budgets and witness deadline are unchanged.
+
+Retain all seven upstream files and all candidate-only source bindings; update
+only the actual overlapping derived hashes. The upstream 456d outcome documents
+remain historical records, not acceptance for this composition. The new source
+has not been built or executed here. It requires fresh exact-head and actual
+prospective-merge validation. The `473` recovery, capacity and confirmation
+failures remain retained; no source composition or selected success closes any
+whole-chain PQ gate or promotes any of the eight machine assertions.

@@ -13,14 +13,48 @@ original controls and separate workspace CPU workflow. Both Node constructor
 fields and all upstream changes are retained; source pins identify the actual
 combined bytes. The first local build on the earlier source received SIGKILL
 and executed no native tests. Its full failure record remains in the evidence.
-The next composition preserves [456d23a7 upstream](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/456d23a778d91b6f3cfee60ee997f8f51d3216bc), including its canonical ASCII encoding,
+The [473a7b9b composition](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/473a7b9bbff5215600950067b46da05cfd31bf5e) preserves [456d23a7 upstream](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/456d23a778d91b6f3cfee60ee997f8f51d3216bc), including its canonical ASCII encoding,
 prepared history queries, transaction-scoped reorganization readback and 35
 original-budget semantic controls. These changes do not replace the separate
 PNQ2 witness guard, extend its protected tables or change any business budget.
-The previously tested `0959b694` / `64cb26b5` combination has 37/37 controls on
-all four native lanes, but still fails original capacity and confirmation gates.
-Those results are retained with that exact source; this new combination requires
-its own source-head and actual prospective-merge execution.
+
+The earlier `0959b694` / `64cb26b5` combination passed 37/37 PQ controls in all
+four native lanes. Its complete Node suites each finished **879 passed, 2 failed,
+22 ignored**, exit `101`; both failures remain the original large-parent CPU
+budget selectors. Strict Clippy passed in all four lanes. The immutable
+[phase 1 archive](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/c8bc6391409704d6243868d184fa7a2712d25886/evidence/pon-pq-system-continuation-20261101/final0959-phase1)
+and [phase 2 delta archive](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/1fa9526d139945f97a4a6823f08550439a6d19d9/evidence/pon-pq-system-continuation-20261101/final0959-phase2)
+preserve that exact source, actual merge `2c1235118b4962c00efc7a774dbb0532cf46cf24`,
+original capacity and confirmation failures. Evidence-only publication trees
+are not the tested application tree.
+
+On `473a7b9bbff5215600950067b46da05cfd31bf5e`, tree
+`4582411d869113af3aac356d078d8adf4440c612`, the actual tested merge is
+`ee78bb676f60865735ee4bef37a165a6f8bd1fd7` against `456d23a7`. The
+[original four-lane PQ run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41367207755)
+passed 37/37 on x64 head, x64 merge and ARM merge, but **36/37 on ARM head**.
+`store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota`
+failed at the first legal 31-byte charge after a successful cold reopen, with
+`PQ_WITNESS_DEADLINE` at `store/pq_rollback_witness/tests.rs:274`. The preceding
+external-head equality assertion had passed; the final charged-byte assertion
+was not reached. The raw log SHA256 is
+`726f88a35e0f95a4807058634c9d41410bc006d4c53096f8b6bf8752540fc887`.
+The original 250 ms per-exchange bound and all controls remain unchanged. The
+uninstrumented receipt does not identify the internal Current/CAS boundary or
+establish an environmental cause. This normal-recovery failure is not waived,
+retried into a replacement result or inferred away from the earlier success.
+The complete `473a7b9b` suites remain separate from these early control artifacts.
+
+The next source composition incorporates [9ceff0e0 upstream](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/9ceff0e073f001e6ea4ac9ea929f477aca8ebf36): equivalent canonical
+encoding inside full-root arithmetic, two additional exact semantic controls,
+and serialized test lock probes with real-held-lock and worker-count checks.
+The independent serde root, complete grammar-before-wire order, original
+workloads, budgets, witness deadline and production guard remain intact. Keep
+all candidate-only source bindings when updating the overlapping corpus pins.
+The accompanying [456d original-gate record](../development/TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md)
+remains historical evidence for its named source. Neither that record nor the
+`0959` or `473` results qualify this new combination. Its new head and actual
+prospective merge require their own native execution; PN0-PN6 remain HOLD.
 The paired Hepta policy fix is [#4558](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4558),
 initially based on #4552 at `0f7c63418a7eec6cff5e4348e8cdc733850f8386`.
 Neither input is the default main branch. Separate candidate passes cannot be
