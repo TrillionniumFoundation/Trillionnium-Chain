@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import stat
 import sys
@@ -29,6 +30,8 @@ GATES = {
     'authorization': (
         'trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress.rs',
+        'trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs',
+        'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
@@ -62,6 +65,14 @@ GATES = {
         'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
         'trillionnium/crates/trnm-service-settlement/src/native_budget.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+        'scripts/ci/pq_external_rollback_oracle.py',
+        'scripts/ci/test_pq_external_rollback_oracle.py',
+        'docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md',
+        'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs',
+        'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs',
+        'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs',
+        'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs',
+        'docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md',
     ),
     'capacity_and_invalid_input': (
         'trillionnium/crates/trnm-protocol/src/pq_frame.rs',
@@ -107,8 +118,18 @@ def strict_json(root: Path, relative: str) -> dict:
             require(key not in value, 'duplicate JSON field: ' + relative + ':' + key)
             value[key] = item
         return value
+    def finite_float(value: str) -> float:
+        parsed = float(value)
+        require(math.isfinite(parsed), 'nonfinite JSON number: ' + relative)
+        return parsed
+
+    def reject_nonstandard_constant(value: str) -> float:
+        raise UnsafePromotion('nonstandard JSON constant: ' + relative + ':' + value)
+
     try:
-        data = json.loads(safe_file(root, relative), object_pairs_hook=unique)
+        data = json.loads(safe_file(root, relative), object_pairs_hook=unique,
+                          parse_float=finite_float,
+                          parse_constant=reject_nonstandard_constant)
     except (ValueError, UnicodeError) as error:
         raise UnsafePromotion('invalid JSON: ' + relative) from error
     require(type(data) is dict, 'non-object JSON: ' + relative)
@@ -120,6 +141,16 @@ def false_field(data: dict, name: str, context: str) -> None:
 
 
 def inspect(root: Path) -> dict:
+    # Reject an alias of an otherwise plausible research checkout *before*
+    # loading any source-controlled claims. Checking only leaf symlinks lets
+    # --root=/tmp/alias (or a symlinked ancestor) silently scan another tree.
+    # Do not normalize-and-accept the alias: it must be rejected as evidence.
+    try:
+        actual_root = root.resolve(strict=True)
+    except (OSError, RuntimeError) as error:
+        raise UnsafePromotion('missing or unreadable repository root') from error
+    require(root.is_dir(), 'non-directory repository root')
+    require(root.absolute() == actual_root, 'symlinked repository root/ancestor')
     p = strict_json(root, CONFIG)
     c = strict_json(root, CORPUS)
     main = strict_json(root, CONSENSUS)

@@ -557,8 +557,14 @@ the existing M06 algorithm re-encodes every actual State key/value, compares the
 complete key set and applies every actual addition, change or removal. A stored
 record, header digest, block identity or caller-supplied root is never an answer.
 Network, parameter and genesis context must match before material can be used.
-Missing, foreign or refused material uses the original full-root path; an error
+Missing or foreign retained material uses the original full-root path; an error
 from optional arithmetic re-enters the original grammar for its exact error.
+An absent or oversized incoming M06 snapshot may retain the already bounded,
+same-context original-hash partition material. It still discards an old canonical
+entry. Each later partition calculation validates and encodes every actual row,
+recomputes every key/leaf hash and compares the complete partition input before
+reusing its deterministic subtree root. The diagnostic
+`offers_preserved_partitions` counts this choice and confers no validity credit.
 
 The optional material retains at most one tree, 2 MiB of canonical payload and
 16 MiB of conservative software charge, charging shared Arc material in full.
@@ -566,6 +572,12 @@ These are additional retention bounds, not process RSS bounds. M06's existing
 temporary workspace and the other independent caches remain separate. The root
 material has no row-set, freshness, admission, cancellation or consensus authority.
 Rollback may leave mathematical material but cannot leave a successful verdict.
+The separate 4 MiB exact-byte cache can reject a provably oversized input before
+allocating its bounded JSON prefix: key UTF-8 bytes plus direct string-value UTF-8
+bytes are a lower bound on the encoded State. Inputs below that lower bound still
+use the original bounded encoder; successful byte-cache hits require fresh full
+serialization and exact byte equality. Neither early cache refusal nor a hash
+partition hit skips the original complete State/account validation.
 
 Account parsing still precedes State-root calculation. Every actual SQL account
 node is still read and decoded, and its parent edge, path, digest, complete leaf

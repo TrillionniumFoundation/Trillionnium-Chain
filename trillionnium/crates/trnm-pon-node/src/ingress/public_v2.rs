@@ -75,6 +75,26 @@ impl PublicPolicy {
         hash(b"public-protected-profile-v2",&[PROFILE.as_bytes(),b"resource-revision-r2/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/head-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history/service1h-no-pool-no-mine/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
     }
 }
+/// The actual reactor condition observed before its internal shutdown signal.
+/// The shared stop flag is set by cleanup too, so reading it after this service
+/// returns cannot distinguish caller cancellation from lifetime expiration.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PublicLoopExitReason {
+    StopRequested,
+    LifetimeExpired,
+    LoopError,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct PublicLoopExit {
+    pub reason: PublicLoopExitReason,
+    pub elapsed_ns: u128,
+    pub configured_lifetime_ns: u128,
+    pub stop_requested_before_shutdown: bool,
+    pub lifetime_reached_before_shutdown: bool,
+}
+
 #[derive(Default, Clone, Debug, Serialize)]
 pub struct PublicMetrics {
     pub accepted_connections: u64,
@@ -123,6 +143,7 @@ pub struct PublicMetrics {
     pub output_reserved_bytes_after_shutdown: usize,
     pub mutating_grants_after_shutdown: usize,
     pub read_grants_after_shutdown: usize,
+    pub loop_exit: Option<PublicLoopExit>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -730,7 +751,8 @@ fn serve_public_protected_v2_with_owner(
         "PUBLIC_V2_LOOPBACK_ONLY",
     )?;
     listener.set_nonblocking(true)?;
-    let end = Instant::now() + lifetime;
+    let started = Instant::now();
+    let end = started + lifetime;
     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
     let proof_rx = Arc::new(Mutex::new(proof_rx));
@@ -857,8 +879,27 @@ fn serve_public_protected_v2_with_owner(
                 }
             }));
         }
+        let mut loop_exit = None;
         let outcome = (|| -> Result<()> {
-            while !stop.load(Ordering::Acquire) && Instant::now() < end {
+            loop {
+                // Preserve the original stop-first termination condition. Take
+                // the observation here, before cleanup sets the same signal.
+                let stop_requested = stop.load(Ordering::Acquire);
+                let observed = Instant::now();
+                if stop_requested || observed >= end {
+                    loop_exit = Some(PublicLoopExit {
+                        reason: if stop_requested {
+                            PublicLoopExitReason::StopRequested
+                        } else {
+                            PublicLoopExitReason::LifetimeExpired
+                        },
+                        elapsed_ns: observed.duration_since(started).as_nanos(),
+                        configured_lifetime_ns: lifetime.as_nanos(),
+                        stop_requested_before_shutdown: stop_requested,
+                        lifetime_reached_before_shutdown: observed >= end,
+                    });
+                    break;
+                }
                 let elapsed = refill.elapsed().as_millis() as u64;
                 let credit = elapsed.saturating_mul(CHALLENGES_PER_SECOND) / 1000;
                 if credit > 0 {
@@ -1295,14 +1336,25 @@ fn serve_public_protected_v2_with_owner(
             }
             Ok(())
         })();
+        let loop_exit = loop_exit.unwrap_or_else(|| {
+            let observed = Instant::now();
+            PublicLoopExit {
+                reason: PublicLoopExitReason::LoopError,
+                elapsed_ns: observed.duration_since(started).as_nanos(),
+                configured_lifetime_ns: lifetime.as_nanos(),
+                stop_requested_before_shutdown: stop.load(Ordering::Acquire),
+                lifetime_reached_before_shutdown: observed >= end,
+            }
+        });
         stop.store(true, Ordering::Release);
         drop(proof_tx);
         drop(read_tx);
         drop(finished_rx);
-        metrics
-            .lock()
-            .map_err(|_| "PUBLIC_METRICS")?
-            .connections_closed_on_shutdown = connections.len();
+        {
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            m.connections_closed_on_shutdown = connections.len();
+            m.loop_exit = Some(loop_exit);
+        }
         connections.clear();
         for worker in workers {
             worker.join().map_err(|_| "PUBLIC_WORKER_PANIC")??;
@@ -1617,6 +1669,77 @@ mod tests {
         }
     }
     #[test]
+    #[cfg(feature = "pq-native-openssl")]
+    fn pq_only_account_profile_refuses_classical_public_v2_before_tcp() {
+        use openssl::pkey::{KeyType, PKey};
+        use std::collections::BTreeSet;
+        use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{
+            application_v6::ApplicationPolicy, GenesisAccount,
+        };
+        use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+
+        let now = super::super::now().unwrap();
+        let accounts: Vec<_> = [81u8, 82, 83]
+            .into_iter()
+            .map(|n| GenesisAccount {
+                spki: PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[n; 32])
+                    .unwrap()
+                    .public_key_to_der()
+                    .unwrap(),
+                balance: 1_000_000,
+            })
+            .collect();
+        let evaluators: BTreeSet<_> = accounts
+            .iter()
+            .take(2)
+            .map(|account| ml_dsa_65_key_id_from_spki(&account.spki).unwrap())
+            .collect();
+        let policy = ApplicationPolicy {
+            evaluators,
+            evaluation_profile: trnm_mvcc_fee::public_evaluation::PROFILE.into(),
+            model_profile: "linear-expert-dev-v1".into(),
+        };
+        let pq = Settings::native_pq_application_v6(&accounts, now - 100, &policy).unwrap();
+        let classical = identity(72);
+        let unused: SocketAddr = "127.0.0.1:0".parse().unwrap();
+        let v2 = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        for request in [
+            Request::Head,
+            Request::History {
+                tip: hex::encode(pq.genesis()),
+                after: hex::encode(pq.genesis()),
+            },
+        ] {
+            let error = call_public_protected_v2_with_deadline(
+                unused,
+                &request,
+                &pq,
+                classical.public_key(),
+                &classical,
+                v2,
+                None,
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), "AUTH_CLASSICAL_FOR_PQ_PROFILE");
+        }
+        // Deliberately unopened port: the classical development client must
+        // retain its original network operation rather than mislabeling it
+        // as an invalid PQ profile.
+        let classic = Settings::development(Some(now - 100)).unwrap();
+        let error = call_public_protected_v2_with_deadline(
+            unused,
+            &Request::Head,
+            &classic,
+            classical.public_key(),
+            &classical,
+            v2,
+            None,
+        )
+        .unwrap_err();
+        assert_ne!(error.to_string(), "AUTH_CLASSICAL_FOR_PQ_PROFILE");
+    }
+
+    #[test]
     fn v2_refuses_non_loopback_before_starting_unmetered_full_w1() {
         let directory = tempfile::tempdir().unwrap();
         let now = super::super::now().unwrap();
@@ -1635,6 +1758,62 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(error.to_string(), "PUBLIC_V2_LOOPBACK_ONLY");
+    }
+
+    #[test]
+    fn public_loop_exit_records_lifetime_before_internal_stop() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = Node::open(directory.path(), settings, 2).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let lifetime = Duration::from_millis(25);
+        let metrics =
+            serve_public_protected_v2(listener, node, lifetime, stop.clone(), server()).unwrap();
+        let exit = metrics.loop_exit.unwrap();
+        assert_eq!(exit.reason, PublicLoopExitReason::LifetimeExpired);
+        assert_eq!(exit.configured_lifetime_ns, lifetime.as_nanos());
+        assert!(!exit.stop_requested_before_shutdown);
+        assert!(exit.lifetime_reached_before_shutdown);
+        assert!(exit.elapsed_ns >= exit.configured_lifetime_ns);
+        // This is exactly why the old after-return observation was ambiguous.
+        assert!(stop.load(Ordering::Acquire));
+    }
+
+    #[test]
+    fn public_loop_exit_records_external_stop_after_signed_read() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let lifetime = Duration::from_secs(5);
+        let worker = thread::spawn(move || {
+            serve_public_protected_v2(listener, node, lifetime, signal, server()).unwrap()
+        });
+        let reply = call_public_protected_v2(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap();
+        assert!(reply.ok);
+        assert_eq!(reply.value["height"], 0);
+        stop.store(true, Ordering::Release);
+        let metrics = worker.join().unwrap();
+        assert_eq!(metrics.completed_read, 1);
+        let exit = metrics.loop_exit.unwrap();
+        assert_eq!(exit.reason, PublicLoopExitReason::StopRequested);
+        assert!(exit.stop_requested_before_shutdown);
+        assert!(!exit.lifetime_reached_before_shutdown);
+        assert_eq!(exit.configured_lifetime_ns, lifetime.as_nanos());
+        assert!(exit.elapsed_ns < exit.configured_lifetime_ns);
+        assert!(stop.load(Ordering::Acquire));
     }
 
     #[test]

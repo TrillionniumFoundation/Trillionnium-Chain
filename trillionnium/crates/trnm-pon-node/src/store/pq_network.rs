@@ -1,6 +1,6 @@
 //! Durable local PQ transport policy/replay ownership. These tables are outside
 //! the reorg State and use an incompatible fresh schema, never account authority.
-use super::{NativeOwners, Node, StateBackend};
+use super::{pq_rollback_witness::Mutation, NativeOwners, Node, StateBackend};
 use crate::{
     ensure,
     ingress::pq_network::{
@@ -9,13 +9,16 @@ use crate::{
     },
     Error, Result, Settings,
 };
-use rusqlite::{params, OptionalExtension, Transaction, TransactionBehavior};
+use rusqlite::{params, OptionalExtension, Transaction};
+#[cfg(test)]
+use std::time::Duration;
 use std::{
     path::Path,
     sync::{
         atomic::{AtomicU64, Ordering},
         Arc,
     },
+    time::Instant,
 };
 use trnm_protocol::pon_wire::{hash, Hash};
 
@@ -69,8 +72,75 @@ impl Node {
                 mining: None,
                 continuous: None,
                 pq_network: Some(policy.canonical().to_vec()),
+                pq_witness: None,
             },
             StateBackend::PqNetworkV2,
+            false,
+        )?;
+        node.validate_pq_network_ledger(policy)?;
+        Ok(node)
+    }
+
+    /// Explicit provisioning only: the independently retained witness must
+    /// already contain the initial checkpoint. This never registers a witness.
+    pub fn create_with_pq_witness(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        witness: crate::pq_rollback_witness::WitnessClient,
+    ) -> Result<Self> {
+        ensure(
+            !path.join("native.sqlite").exists(),
+            "PQ_WITNESS_NEW_NODE_REQUIRED",
+        )?;
+        Self::open_pq_witness_selected(path, settings, workers, policy, witness)
+    }
+
+    /// Existing Node and existing external state are both mandatory. Missing
+    /// external state is never treated as a first-use enrollment opportunity.
+    pub fn open_with_pq_witness(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        witness: crate::pq_rollback_witness::WitnessClient,
+    ) -> Result<Self> {
+        ensure(
+            path.join("native.sqlite").is_file(),
+            "PQ_WITNESS_EXISTING_NODE_REQUIRED",
+        )?;
+        Self::open_pq_witness_selected(path, settings, workers, policy, witness)
+    }
+
+    fn open_pq_witness_selected(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        witness: crate::pq_rollback_witness::WitnessClient,
+    ) -> Result<Self> {
+        ensure(
+            policy.matches(&settings) && witness.binding().matches_policy(policy.canonical()),
+            "PQ_WITNESS_POLICY",
+        )?;
+        ensure(
+            !super::owner_marker_present(path)?,
+            "OWNER_TASK_POLICY_REQUIRED",
+        )?;
+        let node = Self::open_selected(
+            path,
+            settings,
+            workers,
+            None,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+                pq_network: Some(policy.canonical().to_vec()),
+                pq_witness: Some(witness),
+            },
+            StateBackend::PqWitnessV4,
             false,
         )?;
         node.validate_pq_network_ledger(policy)?;
@@ -83,10 +153,17 @@ impl Node {
         ensure(
             matches!(
                 self.state_backend,
-                StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+                StateBackend::PqNetworkV2
+                    | StateBackend::PqContinuousV3
+                    | StateBackend::PqWitnessV4
             ) && policy.matches(&self.settings),
             "PQ_NETWORK_BACKEND",
         )?;
+        let width: bool = self.db.query_row(
+            "SELECT typeof(value)='blob' AND length(value)=? FROM metadata WHERE key='pq_network_owner_v2'",
+            [policy.canonical().len()], |row| row.get(0),
+        )?;
+        ensure(width, "PQ_NETWORK_POLICY_REQUIRED")?;
         let recorded: Vec<u8> = self.db.query_row(
             "SELECT value FROM metadata WHERE key='pq_network_owner_v2'",
             [],
@@ -136,6 +213,7 @@ impl Node {
     }
     /// A failed network attempt consumes protected local capacity, never fees
     /// from an unauthenticated claimed account. Reorg and reopen do not refund it.
+    #[cfg(test)]
     pub(crate) fn charge_pq_ingress(
         &mut self,
         policy: &PqNetworkPolicy,
@@ -143,17 +221,36 @@ impl Node {
         bytes: u64,
         verification: bool,
     ) -> Result<()> {
+        self.charge_pq_ingress_with_check(
+            policy,
+            connection,
+            bytes,
+            verification,
+            Instant::now() + Duration::from_secs(10),
+            &mut || Ok(()),
+        )
+    }
+
+    pub(crate) fn charge_pq_ingress_with_check(
+        &mut self,
+        policy: &PqNetworkPolicy,
+        connection: bool,
+        bytes: u64,
+        verification: bool,
+        deadline: Instant,
+        check: &mut impl FnMut() -> Result<()>,
+    ) -> Result<()> {
+        check()?;
         self.check_pq_network_policy(policy)?;
-        let tx = self
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        ensure(bytes <= MAX_INGRESS_BYTES, "PQ_NETWORK_INGRESS_BUDGET")?;
+        let tx = Mutation::begin_until(self, Some(deadline))?;
+        check()?;
         let changed = tx.execute("UPDATE pq_network_resource_v2 SET connections=connections+?,input_bytes=input_bytes+?,inbound_verifications=inbound_verifications+? WHERE singleton=1 AND connections<=?-? AND input_bytes<=?-? AND inbound_verifications<=?-?",
             params![u64::from(connection), bytes, u64::from(verification),
                 MAX_INGRESS_CONNECTIONS,u64::from(connection),MAX_INGRESS_BYTES,bytes,
                 MAX_INBOUND_VERIFICATIONS,u64::from(verification)])?;
         ensure(changed == 1, "PQ_NETWORK_INGRESS_BUDGET")?;
-        tx.commit()?;
-        Ok(())
+        tx.commit_with_check(check)
     }
 
     pub(crate) fn validate_pq_network_ledger(&self, policy: &PqNetworkPolicy) -> Result<()> {
@@ -234,28 +331,45 @@ impl Node {
         Ok(())
     }
 
+    #[cfg(test)]
     pub(crate) fn begin_pq_network_request(
         &mut self,
         policy: &PqNetworkPolicy,
         request: &VerifiedRequest,
     ) -> Result<PqReplay> {
+        self.begin_pq_network_request_with_check(
+            policy,
+            request,
+            Instant::now() + Duration::from_secs(10),
+            &mut || Ok(()),
+        )
+    }
+
+    pub(crate) fn begin_pq_network_request_with_check(
+        &mut self,
+        policy: &PqNetworkPolicy,
+        request: &VerifiedRequest,
+        deadline: Instant,
+        check: &mut impl FnMut() -> Result<()>,
+    ) -> Result<PqReplay> {
+        check()?;
         self.ready()?;
         self.check_pq_network_policy(policy)?;
         ensure(request.policy == policy.id(), "PQ_NETWORK_CONTEXT")?;
-        let (mut highest, revoked): (u64, bool) = self.db.query_row(
+        self.retire_expired_pq_pending(policy, request.peer, deadline, check)?;
+        let tx = Mutation::begin_until(self, Some(deadline))?;
+        check()?;
+        let (highest, revoked): (u64, bool) = tx.query_row(
             "SELECT highest_sequence,revoked FROM pq_network_peer_v2 WHERE peer=?",
             [request.peer.as_slice()],
             |row| Ok((row.get(0)?, row.get(1)?)),
         )?;
         ensure(!revoked, "PQ_NETWORK_REVOKED")?;
-        if self.retire_expired_pq_pending(policy, request.peer, highest)? {
-            highest += 1;
-        }
         ensure(
             request.sequence <= highest.saturating_add(1),
             "PQ_NETWORK_SEQUENCE_GAP",
         )?;
-        let existing: Option<ReplayRow> = self.db.query_row(
+        let existing: Option<ReplayRow> = tx.query_row(
             "SELECT operation,response,response_digest,status FROM pq_network_request_v2 WHERE peer=? AND sequence=?",
             params![request.peer.as_slice(),request.sequence], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?))).optional()?;
         if let Some((operation, response, digest, status)) = existing {
@@ -273,18 +387,22 @@ impl Node {
                         "PQ_NETWORK_RESPONSE_INTEGRITY",
                     )?;
                     policy.verify_response(&response, request, request.expiry)?;
+                    check()?;
                     return Ok(PqReplay::Cached(response));
                 }
                 (None, None, 0) if request.sequence == highest + 1 => {}
                 (None, None, 2) => return Err("PQ_NETWORK_EXPIRED_UNCONFIRMED".into()),
                 _ => return Err(Error::from("PQ_NETWORK_AUDIT_INTEGRITY").local_integrity()),
             }
+            check()?;
         } else {
             ensure(
                 request.sequence == highest + 1,
                 "PQ_NETWORK_SEQUENCE_INTEGRITY",
             )?;
-            let (count, bytes) = self.pq_network_usage()?;
+            let (count, bytes): (u64, u64) = tx.query_row(
+                "SELECT COUNT(*),COALESCE(SUM(length(wire)+CASE WHEN status=0 THEN 2097152 ELSE COALESCE(length(response),0) END),0) FROM pq_network_request_v2",
+                [], |row| Ok((row.get(0)?, row.get(1)?)))?;
             let reservation = (request.wire.len() + MAX_WIRE) as u64;
             ensure(
                 count < MAX_RECORDS
@@ -293,9 +411,7 @@ impl Node {
                         .is_some_and(|n| n <= MAX_LEDGER_BYTES),
                 "PQ_NETWORK_LEDGER_BUDGET",
             )?;
-            let tx = self
-                .db
-                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+            check()?;
             tx.execute(
                 "INSERT INTO pq_network_request_v2 VALUES(?,?,?,?,NULL,NULL,0)",
                 params![
@@ -305,7 +421,7 @@ impl Node {
                     &request.wire
                 ],
             )?;
-            tx.commit()?;
+            tx.commit_with_check(check)?;
         }
         Ok(PqReplay::Execute(
             self.pq_network_epoch.clone(),
@@ -328,9 +444,7 @@ impl Node {
         policy.verify_response(response, request, request.expiry)?;
         ensure(response.len() <= MAX_WIRE, "PQ_NETWORK_WIRE_LIMIT")?;
         let digest = hash(b"native-pq-network-response-bytes-v2", &[response]);
-        let tx = self
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let tx = Mutation::begin(self)?;
         let changed = tx.execute("UPDATE pq_network_request_v2 SET response=?,response_digest=?,status=1 WHERE peer=? AND sequence=? AND operation=? AND response IS NULL AND status=0",
             params![response,digest.as_slice(),request.peer.as_slice(),request.sequence,request.operation.as_slice()])?;
         ensure(changed == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
@@ -345,10 +459,19 @@ impl Node {
         &mut self,
         policy: &PqNetworkPolicy,
         peer: Hash,
-        highest: u64,
+        deadline: Instant,
+        check: &mut impl FnMut() -> Result<()>,
     ) -> Result<bool> {
-        let pending: Option<Vec<u8>> = self
-            .db
+        check()?;
+        let tx = Mutation::begin_until(self, Some(deadline))?;
+        check()?;
+        let (highest, revoked): (u64, bool) = tx.query_row(
+            "SELECT highest_sequence,revoked FROM pq_network_peer_v2 WHERE peer=?",
+            [peer.as_slice()],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )?;
+        ensure(!revoked, "PQ_NETWORK_REVOKED")?;
+        let pending: Option<Vec<u8>> = tx
             .query_row(
                 "SELECT wire FROM pq_network_request_v2 WHERE peer=? AND sequence=? AND status=0",
                 params![peer.as_slice(), highest + 1],
@@ -363,6 +486,7 @@ impl Node {
             old.peer == peer && old.sequence == highest + 1,
             "PQ_NETWORK_AUDIT_INTEGRITY",
         )?;
+        check()?;
         if crate::ingress::now()? <= old.expiry {
             return Ok(false);
         }
@@ -371,18 +495,22 @@ impl Node {
             .load(Ordering::Acquire)
             .checked_add(1)
             .ok_or("PQ_NETWORK_EPOCH")?;
-        let tx = self
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        ensure(tx.execute("UPDATE pq_network_request_v2 SET status=2 WHERE peer=? AND sequence=? AND status=0",
-            params![peer.as_slice(), old.sequence])? == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
-        ensure(tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=?",
-            params![old.sequence, peer.as_slice(), highest])? == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
-        tx.commit()?;
-        // Invalidate any still-running phase before it can acquire the owner
-        // and commit under an expired authorization. No effect is rolled back;
-        // retirement deliberately means UNCONFIRMED, not 'did not execute'.
-        self.pq_network_epoch.store(next_epoch, Ordering::Release);
+        check()?;
+        ensure(tx.execute("UPDATE pq_network_request_v2 SET status=2 WHERE peer=? AND sequence=? AND status=0", params![peer.as_slice(), old.sequence])? == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
+        ensure(tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=?", params![old.sequence, peer.as_slice(), highest])? == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
+        let committed = tx.commit_with_check(check);
+        // Conservatively invalidate old workers on either outcome. In
+        // particular, a committed retirement followed by a late live error
+        // must not skip this in-memory publication through an early `?`.
+        // A failed witness may already have published terminal cancellation.
+        // Preserve zero while still invalidating prior work after a healthy
+        // committed retirement whose final live callback returned an error.
+        let _ =
+            self.pq_network_epoch
+                .fetch_update(Ordering::AcqRel, Ordering::Acquire, |current| {
+                    (current != 0).then_some(next_epoch)
+                });
+        committed?;
         Ok(true)
     }
 
@@ -390,7 +518,8 @@ impl Node {
     /// method; the row and replay ledger are never part of reorganization State.
     pub fn revoke_pq_network_peer(&mut self, policy: &PqNetworkPolicy, peer: Hash) -> Result<()> {
         self.check_pq_network_policy(policy)?;
-        let revoked: bool = self.db.query_row(
+        let tx = Mutation::begin(self)?;
+        let revoked: bool = tx.query_row(
             "SELECT revoked FROM pq_network_peer_v2 WHERE peer=?",
             [peer.as_slice()],
             |row| row.get(0),
@@ -403,9 +532,6 @@ impl Node {
             .load(Ordering::Acquire)
             .checked_add(1)
             .ok_or("PQ_NETWORK_EPOCH")?;
-        let tx = self
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         ensure(
             tx.execute(
                 "UPDATE pq_network_peer_v2 SET revoked=1 WHERE peer=? AND revoked=0",

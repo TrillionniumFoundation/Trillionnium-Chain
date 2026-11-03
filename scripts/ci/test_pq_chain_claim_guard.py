@@ -121,6 +121,25 @@ class TestClaimGuard(unittest.TestCase):
         (self.root / 'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs').unlink()
         self.refused()
 
+    def test_missing_external_rollback_oracle_refused(self):
+        (self.root / 'scripts/ci/pq_external_rollback_oracle.py').unlink()
+        self.refused()
+
+    def test_native_witness_and_live_admission_sources_cannot_disappear(self):
+        for path in (
+            'trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs',
+            'docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md',
+        ):
+            with self.subTest(path=path):
+                original = (self.root / path).read_bytes()
+                (self.root / path).unlink()
+                self.refused()
+                self.put(path, original)
+
     def test_missing_quantum_daa_model_refused(self):
         (self.root / 'scripts/ci/pq_quantum_daa_scenarios.py').unlink()
         self.refused()
@@ -147,6 +166,44 @@ class TestClaimGuard(unittest.TestCase):
     def test_duplicate_json_keys_refused(self):
         self.put(DEVNET, b'{"production_activation":false,"production_activation":false}')
         self.refused()
+
+    def test_nonfinite_and_nonstandard_json_numbers_refused(self):
+        # Unused configuration fields must not launder invalid JSON into HOLD.
+        # Both Python extensions (NaN/Infinity) and exponent overflow (1e999)
+        # otherwise deserialize successfully and look like valid research data.
+        original = json.dumps(self.configs[CONFIG]).encode()
+        self.assertTrue(original.endswith(b'}'))
+        for literal in (b'NaN', b'Infinity', b'-Infinity', b'1e999', b'-1e999'):
+            with self.subTest(literal=literal):
+                self.put(CONFIG, original[:-1] + b',"untrusted_probe":' + literal + b'}')
+                self.refused()
+
+    def test_symlinked_checkout_root_refused(self):
+        # The previous leaf-only check returned HOLD for this source-tree alias.
+        alias = self.root.parent / (self.root.name + '-root-alias')
+        alias.symlink_to(self.root, target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        with self.assertRaisesRegex(UnsafePromotion, 'symlinked repository root/ancestor'):
+            inspect(alias)
+        # The real pinned test tree remains eligible only for the HOLD verdict.
+        self.assertEqual(inspect(self.root)['status'], 'HOLD')
+
+    def test_symlinked_checkout_ancestor_refused(self):
+        # A final checkout component can be ordinary even when its parent is
+        # a symlink. The leaf-only check also accepted this redirection.
+        ancestor = self.root.parent / (self.root.name + '-parent-alias')
+        ancestor.symlink_to(self.root.parent, target_is_directory=True)
+        self.addCleanup(ancestor.unlink)
+        nested_root = ancestor / self.root.name
+        self.assertFalse(nested_root.is_symlink())
+        with self.assertRaisesRegex(UnsafePromotion, 'symlinked repository root/ancestor'):
+            inspect(nested_root)
+
+    def test_missing_or_non_directory_checkout_root_refused(self):
+        with self.assertRaisesRegex(UnsafePromotion, 'missing or unreadable repository root'):
+            inspect(self.root / 'absent-checkout')
+        with self.assertRaisesRegex(UnsafePromotion, 'non-directory repository root'):
+            inspect(self.root / CONFIG)
 
     def test_symlink_source_refused(self):
         path = self.root / GATES['authorization'][0]

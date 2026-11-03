@@ -1,5 +1,5 @@
 //! Adversarial integration tests run real ML-DSA and the original M06 owner.
-use super::task_fixture_v5 as fixture;
+use super::fixture_v5 as fixture;
 use super::*;
 use crate::{pon_executor as exec, public_evaluation as evaluation};
 use exec::{BlockExecution, ExecutionControl};

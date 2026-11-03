@@ -897,6 +897,7 @@ impl Node {
                         mining: None,
                         continuous: Some(owner),
                         pq_network: Some(network.canonical().to_vec()),
+                        pq_witness: None,
                     },
                     StateBackend::PqContinuousV3,
                     false,

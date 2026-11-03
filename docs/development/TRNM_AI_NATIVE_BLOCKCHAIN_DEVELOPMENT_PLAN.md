@@ -4567,3 +4567,82 @@ remaining controls passing at Cargo build concurrency one. The SQLite I/O
 security, original-budget service, hardware, model utility, whole-chain quantum
 cost and production gates remain HOLD; no budget, deadline or business criterion
 changes.
+
+### 2026-11-01 native PQ admission, policy renewal and external witness continuation
+
+Continue the existing PN0–PN6 work from Chain #678 at
+`5606a97104f9cd3243befc2921ccace3fae2c369`. The
+[security continuation record](../security/PQ_SYSTEM_CONTINUATION_20261101.md)
+binds the native live-admission correction, explicit three-table PNQ2 witness
+namespace and Hepta #4558 policy-bound renewal to their separate evidence. The
+[command records](../../evidence/pon-pq-system-continuation-20261101/README.md)
+must identify actual source, original compiler/lockfiles, real positive effects,
+negative cases and recovery. Reconstructed unpublished source is re-executed;
+lost historical test records do not qualify it.
+
+PN0 and all six whole-chain PQ gates remain HOLD. The witness does not cover all
+Node or Hepta state, is not deployed WAN trust and does not complete uncertain
+commit recovery. Ordinary Cell/FinalUse composition, versioned PQ RunStart and
+ObjectiveStart, migration of historic ownership/liabilities, proof security,
+quantum W1/DAA/fork choice, original capacity and independent sustained joint
+acceptance remain required. Existing budgets and activation authority are
+unchanged. This is an entry in the sole plan, not a new release lane.
+
+The continuation also composes #678's later `64cb26b5` full-root arithmetic
+changes without dropping either constructor field or original workspace CPU
+controls. The initial `ed31b019` local build was terminated by SIGKILL; its
+unchanged source, raw failure and zero native executions are retained. The
+combined current source requires new native evidence. Hepta's checkpoint
+serialization follow-up keeps actual stale-witness rejection and healthy
+recovery under the existing owner lock. These changes do not close PN0–PN6.
+
+The first combined native run executed all 37 meaningful controls: 36 passed,
+with the slow-drip write retaining a real absolute-deadline failure. Replace
+that blocking call with per-call nonblocking I/O; preserve the original 40 ms,
+8 MiB and 500 ms control. The existing Rustix package gains only Node-local
+net functionality, with locked versions and original profiles/budgets intact.
+Synchronize the exact public-readiness V4 source contract, retain legacy-only
+evidence semantics, and serialize the M06 test's own concurrent lock probes.
+Record fresh source/feature identities and native outcomes; PN0–PN6 stay HOLD.
+
+The exact published `0959b694` candidate and its actual `2c123511` merge against
+`64cb26b5` now pass all 37 named PQ controls in each x64/ARM lane. Original
+workspace CPU and pressure-confirmation gates still fail; retain those raw
+results without promoting whole-chain flags. Preserve the later concurrent
+`456d23a7` canonical-encoding/history/readback changes and all 35 associated
+semantic controls in a new combined source. Recompute only overlapping derived
+source identities, keep the independent PNQ2 witness guard and all original
+budgets, and execute the new source and actual merge independently. Neither old
+passes nor the new composition close PN0–PN6.
+
+### 2026-11-02 preserve failed recovery evidence and compose the later M06 source
+
+The immutable [0959 phase 2 evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/1fa9526d139945f97a4a6823f08550439a6d19d9/evidence/pon-pq-system-continuation-20261101/final0959-phase2)
+completes the earlier four-lane collection: each full Node suite reports
+879 passed, 2 failed and 22 ignored, with both original large-parent CPU budget
+failures retained. Its phase 1 references reconstruct all original artifact
+bytes. The archive is evidence-only and does not change candidate activation.
+
+The subsequent exact source `473a7b9bbff5215600950067b46da05cfd31bf5e`, tree
+`4582411d869113af3aac356d078d8adf4440c612`, and actual merge
+`ee78bb676f60865735ee4bef37a165a6f8bd1fd7` against `456d23a7` have a failed
+PQ recovery positive case: x64 head, x64 merge and ARM merge each passed 37/37,
+while ARM head passed 36/37. After witness outage, successful cold reopen and
+matching external head, the first legal 31-byte ingress charge exceeded the
+original 250 ms exchange bound and returned `PQ_WITNESS_DEADLINE`. Preserve
+that exact receipt; no rerun, deadline increase or attribution to an unobserved
+host condition replaces it. The [continuation record](../security/PQ_SYSTEM_CONTINUATION_20261101.md)
+identifies the exact selector and raw-log hash. Early control artifacts do not
+establish that the complete `473a7b9b` suites passed.
+
+Compose the concurrent `9ceff0e073f001e6ea4ac9ea929f477aca8ebf36` successor of
+`456d23a7` without losing PQ source bindings or the callback test's own-probe
+serialization. Retain its real-held-lock refusal, four concurrent probes,
+actual worker-count assertions, equivalent canonical encoding after the full
+State grammar pass and independent serde reference. Its two additional exact
+semantic selectors extend the same original workspace lane; they do not lower
+budgets or replace the original capacity, History and business gates. Keep the
+upstream [456d original outcomes](TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md)
+with that historical source. This new combined source has not yet been built
+or accepted; it requires fresh exact-head and actual-merge evidence. All eight
+machine assertions remain false and PN0-PN6 remain HOLD.

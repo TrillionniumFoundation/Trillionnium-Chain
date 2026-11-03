@@ -1,0 +1,2934 @@
+{
+  "schema": "trnm-system-original-gates-456d23a-20261101-v2",
+  "snapshot_date_utc": "2026-11-01",
+  "tested_source": {
+    "head": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+    "prospective_merge": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+    "tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+    "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0"
+  },
+  "acceptance": "HOLD",
+  "network_tps": null,
+  "full_pq_qualified": false,
+  "production_activation": false,
+  "review_inputs": [
+    {
+      "name": "compact-summary.json",
+      "sha256": "c1fd97806accf2676eb9aca70cb9765c8b58e549b1bb665e216ed7401033c203"
+    },
+    {
+      "name": "default-release-compact.json",
+      "sha256": "e5248614d4409c6f89c72c63de49f37f68eb145d0bf79eeb6b81c622a6448ef5"
+    },
+    {
+      "name": "required-four-second-readback.json",
+      "sha256": "32600eb0aa44e505e7a12591eec14c9e4fcb074380f661bf9bc512275d89813f"
+    },
+    {
+      "name": "priority-original4s-readback.json",
+      "sha256": "18fd34968d1954ca391386f072863adbe8117a955d5a3ab0eda51077af5a68d7"
+    },
+    {
+      "name": "original-30s-readback.json",
+      "sha256": "a317b5a89442b3db1e1cf960b6c4462d8633adcaf35b593b446ba485eeae3c5c"
+    },
+    {
+      "name": "summary.json",
+      "sha256": "a513fda2b14cef47289412a2d548196fd78a78dd2b241df6c3bfcdf0e287ab63"
+    },
+    {
+      "name": "baseline-stage-delta-comparison.json",
+      "sha256": "71c23aed0862fee9e1e8b73302017f8dee90e787161c5e11d66122591cfbaa7a"
+    },
+    {
+      "name": "campaign-host-observations.json",
+      "sha256": "1116903fce7b1ff237a525b3352f7128238dcc949c6b169a9edbbb0c2b5b7026"
+    },
+    {
+      "name": "local-456d-final-receipt.json",
+      "sha256": "0e03fd5ff248a8ad55e9d611ea43e891c65c34f9e4983344e85b0bae650e7856"
+    },
+    {
+      "name": "final-readback.json",
+      "sha256": "08a12f5acef88ac99afaec6389e8c9ab5f1aaad2c9369a8530fbecb80149c99a",
+      "bytes": 23867
+    },
+    {
+      "name": "sqlite-summary.json",
+      "sha256": "25f54d0ccf72476fe2f534b1760afb0b93a305125384ae532c53c6dbe5811d8b",
+      "bytes": 80673
+    },
+    {
+      "name": "full-runtime-summary.json",
+      "sha256": "6e2710aa07001d549893570cf811a7dcc4450a58c4443b40926fa07155d3a15c",
+      "bytes": 51264
+    }
+  ],
+  "original_workspace_profile": {
+    "run_id": 41337846694,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694",
+    "counts": {
+      "original_cpu_named_selectors_executed": 8,
+      "original_cpu_named_selectors_passed": 0,
+      "original_cpu_named_selectors_failed": 8,
+      "first_selector_authenticated_subbranches_not_executed": 4,
+      "independent_authenticated_selectors_executed": 4,
+      "reactor_exit_controls_executed": 8,
+      "reactor_exit_controls_passed": 8,
+      "semantic_controls_selected": 140,
+      "semantic_controls_executed": 140,
+      "semantic_controls_passed": 139,
+      "semantic_controls_failed": 1,
+      "semantic_controls_ignored": 0
+    },
+    "policy": {
+      "initial_credit_ns": 2000000000,
+      "refill_ns_per_second": 250000000,
+      "start_reserve_ns": 100000000,
+      "worker_limit": 2,
+      "initial_credit_is_not_fixed_total_cpu_cap": true
+    },
+    "build_scope": "cargo test --locked --workspace --all-targets --all-features --no-run; original test profile; pinned Rust 1.95.0; original PQ provider preparation",
+    "execution_scope": "four original selectors followed by 35 selected semantic controls per cell; not the entire runtime suite",
+    "jobs": [
+      {
+        "label": "x64-head",
+        "job_id": 124941357628,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/job/124941357628",
+        "artifact": {
+          "id": 13096961231,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/artifacts/13096961231",
+          "zip_sha256": "d7e3d9b4d78a632fd2d25a2fe08a09a0304a7d4de43a6fd00164a1bee10a9872",
+          "zip_bytes": 204727
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "compiler_artifact_count": 520,
+        "workspace_package_count": 26,
+        "elf_bindings": {
+          "binary": {
+            "sha256": "5f25556bb8a0b324a26e9c0782f73f1630badf56f5c93e886b72b40f61b94b39",
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          },
+          "m06-binary": {
+            "sha256": "afcddc8569fd472603adf77afd37b505c9686999cb7161bb25ccefa37f26b21a",
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          }
+        },
+        "cpu": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "backend": "Legacy",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 2888564170,
+            "owner_cpu_ns": 2888206821,
+            "scoped_worker_cpu_ns": 357349,
+            "settled_credit_after_ns": -196840964,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": false
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "backend": "Authenticated",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 3188958797,
+            "owner_cpu_ns": 3188595528,
+            "scoped_worker_cpu_ns": 363269,
+            "settled_credit_after_ns": -422408524,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": null
+          }
+        ],
+        "first_selector_authenticated_subcase": "NOT_EXECUTED: preceding Legacy branch failed",
+        "semantic": {
+          "selected": 35,
+          "executed": 35,
+          "passed": 35,
+          "failed": 0,
+          "ignored": 0,
+          "failures": []
+        }
+      },
+      {
+        "label": "x64-prospective-merge",
+        "job_id": 124941357567,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/job/124941357567",
+        "artifact": {
+          "id": 13096786743,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/artifacts/13096786743",
+          "zip_sha256": "87eceb58ee1dfd4c4f2e4101d3a1b793018ae7d6ef24bbf9bf94617cc2539ea3",
+          "zip_bytes": 204761
+        },
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true,
+        "compiler_artifact_count": 520,
+        "workspace_package_count": 26,
+        "elf_bindings": {
+          "binary": {
+            "sha256": "4603588a843c0fce7028514b6bc75050d4adb8130cb7e610b98e5827d2b1b9c2",
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          },
+          "m06-binary": {
+            "sha256": "afcddc8569fd472603adf77afd37b505c9686999cb7161bb25ccefa37f26b21a",
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          }
+        },
+        "cpu": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "backend": "Legacy",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 2954345838,
+            "owner_cpu_ns": 2953972141,
+            "scoped_worker_cpu_ns": 373697,
+            "settled_credit_after_ns": -240080892,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": false
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "backend": "Authenticated",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 2800215398,
+            "owner_cpu_ns": 2799852131,
+            "scoped_worker_cpu_ns": 363267,
+            "settled_credit_after_ns": -120242559,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": null
+          }
+        ],
+        "first_selector_authenticated_subcase": "NOT_EXECUTED: preceding Legacy branch failed",
+        "semantic": {
+          "selected": 35,
+          "executed": 35,
+          "passed": 35,
+          "failed": 0,
+          "ignored": 0,
+          "failures": []
+        }
+      },
+      {
+        "label": "arm64-head",
+        "job_id": 124941357584,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/job/124941357584",
+        "artifact": {
+          "id": 13097165235,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/artifacts/13097165235",
+          "zip_sha256": "25fe74f3f285463089119a1ab7fe258642b0886d852a43aa56eb664eafc97fc9",
+          "zip_bytes": 204357
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "compiler_artifact_count": 523,
+        "workspace_package_count": 26,
+        "elf_bindings": {
+          "binary": {
+            "sha256": "7465cc8695db26483a68fcdbd0ebbafd5f4ebb200cd3450d83afa14cddc94838",
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          },
+          "m06-binary": {
+            "sha256": "a9c18b405ca0651353e9412dc9cfcb11c2249d4717e2b797b4fecf3e3e2ba9c7",
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          }
+        },
+        "cpu": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "backend": "Legacy",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 2912639848,
+            "owner_cpu_ns": 2912223712,
+            "scoped_worker_cpu_ns": 416136,
+            "settled_credit_after_ns": -200488453,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": false
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "backend": "Authenticated",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 3260173456,
+            "owner_cpu_ns": 3259773728,
+            "scoped_worker_cpu_ns": 399728,
+            "settled_credit_after_ns": -461224482,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": null
+          }
+        ],
+        "first_selector_authenticated_subcase": "NOT_EXECUTED: preceding Legacy branch failed",
+        "semantic": {
+          "selected": 35,
+          "executed": 35,
+          "passed": 35,
+          "failed": 0,
+          "ignored": 0,
+          "failures": []
+        }
+      },
+      {
+        "label": "arm64-prospective-merge",
+        "job_id": 124941357424,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/job/124941357424",
+        "artifact": {
+          "id": 13096941399,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846694/artifacts/13096941399",
+          "zip_sha256": "04d65c6480cdad2bd1187b677b7df0f4483e2c18660124e61083d5af07ea91f9",
+          "zip_bytes": 204675
+        },
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true,
+        "compiler_artifact_count": 523,
+        "workspace_package_count": 26,
+        "elf_bindings": {
+          "binary": {
+            "sha256": "3a196cc494fa3e8c4c537db5eb2e0ce03a32f79daf657fe8d8bc8b1d48271964",
+            "profile": {
+              "opt_level": "3",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          },
+          "m06-binary": {
+            "sha256": "a9c18b405ca0651353e9412dc9cfcb11c2249d4717e2b797b4fecf3e3e2ba9c7",
+            "profile": {
+              "opt_level": "1",
+              "debuginfo": 2,
+              "debug_assertions": true,
+              "overflow_checks": true,
+              "test": true
+            },
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "before_after_digest_binding_verified": true,
+            "elf_body_in_archive": false
+          }
+        },
+        "cpu": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "backend": "Legacy",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 2928074632,
+            "owner_cpu_ns": 2927669848,
+            "scoped_worker_cpu_ns": 404784,
+            "settled_credit_after_ns": -211283619,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": false
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "backend": "Authenticated",
+            "native_tee_reader_exits": [
+              101,
+              0,
+              1
+            ],
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "total_paid_dispatch_cpu_ns": 3267142184,
+            "owner_cpu_ns": 3266656048,
+            "scoped_worker_cpu_ns": 486136,
+            "settled_credit_after_ns": -466151679,
+            "active_state_unchanged_on_refusal": null,
+            "first_selector_later_authenticated_branch_executed": null
+          }
+        ],
+        "first_selector_authenticated_subcase": "NOT_EXECUTED: preceding Legacy branch failed",
+        "semantic": {
+          "selected": 35,
+          "executed": 35,
+          "passed": 34,
+          "failed": 1,
+          "ignored": 0,
+          "failures": [
+            {
+              "crate": "m06",
+              "group": "full-root-arithmetic",
+              "selector": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+              "native_exit": 101,
+              "tee_exit": 0,
+              "reader_exit": 1,
+              "libtest_summaries": [
+                [
+                  "FAILED",
+                  "0",
+                  "1",
+                  "0",
+                  "0",
+                  "102",
+                  "0.02s"
+                ]
+              ],
+              "result": "FAIL",
+              "panic_lines": [
+                "thread 'pon-exec-2' (22275) panicked at crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs:331:25:",
+                "thread 'pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks' (22252) panicked at crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs:343:17:",
+                "assertion `left == right` failed"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "default_release": {
+    "run_id": 41337846728,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728",
+    "counts": {
+      "jobs_completed": 4,
+      "named_native_selectors_executed": 16,
+      "named_native_selectors_passed": 16,
+      "named_native_selectors_failed": 0,
+      "ignored": 0,
+      "large_state_backend_receipts": 12,
+      "large_state_backend_native_ok": 12
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "does_not_replace_original_profile": true,
+    "jobs": [
+      {
+        "label": "release-x64-head",
+        "job_id": 124941357409,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/job/124941357409",
+        "artifact": {
+          "id": 13096705437,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/artifacts/13096705437",
+          "zip_sha256": "d00adbdd21616702d2afa5b9bed8a991566d38758b604e37042cc5b95bbe693e",
+          "zip_bytes": 27398
+        },
+        "source_unchanged": true,
+        "elf_sha256": "42d83b0694613428105537ea48e4883b4817f323d948628322c06938d6b454bf",
+        "elf_body_in_archive": false,
+        "named_passed": 4,
+        "backend_native_ok_receipts": 3,
+        "all_native_tee_reader_exits": [
+          0,
+          0,
+          0
+        ],
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+        "source_after_tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc"
+      },
+      {
+        "label": "release-x64-prospective-merge",
+        "job_id": 124941357648,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/job/124941357648",
+        "artifact": {
+          "id": 13096346202,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/artifacts/13096346202",
+          "zip_sha256": "45af217c717e9defbced5e9ffafcad7a58df595fa7ea502e97f8196e64e18bf0",
+          "zip_bytes": 27499
+        },
+        "source_unchanged": true,
+        "elf_sha256": "42d83b0694613428105537ea48e4883b4817f323d948628322c06938d6b454bf",
+        "elf_body_in_archive": false,
+        "named_passed": 4,
+        "backend_native_ok_receipts": 3,
+        "all_native_tee_reader_exits": [
+          0,
+          0,
+          0
+        ],
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+        "source_after_tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48"
+      },
+      {
+        "label": "release-arm64-head",
+        "job_id": 124941357637,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/job/124941357637",
+        "artifact": {
+          "id": 13095674660,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/artifacts/13095674660",
+          "zip_sha256": "5d7fb3300a81db3ef8ca3e00e4e90b0bcfac9381c8ce4bcbf0b70aa4ca888194",
+          "zip_bytes": 27547
+        },
+        "source_unchanged": true,
+        "elf_sha256": "bcaadf0b4fc043791221a7068e7f3e54a23e04bd50b9030f68bb3de69362cbe1",
+        "elf_body_in_archive": false,
+        "named_passed": 4,
+        "backend_native_ok_receipts": 3,
+        "all_native_tee_reader_exits": [
+          0,
+          0,
+          0
+        ],
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+        "source_after_tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc"
+      },
+      {
+        "label": "release-arm64-prospective-merge",
+        "job_id": 124941357702,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/job/124941357702",
+        "artifact": {
+          "id": 13096725125,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846728/artifacts/13096725125",
+          "zip_sha256": "0e8045d86facc5b2a06f9b0170d66bdd096b7d7b73e3dd3b3a2c5500f401bc0e",
+          "zip_bytes": 27652
+        },
+        "source_unchanged": true,
+        "elf_sha256": "bcaadf0b4fc043791221a7068e7f3e54a23e04bd50b9030f68bb3de69362cbe1",
+        "elf_body_in_archive": false,
+        "named_passed": 4,
+        "backend_native_ok_receipts": 3,
+        "all_native_tee_reader_exits": [
+          0,
+          0,
+          0
+        ],
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+        "source_after_tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48"
+      }
+    ]
+  },
+  "original_four_seconds": {
+    "window_ns": 4000000000,
+    "malicious_producers": 16,
+    "independent_transactions_scheduled_per_phase": 1,
+    "report_count": 8,
+    "scope": "finite same-host controlled experiments, not saturated throughput or a latency population",
+    "reports": [
+      {
+        "label": "x64-required",
+        "run_id": 41337846779,
+        "job_id": 124941357923,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357923",
+        "artifact": {
+          "id": 13096062713,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13096062713",
+          "zip_sha256": "d35c3710be1c94998eabd832d07e4a8f032cd74c4d93ebcd595c6835114b8a08",
+          "zip_bytes": 7640189
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "report_sha256": "2d456845e71cba14c12ec423a0e053cfa22a4b8b8a42a3a19b30eaa9834e6cf8",
+        "elf_body_sha256": "d6e72592143fbd988ea046452b774b28caaa7f8b4a05f7886239f303aae07916",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2609032630,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2609141292,
+              "confirmation_started_ns": 2608429866,
+              "confirmation_thread_cpu_ns": 712000,
+              "confirmation_wall_ns": 711426,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 3,
+            "timely_history_responses": 3,
+            "replay_attempts": 3,
+            "replay_accepted_in_window": 2,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "arm64-required",
+        "run_id": 41337846779,
+        "job_id": 124941357898,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357898",
+        "artifact": {
+          "id": 13095669970,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13095669970",
+          "zip_sha256": "1b0acae36f37d77a9baed1dd6068b6289693bf076901ee10bbc278e65cbfd5ec",
+          "zip_bytes": 7312021
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "report_sha256": "cc2841d5acca32c6225ce0a7cf3470a9793c6d2aa5480665524fb5a2acbf6ce3",
+        "elf_body_sha256": "c278ce0bcc6f0362040d27fa103551823820e11b932d1ebfaaff992862ca910f",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2192374880,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2192556592,
+              "confirmation_started_ns": 2190862044,
+              "confirmation_thread_cpu_ns": 1696160,
+              "confirmation_wall_ns": 1694548,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 2,
+            "timely_history_responses": 2,
+            "replay_attempts": 2,
+            "replay_accepted_in_window": 1,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "protocol-head",
+        "run_id": 41337846779,
+        "job_id": 124941357794,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357794",
+        "artifact": {
+          "id": 13096426718,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13096426718",
+          "zip_sha256": "1598408e25de466f4c02fd6bbdba12564a129691c8e1001dd128972fa8a3a8a0",
+          "zip_bytes": 4997517
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "report_sha256": "00701810ddf9dbaeb1d8fc8a9be6af5a96e548493fb059ac23387600111325fb",
+        "elf_body_sha256": "c1bb14998d36c26c5b063a255b8476952cdd97fb060bdaf744483f18f35e0411",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 3295508578,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 3295656254,
+              "confirmation_started_ns": 3294714888,
+              "confirmation_thread_cpu_ns": 942496,
+              "confirmation_wall_ns": 941366,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 1,
+            "timely_history_responses": 1,
+            "replay_attempts": 1,
+            "replay_accepted_in_window": 0,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "protocol-merge",
+        "run_id": 41337846779,
+        "job_id": 124941358011,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941358011",
+        "artifact": {
+          "id": 13095404322,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13095404322",
+          "zip_sha256": "b3cc2ffdc43025e1bb862b48c0d4ad71dae5de6d8bf8adcb298a1a62c548d276",
+          "zip_bytes": 5144762
+        },
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true,
+        "report_sha256": "446094a5b34a9f47e436c339bbe927736ecf19fd7fd81fe8933f892071e58952",
+        "elf_body_sha256": "d4324792133c76a34b343570af5ae6a7acb5afd8e137a24094ca84bfced27b0d",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2493756964,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2493847751,
+              "confirmation_started_ns": 2493168394,
+              "confirmation_thread_cpu_ns": 679840,
+              "confirmation_wall_ns": 679357,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 3,
+            "timely_history_responses": 3,
+            "replay_attempts": 3,
+            "replay_accepted_in_window": 2,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "x64-merge",
+        "run_id": 41337846833,
+        "job_id": 124941357868,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357868",
+        "artifact": {
+          "id": 13096841708,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13096841708",
+          "zip_sha256": "de301ae46b987d10259c7ec36501e4616991cdb83c7a2cbd46155b60de2bb326",
+          "zip_bytes": 6458441
+        },
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true,
+        "report_sha256": "de3df73da45d7ae12955d12bc85d5f308a3e741cc1276c84e442688eaa255488",
+        "elf_body_sha256": "7f15ece6e2ee3fd4fd0a04d60c6e3f7ee0aecf02b182e945ce2f24ddb8052dc3",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2802229966,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2802356673,
+              "confirmation_started_ns": 2801540147,
+              "confirmation_thread_cpu_ns": 817552,
+              "confirmation_wall_ns": 816526,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 2,
+            "timely_history_responses": 2,
+            "replay_attempts": 2,
+            "replay_accepted_in_window": 1,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "x64-head",
+        "run_id": 41337846833,
+        "job_id": 124941357957,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357957",
+        "artifact": {
+          "id": 13097041321,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13097041321",
+          "zip_sha256": "149bcd4191ae502791639c996088b5b8916b36f404f9e3fbfbfff071ef07c580",
+          "zip_bytes": 6406297
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "report_sha256": "06473aa98c25fd3a3014f90a73d8535a5ebd4d1c0efbbd39adfbe9e81bafcc9e",
+        "elf_body_sha256": "7f15ece6e2ee3fd4fd0a04d60c6e3f7ee0aecf02b182e945ce2f24ddb8052dc3",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 3307989777,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 3308130000,
+              "confirmation_started_ns": 3307217497,
+              "confirmation_thread_cpu_ns": 913633,
+              "confirmation_wall_ns": 912503,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 1,
+            "timely_history_responses": 1,
+            "replay_attempts": 1,
+            "replay_accepted_in_window": 0,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "arm64-merge",
+        "run_id": 41337846833,
+        "job_id": 124941357982,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357982",
+        "artifact": {
+          "id": 13096727249,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13096727249",
+          "zip_sha256": "84320111a87ad6c768581594fa678bed34ca23bf7a94a92594972f8909d1e9bb",
+          "zip_bytes": 6212240
+        },
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true,
+        "report_sha256": "23139ef40c9216ff3ecbe645f113344f34b12ec88833fc459ecfe9890fa9914d",
+        "elf_body_sha256": "6024cecd2c6b2f824c47b5c2b108e087556e614657c7c416c64407325bef3952",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2194755296,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2194927487,
+              "confirmation_started_ns": 2193156206,
+              "confirmation_thread_cpu_ns": 1773136,
+              "confirmation_wall_ns": 1771281,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 2,
+            "timely_history_responses": 2,
+            "replay_attempts": 2,
+            "replay_accepted_in_window": 1,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "rpc_failures": [],
+            "final_confirmation_stage": null
+          }
+        ]
+      },
+      {
+        "label": "arm64-head",
+        "run_id": 41337846833,
+        "job_id": 124941357888,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357888",
+        "artifact": {
+          "id": 13096611634,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13096611634",
+          "zip_sha256": "297e56ee9879070c6d80f700eb9c4beede6b13623ede55fd2f7c45aa633c100d",
+          "zip_bytes": 6221611
+        },
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true,
+        "report_sha256": "152c32a151af252bb6861fd06a1134f99a7690c967b5bd4f382830bad25c38f7",
+        "elf_body_sha256": "6024cecd2c6b2f824c47b5c2b108e087556e614657c7c416c64407325bef3952",
+        "elf_body_hash_verified": true,
+        "all_five_named_native_controls_passed": true,
+        "business_gate_passed": false,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 1,
+            "independent_denominator": 1,
+            "success_latency_ns": 2101407897,
+            "history_attempts": 7,
+            "timely_history_responses": 7,
+            "replay_attempts": 7,
+            "replay_accepted_in_window": 7,
+            "verification_errors": [],
+            "rpc_failures": [],
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 2101558656,
+              "confirmation_started_ns": 2099813965,
+              "confirmation_thread_cpu_ns": 1746680,
+              "confirmation_wall_ns": 1744691,
+              "observation_returned": true
+            }
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "timely_acks": 7,
+            "submit_attempts": 7,
+            "independent_confirmed": 0,
+            "independent_denominator": 1,
+            "success_latency_ns": null,
+            "history_attempts": 3,
+            "timely_history_responses": 2,
+            "replay_attempts": 2,
+            "replay_accepted_in_window": 2,
+            "verification_errors": [],
+            "rpc_failures": [
+              {
+                "started_ns": 3966950049,
+                "ended_ns": 4000852411,
+                "elapsed_wall_ns": 33903066,
+                "client_thread_cpu_ns": 397816,
+                "status": "error",
+                "error": "IO: Resource temporarily unavailable (os error 11)",
+                "returned_after_deadline": false,
+                "returned_after_window": true,
+                "metrics": {
+                  "challenge_ns": 3429153,
+                  "construction_ns": 12936,
+                  "failed_stage": "solution-body-response",
+                  "solution_body_response_ns": 30356352,
+                  "solution_found": true,
+                  "solution_search_ns": 53181,
+                  "solution_trials": 142,
+                  "total_elapsed_ns": 33851838
+                },
+                "response_ok": null
+              }
+            ],
+            "final_confirmation_stage": null
+          }
+        ]
+      }
+    ],
+    "actual_host_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    }
+  },
+  "original_30_seconds": {
+    "run_id": 41337846705,
+    "job_id": 124941357262,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846705/job/124941357262",
+    "artifact": {
+      "id": 13095859595,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846705/artifacts/13095859595",
+      "zip_sha256": "de41c5b90124da162bfc95b2b02fc363d11f00282697cc0f13dc3949f3b231a0",
+      "zip_bytes": 49840757
+    },
+    "source_before_after_equal": true,
+    "binary_sha256": "f7b4c9296697c11ace75035013bfeba7e26fd6edc1cd7dfe911a36102797b027",
+    "binary_body_hash_verified": true,
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "runs": [
+      {
+        "number": 1,
+        "raw_report": "run-1-raw/report.json",
+        "report_sha256": "673d3bbdf8e98238d0935a4419a4af02de2069aaf4d0e86b4bbfedbee2f525c4",
+        "native_exit": 101,
+        "named_result": {
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0
+        },
+        "report_validation_failure": null,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "mode": "baseline",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 0,
+            "attacker_processes_ready": 0,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 7,
+            "history_acks_in_window": 7,
+            "client_imports_accepted": 6
+          },
+          {
+            "mode": "from-zero",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          },
+          {
+            "mode": "late-product",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "raw_report": "run-2-raw/report.json",
+        "report_sha256": "fdad8c5201a9fff3a90158de9853df7b13744106e5aeb2addff1bb9dfd1d144d",
+        "native_exit": 101,
+        "named_result": {
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0
+        },
+        "report_validation_failure": null,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "mode": "baseline",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 0,
+            "attacker_processes_ready": 0,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 7,
+            "history_acks_in_window": 7,
+            "client_imports_accepted": 6
+          },
+          {
+            "mode": "from-zero",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          },
+          {
+            "mode": "late-product",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "raw_report": "run-3-raw/report.json",
+        "report_sha256": "be997cf54827a85bd10571dc1fe6185463650e03c95b1b568d9b56a77224aa1d",
+        "native_exit": 101,
+        "named_result": {
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0
+        },
+        "report_validation_failure": null,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "mode": "baseline",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 0,
+            "attacker_processes_ready": 0,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 7,
+            "history_acks_in_window": 7,
+            "client_imports_accepted": 6
+          },
+          {
+            "mode": "from-zero",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          },
+          {
+            "mode": "late-product",
+            "phase_seconds": 30,
+            "scheduled_rounds": 3,
+            "observed_round_records": 1,
+            "confirmed_rounds_in_original_window": 0,
+            "unobserved_scheduled_rounds": 2,
+            "attacker_processes_requested": 24,
+            "attacker_processes_ready": 24,
+            "startup_error": null,
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "submit_attempts": 7,
+            "submit_acks_in_window": 7,
+            "history_calls": 3,
+            "history_acks_in_window": 3,
+            "client_imports_accepted": 2
+          }
+        ]
+      }
+    ]
+  },
+  "quality": {
+    "run_id": 41337846779,
+    "scope": [
+      "cargo fmt --all -- --check",
+      "supply-chain checks",
+      "cargo test --workspace --doc --all-features",
+      "cargo clippy --workspace --all-targets --all-features -- -D warnings"
+    ],
+    "jobs": [
+      {
+        "kind": "head",
+        "job_id": 124941357885,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357885",
+        "artifact": {
+          "id": 13095449436,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13095449436",
+          "zip_sha256": "1a8c1feb526122bac91214bfbe3efac6840fb0f4bd843c25c1b0833c5919d614",
+          "zip_bytes": 891
+        },
+        "status": "passed",
+        "exit_code": 0,
+        "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+        "source_before_after_equal": true
+      },
+      {
+        "kind": "merge",
+        "job_id": 124941358012,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941358012",
+        "artifact": {
+          "id": 13096058528,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13096058528",
+          "zip_sha256": "70b5a3bec72453ee15b6ad434cc548c5075d989ec2d34fc447c1e5caf9b92195",
+          "zip_bytes": 942
+        },
+        "status": "passed",
+        "exit_code": 0,
+        "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+        "source_before_after_equal": true
+      }
+    ]
+  },
+  "history_4105": {
+    "observed_utc": "2026-11-01T19:53:19.388710+00:00",
+    "run_id": 41337846833,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833",
+    "status": "COMPLETED_FAILURE; original acceptance HOLD",
+    "original_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "original_block_count": 4105,
+    "denominators": {
+      "jobs": 4,
+      "native_passed": 0,
+      "native_failed": 4,
+      "native_ignored": 0
+    },
+    "readback_complete": true,
+    "native_tests_rerun": false,
+    "ci_runs_cancelled_or_rerun_for_readback": false,
+    "elapsed_scope": "Both independent progress and exit elapsed_ns start at ancestry_long_sync.rs:113 before validator generation. These are complete run elapsed observations, not pure cold-sync durations.",
+    "exit_scope": "All four actual server-loop records identify lifetime_expired with the original 1800-second configuration and no prior stop request. This establishes the observed server exit reason, not a unique explanation of all costs or a performance pass.",
+    "active_scope": "Activation occurs when importing the final packet of a complete page reaching the pinned tip. This precedes remaining Host/CPU and test reopen checks; active height alone does not prove acceptance.",
+    "zip_identity_scope": "Actual downloaded ZIP size and SHA256 match GitHub artifact metadata. No SQLite journal sidecars are retained. Every queried DB hash is unchanged before and after readonly queries.",
+    "read_only_database_options": "mode=ro&immutable=1; trusted_schema=OFF",
+    "pure_cold_sync_duration_ns": null,
+    "pure_cold_sync_duration_missing_reason": "The recorded elapsed clock begins before validator generation, not at the start of independent synchronization.",
+    "complete_sync_reopen_and_corrupt_index_acceptance": false,
+    "jobs": [
+      {
+        "label": "x64-head",
+        "job_id": 124941357837,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357837",
+        "status": "completed",
+        "conclusion": "failure",
+        "source": {
+          "base": null,
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "native_counts": {
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "native_exit": 101,
+        "log_exit": 0,
+        "native_harness_elapsed_seconds": "3283.84",
+        "elapsed_from_run_start_ns": 3283834094587,
+        "last_printed_progress_only": {
+          "elapsed_ns": 3138334824580,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        "sync_error": "IO: Connection refused (os error 111)",
+        "server_exit": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000972639,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001556342,
+          "stop_requested_when_exited": true
+        },
+        "databases": {
+          "confirmer": {
+            "active_height": 0,
+            "nonempty_packet_rows": 2163,
+            "sha256": "7a287308d84357012ae1e83e431416121e0ce0ff009e6643dc8334425600e6cf",
+            "sha256_unchanged": true,
+            "size_in_bytes": 115806208,
+            "stored_block_rows": 2164,
+            "stored_maximum_height": 2163
+          },
+          "validator": {
+            "active_height": 4105,
+            "nonempty_packet_rows": 4105,
+            "sha256": "dd6a787b814bb90ff4790261a788e991ecf6622a34121704538f9ac39b4f688c",
+            "sha256_unchanged": true,
+            "size_in_bytes": 220717056,
+            "stored_block_rows": 4106,
+            "stored_maximum_height": 4105
+          }
+        },
+        "retained_packet_files": {
+          "count": 4105,
+          "exactly_1_through_4105": true,
+          "maximum": 4105,
+          "minimum": 1
+        },
+        "original_4105_validator_observed": true,
+        "native_build": {
+          "build_log_sha256": "072b324c1d790b669cc1df38a55bf9ea78b22ee9f0ea5948953a554d0a8735f1",
+          "build_log_size_in_bytes": 106182,
+          "elf_bytes_in_artifact": false,
+          "elf_hash_independently_recomputed": false,
+          "elf_sha256_receipt": "b9ba943c8a656b26ccccaa11f6d8390487e9cc7cf3fb0763d85c6ec90133e6dd",
+          "executable": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-f959c3adc6e3ec33",
+          "executable_paths_match": true,
+          "features": [
+            "default"
+          ],
+          "fresh": false,
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "ancestry_long_sync",
+            "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+            "test": true
+          }
+        },
+        "native_log_exit_records_match_job_log": true,
+        "artifact": {
+          "artifact_id": 13097514146,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13097514146",
+          "zip_bytes": 49870120,
+          "zip_sha256": "f1316a3a1ee5fe2fc8ef4bc56afb8c36108e0e1b66097d99bf9edf7f964799cf",
+          "metadata_size_matches": true,
+          "metadata_digest_matches": true,
+          "sqlite_sidecar_members": []
+        }
+      },
+      {
+        "label": "x64-merge",
+        "job_id": 124941358018,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941358018",
+        "status": "completed",
+        "conclusion": "failure",
+        "source": {
+          "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "prospective-merge",
+          "prospective_merge": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "native_counts": {
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "native_exit": 101,
+        "log_exit": 0,
+        "native_harness_elapsed_seconds": "3247.36",
+        "elapsed_from_run_start_ns": 3247359194366,
+        "last_printed_progress_only": {
+          "elapsed_ns": 3093365628606,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        "sync_error": "IO: Connection refused (os error 111)",
+        "server_exit": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800001031917,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001581204,
+          "stop_requested_when_exited": true
+        },
+        "databases": {
+          "confirmer": {
+            "active_height": 0,
+            "nonempty_packet_rows": 2170,
+            "sha256": "f8000f06aef529d1afe0c6a64da1f68a607a07e0572dff49f5e0e0da5d792b1f",
+            "sha256_unchanged": true,
+            "size_in_bytes": 116183040,
+            "stored_block_rows": 2171,
+            "stored_maximum_height": 2170
+          },
+          "validator": {
+            "active_height": 4105,
+            "nonempty_packet_rows": 4105,
+            "sha256": "512c116e6b3adbdcf19fdee6ef9607a35426d06d7848ccd2ae10e0dfb35c20e8",
+            "sha256_unchanged": true,
+            "size_in_bytes": 220717056,
+            "stored_block_rows": 4106,
+            "stored_maximum_height": 4105
+          }
+        },
+        "retained_packet_files": {
+          "count": 4105,
+          "exactly_1_through_4105": true,
+          "maximum": 4105,
+          "minimum": 1
+        },
+        "original_4105_validator_observed": true,
+        "native_build": {
+          "build_log_sha256": "182b7cf40bf716e34f239e3665bd2410f2fd4fe7761c3a04a16a9654b460da7e",
+          "build_log_size_in_bytes": 106182,
+          "elf_bytes_in_artifact": false,
+          "elf_hash_independently_recomputed": false,
+          "elf_sha256_receipt": "b9ba943c8a656b26ccccaa11f6d8390487e9cc7cf3fb0763d85c6ec90133e6dd",
+          "executable": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-f959c3adc6e3ec33",
+          "executable_paths_match": true,
+          "features": [
+            "default"
+          ],
+          "fresh": false,
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "ancestry_long_sync",
+            "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+            "test": true
+          }
+        },
+        "native_log_exit_records_match_job_log": true,
+        "artifact": {
+          "artifact_id": 13097873464,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13097873464",
+          "zip_bytes": 49899891,
+          "zip_sha256": "2a905e4c3b86d1c3666b452cab1a294cd63c4a19194793f6bd40eb35f675cb75",
+          "metadata_size_matches": true,
+          "metadata_digest_matches": true,
+          "sqlite_sidecar_members": []
+        }
+      },
+      {
+        "label": "arm64-head",
+        "job_id": 124941357922,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941357922",
+        "status": "completed",
+        "conclusion": "failure",
+        "source": {
+          "base": null,
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "native_counts": {
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "native_exit": 101,
+        "log_exit": 0,
+        "native_harness_elapsed_seconds": "3731.44",
+        "elapsed_from_run_start_ns": 3731436761096,
+        "last_printed_progress_only": {
+          "elapsed_ns": 3676915610284,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        "sync_error": "IO: Connection refused (os error 111)",
+        "server_exit": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000448951,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001123693,
+          "stop_requested_when_exited": true
+        },
+        "databases": {
+          "confirmer": {
+            "active_height": 0,
+            "nonempty_packet_rows": 2556,
+            "sha256": "416bd9300fe415b1afac032afae00800bcec931eac881a7933a8dc076534cbbb",
+            "sha256_unchanged": true,
+            "size_in_bytes": 136970240,
+            "stored_block_rows": 2557,
+            "stored_maximum_height": 2556
+          },
+          "validator": {
+            "active_height": 4105,
+            "nonempty_packet_rows": 4105,
+            "sha256": "cbd28e37fd73171c5c2e321f3716831fdd5aabe265c3680e1f6cb16bdf962bf4",
+            "sha256_unchanged": true,
+            "size_in_bytes": 220647424,
+            "stored_block_rows": 4106,
+            "stored_maximum_height": 4105
+          }
+        },
+        "retained_packet_files": {
+          "count": 4105,
+          "exactly_1_through_4105": true,
+          "maximum": 4105,
+          "minimum": 1
+        },
+        "original_4105_validator_observed": true,
+        "native_build": {
+          "build_log_sha256": "5f3e31278e5d0954a03d5ca1f425106c781100dc4f6dfcb8392aaa1cc7e76900",
+          "build_log_size_in_bytes": 108057,
+          "elf_bytes_in_artifact": false,
+          "elf_hash_independently_recomputed": false,
+          "elf_sha256_receipt": "8c93f5fb0c1945d39bf6c6625d3316ade42e24df7ac5e8087669ed3818985e09",
+          "executable": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-788629a735585413",
+          "executable_paths_match": true,
+          "features": [
+            "default"
+          ],
+          "fresh": false,
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "ancestry_long_sync",
+            "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+            "test": true
+          }
+        },
+        "native_log_exit_records_match_job_log": true,
+        "artifact": {
+          "artifact_id": 13098600487,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13098600487",
+          "zip_bytes": 52048494,
+          "zip_sha256": "f2efba3301f5b5855e54668e277701e2bafe82189f5572ac311f1dc90363a7fb",
+          "metadata_size_matches": true,
+          "metadata_digest_matches": true,
+          "sqlite_sidecar_members": []
+        }
+      },
+      {
+        "label": "arm64-merge",
+        "job_id": 124941358039,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/job/124941358039",
+        "status": "completed",
+        "conclusion": "failure",
+        "source": {
+          "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "prospective-merge",
+          "prospective_merge": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_identical": true,
+        "native_counts": {
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0
+        },
+        "native_exit": 101,
+        "log_exit": 0,
+        "native_harness_elapsed_seconds": "3756.26",
+        "elapsed_from_run_start_ns": 3756255633068,
+        "last_printed_progress_only": {
+          "elapsed_ns": 3701747347117,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        "sync_error": "FRAME_EOF",
+        "server_exit": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000681384,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001666770,
+          "stop_requested_when_exited": true
+        },
+        "databases": {
+          "confirmer": {
+            "active_height": 0,
+            "nonempty_packet_rows": 2556,
+            "sha256": "c6472d52ca5f689c0fcc612af2e7e5715aea18d87bb583b7a88b6c04f8aeedf0",
+            "sha256_unchanged": true,
+            "size_in_bytes": 137068544,
+            "stored_block_rows": 2557,
+            "stored_maximum_height": 2556
+          },
+          "validator": {
+            "active_height": 4105,
+            "nonempty_packet_rows": 4105,
+            "sha256": "848a30b0aa055bd71a37a0c714e051d313944dd5fcb8badf8e9725692efd6d58",
+            "sha256_unchanged": true,
+            "size_in_bytes": 220651520,
+            "stored_block_rows": 4106,
+            "stored_maximum_height": 4105
+          }
+        },
+        "retained_packet_files": {
+          "count": 4105,
+          "exactly_1_through_4105": true,
+          "maximum": 4105,
+          "minimum": 1
+        },
+        "original_4105_validator_observed": true,
+        "native_build": {
+          "build_log_sha256": "dab0a368da3d896011b52c39499088c72aaad625abbc5e4946772945950d28c2",
+          "build_log_size_in_bytes": 108057,
+          "elf_bytes_in_artifact": false,
+          "elf_hash_independently_recomputed": false,
+          "elf_sha256_receipt": "8c93f5fb0c1945d39bf6c6625d3316ade42e24df7ac5e8087669ed3818985e09",
+          "executable": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-788629a735585413",
+          "executable_paths_match": true,
+          "features": [
+            "default"
+          ],
+          "fresh": false,
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": true
+          },
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "ancestry_long_sync",
+            "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+            "test": true
+          }
+        },
+        "native_log_exit_records_match_job_log": true,
+        "artifact": {
+          "artifact_id": 13097498453,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846833/artifacts/13097498453",
+          "zip_bytes": 52096496,
+          "zip_sha256": "f68dd7730044f356150e49ace9bd60332d6ae2ea6e86f8b6c311b8a5a79c37cc",
+          "metadata_size_matches": true,
+          "metadata_digest_matches": true,
+          "sqlite_sidecar_members": []
+        }
+      }
+    ]
+  },
+  "required_full_runtime": {
+    "observed_utc": "2026-11-01T19:29:50.703491+00:00",
+    "run_id": 41337846779,
+    "run_attempt": 1,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779",
+    "status": "COMPLETED_FAILURE; full runtime acceptance not established",
+    "profile_evidence": {
+      "actual_command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+      "cargo_profile": "test",
+      "exact_source_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "exact_source_test_profile": {
+        "package": {
+          "curve25519-dalek": {
+            "opt-level": 3
+          },
+          "ed25519-dalek": {
+            "opt-level": 3
+          },
+          "sha2": {
+            "opt-level": 3,
+            "debug-assertions": true,
+            "overflow-checks": true
+          },
+          "trnm-protocol": {
+            "opt-level": 3,
+            "debug-assertions": true,
+            "overflow-checks": true
+          },
+          "trnm-mvcc-fee": {
+            "opt-level": 1,
+            "debug-assertions": true,
+            "overflow-checks": true
+          },
+          "trnm-crypto-primitives": {
+            "opt-level": 3,
+            "debug-assertions": true,
+            "overflow-checks": true
+          },
+          "trnm-pon-node": {
+            "opt-level": 3,
+            "debug-assertions": true,
+            "overflow-checks": true
+          }
+        }
+      },
+      "per_compiler_artifact_json_present": false,
+      "elf_body_or_digest_binding_present": false,
+      "scope": "Actual Cargo invocation/test-profile banner and exact committed profile declarations; no per-ELF profile or SHA claim is imported from another run."
+    },
+    "denominators": {
+      "runtime_jobs_completed_failed": 2,
+      "node_unit_passed": 1698,
+      "node_unit_failed": 4,
+      "node_unit_ignored": 44,
+      "m06_unit_passed": 194,
+      "m06_unit_failed": 0,
+      "m06_unit_ignored": 12,
+      "selected_semantic_controls_executed": 70,
+      "selected_semantic_controls_passed": 70,
+      "new_callback_competition_failures_in_these_jobs": 0,
+      "original_cpu_named_selectors_executed": 4,
+      "original_cpu_named_selectors_failed": 4,
+      "first_selector_authenticated_subbranches_not_executed": 2
+    },
+    "denominator_scope": "These are 4 additional CPU failures in two runtime jobs, separate from the original four-cell matrix denominator of 8; selected semantic markers are 70/70 in these jobs, separate from 139/140 in that matrix.",
+    "boundaries": [
+      "These runtime jobs are separate actual executions from the independent original CPU matrix; do not collapse their denominators.",
+      "The full-workspace cargo command reached Node unit tests and failed; this is not all-target runtime completion.",
+      "set -euo pipefail stops the shell at failed workspace cargo test; later Python oracles and dedicated release capacity/growth/account-cost controls were not reached.",
+      "Successful 35 semantic markers in these two x64 jobs do not erase the separate ARM merge probe failure in run41337846694.",
+      "Archive contains small fixture SQLite files; only JSON/script/text logs were opened; no database content was queried.",
+      "No ELF body or per-compiler-artifact profile/hash is available in these artifacts.",
+      "CPU inner native failures and null refusal-readback fields remain failures; outer Ok is not successful mutation or proven rollback."
+    ],
+    "selected_semantic_control_names": [
+      "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+      "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+      "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+      "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+      "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+      "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+      "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+      "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+      "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+      "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+      "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+      "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+      "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+      "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+      "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+      "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+      "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+      "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+      "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+      "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+      "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+      "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+      "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+      "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+      "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+      "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+      "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+      "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+      "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+      "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+      "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+      "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+      "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+      "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer"
+    ],
+    "jobs": [
+      {
+        "kind": "head",
+        "job_id": 124941357698,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357698",
+        "conclusion": "failure",
+        "native_command_exit": 101,
+        "source": {
+          "base": null,
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_equal": true,
+        "shard_receipt_status": "failed",
+        "command_script_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+        "command_script_sha256_verified": true,
+        "observation_shard_receipt_and_script_equal": true,
+        "workspace_log_sha256": "7ae5fbeffd799787664cca3f4a5237e9aa8865d1e126fd8f0f48a9ba1d4a50dd",
+        "workspace_log_bytes": 386237,
+        "build_profile_banner": [
+          "Finished `test` profile [unoptimized + debuginfo] target(s) in 12m 04s"
+        ],
+        "unit_targets": [
+          {
+            "target": "unittests src/lib.rs",
+            "executable_path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/trnm_mvcc_fee-2afc0265afb18a0d",
+            "status": "ok",
+            "passed": 97,
+            "failed": 0,
+            "ignored": 6,
+            "measured": 0,
+            "filtered": 0,
+            "reported_wall": "32.31s"
+          },
+          {
+            "target": "unittests src/lib.rs",
+            "executable_path": "/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/trnm_pon_node-9c3372ac58be3827",
+            "status": "FAILED",
+            "passed": 849,
+            "failed": 2,
+            "ignored": 22,
+            "measured": 0,
+            "filtered": 0,
+            "reported_wall": "1396.00s"
+          }
+        ],
+        "failed_native_selectors": [
+          "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+        ],
+        "cpu_failures": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "authenticated_backend": false,
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "cpu_receipt": {
+              "accounting_unavailable": false,
+              "finished_workers": 2,
+              "known_workers": 2,
+              "live_paid_cpu_ns": 2886191546,
+              "live_refused": true,
+              "owner_cpu_ns": 2885860929,
+              "residual_cpu_ns": 4168,
+              "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+              "scoped_worker_cpu_ns": 334785,
+              "spawned_workers": 2,
+              "started_workers": 2,
+              "total_cpu_ns": 2886195714
+            },
+            "complete_key_utf8_and_canonical_value_bytes": 8625548,
+            "budget_before": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 2000000000,
+              "worker_limit": 2
+            },
+            "budget_after": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": -189051051,
+              "worker_limit": 2
+            },
+            "outer_dispatch_result": {
+              "Ok": "ok"
+            },
+            "active_state_unchanged_on_refusal": null,
+            "dispatch_elapsed_ns": null,
+            "dispatch_elapsed_missing_reason": "Not extracted in the referenced full-runtime summary; no value imported from another run."
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "authenticated_backend": true,
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "cpu_receipt": {
+              "accounting_unavailable": false,
+              "finished_workers": 2,
+              "known_workers": 2,
+              "live_paid_cpu_ns": 2777999242,
+              "live_refused": true,
+              "owner_cpu_ns": 2777591119,
+              "residual_cpu_ns": 3867,
+              "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+              "scoped_worker_cpu_ns": 411990,
+              "spawned_workers": 2,
+              "started_workers": 2,
+              "total_cpu_ns": 2778003109
+            },
+            "complete_key_utf8_and_canonical_value_bytes": 8625548,
+            "budget_before": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 2000000000,
+              "worker_limit": 2
+            },
+            "budget_after": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": -110966433,
+              "worker_limit": 2
+            },
+            "outer_dispatch_result": {
+              "Ok": "ok"
+            },
+            "active_state_unchanged_on_refusal": null,
+            "dispatch_elapsed_ns": null,
+            "dispatch_elapsed_missing_reason": "Not extracted in the referenced full-runtime summary; no value imported from another run."
+          }
+        ],
+        "first_selector_authenticated_subbranch": "NOT_EXECUTED: first Legacy native unwrap failed",
+        "selected_semantic_passed": 35,
+        "selected_semantic_failed": 0,
+        "later_script_command_receipts_absent": [
+          "native-capacity-release.log",
+          "native-growth-reference-release.log",
+          "native-growth-v2-release.log",
+          "native-account-verification-cost.log",
+          "authenticated-state/oracle.json",
+          "native-authenticated-state/oracle.json",
+          "authenticated-migration/oracle.json",
+          "account-multiproof/oracle.json",
+          "obligation-range/oracle.json",
+          "daa-bounds-python.json"
+        ],
+        "provider": {
+          "version": "3.5.9",
+          "result": "PREPARED_AND_SMOKE_VERIFIED",
+          "exit_code": 0,
+          "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+          "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+          "source_digest_verified": true,
+          "native_backend_inputs": [
+            {
+              "bytes": 8933408,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.AGBidfeg/install/bin/openssl",
+              "sha256": "53afc4f8b78122eb9a63134e8d7e234075272f690b708b792961a18606066349"
+            },
+            {
+              "bytes": 3449,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.AGBidfeg/install/include/openssl/opensslv.h",
+              "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+            },
+            {
+              "bytes": 4729,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.AGBidfeg/install/include/openssl/configuration.h",
+              "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+            },
+            {
+              "bytes": 12381088,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.AGBidfeg/install/lib/libcrypto.a",
+              "sha256": "21739233a7d028c0de832531ca7d4f7681c4feb40d684d998685ab44158e1610"
+            },
+            {
+              "bytes": 2123138,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.AGBidfeg/install/lib/libssl.a",
+              "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+            }
+          ],
+          "native_rust_pq_tests_run_by_preparation": false,
+          "whole_chain_quantum_security_qualified": false
+        },
+        "archive_elf_bodies_present": false,
+        "observation_artifact": {
+          "artifact_id": 13098035214,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13098035214",
+          "zip_bytes": 1539638,
+          "zip_sha256": "4a895d12b28b4134e17bcf5b89107849c3d3a73ccf21d6827b2bb13a48f1aea1",
+          "crc_verified": true,
+          "members": 30
+        },
+        "shard_artifact": {
+          "artifact_id": 13097860524,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13097860524",
+          "zip_bytes": 2391,
+          "zip_sha256": "6944b8c1b5b5f9558453c844c6321a9b19f29340a0288bc68becb64200bc4abe",
+          "crc_verified": true,
+          "members": 2
+        }
+      },
+      {
+        "kind": "prospective-merge",
+        "job_id": 124941357907,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/job/124941357907",
+        "conclusion": "failure",
+        "native_command_exit": 101,
+        "source": {
+          "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+          "candidate": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+          "kind": "prospective-merge",
+          "prospective_merge": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "75e52844e3f6c6b2a11f13fb3d1266fd08f1fe48",
+          "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 781265132,
+          "tracked_entries": 6780,
+          "tracked_worktree_verified": true
+        },
+        "source_before_after_equal": true,
+        "shard_receipt_status": "failed",
+        "command_script_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+        "command_script_sha256_verified": true,
+        "observation_shard_receipt_and_script_equal": true,
+        "workspace_log_sha256": "4eab432146e909ef8ba7476f69cf7c362cc2716675dfefe5ce9ecbccacc3c591",
+        "workspace_log_bytes": 386957,
+        "build_profile_banner": [
+          "Finished `test` profile [unoptimized + debuginfo] target(s) in 12m 19s"
+        ],
+        "unit_targets": [
+          {
+            "target": "unittests src/lib.rs",
+            "executable_path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/trnm_mvcc_fee-2afc0265afb18a0d",
+            "status": "ok",
+            "passed": 97,
+            "failed": 0,
+            "ignored": 6,
+            "measured": 0,
+            "filtered": 0,
+            "reported_wall": "32.56s"
+          },
+          {
+            "target": "unittests src/lib.rs",
+            "executable_path": "/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/trnm_pon_node-9c3372ac58be3827",
+            "status": "FAILED",
+            "passed": 849,
+            "failed": 2,
+            "ignored": 22,
+            "measured": 0,
+            "filtered": 0,
+            "reported_wall": "1411.70s"
+          }
+        ],
+        "failed_native_selectors": [
+          "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+        ],
+        "cpu_failures": [
+          {
+            "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+            "authenticated_backend": false,
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "cpu_receipt": {
+              "accounting_unavailable": false,
+              "finished_workers": 2,
+              "known_workers": 2,
+              "live_paid_cpu_ns": 2929140905,
+              "live_refused": true,
+              "owner_cpu_ns": 2928811170,
+              "residual_cpu_ns": 4107,
+              "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+              "scoped_worker_cpu_ns": 333842,
+              "spawned_workers": 2,
+              "started_workers": 2,
+              "total_cpu_ns": 2929145012
+            },
+            "complete_key_utf8_and_canonical_value_bytes": 8625548,
+            "budget_before": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 2000000000,
+              "worker_limit": 2
+            },
+            "budget_after": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": -222946228,
+              "worker_limit": 2
+            },
+            "outer_dispatch_result": {
+              "Ok": "ok"
+            },
+            "active_state_unchanged_on_refusal": null,
+            "dispatch_elapsed_ns": null,
+            "dispatch_elapsed_missing_reason": "Not extracted in the referenced full-runtime summary; no value imported from another run."
+          },
+          {
+            "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+            "authenticated_backend": true,
+            "native_result": {
+              "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+            },
+            "cpu_receipt": {
+              "accounting_unavailable": false,
+              "finished_workers": 2,
+              "known_workers": 2,
+              "live_paid_cpu_ns": 2777109347,
+              "live_refused": true,
+              "owner_cpu_ns": 2776775874,
+              "residual_cpu_ns": 3807,
+              "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+              "scoped_worker_cpu_ns": 337280,
+              "spawned_workers": 2,
+              "started_workers": 2,
+              "total_cpu_ns": 2777113154
+            },
+            "complete_key_utf8_and_canonical_value_bytes": 8625548,
+            "budget_before": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": 2000000000,
+              "worker_limit": 2
+            },
+            "budget_after": {
+              "accounting_unavailable": false,
+              "burst_ns": 2000000000,
+              "in_flight": 0,
+              "refill_ns_per_second": 250000000,
+              "schema": "public-v3-local-stored-cpu-budget-v1",
+              "start_reserve_ns": 100000000,
+              "stored_credit_ns": -109337429,
+              "worker_limit": 2
+            },
+            "outer_dispatch_result": {
+              "Ok": "ok"
+            },
+            "active_state_unchanged_on_refusal": null,
+            "dispatch_elapsed_ns": null,
+            "dispatch_elapsed_missing_reason": "Not extracted in the referenced full-runtime summary; no value imported from another run."
+          }
+        ],
+        "first_selector_authenticated_subbranch": "NOT_EXECUTED: first Legacy native unwrap failed",
+        "selected_semantic_passed": 35,
+        "selected_semantic_failed": 0,
+        "later_script_command_receipts_absent": [
+          "native-capacity-release.log",
+          "native-growth-reference-release.log",
+          "native-growth-v2-release.log",
+          "native-account-verification-cost.log",
+          "authenticated-state/oracle.json",
+          "native-authenticated-state/oracle.json",
+          "authenticated-migration/oracle.json",
+          "account-multiproof/oracle.json",
+          "obligation-range/oracle.json",
+          "daa-bounds-python.json"
+        ],
+        "provider": {
+          "version": "3.5.9",
+          "result": "PREPARED_AND_SMOKE_VERIFIED",
+          "exit_code": 0,
+          "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+          "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+          "source_digest_verified": true,
+          "native_backend_inputs": [
+            {
+              "bytes": 8933408,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.FE5H87bu/install/bin/openssl",
+              "sha256": "e21e012a00c65ad6a4f4753615cb170fbdaa5c75881c0d3045fc3d93aff86a91"
+            },
+            {
+              "bytes": 3449,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.FE5H87bu/install/include/openssl/opensslv.h",
+              "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+            },
+            {
+              "bytes": 4729,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.FE5H87bu/install/include/openssl/configuration.h",
+              "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+            },
+            {
+              "bytes": 12381088,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.FE5H87bu/install/lib/libcrypto.a",
+              "sha256": "ee92dbd6bfdffba6a84e2b174133af049616739bfc18a10a0f6cd64df09506e9"
+            },
+            {
+              "bytes": 2123138,
+              "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.FE5H87bu/install/lib/libssl.a",
+              "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+            }
+          ],
+          "native_rust_pq_tests_run_by_preparation": false,
+          "whole_chain_quantum_security_qualified": false
+        },
+        "archive_elf_bodies_present": false,
+        "observation_artifact": {
+          "artifact_id": 13096649487,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13096649487",
+          "zip_bytes": 1539750,
+          "zip_sha256": "2badbc5b95e9948e912b42751a53a4a7db75f536a6483a07e869981f3b43c8d7",
+          "crc_verified": true,
+          "members": 30
+        },
+        "shard_artifact": {
+          "artifact_id": 13096564564,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41337846779/artifacts/13096564564",
+          "zip_bytes": 2441,
+          "zip_sha256": "11a9ab186d68b34851258b5103cf11fb5c736c38515ae6cf71271d92f0c25c40",
+          "crc_verified": true,
+          "members": 2
+        }
+      }
+    ]
+  },
+  "diagnostic_baseline_run1": {
+    "source_run_id": 41337846705,
+    "scope": "Run 1 baseline phase snapshots; 456d records only incomplete round 0. 5606 records successful round 0 and an incomplete round 1; no per-round stage snapshots are available. Seven page-import rows on each source are retained without substituting successful work for censored work.",
+    "nested_stages_are_not_additive": true,
+    "cpu_excludes_separate_worker_cpu": true,
+    "client_stage_delta": {
+      "record": {
+        "calls": 289,
+        "cpu_known_calls": 289,
+        "cpu_ns": 2944325,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 81303627
+      },
+      "packet": {
+        "calls": 162,
+        "cpu_known_calls": 162,
+        "cpu_ns": 5578592,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 5732320
+      },
+      "delta": {
+        "calls": 155,
+        "cpu_known_calls": 155,
+        "cpu_ns": 62483970,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 295835298
+      },
+      "verify_state": {
+        "calls": 57,
+        "cpu_known_calls": 57,
+        "cpu_ns": 4718061327,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 21230867379
+      },
+      "verify_history": {
+        "calls": 14,
+        "cpu_known_calls": 14,
+        "cpu_ns": 70541767,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 225699305
+      },
+      "publish": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 1936667986,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 8525157529
+      },
+      "read_active": {
+        "calls": 2,
+        "cpu_known_calls": 2,
+        "cpu_ns": 278596458,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 1209039987
+      },
+      "state_at": {
+        "calls": 21,
+        "cpu_known_calls": 21,
+        "cpu_ns": 1963808571,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 8710080933
+      },
+      "execute": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 16496131,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 16503967
+      },
+      "admission": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 5261156317,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 23406347785
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 116170186,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 503237043
+      },
+      "complete_commitment": {
+        "calls": 64,
+        "cpu_known_calls": 64,
+        "cpu_ns": 66567584,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 299138164
+      },
+      "complete_state_root": {
+        "calls": 23,
+        "cpu_known_calls": 23,
+        "cpu_ns": 7255110,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 162221748
+      },
+      "account_graph": {
+        "calls": 42,
+        "cpu_known_calls": 42,
+        "cpu_ns": 4631619108,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 20755731076
+      },
+      "persisted_state_root": {
+        "calls": 36,
+        "cpu_known_calls": 36,
+        "cpu_ns": 5207429,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 5250368
+      },
+      "execution_parent_binding": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 4715742,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 4725626
+      }
+    },
+    "receiver_account_graph_delta": {
+      "calls": 49,
+      "cpu_known_calls": 49,
+      "cpu_ns": 284054733,
+      "cpu_unknown_calls": 0,
+      "unwinding_calls": 0,
+      "wall_ns": 1405522570
+    },
+    "per_page_imports": [
+      {
+        "index": 0,
+        "succeeded": true,
+        "wall_ns": 3493536409,
+        "thread_cpu_ns": 723627956
+      },
+      {
+        "index": 1,
+        "succeeded": true,
+        "wall_ns": 3699955027,
+        "thread_cpu_ns": 843323159
+      },
+      {
+        "index": 2,
+        "succeeded": true,
+        "wall_ns": 3772972480,
+        "thread_cpu_ns": 833066417
+      },
+      {
+        "index": 3,
+        "succeeded": true,
+        "wall_ns": 3702116161,
+        "thread_cpu_ns": 843800033
+      },
+      {
+        "index": 4,
+        "succeeded": true,
+        "wall_ns": 3770622836,
+        "thread_cpu_ns": 834492012
+      },
+      {
+        "index": 5,
+        "succeeded": true,
+        "wall_ns": 3704847978,
+        "thread_cpu_ns": 842829438
+      },
+      {
+        "index": 6,
+        "succeeded": false,
+        "wall_ns": 4282031229,
+        "thread_cpu_ns": 960075549
+      }
+    ],
+    "separate_reorg_stage": null,
+    "comparison": {
+      "older_run_id": 41296585330,
+      "older_artifact_id": 13079268814,
+      "older_zip_sha256": "a791f4cb61115fbe9b541bc07e5252a024f31d75f14e35903273a12ea96b2a01",
+      "older_source": "5606a97104f9cd3243befc2921ccace3fae2c369",
+      "same_inputs": true,
+      "same_prepared_business_records": true,
+      "same_resource_policy": true,
+      "older_cpu_models": [
+        "AMD EPYC 9V45 96-Core Processor"
+      ],
+      "current_cpu_models": [
+        "AMD EPYC 7763 64-Core Processor"
+      ],
+      "older_rounds": [
+        {
+          "round": 0,
+          "confirmed_inside_pressure_window": true,
+          "started_ns": 1000863954,
+          "ended_ns": 28792399096
+        },
+        {
+          "round": 1,
+          "confirmed_inside_pressure_window": false,
+          "started_ns": 28792422381,
+          "ended_ns": 30009227823
+        }
+      ],
+      "current_rounds": [
+        {
+          "round": 0,
+          "confirmed_inside_pressure_window": false,
+          "started_ns": 1001137729,
+          "ended_ns": 30001200932
+        }
+      ],
+      "causal_claim": null
+    },
+    "host": {
+      "receiver_and_verifier_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "same_before_after_limits_in_all_18_old_and_current_phases": true,
+      "all_18_host_read_errors_empty": true,
+      "controller_cpu_max": "400000 100000",
+      "controller_memory_max": "17179869184",
+      "controller_nice": 10,
+      "placement": {
+        "receiver_and_verifier_share_one_phase_process_and_cgroup": true,
+        "each_owner_has_its_own_quarter_cpu_domain": false,
+        "phase_pid": 4782,
+        "phase_cgroup": "/trnmponpublic.slice/trnm-phase-41337846705-1-original-campaign-4710.service",
+        "controller_cgroup": "/system.slice/trnm-native-campaign-41337846705-1.service",
+        "separate_from_controller_and_attackers": true,
+        "source_evidence": [
+          "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs: phase creates both Nodes, receiver service runs in a spawned thread",
+          "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs: entry invokes phase then records one phase pid/cgroup, distinct from controller"
+        ]
+      }
+    }
+  },
+  "local_historical_scope": {
+    "source": "64cb26b53ed82be14049000387040ba119f00e1e",
+    "m06_package_pon_commitment": {
+      "passed": 29,
+      "failed": 0,
+      "originally_ignored_microbenchmarks": 5
+    },
+    "node_integration_controls_passed": 7,
+    "full_graph_build_success": false,
+    "node_libtest_sigkill_attempts": 2,
+    "successfully_archived_local_elf_bodies": false,
+    "cause_of_later_missing_build_cache": null,
+    "does_not_qualify_456d_or_followup": true
+  },
+  "next_candidate": {
+    "commit_sha": null,
+    "native_results": "PENDING; no result transferred from 456d",
+    "semantic_controls_planned_per_cell": 37,
+    "patches": [
+      {
+        "id": "A",
+        "file": "trnm-fullroot-callback-candidate.patch",
+        "sha256": "2d9e96c7ec97adfdcee6d32f38d8a8cd90cf4b07f696db4d4890ae2d847106ea",
+        "scope": "test-only gate serializes mutex probes, drops probe guard first, preserves real-held-lock negative, four-thread control and original workers/cancellations",
+        "review": "independent static review; no native execution claimed"
+      },
+      {
+        "id": "B",
+        "file": "trnm-m06-arithmetic-canonical-456d23a7.patch",
+        "sha256": "670b011fed31dd24102853385352f4be54386ad92dae76e2083a5d381b575518",
+        "scope": "private canonical_after_validation reused by root_with_arithmetic after complete State grammar/count checks; independent original serde root unchanged",
+        "review": "independent static review; no native execution claimed"
+      }
+    ],
+    "invariants_retained": [
+      "original budgets/profiles/Host limits/checkpoint frequency",
+      "original 4s/30s/4105 and 1800s lifetime gates",
+      "independent original root/reference and current-input checks"
+    ],
+    "new_or_extended_exact_controls": [
+      "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+      "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits"
+    ]
+  },
+  "local_456d_m06_subset": {
+    "tested_commit": "456d23a778d91b6f3cfee60ee997f8f51d3216bc",
+    "tested_tree": "d48ee85bbb029b38b087096d1578f2dddb0abc57",
+    "source_before_after_equal": true,
+    "receipt_sha256": "0e03fd5ff248a8ad55e9d611ea43e891c65c34f9e4983344e85b0bae650e7856",
+    "build_scope": "M06 package-only, --all-features --lib, original test profile; not complete workspace graph",
+    "build_exit": 0,
+    "actual_profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "1",
+      "overflow_checks": true,
+      "test": true
+    },
+    "actual_features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "groups": [
+      {
+        "prefix": "pon_commitment::",
+        "native_summary": {
+          "failed": 0,
+          "filtered_out": 68,
+          "ignored": 5,
+          "measured": 0,
+          "passed": 30,
+          "reported_seconds": "19.06",
+          "status": "ok"
+        },
+        "native_exit": 0,
+        "marker_inventory_complete": true
+      },
+      {
+        "prefix": "pon_executor::root_arithmetic_tests::",
+        "native_summary": {
+          "failed": 0,
+          "filtered_out": 97,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "reported_seconds": "0.34",
+          "status": "ok"
+        },
+        "native_exit": 0,
+        "marker_inventory_complete": true
+      }
+    ],
+    "elf": {
+      "bytes": 70314080,
+      "execution_before_sha256": "3193a68eb9f5f40e9e10145a3c20abb85ff4524f1bb6127162556279de97d650",
+      "execution_after_sha256": "3193a68eb9f5f40e9e10145a3c20abb85ff4524f1bb6127162556279de97d650",
+      "retained_reread_sha256": "3193a68eb9f5f40e9e10145a3c20abb85ff4524f1bb6127162556279de97d650",
+      "retention_receipt_sha256": "47c601387e463d8fe8f8cf4a8d2e280a8c89c9b4222395b330f2dbcd74df07d8",
+      "session_local_body_retained": true,
+      "permanent_archive_claim": false,
+      "retention_observed_utc": "2026-11-01T18:47:41.456536+00:00"
+    },
+    "later_arm_merge_same_named_control_failed": true,
+    "does_not_replace_full_workspace_or_business_acceptance": true
+  },
+  "revision_date_utc": "2026-11-02",
+  "revision_scope": "Final History and required-runtime readback replaces v1 pending observations; measured source remains 456d/75e/d48, follow-up A+B remains unqualified.",
+  "frozen_v1": {
+    "markdown_sha256": "85aa837e2817aac750a2b7619d05e635da4120881dbd3bb3c9a055c2d844aeff",
+    "json_sha256": "f5721357d3ec912a159198e513a53b3279dd0dab1ea9805e1bf1a8e4c26457c3",
+    "unchanged": true
+  }
+}

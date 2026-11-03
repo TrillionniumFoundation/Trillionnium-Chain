@@ -1,5 +1,9 @@
 //! Local derived binary-lifting index. Seals detect inconsistent local data,
 //! not a malicious owner who can rewrite the database and recompute hashes.
+#[cfg(all(test, target_os = "linux"))]
+#[path = "ancestry_index_cost_tests.rs"]
+mod cost_tests;
+
 use crate::{ensure, Error, Result};
 use rusqlite::{params, Connection, OptionalExtension};
 #[cfg(test)]
@@ -11,7 +15,7 @@ pub(crate) const LEVELS: u8 = 63;
 pub(crate) const READ_SQL_BUDGET: u64 = 1024;
 const WRITE_SQL_BUDGET: u64 = 4096;
 const MAX_PACKET: usize = 1_048_576;
-pub(crate) const DDL:&str="CREATE TABLE ancestry_jump(block BLOB NOT NULL CHECK(length(block)=32),level INTEGER NOT NULL CHECK(level>=0 AND level<63),ancestor BLOB NOT NULL CHECK(length(ancestor)=32),ancestor_height INTEGER NOT NULL CHECK(ancestor_height>=0),left_seal BLOB NOT NULL CHECK(length(left_seal)=32),right_seal BLOB NOT NULL CHECK(length(right_seal)=32),seal BLOB NOT NULL CHECK(length(seal)=32),PRIMARY KEY(block,level),FOREIGN KEY(block) REFERENCES blocks(id),FOREIGN KEY(ancestor) REFERENCES blocks(id)) WITHOUT ROWID;";
+pub(crate) const DDL: &str = "CREATE TABLE ancestry_jump(block BLOB NOT NULL CHECK(length(block)=32),level INTEGER NOT NULL CHECK(level>=0 AND level<63),ancestor BLOB NOT NULL CHECK(length(ancestor)=32),ancestor_height INTEGER NOT NULL CHECK(ancestor_height>=0),left_seal BLOB NOT NULL CHECK(length(left_seal)=32),right_seal BLOB NOT NULL CHECK(length(right_seal)=32),seal BLOB NOT NULL CHECK(length(seal)=32),PRIMARY KEY(block,level),FOREIGN KEY(block) REFERENCES blocks(id),FOREIGN KEY(ancestor) REFERENCES blocks(id)) WITHOUT ROWID;";
 type StoredShape = (u64, Option<usize>, usize, Option<usize>);
 type HeaderProjection = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
 type JumpProjection = (Vec<u8>, u64, Vec<u8>, Vec<u8>, Vec<u8>);
@@ -145,11 +149,15 @@ impl ReadSet {
 }
 
 fn read_shape(db: &Connection, id: Hash) -> rusqlite::Result<Option<StoredShape>> {
-    db.query_row(
+    // Cache only the prepared program. Every charged lookup still binds its
+    // actual key and observes current SQL bytes; no metadata/ancestry verdict
+    // survives a statement, callback, transaction or connection.
+    db.prepare_cached(
         "SELECT height,length(parent),length(state_root),length(packet) FROM blocks WHERE id=?",
-        [id.as_slice()],
-        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
-    )
+    )?
+    .query_row([id.as_slice()], |r| {
+        Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?))
+    })
     .optional()
 }
 fn read_header(
@@ -157,12 +165,12 @@ fn read_header(
     id: Hash,
     header_bytes: usize,
 ) -> rusqlite::Result<Option<HeaderProjection>> {
-    db.query_row("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
-        params![header_bytes,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
+    db.prepare_cached("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?")?
+        .query_row(params![header_bytes,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
 }
 fn read_jump(db: &Connection, id: Hash, level: u8) -> rusqlite::Result<Option<JumpProjection>> {
-    db.query_row("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
-        params![id.as_slice(),level], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).optional()
+    db.prepare_cached("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32")?
+        .query_row(params![id.as_slice(),level], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).optional()
 }
 #[cfg(test)]
 fn shape_digest(value: &Option<StoredShape>) -> Hash {
@@ -737,6 +745,87 @@ mod tests {
         }
         ids
     }
+    #[test]
+    fn prepared_ancestry_reads_observe_foreign_writes_and_rollback_with_original_budget() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("history.sqlite");
+        let (memory, ctx) = fixture();
+        let ids = chain(&memory, ctx, 9);
+        memory
+            .execute("VACUUM INTO ?", [path.to_str().unwrap()])
+            .unwrap();
+        drop(memory);
+        let db = Connection::open(&path).unwrap();
+        let foreign = Connection::open(&path).unwrap();
+        let lookup = || {
+            let mut progress = Vec::new();
+            let result = next_public_request(
+                &db,
+                ctx,
+                ids[9],
+                ctx.genesis,
+                READ_SQL_BUDGET,
+                &mut |used| {
+                    progress.push(used);
+                    Ok(())
+                },
+            )
+            .map(|value| (value.next, value.height, value.sql_lookups))
+            .map_err(|error| (error.to_string(), error.kind(), error.requires_owner_stop()));
+            (result, progress)
+        };
+        for capacity in [0, 1, 64] {
+            db.set_prepared_statement_cache_capacity(capacity);
+            let original = lookup();
+            assert_eq!(original.0.as_ref().unwrap().0, Some(ids[1]));
+            let seal: Vec<u8> = foreign
+                .query_row(
+                    "SELECT seal FROM ancestry_jump WHERE block=? AND level=3",
+                    [ids[9].as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            foreign
+                .execute(
+                    "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=3",
+                    params![[0_u8; 32].as_slice(), ids[9].as_slice()],
+                )
+                .unwrap();
+            let warm = lookup();
+            assert_eq!(warm.0.as_ref().unwrap_err().0, "ANCESTRY_INDEX_SEAL");
+            db.flush_prepared_statement_cache();
+            assert_eq!(lookup(), warm);
+            foreign
+                .execute(
+                    "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=3",
+                    params![seal, ids[9].as_slice()],
+                )
+                .unwrap();
+            assert_eq!(lookup(), original);
+            // A currently executed writer, including a rolled-back change, is
+            // observed exactly as it was with uncached query_row statements.
+            db.execute_batch("BEGIN IMMEDIATE").unwrap();
+            db.execute(
+                "UPDATE blocks SET height=height+1 WHERE id=?",
+                [ids[9].as_slice()],
+            )
+            .unwrap();
+            let changed = lookup();
+            assert_eq!(changed.0.as_ref().unwrap_err().0, "ANCESTRY_INDEX_HEADER");
+            db.flush_prepared_statement_cache();
+            assert_eq!(lookup(), changed);
+            db.execute_batch("ROLLBACK").unwrap();
+            assert_eq!(lookup(), original);
+            // Rebinding another cursor must not inherit the prior answer or
+            // consume fewer charge/cancellation callbacks on a cache hit.
+            let following =
+                next_public_request(&db, ctx, ids[9], ids[4], READ_SQL_BUDGET, &mut |_| Ok(()))
+                    .unwrap();
+            assert_eq!(following.next, Some(ids[5]));
+            assert_eq!(lookup(), original);
+        }
+    }
+
     #[test]
     fn forks_use_derived_parent_paths_and_lookup_is_bounded_nonrecursive() {
         let (db, ctx) = fixture();

@@ -89,7 +89,7 @@ fn backend_name(backend: StateBackend) -> Result<&'static str> {
         StateBackend::Legacy => Ok("legacy"),
         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
         StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV4 => {
             Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into())
         }
     }
@@ -345,6 +345,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         public_history_test_snapshot: false,
         commitment_cache: RefCell::new(None),
         historical_commitment_cache: RefCell::default(),
+        commitment_root_arithmetic: Default::default(),
         root_rejection_cache: RefCell::new(None),
         authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
         commitment_observation: RefCell::new(None),
@@ -360,6 +361,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         #[cfg(test)]
         cancel_next_activation_intent: false,
         pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
+        pq_witness: None,
     })
 }
 fn read_receipt(directory: &Path) -> Result<GrowthRehearsalReceiptV2> {

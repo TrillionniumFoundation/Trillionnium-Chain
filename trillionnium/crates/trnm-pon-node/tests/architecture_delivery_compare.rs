@@ -725,6 +725,18 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
         serde_json::to_vec_pretty(&report).unwrap(),
     )
     .unwrap();
+    // Keep the complete failing sample report in the existing CI artifact
+    // directory. The default TempDir is removed when this test exits, and
+    // a console-only report_path cannot be independently replayed.
+    if let Some(receipt_dir) = std::env::var_os("TRNM_CI_RECEIPT_DIR") {
+        let receipt_dir = std::path::PathBuf::from(receipt_dir);
+        fs::create_dir_all(&receipt_dir).unwrap();
+        fs::copy(
+            output.join("report.json"),
+            receipt_dir.join("architecture-delivery-comparison.json"),
+        )
+        .unwrap();
+    }
     println!(
         "{}",
         json!({"schema": report["schema"], "samples": 18, "all_finite_business_targets_met": all_business, "report_path": output.join("report.json")})

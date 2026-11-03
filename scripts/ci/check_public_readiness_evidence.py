@@ -283,7 +283,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_[a-z0-9_]+)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_[a-z0-9_]+|pq_witness_[a-z0-9_]+)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     code = rust_code(source)
@@ -299,7 +299,8 @@ def native_durable_schema(root):
             # These are closed source contracts, not a retry after failure.
             # Scan all code tokens (without evaluating cfg) so a removed enum
             # arm cannot hide a remaining PQ implementation, module or owner.
-            canonical_pq = re.search(r'\b(?:PqNetworkV2|PqContinuousV3)\b',code) is not None
+            witness_pq = re.search(r'\b(?:PqWitnessV4|pq_witness|pq_rollback_witness)\b',code) is not None
+            canonical_pq = witness_pq or re.search(r'\b(?:PqNetworkV2|PqContinuousV3)\b',code) is not None
             old_pq = re.search(r'\bPqNetworkV1\b',code) is not None
             require(not (canonical_pq and old_pq), 'durable backend mixed PQ generations')
             has_pq = canonical_pq or old_pq or re.search(r'\bpq_network\b',code) is not None
@@ -310,6 +311,15 @@ def native_durable_schema(root):
                 pq_domains = [('PqNetworkV2','native-pq-network-owner-schema-v2'),
                               ('PqContinuousV3','native-pq-continuous-owner-schema-v3')]
                 pq_formats = [r'PqNetworkV2\s*\|\s*Self::PqContinuousV3']
+                if witness_pq:
+                    # This is a closed mapping of the new native namespace,
+                    # never evidence that the witness protects legacy tables or
+                    # that the system has qualified for production/whole PQ.
+                    pq_variants += 'PqWitnessV4,'
+                    pq_ddl += '''Self::PqWitnessV4 => {
+                        format!("{}{}{}", ddl(), pq_network::DDL, pq_rollback_witness::DDL)
+                    }'''
+                    pq_domains.append(('PqWitnessV4','native-pq-network-witness-schema-v4'))
             elif has_pq:
                 pq_variants = '#[cfg(feature = "pq-native-openssl")] PqNetworkV1,'
                 pq_ddl = '#[cfg(feature = "pq-native-openssl")] Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
@@ -363,6 +373,9 @@ def native_durable_schema(root):
             for variant in ['AuthenticatedV1', 'PermanentAccountGrowthV2']+pq_formats:
                 require(value(backend_ddl,r'\bSelf::'+variant+r'\s*=>\s*format!\s*\(') == '{}{}',
                         'durable backend composition '+variant)
+            if witness_pq:
+                require(value(backend_ddl,r'\bSelf::PqWitnessV4\s*=>\s*\{\s*format!\s*\(') == '{}{}{}',
+                        'durable backend composition PqWitnessV4')
             require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
                     'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
@@ -384,6 +397,8 @@ def native_durable_schema(root):
                         NativeOwners { policy: None, mining: None, continuous: None, pq_network: None, }, StateBackend::AuthenticatedV1, false,)''',
             }
             for name, expected in selections.items():
+                if witness_pq:
+                    expected = expected.replace('pq_network: None,','pq_network: None, pq_witness: None,')
                 if not has_pq:
                     # Only the trusted expected template changes. Source bytes
                     # must match the complete pre-PQ owner contract verbatim.

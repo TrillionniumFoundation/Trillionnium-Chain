@@ -151,6 +151,36 @@ fn pin_lifetime_generation_and_revocation_are_freshly_enforced() {
 }
 
 #[test]
+fn one_pq_signing_key_cannot_claim_multiple_independent_dids() {
+    let (signer, first) = signer_and_pin();
+    let mut second = first.clone();
+    second.signer_did = "did:trnm:independent-hepta-authority".into();
+    second.generation = first.generation + 1;
+    // Both records are individually well-formed; DID and generation differ.
+    // Duplicate key material must still be refused by the pinned trust roster.
+    for pins in [
+        vec![first.clone(), second.clone()],
+        vec![second.clone(), first.clone()],
+    ] {
+        assert!(matches!(
+            PqHeptaAuthoritySetV2::new(pins),
+            Err(PqHeptaHandoffError::InvalidPin)
+        ));
+    }
+
+    // Positive control: a genuinely distinct ML-DSA public key on the second
+    // DID remains valid, and the original real signature still verifies.
+    let seed = Zeroizing::new([0x48; 32]);
+    second.spki = PqNativeSigningKey::public_spki_from_seed(&seed);
+    second.key_id = ml_dsa_65_key_id_from_spki(&second.spki).unwrap();
+    assert_ne!(second.key_id, first.key_id);
+    let pins = PqHeptaAuthoritySetV2::new(vec![second, first]).unwrap();
+    signed(&signer)
+        .verify_for_context(&pins, "trnm-pq-test", &admission(), NOW)
+        .unwrap();
+}
+
+#[test]
 fn chain_and_fresh_hepta_owner_context_cannot_be_reused() {
     let (signer, pin) = signer_and_pin();
     let pins = PqHeptaAuthoritySetV2::new(vec![pin]).unwrap();

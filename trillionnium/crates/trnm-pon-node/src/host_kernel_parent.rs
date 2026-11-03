@@ -95,7 +95,7 @@ mod kernel_parent {
         (value > 0 && value <= limit).then_some(value)
     }
 
-    // The maximum CPU bandwidth is strictly <= 250,000 ns per second per
+    // The maximum CPU bandwidth is <= 250,000,000 ns per second per
     // entire host parent. Explicit finite ceilings only; never accept "max".
     fn validate_limits(
         cpu: &str,
@@ -162,26 +162,41 @@ mod kernel_parent {
         read_limit_text(&mut file, bytes)
     }
 
-    fn read_limits(parent: &Path) -> Result<Limits> {
+    fn limit_paths(parent: &Path) -> [PathBuf; 5] {
+        [
+            "cpu.max",
+            "cpu.max.burst",
+            "memory.max",
+            "memory.swap.max",
+            "pids.max",
+        ]
+        .map(|name| parent.join(name))
+    }
+
+    fn read_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
         // Preserve the original read order and parse only AFTER all five
         // complete reads, including the original I/O-before-parse error order.
         validate_limits(
-            read_limit(&parent.join("cpu.max"), cpu)?,
-            read_limit(&parent.join("cpu.max.burst"), burst)?,
-            read_limit(&parent.join("memory.max"), memory)?,
-            read_limit(&parent.join("memory.swap.max"), swap)?,
-            read_limit(&parent.join("pids.max"), pids)?,
+            read_limit(&paths[0], cpu)?,
+            read_limit(&paths[1], burst)?,
+            read_limit(&paths[2], memory)?,
+            read_limit(&paths[3], swap)?,
+            read_limit(&paths[4], pids)?,
         )
     }
 
-    fn own_cgroup() -> Result<String> {
+    fn in_parent_cgroup(parent: &str) -> Result<bool> {
         // A process may have independently placed native worker threads in a
         // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
         // leader and cannot attest the actual calling worker's CPU cgroup.
         // The kernel's /proc/thread-self resolves to the current TID.
         let text = fs::read_to_string("/proc/thread-self/cgroup")
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+        cgroup_within_parent(&text, parent)
+    }
+
+    fn cgroup_within_parent(text: &str, parent: &str) -> Result<bool> {
         let mut entries = text.lines();
         let only = entries.next().ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?;
         if entries.next().is_some() {
@@ -197,7 +212,7 @@ mod kernel_parent {
         {
             return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
         }
-        Ok(relative.to_owned())
+        Ok(within_parent(relative, parent))
     }
 
     fn within_parent(current: &str, parent: &str) -> bool {
@@ -260,6 +275,9 @@ mod kernel_parent {
 
     pub struct KernelBudget {
         parent: PathBuf,
+        // Immutable names only. Every check still opens all five actual paths
+        // afresh; no descriptor, contents or resource verdict is retained.
+        limit_paths: [PathBuf; 5],
         identity: (u64, u64),
         boot_id: String,
         limits: Limits,
@@ -287,11 +305,10 @@ mod kernel_parent {
                 .to_str()
                 .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
                 .trim_start_matches('/');
-            let current = own_cgroup()?;
-            if !within_parent(&current, parent_rel) {
+            if !in_parent_cgroup(parent_rel)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let observed = read_limits(&self.parent)?;
+            let observed = read_limits(&self.limit_paths)?;
             if observed != self.limits {
                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
             }
@@ -321,6 +338,7 @@ mod kernel_parent {
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
                 boot_id: boot.trim().to_owned(),
+                limit_paths: limit_paths(&parent),
                 parent,
                 limits: Limits {
                     cpu_quota_us: 0,
@@ -526,6 +544,9 @@ mod kernel_parent {
         #[test]
         fn limit_reader_keeps_all_five_reads_before_validation_and_observes_changes() {
             let dir = tempfile::tempdir().unwrap();
+            // Reuse the exact immutable names across rewrites and removals.
+            // This must never reuse the previous file or successful read.
+            let paths = limit_paths(dir.path());
             let values = [
                 ("cpu.max", "25000 100000\n"),
                 ("cpu.max.burst", "0\n"),
@@ -536,7 +557,7 @@ mod kernel_parent {
             for (name, value) in values {
                 fs::write(dir.path().join(name), value).unwrap();
             }
-            let initial = read_limits(dir.path()).unwrap();
+            let initial = read_limits(&paths).unwrap();
             assert_eq!(
                 initial,
                 validate_limits("25000 100000\n", "0\n", "268435456\n", "0\n", "32\n").unwrap()
@@ -546,27 +567,27 @@ mod kernel_parent {
                 let mut padded = value.as_bytes().to_vec();
                 padded.resize(MAX_LIMIT_BYTES, b' ');
                 fs::write(&path, &padded).unwrap();
-                assert_eq!(read_limits(dir.path()).unwrap(), initial);
+                assert_eq!(read_limits(&paths).unwrap(), initial);
                 padded.push(b' ');
                 fs::write(&path, &padded).unwrap();
                 assert_eq!(
-                    read_limits(dir.path()).unwrap_err().to_string(),
+                    read_limits(&paths).unwrap_err().to_string(),
                     "PUBLIC_HOST_KERNEL_UNAVAILABLE"
                 );
                 fs::write(&path, value).unwrap();
             }
             fs::write(dir.path().join("cpu.max"), b"10000 100000\n").unwrap();
-            assert_ne!(read_limits(dir.path()).unwrap(), initial);
+            assert_ne!(read_limits(&paths).unwrap(), initial);
             fs::write(dir.path().join("cpu.max"), b"malformed").unwrap();
             fs::remove_file(dir.path().join("pids.max")).unwrap();
             assert_eq!(
-                read_limits(dir.path()).unwrap_err().to_string(),
+                read_limits(&paths).unwrap_err().to_string(),
                 "PUBLIC_HOST_KERNEL_UNAVAILABLE",
                 "late I/O failure still precedes parsing an early malformed value"
             );
             fs::write(dir.path().join("pids.max"), b"32\n").unwrap();
             assert_eq!(
-                read_limits(dir.path()).unwrap_err().to_string(),
+                read_limits(&paths).unwrap_err().to_string(),
                 "PUBLIC_HOST_KERNEL_LIMITS"
             );
         }
@@ -613,6 +634,39 @@ mod kernel_parent {
                 assert_eq!(by_tid.lines().count(), 1);
             });
             join.join().unwrap();
+        }
+        #[test]
+        fn membership_borrows_current_complete_text_and_keeps_path_boundaries() {
+            let parent = "trnmponpublic.slice";
+            for text in [
+                "0::/trnmponpublic.slice\n",
+                "0::/trnmponpublic.slice/child.service\n",
+            ] {
+                assert!(cgroup_within_parent(text, parent).unwrap());
+            }
+            for text in [
+                "0::/trnmponpublic.slice-other/child.service\n",
+                "0::/other/trnmponpublic.slice\n",
+                "0::/other.slice/child.service\n",
+            ] {
+                assert!(!cgroup_within_parent(text, parent).unwrap());
+            }
+            for text in [
+                "",
+                "0::/\n",
+                "0::/trnmponpublic.slice/\n",
+                "0::/trnmponpublic.slice//child\n",
+                "0::/trnmponpublic.slice/../child\n",
+                "0::/trnmponpublic.slice/./child\n",
+                "1::/trnmponpublic.slice\n",
+                "0::/trnmponpublic.slice\n0::/other.slice\n",
+            ] {
+                assert_eq!(
+                    cgroup_within_parent(text, parent).unwrap_err().to_string(),
+                    "PUBLIC_HOST_KERNEL_CONTEXT",
+                    "{text:?}",
+                );
+            }
         }
         #[test]
         fn real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota() {
@@ -830,7 +884,7 @@ mod kernel_parent {
                 assert!(!within_parent(current, PARENT_NAME), "{current}");
             }
             // This helper preserves the original string relationship only.
-            // own_cgroup separately validates empty, dot and trailing segments.
+            // cgroup_within_parent separately validates empty, dot and trailing segments.
             // These edge forms must not gain implicit path normalization.
             for (current, parent, expected) in [
                 ("trnmponpublic.slice/", PARENT_NAME, true),

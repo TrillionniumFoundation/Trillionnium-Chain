@@ -11,7 +11,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
-        Arc, Mutex,
+        Arc, Mutex, MutexGuard, TryLockError,
     },
     time::{Duration, Instant},
 };
@@ -32,6 +32,9 @@ pub(crate) const MAX_INGRESS_CONNECTIONS: u64 = 64;
 pub(crate) const MAX_INGRESS_BYTES: u64 = 32 * 1024 * 1024;
 pub(crate) const MAX_INBOUND_VERIFICATIONS: u64 = 64;
 const MAX_LIFETIME_SECONDS: u64 = 60;
+// The signed frame and the outer length prefix are not part of the JSON body.
+// Refuse untransmittable inputs before computing SHA-384 or ML-DSA signatures.
+const MAX_SIGNED_PAYLOAD_BYTES: usize = MAX_WIRE - 8 - TPQ1_SIGNED_BYTES;
 const REQUEST_MAGIC: &[u8; 4] = b"PNQ2";
 const RESPONSE_MAGIC: &[u8; 4] = b"PNP2";
 // TPQ1 purpose 6 is the existing peer-authorization purpose. Directions are
@@ -201,8 +204,21 @@ impl PqNetworkPolicy {
             (1..=i64::MAX as u64).contains(&sequence),
             "PQ_NETWORK_SEQUENCE",
         )?;
-        let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
+        // Reserve the original durable attempt before deriving the payload-
+        // bound cryptographic expectation. Even a bounded invalid payload can
+        // otherwise consume hashing and allocation before the owner is charged.
+        // Preserve peer/sequence checks and all original verification limits.
         before_verification()?;
+        let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
+        // The live server already rejects signed expiries beyond 60 seconds,
+        // but previously did so only AFTER ML-DSA and payload parsing. Refuse
+        // the same impossible future interval before spending verifier CPU.
+        // Expired packets retain the verifier's existing refusal semantics;
+        // retained historical validation uses its signed expiry as "now".
+        ensure(
+            expiry <= now || expiry - now <= MAX_LIFETIME_SECONDS,
+            "PQ_NETWORK_LIFETIME",
+        )?;
         let observed = verifier.verify(frame, &expected).map_err(crypto)?;
         let operation = hash(
             b"native-pq-network-operation-v2",
@@ -303,11 +319,12 @@ fn statement(e: &PqFrameExpectation<'_>) -> Result<[u8; TPQ1_UNSIGNED_BYTES]> {
     out[128..].copy_from_slice(&payload_commitment(e.payload).map_err(crypto)?);
     Ok(out)
 }
+fn require_signed_payload_bound(length: usize) -> Result<()> {
+    ensure(length <= MAX_SIGNED_PAYLOAD_BYTES, "PQ_NETWORK_WIRE_LIMIT")
+}
 fn encode_wire(magic: &[u8; 4], frame: &[u8], payload: &[u8]) -> Result<Vec<u8>> {
-    ensure(
-        frame.len() == TPQ1_SIGNED_BYTES && payload.len() <= MAX_WIRE - 8 - TPQ1_SIGNED_BYTES,
-        "PQ_NETWORK_WIRE_LIMIT",
-    )?;
+    ensure(frame.len() == TPQ1_SIGNED_BYTES, "PQ_NETWORK_WIRE_LIMIT")?;
+    require_signed_payload_bound(payload.len())?;
     let mut out = Vec::with_capacity(8 + frame.len() + payload.len());
     out.extend_from_slice(magic);
     out.extend_from_slice(&(payload.len() as u32).to_be_bytes());
@@ -377,7 +394,17 @@ impl PqClient {
             expires_at >= now && expires_at - now <= MAX_LIFETIME_SECONDS,
             "PQ_NETWORK_LIFETIME",
         )?;
+        // A locally supplied sequence outside the native signed-wire domain
+        // cannot pass the receiver's existing check. Reject it before JSON
+        // serialization and costly ML-DSA signing, not after creating a frame.
+        ensure(
+            (1..=i64::MAX as u64).contains(&sequence),
+            "PQ_NETWORK_SEQUENCE",
+        )?;
         let payload = serde_json::to_vec(&request)?;
+        // This client must not hash/sign a body the original PNQ2 wire bound
+        // would reject after ML-DSA has already done expensive work.
+        require_signed_payload_bound(payload.len())?;
         let expected = self.policy.expectation(
             self.signer.public_key_id(),
             Direction::Request,
@@ -410,6 +437,18 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
+        // PNQ2 is authenticated plaintext for explicitly local development.
+        // The server already refuses non-loopback listeners; the public client
+        // must enforce the same boundary before a signed payload reaches a
+        // caller-selected remote TCP endpoint (or leaks across a public route).
+        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        // Preparation checked its original expiry, but caller queueing may
+        // outlive the signed lease. Refuse a stale packet before TCP; the
+        // receiving node independently checks expiry at the live boundary.
+        ensure(
+            super::now()? <= prepared.verified.expiry,
+            "PQ_NETWORK_EXPIRED_UNCONFIRMED",
+        )?;
         let end = Instant::now() + budget;
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
@@ -423,6 +462,40 @@ pub struct PqServer {
     policy: Arc<PqNetworkPolicy>,
     signer: PqNativeSigningKey,
 }
+
+// Queueing for the native owner is part of the caller's original interval.
+// This guard does not renew the wire lease, refund an attempted signature or
+// replace the execution owner's cancellation checks.
+fn check_live_request(deadline: Instant, expiry: Option<u64>) -> Result<()> {
+    if Instant::now() >= deadline {
+        return Err(Error::new(ErrorCode::PqNetworkDeadline));
+    }
+    if let Some(expiry) = expiry {
+        if super::now()? > expiry {
+            return Err(Error::new(ErrorCode::PqNetworkExpired));
+        }
+    }
+    Ok(())
+}
+
+fn lock_live_owner(
+    node: &Mutex<Node>,
+    deadline: Instant,
+    expiry: Option<u64>,
+) -> Result<MutexGuard<'_, Node>> {
+    loop {
+        check_live_request(deadline, expiry)?;
+        match node.try_lock() {
+            Ok(owner) => {
+                check_live_request(deadline, expiry)?;
+                return Ok(owner);
+            }
+            Err(TryLockError::Poisoned(_)) => return Err("PQ_NETWORK_OWNER".into()),
+            Err(TryLockError::WouldBlock) => std::thread::sleep(Duration::from_millis(2)),
+        }
+    }
+}
+
 impl PqServer {
     pub fn new(policy: Arc<PqNetworkPolicy>, signer: PqNativeSigningKey) -> Result<Self> {
         ensure(
@@ -449,6 +522,9 @@ impl PqServer {
             value,
         };
         let payload = serde_json::to_vec(&response)?;
+        // Never sign an oversized terminal response that cannot be persisted
+        // or relayed under the same fixed native network wire limit.
+        require_signed_payload_bound(payload.len())?;
         let expected = self.policy.expectation(
             request.peer,
             Direction::Response,
@@ -472,47 +548,79 @@ impl PqServer {
         deadline: Instant,
     ) -> Result<Vec<u8>> {
         // Charge the original durable owner before reading or allocating a body.
-        node.lock()
-            .map_err(|_| "PQ_NETWORK_OWNER")?
-            .charge_pq_ingress(&self.policy, true, 0, false)?;
+        lock_live_owner(node, deadline, None)?.charge_pq_ingress_with_check(
+            &self.policy,
+            true,
+            0,
+            false,
+            deadline,
+            &mut || check_live_request(deadline, None),
+        )?;
         let mut prefix = [0; 4];
         super::read_exact_deadline(stream, &mut prefix, deadline)?;
         let length = u32::from_be_bytes(prefix) as usize;
         ensure((1..=MAX_WIRE).contains(&length), "PQ_NETWORK_WIRE_LIMIT")?;
-        node.lock()
-            .map_err(|_| "PQ_NETWORK_OWNER")?
-            .charge_pq_ingress(&self.policy, false, length as u64, false)?;
+        lock_live_owner(node, deadline, None)?.charge_pq_ingress_with_check(
+            &self.policy,
+            false,
+            length as u64,
+            false,
+            deadline,
+            &mut || check_live_request(deadline, None),
+        )?;
+        check_live_request(deadline, None)?;
         let mut wire = vec![0; length];
         super::read_exact_deadline(stream, &mut wire, deadline)?;
         Ok(wire)
     }
     fn handle(&self, node: &Mutex<Node>, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
+        check_live_request(deadline, None)?;
+        // Decode only the already-bounded frame here. This untrusted expiry
+        // can cause refusal only; the canonical verifier still authenticates
+        // it before begin, cached replay, execution or response production.
+        let (frame, _) = decode_wire(wire, REQUEST_MAGIC)?;
+        let expiry = u64_field(frame, 120);
         let now = super::now()?;
         let verified = self.policy.verify_request_metered(wire, now, &mut || {
-            node.lock()
-                .map_err(|_| "PQ_NETWORK_OWNER")?
-                .charge_pq_ingress(&self.policy, false, 0, true)
+            lock_live_owner(node, deadline, Some(expiry))?.charge_pq_ingress_with_check(
+                &self.policy,
+                false,
+                0,
+                true,
+                deadline,
+                &mut || check_live_request(deadline, Some(expiry)),
+            )?;
+            // A synchronous durable charge cannot be preempted. If it
+            // overruns, retain the spent attempt and skip signature CPU.
+            check_live_request(deadline, Some(expiry))
         })?;
+        // The non-interruptible signature work and its preceding durable
+        // charge may have crossed the original interval. Keep the charge;
+        // refuse a new operation or a cached response under stale authority.
+        check_live_request(deadline, Some(verified.expiry))?;
         ensure(
             verified.expiry - now <= MAX_LIFETIME_SECONDS,
             "PQ_NETWORK_LIFETIME",
         )?;
         let (begin, settings) = {
-            let mut owner = node.lock().map_err(|_| "PQ_NETWORK_OWNER")?;
-            let begin = owner.begin_pq_network_request(&self.policy, &verified)?;
+            let mut owner = lock_live_owner(node, deadline, Some(verified.expiry))?;
+            let begin = owner.begin_pq_network_request_with_check(
+                &self.policy,
+                &verified,
+                deadline,
+                &mut || check_live_request(deadline, Some(verified.expiry)),
+            )?;
             (begin, owner.settings().clone())
         };
         let (epoch, expected_epoch) = match begin {
-            crate::store::pq_network::PqReplay::Cached(response) => return Ok(response),
+            crate::store::pq_network::PqReplay::Cached(response) => {
+                check_live_request(deadline, Some(verified.expiry))?;
+                return Ok(response);
+            }
             crate::store::pq_network::PqReplay::Execute(epoch, expected) => (epoch, expected),
         };
         let check = || {
-            if Instant::now() >= deadline {
-                return Err(Error::new(ErrorCode::PqNetworkDeadline));
-            }
-            if super::now()? > verified.expiry {
-                return Err(Error::new(ErrorCode::PqNetworkExpired));
-            }
+            check_live_request(deadline, Some(verified.expiry))?;
             if epoch.load(Ordering::Acquire) != expected_epoch {
                 return Err(Error::new(ErrorCode::PqNetworkRevoked));
             }
@@ -531,10 +639,15 @@ impl PqServer {
         );
         // Complete outcomes, including errors, consume this operation sequence.
         // A caller can issue a new sequence, but cannot change this retained result.
+        let completed_successfully = result.is_ok();
         let response = self.response(&verified, result)?;
         node.lock()
             .map_err(|_| "PQ_NETWORK_OWNER")?
             .finish_pq_network_request(&self.policy, &verified, &response, expected_epoch)?;
+        // Finish records the actual outcome even after cancellation; skipping
+        // it would lose the completed operation and strand the next sequence.
+        // Its completion is not permission to return a late successful ACK.
+        check_live_request(deadline, completed_successfully.then_some(verified.expiry))?;
         Ok(response)
     }
 }
@@ -598,3 +711,6 @@ mod tests;
 
 #[cfg(test)]
 pub(crate) mod canonical_tests;
+
+#[cfg(test)]
+mod live_admission_tests;
