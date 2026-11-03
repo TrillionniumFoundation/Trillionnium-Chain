@@ -794,7 +794,8 @@ pub(super) fn verify_history_with_readback(
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
                 local(ensure(
-                    canonical(&state)? == bytes && state == settings.initial,
+                    super::canonical_json::state_bytes(&state)? == bytes
+                        && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
                 return verify_state_with_readback(

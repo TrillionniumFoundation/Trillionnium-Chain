@@ -3231,7 +3231,7 @@ impl Node {
             if let Some(bytes) = snapshot {
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
-                ensure(canonical(&state)? == bytes, "STATE_BYTES")
+                ensure(canonical_json::state_bytes(&state)? == bytes, "STATE_BYTES")
                     .map_err(Error::local_integrity)?;
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
