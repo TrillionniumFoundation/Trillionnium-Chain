@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-deterministic-finality-profile-v1",
+  "profile_id": "pon-deterministic-finality-v1",
+  "version": 1,
+  "enabled": false,
+  "production_eligible": false,
+  "finality_model": "explicit-qualified-profile",
+  "confirmation_policy": "deterministic-only-after-qualified-evidence",
+  "fallback_profile": null,
+  "retired_consensus_fallback": false,
+  "requires": {
+    "deterministic_state_transition": true,
+    "independent_verifier": true,
+    "artifact_availability": true,
+    "three_generation_predecessor_window": true,
+    "wan_partition_recovery": true,
+    "power_loss_recovery": true,
+    "deep_reorg_replay": true,
+    "independent_evaluator": true
+  },
+  "activation_authority": "governed-new-profile-only",
+  "notes": "Qualification contract only. It cannot activate PoN, restore PoCO-BFT, or convert probabilistic confirmations by configuration alone."
+}

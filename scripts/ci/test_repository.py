@@ -8,6 +8,8 @@ class EvidenceBoundaryTests(unittest.TestCase):
     def test_current_claims_are_unactivated(self):
         no_promotion(json.loads((ROOT/'config/consensus-mainline.json').read_text()))
         no_promotion(json.loads((ROOT/'config/pon-nakamoto-v1.json').read_text()))
+        no_promotion(json.loads((ROOT/'config/pon/deterministic-finality-v1.json').read_text()))
+        no_promotion(json.loads((ROOT/'config/pon/hepta-adapter-contract-v1.json').read_text()))
     def test_no_runtime_claim(self):
         with self.assertRaises(Invalid):no_promotion({'runtime_implemented':True})
     def test_no_release_from_nested_report(self):
@@ -21,7 +23,7 @@ class EvidenceBoundaryTests(unittest.TestCase):
     def test_explicit_missing_native_core(self):
         inventory=json.loads((ROOT/'config/portability-inventory-v1.json').read_text())
         self.assertFalse(inventory['runtime_implemented'])
-        self.assertFalse(any(row['module']=='M02' for row in inventory['packages']))
+        self.assertEqual([row['package'] for row in inventory['packages'] if row['module']=='M02'], ['trnm-fork-choice'])
     def test_old_protocol_is_not_supported(self):
         inventory=json.loads((ROOT/'config/portability-inventory-v1.json').read_text())
         self.assertIs(inventory['old_protocol_compatibility'],False)
@@ -53,7 +55,7 @@ class RepositoryMutants(unittest.TestCase):
         def transform(text):
             data=json.loads(text);mutate(data);return json.dumps(data)
         self.reject_text(relative,transform)
-    def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],24)
+    def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],25)
     def test_duplicate_package(self):
         self.reject_json('config/portability-inventory-v1.json',lambda d:d['packages'].append(copy.deepcopy(d['packages'][0])))
     def test_omitted_package(self):
@@ -102,6 +104,22 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(validator_voting=True))
     def test_no_automatic_fallback(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(automatic_bft_fallback=True))
+    def test_deterministic_finality_cannot_activate(self):
+        self.reject_json('config/pon/deterministic-finality-v1.json',lambda d:d.update(enabled=True))
+    def test_deterministic_finality_cannot_restore_retired_fallback(self):
+        self.reject_json('config/pon/deterministic-finality-v1.json',lambda d:d.update(retired_consensus_fallback=True))
+    def test_hepta_adapter_cannot_activate(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d.update(enabled=True))
+    def test_hepta_adapter_cannot_own_final_use(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d.update(final_use_authority='chain'))
+    def test_hepta_adapter_requires_all_inputs(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d['required_inputs'].pop())
+    def test_hepta_adapter_rejects_duplicate_inputs(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d['required_inputs'].append(d['required_inputs'][0]))
+    def test_hepta_adapter_requires_all_forbidden_authorities(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d['forbidden_authorities'].pop())
+    def test_hepta_adapter_rejects_duplicate_forbidden_authorities(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d['forbidden_authorities'].append(d['forbidden_authorities'][0]))
     def test_unknown_concrete_work_profile_rejected(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['work_profile'].update(concrete_profile_id='unregistered-profile'))
     def test_fake_qualified_primitive(self):

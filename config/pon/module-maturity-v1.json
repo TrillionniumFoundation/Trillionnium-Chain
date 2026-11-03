@@ -22,7 +22,7 @@
     {
       "id": "M02",
       "documented": true,
-      "has_native_component": false,
+      "has_native_component": true,
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,

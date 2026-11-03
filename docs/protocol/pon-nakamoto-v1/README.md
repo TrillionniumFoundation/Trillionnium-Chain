@@ -4,6 +4,7 @@ Status: selected development architecture; candidate specification, not a deploy
 Decision date: 2026-09-28. Primary owner M00; consensus M02; cross-module consumers M01-M17.
 The sole work sequence remains the [development plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 Machine contract: [pon-nakamoto-v1.json](../../../config/pon-nakamoto-v1.json).
+Deterministic-finality qualification contract: [deterministic-finality-v1.json](../../../config/pon/deterministic-finality-v1.json).
 
 ## Architectural decision
 
@@ -52,6 +53,11 @@ contracts, native/Python vectors, real disk crash cuts, and controlled model exp
 None implies deployed native consensus, external independent acceptance, unseen future
 model efficacy or production activation. The cheap-forgery verification asymmetry is
 measured and remains a public-network blocker, not a hidden fallback.
+
+The deterministic-finality contract is versioned and disabled. It is a qualification
+boundary for a future profile, not a conversion of probabilistic confirmations and not
+a route back to retired PoCO-BFT semantics. Activation requires every listed evidence
+axis and a separately reviewed new profile.
 
 ## Implementable detail index
 

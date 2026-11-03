@@ -1,5 +1,8 @@
 # H2 — existing-owner handoff and unexecuted product boundary
 
+Machine-readable boundary: [`config/pon/hepta-adapter-contract-v1.json`](../../../../config/pon/hepta-adapter-contract-v1.json).
+It is disabled and cannot grant FinalUse; the existing Hepta owners remain authoritative.
+
 Hepta remains the authority for actual user tasks, learning data and final execution.
 Read source input: `hepta-private-ci/codex-rs/hepta-learning-artifacts/src/lib.rs` and its
 technical guide. Existing exports include LearningArtifactManifestV2,

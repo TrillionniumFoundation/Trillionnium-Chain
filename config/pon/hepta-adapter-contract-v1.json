@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-hepta-typed-adapter-contract-v1",
+  "version": 1,
+  "enabled": false,
+  "production_eligible": false,
+  "authority_owner": "hepta-private-ci",
+  "chain_role": "typed-idempotent-observer-and-submitter",
+  "forbidden_authorities": [
+    "artifact_registry",
+    "trainer",
+    "final_use_token",
+    "revocation_owner",
+    "local_effect_log"
+  ],
+  "required_inputs": [
+    "artifact_manifest_digest",
+    "withdrawal_frontier_digest",
+    "operation_id",
+    "attempt_id",
+    "owner_generation",
+    "model_family_digest",
+    "evaluation_bundle_digest",
+    "chain_profile_digest"
+  ],
+  "required_behaviors": [
+    "durable_intent_outbox",
+    "lost_ack_reconciliation",
+    "withdrawal_frontier_revalidation",
+    "revocation_frontier_survives_reorg",
+    "idempotent_inclusion_observation"
+  ],
+  "final_use_authority": "hepta-owner-only",
+  "notes": "Contract boundary only. It does not connect a live owner, export private artifacts, or grant FinalUse."
+}

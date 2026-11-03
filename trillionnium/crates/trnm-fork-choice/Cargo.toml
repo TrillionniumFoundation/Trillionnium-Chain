@@ -1,0 +1,16 @@
+[package]
+name = "trnm-fork-choice"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+module = "M02"
+role = "pure fully-validated cumulative-work fork choice candidate"
+profile = "pon-nakamoto-v1"
+production_activation = false
+consensus_authority = false
+
+[dependencies]

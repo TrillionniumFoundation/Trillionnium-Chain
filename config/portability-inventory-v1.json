@@ -135,6 +135,14 @@
       "production_activation": false
     },
     {
+      "package": "trnm-fork-choice",
+      "module": "M02",
+      "path": "trillionnium/crates/trnm-fork-choice",
+      "role": "Pure fully-validated cumulative-work branch choice candidate; no node or activation.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
       "package": "trnm-checkpoint-store",
       "module": "M03",
       "path": "trillionnium/crates/trnm-checkpoint-store",

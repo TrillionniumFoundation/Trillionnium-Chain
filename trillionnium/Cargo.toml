@@ -5,6 +5,7 @@ members = [
   "crates/trnm-governance-guard",
   "crates/trnm-escrow-vault",
   "crates/trnm-types",
+  "crates/trnm-fork-choice",
   "crates/trnm-executor",
   "crates/trnm-bench",
   "crates/trnm-mempool",
