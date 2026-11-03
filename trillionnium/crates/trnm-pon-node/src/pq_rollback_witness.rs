@@ -438,7 +438,22 @@ impl WitnessClient {
                     ensure(
                         previous.sequence.checked_add(1) == Some(next.sequence),
                         "PQ_WITNESS_SEQUENCE",
-                    )
+                    )?;
+                    if let Some(known) = self.last_verified {
+                        // Refuse a locally contradictory CAS before signing or sending.
+                        // Exact retry of the known head remains valid; the owner still
+                        // verifies its predecessor. Other writers may have advanced
+                        // beyond the last head observed by this client.
+                        ensure(
+                            next.sequence > known.sequence || next == known,
+                            "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                        )?;
+                        ensure(
+                            previous.sequence != known.sequence || previous == known,
+                            "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                        )?;
+                    }
+                    Ok::<_, Error>(())
                 })()
             )?;
             if self.request(Some(previous), Some(next), until)? != next {

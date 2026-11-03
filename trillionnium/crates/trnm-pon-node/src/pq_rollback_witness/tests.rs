@@ -469,3 +469,74 @@ fn slow_drip_write_obeys_one_absolute_deadline() {
         .expect("write must stop while the peer is still draining")
         .is_err());
 }
+
+#[test]
+fn known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport() {
+    let (_diagnostics, _directory, policy, owner) = fixture();
+    let calls = Arc::new(AtomicUsize::new(0));
+    let mut client = client(&policy, owner, calls.clone(), false);
+    let initial = client.current().unwrap();
+    let second = Checkpoint::new(2, [2; 64]).unwrap();
+    let known = Checkpoint::new(3, [3; 64]).unwrap();
+    let later = Checkpoint::new(4, [4; 64]).unwrap();
+    client.advance(initial, second).unwrap();
+    client.advance(second, known).unwrap();
+    let before_calls = calls.load(Ordering::SeqCst);
+    let signed = Arc::new(AtomicUsize::new(0));
+    let observed_signed = signed.clone();
+    client.before_send = Some(Box::new(move |_| {
+        observed_signed.fetch_add(1, Ordering::SeqCst);
+    }));
+    for (previous, next) in [
+        (initial, second),
+        (second, Checkpoint::new(3, [9; 64]).unwrap()),
+        (Checkpoint::new(3, [9; 64]).unwrap(), later),
+    ] {
+        assert_eq!(
+            client.advance(previous, next).unwrap_err().to_string(),
+            "PQ_WITNESS_OBSERVATION_ROLLBACK"
+        );
+        assert_eq!(client.last_verified, Some(known));
+        client.available().unwrap();
+    }
+    assert_eq!(signed.load(Ordering::SeqCst), 0);
+    assert_eq!(calls.load(Ordering::SeqCst), before_calls);
+    client.advance(known, later).unwrap();
+    assert_eq!(signed.load(Ordering::SeqCst), 1);
+    assert_eq!(calls.load(Ordering::SeqCst), before_calls + 1);
+    assert_eq!(client.current().unwrap(), later);
+}
+
+#[test]
+fn known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress() {
+    let (_diagnostics, _directory, policy, owner) = fixture();
+    let owner = Arc::new(Mutex::new(owner));
+    let mut first = shared_client(&policy, &owner);
+    let mut second = shared_client(&policy, &owner);
+    let initial = first.current().unwrap();
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    let later = Checkpoint::new(3, [3; 64]).unwrap();
+    let last = Checkpoint::new(4, [4; 64]).unwrap();
+    first.advance(initial, next).unwrap();
+    // An exact result retry still reaches the owner, which checks the recorded
+    // predecessor. Merely matching a local result must not fabricate success.
+    first.advance(initial, next).unwrap();
+    assert_eq!(first.last_verified, Some(next));
+    let mut retry = shared_client(&policy, &owner);
+    assert_eq!(retry.current().unwrap(), next);
+    assert_eq!(
+        retry
+            .advance(Checkpoint::new(1, [9; 64]).unwrap(), next)
+            .unwrap_err()
+            .to_string(),
+        "PQ_WITNESS_RETRY_CONFLICT"
+    );
+    assert_eq!(second.current().unwrap(), next);
+    second.advance(next, later).unwrap();
+    // First has not observed the other writer's new head. A later valid CAS
+    // must remain available without requiring an extra Current exchange.
+    assert_eq!(first.last_verified, Some(next));
+    first.advance(later, last).unwrap();
+    assert_eq!(first.current().unwrap(), last);
+    assert_eq!(second.current().unwrap(), last);
+}
