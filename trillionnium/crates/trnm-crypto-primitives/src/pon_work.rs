@@ -259,6 +259,39 @@ struct TranscriptEvaluation {
     trace: Hash,
 }
 
+// Keep the independently coded scalar path's row-major intermediates unchanged.
+// Optimized replay owns exactly one representation of B': the column kernel
+// retains rows, while the other kernels retain the transpose already used by
+// every transcript tile. Neither representation carries verification authority.
+enum ReplayedRightOperand {
+    RowMajor(Vec<u32>),
+    Transposed(Vec<u32>),
+}
+
+struct OptimizedTranscriptEvaluation {
+    cp: Vec<u32>,
+    el: Vec<u32>,
+    er: Vec<u32>,
+    fl: Vec<u32>,
+    fr: Vec<u32>,
+    right: ReplayedRightOperand,
+    trace: Hash,
+}
+
+enum ReplayedTranscript {
+    Reference(TranscriptEvaluation),
+    Optimized(OptimizedTranscriptEvaluation),
+}
+
+impl ReplayedTranscript {
+    fn trace(&self) -> &Hash {
+        match self {
+            Self::Reference(evaluated) => &evaluated.trace,
+            Self::Optimized(evaluated) => &evaluated.trace,
+        }
+    }
+}
+
 fn evaluate_transcript(
     challenge: Hash,
     a: &[u32],
@@ -626,52 +659,44 @@ fn checked_proof_inputs(
     if target == [0; 32] {
         return Err(WorkError::Target);
     }
-    // Only A and B are arithmetic inputs. Keep the scalar reference's original
-    // three-matrix decoding; production and limb compare C directly with its
-    // fixed-width wire bytes after the entire original relation has succeeded.
-    let decoded_cells = match kernel {
-        VerificationKernel::ScalarReference => 3 * CELLS,
+    // Keep the scalar reference's original three-matrix decoding. Optimized
+    // paths borrow the exact wire until field, task and ticket checks succeed;
+    // cheap refusal must not allocate the 32-KiB arithmetic input buffer.
+    let mut matrices = match kernel {
+        VerificationKernel::ScalarReference => bytes[4..4 + 3 * CELLS * 4]
+            .chunks_exact(4)
+            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+            .collect::<Vec<_>>(),
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
         | VerificationKernel::FullLimb
-        | VerificationKernel::ColumnLimbTranscript => 2 * CELLS,
+        | VerificationKernel::ColumnLimbTranscript => Vec::new(),
     };
-    let matrices: Vec<u32> = bytes[4..4 + decoded_cells * 4]
-        .chunks_exact(4)
-        .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
-        .collect();
-    let (a, tail) = matrices.split_at(CELLS);
-    let (b, claimed) = tail.split_at(CELLS);
-    let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
-    match kernel {
-        VerificationKernel::ScalarReference => validate(claimed)?,
-        VerificationKernel::Transposed
-        | VerificationKernel::LimbTranscript
-        | VerificationKernel::FullLimb
-        | VerificationKernel::ColumnLimbTranscript => {
-            // C's field check still precedes A/B, task, ticket and callbacks.
-            // No unaligned cast, host-endian assumption or reduced field value.
-            if claimed_bytes
-                .chunks_exact(4)
-                .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
-            {
-                return Err(WorkError::Field);
-            }
-        }
-    }
     let actual_task = match kernel {
         // Retain the scalar reference's independent field re-encoding.
-        VerificationKernel::ScalarReference => task_id(a, b)?,
+        VerificationKernel::ScalarReference => {
+            let (a, tail) = matrices.split_at(CELLS);
+            let (b, claimed) = tail.split_at(CELLS);
+            validate(claimed)?;
+            task_id(a, b)?
+        }
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
         | VerificationKernel::FullLimb
         | VerificationKernel::ColumnLimbTranscript => {
-            validate(a)?;
-            validate(b)?;
-            // The fixed grammar above decoded these exact little-endian words.
-            // Reuse the original canonical field bytes only after all three
-            // matrices passed the same validation order. This is a hash input,
-            // not a cached task verdict, and removes two 16-KiB byte buffers.
+            // Preserve C, A, B field-error precedence before task, ticket and
+            // callbacks. Exact fixed slices need no allocation, unaligned cast,
+            // host-endian assumption or reduction of noncanonical input words.
+            for matrix in [2, 0, 1] {
+                let start = 4 + matrix * CELLS * 4;
+                if bytes[start..start + CELLS * 4]
+                    .chunks_exact(4)
+                    .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
+                {
+                    return Err(WorkError::Field);
+                }
+            }
+            // These are the current canonical bytes, not a cached task verdict.
             hash(
                 b"task",
                 &[
@@ -690,6 +715,14 @@ fn checked_proof_inputs(
     let ticket = hash(b"ticket", &[&challenge, trace_claim]);
     if ticket > target {
         return Err(WorkError::Target);
+    }
+    if !matches!(kernel, VerificationKernel::ScalarReference) {
+        // Only A and B are arithmetic inputs. The immutable borrowed wire was
+        // checked above; C is still compared in full after relation replay.
+        matrices = bytes[4..4 + 2 * CELLS * 4]
+            .chunks_exact(4)
+            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+            .collect();
     }
     Ok(CheckedProofInputs {
         matrices,
@@ -717,40 +750,47 @@ fn verify_with_kernel<E>(
     let trace_claim = &bytes[4 + 3 * CELLS * 4..];
     progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
     let evaluated = match kernel {
-        VerificationKernel::ScalarReference => {
-            evaluate_transcript_with_progress(challenge, a, b, progress)?
-        }
-        VerificationKernel::Transposed => {
-            evaluate_transposed_with_progress::<false, E>(challenge, a, b, progress)?
-        }
-        VerificationKernel::LimbTranscript => {
-            evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?
-        }
+        VerificationKernel::ScalarReference => ReplayedTranscript::Reference(
+            evaluate_transcript_with_progress(challenge, a, b, progress)?,
+        ),
+        VerificationKernel::Transposed => ReplayedTranscript::Optimized(
+            evaluate_transposed_with_progress::<false, E>(challenge, a, b, progress)?,
+        ),
+        VerificationKernel::LimbTranscript => ReplayedTranscript::Optimized(
+            evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?,
+        ),
         VerificationKernel::ColumnLimbTranscript => {
-            evaluate_transcript_kernel_with_progress::<false, true, false, E>(
-                challenge, a, b, progress,
-            )?
+            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<
+                false,
+                true,
+                false,
+                E,
+            >(challenge, a, b, progress)?)
         }
         VerificationKernel::FullLimb => {
-            evaluate_transcript_kernel_with_progress::<true, false, true, E>(
-                challenge, a, b, progress,
-            )?
+            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<
+                true,
+                false,
+                true,
+                E,
+            >(challenge, a, b, progress)?)
         }
     };
     // PNW1 submits only a final digest: every transcript update is still replayed.
     // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
-    if evaluated.trace.as_slice() != trace_claim {
+    if evaluated.trace().as_slice() != trace_claim {
         return Err(WorkError::Transcript.into());
     }
-    let product = match kernel {
-        VerificationKernel::ScalarReference => finish_product_with_progress(a, evaluated, progress),
-        VerificationKernel::Transposed
-        | VerificationKernel::LimbTranscript
-        | VerificationKernel::ColumnLimbTranscript => {
-            finish_transposed_with_progress(a, evaluated, progress)
+    let product = match evaluated {
+        ReplayedTranscript::Reference(evaluated) => {
+            finish_product_with_progress(a, evaluated, progress)
         }
-        VerificationKernel::FullLimb => {
-            finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
+        ReplayedTranscript::Optimized(evaluated) => {
+            if matches!(kernel, VerificationKernel::FullLimb) {
+                finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
+            } else {
+                finish_transposed_with_progress(a, evaluated, progress)
+            }
         }
     }
     .map_err(VerificationError::Cancelled)?;
@@ -822,6 +862,21 @@ fn transposed_mul_kernel_with_progress<const LIMB: bool, E>(
             transposed[j * inner + k] = b[k * cols + j];
         }
     }
+    multiply_transposed_right_with_progress::<LIMB, E>(a, &transposed, rows, inner, cols, progress)
+}
+
+// Receives a transpose owned by this same arithmetic call. Keeping it across
+// transcript/product stages avoids another full B' transpose; every dot product
+// and every original MatrixRow callback is still performed.
+fn multiply_transposed_right_with_progress<const LIMB: bool, E>(
+    a: &[u32],
+    transposed: &[u32],
+    rows: usize,
+    inner: usize,
+    cols: usize,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
+    debug_assert!(inner <= N);
     let mut out = vec![0; rows * cols];
     for i in 0..rows {
         progress(VerificationProgress::MatrixRow { row: i })?;
@@ -852,7 +907,7 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     a: &[u32],
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
-) -> Result<TranscriptEvaluation, VerificationError<E>> {
+) -> Result<OptimizedTranscriptEvaluation, VerificationError<E>> {
     evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, false, E>(
         challenge, a, b, progress,
     )
@@ -868,7 +923,7 @@ fn evaluate_transcript_kernel_with_progress<
     a: &[u32],
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
-) -> Result<TranscriptEvaluation, VerificationError<E>> {
+) -> Result<OptimizedTranscriptEvaluation, VerificationError<E>> {
     #[cfg(test)]
     ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
     validate(a)?;
@@ -881,16 +936,14 @@ fn evaluate_transcript_kernel_with_progress<
         .map_err(VerificationError::Cancelled)?;
     let f = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&fl, &fr, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
-    let ap: Vec<u32> = a
-        .iter()
-        .zip(e)
-        .map(|(x, y)| producer_reduce(u128::from(*x) + u128::from(y)))
-        .collect();
-    let bp: Vec<u32> = b
-        .iter()
-        .zip(f)
-        .map(|(x, y)| producer_reduce(u128::from(*x) + u128::from(y)))
-        .collect();
+    let mut ap = e;
+    for (value, original) in ap.iter_mut().zip(a) {
+        *value = producer_reduce(u128::from(*original) + u128::from(*value));
+    }
+    let mut bp = f;
+    for (value, original) in bp.iter_mut().zip(b) {
+        *value = producer_reduce(u128::from(*original) + u128::from(*value));
+    }
     // The column kernel reads the original contiguous B' rows. The other
     // kernels retain their original transpose and exact arithmetic path.
     let mut bt = if COLUMN_LIMB {
@@ -968,13 +1021,21 @@ fn evaluate_transcript_kernel_with_progress<
     let trace = transcript.finalize().into();
     #[cfg(test)]
     ARITHMETIC_TRANSCRIPT_COMPLETIONS.with(|count| count.set(count.get() + 1));
-    Ok(TranscriptEvaluation {
+    let right = if COLUMN_LIMB {
+        ReplayedRightOperand::RowMajor(bp)
+    } else {
+        // Retain only the already computed transpose for the later ER * B'.
+        // This is per-call arithmetic material, never reused across requests.
+        drop(bp);
+        ReplayedRightOperand::Transposed(bt)
+    };
+    Ok(OptimizedTranscriptEvaluation {
         cp,
         el,
         er,
         fl,
         fr,
-        bp,
+        right,
         trace,
     })
 }
@@ -1016,7 +1077,7 @@ fn column_limb_row(left: &[u32], right: &[u32], prior: &[u32]) -> [u32; R] {
 
 fn finish_transposed_with_progress<E>(
     a: &[u32],
-    evaluated: TranscriptEvaluation,
+    evaluated: OptimizedTranscriptEvaluation,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
     finish_transposed_kernel_with_progress::<false, E>(a, evaluated, progress)
@@ -1024,7 +1085,7 @@ fn finish_transposed_with_progress<E>(
 
 fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
     a: &[u32],
-    evaluated: TranscriptEvaluation,
+    evaluated: OptimizedTranscriptEvaluation,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
     progress(VerificationProgress::BeforeProduct)?;
@@ -1033,23 +1094,22 @@ fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
     let left = transposed_mul_kernel_with_progress::<LIMB, E>(a, &evaluated.fl, N, N, R, progress)?;
     let correction1 =
         transposed_mul_kernel_with_progress::<LIMB, E>(&left, &evaluated.fr, N, R, N, progress)?;
-    let right = transposed_mul_kernel_with_progress::<LIMB, E>(
-        &evaluated.er,
-        &evaluated.bp,
-        R,
-        N,
-        N,
-        progress,
-    )?;
+    let right = match &evaluated.right {
+        ReplayedRightOperand::RowMajor(bp) => {
+            transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.er, bp, R, N, N, progress)
+        }
+        ReplayedRightOperand::Transposed(bt) => {
+            multiply_transposed_right_with_progress::<LIMB, E>(&evaluated.er, bt, R, N, N, progress)
+        }
+    }?;
     let correction2 =
         transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.el, &right, N, R, N, progress)?;
-    Ok(evaluated
-        .cp
-        .iter()
-        .zip(correction1)
-        .zip(correction2)
-        .map(|((x, y), z)| producer_reduce(u128::from(*x) + 2 * Q - u128::from(y) - u128::from(z)))
-        .collect())
+    let mut product = evaluated.cp;
+    for ((value, first), second) in product.iter_mut().zip(correction1).zip(correction2) {
+        *value =
+            producer_reduce(u128::from(*value) + 2 * Q - u128::from(first) - u128::from(second));
+    }
+    Ok(product)
 }
 
 /// Bounded producer cache for one exact task. It carries no verification authority.

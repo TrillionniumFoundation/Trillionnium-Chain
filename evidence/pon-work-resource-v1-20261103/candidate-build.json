@@ -1,0 +1,15 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "build",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 3.7074173590008286
+}

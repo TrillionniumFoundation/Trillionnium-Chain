@@ -52,6 +52,53 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### PoN work-resource and branch-target continuation — 2026-11-03
+
+Continue the W1 candidate from PR #682 (`a1f6cd3411681d5f1295e1deadba0b639bb7d4d5`)
+on an isolated development branch. M01 retains the exact W1 relation, proof bytes,
+ticket and private `VerifiedWork` boundary while deferring owned input buffers
+until preliminary checks pass and reusing temporary matrices within one complete
+verification. The scalar reference, complete transcript/product arithmetic,
+error order and cancellation checkpoints remain independent regression controls.
+This is a verifier resource optimization, not a new work profile or a cheapest-
+producer claim; the original rejection-cost and honest-service thresholds remain.
+
+M02 uses one checked parent-height and parent-first retarget-window calculation
+for the ordinary and permanent-account-growth storage owners. Real admitted forks
+at child heights 15/16/17, nonactive parents and cold reopen must agree with the
+unchanged development parameters. Independent Python integer vectors also check
+the actual native wide arithmetic. Median-time selection keeps the original
+eleven-parent and short-window semantics with a fixed stack buffer.
+
+M17's public-readiness runner and reader move to an explicit v2 evidence namespace:
+select the actual Cargo compiler artifact, retain its bytes, and bind every
+pipeline invocation to its arguments, observed process/result and executable
+snapshots before and after execution. Preserve failed rows. Old v1 records remain
+historical evidence and cannot satisfy the current v2 execution contract. These
+are software observations, not cryptographic execution attestation or independent
+operation. See the [public-readiness contract](../protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md).
+
+The original long-history acceptance also requires a closed Host execution mode.
+Bind the unique `ancestry_long_sync` Cargo artifact and its original exact selector
+to the workflow's verified source receipt, then run the entire native test under
+the existing fixed Host owner. Its real block generation, renewal, corruption
+refusal, independent full sync and reopen stay in the same process and resource
+denominator. Compilation remains outside native time/RSS measurement. Preserve
+the original 4105-block/packet, four-renewal, state-equality and reopen conditions,
+fixed Host limits, per-request/import/server deadlines and 180-minute job limit.
+The earlier `PUBLIC_HOST_KERNEL_PARENT` refusal is an execution-placement failure,
+not completed synchronization evidence. Host placement and artifact binding alone
+cannot pass history acceptance; retain every native failure and require the
+original successful test and summary before recording this bounded observation.
+
+Acceptance requires the existing exact-source tests, strict formatting/lint,
+source inventories, head/prospective-merge CI and original resource envelopes.
+Statement correctness, computational qualification and honest service retain
+separate verdicts. Hardware/preprocessing advantages, the cheapest legal work
+cost, independent operators, prospective model benefit, durable external effects
+and funded storage require their own evidence. No activation, work qualification,
+public-readiness or whole-chain post-quantum flag is promoted by this continuation.
+
 #### W1 factorial legal-attempt continuation — 2026-11-01
 
 The separate [V3 factorial experiment](specs/pon/W1_LEGAL_STRATEGY_V3.md) compares

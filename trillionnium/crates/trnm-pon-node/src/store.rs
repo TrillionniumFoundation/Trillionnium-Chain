@@ -3214,25 +3214,24 @@ impl Node {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_expected_target(parent);
         }
-        let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
+        let height = consensus::BranchTargetHeight::after(self.record(parent)?.height)?;
         let recent = self.recent(parent)?;
         let interval = self.settings.limit("retarget_interval")?;
-        let target = recent.first().ok_or("UNKNOWN_PARENT")?.1;
-        if height % interval != 0 {
-            return Ok(target);
+        match height.window(&recent, interval)? {
+            consensus::TargetWindow::Parent(target) => Ok(target),
+            consensus::TargetWindow::Retarget {
+                target,
+                first,
+                last,
+            } => consensus::retarget(
+                target,
+                first,
+                last,
+                interval,
+                self.settings.limit("target_spacing_seconds")?,
+                self.settings.target("pow_limit_hex")?,
+            ),
         }
-        let first = recent
-            .get((interval - 1) as usize)
-            .ok_or("UNKNOWN_PARENT")?
-            .0;
-        consensus::retarget(
-            target,
-            first,
-            recent[0].0,
-            interval,
-            self.settings.limit("target_spacing_seconds")?,
-            self.settings.target("pow_limit_hex")?,
-        )
     }
     /// A cancelled controlled activation may have committed only part of its
     /// existing reorg intent. Permit only the exact already-admitted intent
@@ -7371,6 +7370,109 @@ mod native_ancestry_tests {
 #[cfg(test)]
 #[path = "operator_task_store_tests.rs"]
 mod operator_task_store_tests;
+
+#[cfg(test)]
+mod branch_target_tests {
+    use super::*;
+
+    fn open(path: &Path, settings: Settings, growth: bool) -> Node {
+        if growth {
+            Node::open_with_permanent_account_growth_v2(path, settings).unwrap()
+        } else {
+            Node::open(path, settings, 1).unwrap()
+        }
+    }
+
+    #[test]
+    fn both_storage_owners_derive_targets_from_real_fork_parents_at_15_16_17() {
+        for growth in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = if growth {
+                Settings::development_with_profiles(
+                    Some(1),
+                    "native-public-evaluation-dev-v1",
+                    continuity_v1::PROFILE,
+                )
+                .unwrap()
+                .with_permanent_account_growth_v2("branch-target-boundary-test")
+                .unwrap()
+            } else {
+                Settings::development(Some(1)).unwrap()
+            };
+            let mut node = open(directory.path(), settings.clone(), growth);
+            let mut limit = [255; 32];
+            limit[0] = 127;
+            let mut half = [255; 32];
+            half[0] = 63;
+            assert_eq!(settings.target("initial_target_hex").unwrap(), limit);
+            assert_eq!(settings.limit("retarget_interval").unwrap(), 16);
+            assert_eq!(settings.limit("target_spacing_seconds").unwrap(), 10);
+            let mut branches = [vec![settings.genesis()], vec![settings.genesis()]];
+            for height in 1..=17 {
+                for (branch, spacing) in [5, 10].into_iter().enumerate() {
+                    let parent = *branches[branch].last().unwrap();
+                    // Ordinary five/ten-second histories have exact 75/150
+                    // second first periods. Their targets are P/2 and P,
+                    // independently of either native retarget implementation.
+                    let expected = if branch == 0 && height >= 16 {
+                        half
+                    } else {
+                        limit
+                    };
+                    assert_eq!(node.expected_target(parent).unwrap(), expected);
+                    let timestamp = 1 + height * spacing;
+                    let miner = crate::development_public(branch as u64).unwrap();
+                    let id = if growth {
+                        let packet = node
+                            .make_growth_consensus_maintenance(
+                                parent,
+                                vec![],
+                                miner,
+                                timestamp,
+                                4096,
+                            )
+                            .unwrap();
+                        assert_eq!(packet.header.ledger.height, height);
+                        assert_eq!(packet.header.ledger.target, expected);
+                        node.admit_growth(&packet, 100_000).unwrap()
+                    } else {
+                        let packet = node.make(parent, vec![], miner, timestamp, 4096).unwrap();
+                        assert_eq!(packet.header.height, height);
+                        assert_eq!(packet.header.target, expected);
+                        node.admit(&packet, 100_000).unwrap()
+                    };
+                    branches[branch].push(id);
+                }
+            }
+            // Admission did not substitute either fork for the selected parent.
+            assert_eq!(node.active().unwrap().0, settings.genesis());
+            let selected = *branches[0].last().unwrap();
+            // Growth's public activation dispatch owns its PNP2 history and
+            // journal checks; activate_observed reads the ordinary PNP1 header.
+            let activated = if growth {
+                node.activate(selected)
+            } else {
+                node.activate_observed(selected, 100_000)
+            };
+            assert_eq!(activated.unwrap(), selected);
+            let active = node.active().unwrap();
+            for reopened in [false, true] {
+                if reopened {
+                    drop(node);
+                    node = open(directory.path(), settings.clone(), growth);
+                    assert_eq!(node.active().unwrap(), active);
+                }
+                for (branch, ids) in branches.iter().enumerate() {
+                    assert_eq!(node.expected_target(ids[14]).unwrap(), limit);
+                    let expected = if branch == 0 { half } else { limit };
+                    assert_eq!(node.expected_target(ids[15]).unwrap(), expected);
+                    assert_eq!(node.expected_target(ids[16]).unwrap(), expected);
+                    assert_eq!(node.expected_target(ids[17]).unwrap(), expected);
+                }
+            }
+        }
+    }
+}
 
 #[cfg(test)]
 #[path = "continuity_tests.rs"]

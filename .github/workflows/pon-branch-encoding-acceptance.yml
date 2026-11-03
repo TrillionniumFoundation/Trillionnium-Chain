@@ -139,7 +139,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib consensus::tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/work-arithmetic.log"
-          grep -E '^test result: ok\. 6 passed; 0 failed; 0 ignored;' "$OUT/work-arithmetic.log"
+          grep -E '^test result: ok\. 10 passed; 0 failed; 0 ignored;' "$OUT/work-arithmetic.log"
           for test in aligned_division_preserves_all_512_shift_and_limb_boundaries aligned_division_matches_original_for_wide_arbitrary_operands aligned_required_work_and_retarget_match_original_arithmetic; do
             selector="consensus::tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"

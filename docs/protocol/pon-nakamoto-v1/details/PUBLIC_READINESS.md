@@ -268,9 +268,27 @@ It does not rebrand the original observation as authenticated native ML executio
 and corpus Git objects, verifies negative source/evidence tests, executes the full existing
 native/reference regression and then the new attack, task, attribution/lifecycle and
 live pipeline campaigns from clean committed source. Failures and raw logs are retained.
-It hashes its source and binary, records actual tool/runtime versions and produces no
-public acceptance. Earlier packages remain immutable and are checked against their
-original source. Documentation publication alone never reruns a historical measurement.
+It hashes its source, records actual tool/runtime versions and produces no public
+acceptance. The V2 engineering/evidence schemas bind the pipeline to the retained
+Cargo `compiler-artifact` and successful `build-finished` records for the exact release
+example, retain a complete bounded executable copy, and record the original and copy
+paths, byte lengths, hashes and file identities before and after each of the four cases.
+Each case retains its requested payload arguments, actual GNU time launcher arguments
+and PID, observed launcher exit and timeout. A failure before launch retains the attempted command
+and observed failure with a null exit/PID; a later observation failure retains the real
+exit already obtained. Wait or cleanup errors remain in the case record; an exit that
+could not be observed remains null. A missing, changed or incomplete binding cannot pass the current
+reader. The existing matrix, minimum live duration and timeout limits remain required.
+
+This scope is software file snapshots and launcher observations. A local hash, Cargo
+log or PID does not establish that those bytes were the running process image, exclude
+replacement races, authenticate a remote execution environment, or prove work hardness.
+`native_execution_authenticated` and all existing public, independent and work-profile
+qualification flags remain false. Current validation uses a fresh V2 package; the existing
+V1 packages remain immutable and pass only through the explicit historical reader,
+which checks their original source without upgrading them to current-source evidence.
+Adding these controls or publishing this documentation does not run the full qualification
+or produce a new passing V2 package.
 
 The qualification owners record the actual child exit and timeout even when GNU time
 does not emit a resource summary. Missing, empty, unreadable or malformed usage records

@@ -1200,4 +1200,298 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(source,index)
 
 
+class PipelineExecutableBindingTests(unittest.TestCase):
+    """Bounded local files and harmless child exits, never native qualification."""
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pipeline-binding-')
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.out = self.root/'evidence'; (self.out/'logs').mkdir(parents=True)
+        self.binary = self.root/'target/release/examples/continuous_pipeline'
+        self.binary.parent.mkdir(parents=True)
+        self.binary.write_bytes(b'independent inert artifact fixture\n')
+        self.copy = self.out/'binaries/continuous_pipeline'
+        self.copy.parent.mkdir(); self.copy.write_bytes(self.binary.read_bytes())
+        self.artifact = dict(reason='compiler-artifact', package_id='fixture:trnm-pon-node',
+            manifest_path=str(self.root/'trillionnium/crates/trnm-pon-node/Cargo.toml'),
+            target=dict(name='continuous_pipeline', kind=['example'], crate_types=['bin'],
+                        src_path=str(self.root/'trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs')),
+            profile=dict(opt_level='3', test=False), fresh=False,
+            executable=str(self.binary), filenames=[str(self.binary)])
+        self.write_build([self.artifact, dict(reason='build-finished', success=True)])
+        def snapshot(path):
+            info = path.stat()
+            return dict(path=str(path), bytes=info.st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                        device=info.st_dev, inode=info.st_ino, mtime_ns=info.st_mtime_ns, ctime_ns=info.st_ctime_ns)
+        initial, retained = snapshot(self.binary), snapshot(self.copy)
+        self.binding = dict(cargo_artifact=copy.deepcopy(self.artifact), build_log='logs/pipeline-build.log',
+            retained_path='binaries/continuous_pipeline', initial=initial, retained=retained,
+            observation_scope='software-file-snapshots-and-launcher-exit-not-execution-attestation')
+        self.observer = dict(executable='/fixture/time', sha256='1'*64, identity='time (GNU Time) fixture',
+                             observation='software-file-snapshot-not-execution-attestation')
+        self.report = dict(pipeline_executable=self.binding, pipeline_binary_sha256=initial['sha256'],
+                           environment=dict(resource_observer=self.observer))
+        self.rows = {'pipeline-build': dict(log='logs/pipeline-build.log')}
+        for pattern, profile in check.CASES:
+            name = 'pipeline-'+pattern+'-'+profile
+            command = [str(self.binary), str(self.out/name), '20', '32', '10000', pattern, profile]
+            observation = dict(source=initial, retained=retained)
+            self.rows[name] = dict(command=command, returncode=0, timed_out=False,
+                resource_observer=copy.deepcopy(self.observer), pipeline_execution=dict(
+                    requested_argv=command, launcher_pid=123,
+                    launched_argv=['/fixture/time', '-f', '%M %U %S', '-o', str(self.out/'logs'/(name+'.usage')), *command],
+                    before=copy.deepcopy(observation), after=copy.deepcopy(observation),
+                    observation_scope=self.binding['observation_scope']))
+
+    def write_build(self, messages):
+        (self.out/'logs/pipeline-build.log').write_text('\n'.join(json.dumps(row) for row in messages)+'\n')
+
+    def validate(self, report=None, rows=None):
+        return check.validate_pipeline_executable(self.out, report or self.report, rows or self.rows)
+
+    def owner(self):
+        sys.path.insert(0, str(check.ROOT/'scripts'))
+        import run_public_readiness_qualification
+        return run_public_readiness_qualification
+
+    def actual_shell_binding(self):
+        import shutil
+        from unittest.mock import patch
+        owner = self.owner()
+        self.binary.write_bytes(Path(shutil.which('sh')).resolve().read_bytes()); self.binary.chmod(0o700)
+        self.copy.unlink(); self.copy.parent.rmdir()
+        with patch.object(owner, 'ROOT', self.root):
+            return owner.bind_pipeline_executable(self.out/'logs/pipeline-build.log', self.binary, self.out)
+
+    def test_complete_observations_and_relocated_archive_verify_only_file_bindings(self):
+        self.assertEqual(self.validate(), self.binding)
+        import shutil
+        relocated = self.root/'relocated'; shutil.copytree(self.out, relocated)
+        self.assertEqual(check.validate_pipeline_executable(relocated, self.report, self.rows), self.binding)
+
+    def test_actual_retained_binary_bytes_and_size_are_required(self):
+        original = self.copy.read_bytes()
+        for data in (b'changed', original+b'suffix', b''):
+            self.copy.write_bytes(data)
+            with self.subTest(data=data), self.assertRaisesRegex(ValueError, 'retained executable bytes|bounded regular file'):
+                self.validate()
+        self.copy.write_bytes(original)
+        changed = copy.deepcopy(self.report); changed['pipeline_binary_sha256'] = '0'*64
+        with self.assertRaisesRegex(ValueError, 'retained hash/length'):
+            self.validate(changed)
+
+    def test_omitted_before_after_foreign_argv_and_failed_exit_reject(self):
+        name = 'pipeline-hot-legacy'
+        for field, value in [('before', None), ('after', None), ('launcher_pid', 0),
+                             ('launched_argv', ['different']), ('requested_argv', ['different'])]:
+            rows = copy.deepcopy(self.rows); rows[name]['pipeline_execution'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError): self.validate(rows=rows)
+        for field, value in [('returncode', 7), ('returncode', True), ('timed_out', True)]:
+            rows = copy.deepcopy(self.rows); rows[name][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError): self.validate(rows=rows)
+        rows = copy.deepcopy(self.rows); rows[name]['command'][0] = '/different/continuous_pipeline'
+        with self.assertRaisesRegex(ValueError, 'exact executable/output argv'): self.validate(rows=rows)
+
+    def test_case_observer_cannot_differ_or_hide_a_recorded_failure(self):
+        name = 'pipeline-hot-legacy'
+        rows = copy.deepcopy(self.rows); rows[name]['resource_observer']['sha256'] = '2'*64
+        with self.assertRaisesRegex(ValueError, 'observer binding/failure'): self.validate(rows=rows)
+        rows = copy.deepcopy(self.rows); rows[name]['resource_observer_error'] = 'retained observer failure'
+        with self.assertRaisesRegex(ValueError, 'observer binding/failure'): self.validate(rows=rows)
+        for field, value in [('observation', 'execution-attested'), ('sha256', 'bad'), ('identity', None)]:
+            report = copy.deepcopy(self.report); report['environment']['resource_observer'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError): self.validate(report)
+
+    def test_cargo_artifact_cannot_be_absent_duplicated_changed_or_failed(self):
+        for messages in ([], [self.artifact], [self.artifact, self.artifact, dict(reason='build-finished', success=True)],
+                         [self.artifact, dict(reason='build-finished', success=False)]):
+            self.write_build(messages)
+            with self.subTest(messages=messages), self.assertRaisesRegex(ValueError, 'Cargo artifact'):
+                self.validate()
+        changed = copy.deepcopy(self.artifact); changed['profile']['opt_level'] = '1'
+        self.write_build([changed, dict(reason='build-finished', success=True)])
+        report = copy.deepcopy(self.report); report['pipeline_executable']['cargo_artifact'] = changed
+        with self.assertRaisesRegex(ValueError, 'target/profile'): self.validate(report)
+
+    def test_malformed_cargo_target_profile_and_file_list_fail_closed(self):
+        from unittest.mock import patch
+        owner = self.owner()
+        for field, value in [('target', None), ('target', []), ('profile', None), ('profile', '3'),
+                             ('filenames', str(self.binary)), ('filenames', None), ('filenames', [None])]:
+            artifact = copy.deepcopy(self.artifact); artifact[field] = value
+            self.write_build([artifact, dict(reason='build-finished', success=True)])
+            report = copy.deepcopy(self.report); report['pipeline_executable']['cargo_artifact'] = artifact
+            with self.subTest(field=field, value=value):
+                with self.assertRaises(ValueError): self.validate(report)
+                with patch.object(owner, 'ROOT', self.root), self.assertRaisesRegex(ValueError, 'PIPELINE_CARGO_ARTIFACT'):
+                    owner.bind_pipeline_executable(self.out/'logs/pipeline-build.log', self.binary, self.out)
+
+    def test_v1_cannot_acquire_current_v2_or_execution_authentication(self):
+        (self.out/'manifest.json').write_text(json.dumps(dict(schema='trnm-public-readiness-evidence-v1')))
+        with self.assertRaisesRegex(ValueError, 'current execution requires v2'):
+            check.validate(self.root, self.out, tracked=False)
+        with self.assertRaisesRegex(ValueError, 'unsupported authority'):
+            check.scope_flags(dict(native_execution_authenticated=True))
+
+    def test_actual_collector_retains_bytes_and_rejects_later_changes(self):
+        from unittest.mock import patch
+        owner = self.owner(); self.copy.unlink(); self.copy.parent.rmdir()
+        with patch.object(owner, 'ROOT', self.root):
+            binding = owner.bind_pipeline_executable(self.out/'logs/pipeline-build.log', self.binary, self.out)
+        self.assertEqual(self.copy.read_bytes(), self.binary.read_bytes())
+        self.assertEqual(owner.observe_pipeline_executable(binding, self.out),
+                         dict(source=binding['initial'], retained=binding['retained']))
+        self.copy.write_bytes(b'changed private fixture')
+        with self.assertRaisesRegex(ValueError, 'RETAINED_COPY_CHANGED'):
+            owner.observe_pipeline_executable(binding, self.out)
+
+    def test_snapshot_rejects_symlink_fifo_and_oversized_regular_file(self):
+        owner = self.owner()
+        symlink = self.root/'alias'; symlink.symlink_to(self.binary)
+        fifo = self.root/'fifo'; os.mkfifo(fifo)
+        large = self.root/'oversized'
+        with large.open('wb') as stream: stream.truncate(owner.PIPELINE_BINARY_LIMIT+1)
+        for path in (symlink, fifo, large):
+            with self.subTest(path=path), self.assertRaises(ValueError): owner.snapshot_pipeline_file(path)
+            with self.subTest(path=path), self.assertRaises((OSError, ValueError)):
+                owner.sha(path, limit=owner.PIPELINE_BINARY_LIMIT)
+            with self.subTest(path=path), self.assertRaises((OSError, ValueError)):
+                check.hash_file(path, limit=check.PIPELINE_BINARY_LIMIT)
+
+    def test_manifest_stage_hashes_binary_as_bounded_stream_before_validation(self):
+        from unittest.mock import patch
+        owner = self.owner()
+        (self.out/'qualification.json').write_text('{}\n')
+        manifest = dict(files={path.relative_to(self.out).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+                               for path in self.out.rglob('*') if path.is_file()})
+        with patch.object(Path, 'read_bytes', side_effect=AssertionError('unbounded whole-file read')):
+            check.validate_artifacts(self.root, self.out, manifest, tracked=False)
+            self.assertEqual(owner.sha(self.copy, limit=owner.PIPELINE_BINARY_LIMIT), self.binding['retained']['sha256'])
+        with self.copy.open('wb') as stream: stream.truncate(owner.PIPELINE_BINARY_LIMIT+1)
+        with patch.object(Path, 'read_bytes', side_effect=AssertionError('unbounded whole-file read')):
+            with self.assertRaisesRegex(ValueError, 'bounded regular file'):
+                check.validate_artifacts(self.root, self.out, manifest, tracked=False)
+            with self.assertRaisesRegex(ValueError, 'BOUNDED_REGULAR_FILE'):
+                owner.sha(self.copy, limit=owner.PIPELINE_BINARY_LIMIT)
+
+    def test_actual_owner_child_failure_and_post_observation_failure_keep_exit(self):
+        import contextlib
+        import io
+        import signal
+        owner = self.owner()
+        from test_qualification_runtime import QualificationRuntimeTests
+        binding = self.actual_shell_binding()
+        harness = QualificationRuntimeTests()
+        cases = [('normal', 'exit 0', 0, False, False), ('nonzero', 'exit 7', 7, False, False),
+                 ('timeout', 'sleep 10', -signal.SIGKILL, True, False), ('post-failure', 'exit 0', 0, False, True)]
+        for name, script, code, timed_out, late_failure in cases:
+            records = []
+            execute = harness.owner_execute('run_public_readiness_qualification.py', self.out, records)
+            observe = owner.observe_pipeline_executable
+            if late_failure:
+                snapshot = observe(binding, self.out)
+                from unittest.mock import Mock
+                observe = Mock(side_effect=[snapshot, ValueError('controlled post-observation failure')])
+            execute.__globals__.update(observe_pipeline_executable=observe,
+                                       PIPELINE_OBSERVATION_SCOPE=owner.PIPELINE_OBSERVATION_SCOPE)
+            with contextlib.redirect_stdout(io.StringIO()):
+                if code or late_failure:
+                    with self.assertRaisesRegex(RuntimeError, 'QUALIFICATION_FAILED'):
+                        execute(name, [str(self.binary), '-c', script], timeout=0.1 if timed_out else 5,
+                                executable_binding=binding)
+                else:
+                    execute(name, [str(self.binary), '-c', 'exit 0'], executable_binding=binding)
+            self.assertEqual(len(records), 1)
+            self.assertEqual(records[0]['returncode'], code)
+            self.assertIs(records[0]['timed_out'], timed_out)
+            self.assertGreater(records[0]['pipeline_execution']['launcher_pid'], 0)
+            if late_failure: self.assertIn('error', records[0]['pipeline_execution'])
+
+    def test_actual_prelaunch_failures_retain_observations_without_inventing_exits(self):
+        import contextlib
+        import io
+        owner = self.owner()
+        from test_qualification_runtime import QualificationRuntimeTests
+        binding = self.actual_shell_binding()
+        harness = QualificationRuntimeTests()
+        for name, stage in [('missing-observer', 'OBSERVER_BEFORE'), ('missing-cwd', 'LAUNCH'), ('changed-copy', 'BEFORE')]:
+            records = []
+            execute = harness.owner_execute('run_public_readiness_qualification.py', self.out, records)
+            execute.__globals__.update(observe_pipeline_executable=owner.observe_pipeline_executable,
+                                       PIPELINE_OBSERVATION_SCOPE=owner.PIPELINE_OBSERVATION_SCOPE)
+            if name == 'missing-observer':
+                execute.__globals__['resource_observer'] = dict(execute.__globals__['resource_observer'],
+                                                               executable=str(self.root/'no-such-observer'))
+            elif name == 'missing-cwd':
+                execute.__globals__['ROOT'] = self.root/'no-such-working-directory'
+            else:
+                self.copy.write_bytes(b'changed private fixture')
+            marker = self.root/(name+'-started')
+            command = [str(self.binary), '-c', 'printf reached > "$1"', 'control', str(marker)]
+            with contextlib.redirect_stdout(io.StringIO()), self.assertRaisesRegex(RuntimeError, 'PIPELINE_'+stage):
+                execute(name, command, executable_binding=binding)
+            self.assertEqual(len(records), 1)
+            row = records[0]; execution = row['pipeline_execution']
+            self.assertFalse(marker.exists())
+            self.assertIsNone(row['returncode'])
+            self.assertFalse(row['timed_out'])
+            self.assertEqual(execution['requested_argv'], command)
+            self.assertIsNone(execution['launcher_pid'])
+            self.assertIsNone(execution['launched_argv'])
+            self.assertIsNone(execution['after'])
+            self.assertEqual(execution['failure_stage'], stage)
+            self.assertTrue(execution['error'])
+            if stage == 'BEFORE': self.assertIsNone(execution['before'])
+            else: self.assertEqual(execution['before'], dict(source=binding['initial'], retained=binding['retained']))
+            if stage == 'LAUNCH': self.assertEqual(execution['launch_attempted_argv'][-len(command):], command)
+
+    def test_started_wait_and_cleanup_errors_retain_real_or_unknown_exit(self):
+        import contextlib
+        import io
+        from unittest.mock import patch
+        owner = self.owner()
+        from test_qualification_runtime import QualificationRuntimeTests
+        binding = self.actual_shell_binding()
+        harness = QualificationRuntimeTests()
+        real_popen = subprocess.Popen
+        for name, fail_poll, unknown_exit in [('wait-error', False, False), ('cleanup-error', True, False),
+                                               ('unknown-exit', False, True)]:
+            records, children = [], []
+            execute = harness.owner_execute('run_public_readiness_qualification.py', self.out, records)
+            execute.__globals__.update(observe_pipeline_executable=owner.observe_pipeline_executable,
+                                       PIPELINE_OBSERVATION_SCOPE=owner.PIPELINE_OBSERVATION_SCOPE)
+            class InterruptedObservation:
+                def __init__(self, process): self.process, self.pid, self.waits = process, process.pid, 0
+                def wait(self, timeout=None):
+                    self.waits += 1
+                    if self.waits == 1:
+                        # The harmless child is real and reaped. Inject only a
+                        # failed delivery of this wait result to the owner.
+                        self.process.wait(timeout=timeout)
+                        raise OSError('controlled wait observation failure')
+                    if unknown_exit: raise OSError('controlled cleanup wait failure')
+                    return self.process.wait(timeout=timeout)
+                def poll(self):
+                    if fail_poll: raise OSError('controlled cleanup poll failure')
+                    return self.process.poll()
+            def launch(*args, **kwargs):
+                process = real_popen(*args, **kwargs); children.append(process)
+                return InterruptedObservation(process)
+            try:
+                with patch.object(subprocess, 'Popen', side_effect=launch), contextlib.redirect_stdout(io.StringIO()), \
+                        self.assertRaisesRegex(RuntimeError, 'PIPELINE_WAIT_OR_CLEANUP'):
+                    execute(name, [str(self.binary), '-c', 'exit 0'], executable_binding=binding)
+            finally:
+                for process in children: process.wait(timeout=5)
+            self.assertEqual(len(records), 1)
+            row = records[0]; execution = row['pipeline_execution']
+            self.assertEqual(row['returncode'], None if unknown_exit else 0)
+            self.assertFalse(row['timed_out'])
+            self.assertGreater(execution['launcher_pid'], 0)
+            self.assertEqual(execution['failure_stage'], 'WAIT_OR_CLEANUP')
+            self.assertIn('controlled wait observation failure', execution['error'])
+            self.assertEqual(bool(execution['cleanup_errors']), fail_poll or unknown_exit)
+            self.assertEqual(execution['after'], dict(source=binding['initial'], retained=binding['retained']))
+
+
 if __name__ == '__main__': unittest.main(verbosity=2)
