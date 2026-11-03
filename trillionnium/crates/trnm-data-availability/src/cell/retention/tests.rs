@@ -1056,6 +1056,127 @@ fn expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successo
 }
 
 #[test]
+fn retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    let before = store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    let mut other_writer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let held = other_writer
+        .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
+    let (mut store, result, finished_while_locked) = thread::scope(|scope| {
+        let (done, complete) = std::sync::mpsc::channel();
+        let worker = scope.spawn(move || {
+            let end = Instant::now() + Duration::from_millis(100);
+            let result = store.retire([1; 32], 10, None, end);
+            let _ = done.send(());
+            (store, result)
+        });
+        let finished = complete.recv_timeout(Duration::from_secs(2)).is_ok();
+        held.rollback().unwrap();
+        let (store, result) = worker.join().unwrap();
+        (store, result, finished)
+    });
+    assert!(
+        finished_while_locked,
+        "retirement renewed its writer-wait deadline"
+    );
+    assert!(result.is_err());
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    assert_eq!(store.reserve(duty.clone()).unwrap(), before);
+    assert!(store.reserve(contract(2, &manifest)).is_err());
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(store.verify(duty.operation, deadline()).unwrap(), before);
+    // A separately requested, in-deadline retirement still succeeds and makes
+    // the original physical slot available, without changing the old identity.
+    assert!(
+        store
+            .retire(duty.operation, 10, None, deadline())
+            .unwrap()
+            .retired
+    );
+    assert!(store.reserve(contract(2, &manifest)).is_ok());
+}
+
+#[test]
+fn retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    let before = store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    let reader = Connection::open(path.join("retention.sqlite")).unwrap();
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    let mut observed_committed = false;
+    let result = store.retire_controlled(duty.operation, 10, None, deadline(), &mut || {
+        let status: u8 = reader.query_row(
+            "SELECT status FROM obligations WHERE operation=?1",
+            [duty.operation.as_slice()],
+            |row| row.get(0),
+        )?;
+        if status == 2 {
+            observed_committed = true;
+            Err(CellErrorV1::Invalid(
+                "test retirement completion observation cancelled",
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    assert!(observed_committed);
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid(
+            "test retirement completion observation cancelled"
+        ))
+    ));
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    let mut expected = before;
+    expected.acknowledged = false;
+    expected.retired = true;
+    assert_eq!(store.reserve(duty.clone()).unwrap(), expected);
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(
+        store.retire(duty.operation, 10, None, deadline()).unwrap(),
+        expected
+    );
+    assert_eq!(store.reserve(duty).unwrap(), expected);
+}
+
+#[test]
 fn sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen() {
     let dir = tempfile::tempdir().unwrap();
     let (cache, manifest, _) = material(dir.path(), 5000);

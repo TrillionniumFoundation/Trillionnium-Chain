@@ -41,45 +41,9 @@
     }
   ],
   "base_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "base_commit_scope": "Original reproduced locked-fetch source; the concurrent integration target is identified below.",
   "base_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
   "candidate_branch": "fix/chain-fuzz-locked-graph-20261103-gpt6",
-  "candidate_payload_inputs": {
-    "config/pon/pq-cross-branch-corpus-v1.json": {
-      "bytes": 68081,
-      "git_blob": "9ef6b91f1603e78fe8b2c563e0f95738b9f77aca",
-      "sha256": "395aa7707ad75608889ca4ba8319fa9fb1f360012d5965bfde23afc361667d6a"
-    },
-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
-      "bytes": 389201,
-      "git_blob": "155fe2b13f7c5459532fef98b19747dedb6afbe1",
-      "sha256": "845cd314428ee5058db4a6f165012c3f70ae75fd294f5e39a1f4c8a47d5c1336"
-    },
-    "tests/fuzz/Cargo.lock": {
-      "bytes": 33374,
-      "git_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
-      "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
-    },
-    "tests/fuzz/Cargo.toml": {
-      "bytes": 1122,
-      "git_blob": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
-      "sha256": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
-    },
-    "trillionnium/Cargo.lock": {
-      "bytes": 39745,
-      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519",
-      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
-    },
-    "trillionnium/Cargo.toml": {
-      "bytes": 2204,
-      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
-      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
-    },
-    "trillionnium/crates/trnm-data-availability/Cargo.toml": {
-      "bytes": 1179,
-      "git_blob": "3e553781cf89fcd4dc9e7b04e9ac236d722673fd",
-      "sha256": "81f73d9ffb4091abc54962fe22cf8ecd448fa748efd0c19cba5f3e8db93501a1"
-    }
-  },
   "cargo_regeneration": {
     "changed_packages": [
       {
@@ -141,6 +105,30 @@
     "full_local_checklist_sha256": "fa579be57975187c3054834214a7b37e6b8f514e7279793b4fed764511a05df5",
     "result": "PASS",
     "scope": "all relative links in the sole changed Markdown file; exact base Git tree plus candidate files, not full sparse-worktree repository checker"
+  },
+  "concurrent_integration": {
+    "method": "Normal two-parent merge, preserving all 25 incoming changed files; append both independent development-plan sections and retain all incoming corpus pins. No force update.",
+    "payload_inputs_excluding_this_record": {
+      "config/pon/pq-cross-branch-corpus-v1.json": {
+        "bytes": 68081,
+        "git_blob": "37a59c5bcf464c0278663b93c3fd3048f832b0eb",
+        "sha256": "f56642f39763022c20c2990e01f2886cfa189c606e5f9f47c98f06425c9b8fbc"
+      },
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+        "bytes": 391953,
+        "git_blob": "75366ad9c6e1ebbe32b8eabc5f35030bff5f2ab3",
+        "sha256": "960883147243e43e452003f01ba2943fe5da807e714a8ce315bfb0bdaeb99ac7"
+      },
+      "tests/fuzz/Cargo.lock": {
+        "bytes": 33374,
+        "git_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+        "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+      }
+    },
+    "previous_published_commit": "45295a128cc455b2ef3cedc22e81003803e58a20",
+    "runtime_delta_from_upstream": [],
+    "upstream_commit": "f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d",
+    "upstream_runtime_changes": "Retained exactly from f66f7f7; this lockfile-only change does not independently qualify those runtime changes."
   },
   "global_assertions": {
     "allow_legacy_fallback": false,
@@ -241,6 +229,45 @@
     "result": "no_blocking_finding",
     "scope": "Four-file source diff, parsed 146-package before/after lock graph, one blob pin, and evidence claim boundaries; read-only; no tests rerun by reviewer."
   },
+  "initial_candidate_payload_inputs": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 68081,
+      "git_blob": "9ef6b91f1603e78fe8b2c563e0f95738b9f77aca",
+      "sha256": "395aa7707ad75608889ca4ba8319fa9fb1f360012d5965bfde23afc361667d6a"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 389201,
+      "git_blob": "155fe2b13f7c5459532fef98b19747dedb6afbe1",
+      "sha256": "845cd314428ee5058db4a6f165012c3f70ae75fd294f5e39a1f4c8a47d5c1336"
+    },
+    "tests/fuzz/Cargo.lock": {
+      "bytes": 33374,
+      "git_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+      "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+    },
+    "tests/fuzz/Cargo.toml": {
+      "bytes": 1122,
+      "git_blob": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
+      "sha256": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 39745,
+      "git_blob": "7a298d02ad14470a8c45094b4791c24109fc4519",
+      "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+      "bytes": 1179,
+      "git_blob": "3e553781cf89fcd4dc9e7b04e9ac236d722673fd",
+      "sha256": "81f73d9ffb4091abc54962fe22cf8ecd448fa748efd0c19cba5f3e8db93501a1"
+    }
+  },
+  "initial_published_commit": "45295a128cc455b2ef3cedc22e81003803e58a20",
+  "initial_published_tree": "ecf97b37c5231708c65f68634bb05ad01ca4505c",
   "locked_command_results": [
     {
       "command": [

@@ -4815,6 +4815,48 @@ directories. Preliminary local tests do not replace exact committed-source,
 actual prospective-merge, x64/ARM, PQ witness or original Host results. Public
 readiness, whole-chain post-quantum qualification and activation remain HOLD.
 
+
+### 2026-11-03 remaining-blocker continuation with original gates retained
+
+Preserve concurrent parent `469c4d4bb36efb37045d968f35f83cb2c1771933`, including
+its exact account-graph reuse, final writer fences, corrected no-hit reorg
+fixture and all twenty incoming files. The [blocker continuation evidence](../../evidence/pon-blocker-continuation-20261103/README.md)
+keeps independent component, source and original-service conclusions separate.
+
+Cell retirement now carries its original absolute deadline through successor
+verification, writer contention, transaction readback, commit and final readback.
+A pre-commit refusal rolls back this retirement update; a post-commit refusal
+keeps the retired identity for exact reconciliation. Original status, coverage,
+arena and non-refundable byte accounting remain required. Twenty-seven release
+retention controls cover ordinary contention and observed post-commit cancellation.
+W1 failed-process manifests gain bounded diagnostic metadata only; the original
+validation functions, four-second window, selectors and failing exit remain.
+Thirteen static/mock controls cannot promote a positive-looking failure summary.
+
+Reject the prepared-Host-path/current-limit-text candidate: the fixed sixteen
+ABBA rounds completed, but empirical p95 CPU ratio 1.417139 exceeds the declared
+1.05 limit despite median 0.902946. Reject ordered sibling SQL before runtime
+qualification because SQLite may execute the left arm before the original right
+verdict. Preserve both patches and restore their production paths exactly.
+
+Read back the existing exact-1b0 large F0 baseline with all three planned rounds,
+including two missed rounds, six successful imports and one deadline failure;
+zero confirmations remains zero. Its 5.022116584 s checkpoint CPU and
+5.833386418 s importer CPU overlap; neither is added to the account-graph span.
+The historical approximately 20.73 primitive ratio is not remeasured here.
+
+Align the existing Draft #688 review target with main through ordinary PR
+metadata, retaining main's sole exclusive content change (an empty README).
+Align the detailed-contract byte check with that exact zero-byte file; preserve
+its initial stale-newline failure and the incomplete-packaging link failure.
+The prior feature target lacked an observed default CodeQL producer for the
+exact source; no export timeout is a zero-finding verdict. Preserve old
+head/base/merge receipts and require fresh analyses after the normal source
+synchronize event. No protection, permission, scanning configuration, merge or
+activation is changed. Original public-service, cheapest-work, heterogeneous
+hardware, DAA/quantum, independent-operator, model, custody, economics and
+whole-chain PQ qualifications remain HOLD.
+
 ### 2026-11-03 retain the exact fuzz dependency graph in locked CI
 
 The `469c4d4bb36efb37045d968f35f83cb2c1771933` integration source retains

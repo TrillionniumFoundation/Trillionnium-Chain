@@ -234,6 +234,65 @@ def validate_execution(process: dict, log: Path, selector: str, report: Path) ->
     return {'named_execution': named, 'report': read}
 
 
+def failure_diagnostic(process: dict, selector: str, report: Path) -> dict:
+    """Bounded, untrusted metadata only; never an alternative acceptance path.
+
+    Preserve the actual child return code, not a wrapper's effective exit code.
+    Copy no proof/request fields and do not reconstruct or validate work. The
+    final pressure phase owns the last replay; missing pressure observations
+    cannot fall back to a successful baseline or an earlier well-shaped row.
+    """
+    returned = process.get('process_exit_code')
+    result = {'schema': 'trnm-w1-fresh-failure-diagnostic-v1',
+              'native_returncode': returned if type(returned) is int
+              and -(1 << 31) <= returned < 1 << 31 else 'unknown',
+              'finite_target_met': 'unknown', 'last_history_replay': 'unknown',
+              'acceptance_authority': False}
+    expected_schema = ('public-v3-signed-confirmation-pressure-v1' if selector == ORIGINAL
+                       else FRESH_SCHEMA if selector == FRESH else None)
+    try:
+        doc, _ = load_report(report)  # Existing regular-file, byte and JSON bounds.
+        if expected_schema is None or doc.get('schema') != expected_schema:
+            return result
+        finite = doc.get('finite_target_met')
+        if type(finite) is bool:
+            result['finite_target_met'] = finite
+        phases = doc.get('phases')
+        if (type(phases) is not list or len(phases) != 2
+                or any(type(phase) is not dict for phase in phases)
+                or [phase.get('mode') for phase in phases]
+                != ['attack-free-baseline', 'from-zero-pressure']):
+            return result
+        replays = phases[-1].get('independent_history_page_replay')
+        if type(replays) is not list or not 1 <= len(replays) <= 16:
+            return result
+        previous = -1
+        last = None
+        for row in replays:
+            if type(row) is not dict:
+                return result
+            index, accepted, error = (row.get('history_call_index'),
+                                      row.get('replay_accepted'), row.get('replay_error'))
+            if (type(index) is not int or not previous < index < 16
+                    or type(accepted) is not bool or 'replay_error' not in row):
+                return result
+            # Only short native error identifiers can enter the manifest. An
+            # arbitrary error message might contain an encoded request/proof.
+            if (accepted and error is not None) or (not accepted and (
+                    type(error) is not str or len(error) > 96
+                    or re.fullmatch(r'(?:PUBLIC|HISTORY|HOST|WORK)_[A-Z0-9_]+', error) is None)):
+                return result
+            previous = index
+            last = {'phase': 'from-zero-pressure', 'history_call_index': index,
+                    'replay_accepted': accepted, 'replay_error': error}
+        result['last_history_replay'] = last
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError):
+        # Optional diagnosis cannot replace the failure already recorded by
+        # validate_execution, including missing or malformed report bytes.
+        pass
+    return result
+
+
 def run(out: Path) -> dict:
     require(out.is_absolute() and out.resolve() == out and not out.is_relative_to(ci.ROOT),
             'OUTPUT_MUST_BE_CANONICAL_OUTSIDE_CHECKOUT')
@@ -280,6 +339,7 @@ def run(out: Path) -> dict:
             except (OSError, ValueError, TypeError, KeyError, UnicodeError) as error:
                 row['failure'] = str(error)
                 result['failures'].append(selector + ': ' + str(error))
+                row['failure_diagnostic'] = failure_diagnostic(process, selector, report)
             native.save_manifest(out, result)
         result['execution_finished'] = True
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:

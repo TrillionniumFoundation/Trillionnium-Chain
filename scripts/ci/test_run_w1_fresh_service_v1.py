@@ -386,5 +386,195 @@ class FreshRefusalControls(unittest.TestCase):
                     host.bind_prepared_execution(prepared, out)
 
 
+class FreshFailureDiagnostics(unittest.TestCase):
+    """Static metadata fixtures and mocked owners; no work construction/execution."""
+
+    @staticmethod
+    def report(selector=fresh.FRESH):
+        return dict(schema=('public-v3-signed-confirmation-pressure-v1'
+                            if selector == fresh.ORIGINAL else fresh.FRESH_SCHEMA),
+                    finite_target_met=False, requested_window_ns=4_000_000_000,
+                    attack_workers=16, per_worker_attempt_cap=1024,
+                    phases=[dict(mode='attack-free-baseline', independent_history_page_replay=[]),
+                            dict(mode='from-zero-pressure', independent_history_page_replay=[
+                                dict(history_call_index=0, replay_accepted=True, replay_error=None),
+                                dict(history_call_index=1, replay_accepted=False,
+                                     replay_error='PUBLIC_REQUEST_DEADLINE')])])
+
+    def diagnose(self, doc, observed=None):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(doc))
+            return fresh.failure_diagnostic(observed or process(), fresh.FRESH, path)
+
+    def test_only_bounded_metadata_and_actual_child_returncode_are_retained(self):
+        doc = self.report()
+        doc['proof'] = 'never-copy-proof-or-request-material'
+        doc['phases'][1]['independent_history_page_replay'][-1]['request'] = doc['proof']
+        observed = dict(process(), exit_code=1, process_exit_code=101)
+        result = self.diagnose(doc, observed)
+        self.assertEqual(result, dict(schema='trnm-w1-fresh-failure-diagnostic-v1',
+            native_returncode=101, finite_target_met=False, acceptance_authority=False,
+            last_history_replay=dict(phase='from-zero-pressure', history_call_index=1,
+                replay_accepted=False, replay_error='PUBLIC_REQUEST_DEADLINE')))
+        encoded = json.dumps(result)
+        self.assertNotIn(doc['proof'], encoded)
+        self.assertLess(len(encoded), 512)
+
+    def test_unknown_actual_returncode_never_borrows_the_effective_exit_code(self):
+        for code in (None, True, '101', 1 << 40):
+            with self.subTest(code=code):
+                result = self.diagnose(self.report(), dict(process(), process_exit_code=code))
+                self.assertEqual(result['native_returncode'], 'unknown')
+        observed = process()
+        del observed['process_exit_code']
+        self.assertEqual(self.diagnose(self.report(), observed)['native_returncode'], 'unknown')
+        self.assertEqual(self.diagnose(self.report(), dict(process(), process_exit_code=-9))
+                         ['native_returncode'], -9)
+
+    def test_missing_malformed_nonfinite_and_wrong_schema_reports_remain_unknown(self):
+        cases = [None, b'{', b'[]', b'\xff', b'{"finite_target_met":NaN}',
+                 b'{"schema":"one","schema":"two"}',
+                 json.dumps(dict(self.report(), schema='other-report')).encode()]
+        for raw in cases:
+            with self.subTest(raw=raw), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'report.json'
+                if raw is not None:
+                    path.write_bytes(raw)
+                result = fresh.failure_diagnostic(process(), fresh.FRESH, path)
+                self.assertEqual(result['finite_target_met'], 'unknown')
+                self.assertEqual(result['last_history_replay'], 'unknown')
+                self.assertFalse(result['acceptance_authority'])
+        for error in (OSError('unreadable'), RecursionError('malformed depth')):
+            with self.subTest(error=type(error)), patch.object(fresh, 'load_report', side_effect=error):
+                result = fresh.failure_diagnostic(process(), fresh.FRESH, Path('unused'))
+                self.assertEqual(result['last_history_replay'], 'unknown')
+
+    def test_report_size_and_symlink_bounds_apply_without_a_new_reader(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_bytes(b' ' * 65)
+            with patch.object(fresh.native, 'REPORT_LIMIT', 64):
+                self.assertEqual(fresh.failure_diagnostic(process(), fresh.FRESH, path)
+                                 ['finite_target_met'], 'unknown')
+            path.write_text(json.dumps(self.report()))
+            alias = path.with_name('alias.json')
+            alias.symlink_to(path)
+            self.assertEqual(fresh.failure_diagnostic(process(), fresh.FRESH, alias)
+                             ['last_history_replay'], 'unknown')
+
+    def test_malformed_last_replay_cannot_fall_back_to_an_earlier_row_or_baseline(self):
+        changes = [
+            lambda d: d.update(phases=[]),
+            lambda d: d['phases'][1].update(mode='unreviewed-phase'),
+            lambda d: d['phases'][1].update(independent_history_page_replay=[]),
+            lambda d: d['phases'][1].update(independent_history_page_replay={}),
+            lambda d: d['phases'][1]['independent_history_page_replay'].extend([{}] * 15),
+            lambda d: d['phases'][1]['independent_history_page_replay'].append(None),
+        ]
+        row_changes = [dict(history_call_index=True), dict(history_call_index=-1),
+                       dict(history_call_index=16), dict(history_call_index=0),
+                       dict(replay_accepted=0), dict(replay_error=None),
+                       dict(replay_error='PUBLIC_' + 'A' * 96),
+                       dict(replay_error='PUBLIC_ERROR {"proof":"must-not-copy"}'),
+                       dict(replay_error='ab' * 32), dict(replay_accepted=True)]
+        for change in row_changes:
+            changes.append(lambda d, change=change: d['phases'][1]
+                           ['independent_history_page_replay'][-1].update(change))
+        changes.append(lambda d: d['phases'][1]['independent_history_page_replay'][-1]
+                       .pop('replay_error'))
+        for index, change in enumerate(changes):
+            doc = self.report()
+            doc['phases'][0]['independent_history_page_replay'] = [
+                dict(history_call_index=0, replay_accepted=True, replay_error=None)]
+            change(doc)
+            with self.subTest(index=index):
+                self.assertEqual(self.diagnose(doc)['last_history_replay'], 'unknown')
+        for finite in (None, 0, 'false'):
+            with self.subTest(finite=finite):
+                self.assertEqual(self.diagnose(dict(self.report(), finite_target_met=finite))
+                                 ['finite_target_met'], 'unknown')
+
+    def test_successful_last_replay_can_explain_a_later_failed_business_target(self):
+        doc = self.report()
+        doc['phases'][1]['independent_history_page_replay'].pop()
+        result = self.diagnose(doc)
+        self.assertFalse(result['finite_target_met'])
+        self.assertEqual(result['last_history_replay']['history_call_index'], 0)
+        self.assertIsNone(result['last_history_replay']['replay_error'])
+        self.assertFalse(result['acceptance_authority'])
+
+    def test_diagnostic_cannot_change_zero_exit_failed_report_validation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log, report = root / 'test.log', root / 'report.json'
+            log.write_text(passing_log(fresh.FRESH))
+            for raw in (None, b'{', json.dumps(self.report()).encode()):
+                with self.subTest(raw=raw):
+                    if report.exists():
+                        report.unlink()
+                    if raw is not None:
+                        report.write_bytes(raw)
+                    with self.assertRaises(ValueError) as before:
+                        fresh.validate_execution(process(), log, fresh.FRESH, report)
+                    fresh.failure_diagnostic(process(), fresh.FRESH, report)
+                    with self.assertRaises(ValueError) as after:
+                        fresh.validate_execution(process(), log, fresh.FRESH, report)
+                    self.assertEqual(str(before.exception), str(after.exception))
+
+    def test_failure_manifest_keeps_original_verdicts_budgets_and_execution_count(self):
+        for kind in ('missing', 'malformed', 'failed', 'positive-summary'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                binary = base / 'synthetic-never-executed-native'
+                binary.write_bytes(b'static fixture; no native execution')
+
+                def observed(command, log, **kwargs):
+                    log.write_text('synthetic build control\n')
+                    if command[0] != str(binary):
+                        return process()
+                    selector = command[1]
+                    log.write_text(f'running 1 test\ntest {selector} ... FAILED\n')
+                    key = ('TRNM_PUBLIC_V3_CONFIRMATION_DIR' if selector == fresh.ORIGINAL
+                           else 'TRNM_PUBLIC_V3_FRESH_CONFIRMATION_DIR')
+                    folder = Path(kwargs['env'][key])
+                    folder.mkdir()
+                    if kind != 'missing':
+                        doc = self.report(selector)
+                        doc['finite_target_met'] = kind == 'positive-summary'
+                        (folder / 'report.json').write_text('{' if kind == 'malformed'
+                                                          else json.dumps(doc))
+                    return dict(process(), exit_code=101, process_exit_code=101)
+
+                with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true',
+                                            'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}), \
+                        patch.object(fresh.native, 'source_identity', return_value={'commit': 'a' * 40}), \
+                        patch.object(fresh.native, 'select_binary', return_value=binary), \
+                        patch.object(fresh.ci, 'run', side_effect=observed) as runner:
+                    out = base / 'observations'
+                    result = fresh.run(out)
+                self.assertEqual(runner.call_count, 3)  # Existing build plus two named calls only.
+                self.assertFalse(result['passed'])
+                self.assertFalse(result['all_named_tests_passed'])
+                self.assertTrue(result['execution_finished'])
+                self.assertEqual(result['requested_window_ns'], 4_000_000_000)
+                self.assertEqual(result['attack_workers'], 16)
+                self.assertEqual(result['failures'], [selector + ': FRESH_NATIVE_PROCESS_REQUIRED'
+                                                     for selector in fresh.SELECTORS])
+                for row in result['runs']:
+                    self.assertFalse(row['passed'])
+                    self.assertEqual(row['failure'], 'FRESH_NATIVE_PROCESS_REQUIRED')
+                    diagnostic = row['failure_diagnostic']
+                    self.assertEqual(diagnostic['native_returncode'], 101)
+                    self.assertFalse(diagnostic['acceptance_authority'])
+                    self.assertEqual(diagnostic['finite_target_met'],
+                                     'unknown' if kind in ('missing', 'malformed')
+                                     else kind == 'positive-summary')
+                for key in ('independent_wan_accepted', 'work_hardness_accepted',
+                            'production_activation'):
+                    self.assertFalse(result[key])
+                self.assertEqual(json.loads((out / 'manifest.json').read_text()), result)
+
+
 if __name__ == '__main__':
     unittest.main()
