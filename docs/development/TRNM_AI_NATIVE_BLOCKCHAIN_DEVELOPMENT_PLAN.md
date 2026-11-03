@@ -1614,6 +1614,17 @@ scores do not change chainwork. Earlier failures and zero rewards remain retaine
 | P2 errors | [Typed local errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) separate local identity/cause and actual retained-data provenance from human text and authenticated remote refusal. Real retained header/KV/reorg/replay failures stop the owner while peer lookalikes, cancellation and clock deferral retain their original behavior. Public-client recovery and failed-phase accounting use typed local stages while retaining exact JSON labels. Completed local replay rows missing retained responses and failed conditional journal writes now carry local-structure origin; caller frame/ACK refusals retain typed nonfatal causes. | Remaining formatted legacy diagnostics still explicitly remain Unclassified; each added origin boundary requires concrete native tests. |
 | P2 CI/docs | [Execution contract](../architecture/CI_EXECUTION_CONTRACT.md) retains the five required head names and exact prospective-merge lanes. Existing workspace runs export actual native SQLite, source/target migration, signed AAM1, complete obligation ranges and raw zero-prefix fixtures for independent readers. The storage reader reconstructs every retained ancestry row from parent walks. Each Rust lane explicitly runs the authenticated65,536-key capacity fixture and paired complete-account verification observation in release; their ignored markers in ordinary debug tests cannot substitute for these required executions. Coverage-guided targets include actual compact/range execution and three W1 kernels. The same two cost jobs and comparison retain four producer suites plus the separate legal/late-rejection suite, bound to one source/run/attempt and real architecture. | Hosted jobs must actually execute on the final source. Local preflight, source wiring, finite fuzz and artifact consistency do not establish independent operators, worst-case complexity, security acceptance or production qualification. |
 
+The ordinary authenticated post-write readback now permits its original four
+nominated roles to share an exactly identical account graph within one unchanged
+writer. Every target Record, delta and complete State is still verified before
+the entire node/digest/count/balance Root is compared. Current nonce, account
+existence, working-state and liability checks, callback cancellation and final
+publication fences remain. This scoped duplicate-work reduction is described in
+the [native storage boundary](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md).
+It does not remove the remaining full-State/history costs or qualify the original
+four-second hostile-service, thirty-second business, fixed-touched-set growth or
+independent WAN gates; those require their own actual-source observations.
+
 The account archive and model-window history are explicit research/offline boundaries in the
 applicability registry, not new active consensus revisions. The archive preserves every
 account nonce and fails on unavailable data. Its original checked execution wrapper requires

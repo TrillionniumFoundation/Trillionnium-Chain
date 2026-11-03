@@ -88,6 +88,64 @@ fn active_child() -> Fixture {
     f
 }
 
+fn active_child_with_transfer() -> Fixture {
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::Envelope;
+
+    let mut f = fixture(true);
+    let mut payload = development_public(1).unwrap().to_vec();
+    payload.extend(1_u64.to_le_bytes());
+    let mut transaction = Envelope {
+        network: f.node.settings.network(),
+        sender: development_public(0).unwrap(),
+        nonce: 1,
+        expiry: 2000,
+        fee_limit: 1_000_000,
+        tag: 1,
+        payload,
+        signature: [0; 64],
+    };
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
+    transaction.signature = hex::decode(sign_hex(&key, &transaction.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    let genesis = f.node.settings.genesis();
+    let block = f
+        .node
+        .make_consensus_maintenance(
+            genesis,
+            vec![transaction.encode().unwrap()],
+            development_public(7).unwrap(),
+            11,
+            4096,
+        )
+        .unwrap();
+    let id = f.node.admit(&block, 100_000).unwrap();
+    f.node.activate_observed(id, 100_000).unwrap();
+    assert_ne!(id, genesis);
+    let accounts = |block: Hash| {
+        let bytes: Vec<u8> = f
+            .node
+            .db
+            .query_row(
+                "SELECT data FROM native_state_commitments WHERE block=?",
+                [block.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        serde_json::from_slice::<native_authenticated::Record>(&bytes)
+            .unwrap()
+            .accounts
+    };
+    // Keep a real no-hit tail after cross-Record reuse was introduced: an
+    // empty maintenance child would share genesis's account graph and consume
+    // a hit even when the closure below has not verified its first graph.
+    assert_ne!(accounts(id), accounts(genesis));
+    f
+}
+
 fn tail(
     node: &Node,
     tip: Hash,
@@ -471,7 +529,7 @@ fn no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_so
 #[test]
 fn final_callback_writes_fail_with_or_without_a_consumed_graph_hit() {
     for first_graph in [false, true] {
-        let f = active_child();
+        let f = active_child_with_transfer();
         let (tip, generation, state) = f.node.read_active().unwrap();
         let mut callbacks = 0;
         let before = graphs(&f.node);

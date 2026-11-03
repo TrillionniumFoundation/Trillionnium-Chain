@@ -1,6 +1,79 @@
 use super::*;
 
 #[test]
+fn cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing() {
+    let (f, child, state) = working_only_child();
+    let genesis = f.node.settings.genesis();
+    f.node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = capture(&f.node, child);
+    verify(
+        &f.node,
+        genesis,
+        &f.node.settings.initial,
+        &mut scope,
+        &mut || Ok(()),
+    )
+    .unwrap();
+    let mut callbacks = 0;
+    verify(&f.node, child, &state, &mut scope, &mut || {
+        callbacks += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert_eq!(scope.hits, 1);
+    for cancel_at in [1, callbacks] {
+        let mut current = 0;
+        let error = verify(&f.node, child, &state, &mut scope, &mut || {
+            current += 1;
+            if current == cancel_at {
+                Err("READBACK_TEST_CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "READBACK_TEST_CANCELLED");
+        assert_eq!(scope.hits, 1);
+    }
+    drop(scope);
+    let mut scope = capture(&f.node, child);
+    verify(
+        &f.node,
+        genesis,
+        &f.node.settings.initial,
+        &mut scope,
+        &mut || Ok(()),
+    )
+    .unwrap();
+    assert!(!scope.consumed);
+    let root = load_observed(&f.node.db, child, None)
+        .unwrap()
+        .accounts
+        .node
+        .unwrap();
+    let mut current = 0;
+    let before = graphs(&f.node);
+    let error = verify(&f.node, child, &state, &mut scope, &mut || {
+        current += 1;
+        if current == callbacks {
+            f.node.db.execute(
+                "UPDATE archive_nodes SET data=x'00' WHERE id=?",
+                [root.as_slice()],
+            )?;
+        }
+        Ok(())
+    })
+    .unwrap_err();
+    assert!(current >= callbacks);
+    assert!(error.to_string().starts_with("NATIVE_ACCOUNT_STORE"));
+    assert_eq!(graphs(&f.node) - before, 1);
+    assert_eq!(scope.hits, 0);
+    assert!(!scope.enabled);
+    assert!(!scope.consumed);
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
 fn four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt() {
     let mut f = fixture();
     let mut ids = vec![f.node.settings.genesis()];
@@ -42,6 +115,10 @@ fn four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt() {
         .unwrap();
         assert_eq!(graphs(&f.node), before);
     }
+    assert_eq!(
+        load_observed(&f.node.db, ids[1], None).unwrap().accounts,
+        load_observed(&f.node.db, ids[4], None).unwrap().accounts
+    );
     let before = graphs(&f.node);
     for _ in 0..2 {
         verify(&f.node, ids[1], &states[1], &mut scope, &mut || Ok(())).unwrap();

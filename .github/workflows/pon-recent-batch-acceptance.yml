@@ -160,7 +160,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 75 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 79 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -169,9 +169,9 @@ jobs:
           names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
           summaries = [line for line in lines if line.startswith('test result:')]
           post_write = [name for name in names if name.startswith('store::native_authenticated::post_write_readback::tests::')]
-          if (len(names) != 75 or len(set(names)) != 75 or len(post_write) != 15
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 75 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 60 retained and 15 post-write executions in one log')
+          if (len(names) != 79 or len(set(names)) != 79 or len(post_write) != 19
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 79 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires 60 retained and 19 post-write executions in one log')
           PYLOG
             fi
           done

@@ -82,6 +82,229 @@ fn mint_genesis(node: &Node) -> PostWriteReadback<'_> {
     scope
 }
 
+fn working_only_child() -> (Fixture, Hash, State) {
+    let mut f = fixture();
+    let genesis = f.node.settings.genesis();
+    let packet = f
+        .node
+        .make_consensus_maintenance(
+            genesis,
+            vec![],
+            crate::development_public(7).unwrap(),
+            11,
+            4096,
+        )
+        .unwrap();
+    let child = f.node.admit(&packet, 100_000).unwrap();
+    let state = f.node.state_at(child).unwrap();
+    let parent_record = load_observed(&f.node.db, genesis, None).unwrap();
+    let child_record = load_observed(&f.node.db, child, None).unwrap();
+    assert_ne!(child_record.state, parent_record.state);
+    assert_eq!(child_record.accounts, parent_record.accounts);
+    assert_ne!(state, f.node.settings.initial);
+    (f, child, state)
+}
+
+#[test]
+fn different_current_records_share_only_the_exact_account_graph_in_one_writer() {
+    let (f, child, state) = working_only_child();
+    let genesis = f.node.settings.genesis();
+    f.node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = capture(&f.node, child);
+    verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap();
+    assert_eq!(scope.ids, [Some(child), Some(genesis), Some(genesis), None]);
+    assert!(scope.graphs[1].is_none());
+    assert!(scope.graphs[2].is_none());
+    let parent_record = load_observed(&f.node.db, genesis, None).unwrap();
+    assert_ne!(scope.graphs[0].as_ref(), Some(&parent_record));
+    assert_eq!(
+        crate::account_archive_prototype::accounts(&state).unwrap(),
+        crate::account_archive_prototype::accounts(&f.node.settings.initial).unwrap()
+    );
+
+    // The reference is the original real SQL/graph verifier in THIS writer,
+    // with the same arithmetic material and progress callback. Only its
+    // optional transaction-local graph result is absent.
+    let before = graphs(&f.node);
+    let mut original_progress = 0u64;
+    super::super::verify_state_with_cache(
+        &f.node.db,
+        &f.node.settings,
+        genesis,
+        &f.node.settings.initial,
+        &mut || {
+            original_progress += 1;
+            Ok(())
+        },
+        Some(&f.node.authenticated_arithmetic),
+    )
+    .unwrap();
+    assert_eq!(graphs(&f.node) - before, 1);
+    let before = graphs(&f.node);
+    let mut reused_progress = 0u64;
+    verify(
+        &f.node,
+        genesis,
+        &f.node.settings.initial,
+        &mut scope,
+        &mut || {
+            reused_progress += 1;
+            Ok(())
+        },
+    )
+    .unwrap();
+    assert_eq!(graphs(&f.node), before);
+    assert_eq!(scope.hits, 1);
+    assert!(scope.consumed);
+    // Entry, all three original delta boundaries and the final boundary remain.
+    assert_eq!(reused_progress, 5);
+    assert_eq!(
+        original_progress - reused_progress,
+        2 * parent_record.accounts.count - 1
+    );
+
+    for field in ["node", "digest", "count", "balance"] {
+        let mut changed = parent_record.clone();
+        match field {
+            "node" => changed.accounts.node = None,
+            "digest" => changed.accounts.digest[0] ^= 1,
+            "count" => changed.accounts.count += 1,
+            "balance" => changed.accounts.balance += 1,
+            _ => unreachable!(),
+        }
+        assert!(
+            !scope
+                .matches(&f.node.db, &f.node.settings, &changed)
+                .unwrap(),
+            "{field}"
+        );
+    }
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks() {
+    let (f, child, state) = working_only_child();
+    f.node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = capture(&f.node, child);
+    verify(
+        &f.node,
+        f.node.settings.genesis(),
+        &f.node.settings.initial,
+        &mut scope,
+        &mut || Ok(()),
+    )
+    .unwrap();
+    let child_record = load_observed(&f.node.db, child, None).unwrap();
+    assert!(scope
+        .matches(&f.node.db, &f.node.settings, &child_record)
+        .unwrap());
+    let owner = format!(
+        "account:{}",
+        hex::encode(crate::development_public(0).unwrap())
+    );
+    let reward = state.keys().find(|key| key.starts_with("reward:")).unwrap();
+    for change in [
+        "nonce",
+        "balance",
+        "zero-account",
+        "missing-account",
+        "alias",
+        "field",
+        "float",
+        "working",
+        "liability",
+    ] {
+        let mut changed = state.clone();
+        match change {
+            "nonce" => changed.get_mut(&owner).unwrap()["nonce"] = serde_json::json!(1),
+            "balance" => {
+                let balance = changed[&owner]["balance"].as_u64().unwrap();
+                changed.get_mut(&owner).unwrap()["balance"] = serde_json::json!(balance - 1);
+            }
+            "zero-account" => {
+                assert!(changed
+                    .insert(
+                        format!("account:{}", "93".repeat(32)),
+                        serde_json::json!({"balance": 0, "nonce": 7})
+                    )
+                    .is_none());
+            }
+            "missing-account" => {
+                changed.remove(&owner);
+            }
+            "alias" => {
+                changed.insert(
+                    format!("account:{}", "AB".repeat(32)),
+                    serde_json::json!({"balance": 0, "nonce": 0}),
+                );
+            }
+            "field" => changed.get_mut(&owner).unwrap()["extra"] = serde_json::json!(0),
+            "float" => changed.get_mut(&owner).unwrap()["nonce"] = serde_json::json!(0.0),
+            "working" => {
+                changed.insert("meta:readback-negative".into(), serde_json::json!(1));
+            }
+            "liability" => {
+                let amount = changed[reward]["amount"].as_u64().unwrap();
+                changed.get_mut(reward).unwrap()["amount"] = serde_json::json!(amount + 1);
+            }
+            _ => unreachable!(),
+        }
+        // Compare the actual original error, including parser/conservation
+        // precedence, before any graph hit can be consumed.
+        let original = super::super::verify_state_with_cache(
+            &f.node.db,
+            &f.node.settings,
+            child,
+            &changed,
+            &mut || Ok(()),
+            None,
+        )
+        .unwrap_err();
+        let before = graphs(&f.node);
+        let error = verify(&f.node, child, &changed, &mut scope, &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), original.to_string(), "{change}");
+        assert_eq!(graphs(&f.node), before, "{change}");
+        assert_eq!(scope.hits, 0, "{change}");
+        assert!(!scope.consumed, "{change}");
+    }
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn a_current_child_record_with_another_node_cannot_borrow_the_parent_graph() {
+    let (f, child, state) = working_only_child();
+    let mut record = load_observed(&f.node.db, child, None).unwrap();
+    record.accounts.node = None;
+    record.id = record.digest().unwrap();
+    f.node
+        .db
+        .execute(
+            "UPDATE native_state_commitments SET data=? WHERE block=?",
+            rusqlite::params![super::super::canonical(&record).unwrap(), child.as_slice()],
+        )
+        .unwrap();
+    f.node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = capture(&f.node, child);
+    verify(
+        &f.node,
+        f.node.settings.genesis(),
+        &f.node.settings.initial,
+        &mut scope,
+        &mut || Ok(()),
+    )
+    .unwrap();
+    // This current row still passes Record/complete-State bindings, so an
+    // account-digest-only lookup would incorrectly suppress the real failure.
+    let before = graphs(&f.node);
+    let error = verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_ROOT");
+    assert_eq!(graphs(&f.node) - before, 1);
+    assert_eq!(scope.hits, 0);
+    assert!(!scope.consumed);
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
 #[test]
 fn actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen() {
     let mut accelerated = fixture();

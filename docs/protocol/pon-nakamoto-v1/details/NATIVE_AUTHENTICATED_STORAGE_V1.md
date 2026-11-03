@@ -480,6 +480,29 @@ Individual canonical encodings, complete root calculations and SQL statements
 remain nonpreemptive, and every required ancestor is still checked. This changes
 neither the65536-key consensus limit nor full-State/history asymptotic costs.
 
+The ordinary post-write readback may reuse a successfully verified account graph
+among its original four nominated roles: child, genesis, the fully verified
+child's parent and the actual active tip. Reuse requires equality of the entire
+account `Root { node, digest, count, balance }` inside the same connection, writer,
+last-write epoch, schema and parameter context. The current SQL Record, block,
+deltas and complete State commitment are still checked before every lookup.
+Complete-State commitment and graph verification use the same strict account
+parser, including nonce and zero-balance account existence. Working state and
+reward liabilities remain part of the current complete-State comparison.
+
+A different Record can therefore share an unchanged account graph without
+sharing its State or authorization. A fifth block is never nominated merely
+because its root matches. The original entry/delta/final callbacks remain;
+cancellation retains its error, a callback write disables reuse, and a write
+after a consumed hit refuses the owning publication. The result is never retained
+across transactions or used as recovery authority. The actual Node regressions
+include a current SQL Record with a forged node pointer but unchanged account
+digest/count/balance, target-State grammar/nonce/liability changes, and cross-Record
+callback writes and cancellation. This removes duplicate graph work only; first
+traversals, changed roots, complete State reconstruction and required ancestry
+verification remain. Original Host/service and fixed-touched-set growth gates
+must still execute on the candidate source.
+
 The existing `native_authenticated` tests compare the streamed reader with an
 independent copy of the original ordered reader and general sequence root,
 including131072 actual SQLite delta rows, malformed values, type/range faults,

@@ -53,8 +53,12 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
 /// authority. Every use still loads current SQL State/records/deltas and runs
 /// the ORIGINAL complete(settings, current State) comparison before this graph
-/// result can match. Its Record binds the full State commitment, not just an
-/// account root. Writes disable reuse for the remainder of this local scope.
+/// result can match. Named records may share a successfully checked account
+/// graph only when its entire Root (node, digest, count and balance) matches in
+/// this unchanged writer. The current complete-State check uses the SAME account
+/// parser as graph verification, including nonce and zero-balance accounts; no
+/// working state, Record binding or database read is supplied by the receipt.
+/// Writes disable reuse for the remainder of this local scope.
 pub(in crate::store) struct PostWriteReadback<'db> {
     db: &'db Connection,
     scope: TransactionScope<'db>,
@@ -191,11 +195,18 @@ impl<'db> PostWriteReadback<'db> {
         {
             return Ok(false);
         }
-        Ok(self
-            .ids
-            .iter()
-            .position(|id| *id == Some(record.block))
-            .is_some_and(|index| self.graphs[index].as_ref() == Some(record)))
+        // Eligibility remains limited to the original four named records. A
+        // fifth block cannot borrow a graph even when its account Root matches.
+        // Each candidate has already passed the CURRENT complete-State and
+        // Record checks at the caller. A prior graph proves only this exact
+        // content-addressed account Root in the same no-write SQL epoch: empty
+        // confirmation blocks can have different working state but share it.
+        Ok(self.ids.contains(&Some(record.block))
+            && self
+                .graphs
+                .iter()
+                .flatten()
+                .any(|verified| verified.accounts == record.accounts))
     }
 
     pub(super) fn remember(&mut self, db: &Connection, record: Record) -> Result<()> {
