@@ -50,16 +50,9 @@ macro_rules! observe_phase {
 }
 #[cfg(test)]
 macro_rules! observe_operation {
-    ($operation:ident, $kind:expr, $action:block) => {{
-        #[cfg(test)]
-        let $operation = $crate::pq_rollback_witness::test_observation::start($kind);
-        let result: $crate::Result<_> = (|| $action)();
-        #[cfg(test)]
-        if let Some(operation) = $operation {
-            operation.finish(&result);
-        }
-        result
-    }};
+    ($operation:ident, $kind:expr, $action:block) => {
+        $crate::pq_rollback_witness::test_observation::with_operation($kind, |$operation| $action)
+    };
 }
 #[cfg(not(test))]
 macro_rules! observe_operation {

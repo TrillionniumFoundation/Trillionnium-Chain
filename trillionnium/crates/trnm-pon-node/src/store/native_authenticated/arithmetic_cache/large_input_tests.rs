@@ -5,6 +5,112 @@ use serde_json::json;
 use std::cell::Cell;
 use trnm_protocol::pon_wire::hash;
 
+#[test]
+fn borrowed_complete_partition_preserves_original_commitments_and_error_order() {
+    use crate::account_archive_execution::state_witness::{
+        commitment_from_complete_state, commitment_from_complete_state_with_borrowed_roots,
+    };
+    let settings = Settings::development(Some(1)).unwrap();
+    let original = settings.initial.clone();
+    let mut cases = vec![original.clone(), State::new()];
+    for change in [
+        "nonce",
+        "zero",
+        "unknown",
+        "issued",
+        "issued-absent",
+        "issued-nonnumeric",
+        "reward",
+        "liabilities",
+        "escrow-overflow",
+        "grammar",
+        "account-first",
+    ] {
+        let mut state = original.clone();
+        match change {
+            "nonce" => {
+                state
+                    .values_mut()
+                    .find(|value| value.get("nonce").is_some())
+                    .unwrap()["nonce"] = json!(9)
+            }
+            "zero" => {
+                state.insert(
+                    format!("account:{}", "91".repeat(32)),
+                    json!({"balance":0,"nonce":99}),
+                );
+            }
+            "unknown" => {
+                state.insert(
+                    "future-obligation:opaque".into(),
+                    json!({"value":[1,"retained"]}),
+                );
+            }
+            "issued" => {
+                state.insert("meta:issued".into(), json!(u64::MAX));
+            }
+            "issued-absent" => {
+                state.remove("meta:issued");
+            }
+            "issued-nonnumeric" => {
+                state.insert("meta:issued".into(), json!("bad"));
+            }
+            "reward" => {
+                state.insert("reward:bad".into(), json!({"amount":"bad"}));
+            }
+            "liabilities" => {
+                state.insert("task:one".into(), json!({"remaining":1}));
+                state.insert("quota:two".into(), json!({"remaining":2}));
+                state.insert("release:three".into(), json!({"remaining":3}));
+                state.insert("reward:four".into(), json!({"amount":4}));
+                state.insert(
+                    "meta:issued".into(),
+                    json!(state["meta:issued"].as_u64().unwrap() + 10),
+                );
+            }
+            "escrow-overflow" => {
+                state.insert("task:one".into(), json!({"remaining":u64::MAX}));
+                state.insert("quota:two".into(), json!({"remaining":1}));
+            }
+            "grammar" => {
+                state.insert("a".repeat(161), json!(0));
+                state.insert("zz-invalid".into(), json!(0.5));
+            }
+            "account-first" => {
+                state.insert("account:malformed".into(), json!({"balance":0}));
+                state.insert("zz-invalid".into(), json!(0.5));
+            }
+            _ => unreachable!(),
+        }
+        cases.push(state);
+    }
+    for state in cases {
+        let expected = commitment_from_complete_state(&settings, &state);
+        let actual = commitment_from_complete_state_with_borrowed_roots(
+            &settings,
+            &state,
+            None,
+            || trnm_mvcc_fee::pon_executor::root(&state),
+            |partition| {
+                assert_eq!(
+                    partition.len(),
+                    state
+                        .keys()
+                        .filter(|key| !key.starts_with("account:"))
+                        .count()
+                );
+                for (key, value) in partition.iter() {
+                    let (source_key, source_value) = state.get_key_value(key).unwrap();
+                    assert!(std::ptr::eq(key, source_key));
+                    assert!(std::ptr::eq(value, source_value));
+                }
+                partition.root()
+            },
+        );
+        assert_eq!(format!("{actual:?}"), format!("{expected:?}"));
+    }
+}
+
 fn large_settings() -> Settings {
     let mut settings = Settings::development(Some(1)).unwrap();
     for index in 0..2100 {

@@ -1,0 +1,233 @@
+{
+  "schema": "pon-six-axis-component-reproduction-v1",
+  "date": "2026-11-03",
+  "original_base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "decision": {
+    "descriptor_v2": "HOLD",
+    "allocation_rule_passed_cohorts": 8,
+    "wall_nonregression_passed_cohorts": 6,
+    "wall_five_percent_improvement_passed_cohorts": 3,
+    "required_cohorts": 8,
+    "failed_nonregression_cohorts": [
+      {
+        "cohort": "payload-64-accounts-64-cold",
+        "median_ratio": 0.987653838842587,
+        "p95_ratio": 1.3194702459194079,
+        "nonregression": false,
+        "five_percent_improvement": false
+      },
+      {
+        "cohort": "payload-1024-accounts-64-cold",
+        "median_ratio": 1.0076818161664636,
+        "p95_ratio": 0.9973284459462487,
+        "nonregression": false,
+        "five_percent_improvement": false
+      }
+    ],
+    "runtime_candidate_selected": false,
+    "production_isolation_identity": "production-isolation-identity.json",
+    "measurements_after_isolation": false,
+    "final_integration_validation": "Pending integration-owner receipt; this package asserts no final committed-source acceptance."
+  },
+  "scope": {
+    "component": "M06 non-account partition construction, grammar validation and root arithmetic",
+    "qualification": {
+      "service_cpu_gate": false,
+      "host": false,
+      "public_throughput": false,
+      "p99": null
+    },
+    "allocation_metric": "Cumulative requested bytes/requests from one calling thread; not process RSS, peak/live allocation, or retained-memory reduction.",
+    "reference": "Independent root function byte-identical to original base. Measured A root_with_arithmetic used the candidate generic rows adapter; the historical replay patch preserves this exact source."
+  },
+  "common_inputs": {
+    "cohorts": [
+      {
+        "payload_cells": 64,
+        "account_rows": 64,
+        "warm": false
+      },
+      {
+        "payload_cells": 64,
+        "account_rows": 64,
+        "warm": true
+      },
+      {
+        "payload_cells": 1024,
+        "account_rows": 64,
+        "warm": false
+      },
+      {
+        "payload_cells": 1024,
+        "account_rows": 64,
+        "warm": true
+      },
+      {
+        "payload_cells": 2100,
+        "account_rows": 64,
+        "warm": false
+      },
+      {
+        "payload_cells": 2100,
+        "account_rows": 64,
+        "warm": true
+      },
+      {
+        "payload_cells": 64,
+        "account_rows": 2100,
+        "warm": false
+      },
+      {
+        "payload_cells": 64,
+        "account_rows": 2100,
+        "warm": true
+      }
+    ],
+    "payload_ascii_bytes_per_cell": 4080,
+    "retained_payload_limit_bytes": 2097152,
+    "order": "ABBA",
+    "wall_rounds_per_cohort": 16,
+    "wall_samples": 512,
+    "allocation_samples_per_cohort": 4,
+    "allocation_samples": 32,
+    "warm_mode": "One untimed preparation per arm; reused arithmetic cache.",
+    "cold_mode": "New arithmetic cache before each sample, outside timed interval."
+  },
+  "toolchain": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "cargo_profile": "test",
+    "features": "M06 default; no PQ provider feature",
+    "manifest_and_lockfile": "Unchanged from original base; exact hashes in source manifests.",
+    "profile_note": "Existing M06 opt-level 1 and protocol opt-level 3 overrides. Unused release preparation is recorded only in setup-observations.json."
+  },
+  "variants": {
+    "filtered_v1": {
+      "patch": "filtered-v1-reproduction.patch",
+      "patch_sha256": "bc7340c01f223bea0b4eaaf34abb2de3a3e6a5c63a207b75f371c89d08af232d",
+      "source_manifest": "filtered-v1-source.json",
+      "raw": "filtered-v1-raw.json",
+      "summary": "filtered-v1-summary.json",
+      "binary_sha256": "1874642cf728d58034a6ef52edaf3b47f6bfb687bae149f01e7b731f35fd0471",
+      "allocator": "Instrumented custom GlobalAlloc wrapper remains installed during timing; counters disabled but TLS lookup remains.",
+      "ordinary_wall_performance_accepted": false,
+      "original_registered_wall_rules": {
+        "paired_median_wall_ratio_max": 0.95,
+        "p95_wall_ratio_max": 1.1
+      },
+      "instrumented_wall_rule_passed_cohorts": 1,
+      "all_eight_rule_passed": false,
+      "exit_code": 0,
+      "build_argv": [
+        "cargo",
+        "+1.95.0",
+        "build",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--profile",
+        "test",
+        "-p",
+        "trnm-mvcc-fee",
+        "--example",
+        "borrowed_non_account_cost"
+      ],
+      "run_argv": [
+        "TARGET/debug/examples/borrowed_non_account_cost",
+        "--run-component-observation"
+      ]
+    },
+    "descriptor_v2": {
+      "patch": "descriptor-v2-reproduction.patch",
+      "patch_sha256": "c7dc2c9e2d38230d9f6766317ca75890d588adca75b897cf0c182152012cd49e",
+      "source_manifest": "descriptor-v2-source-inventory.json",
+      "campaign_manifest": "descriptor-v2-campaign.json",
+      "independent_audit": "descriptor-v2-independent-audit.json",
+      "source_before_after_equal": true,
+      "recorded_source_file_count": 1107,
+      "binary_before_after_equal_by_sha256_and_size": true,
+      "binaries": {
+        "borrowed_non_account_cost": {
+          "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_cost",
+          "sha256": "c06237568417674526a369d8d48b4b6eaca5ffbb2aa18abfc152cf3c7501712a",
+          "bytes": 51567920
+        },
+        "borrowed_non_account_allocations": {
+          "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_allocations",
+          "sha256": "556238b395b74195f61d094dddb7fe9f2cac0b0e985819d4944c565ee25f7ca8",
+          "bytes": 51230176
+        }
+      },
+      "rules": {
+        "allocation_minimum_requested_byte_reduction_each_cohort": 0.05,
+        "wall_nonregression_median_ratio_max": 1.0,
+        "wall_p95_ratio_max": 1.1,
+        "separate_wall_improvement_median_ratio_max": 0.95,
+        "all_eight_cohorts_required": true
+      },
+      "wall_allocator": "Standard Rust allocator; no custom GlobalAlloc or TLS counter code in timing binary or shared support.",
+      "allocation_allocator": "Separate instrumented executable forwarding to System; overflow saturates and invalidates the observation.",
+      "wall_raw": "descriptor-v2-wall.jsonl",
+      "allocation_raw": "descriptor-v2-allocations.jsonl",
+      "build_argv": [
+        "cargo",
+        "+1.95.0",
+        "build",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--profile",
+        "test",
+        "-p",
+        "trnm-mvcc-fee",
+        "--example",
+        "borrowed_non_account_cost",
+        "--example",
+        "borrowed_non_account_allocations"
+      ],
+      "run_order": [
+        [
+          "TARGET/debug/examples/borrowed_non_account_cost",
+          "--run-component-observation"
+        ],
+        [
+          "TARGET/debug/examples/borrowed_non_account_allocations",
+          "--run-allocation-observation"
+        ]
+      ],
+      "runs_completed_once": true,
+      "both_exit_codes": 0,
+      "both_stderr_empty": true,
+      "stop_rule": "300-second absolute process timeout for each executable; retain partial output and do not retry"
+    }
+  },
+  "reproduction": {
+    "working_directory": "A separate clean checkout at original_base for each variant. Do not combine the two alternative patches.",
+    "apply_argv": [
+      "git",
+      "apply",
+      "ABSOLUTE_EVIDENCE_DIRECTORY/VARIANT-reproduction.patch"
+    ],
+    "source_identity": "Verify source-patches.json and the recorded inventory after applying. Historical v2 patch includes the experimental Node wiring; production isolation is a later state.",
+    "build_commands": "Use the selected variant build_argv from the checkout root; substitute TARGET with CARGO_TARGET_DIR (or checkout/target). Both arms are built in the same executable.",
+    "dependency_preparation": "Cargo.lock dependencies must already be cached for --offline; retain any dependency setup failures. Rust 1.95.0 is required.",
+    "measurement_protocol": "Run each planned campaign once, retaining stdout JSON/JSONL and stderr even on failure. For v2 run standard wall then allocation sequentially with other task-owned CPU work paused. Do not retry for a passing threshold.",
+    "failure_handling": "Keep partial JSONL, process exit, timeout and stderr. Missing completion, root mismatch, retention violation or counter overflow invalidates the campaign; do not emit a summary pass.",
+    "new_runs_are_new_evidence": "Recorded binary SHA256 identifies these observations; rebuilt binaries and host timings may differ. No reproduction command was run while assembling this package."
+  },
+  "native_controls": {
+    "summary": "native-control-observations.json",
+    "results": "native-descriptor-control-results.json",
+    "scope": "Pre-isolation Node binary; full Node source closure is not certified by the M06 inventory.",
+    "passed": 119,
+    "failed": 2,
+    "ignored": 1,
+    "cpu_failures": "PUBLIC_MUTATION_CPU_BUDGET",
+    "strict_speed_ratio_claim": false
+  },
+  "setup_history": "setup-observations.json",
+  "source_patch_metadata": "source-patches.json",
+  "source_reconstruction_check": "reconstruction-check.json",
+  "copy_provenance": "retained-file-provenance.json"
+}

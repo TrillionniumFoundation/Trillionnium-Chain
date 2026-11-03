@@ -2710,6 +2710,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_allocations.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_allocations.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/examples/checkpoint_tile_material_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2749,6 +2763,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/examples/pon_execute_session.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/examples/support/borrowed_non_account_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/examples/support/borrowed_non_account_cost.rs"
         )),
     ),
     (

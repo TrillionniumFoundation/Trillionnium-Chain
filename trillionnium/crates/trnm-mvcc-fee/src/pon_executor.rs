@@ -329,6 +329,75 @@ pub fn root(state: &State) -> Result<Hash> {
     })
 }
 
+/// A borrowed complete non-account partition for pure root calculations. The
+/// immutable source supplies every row; this view accepts no claimed digest,
+/// precomputed leaf or partial update and grants no execution authority.
+/// This experimental comparison primitive is not selected by the default native
+/// store, which retains its original owned projection while acceptance is held.
+pub struct BorrowedNonAccountState<'a> {
+    rows: Vec<(&'a String, &'a Value)>,
+}
+
+impl<'a> BorrowedNonAccountState<'a> {
+    pub fn new(state: &'a State) -> Self {
+        Self {
+            // Filter the immutable State once. Subsequent grammar, component
+            // and encoding passes visit only these borrowed descriptors; no
+            // account rows are rescanned and no key or JSON value is cloned.
+            rows: state
+                .iter()
+                .filter(|(key, _)| !key.starts_with("account:"))
+                .collect(),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.rows.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&'a String, &'a Value)> + Clone + '_ {
+        self.rows.iter().copied()
+    }
+
+    pub fn get(&self, key: &str) -> Option<&'a Value> {
+        self.rows
+            .binary_search_by(|(name, _)| name.as_str().cmp(key))
+            .ok()
+            .map(|index| self.rows[index].1)
+    }
+
+    pub fn root(&self) -> Result<Hash> {
+        // Keep the independent root's grammar -> count -> wire order over the
+        // exact complete partition, without cloning its keys or JSON values.
+        for (_, value) in self.iter() {
+            validate_canonical(value)?;
+        }
+        if self.len() > 65_536 {
+            return Err("LIMIT");
+        }
+        state_root_from_entries(self.iter().map(|(key, value)| {
+            serde_json::to_vec(value)
+                .map(|bytes| (key.as_bytes(), bytes))
+                .map_err(|_| "NONCANONICAL")
+        }))
+        .map_err(|error| match error {
+            StateRootInputError::Input(error) => error,
+            StateRootInputError::Wire(_) => "LIMIT",
+        })
+    }
+
+    pub fn root_with_arithmetic(
+        &self,
+        arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+    ) -> Result<Hash> {
+        arithmetic_root_from_rows(self.iter(), self.len(), arithmetic)
+    }
+}
+
 /// Optional bounded tree arithmetic over the complete actual State. This is a
 /// root calculation, not a checked execution-parent or admission capability.
 /// No root claim, partial update or caller-produced leaf hash can enter it.
@@ -347,6 +416,40 @@ pub fn root_with_arithmetic(
     }
     let mut input = arithmetic.input_builder();
     for (key, value) in state {
+        // Only a full current String/key equality can skip encoding. The
+        // builder proves eligibility from its private original wire bytes;
+        // every miss keeps the existing encoder and its actual allocations.
+        if let Value::String(value) = value {
+            if input
+                .try_plain_json_string(key.as_bytes(), value)
+                .map_err(|_| "LIMIT")?
+            {
+                continue;
+            }
+        }
+        let bytes = canonical_after_validation(value)?;
+        input
+            .add_encoded(key.as_bytes(), &bytes)
+            .map_err(|_| "LIMIT")?;
+    }
+    input.finish().map_err(|_| "LIMIT")
+}
+
+fn arithmetic_root_from_rows<'a>(
+    rows: impl Iterator<Item = (&'a String, &'a Value)> + Clone,
+    count: usize,
+    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+) -> Result<Hash> {
+    // The complete canonical pass must still precede every wire bound. In
+    // particular, a late invalid number wins over an early oversized key.
+    for (_, value) in rows.clone() {
+        validate_canonical(value)?;
+    }
+    if count > 65_536 {
+        return Err("LIMIT");
+    }
+    let mut input = arithmetic.input_builder();
+    for (key, value) in rows {
         // Only a full current String/key equality can skip encoding. The
         // builder proves eligibility from its private original wire bytes;
         // every miss keeps the existing encoder and its actual allocations.

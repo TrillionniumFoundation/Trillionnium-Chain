@@ -1,0 +1,166 @@
+{
+  "schema": "borrowed-descriptor-two-binary-campaign-v2",
+  "started_utc": "2026-11-03T15:58:26.448334+00:00",
+  "profile": "test; existing M06 opt-level1/protocol opt-level3 overrides; unchanged manifests",
+  "features": "M06 default; no PQ provider feature",
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "binary_before": {
+    "borrowed_non_account_cost": {
+      "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_cost",
+      "sha256": "c06237568417674526a369d8d48b4b6eaca5ffbb2aa18abfc152cf3c7501712a",
+      "bytes": 51567920
+    },
+    "borrowed_non_account_allocations": {
+      "path": "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_allocations",
+      "sha256": "556238b395b74195f61d094dddb7fe9f2cac0b0e985819d4944c565ee25f7ca8",
+      "bytes": 51230176
+    }
+  },
+  "cohorts": [
+    [
+      64,
+      64,
+      false
+    ],
+    [
+      64,
+      64,
+      true
+    ],
+    [
+      1024,
+      64,
+      false
+    ],
+    [
+      1024,
+      64,
+      true
+    ],
+    [
+      2100,
+      64,
+      false
+    ],
+    [
+      2100,
+      64,
+      true
+    ],
+    [
+      64,
+      2100,
+      false
+    ],
+    [
+      64,
+      2100,
+      true
+    ]
+  ],
+  "planned_wall_samples": 512,
+  "planned_allocation_samples": 32,
+  "order": "ABBA",
+  "wall_rounds": 16,
+  "rules": {
+    "allocation_minimum_requested_byte_reduction_each_cohort": 0.05,
+    "wall_nonregression_median_ratio_max": 1.0,
+    "wall_p95_ratio_max": 1.1,
+    "separate_wall_improvement_median_ratio_max": 0.95,
+    "all_eight_cohorts_required": true
+  },
+  "stop_rule": "300-second absolute process timeout for each executable; retain partial output and do not retry",
+  "host": {
+    "uname": [
+      "Linux",
+      "0d65fa94486d",
+      "6.18.57",
+      "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+      "x86_64",
+      "x86_64"
+    ],
+    "cpu_count": 9,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "load_average_before": [
+      6.40966796875,
+      5.6396484375,
+      4.11181640625
+    ],
+    "load_average_after": [
+      5.201171875,
+      5.41845703125,
+      4.07080078125
+    ]
+  },
+  "service_cpu_gate_qualified": false,
+  "host_qualified": false,
+  "public_throughput_claim": false,
+  "runs": [
+    {
+      "mode": "wall",
+      "argv": [
+        "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_cost",
+        "--run-component-observation"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 20394375051,
+      "stdout": "/workspace/scratch/b5a148b09b11/validation/borrowed-descriptor-wall-v2.jsonl",
+      "stdout_sha256": "2c0cf9618d552dbc1b698d6410df3c12e7be7d08f437122717a4d1bc302814d2",
+      "stderr": "/workspace/scratch/b5a148b09b11/validation/borrowed-descriptor-wall-v2.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "mode": "allocations",
+      "argv": [
+        "/workspace/scratch/b5a148b09b11/borrowed-partition-target/debug/examples/borrowed_non_account_allocations",
+        "--run-allocation-observation"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 3477540904,
+      "stdout": "/workspace/scratch/b5a148b09b11/validation/borrowed-descriptor-allocations-v2.jsonl",
+      "stdout_sha256": "ef0b8d5e56b9ce177ac2aa7fb3f3e5631563c345aabf4c5dd69e08eabe61c459",
+      "stderr": "/workspace/scratch/b5a148b09b11/validation/borrowed-descriptor-allocations-v2.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "binary_after": {
+    "borrowed_non_account_cost": {
+      "sha256": "c06237568417674526a369d8d48b4b6eaca5ffbb2aa18abfc152cf3c7501712a",
+      "bytes": 51567920
+    },
+    "borrowed_non_account_allocations": {
+      "sha256": "556238b395b74195f61d094dddb7fe9f2cac0b0e985819d4944c565ee25f7ca8",
+      "bytes": 51230176
+    }
+  },
+  "source_before_equals_after": true,
+  "binary_before_equals_after": true,
+  "finished_utc": "2026-11-03T15:58:51.165711+00:00",
+  "source_before": {
+    "expand_from": "descriptor-v2-source-inventory.json",
+    "expand_rule": "Map each [path, sha256, bytes] row to path: {sha256, bytes}."
+  },
+  "source_after": {
+    "expand_from": "descriptor-v2-source-inventory.json",
+    "expand_rule": "Map each [path, sha256, bytes] row to path: {sha256, bytes}."
+  },
+  "evidence_compaction": {
+    "original_file": "borrowed-descriptor-campaign-v2-manifest.json",
+    "original_bytes": 435221,
+    "original_sha256": "311ed32be4f8bb74acda3b87a4252e7d984a2bc2d8caa8591c015894b6382946",
+    "explanation": "Identical 1107-file before/after inventories are retained once; all other original fields are preserved. Expand the two explicit references to reconstruct the original JSON value."
+  }
+}

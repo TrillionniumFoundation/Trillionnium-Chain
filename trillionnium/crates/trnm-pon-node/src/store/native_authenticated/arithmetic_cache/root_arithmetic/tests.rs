@@ -250,6 +250,128 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
 }
 
 #[test]
+fn borrowed_non_account_fallback_keeps_shared_and_mutable_borrow_accounting() {
+    let settings = settings();
+    let cache = RootArithmetic::default();
+    equal(&cache, &settings, &settings.initial);
+    let partition = pon_executor::BorrowedNonAccountState::new(&settings.initial);
+    let expected = partition.root();
+    let malformed = State::from([
+        ("a".repeat(161), json!(0)),
+        ("zz-invalid-number".into(), json!(-0.0)),
+    ]);
+    let invalid = pon_executor::BorrowedNonAccountState::new(&malformed);
+    assert_eq!(invalid.root(), Err("RANGE"));
+    let retained_before = cache.observation()["retained_material"].clone();
+
+    let shared = cache.material.borrow();
+    assert!(matches!(
+        &shared.as_ref().unwrap().source,
+        MaterialSource::Partitions(_)
+    ));
+    let before = cache.counters.get();
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &partition),
+        expected
+    );
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &invalid),
+        Err("RANGE")
+    );
+    let mut expected_counters = serde_json::to_value(before).unwrap();
+    expected_counters["calculations"] = json!(before.calculations + 2);
+    expected_counters["cold_roots"] = json!(before.cold_roots + 2);
+    assert_eq!(
+        serde_json::to_value(cache.counters.get()).unwrap(),
+        expected_counters
+    );
+    assert_eq!(cache.observation()["retained_material"], retained_before);
+    drop(shared);
+
+    let exclusive = cache.material.borrow_mut();
+    let before = serde_json::to_value(cache.counters.get()).unwrap();
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &partition),
+        expected
+    );
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &invalid),
+        Err("RANGE")
+    );
+    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
+    assert!(matches!(
+        &exclusive.as_ref().unwrap().source,
+        MaterialSource::Partitions(_)
+    ));
+    drop(exclusive);
+    assert_eq!(cache.observation()["retained_material"], retained_before);
+
+    let before = cache.counters.get();
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &partition),
+        expected
+    );
+    let after = cache.counters.get();
+    assert_eq!(after.calculations, before.calculations + 1);
+    assert_eq!(after.material_uses, before.material_uses + 1);
+    assert_eq!(after.cold_roots, before.cold_roots);
+}
+
+#[test]
+fn borrowed_non_account_fallback_keeps_absent_canonical_and_foreign_material() {
+    let settings = settings();
+    let cache = RootArithmetic::default();
+    let partition = pon_executor::BorrowedNonAccountState::new(&settings.initial);
+    let expected = partition.root();
+    let before = serde_json::to_value(cache.counters.get()).unwrap();
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &partition),
+        expected
+    );
+    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
+    assert!(cache.material.borrow().is_none());
+
+    cache.offer(&settings, Some(&snapshot(&settings.initial)));
+    let retained_before = cache.observation()["retained_material"].clone();
+    let before = serde_json::to_value(cache.counters.get()).unwrap();
+    assert_eq!(
+        cache.calculate_borrowed_non_accounts(&settings, &partition),
+        expected
+    );
+    assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
+    assert_eq!(cache.observation()["retained_material"], retained_before);
+    assert!(matches!(
+        &cache.material.borrow().as_ref().unwrap().source,
+        MaterialSource::Canonical(_)
+    ));
+
+    cache.offer(&settings, None);
+    equal(&cache, &settings, &settings.initial);
+    let retained_before = cache.observation()["retained_material"].clone();
+    let context = [
+        settings.network(),
+        settings.parameters(),
+        settings.genesis(),
+    ];
+    for component in 0..3 {
+        let mut foreign = settings.clone();
+        match component {
+            0 => foreign.app.network[0] ^= 1,
+            1 => foreign.app.parameters[0] ^= 1,
+            _ => foreign.genesis[0] ^= 1,
+        }
+        let before = serde_json::to_value(cache.counters.get()).unwrap();
+        assert_eq!(
+            cache.calculate_borrowed_non_accounts(&foreign, &partition),
+            expected
+        );
+        assert_eq!(serde_json::to_value(cache.counters.get()).unwrap(), before);
+        assert_eq!(cache.observation()["retained_material"], retained_before);
+        assert_eq!(cache.material.borrow().as_ref().unwrap().context, context);
+    }
+}
+
+#[test]
 fn complete_commitment_keeps_account_error_order_with_root_material() {
     let settings = settings();
     let cache = super::super::ArithmeticCache::default();

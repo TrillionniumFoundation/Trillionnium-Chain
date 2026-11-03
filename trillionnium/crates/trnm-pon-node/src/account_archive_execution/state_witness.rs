@@ -543,6 +543,34 @@ fn components(state: &State) -> Result<(u64, u64, u64)> {
         .ok_or(StateWitnessError::Aggregate)?;
     Ok((escrow, rewards, issued))
 }
+
+// Preserve components above for the independent owned-State reference. The
+// compact borrowed partition visits exactly those same ordered rows and uses
+// an exact key lookup only after all liability checks, matching error order.
+#[cfg(test)]
+fn borrowed_components(
+    state: &pon_executor::BorrowedNonAccountState<'_>,
+) -> Result<(u64, u64, u64)> {
+    let mut escrow = 0u64;
+    let mut rewards = 0u64;
+    for (key, value) in state.iter() {
+        if key.starts_with("task:") || key.starts_with("quota:") || key.starts_with("release:") {
+            escrow = escrow
+                .checked_add(number(value, "remaining")?)
+                .ok_or(StateWitnessError::Aggregate)?;
+        } else if key.starts_with("reward:") {
+            rewards = rewards
+                .checked_add(number(value, "amount")?)
+                .ok_or(StateWitnessError::Aggregate)?;
+        }
+    }
+    let issued = state
+        .get("meta:issued")
+        .and_then(Value::as_u64)
+        .ok_or(StateWitnessError::Aggregate)?;
+    Ok((escrow, rewards, issued))
+}
+
 fn commitment(
     context: Context,
     state_root: Hash,
@@ -694,6 +722,55 @@ pub(crate) fn commitment_from_complete_state_with_roots(
         &non_accounts(state),
         calculate_non_account_root,
     )
+}
+
+/// Experimental borrowed-partition parity controls only. The default native
+/// arithmetic cache retains the independent owned complete-state path above.
+/// Both paths retain account parsing, full root, account root/count/balance,
+/// liabilities, conservation and finally non-account root in that exact order.
+#[cfg(test)]
+pub(crate) fn commitment_from_complete_state_with_borrowed_roots(
+    settings: &Settings,
+    state: &State,
+    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
+    calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
+    calculate_non_account_root: impl FnOnce(
+        &pon_executor::BorrowedNonAccountState<'_>,
+    ) -> pon_executor::Result<Hash>,
+) -> Result<StateCommitment> {
+    let account_values = accounts(state)?;
+    let state_root = relation(calculate_root())?;
+    let account_root = match lifts {
+        Some(lifts) => {
+            crate::account_archive_prototype::account_root_with_lifts(&account_values, lifts)?
+        }
+        None => crate::account_archive_prototype::account_root(&account_values)?,
+    };
+    let account_count = account_values.len() as u64;
+    let account_balance = total(account_values.values().map(|value| value.balance))?;
+    let partition = pon_executor::BorrowedNonAccountState::new(state);
+    let (escrow_balance, reward_balance, issued) = borrowed_components(&partition)?;
+    if total([account_balance, escrow_balance, reward_balance].into_iter())? != issued {
+        return Err(StateWitnessError::Conservation.into());
+    }
+    let mut out = StateCommitment {
+        schema: COMMITMENT_SCHEMA.into(),
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        state_root,
+        account_root,
+        account_count,
+        account_balance,
+        non_account_root: relation(calculate_non_account_root(&partition))?,
+        non_account_count: partition.len() as u64,
+        escrow_balance,
+        reward_balance,
+        issued,
+        id: [0; 32],
+    };
+    out.id = out.digest();
+    Ok(out)
 }
 
 /// Opaque operation-local source, never constructed from a digest claim alone.

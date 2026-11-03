@@ -795,6 +795,19 @@ pub(crate) fn start(kind: Kind) -> Option<Operation> {
         outcome: None,
     })
 }
+// The action needs its own return boundary: both `?` and an explicit `return`
+// must reach finish, while unwinding must retain the original unfinished drop.
+pub(crate) fn with_operation<T>(
+    kind: Kind,
+    action: impl FnOnce(&Option<Operation>) -> crate::Result<T>,
+) -> crate::Result<T> {
+    let operation = start(kind);
+    let result = action(&operation);
+    if let Some(operation) = operation {
+        operation.finish(&result);
+    }
+    result
+}
 impl Operation {
     pub(crate) fn phase(&self, phase: Phase) -> PhaseGuard {
         self.last_phase.set(Some(phase));
@@ -919,6 +932,91 @@ impl Drop for PhaseGuard {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn operation_macro_finishes_question_mark_and_early_return_once() {
+        fn reject(early_return: bool, calls: &mut usize) -> crate::Result<()> {
+            let result = observe_operation!(operation, Kind::ClientCurrent, {
+                *calls += 1;
+                if early_return {
+                    return Err("PQ_WITNESS_CAS".into());
+                }
+                observe_phase!(
+                    operation,
+                    BeforeTransport,
+                    Err::<(), crate::Error>("PQ_WITNESS_DEADLINE".into())
+                )?;
+                Ok(())
+            });
+            // A block replacing the action boundary would skip this assertion
+            // and leave its operation unfinished on either error path.
+            assert!(result.is_err());
+            *calls += 1;
+            result
+        }
+
+        let recorder = Recorder::new(Sink::Quiet);
+        let _scope = Scope::install(recorder.clone(), false);
+        let mut calls = 0;
+        assert_eq!(
+            reject(false, &mut calls).unwrap_err().to_string(),
+            "PQ_WITNESS_DEADLINE"
+        );
+        assert_eq!(
+            reject(true, &mut calls).unwrap_err().to_string(),
+            "PQ_WITNESS_CAS"
+        );
+        assert_eq!(calls, 4);
+        let value = recorder.snapshot();
+        assert_eq!(value["records_started"], 2);
+        assert_eq!(value["records_completed"], 2);
+        assert_eq!(value["records_closed"], 2);
+        assert_eq!(value["has_open_operations"], false);
+        for row in value["records"].as_array().unwrap() {
+            assert_eq!(row["accepted"], false);
+        }
+        assert_eq!(value["last_failure"]["error"]["code"], "PQ_WITNESS_CAS");
+    }
+
+    #[test]
+    fn operation_macro_keeps_success_unwind_and_disabled_scope_semantics() {
+        let mut calls = 0;
+        let disabled = observe_operation!(operation, Kind::ClientCurrent, {
+            assert!(operation.is_none());
+            calls += 1;
+            Ok(String::from("owned result"))
+        });
+        assert_eq!(disabled.unwrap(), "owned result");
+        assert_eq!(calls, 1);
+
+        let recorder = Recorder::new(Sink::Quiet);
+        let _scope = Scope::install(recorder.clone(), false);
+        let success = observe_operation!(operation, Kind::ClientCurrent, {
+            assert!(operation.is_some());
+            calls += 1;
+            Ok(String::from("owned result"))
+        });
+        assert_eq!(success.unwrap(), "owned result");
+        let unwind = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _: crate::Result<()> = observe_operation!(operation, Kind::ClientCas, {
+                let _phase = operation.as_ref().unwrap().phase(Phase::Transport);
+                calls += 1;
+                panic!("synthetic operation unwind");
+            });
+        }));
+        assert!(unwind.is_err());
+        assert_eq!(calls, 3);
+        let value = recorder.snapshot();
+        assert_eq!(value["records_started"], 2);
+        assert_eq!(value["records_completed"], 1);
+        assert_eq!(value["records_closed"], 2);
+        assert_eq!(value["has_open_operations"], false);
+        let rows = value["records"].as_array().unwrap();
+        assert_eq!(rows[0]["accepted"], true);
+        assert!(rows[1]["accepted"].is_null());
+        assert_eq!(value["phase_totals"][0]["samples"]["unfinished"], 1);
+    }
+
     #[test]
     fn disabled_observation_and_failures_never_supply_authority_or_error_text() {
         assert!(start(Kind::ClientCurrent).is_none());

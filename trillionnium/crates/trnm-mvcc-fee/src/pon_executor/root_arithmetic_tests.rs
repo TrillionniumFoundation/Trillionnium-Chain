@@ -2,6 +2,106 @@ use super::*;
 use serde_json::json;
 use trnm_protocol::pon_wire::StateRootArithmetic;
 
+fn owned_non_accounts(state: &State) -> State {
+    state
+        .iter()
+        .filter(|(key, _)| !key.starts_with("account:"))
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect()
+}
+
+#[test]
+fn borrowed_non_account_partition_keeps_actual_rows_changes_and_original_roots() {
+    let mut state = State::from([
+        ("account:one".into(), json!({"balance":7,"nonce":2})),
+        ("accounting".into(), json!("included")),
+        ("meta:issued".into(), json!(7)),
+        ("plain".into(), json!("x".repeat(4080))),
+        ("escaped".into(), json!("\"\\\n\u{001f}")),
+        ("nested".into(), json!({"a":["plain",1,null]})),
+    ]);
+    let mut arithmetic = StateRootArithmetic::new(16 * 1024);
+    for step in 0..7 {
+        match step {
+            1 => state.get_mut("account:one").unwrap()["nonce"] = json!(3),
+            2 => {
+                state.insert("new".into(), json!("new"));
+            }
+            3 => {
+                state.insert("plain".into(), json!("y".repeat(4080)));
+            }
+            4 => {
+                state.remove("escaped");
+            }
+            5 => {
+                state.insert("account:zero".into(), json!({"balance":0,"nonce":99}));
+            }
+            6 => state.clear(),
+            _ => {}
+        }
+        let original = owned_non_accounts(&state);
+        let view = BorrowedNonAccountState::new(&state);
+        assert_eq!(view.len(), original.len());
+        assert_eq!(view.is_empty(), original.is_empty());
+        assert!(view.iter().eq(original.iter()));
+        assert_eq!(view.get("account:one"), None);
+        assert_eq!(view.get("not-present"), None);
+        for (key, value) in view.iter() {
+            let (source_key, source_value) = state.get_key_value(key).unwrap();
+            assert!(std::ptr::eq(key, source_key));
+            assert!(std::ptr::eq(value, source_value));
+            assert!(std::ptr::eq(view.get(key).unwrap(), source_value));
+        }
+        let expected = root(&original);
+        assert_eq!(view.root(), expected);
+        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
+        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
+        assert!(arithmetic.retained_payload_bytes() <= 16 * 1024);
+    }
+}
+
+#[test]
+fn borrowed_non_account_partition_keeps_full_grammar_before_count_and_wire_limits() {
+    let mut arithmetic = StateRootArithmetic::new(16 * 1024);
+    let warm = State::from([("warm".into(), json!("prior complete material"))]);
+    BorrowedNonAccountState::new(&warm)
+        .root_with_arithmetic(&mut arithmetic)
+        .unwrap();
+    let previous = arithmetic.observation();
+    let mut cases = vec![
+        State::from([("a".repeat(161), json!(0)), ("z".into(), json!(0.5))]),
+        State::from([
+            ("a".into(), json!("x".repeat(4096))),
+            ("z".into(), json!("é")),
+        ]),
+        State::from([("a".repeat(161), json!(0))]),
+        State::from([("a".into(), json!("x".repeat(4096)))]),
+    ];
+    let mut too_many: State = (0..65_537)
+        .map(|index| (format!("row:{index:05}"), json!(0)))
+        .collect();
+    cases.push(too_many.clone());
+    too_many.insert("zz-late-invalid".into(), json!(0.5));
+    cases.push(too_many);
+    for (index, state) in cases.iter_mut().enumerate() {
+        state.insert("account:excluded".into(), json!({"balance":0,"nonce":99}));
+        let original = owned_non_accounts(state);
+        let expected = root(&original);
+        assert_eq!(
+            expected,
+            Err(match index {
+                0 | 5 => "RANGE",
+                1 => "NONCANONICAL",
+                _ => "LIMIT",
+            })
+        );
+        let view = BorrowedNonAccountState::new(state);
+        assert_eq!(view.root(), expected);
+        assert_eq!(view.root_with_arithmetic(&mut arithmetic), expected);
+        assert_eq!(arithmetic.observation(), previous);
+    }
+}
+
 fn plain_ascii_reference(bytes: &[u8]) -> bool {
     bytes
         .iter()

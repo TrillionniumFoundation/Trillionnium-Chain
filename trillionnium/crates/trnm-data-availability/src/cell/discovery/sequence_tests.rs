@@ -8,7 +8,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         atomic::{AtomicBool, AtomicU64, Ordering},
-        Arc, Mutex,
+        mpsc, Arc, Mutex,
     },
     thread::{self, JoinHandle},
 };
@@ -57,6 +57,15 @@ fn limits() -> CellPeerLimitsV1 {
 
 fn deadline() -> Instant {
     Instant::now() + limits().overall_timeout
+}
+
+// Fixture startup is not a TCP request. Await actual worker entry and database
+// setup before the caller starts a request deadline or mints a short signed TTL.
+// This sends no probe connection and changes no service lifetime or request cap.
+fn wait_for_fixture_setup(ready: mpsc::Receiver<()>, owner: &str) {
+    ready
+        .recv_timeout(limits().overall_timeout)
+        .unwrap_or_else(|error| panic!("{owner} fixture setup did not complete: {error:?}"));
 }
 
 fn policy(peers: &[SocketAddr]) -> CellDiscoveryAddressPolicyV1 {
@@ -114,15 +123,21 @@ impl Peer {
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
         let path = path.to_owned();
+        let (ready, started) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
             let store = CellStoreV1::open(&path, cache_config())?;
+            listener.set_nonblocking(true)?;
+            let _ = ready.send(());
             serve_cells(&listener, &store, &stop, bounds)
         });
-        Self {
+        let peer = Self {
             address,
             shutdown,
             handle: Some(handle),
-        }
+        };
+        // Construct the owner first so a failed setup wait still joins it.
+        wait_for_fixture_setup(started, "Cell peer");
+        peer
     }
 
     fn stop(mut self) -> u64 {
@@ -148,13 +163,25 @@ struct Rendezvous {
 
 impl Rendezvous {
     fn start(path: &Path, providers: &[SocketAddr]) -> Self {
+        Self::start_after_setup(path, providers, || {})
+    }
+
+    fn start_after_setup(
+        path: &Path,
+        providers: &[SocketAddr],
+        setup: impl FnOnce() + Send + 'static,
+    ) -> Self {
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let addresses = policy(providers);
         let directory = CellProviderDirectoryV1::open(path, context()).unwrap();
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
+        let (ready, started) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
+            setup();
+            listener.set_nonblocking(true)?;
+            let _ = ready.send(());
             serve_cell_rendezvous(
                 &listener,
                 &directory,
@@ -167,11 +194,13 @@ impl Rendezvous {
                 },
             )
         });
-        Self {
+        let rendezvous = Self {
             address,
             shutdown,
             handle: Some(handle),
-        }
+        };
+        wait_for_fixture_setup(started, "Cell rendezvous");
+        rendezvous
     }
 
     fn stop(mut self) -> CellRendezvousReportV1 {
@@ -208,9 +237,11 @@ impl SilentTrap {
         let stop = shutdown.clone();
         let accepted = Arc::new(AtomicU64::new(0));
         let observed = accepted.clone();
+        let (ready, started) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
             let end = Instant::now() + Duration::from_secs(30);
             let mut held = Vec::new();
+            let _ = ready.send(());
             while !stop.load(Ordering::Relaxed) && held.len() < 64 && Instant::now() < end {
                 match listener.accept() {
                     Ok((stream, _)) => {
@@ -226,12 +257,14 @@ impl SilentTrap {
             }
             Ok(())
         });
-        Self {
+        let trap = Self {
             address,
             shutdown,
             accepted,
             handle: Some(handle),
-        }
+        };
+        wait_for_fixture_setup(started, "stale endpoint trap");
+        trap
     }
 
     fn stop(mut self) -> u64 {
@@ -279,10 +312,12 @@ impl ExpiryProxy {
         let stop = shutdown.clone();
         let observation = Arc::new(Mutex::new(None));
         let observed = observation.clone();
+        let (ready, started) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
             let end = Instant::now() + Duration::from_secs(30);
             let mut connections = 0;
             let mut delayed = false;
+            let _ = ready.send(());
             while !stop.load(Ordering::Relaxed) && connections < 64 && Instant::now() < end {
                 let mut client = match listener.accept() {
                     Ok((stream, _)) => stream,
@@ -374,13 +409,15 @@ impl ExpiryProxy {
             }
             Ok(())
         });
-        Self {
+        let proxy = Self {
             address,
             expiry,
             shutdown,
             observation,
             handle: Some(handle),
-        }
+        };
+        wait_for_fixture_setup(started, "expiry proxy");
+        proxy
     }
 
     fn arm(&self, signed_expiry: u64) {
@@ -419,6 +456,35 @@ fn assert_current_sequence(
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].statement().sequence, sequence);
+}
+
+#[test]
+fn fixture_setup_wait_preserves_original_tcp_announcement_budget() {
+    let temp = tempfile::tempdir().unwrap();
+    let provider = SilentTrap::start();
+    // A real server begins servicing only after setup slower than the original
+    // 200 ms client request allowance. Startup must finish before that clock
+    // starts; there is one actual announcement, no retry or readiness probe.
+    let setup_delay = limits().request_timeout + Duration::from_millis(150);
+    let started = Instant::now();
+    let rendezvous = Rendezvous::start_after_setup(
+        &temp.path().join("slow-start-directory.sqlite"),
+        &[provider.address],
+        move || thread::sleep(setup_delay),
+    );
+    assert!(started.elapsed() >= setup_delay);
+    let addresses = policy(&[provider.address, rendezvous.address]);
+    let pin = request([40; 32]);
+    let value = record(pin, provider.address, 1, wall_now().unwrap().as_secs(), 300);
+    let receipt =
+        announce_cell_provider(&value, rendezvous.address, &addresses, limits(), deadline())
+            .unwrap();
+    assert_eq!(receipt.connection_attempts, 1);
+    assert_eq!(receipt.received_response_bytes, 41);
+    let served = rendezvous.stop();
+    assert_eq!(served.connections, 1);
+    assert_eq!(served.rejected_requests, 0);
+    assert_eq!(provider.stop(), 0);
 }
 
 #[test]
@@ -536,15 +602,19 @@ fn tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication() 
     // Failure to reach the proxy while live is a failed fixture, never a pass.
     let now = wall_now().unwrap().as_secs();
     let old = record(pin, proxy.address, 1, now, 300);
-    let latest = record(pin, proxy.address, 2, now, 2);
+    let old_receipt =
+        announce_cell_provider(&old, first.address, &addresses, bounds, deadline()).unwrap();
+    assert_eq!(old_receipt.connection_attempts, 1);
+    assert_eq!(old_receipt.received_response_bytes, 41);
+    // The long-lived seq1 announcement is fixture preparation. Mint seq2 only
+    // when its own announcement is next, retaining the same two-second TTL.
+    let latest = record(pin, proxy.address, 2, wall_now().unwrap().as_secs(), 2);
     let expires = Duration::from_secs(latest.statement().expires_unix_seconds);
     proxy.arm(latest.statement().expires_unix_seconds);
-    for (value, rendezvous) in [(&old, first.address), (&latest, second.address)] {
-        let receipt =
-            announce_cell_provider(value, rendezvous, &addresses, bounds, deadline()).unwrap();
-        assert_eq!(receipt.connection_attempts, 1);
-        assert_eq!(receipt.received_response_bytes, 41);
-    }
+    let latest_receipt =
+        announce_cell_provider(&latest, second.address, &addresses, bounds, deadline()).unwrap();
+    assert_eq!(latest_receipt.connection_attempts, 1);
+    assert_eq!(latest_receipt.received_response_bytes, 41);
     let options = CellDiscoveryOptionsV1 {
         request: pin,
         bootstraps: vec![first.address, second.address],

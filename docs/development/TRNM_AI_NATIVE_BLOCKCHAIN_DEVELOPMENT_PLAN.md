@@ -4921,3 +4921,63 @@ changing the original 250 ms/200 ms boundaries or mandatory self-verification.
 Its two new diagnostic controls and the final combined source require fresh
 hosted execution. Shared-disk exhaustion prevents a complete local combined
 build; component runs are not relabelled as that missing result.
+
+### 2026-11-03 complete-cost measurement and rejected borrowed partition
+
+Continue from published #688 head
+`bebb1f3289cd7050fefde89ea8f2cf33c6c37588`, keeping the existing optimization
+order and original decision/resource gates. The
+[measurement continuation](../../evidence/pon-six-axis-measurement-20261103/README.md)
+retains both rejected experiments, exact reproduction patches, source/binary
+identities, all planned component samples and the original native failures.
+
+The first borrowed-filter experiment repeatedly visited account rows and failed
+its fixed component acceptance rule. Its allocator wrapper also instrumented
+the timed process even when counting was disabled. Preserve that observation
+as instrumented wall time; it cannot qualify ordinary executable performance.
+The next descriptor experiment filtered the immutable complete State once into
+borrowed key/value references. Separate executables then measured 512 ordinary
+System-allocator wall calls and 32 allocation-count calls across all eight
+registered cold/warm cohorts, without retrying a failed cohort. Complete roots,
+arithmetic observations and the original 2 MiB retained-payload boundary agreed.
+
+Requested allocation bytes fell by 19.61% to 82.55% in all eight cohorts; the
+2100-payload fixture removed 9,190,156 requested bytes per call. These are
+cumulative allocation requests, not peak RSS, CPU or complete-service savings.
+The preregistered all-cohort wall gate still failed: 64 payload/64 accounts cold
+had p95 ratio 1.319470 above 1.10, and 1024 payload/64 accounts cold had median
+ratio 1.007682 above 1.0. Only three cohorts met the separate five-percent wall
+improvement rule. The experimental native binary also retained both original
+large-parent `PUBLIC_MUTATION_CPU_BUDGET` refusals, alongside 119 selected
+passing controls and one explicitly release-only ignored control.
+
+Keep the descriptor integration rejected. Restore eleven original production
+functions, including both ordinary M06 root paths and the native non-account
+calculation, plus the entire native arithmetic-cache entry file byte-for-byte
+to the published parent. The borrowed Node helpers remain behind `cfg(test)`;
+the explicit M06 reproduction primitive grants no authority and has no default
+Node caller. The retained patches reconstruct the measured intermediate source,
+including the generic-row adapter used by its A arm. Final isolated-source
+validation is recorded separately and cannot relabel those historical runs.
+
+Repair the test-only PQ observer's immediate closure invocation with a typed
+operation boundary. Keep success, question-mark, explicit-return and panic/drop
+semantics; no lint allowance or production observation branch changes. Cell TCP
+fixtures now wait for actual worker/database readiness before starting the
+original request clock and mint the short successor announcement after prior
+setup. The 200 ms request, 250 ms rendezvous request, two-second TTL and original
+connection/byte limits remain. A deliberately delayed real TCP fixture and its
+removed-wait negative control establish that setup boundary; they do not prove
+all hosted scheduling failures are gone or constitute Cell throughput gains.
+
+The six priorities remain one implementation sequence. Existing observations
+must still resolve aggregate parent/task work, inclusive versus nested CPU and
+the original full-service failure denominator. GrowthV2 fixed-touched curves do
+not eliminate ordinary complete-State reads or original O(H) history work.
+Admission persistence and final generation publication retain their separate
+atomic transactions. Mathematical cache reuse never substitutes for live
+generation/revocation/expiry authorization. Bounded confirmation queries do not
+prove group-commit, head-of-line, retry/drain or PQ aggregation performance; Cell
+component limits do not establish full model installation and inference budgets.
+Original public-service, independent WAN/fault, whole-chain PQ and activation
+qualifications remain HOLD.

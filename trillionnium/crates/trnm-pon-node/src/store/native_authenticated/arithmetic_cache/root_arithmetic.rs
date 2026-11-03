@@ -271,6 +271,58 @@ impl RootArithmetic {
         }
     }
 
+    /// Explicit experimental controls only; never selected by complete().
+    #[cfg(test)]
+    pub(super) fn calculate_borrowed_non_accounts(
+        &self,
+        settings: &Settings,
+        actual: &pon_executor::BorrowedNonAccountState<'_>,
+    ) -> pon_executor::Result<Hash> {
+        // Preserve the original shared eligibility check before attempting to
+        // take material. A shared borrow permits eligibility but forces the
+        // counted cold calculation below; a mutable borrow cannot establish
+        // eligibility and keeps the original uncounted independent fallback.
+        let use_partitions = self.material.try_borrow().is_ok_and(|material| {
+            material.as_ref().is_some_and(|material| {
+                material.context
+                    == [
+                        settings.network(),
+                        settings.parameters(),
+                        settings.genesis(),
+                    ]
+                    && matches!(&material.source, MaterialSource::Partitions(_))
+            })
+        });
+        if !use_partitions {
+            return actual.root();
+        }
+        self.count(|c| c.calculations = c.calculations.saturating_add(1));
+        let prior = match self.material.try_borrow_mut() {
+            Ok(mut material) => material.take(),
+            Err(_) => {
+                self.count(|c| c.cold_roots = c.cold_roots.saturating_add(1));
+                return actual.root();
+            }
+        };
+        match prior {
+            Some(Material {
+                source: MaterialSource::Partitions(arithmetic),
+                ..
+            }) => {
+                self.count(|c| {
+                    c.material_uses = c.material_uses.saturating_add(1);
+                });
+                self.calculate_partition_inputs(
+                    settings,
+                    arithmetic,
+                    |arithmetic| actual.root_with_arithmetic(arithmetic),
+                    || actual.root(),
+                )
+            }
+            _ => actual.root(),
+        }
+    }
+
     fn calculate_partitions(
         &self,
         settings: &Settings,
@@ -326,6 +378,67 @@ impl RootArithmetic {
                     c.original_error_fallbacks = c.original_error_fallbacks.saturating_add(1)
                 });
                 pon_executor::root(actual)
+            }
+        }
+    }
+
+    #[cfg(test)]
+    fn calculate_partition_inputs(
+        &self,
+        settings: &Settings,
+        mut arithmetic: StateRootArithmetic,
+        calculate: impl FnOnce(&mut StateRootArithmetic) -> pon_executor::Result<Hash>,
+        original: impl FnOnce() -> pon_executor::Result<Hash>,
+    ) -> pon_executor::Result<Hash> {
+        let result = calculate(&mut arithmetic);
+        if result.is_ok() {
+            let observation = arithmetic.observation();
+            self.count(|c| {
+                c.partition_inputs_observed = c
+                    .partition_inputs_observed
+                    .saturating_add(observation.input_keys as u64);
+                c.partition_inputs_hashed = c
+                    .partition_inputs_hashed
+                    .saturating_add(observation.leaf_hashes_computed as u64);
+                c.partition_exact_string_hits = c
+                    .partition_exact_string_hits
+                    .saturating_add(observation.exact_string_hits as u64);
+                c.partition_string_encodings_reused = c
+                    .partition_string_encodings_reused
+                    .saturating_add(observation.string_encodings_reused as u64);
+                c.partition_roots_reused = c
+                    .partition_roots_reused
+                    .saturating_add(observation.reused_partitions as u64);
+                c.partition_roots_computed = c
+                    .partition_roots_computed
+                    .saturating_add(observation.computed_partitions as u64);
+                if observation.retention_refused {
+                    c.partition_retention_refusals =
+                        c.partition_retention_refusals.saturating_add(1);
+                }
+            });
+            // A refused calculation publishes no entry; the returned root was
+            // computed by the original complete reducer over actual leaf hashes.
+            if observation.retention_refused {
+                return result;
+            }
+        }
+        self.restore(Material {
+            context: [
+                settings.network(),
+                settings.parameters(),
+                settings.genesis(),
+            ],
+            charged: arithmetic.retained_payload_bytes() + ENTRY_CHARGE,
+            source: MaterialSource::Partitions(arithmetic),
+        });
+        match result {
+            Ok(root) => Ok(root),
+            Err(_) => {
+                self.count(|c| {
+                    c.original_error_fallbacks = c.original_error_fallbacks.saturating_add(1)
+                });
+                original()
             }
         }
     }
