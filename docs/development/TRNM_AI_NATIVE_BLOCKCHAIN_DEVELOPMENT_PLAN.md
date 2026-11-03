@@ -4729,6 +4729,36 @@ with that historical source. This new combined source has not yet been built
 or accepted; it requires fresh exact-head and actual-merge evidence. All eight
 machine assertions remain false and PN0-PN6 remain HOLD.
 
+
+### 2026-11-03 whole-chain PQ integration continuation
+
+This source continuation was later reconciled with #688
+`9f04640877078204d367f753eba684d94e705a74`, preserving its independent
+History deadline repair and source records.
+
+Continue #688 from `116a3caf6046dd0db3caf1d0797e636c35c877b8` and pair source
+review with Hepta #4497 `f28af9b7700a61fbbcdcc121521cb879297d5e31`. Integrate
+#683's missing same-transaction witness admission guard, its two required
+controls, and the isolated SDK 3.0.6 Poseidon2 verifier profile. Preserve the
+current observation diagnostics, all 43 earlier required controls and original
+250 ms witness and four-second business bounds. The new 45-control composition
+requires its own native result; historical component passes do not transfer.
+
+The paired Hepta repair makes every final consumer boundary validate the same
+revocation head captured by its authenticated claim, while preserving consumed
+nonces and explicit revocation precedence. Ordinary explicitly selected PQ Cell
+composition does not close the classical-only RunStart V1 and production
+grant/recovery paths. Those paths need versioned owner migration and current
+frontier checks, not an OR fallback.
+
+The [whole-chain claim record](../security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md#2026-11-03-integrated-source-continuation)
+keeps the three-table PqWitnessV4 scope distinct from paired V5 evidence names,
+canonical reorganization state distinct from monotonic local effect state, and
+primitive category distinct from a whole-system PQ-128 claim. Local source and
+format checks, resource failures and remote native outcomes are separate
+observations. All six qualification domains and production activation remain
+HOLD until their own evidence is accepted.
+
 ### 2026-11-03 six-axis performance implementation with original gates retained
 
 The integration baseline `af064bf751ed92c82da0b113682a7dfff3225d97`, tree
@@ -5096,27 +5126,20 @@ The later successful CodeQL check-run remains bound to old `bebb`, without
 dismissing existing warnings or granting whole-chain security acceptance.
 
 
-### 2026-11-03 whole-chain PQ integration continuation
+### 2026-11-03 History completion after mandatory cleanup
 
-Continue #688 from `116a3caf6046dd0db3caf1d0797e636c35c877b8` and pair source
-review with Hepta #4497 `f28af9b7700a61fbbcdcc121521cb879297d5e31`. Integrate
-#683's missing same-transaction witness admission guard, its two required
-controls, and the isolated SDK 3.0.6 Poseidon2 verifier profile. Preserve the
-current observation diagnostics, all 43 earlier required controls and original
-250 ms witness and four-second business bounds. The new 45-control composition
-requires its own native result; historical component passes do not transfer.
+Preserve parent `45962558a7133375b16c0ac2600f2edb4a115585`, including the
+composed `116a3caf...` integration and concurrent PQ witness pre-CAS checks.
+The ordinary History wrappers now check the original absolute deadline after
+CPU settlement and epoch closure, only when the prior result is successful.
+Cleanup errors retain priority over native errors, followed by late-success
+refusal. Durable packet/activation facts and paid CPU are retained for exact
+retry; a closed epoch is not marked abandoned by the final refusal.
 
-The paired Hepta repair makes every final consumer boundary validate the same
-revocation head captured by its authenticated claim, while preserving consumed
-nonces and explicit revocation precedence. Ordinary explicitly selected PQ Cell
-composition does not close the classical-only RunStart V1 and production
-grant/recovery paths. Those paths need versioned owner migration and current
-frontier checks, not an OR fallback.
-
-The [whole-chain claim record](../security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md#2026-11-03-integrated-source-continuation)
-keeps the three-table PqWitnessV4 scope distinct from paired V5 evidence names,
-canonical reorganization state distinct from monotonic local effect state, and
-primitive category distinct from a whole-system PQ-128 claim. Local source and
-format checks, resource failures and remote native outcomes are separate
-observations. All six qualification domains and production activation remain
-HOLD until their own evidence is accepted.
+The [candidate record](../../evidence/pon-history-close-deadline-20261103/README.md)
+contains the static review and three new ordinary controls. Execution became
+unavailable before compilation or test execution; the recovered candidate's
+formatting, Clippy, native controls and exact-source gates remain pending.
+The existing Host-context mismatch in the signed-DAG integration also remains
+open. Original service windows, work-cost/security, independent evidence,
+whole-chain PQ, public-readiness and activation gates are not promoted.

@@ -144,19 +144,24 @@ new deterministic concurrency control requires both valid callers to complete,
 rejects a genuinely old witness and then restores signed service after exact
 witness repair. It does not weaken rollback checks or extend test timeouts.
 
-Normal Cell V2 startup from #4497 and PQ profile validation from #4552 still need
-one combined source tree and real qualification-to-CURRENT-to-load/read/unload
-tests. RunStart and ObjectiveStart require versioned producers, authenticators,
-both normal and conflict journal encodings, decoders, revocation and an external
-freshness owner. Rejecting the current classical format is necessary but is not
-the successful PQ business path. The precise pinned dependencies are recorded in
-[Hepta's migration analysis](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/cd3c1b860f2b0f05c24bfb8d4b5da6ba7f99704a/qualification/pq-policy-renewal-20261101/MIGRATION_DEPENDENCIES.md).
+The earlier separation of Normal Cell V2 startup and PQ profile validation is
+superseded by the source-bound [#4497 candidate at f28af9b](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/f28af9b7700a61fbbcdcc121521cb879297d5e31).
+Explicit `ml_dsa65_v2` ordinary Cell and initial consumers now use canonical PQ
+FinalUse authority, with material/selector profile agreement and the protected
+clock and original startup deadline. The same candidate includes the actual
+Codex PQ turn/start route. Untagged compatibility remains classical. These
+specific source/component results do not qualify every effect-bearing owner,
+governance, release, recovery, migration or the final composed deployment.
+The [earlier migration analysis](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/cd3c1b860f2b0f05c24bfb8d4b5da6ba7f99704a/qualification/pq-policy-renewal-20261101/MIGRATION_DEPENDENCIES.md)
+retains its historical source identity; its unimplemented-at-the-time routes
+must not be restated as current source gaps. Original installed confirmation
+and complete-system failures remain separate unclosed gates.
 
 ## All six qualification gates remain open
 
 | Gate | This continuation supplies | Still required for a whole-system claim |
 | --- | --- | --- |
-| Complete authorization | Live PNQ2 admission and policy-bound Hepta renewal controls | Every normal effect path, composed Cell/FinalUse, RunStart/ObjectiveStart, upgrade, revocation and recovery under the same protected PQ profile |
+| Complete authorization | Live PNQ2 admission, policy-bound Hepta renewal and the pinned explicit canonical PQ Cell/initial FinalUse and Codex turn/start routes | Every effect-bearing owner, upgrade, revocation and recovery, plus the final composed Chain/Hepta deployment under the same protected PQ profile |
 | Proof PQ-128 | No change to proof acceptance or claimed security level | Exact full relation and verifier parameters, quantum soundness, recursive composition and independent cryptographic review |
 | Quantum work and fork choice | No change to W1, difficulty or chainwork | Complete reversible W1 cost, amortization and cheapest valid work, quantum search, DAA/timestamps, forks and propagation under original budgets |
 | Migration and rollback | Explicit native witness for three PNQ2 tables | Historical assets and liabilities, all effect-bearing state, independently administered monotonic trust, conflict recovery and actual deployed cold-restoration acceptance |

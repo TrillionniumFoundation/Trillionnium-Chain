@@ -11,6 +11,10 @@ use std::{
 };
 
 type Observer = Box<dyn Fn(&str)>;
+
+#[path = "history_import_deadline_tests.rs"]
+mod deadline_controls;
+
 thread_local! {
     static OBSERVER: RefCell<Option<Observer>> = RefCell::new(None);
 }
