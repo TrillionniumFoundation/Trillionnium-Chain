@@ -124,3 +124,26 @@ blank final line. Its exact historical bytes are preserved. Whole-composition
 `git diff --check` reports that retained-log whitespace; the separate check
 excluding only this unchanged historical log passes. The formatting-only
 patch is retained as a JSON string so patch context spaces remain exact data.
+
+
+## Source-pin correction after the first publication
+
+The actual corpus check on `801bc063d64eff483cbd52804debfa6638cf96dd`
+failed on the changed fixed-Host CI workflow. A complete comparison of all
+376 pins found exactly two stale entries: that workflow inherited from #697
+and the formatting-only History deadline test change in this composition.
+The earlier source-integrity unit controls did not replace this actual
+manifest check. Its negative output remains in `PIN_CORRECTION.json`.
+
+The correction updates only those two blob values. The other 374 pins and
+all manifest fields remain identical. The real corpus check now exits zero
+with its original `HOLD_NO_GO` result; the original 34 corpus controls and
+22 claim-guard controls also pass. No Rust, Cargo, workflow, deadline,
+workload or assertion changes accompany this correction, and no additional
+native run is claimed. Original hosted runtime qualification remains pending.
+
+Separately, the original release and workspace-profile CPU matrices on the
+earlier exact `116a3caf` source have now been independently verified across
+x64/ARM and head/prospective merge. Their [source-bound proof](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/adb90322aee5675fdd410bc813a9782e881f0024/evidence/pon-original-cpu-independent-20261103/README.md)
+does not qualify this later composition or the still-failing 4-second and
+30-second service gates.

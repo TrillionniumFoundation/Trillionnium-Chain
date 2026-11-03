@@ -5174,3 +5174,17 @@ Fixed-Host native execution, original 4 s / 16-hostile pressure, ARM CPU,
 and 30 s campaign gates remain independently OPEN. No runtime/model/security
 acceptance or activation is promoted: DRAFT / SHADOW_ONLY / DENY_ALL /
 HOLD_NO_GO remains in force.
+
+
+### Fixed-Host/readiness source-pin correction (2026-11-03)
+
+The first composed `801bc063` retained two stale corpus blob pins: the fixed-Host
+baseline workflow and the formatting-only History deadline test. The actual
+corpus check failed and its output is retained in
+`qualification/cell-rendezvous-readiness-20261103/PIN_CORRECTION.json`.
+Only these two pin values are corrected; all other 374 pins and every remaining
+manifest field are unchanged. The original 376-blob check now exits zero with
+`HOLD_NO_GO`, and all 34 corpus plus 22 claim-guard controls pass. The correction
+changes no Rust/Cargo/workflow input and claims no new native execution; previous
+174-test DA and fixed-Host evidence keep their exact source scope. Original
+hosted runtime, 4-second/16-hostile and 30-second service gates remain required.
