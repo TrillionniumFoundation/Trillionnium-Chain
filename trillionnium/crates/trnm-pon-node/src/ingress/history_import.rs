@@ -136,7 +136,13 @@ fn scoped_observed<T>(
         guard.closed = true;
     }
     close?;
-    result
+    // Cleanup is mandatory even after expiry. Only a successful outward result
+    // receives this final time fence: an existing native/cleanup error keeps
+    // its original precedence, and already committed facts remain committed.
+    result.and_then(|value| {
+        control.alive()?;
+        Ok(value)
+    })
 }
 
 fn begin_cpu(
@@ -193,7 +199,13 @@ fn metered_observed<T>(
             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
         )
     })?;
-    result
+    // Settlement must retain all paid CPU before any late success is refused.
+    // The cheap original-deadline check is not another Host observation and
+    // cannot replace an existing native or settlement error.
+    result.and_then(|value| {
+        control.alive()?;
+        Ok(value)
+    })
 }
 
 fn validate_page(settings: &Settings, page: &Page, tip: Hash, after: Hash) -> Result<()> {

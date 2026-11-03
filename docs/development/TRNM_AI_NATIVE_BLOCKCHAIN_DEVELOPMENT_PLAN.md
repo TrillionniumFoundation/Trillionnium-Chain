@@ -5094,3 +5094,22 @@ retains all 32 cost observations. Neither this correction nor the prior source's
 success replaces composition, ARM, release or original public-service evidence.
 The later successful CodeQL check-run remains bound to old `bebb`, without
 dismissing existing warnings or granting whole-chain security acceptance.
+
+
+### 2026-11-03 History completion after mandatory cleanup
+
+Preserve parent `45962558a7133375b16c0ac2600f2edb4a115585`, including the
+composed `116a3caf...` integration and concurrent PQ witness pre-CAS checks.
+The ordinary History wrappers now check the original absolute deadline after
+CPU settlement and epoch closure, only when the prior result is successful.
+Cleanup errors retain priority over native errors, followed by late-success
+refusal. Durable packet/activation facts and paid CPU are retained for exact
+retry; a closed epoch is not marked abandoned by the final refusal.
+
+The [candidate record](../../evidence/pon-history-close-deadline-20261103/README.md)
+contains the static review and three new ordinary controls. Execution became
+unavailable before compilation or test execution; the recovered candidate's
+formatting, Clippy, native controls and exact-source gates remain pending.
+The existing Host-context mismatch in the signed-DAG integration also remains
+open. Original service windows, work-cost/security, independent evidence,
+whole-chain PQ, public-readiness and activation gates are not promoted.
