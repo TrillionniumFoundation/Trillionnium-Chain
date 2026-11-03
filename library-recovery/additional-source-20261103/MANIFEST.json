@@ -1,0 +1,51 @@
+{
+  "schema": "library.unclassified.source-recovery.v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "classification_note": "best-effort assignment by filename and source header; not release authority",
+  "original_surface": "ChatGPT Library",
+  "date": "2026-11-03",
+  "files": [
+    {
+      "name": "go.mod",
+      "bytes": 59,
+      "sha256": "abf40fac996c561fa3e9a9088857631c62274793353952f86ec15e6ce80c4c83",
+      "git_blob_sha": "d25777a2a9c1a5e5cbcbdc8a7888235665e09bf4"
+    },
+    {
+      "name": "local_hot_fence_probe(1).py",
+      "bytes": 4829,
+      "sha256": "93d22ff389c09d7b3d5d31676bbe25412ff0f894556bffb0e31e375ee34bbde4",
+      "git_blob_sha": "24f88e62bc4cb1ae97a8baf8a03ed38b6e5bbcc0"
+    },
+    {
+      "name": "local_hot_fence_probe.py",
+      "bytes": 4829,
+      "sha256": "93d22ff389c09d7b3d5d31676bbe25412ff0f894556bffb0e31e375ee34bbde4",
+      "git_blob_sha": "24f88e62bc4cb1ae97a8baf8a03ed38b6e5bbcc0"
+    },
+    {
+      "name": "main.go",
+      "bytes": 7989,
+      "sha256": "f2e9dadbf20f4e0f2c0595fbe909f73cd1412e6df76e7d38e09abb327d2b4f77",
+      "git_blob_sha": "cf99557391968f9a1eccfb925682bb827a8200f9"
+    },
+    {
+      "name": "main_test.go",
+      "bytes": 2146,
+      "sha256": "268ddabea8e46df7e074e35d8de4fc30c6d06aa32c212196fd6ec7491331f159",
+      "git_blob_sha": "fae5ec2cfbe758cf1e399df966d876d8f5a2dcb0"
+    },
+    {
+      "name": "verify.go",
+      "bytes": 11607,
+      "sha256": "b3008db85f7bfc0af9e8ebfcf7e367311294d027ff0a5e57540463c851dc52e0",
+      "git_blob_sha": "b04a052700aee9cd6e5ea0dde231b390fbe796c0"
+    },
+    {
+      "name": "verify_test.go",
+      "bytes": 11844,
+      "sha256": "c90a0249e1c97ecbbeaf0d83e9f288aa926fcd364e8411939b9e830245c9f772",
+      "git_blob_sha": "9b1a68648e5885b4fafe942643bb4c64bb2fd84a"
+    }
+  ]
+}
