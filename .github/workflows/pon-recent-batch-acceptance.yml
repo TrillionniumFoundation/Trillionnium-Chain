@@ -79,9 +79,9 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 5bbb4469977972020ae5c0f324239ee56dfaf888
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = ac0a694a02610bf494abdd5ee708a6f5c03adf49
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11
-          # R10 adds a separate module and two ignored F0 entries; all original
-          # phase/ROOT bodies remain byte-identical. Keep an exact whole-file pin.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 22fd5d81377022b73bbcc82bfa30fbf10c5502ff
+          # Retain R10 and the subsequent bounded 30-second client-import
+          # observation under the original budgets, with an exact whole-file pin.
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = ec6420becaba837f22d45c917d15554a8e653275
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
@@ -233,7 +233,8 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline -- --show-output --test-threads=1 2>&1 | tee "$OUT/pipeline-failure-controls.log"
-          grep -E '^test result: ok\. 11 passed; 0 failed; 0 ignored;' "$OUT/pipeline-failure-controls.log"
+          # Eleven retained controls plus the two later failure/panic ownership controls.
+          grep -E '^test result: ok\. 13 passed; 0 failed; 0 ignored;' "$OUT/pipeline-failure-controls.log"
           for test in failed_poll_retains_deferred_failed_and_unread_obligations original_drain_loses_obligations_on_the_same_failure every_failure_cut_preserves_exact_remaining_order shutdown_joins_before_returning_server_failure shutdown_preserves_success_and_reports_panicked_server batched_poll_uses_complete_blocks_with_exact_wire_limit batched_poll_every_rpc_failure_preserves_retry_ownership batched_poll_rejects_dimensions_before_any_rpc batched_poll_rejects_partial_or_extra_decisions_without_removal batched_poll_matches_single_queries_without_reordering_deferred_work batched_confirmation_validates_late_context_before_claiming_any_success; do
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline "tests::$test" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "tests::$test"
@@ -337,13 +338,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          out="${OUT:-$RUNNER_TEMP/recent-exact}"
+          mkdir -p "$out"
           args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
           if test "$SOURCE_KIND" = prospective-merge; then
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
-          sha256sum "$OUT"/*.log > "$OUT/logs.sha256"
-          printf 'Exact-source recent-window, bounded snapshots, statement reuse, authenticated recovery and migration scope only. Query bounds require their stated oracle and predictable-target assumptions. Whole baseline, full capacity, public Sybil fairness, physical power loss and WAN acceptance are separate. No cross-call verdict cache; whole-history quadratic traversal remains.\n' > "$OUT/SCOPE.txt"
+          source_status=0
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-after.json" || source_status=$?
+          shopt -s nullglob
+          logs=("$out"/*.log)
+          log_status=no-logs-retained
+          if ((${#logs[@]})); then
+            sha256sum "${logs[@]}" > "$out/logs.sha256"
+            log_status=logs-retained
+          else
+            : > "$out/logs.sha256"
+          fi
+          printf '{"schema":"trnm-recent-log-inventory-v1","status":"%s","retained_log_files":%s,"source_identity_exit_code":%s,"native_execution_established_by_inventory":false,"qualification":"unknown"}\n' "$log_status" "${#logs[@]}" "$source_status" > "$out/log-inventory.json"
+          printf 'Exact-source recent-window, bounded snapshots, statement reuse, authenticated recovery and migration scope only. Query bounds require their stated oracle and predictable-target assumptions. Whole baseline, full capacity, public Sybil fairness, physical power loss and WAN acceptance are separate. No cross-call verdict cache; whole-history quadratic traversal remains. A log inventory records only files present; absent logs do not establish native execution or a passing test. Earlier failed steps and the source verifier exit remain failures.\n' > "$out/SCOPE.txt"
+          exit "$source_status"
       - name: Bind complete native cache observations to the unchanged tested source
         shell: bash
         run: |

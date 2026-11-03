@@ -675,13 +675,17 @@ impl CellRetentionStoreV1 {
         let row = self.required_row(operation)?;
         require(row.status == 1, "retention unavailable")?;
         self.verify_payload(&row, deadline)?;
-        cache.put_manifest(row.contract.manifest.id(), &row.contract.manifest.encode())?;
+        cache.put_manifest_with_deadline(
+            row.contract.manifest.id(),
+            &row.contract.manifest.encode(),
+            Some(deadline),
+        )?;
         self.arena.seek(SeekFrom::Start(row.offset))?;
         for chunk in row.contract.manifest.chunks() {
             check_deadline(deadline)?;
             let mut bytes = vec![0; chunk.size as usize];
             self.arena.read_exact(&mut bytes)?;
-            cache.put_chunk(chunk, &bytes)?;
+            cache.put_chunk_with_deadline(chunk, &bytes, Some(deadline))?;
         }
         cache.verify_complete_until(&row.contract.manifest, deadline)?;
         self.readback(&row)
@@ -771,7 +775,7 @@ impl CellRetentionStoreV1 {
         let mut complete = Sha256::new();
         for expected in row.contract.manifest.chunks() {
             control.check()?;
-            let bytes = cache.chunk(expected.sha256);
+            let bytes = cache.chunk_with_deadline(expected.sha256, Some(control.deadline));
             control.check()?;
             let bytes = bytes?.ok_or(CellErrorV1::Unavailable)?;
             let verified = verify_chunk(expected, &bytes);

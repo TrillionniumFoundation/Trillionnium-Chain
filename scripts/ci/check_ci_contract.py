@@ -2,6 +2,7 @@
 """Check the deliberately fixed hosted-CI structure; this does not execute its lanes."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -493,7 +494,40 @@ def check_w1_reuse_v3(block: str) -> None:
             'four exact W1 V3 head/merge native lanes with retained failure artifacts')
 
 
+def check_inline_source_pins(root: Path) -> int:
+    """Check existing literal blob guards before CI spends a native build.
+
+    This does not add pins or authenticate source execution. The workflow's
+    original guard remains authoritative; a reviewed source edit must update
+    its corresponding literal rather than silently skipping the guard.
+    """
+    count = 0
+    pattern = re.compile(r'test "\$\(git hash-object ([A-Za-z0-9_./-]+)\)" = ([0-9a-f]{40})')
+    for workflow in sorted((root / '.github/workflows').glob('*.yml')):
+        for line_number, line in enumerate(workflow.read_text().splitlines(), 1):
+            line = line.strip()
+            if line.startswith('#') or 'git hash-object' not in line:
+                continue
+            context = f'{workflow.relative_to(root)}:{line_number}'
+            match = pattern.fullmatch(line)
+            require(match is not None, 'unsupported inline source guard: ' + context)
+            path, expected = match.groups()
+            require(not path.startswith('/') and all(part not in ('', '.', '..')
+                    for part in path.split('/')), 'noncanonical inline source path: ' + context)
+            source = root / path
+            require(source.is_file() and not source.is_symlink(),
+                    'missing regular inline source: ' + context)
+            raw = source.read_bytes()
+            actual = hashlib.sha1(b'blob ' + str(len(raw)).encode('ascii') + b'\0' + raw,
+                                  usedforsecurity=False).hexdigest()
+            require(actual == expected, f'inline source pin differs: {context}: {path}: '
+                    f'expected {expected}, observed {actual}')
+            count += 1
+    return count
+
+
 def validate(root: Path = ROOT) -> dict:
+    inline_source_pins = check_inline_source_pins(root)
     check_from_zero_host_callsites(root)
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
@@ -710,7 +744,8 @@ def validate(root: Path = ROOT) -> dict:
                 'fuzz must instrument the same shared dependency versions as the native lockfile: ' + package['name'])
     return {'head_jobs': len(required), 'merge_lanes': len(required),
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
-            'w1_actual_reuse_v3_cells': 4, 'tests_executed': False}
+            'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
+            'tests_executed': False}
 
 
 if __name__ == '__main__':

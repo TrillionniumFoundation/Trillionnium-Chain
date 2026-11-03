@@ -115,15 +115,37 @@ impl CellStoreV1 {
         })
     }
 
+    #[cfg(test)]
     fn write<T>(&self, operation: impl FnOnce(&Connection) -> CellResultV1<T>) -> CellResultV1<T> {
+        self.write_with_deadline(None, operation)
+    }
+
+    /// Network callers keep their original absolute deadline through local
+    /// contention and publication. Standalone cache APIs retain their original
+    /// five-second writer allowance. Blocking filesystem/SQLite calls remain
+    /// cooperative; an observed expiry before COMMIT rolls back this batch.
+    fn write_with_deadline<T>(
+        &self,
+        caller_deadline: Option<Instant>,
+        operation: impl FnOnce(&Connection) -> CellResultV1<T>,
+    ) -> CellResultV1<T> {
         let identity = self
             .writer_identity
             .as_ref()
             .ok_or(CellErrorV1::Invalid("read-only cache"))?;
-        let deadline = Instant::now() + super::cache_wal::WRITER_BUDGET;
+        let writer_deadline = Instant::now() + super::cache_wal::WRITER_BUDGET;
+        let deadline = caller_deadline.map_or(writer_deadline, |end| end.min(writer_deadline));
+        super::cache_wal::remaining(deadline)?;
         let _permit = super::cache_wal::acquire(identity, deadline)?;
+        // A lock released at expiry must not admit a late local write.
+        super::cache_wal::remaining(deadline)?;
         super::cache_wal::check_path(&self.path)?;
         super::cache_wal::check_sidecars(&self.path, self.config)?;
+        if caller_deadline.is_some() {
+            // Do not inherit a previous standalone write's five-second SQLite
+            // busy handler while reasserting the pager/checkpoint policy.
+            self.connection.busy_timeout(std::time::Duration::ZERO)?;
+        }
         super::cache_wal::configure(&self.connection)?;
         super::cache_wal::checkpoint_zero(&self.connection, &self.path)?;
         self.connection
@@ -133,6 +155,9 @@ impl CellStoreV1 {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         let value = operation(&transaction)?;
+        if caller_deadline.is_some() {
+            super::cache_wal::remaining(deadline)?;
+        }
         transaction.commit()?;
         super::cache_wal::check_sidecars(&self.path, self.config)?;
         Ok(value)
@@ -149,9 +174,18 @@ impl CellStoreV1 {
     }
 
     pub fn put_manifest(&self, pinned: CellDigestV1, wire: &[u8]) -> CellResultV1<CellManifestV1> {
+        self.put_manifest_with_deadline(pinned, wire, None)
+    }
+
+    pub(super) fn put_manifest_with_deadline(
+        &self,
+        pinned: CellDigestV1,
+        wire: &[u8],
+        deadline: Option<Instant>,
+    ) -> CellResultV1<CellManifestV1> {
         let manifest = CellManifestV1::decode(wire)?;
         require(manifest.id() == pinned, "manifest digest")?;
-        self.write(|connection| {
+        self.write_with_deadline(deadline, |connection| {
             connection.execute(
                 "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
              ON CONFLICT(id) DO UPDATE SET wire = excluded.wire",
@@ -184,8 +218,17 @@ impl CellStoreV1 {
     }
 
     pub fn put_chunk(&self, expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
+        self.put_chunk_with_deadline(expected, bytes, None)
+    }
+
+    pub(super) fn put_chunk_with_deadline(
+        &self,
+        expected: &CellChunkV1,
+        bytes: &[u8],
+        deadline: Option<Instant>,
+    ) -> CellResultV1<()> {
         verify_chunk(expected, bytes)?;
-        self.write(|connection| {
+        self.write_with_deadline(deadline, |connection| {
             connection.execute(
                 "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
              ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
@@ -195,7 +238,16 @@ impl CellStoreV1 {
         })
     }
 
+    #[cfg(test)]
     pub(super) fn put_chunk_batch(&self, chunks: &[(&CellChunkV1, &[u8])]) -> CellResultV1<()> {
+        self.put_chunk_batch_with_deadline(chunks, None)
+    }
+
+    pub(super) fn put_chunk_batch_with_deadline(
+        &self,
+        chunks: &[(&CellChunkV1, &[u8])],
+        deadline: Option<Instant>,
+    ) -> CellResultV1<()> {
         require(
             !chunks.is_empty() && chunks.len() <= MAX_CHUNK_COMMIT_BATCH,
             "chunk commit batch bound",
@@ -205,7 +257,7 @@ impl CellStoreV1 {
         for (expected, bytes) in chunks {
             verify_chunk(expected, bytes)?;
         }
-        self.write(|transaction| {
+        self.write_with_deadline(deadline, |transaction| {
             {
                 let mut statement = transaction.prepare_cached(
                     "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
@@ -227,6 +279,14 @@ impl CellStoreV1 {
     /// Every read hashes the actual bytes. A corrupt disposable chunk is removed
     /// and becomes missing, so the ordinary fetch path can repair it.
     pub fn chunk(&self, hash: CellDigestV1) -> CellResultV1<Option<Vec<u8>>> {
+        self.chunk_with_deadline(hash, None)
+    }
+
+    pub(super) fn chunk_with_deadline(
+        &self,
+        hash: CellDigestV1,
+        deadline: Option<Instant>,
+    ) -> CellResultV1<Option<Vec<u8>>> {
         let row: Option<Option<Vec<u8>>> = self
             .connection
             .query_row(
@@ -245,7 +305,7 @@ impl CellStoreV1 {
             }
         }
         if !self.read_only {
-            return self.write(|connection| {
+            return self.write_with_deadline(deadline, |connection| {
                 let current: Option<Vec<u8>> = connection.query_row(
                     "SELECT CASE WHEN length(bytes) BETWEEN 1 AND ?2 THEN bytes ELSE NULL END FROM cell_chunks_v1 WHERE hash=?1",
                     params![hash.as_slice(), i64::from(MAX_CHUNK_BYTES)], |r| r.get::<_, Option<Vec<u8>>>(0),
@@ -446,7 +506,7 @@ impl CellStoreV1 {
                 "verification deadline",
             )?;
             let bytes = self
-                .chunk(expected.sha256)?
+                .chunk_with_deadline(expected.sha256, deadline)?
                 .ok_or(CellErrorV1::Unavailable)?;
             // chunk() just hashed these actual bytes against expected.sha256.
             // Retain the manifest's length relation and the ordered payload

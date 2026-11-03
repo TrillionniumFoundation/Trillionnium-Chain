@@ -65,6 +65,129 @@ fn damage(store: &mut CellRetentionStoreV1) {
     store.arena.sync_all().unwrap();
 }
 
+fn while_cache_writer_locked<T: Send>(
+    cache_path: &Path,
+    operation: impl FnOnce(Instant) -> T + Send,
+) -> (T, bool) {
+    let held = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(crate::cell::cache_wal::sidecar(
+            cache_path,
+            "-writer-lock-v4",
+        ))
+        .unwrap();
+    held.lock().unwrap();
+    thread::scope(|scope| {
+        let (done, complete) = std::sync::mpsc::channel();
+        let worker = scope.spawn(move || {
+            let started = Instant::now();
+            let result = operation(started + Duration::from_millis(250));
+            let _ = done.send(());
+            (result, started.elapsed())
+        });
+        let finished = complete.recv_timeout(Duration::from_secs(2)).is_ok();
+        held.unlock().unwrap();
+        let (result, elapsed) = worker.join().unwrap();
+        eprintln!(
+            "CELL_RETENTION_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns={} finished_while_locked={finished}",
+            elapsed.as_nanos()
+        );
+        (result, finished)
+    })
+}
+
+#[test]
+fn retention_population_preserves_original_deadline_during_cache_writer_contention() {
+    let dir = tempfile::tempdir().unwrap();
+    let (source, manifest, _) = material(dir.path(), 5000);
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, 8192)).unwrap();
+    retention.reserve(contract(1, &manifest)).unwrap();
+    let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+    let target_path = dir.path().join("target.sqlite");
+    let target = CellStoreV1::open(&target_path, cache_config()).unwrap();
+    let usage = target.cache_usage().unwrap();
+    let ((mut retention, target, result), finished) =
+        while_cache_writer_locked(&target_path, move |end| {
+            let result = retention.populate_cache([1; 32], &target, end);
+            (retention, target, result)
+        });
+    assert!(finished, "population renewed its original deadline");
+    assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
+    assert_eq!(target.cache_usage().unwrap(), usage);
+    assert_eq!(retention.verify([1; 32], deadline()).unwrap(), original);
+    // Cache contention cannot erase the retained duty. A later explicit call
+    // repopulates all real bytes, using its own independently supplied deadline.
+    assert_eq!(
+        retention
+            .populate_cache([1; 32], &target, deadline())
+            .unwrap(),
+        original
+    );
+    target.verify_complete(&manifest).unwrap();
+}
+
+#[test]
+fn controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, payload) = material(dir.path(), 5000);
+    let cache_path = dir.path().join("cache.sqlite");
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, 8192)).unwrap();
+    retention.reserve(contract(1, &manifest)).unwrap();
+    retention.acknowledge([1; 32], &cache, deadline()).unwrap();
+    damage(&mut retention);
+    let hash = manifest.chunks()[0].sha256;
+    let corrupt = vec![0; payload.len()];
+    Connection::open(&cache_path)
+        .unwrap()
+        .execute(
+            "UPDATE cell_chunks_v1 SET bytes=?2 WHERE hash=?1",
+            params![hash.as_slice(), &corrupt],
+        )
+        .unwrap();
+    let ((mut retention, cache, result), finished) =
+        while_cache_writer_locked(&cache_path, move |end| {
+            let result =
+                retention.repair_controlled([1; 32], [101; 32], &cache, end, &mut || Ok(()));
+            (retention, cache, result)
+        });
+    assert!(finished, "controlled copy renewed its original deadline");
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("retention deadline"))
+    ));
+    let stored: Vec<u8> = Connection::open(&cache_path)
+        .unwrap()
+        .query_row(
+            "SELECT bytes FROM cell_chunks_v1 WHERE hash=?1",
+            [hash.as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(stored, corrupt, "expired repair deleted a cache row");
+    assert_eq!(
+        retention
+            .reserve(contract(1, &manifest))
+            .unwrap()
+            .repair_bytes_committed,
+        5000
+    );
+    assert!(retention.verify([1; 32], deadline()).is_err());
+    cache.put_chunk(&manifest.chunks()[0], &payload).unwrap();
+    // The failed operation's charge/identity survives; it may not redispatch.
+    assert!(retention
+        .repair([1; 32], [101; 32], &cache, deadline())
+        .is_err());
+    let repaired = retention
+        .repair([1; 32], [102; 32], &cache, deadline())
+        .unwrap();
+    assert!(repaired.acknowledged);
+    assert_eq!(repaired.repair_bytes_committed, 10000);
+    assert_eq!(retention.verify([1; 32], deadline()).unwrap(), repaired);
+}
+
 #[test]
 fn actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen() {
     let dir = tempfile::tempdir().unwrap();

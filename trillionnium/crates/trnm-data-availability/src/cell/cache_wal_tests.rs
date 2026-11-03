@@ -39,6 +39,51 @@ fn limits(path: &Path) {
 }
 
 #[test]
+fn caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("late-cache-commit.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    let before = cache.cache_usage().unwrap();
+    let (item, payload) = chunk(7, 1024);
+    let deadline = Instant::now() + Duration::from_millis(250);
+    let mut entered = false;
+    let result = cache.write_with_deadline(Some(deadline), |transaction| {
+        transaction.execute(
+            "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)",
+            params![item.sha256.as_slice(), &payload],
+        )?;
+        entered = true;
+        // A real uncommitted row exists while the original caller deadline
+        // expires. No fake clock or successful stub replaces the SQL operation.
+        while let Some(left) = deadline.checked_duration_since(Instant::now()) {
+            std::thread::sleep(left);
+        }
+        Ok(())
+    });
+    assert!(
+        entered,
+        "the transaction fixture expired before its real INSERT"
+    );
+    assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    assert!(cache.chunk(item.sha256).unwrap().is_none());
+    assert!(matches!(
+        cache.write_with_deadline(Some(deadline), |_| -> CellResultV1<()> {
+            panic!("an already expired caller must not enter its transaction")
+        }),
+        Err(CellErrorV1::CacheWriterBusy)
+    ));
+    // The standalone API keeps its existing writer allowance. An explicit new
+    // operation after the failed attempt persists and survives a cold reopen.
+    cache.put_chunk(&item, &payload).unwrap();
+    drop(cache);
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    assert_eq!(reopened.chunk(item.sha256).unwrap(), Some(payload));
+    assert_eq!(reopened.cache_usage().unwrap().chunk_rows, 1);
+    limits(&path);
+}
+
+#[test]
 fn writer_reasserts_pager_policy_and_preserves_committed_wal_after_close() {
     use rusqlite::config::DbConfig;
 

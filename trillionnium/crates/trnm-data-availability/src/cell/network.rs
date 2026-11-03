@@ -190,7 +190,7 @@ pub(super) fn fetch_cell_in_session(
     };
     for (index, expected) in manifest.chunks().iter().enumerate() {
         require(Instant::now() <= deadline, "cache scan deadline")?;
-        match store.chunk(expected.sha256)? {
+        match store.chunk_with_deadline(expected.sha256, Some(deadline))? {
             Some(bytes) => {
                 // chunk() already hashes the actual cache buffer on every read.
                 verify_chunk_length(expected, &bytes)?;
@@ -231,7 +231,7 @@ pub(super) fn fetch_cell_in_session(
                 .iter()
                 .map(|(chunk, bytes, _, _)| (*chunk, bytes.as_slice()))
                 .collect();
-            store.put_chunk_batch(&chunks)?;
+            store.put_chunk_batch_with_deadline(&chunks, Some(deadline))?;
             for (_, bytes, peer, rejected) in pending.drain(..) {
                 report.downloaded_bytes += bytes.len() as u64;
                 report.downloaded_chunks += 1;
@@ -337,7 +337,11 @@ pub(super) fn fetch_manifest_observed(
                     Ok(wire) => {
                         // A valid response cannot turn a local persistence
                         // failure into peer unavailability or budget exhaustion.
-                        received = Some(store.put_manifest(pinned, &wire)?);
+                        received = Some(store.put_manifest_with_deadline(
+                            pinned,
+                            &wire,
+                            Some(transport.overall),
+                        )?);
                         break;
                     }
                     Err(error) => {
@@ -455,7 +459,7 @@ fn serve_one_budgeted(
         .map_err(|_| CellErrorV1::Invalid("request digest"))?;
     let bytes = match query[4] {
         1 => store.manifest(digest)?.map(|m| m.encode()),
-        2 => store.chunk(digest)?,
+        2 => store.chunk_with_deadline(digest, Some(deadline))?,
         _ => return Err(CellErrorV1::Invalid("request type")),
     };
     let mut header = [0; 9];
@@ -787,6 +791,218 @@ pub(super) fn write_deadline(
 mod budget_tests {
     use super::*;
 
+    /// A real socket peer serving only the listed manifest/chunk responses.
+    /// Each expected operation must arrive before the helper's finite deadline.
+    fn fixed_responses(
+        responses: Vec<(u8, CellDigestV1, Vec<u8>)>,
+    ) -> (SocketAddr, thread::JoinHandle<()>) {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = thread::spawn(move || {
+            for (kind, digest, bytes) in responses {
+                let mut stream = accept_before_test_deadline(&listener);
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                stream
+                    .set_write_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                let mut query = [0; 37];
+                stream.read_exact(&mut query).unwrap();
+                assert_eq!(&query[..5], &[b'T', b'C', b'Q', b'1', kind]);
+                assert_eq!(&query[5..], &digest);
+                let mut wire = b"TCS1\0".to_vec();
+                wire.extend_from_slice(&(bytes.len() as u32).to_be_bytes());
+                wire.extend_from_slice(&bytes);
+                stream.write_all(&wire).unwrap();
+            }
+        });
+        (address, server)
+    }
+
+    #[test]
+    fn fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock() {
+        use crate::cell::{cache_wal, CellCacheConfigV4, CellContextV1};
+        use rusqlite::{params, Connection, OptionalExtension};
+        use sha2::{Digest, Sha256};
+        use std::fs::{self, OpenOptions};
+
+        // Exercise manifest persistence, the final bounded chunk batch, and
+        // corrupt-cache deletion. All three previously restarted a five-second
+        // writer wait after the original fetch deadline had been established.
+        let mut renewed_deadlines = Vec::new();
+        for phase in ["manifest", "batch", "repair"] {
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("cache.sqlite");
+            let cache = CellStoreV1::open(
+                &path,
+                CellCacheConfigV4 {
+                    max_database_bytes: 1_048_576,
+                    max_logical_bytes: 1_048_576,
+                    max_chunk_rows: 16,
+                    max_manifest_rows: 16,
+                },
+            )
+            .unwrap();
+            let payload = b"original-cell-fetch-deadline".to_vec();
+            let chunk = CellChunkV1 {
+                size: payload.len() as u32,
+                sha256: Sha256::digest(&payload).into(),
+            };
+            let manifest = CellManifestV1::new(
+                CellContextV1 {
+                    family: "writer-deadline".into(),
+                    base: [1; 32],
+                    parent: [2; 32],
+                    tokenizer: [3; 32],
+                    layout: [4; 32],
+                    runtime: [5; 32],
+                },
+                payload.len() as u64,
+                chunk.sha256,
+                16_384,
+                vec![chunk.clone()],
+            )
+            .unwrap();
+            if phase != "manifest" {
+                cache
+                    .put_manifest(manifest.id(), &manifest.encode())
+                    .unwrap();
+            }
+            let corrupt = vec![0; payload.len()];
+            if phase == "repair" {
+                cache.put_chunk(&chunk, &payload).unwrap();
+                Connection::open(&path)
+                    .unwrap()
+                    .execute(
+                        "UPDATE cell_chunks_v1 SET bytes=?2 WHERE hash=?1",
+                        params![chunk.sha256.as_slice(), &corrupt],
+                    )
+                    .unwrap();
+            }
+            let usage_before = cache.cache_usage().unwrap();
+            let held = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(cache_wal::sidecar(&path, "-writer-lock-v4"))
+                .unwrap();
+            held.lock().unwrap();
+            let response = match phase {
+                "manifest" => Some((1, manifest.id(), manifest.encode())),
+                "batch" => Some((2, chunk.sha256, payload.clone())),
+                _ => None,
+            };
+            let peer = response.map(|response| fixed_responses(vec![response]));
+            let peers: Vec<_> = peer
+                .as_ref()
+                .map(|(address, _)| *address)
+                .into_iter()
+                .collect();
+            let limits = CellPeerLimitsV1 {
+                request_timeout: Duration::from_millis(250),
+                overall_timeout: Duration::from_millis(250),
+                max_cell_bytes: 16_384,
+                parallelism: 1,
+                max_connections: 2,
+                max_response_bytes: 4096,
+            };
+            let output = dir.path().join("complete.weights");
+            let pinned = manifest.id();
+            let (cache, result, elapsed, finished_while_locked) = thread::scope(|scope| {
+                let (done, completed) = mpsc::channel();
+                let output = &output;
+                let worker = scope.spawn(move || {
+                    let started = Instant::now();
+                    let result = fetch_cell_to_file(&cache, pinned, &peers, limits, output);
+                    let elapsed = started.elapsed();
+                    let _ = done.send(());
+                    (cache, result, elapsed)
+                });
+                // Always release before joining/asserting. A regression cannot
+                // strand the test; it demonstrably waits for our release instead.
+                let finished = completed.recv_timeout(Duration::from_secs(2)).is_ok();
+                held.unlock().unwrap();
+                let (cache, result, elapsed) = worker.join().unwrap();
+                (cache, result, elapsed, finished)
+            });
+            if let Some((_, server)) = peer {
+                server.join().unwrap();
+            }
+            let usage_after = cache.cache_usage().unwrap();
+            eprintln!(
+                "CELL_PERSISTENCE_DEADLINE_OBSERVATION phase={phase} original_budget_ms={} elapsed_ns={} finished_while_locked={finished_while_locked} output_exists={} before={usage_before:?} after={usage_after:?} outcome={:?}",
+                limits.overall_timeout.as_millis(),
+                elapsed.as_nanos(),
+                output.exists(),
+                result.as_ref().map(|_| ())
+            );
+            if !finished_while_locked {
+                // Keep every failing phase when the unchanged control is run
+                // against the original source. The aggregate assertion below
+                // still fails; no late result is credited as a successful retry.
+                renewed_deadlines.push(phase);
+                continue;
+            }
+            assert!(
+                matches!(result, Err(CellErrorV1::CacheWriterBusy)),
+                "{phase}: {result:?}"
+            );
+            assert!(
+                !output.exists(),
+                "failed {phase} published a complete output"
+            );
+            assert_eq!(usage_after, usage_before);
+            assert_eq!(
+                cache.manifest(pinned).unwrap().is_some(),
+                phase != "manifest"
+            );
+            let stored: Option<Vec<u8>> = Connection::open(&path)
+                .unwrap()
+                .query_row(
+                    "SELECT bytes FROM cell_chunks_v1 WHERE hash=?1",
+                    [chunk.sha256.as_slice()],
+                    |row| row.get(0),
+                )
+                .optional()
+                .unwrap();
+            assert_eq!(stored, (phase == "repair").then_some(corrupt));
+
+            // A distinct later invocation may retry after contention clears.
+            // It must receive/verify actual bytes and create the complete file.
+            let mut replies = Vec::new();
+            if phase == "manifest" {
+                replies.push((1, pinned, manifest.encode()));
+            }
+            replies.push((2, chunk.sha256, payload.clone()));
+            let (address, server) = fixed_responses(replies);
+            let (actual, report) = fetch_cell_to_file(
+                &cache,
+                pinned,
+                &[address],
+                CellPeerLimitsV1 {
+                    request_timeout: Duration::from_secs(1),
+                    overall_timeout: Duration::from_secs(2),
+                    ..limits
+                },
+                &output,
+            )
+            .unwrap();
+            server.join().unwrap();
+            assert_eq!(actual, manifest);
+            assert_eq!(report.downloaded_chunks, 1);
+            assert_eq!(report.downloaded_bytes, payload.len() as u64);
+            assert_eq!(
+                report.connection_attempts,
+                if phase == "manifest" { 2 } else { 1 }
+            );
+            assert_eq!(fs::read(&output).unwrap(), payload);
+        }
+        assert!(
+            renewed_deadlines.is_empty(),
+            "cache phases renewed the original fetch deadline: {renewed_deadlines:?}"
+        );
+    }
+
     fn accept_before_test_deadline(listener: &TcpListener) -> TcpStream {
         listener.set_nonblocking(true).unwrap();
         let deadline = Instant::now() + Duration::from_secs(2);
@@ -801,6 +1017,101 @@ mod budget_tests {
                 result => panic!("expected bounded actual TCP request: {result:?}"),
             }
         }
+    }
+
+    #[test]
+    fn writable_serving_cache_repair_keeps_original_request_deadline() {
+        use crate::cell::{cache_wal, CellCacheConfigV4};
+        use rusqlite::{params, Connection};
+        use sha2::{Digest, Sha256};
+        use std::fs::OpenOptions;
+
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("serving.sqlite");
+        let cache = CellStoreV1::open(
+            &path,
+            CellCacheConfigV4 {
+                max_database_bytes: 1_048_576,
+                max_logical_bytes: 1_048_576,
+                max_chunk_rows: 16,
+                max_manifest_rows: 16,
+            },
+        )
+        .unwrap();
+        let payload = vec![7; 64];
+        let chunk = CellChunkV1 {
+            size: payload.len() as u32,
+            sha256: Sha256::digest(&payload).into(),
+        };
+        cache.put_chunk(&chunk, &payload).unwrap();
+        let corrupt = vec![0; payload.len()];
+        Connection::open(&path)
+            .unwrap()
+            .execute(
+                "UPDATE cell_chunks_v1 SET bytes=?2 WHERE hash=?1",
+                params![chunk.sha256.as_slice(), &corrupt],
+            )
+            .unwrap();
+        let held = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(cache_wal::sidecar(&path, "-writer-lock-v4"))
+            .unwrap();
+        held.lock().unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let (cache, result, elapsed, finished) = thread::scope(|scope| {
+            let (done, completed) = mpsc::channel();
+            let worker = scope.spawn(move || {
+                let mut stream = accept_before_test_deadline(&listener);
+                let started = Instant::now();
+                let response_budget = ResponseBudget::new(4096);
+                let result = serve_one_budgeted(
+                    &mut stream,
+                    &cache,
+                    started + Duration::from_millis(250),
+                    Some(&response_budget),
+                );
+                let elapsed = started.elapsed();
+                assert_eq!(response_budget.received().unwrap(), 0);
+                let _ = done.send(());
+                (cache, result, elapsed)
+            });
+            let mut client = TcpStream::connect(address).unwrap();
+            client
+                .set_write_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut query = b"TCQ1\x02".to_vec();
+            query.extend_from_slice(&chunk.sha256);
+            client.write_all(&query).unwrap();
+            let finished = completed.recv_timeout(Duration::from_secs(2)).is_ok();
+            held.unlock().unwrap();
+            let (cache, result, elapsed) = worker.join().unwrap();
+            (cache, result, elapsed, finished)
+        });
+        eprintln!(
+            "CELL_SERVING_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns={} finished_while_locked={finished} outcome={result:?}",
+            elapsed.as_nanos()
+        );
+        assert!(
+            finished,
+            "serving cache cleanup renewed its request deadline"
+        );
+        assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
+        let stored: Vec<u8> = Connection::open(&path)
+            .unwrap()
+            .query_row(
+                "SELECT bytes FROM cell_chunks_v1 WHERE hash=?1",
+                [chunk.sha256.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(stored, corrupt);
+        // A fresh ordinary cache operation may repair after the held lock is
+        // released. The failed request neither served bad bytes nor deleted them.
+        assert!(cache.chunk(chunk.sha256).unwrap().is_none());
+        cache.put_chunk(&chunk, &payload).unwrap();
+        assert_eq!(cache.chunk(chunk.sha256).unwrap(), Some(payload));
     }
 
     #[test]

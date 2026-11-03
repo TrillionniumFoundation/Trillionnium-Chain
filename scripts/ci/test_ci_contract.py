@@ -2,6 +2,9 @@
 """Negative checks for real lane execution, merge identity, and generated navigation."""
 from __future__ import annotations
 
+import hashlib
+import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -9,7 +12,7 @@ import tomllib
 import unittest
 from pathlib import Path
 
-from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
+from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
@@ -52,6 +55,70 @@ synthetic_growth_v2_native() {
   printf '%s\n' 'running 1 test' 'test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
 }
 '''
+
+
+class InlineSourcePinTests(unittest.TestCase):
+    def test_actual_workflow_guards_bind_current_bytes(self):
+        self.assertGreater(check_inline_source_pins(ROOT), 0)
+
+    def test_stale_missing_and_bypassed_literal_guards_are_rejected(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-inline-source-') as directory:
+            root = Path(directory)
+            (root / '.github/workflows').mkdir(parents=True)
+            source = root / 'source.rs'
+            raw = b'const WORK: bool = true;\n'
+            source.write_bytes(raw)
+            blob = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw,
+                                usedforsecurity=False).hexdigest()
+            guard = f'          test "$(git hash-object source.rs)" = {blob}\n'
+            workflow = root / '.github/workflows/control.yml'
+            workflow.write_text(guard)
+            self.assertEqual(check_inline_source_pins(root), 1)
+            source.write_bytes(raw.replace(b'true', b'TRUE'))
+            with self.assertRaisesRegex(ValueError, 'inline source pin differs'):
+                check_inline_source_pins(root)
+            source.unlink()
+            with self.assertRaisesRegex(ValueError, 'missing regular inline source'):
+                check_inline_source_pins(root)
+            source.write_bytes(raw)
+            workflow.write_text(guard.rstrip() + ' || true\n')
+            with self.assertRaisesRegex(ValueError, 'unsupported inline source guard'):
+                check_inline_source_pins(root)
+
+    def test_recent_log_inventory_retains_absence_and_source_failure(self):
+        text = (ROOT / '.github/workflows/pon-recent-batch-acceptance.yml').read_text()
+        section = text.split('      - name: Recheck unchanged exact source and hash all native logs\n', 1)[1]
+        self.assertTrue(section.startswith('        if: always()\n'))
+        script = section.split('        run: |\n', 1)[1].split('\n      - ', 1)[0]
+        script = '\n'.join(line[10:] for line in script.splitlines()) + '\n'
+        for source_status, logs in ((0, {}), (0, {'first.log': b'actual bytes\n',
+                                              'with space.log': b'failed native attempt\n'}),
+                                    (7, {}), (7, {'failed.log': b'failure retained\n'})):
+            with self.subTest(source_status=source_status, logs=list(logs)), \
+                    tempfile.TemporaryDirectory(prefix='trnm-recent-log-test-') as directory:
+                output = Path(directory) / 'retained'
+                output.mkdir()
+                for name, data in logs.items():
+                    (output / name).write_bytes(data)
+                # Only the source verifier is substituted. The actual workflow
+                # shell handles no logs, real file bytes and a failed verifier.
+                prefix = 'python3() { return ' + str(source_status) + '; }\n'
+                env = dict(os.environ, OUT=str(output), SOURCE_KIND='head',
+                           EXPECTED_HEAD='1' * 40)
+                result = subprocess.run(['bash', '-c', prefix + script], env=env,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, source_status, result.stderr)
+                inventory = json.loads((output / 'log-inventory.json').read_text())
+                self.assertEqual(inventory['retained_log_files'], len(logs))
+                self.assertEqual(inventory['source_identity_exit_code'], source_status)
+                self.assertEqual(inventory['status'], 'logs-retained' if logs else 'no-logs-retained')
+                self.assertFalse(inventory['native_execution_established_by_inventory'])
+                self.assertEqual(inventory['qualification'], 'unknown')
+                checksums = (output / 'logs.sha256').read_text().splitlines()
+                self.assertEqual(len(checksums), len(logs))
+                for name, data in logs.items():
+                    self.assertIn(hashlib.sha256(data).hexdigest() + '  ' + str(output / name), checksums)
+                self.assertTrue((output / 'SCOPE.txt').is_file())
 
 
 class EvaluationQuorumLaneTests(unittest.TestCase):
