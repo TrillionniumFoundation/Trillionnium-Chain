@@ -1,0 +1,220 @@
+{
+  "schema": "append-readback-independent-static-review-v1",
+  "reviewer": "/root/hosted_status_now",
+  "observed_utc": "2026-11-03T21:40:39.476493+00:00",
+  "decision": "DEFER_NOT_APPLIED_NOT_CURRENT_SERVICE_BLOCKER_CLOSURE",
+  "parent_decision": "Root explicitly declined this candidate in the current diagnostics/evaluation-fixture change. No extra build, benchmark or qualification was requested or performed.",
+  "scope": "Independent read-only source review of the direct-append PostWriteReadback candidate. No repository mutation, Cargo, native execution, benchmark, CI polling or external publication.",
+  "source_head_at_review": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+  "preflight": {
+    "command": "bash scripts/project-preflight.sh",
+    "exit_code": 0,
+    "packages": 26,
+    "result": "PASS",
+    "remote_policy_mutated": false
+  },
+  "candidate": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/append-candidate/candidate.patch",
+    "patch_sha256": "7663ff4a2685fe6035fdf6a615800dac0c308d591779ea4c8ec45d5d2b6277fe",
+    "candidate_source_sha256": "81b31cee8b4ead72b3c0c2eb6a629d0714f6e0e47a32565b21020b1635c5e5d9",
+    "original_source_sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+    "helper_lines_added": 65,
+    "changed_existing_calls": 1,
+    "independently_restores_exact_original_by_removing_helper_and_restoring_call": true,
+    "applied": false,
+    "compiled": false,
+    "native_tested": false,
+    "performance_tested": false
+  },
+  "current_blocker_scope": {
+    "four_second": {
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "function": "signed_confirmation_phase_with_builder",
+      "observed_source_lines": [
+        1285,
+        1286
+      ],
+      "opener": "Node::open for receiver and independent-client",
+      "opener_chain": "store.rs open -> open_with_fault -> open_inner -> open_selected(StateBackend::Legacy)",
+      "readback_gate": "store.rs Node construction sets post_write_schema only for StateBackend::AuthenticatedV1",
+      "conclusion": "Candidate adds no graph reuse to the original four-second fixture; changing that fixture backend would be a separate experimental condition, not closure of the original gate."
+    },
+    "f0": {
+      "stage_readback_file": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/f0-stage-deltas.json",
+      "stage_readback_sha256": "fd5c9893f6e69bc09ec20c1534d60c6b2d822695c91f58ef62a913fab9029e5a",
+      "readback_scope": "Existing artifact-derived stage readback reviewed; not a new native run or per-request causal attribution. Artifact was previously downloaded and digest verified in this agent task. Stage deltas were not independently recomputed here.",
+      "artifact_id": 13269380609,
+      "artifact_sha256": "ff7797f705eeafd7faeddcfb4b7a64ef695627f288954d3e20ed7a8602897074",
+      "mode": "valid-work-root",
+      "state_backend": "authenticated-v1",
+      "independent_client_admission": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 82080354,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 800424186
+      },
+      "independent_client_activation": {
+        "calls": 0,
+        "cpu_known_calls": 0,
+        "cpu_ns": 0,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 0
+      },
+      "receiver_activation": {
+        "calls": 10,
+        "cpu_known_calls": 10,
+        "cpu_ns": 116300477,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 740078424
+      },
+      "conclusion": "The observed independent-client ROOT failure has one admission call and zero activation calls. The candidate does not execute on that failing client interval. Authenticated receiver activation does exist, so no claim of zero conceivable indirect effect is made; no evidence establishes closure or a measured end-to-end benefit."
+    }
+  },
+  "static_findings": [
+    {
+      "id": "S1",
+      "finding": "The candidate is narrower than replacing atomic_with_progress by atomic_reorg_with_readback. Original atomic and reorg implementations remain byte-identical; only the no-hook direct-parent append call changes. GrowthV2 returns before this path. Legacy / post_write_schema == None executes the same original run, active readback, live-owner checkpoints, final callback and COMMIT sequence without a readback scope. A constructor returning None after an original owner was captured is distinct: graph reuse is off but the new original-writer identity fence still applies."
+    },
+    {
+      "id": "S2",
+      "finding": "The original BEGIN IMMEDIATE remains the single writer. The optional original TransactionScope is captured after the original entry callback and BEGIN, before callback/write execution inside run. After run completes its original delta/state/root checks, active UPDATE, event INSERT, active/slot equality and event verification, a fresh PostWriteReadback is created in that same writer. No scope crosses COMMIT, survives on Node, or supplies a new admission/authorization fact."
+    },
+    {
+      "id": "S3",
+      "finding": "The first tail target graph remains complete: the new scope has no graphs/frontier. Existing complete current State/Record validation, namespace/storage context, active-row count, slot read, continuity, actual root, ancestry, full retained history/deltas and genesis equality remain. Only later duplicate account-root/unchanged-subtree graph work can be skipped under the existing proof; literal identity of every SQL statement is NOT claimed, because eliminating those repeated graph descendant reads is the proposal itself."
+    },
+    {
+      "id": "S4",
+      "finding": "Existing bounds stay four named roles and one sixteen-prefix frontier. The parent is nominated only after successful full child verification; active nomination alone is not proof. Root equality includes node ID/digest/count/balance, and complete actual-State commitment covers nonce/existence and all non-account working state/obligations. First/no-hit traversal still compares all decoded account fields, including nonce and zero-balance accounts."
+    },
+    {
+      "id": "S5",
+      "finding": "Original direct-append active-generation/event checks, continuous_scope_checkpoint, mining_scope_checkpoint, final progress and COMMIT ordering are retained. No cancellation is added after COMMIT. Publish_commitment remains after successful transaction and the original actual active/generation/slot check. Deep-reorg intent/steps/cancellation reservation/recovery paths are unchanged in the patch."
+    },
+    {
+      "id": "S6",
+      "finding": "The scope owner match returns Ok(false) for ordinary executed writes and that false is intentionally not treated as a transaction replacement. This allows the original closure writes. A scope write-epoch change disables future reuse; the same epoch cannot be re-stamped into a fresh proof after a callback write."
+    },
+    {
+      "id": "S7",
+      "finding": "Existing constructor normalization PRAGMA writable_schema=RESET is meaningful behavior and cost: it clears stale parsed schema/cached VMs after canonical-schema checks. A corrupt writable-catalog/cached-VM split may now be exposed earlier than the old append path. Schema validation/SELECT 0 probes/statement expiry add real work; net cost and error ordering on invalid storage are unmeasured."
+    }
+  ],
+  "callback_semantics": {
+    "drop_in_equivalent_for_arbitrary_fnmut": false,
+    "reject_direct_atomic_reorg_swap": true,
+    "strict_reorg_difference": "atomic_reorg requires unchanged write epoch after the last callback even when no graph result was consumed; this newly rejects final no-row/failed writes and reverted DDL. That strict fence is not justified as an unchanged append callback contract.",
+    "narrow_candidate_difference": "The candidate uses validate_consumed, matching admission: before any consumed hit, ordinary writes disable reuse and preserve native fallback; after a consumed whole-root or partial-frontier hit, any potentially writing statement can produce NATIVE_POST_WRITE_CHANGED even if it writes zero rows. This is still an intentional refusal-semantic extension, not arbitrary-callback equivalence.",
+    "transaction_controls": "The new original-owner fence rejects executed SAVEPOINT/RELEASE as well as COMMIT/ROLLBACK/BEGIN replacement, including no-data-change/ABA attempts. It also detects trace/observer replacement. These are not ordinary cache misses.",
+    "error_precedence": "A same-writer callback error/cancellation is returned unchanged when only normal writes occurred. Transaction/observer replacement instead produces NATIVE_POST_WRITE_SCOPE and retains the first error in the source chain; its top-level kind/text are deliberately not identical. Constructor/probe/normalization can introduce earlier errors on invalid connection/schema states. No global promise of all original error priority is supportable without explicit input-domain qualification and native controls.",
+    "admitted_production_callers_reviewed": "Public ingress and History activation use current control/deadline/CPU/owner checkpoints; the reviewed paths do not intentionally write/control the same Node SQLite connection from progress. This narrows expected normal behavior but does not prove equivalence for every possible FnMut callback.",
+    "checkpoint_policy": "Macro boundary ordering is retained in source. Skipped authenticated descendants have no real traversal and no synthetic node progress callbacks; therefore callback counts and total timing are not globally identical."
+  },
+  "would_require_before_any_future_adoption": [
+    "Source-identical original-versus-candidate direct-append tests on empty/working-only and account-changing blocks, with real first complete target traversal, genesis whole-root/partial-prefix reuse where possible, and identical current State/active/generation/events/history plus cold reopen.",
+    "Native cancellation at original entry, complete first graph, reuse final callback and pre-COMMIT boundaries; original same-writer callback errors preserved; no new post-COMMIT cancellation.",
+    "Current SQL corruption/trigger/suppressed-write/nonce/zero-balance/obligation and generation tests; first traversal cannot seed a frontier on error. No foreign connection or later transaction can borrow the result.",
+    "Explicit no-hit versus consumed-hit final no-row/failed-write/DDL controls; transaction-control ABA/SAVEPOINT and first-error source-chain controls; disabled-schema/legacy fallback behavior kept distinct from authenticated fencing.",
+    "Actual original-profile/strict-Clippy/format/source gates and unchanged original service-budget end-to-end observations on the path that really executes this candidate. A graph counter reduction alone cannot close service acceptance."
+  ],
+  "claims": {
+    "safe_runtime_implementation_qualified": false,
+    "native_tests_passed_by_this_review": false,
+    "performance_improvement_proven": false,
+    "four_second_blocker_closed": false,
+    "f0_blocker_closed": false,
+    "fixed_touched_set_state_scaling_qualified": false,
+    "authorization_cache_added": false,
+    "release_or_activation_authorized": false
+  },
+  "reviewed_source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 331511,
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "git_blob_sha1": "c7669f3107ec806ecc680ab5a56fc0883dedc999"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "bytes": 94152,
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "git_blob_sha1": "e250df3f9b6bbd792ba186e563677c36c8ba8959"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "bytes": 13538,
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "git_blob_sha1": "ed9c2000d253d7421ec899287012f2602f6f7fc5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "bytes": 11867,
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "git_blob_sha1": "46e4dee2d0aa0952c830066790551794fc86b40f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "bytes": 22051,
+      "sha256": "2300f470a2c6fed43ba7f9e9e49782332f52a0cf45fe27f39c7a201bbbac4e92",
+      "git_blob_sha1": "b75d92560ba797854bc8e59be9a1f35efe1b8cc6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+      "bytes": 26122,
+      "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+      "git_blob_sha1": "caad5478bb950eeeb990e66f743b7d640db8fecb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+      "bytes": 7162,
+      "sha256": "036ad091b995992bec61c6c1a7046231e1b4dae867d9f14ec2b605e031ab0766",
+      "git_blob_sha1": "4c4fe7aae2a194ef0d2d920c5f3e447ceb7197ba"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "bytes": 21091,
+      "sha256": "04b02127f2cb6e9bfc40261c1b30448e04b5f1fc2ba5bd44cebefc0bfaf53eea",
+      "git_blob_sha1": "15684ef0415b37a9829960ed6aa61ca2f9d5ae38"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "bytes": 12585,
+      "sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "git_blob_sha1": "b1daca95ea800ed45ac5fc01063e9814134f8f92"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22160,
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "git_blob_sha1": "57616573bfeddd872c9e167332ad5882d2bd5ccc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 207316,
+      "sha256": "8f4469372d3a91fd5df3f0345638f15a4a4843c6b4e4be8440f09a87cf8c368b",
+      "git_blob_sha1": "f8aea8a3de78d0b1be65a30d88cc534b6f9c2ea2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "bytes": 119523,
+      "sha256": "d88ff6cc5c56c73460f69c7c7d9a5ce96831be4571739d223049eaeba80d605f",
+      "git_blob_sha1": "b2a63be7408eef9f61b4c3c7b6018518d5987acc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "bytes": 48774,
+      "sha256": "6d145369910031232072bfbd1e4f6449c5e2a96e48b5b432dd700fe78e133cb0",
+      "git_blob_sha1": "60ca2b214bb3f7b759c11002e4a23d6d900ddaa7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "bytes": 77894,
+      "sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+      "git_blob_sha1": "f08831277c66244cc8469285cdfc63aaafaecb48"
+    }
+  ]
+}

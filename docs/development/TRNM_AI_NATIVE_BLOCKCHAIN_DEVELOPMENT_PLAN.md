@@ -5232,3 +5232,78 @@ server root cause or public amplification. Calling-thread and nested timing
 scopes remain separate. Work security, original public service, independent
 operators/evaluators, quantum/DAA, model benefit, custody, economics, external
 effects, whole-chain PQ, release and activation remain HOLD.
+
+
+### 2026-11-03 complete original-source readback and paid evaluation activation
+
+Preserve the concurrent `af570eae`, `12171edc` and `8ebded73` evidence additions
+on the existing integration branch. The
+[runtime continuation record](../../evidence/pon-runtime-fixture-closure-20261103/README.md)
+now accounts for b280's complete original-profile local run: 947 passed, one
+UnixListener EPERM failure before witness ready, and 23 original ignored,
+covering all 971 registered identities. Four actual hosted head/merge and
+x64/ARM lanes each complete 948 passed, zero failed and the same 23 ignored.
+The original 43 PQ names pass in all four lanes. Repeated selectors, nested
+child harnesses and separate release-profile results do not add unique coverage.
+
+Both actual b280 runtime lanes pass the original 18-sample architecture fixture
+and then fail the evaluation fixture at its direct fork activation with
+`OWNER_REORG_TERMINATION_CPU_REQUIRED`. Their actual fixed Host checks and empty
+owned-child cleanup pass; the remaining seven Host selectors were not executed.
+The later retirement activation has the same missing scope but is not a second
+observed failure. Both calls now use the same Node's original CPU domain and the
+existing metered Submit path to activate an exact already-admitted packet. The
+helper checks unchanged stored-block count, exact packet bytes, active tip and
+generation, known positive CPU settlement and zero live owners. It neither
+replays W1 for the durable duplicate nor creates a fresh CPU allowance. The
+original offline construction, assertions, listener leases, request policy and
+three 64-page retirement chunks remain. A new real TCP control checks the old
+unmetered refusal and both same-domain paid activations; actual pinned Head
+responses establish listener readiness before stop/join and reconstruction.
+
+The public request observer now has a separately versioned bounded diagnostic
+attachment. Dispatch and terminal errors retain their actual existing kind and
+at most 96 UTF-8 bytes of display text. Typed error identity and owner-stop/retry
+behavior remain separate: legacy ROOT still has no typed code, peer text grants
+no control authority, and historical missing values are not backfilled. The
+three new native controls and the original paid TCP ROOT replay control pass.
+Reader validation passes 35 controls; the full applied Python set passes 201.
+Measured public-record layout grows from 2,376 to 2,664 bytes. The 4.5 MiB
+capacity product is not RSS, and capture is not claimed to be free.
+
+The diagnostic-only source completes all 974 Node identities: 950 passed,
+one original UnixListener EPERM failure and 23 original ignored, with native
+exit 101 and no timeout. Its original-profile build, formatter and strict
+workspace/all-target/all-feature Clippy pass. The final fixture composition has
+its own source manifest `545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82`
+and Node ELF `34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf`.
+That composition's build, formatter, strict Clippy, new Cargo integration control,
+25 meaningful History controls and 56 of 57 selected library controls pass;
+the selected witness listener retains the same actual EPERM refusal. Its full
+974 run is in progress at this publication snapshot and must not inherit the
+prior ELF's complete result. Actual final-source Host acceptance is separate.
+
+The W1 workflow's exact History reader changes only its stale expected result
+from 22 passed/one ignored to the actual 25 passed/one ignored. Its original
+command, native assertions, ignored child and all five other counts remain.
+The cancelled b280 W1 job is not represented as an observed reader failure.
+All incomplete executor attempts, the initial reader fixture errors, the new
+fixture's first readiness failure and its intermediate compile error are retained.
+
+The original four-second pressure gate still confirms zero of one; F0 remains
+one of six in thirty seconds and zero of six in four seconds; three campaigns
+confirm three of 27. In the measured four-second Legacy path the first History
+returns at 2.600084369 seconds, its only completed import ends at 3.903518011,
+and the next response misses the original cutoff. Cold History's zero-credit
+start and 100 ms reservation at 0.25 CPU-second/second require 400 ms from cold
+epoch creation before that credit can be earned; no warm-up exception is granted. The separate F0 ROOT
+client fails in admission before any publication or activation. A proposed
+AuthenticatedV1 append-tail graph reuse does not cover these observed paths and
+also introduces unqualified callback/schema-fence behavior; retain its rejected
+scope analysis without applying the patch. Nested timing scopes are not summed.
+
+Original service completion, cheapest-work/rejection economics, independent
+hardware/operators/review/evaluation, quantum/DAA, model benefit, custody,
+external effects, whole-chain PQ, release and activation remain HOLD under the
+existing exit conditions. Source coverage, functional corrections and an
+explicitly failed business observation cannot promote those qualifications.

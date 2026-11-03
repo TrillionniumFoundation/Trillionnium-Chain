@@ -498,6 +498,12 @@ fn root_rejection_public_replays_keep_signed_root_full_work_and_actual_paid_cpu(
         assert_eq!(record.full_work_accepted, Some(true));
         assert!(record.full_work_thread_cpu_ns.is_some_and(|ns| ns > 0));
         assert_eq!(record.dispatch_accepted, Some(false));
+        assert_eq!(record.dispatch_error_code, None);
+        let diagnostic = serde_json::to_value(record.error_diagnostics).unwrap();
+        assert_eq!(diagnostic["dispatch"]["kind"], "unclassified");
+        assert_eq!(diagnostic["dispatch"]["message_prefix"], "ROOT");
+        assert_eq!(diagnostic["dispatch"]["message_truncated"], false);
+        assert_eq!(diagnostic["has_control_authority"], false);
         assert!(record.dispatch_thread_cpu_ns.is_some_and(|ns| ns > 0));
     }
     let node = owner.lock().unwrap();
