@@ -54,6 +54,7 @@ struct Counters {
     complete_computations: u64,
     exact_root_hits: u64,
     operation_full_root_reuses: u64,
+    operation_initial_root_reuses: u64,
     calculations: u64,
     material_uses: u64,
     context_misses: u64,
@@ -94,6 +95,12 @@ impl RootArithmetic {
     pub(super) fn operation_full_root_reuse(&self) {
         self.count(|c| {
             c.operation_full_root_reuses = c.operation_full_root_reuses.saturating_add(1)
+        });
+    }
+
+    pub(super) fn operation_initial_root_reuse(&self) {
+        self.count(|c| {
+            c.operation_initial_root_reuses = c.operation_initial_root_reuses.saturating_add(1)
         });
     }
 

@@ -304,7 +304,9 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
-    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c"
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests/reference.rs"
   ],
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "3c0aeb12ef740b61e8759d77ba10456f0164aa32",
@@ -449,7 +451,7 @@
     "formal/pon-nakamoto-v1/test_pql3_native_verify.py": "5961721b393281be6b505b3149b598cdcde25915",
     "formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json": "3f134a30554189a88462b6b94f07052b74193d5d",
     "scripts/ci/check_ci_contract.py": "5fb225abfbcd43afef71eb01a4f602596a4b5eff",
-    "scripts/ci/check_pq_research_integration.py": "430e57701723bf6f4cef089bf1af573d1e45013b",
+    "scripts/ci/check_pq_research_integration.py": "d5552f9722bc63804c219aa9f0d079a888596c3a",
     "scripts/ci/check_public_readiness_evidence.py": "86db28e70106602f81779d38fd9832b2f131d873",
     "scripts/ci/ci_job.sh": "66cc9871eb75fc4c08e747744692b6136726f84b",
     "scripts/ci/model-runtime-cpu-requirements.txt": "6796d0737af36e1521d89f6937df288fe67167a1",
@@ -620,10 +622,10 @@
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "dc0532566688df3bca59f19b9278125058bfbe41",
     "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs": "586942255c345bbeaa049bc5d39f8a2d82d42d53",
-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "f13d4dbfb3994d3f41dfc2260addfbd5e6f7b727",
-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs": "89c2f08382164aa0f75cc52cadc76ad176e2b1e7",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "eeaad70e60ddd8984f5aff8ba91816f1fcdcce08",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs": "4c62f30be31b3eb5bcffade11120b3bc6e457939",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs": "56635a03b1fcefae9bf54a40b36065422f5273c0",
-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs": "904ab7c51f4ef0c6b5a121e23f4b21d1709e8907",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs": "3bbff7eab02f6f00a88a59a85588370972f2c792",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs": "f460c9fa2e57506ce5f82fd579f7d013bbc8e215",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": "fc8054c7448aa5adcd02050533e9b58321248a60",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "55be0eaada7e38d6670ab4b83f8f2234aa24643f",
@@ -673,7 +675,9 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs": "1d33eb39cf1c449ed981b1e1681c5aca5145e428",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
     "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs": "f3a6e69ce6aee5aadcf11be7c5e5500a3b10dff4"
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs": "f3a6e69ce6aee5aadcf11be7c5e5500a3b10dff4",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs": "28fbcb8e0f951cf3b2b7f66235bb7be9bbc0c667",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests/reference.rs": "609ff6993c4eb7aad0bfa11a2381950e0f8a3d51"
   },
   "assertions": {
     "production_activation": false,
