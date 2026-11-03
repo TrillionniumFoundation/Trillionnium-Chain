@@ -1,0 +1,10 @@
+{
+ "schema":"chain-direct-test-ablation-v1",
+ "hypothesis":"Directly annotated Rust test functions in the historical training corpus may bias owner classification toward M10. Association alone is not causation.",
+ "fit_intervention":"Exclude only directly #[test]/#[tokio::test]-annotated rows from each fold's fit pool, including the base seed. Preserve original class-balanced train function and all fixed steps/settings.",
+ "control":"The previously frozen train-only five-fold pooled model. Recompute baseline identically and assert every prediction matches its retained OOF output.",
+ "score":"All original train-only OOF rows remain scored. Report overall file-macro, row accuracy, full confusion and direct-test/non-test subgroup breakdowns. Do not select a subgroup to declare success.",
+ "folds":"Reuse original five-fold whole-file assignment; no calibration/evaluation/consumer inputs.",
+ "training":"First 20 fit rows per class seed 8 steps; pooled 120 steps; original 257 features, scale 1024, class balancing, regularizer and learning rate. No parameter search.",
+ "stopping":"One fixed ablation, report every outcome. No deployment or adoption from development folds. No changes to historical data, labels or score targets."
+}
