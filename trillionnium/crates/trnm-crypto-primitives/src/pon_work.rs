@@ -899,6 +899,18 @@ fn multiply_transposed_right_with_progress<const LIMB: bool, E>(
     Ok(out)
 }
 
+// The owned B' buffer is square. Transposing each off-diagonal pair once
+// preserves its allocation and all field values; callers need only this
+// representation after preparation. No input, proof or arithmetic fact is shared.
+fn transpose_square_in_place(matrix: &mut [u32]) {
+    debug_assert_eq!(matrix.len(), CELLS);
+    for row in 0..N {
+        for column in row + 1..N {
+            matrix.swap(row * N + column, column * N + row);
+        }
+    }
+}
+
 // Exact full replay. Transposition and batched hashing change neither transcript
 // order nor the original noise/row/tile observation sequence. Nothing is trusted
 // from the producer, a prior task, the claimed product or an earlier callback.
@@ -944,19 +956,14 @@ fn evaluate_transcript_kernel_with_progress<
     for (value, original) in bp.iter_mut().zip(b) {
         *value = producer_reduce(u128::from(*original) + u128::from(*value));
     }
-    // The column kernel reads the original contiguous B' rows. The other
-    // kernels retain their original transpose and exact arithmetic path.
-    let mut bt = if COLUMN_LIMB {
-        Vec::new()
-    } else {
-        vec![0u32; CELLS]
-    };
+    // The column kernel keeps the original contiguous B' rows. The other
+    // kernels need only its transpose, so move the same owned allocation
+    // after an exact in-place permutation. There are no callbacks in this
+    // preparation interval; the original callback sequence remains unchanged.
+    let mut bt = Vec::new();
     if !COLUMN_LIMB {
-        for k in 0..N {
-            for j in 0..N {
-                bt[j * N + k] = bp[k * N + j];
-            }
-        }
+        transpose_square_in_place(&mut bp);
+        bt = std::mem::take(&mut bp);
     }
     let mut cp = vec![0u32; CELLS];
     let mut transcript = Sha256::new();
@@ -1083,6 +1090,53 @@ fn finish_transposed_with_progress<E>(
     finish_transposed_kernel_with_progress::<false, E>(a, evaluated, progress)
 }
 
+// Both product corrections have shape (N x R) * (R x N). Subtract each
+// complete dot product directly into this call's owned result, avoiding a
+// second full-size output matrix. Every original MatrixRow callback still
+// precedes that row's arithmetic. On cancellation the caller discards this
+// operation-local result; partial updates are never published as a fact.
+fn subtract_transposed_correction_with_progress<const LIMB: bool, E>(
+    left: &[u32],
+    right: &[u32],
+    product: &mut [u32],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<(), E> {
+    debug_assert_eq!(left.len(), N * R);
+    debug_assert_eq!(right.len(), R * N);
+    debug_assert_eq!(product.len(), CELLS);
+    let mut transposed = vec![0; right.len()];
+    for k in 0..R {
+        for j in 0..N {
+            transposed[j * R + k] = right[k * N + j];
+        }
+    }
+    for (i, row) in product.chunks_exact_mut(N).enumerate() {
+        progress(VerificationProgress::MatrixRow { row: i })?;
+        let a = &left[i * R..(i + 1) * R];
+        for (j, value) in row.iter_mut().enumerate() {
+            let b = &transposed[j * R..(j + 1) * R];
+            let correction = if LIMB {
+                maintenance_limb::dot_bounded(a, b, 0)
+            } else {
+                let mut sum = 0_u128;
+                for k in 0..R {
+                    sum += u128::from(a[k]) * u128::from(b[k]);
+                }
+                producer_reduce(sum)
+            };
+            // Canonical operands make this nonnegative and below 2Q. Two
+            // successive subtractions equal the original (C' - C1 - C2) mod Q.
+            let corrected = u64::from(*value) + Q as u64 - u64::from(correction);
+            *value = if corrected >= Q as u64 {
+                (corrected - Q as u64) as u32
+            } else {
+                corrected as u32
+            };
+        }
+    }
+    Ok(())
+}
+
 fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
     a: &[u32],
     evaluated: OptimizedTranscriptEvaluation,
@@ -1091,9 +1145,14 @@ fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
     progress(VerificationProgress::BeforeProduct)?;
     #[cfg(test)]
     PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
+    let mut product = evaluated.cp;
     let left = transposed_mul_kernel_with_progress::<LIMB, E>(a, &evaluated.fl, N, N, R, progress)?;
-    let correction1 =
-        transposed_mul_kernel_with_progress::<LIMB, E>(&left, &evaluated.fr, N, R, N, progress)?;
+    subtract_transposed_correction_with_progress::<LIMB, E>(
+        &left,
+        &evaluated.fr,
+        &mut product,
+        progress,
+    )?;
     let right = match &evaluated.right {
         ReplayedRightOperand::RowMajor(bp) => {
             transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.er, bp, R, N, N, progress)
@@ -1102,13 +1161,12 @@ fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
             multiply_transposed_right_with_progress::<LIMB, E>(&evaluated.er, bt, R, N, N, progress)
         }
     }?;
-    let correction2 =
-        transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.el, &right, N, R, N, progress)?;
-    let mut product = evaluated.cp;
-    for ((value, first), second) in product.iter_mut().zip(correction1).zip(correction2) {
-        *value =
-            producer_reduce(u128::from(*value) + 2 * Q - u128::from(first) - u128::from(second));
-    }
+    subtract_transposed_correction_with_progress::<LIMB, E>(
+        &evaluated.el,
+        &right,
+        &mut product,
+        progress,
+    )?;
     Ok(product)
 }
 
@@ -1869,6 +1927,156 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn owned_square_transpose_preserves_allocation_and_exact_permutation() {
+        let original: Vec<_> = (0..CELLS)
+            .map(|i| Q as u32 - 1 - (i * 65_537) as u32)
+            .collect();
+        let mut actual = original.clone();
+        let pointer = actual.as_ptr();
+        let capacity = actual.capacity();
+        transpose_square_in_place(&mut actual);
+        assert_eq!(actual.as_ptr(), pointer);
+        assert_eq!(actual.capacity(), capacity);
+        for row in 0..N {
+            for column in 0..N {
+                assert_eq!(actual[row * N + column], original[column * N + row]);
+            }
+        }
+        transpose_square_in_place(&mut actual);
+        assert_eq!(actual, original);
+        assert_eq!(actual.as_ptr(), pointer);
+        assert_eq!(actual.capacity(), capacity);
+    }
+
+    #[test]
+    fn in_place_corrections_match_independent_scalar_for_full_w1_shape() {
+        fn exercise<const LIMB: bool>() {
+            let values = [0, 1, 1 << 16, 1 << 31, Q as u32 - 2, Q as u32 - 1];
+            for case in 0..8 {
+                let word = |index: usize| match case {
+                    0 => 0,
+                    1 => Q as u32 - 1,
+                    2 => values[index % values.len()],
+                    3 => Q as u32 - 1 - (index % 257) as u32,
+                    _ => ((index as u128 * 65_537 + case * 97) % Q) as u32,
+                };
+                let left: Vec<_> = (0..N * R).map(word).collect();
+                let right: Vec<_> = (0..R * N).map(|i| word(i * 3 + 1)).collect();
+                let next_left: Vec<_> = (0..N * R).map(|i| word(i * 5 + 2)).collect();
+                let next_right: Vec<_> = (0..R * N).map(|i| word(i * 7 + 3)).collect();
+                let first = mul(&left, &right, N, R, N);
+                let second = mul(&next_left, &next_right, N, R, N);
+                let original: Vec<_> = (0..CELLS)
+                    .map(|i| match i % 4 {
+                        0 => 0,
+                        1 => Q as u32 - 1,
+                        2 => first[i],
+                        _ => word(i + 4),
+                    })
+                    .collect();
+                let expected_first: Vec<_> = original
+                    .iter()
+                    .zip(&first)
+                    .map(|(&p, &c)| ((u128::from(p) + Q - u128::from(c)) % Q) as u32)
+                    .collect();
+                let expected: Vec<_> = original
+                    .iter()
+                    .zip(&first)
+                    .zip(&second)
+                    .map(|((&p, &c1), &c2)| {
+                        ((u128::from(p) + 2 * Q - u128::from(c1) - u128::from(c2)) % Q) as u32
+                    })
+                    .collect();
+                let mut actual = original;
+                let mut points = Vec::new();
+                subtract_transposed_correction_with_progress::<LIMB, usize>(
+                    &left,
+                    &right,
+                    &mut actual,
+                    &mut |point| {
+                        points.push(point);
+                        Ok(())
+                    },
+                )
+                .unwrap();
+                assert_eq!(actual, expected_first, "first correction, case {case}");
+                subtract_transposed_correction_with_progress::<LIMB, usize>(
+                    &next_left,
+                    &next_right,
+                    &mut actual,
+                    &mut |point| {
+                        points.push(point);
+                        Ok(())
+                    },
+                )
+                .unwrap();
+                assert_eq!(actual, expected, "two corrections, case {case}");
+                let expected_points: Vec<_> = (0..2 * N)
+                    .map(|i| VerificationProgress::MatrixRow { row: i % N })
+                    .collect();
+                assert_eq!(points, expected_points);
+            }
+        }
+        exercise::<false>();
+        exercise::<true>();
+    }
+
+    #[test]
+    fn in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh() {
+        fn exercise<const LIMB: bool>() {
+            let left: Vec<_> = (0..N * R).map(|i| Q as u32 - 1 - i as u32).collect();
+            let right: Vec<_> = (0..R * N)
+                .map(|i| [0, 1, Q as u32 - 1, 1 << 31, 31][i % 5])
+                .collect();
+            let original: Vec<_> = (0..CELLS).map(|i| (i * 65_537 + 258) as u32).collect();
+            let correction = mul(&left, &right, N, R, N);
+            let expected: Vec<_> = original
+                .iter()
+                .zip(correction)
+                .map(|(&p, c)| ((u128::from(p) + Q - u128::from(c)) % Q) as u32)
+                .collect();
+            for cut in 0..N {
+                let mut local_product = original.clone();
+                let mut points = Vec::new();
+                let result = subtract_transposed_correction_with_progress::<LIMB, usize>(
+                    &left,
+                    &right,
+                    &mut local_product,
+                    &mut |point| {
+                        points.push(point);
+                        if point == (VerificationProgress::MatrixRow { row: cut }) {
+                            Err(cut)
+                        } else {
+                            Ok(())
+                        }
+                    },
+                );
+                assert_eq!(result, Err(cut));
+                let expected_points: Vec<_> = (0..=cut)
+                    .map(|row| VerificationProgress::MatrixRow { row })
+                    .collect();
+                assert_eq!(points, expected_points);
+                assert_eq!(local_product[..cut * N], expected[..cut * N]);
+                assert_eq!(local_product[cut * N..], original[cut * N..]);
+                // The verifier discards the operation-local partial result on
+                // cancellation. A later invocation starts with its own C'.
+                drop(local_product);
+                let mut retry = original.clone();
+                subtract_transposed_correction_with_progress::<LIMB, usize>(
+                    &left,
+                    &right,
+                    &mut retry,
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+                assert_eq!(retry, expected);
+            }
+        }
+        exercise::<false>();
+        exercise::<true>();
     }
 
     #[test]

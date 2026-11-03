@@ -52,6 +52,40 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### PoN complete-verifier and measured-rate continuation — 2026-11-03
+
+Continue the integrated #688 source `af064bf751ed92c82da0b113682a7dfff3225d97`
+without separating its W1 and State/History owners. M01 removes two owned
+correction-product buffers by subtracting each complete correction row into the
+current verification's private product buffer. Non-column transcript kernels
+also transpose their owned B-prime matrix in place, removing its duplicate
+allocation while keeping the column kernel's row-major input. Preserve exact field
+results, the full transcript and product checks, progress callback order,
+cancellation boundary, proof bytes, target policy and private `VerifiedWork`
+construction. Cancelled operation-local partial products cannot be published or
+reused. Compare complete legal proofs with the independent scalar verifier and
+measure allocation requests using the existing legal-only observer. Allocation
+and timing observations remain separate; neither is a work-hardness result.
+
+Extend the existing V3 legal-strategy reader with denominator-complete finite
+cohort rates. Account for one actual setup, all complete attempts and misses,
+observed winners/exhaustion and actual proof materializations. Use exact rational
+ratios of totals. Any target-weighted result is hypothetical required-work-
+equivalent throughput for standalone relation fixtures, not observed ledger
+chainwork or an estimate of network security share. Keep shared material
+preparation explicit, the overlapping reuse horizons separate, native semantic
+alerts visible and all qualification flags unchanged. Do not infer an unseen
+winner, independently operated hardware, confidence bound or cheapest producer.
+
+Recheck the existing M12/M09 local effect and storage owners on the same source:
+ordinary legal reorganization and reopen must retain physical obligations,
+pending reconciliation and completed operation identities without redispatch.
+This is current-source regression evidence for existing owners, not a new public
+independence, future availability, general model safety or economic acceptance.
+The original finite-service failure and work-cost conditions remain open. The
+[resource and finite-rate observations](../../evidence/pon-consensus-resource-v2-20261103/README.md)
+retain both successful local controls and earlier unsuccessful comparisons.
+
 #### PoN work-resource and branch-target continuation — 2026-11-03
 
 Continue the W1 candidate from PR #682 (`a1f6cd3411681d5f1295e1deadba0b639bb7d4d5`)

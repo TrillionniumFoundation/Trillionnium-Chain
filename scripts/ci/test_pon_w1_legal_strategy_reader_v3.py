@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Synthetic reader controls; invented timings/verdicts are never native evidence."""
 import copy
+from fractions import Fraction
 import json
 from pathlib import Path
 import sys
@@ -154,6 +155,69 @@ class LegalStrategyReaderTests(unittest.TestCase):
         ratio = result["eager_transposed_over_lazy_full_limb_cpu"]
         self.assertEqual(ratio["numerator"], ratio["denominator"])
 
+    def test_finite_rates_preserve_complete_sample_denominators_and_count_hits_once(self):
+        for target_index, weight in ((0, 2), (1, 32)):
+            source = fixture(target_index=target_index)
+            report = reader.analyze_shard(self.save(source))
+            self.assertEqual(report["required_target_weight"], weight)
+            self.assertIs(report["rate_diagnostic_scope"]["native_chainwork_observed"], False)
+            self.assertIsNone(report["rate_diagnostic_scope"]["network_work_share"])
+            self.assertIsNone(report["rate_diagnostic_scope"]["confidence_bound"])
+            for costs in report["strategy_costs"]:
+                samples = costs["per_sample_denominators"]
+                self.assertEqual([c["sample"] for c in samples], list(range(reader.SAMPLES)))
+                for key in ("actual_setup_calls", "actual_searches", "attempts", "target_hits",
+                            "exhausted_searches", "proof_materializations", "serialized_proof_bytes"):
+                    self.assertEqual(sum(c[key] for c in samples), costs[key])
+                for sample in samples:
+                    original = self.first(source, "cohort", strategy=costs["strategy"], sample=sample["sample"])
+                    self.assertEqual(sample["setup"], original["setup"])
+                    self.assertEqual(sample["inclusive_cohort_total"], original["total"])
+                rate = costs["rate_diagnostic"]
+                cpu = sum(c["inclusive_cohort_total"]["cpu_ns"] for c in samples)
+                self.assertEqual(cpu, costs["inclusive_cohort_total"]["cpu_ns"])
+                self.assertEqual(rate["recorded_relation_valid_hits"], reader.SAMPLES)
+                self.assertEqual(costs["native_outcome_counts"]["legal"]["Accepted"],
+                                 len(reader.PATHS) * rate["recorded_relation_valid_hits"])
+                self.assertEqual(rate["attempts_per_cpu_second"],
+                                 dict(numerator=costs["attempts"] * 10**9, denominator=cpu))
+                self.assertEqual(rate["recorded_relation_valid_hits_per_cpu_second"],
+                                 dict(numerator=reader.SAMPLES * 10**9, denominator=cpu))
+                self.assertEqual(rate["hypothetical_required_work_total"], reader.SAMPLES * weight)
+                self.assertEqual(rate["hypothetical_required_work_per_cpu_second"],
+                                 dict(numerator=reader.SAMPLES * weight * 10**9, denominator=cpu))
+
+    def test_rate_is_exact_ratio_of_sums_with_the_slow_sample_retained(self):
+        rows = copy.deepcopy(self.original)
+        strategy = reader.STRATEGIES[0]
+        slow = self.first(rows, "cohort", strategy=strategy, sample=0)
+        slow["total"] = stamp(2**53 + 1)
+        report = reader.analyze_shard(self.save(rows))
+        costs = report["strategy_costs"][0]
+        rate = costs["rate_diagnostic"]["recorded_relation_valid_hits_per_cpu_second"]
+        expected_cpu = sum(r["total"]["cpu_ns"] for r in rows
+                           if r["kind"] == "cohort" and r["strategy"] == strategy)
+        self.assertEqual(rate, dict(numerator=reader.SAMPLES * 10**9, denominator=expected_cpu))
+        self.assertEqual(costs["per_sample_denominators"][0]["inclusive_cohort_total"], stamp(2**53 + 1))
+        sample_rates = [c["rate_diagnostic"]["recorded_relation_valid_hits_per_cpu_second"]
+                        for c in costs["per_sample_denominators"]]
+        mean_of_rates = sum(Fraction(r["numerator"], r["denominator"]) for r in sample_rates) / reader.SAMPLES
+        self.assertNotEqual(Fraction(rate["numerator"], rate["denominator"]), mean_of_rates)
+
+    def test_shared_material_and_separate_evidence_costs_are_not_silently_allocated(self):
+        baseline = reader.analyze_shard(self.save(self.original))
+        rows = copy.deepcopy(self.original)
+        self.first(rows, "campaign")["material_setup"] = stamp(900000)
+        for row in rows:
+            if row["kind"] == "search":
+                row["evidence_timing"] = stamp(800000)
+        changed = reader.analyze_shard(self.save(rows))
+        self.assertEqual(changed["material_setup"], stamp(900000))
+        self.assertEqual(changed["rate_diagnostic_scope"]["denominator"], reader.PRODUCER_SCOPE)
+        for before, after in zip(baseline["strategy_costs"], changed["strategy_costs"]):
+            self.assertEqual(before["rate_diagnostic"], after["rate_diagnostic"])
+            self.assertNotEqual(before["separate_attempt_evidence_total"], after["separate_attempt_evidence_total"])
+
     def test_factorial_cells_cannot_relabel_arithmetic_or_materialization(self):
         self.assertEqual([reader.factors(s) for s in reader.STRATEGIES], [
             ("transposed", "every-attempt"), ("transposed", "target-hit"),
@@ -179,6 +243,16 @@ class LegalStrategyReaderTests(unittest.TestCase):
             self.assertEqual(costs["exhausted_searches"], 1)
             self.assertEqual(costs["target_hits"], reader.SAMPLES - 1)
             self.assertGreaterEqual(costs["attempts"], reader.ATTEMPT_BUDGET + 1)
+            sample = costs["per_sample_denominators"][0]
+            self.assertEqual(sample["attempts"], reader.ATTEMPT_BUDGET)
+            self.assertEqual(sample["exhausted_searches"], 1)
+            self.assertEqual(sample["rate_diagnostic"]["recorded_relation_valid_hits"], 0)
+            self.assertEqual(sample["rate_diagnostic"]["hypothetical_required_work_total"], 0)
+            self.assertEqual(sample["rate_diagnostic"]["recorded_relation_valid_hits_per_cpu_second"],
+                             dict(numerator=0, denominator=sample["inclusive_cohort_total"]["cpu_ns"]))
+            rate = costs["rate_diagnostic"]["recorded_relation_valid_hits_per_cpu_second"]
+            self.assertEqual(rate, dict(numerator=(reader.SAMPLES - 1) * 10**9,
+                                       denominator=costs["inclusive_cohort_total"]["cpu_ns"]))
         searched = self.first(rows, "search", status="exhausted")
         searched["attempts"].pop()
         with self.assertRaisesRegex(ValueError, "exhaustion/misses incomplete"):
@@ -198,7 +272,17 @@ class LegalStrategyReaderTests(unittest.TestCase):
             report = reader.analyze_shard(self.save(rows))
             self.assertEqual(report["semantic_alerts"][0]["case"], case)
             self.assertIsNone(report["eager_transposed_over_lazy_full_limb_cpu"])
-            self.assertTrue(any(r["cpu_per_observed_valid_winner"] is None for r in report["strategy_costs"]))
+            self.assertTrue(all(r["cpu_per_observed_valid_winner"] is None for r in report["strategy_costs"]))
+            # One shard alert prevents selecting an apparently unaffected arm
+            # or sample as a valid-work-rate claim. Recorded attempts remain.
+            for costs in report["strategy_costs"]:
+                rates = [costs["rate_diagnostic"], *(c["rate_diagnostic"] for c in costs["per_sample_denominators"])]
+                for rate in rates:
+                    self.assertTrue(rate["valid_rates_suppressed_by_shard_alerts"])
+                    self.assertIsNotNone(rate["attempts_per_cpu_second"])
+                    for key in ("recorded_relation_valid_hits_per_cpu_second",
+                                "hypothetical_required_work_total", "hypothetical_required_work_per_cpu_second"):
+                        self.assertIsNone(rate[key])
 
     def test_complete_candidate_and_every_negative_verifier_are_required(self):
         for kind in ("candidate", "verifier"):
@@ -248,6 +332,10 @@ class LegalStrategyReaderTests(unittest.TestCase):
             self.assertTrue(report["policy_sample_count_satisfied"])
             self.assertFalse(report["work_profile_qualified"])
             self.assertEqual(report["unique_search_streams"], 8 * reader.SAMPLES)
+            for shard in report["shards"]:
+                self.assertEqual(shard["rate_diagnostic_scope"]["cross_horizon_aggregation"],
+                                 "none-shared-search-prefixes-are-not-independent")
+            self.assertNotIn("rate_diagnostic", report)
             with self.assertRaisesRegex(ValueError, "complete fixed shard grid"):
                 reader.analyze(paths[:1])
             with self.assertRaisesRegex(ValueError, "duplicate/unknown shard"):
