@@ -1040,7 +1040,9 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
         // reparsing and reserializing the same bounded packet without widening
         // the accepted byte language. All current-context and full work checks
         // still run in the original paid dispatch interval.
-        let packet = std::str::from_utf8(text)?.to_owned();
+        let packet = std::str::from_utf8(text)
+            .map_err(|_| "PUBLIC_PACKET_TEXT")?
+            .to_owned();
         return Ok(match op {
             1 => Request::Submit { packet },
             6 => Request::GrowthSubmitV1 { packet },
