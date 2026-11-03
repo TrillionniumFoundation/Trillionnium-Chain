@@ -53,8 +53,10 @@ macro_rules! observe_operation {
     ($operation:ident, $kind:expr, $action:block) => {{
         #[cfg(test)]
         let $operation = $crate::pq_rollback_witness::test_observation::start($kind);
-        let action = || $action;
-        let result: $crate::Result<_> = action();
+        fn invoke_once<T>(action: impl FnOnce() -> T) -> T {
+            action()
+        }
+        let result: $crate::Result<_> = invoke_once(|| $action);
         #[cfg(test)]
         if let Some(operation) = $operation {
             operation.finish(&result);
