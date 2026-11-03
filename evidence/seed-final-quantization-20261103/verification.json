@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "rows": 1005,
+  "whole_file_groups": 150,
+  "folds": 5,
+  "arms": 4,
+  "stored_weight_logits_margins_and_predictions_exact": true,
+  "old_float_and_integer_controls_exact": true,
+  "all_metrics_recomputed": true,
+  "disagreements": {
+    "seed_before_final": 1,
+    "seed_after_final": 1,
+    "final_from_float_seed": 0,
+    "final_from_quantized_seed": 0
+  },
+  "model_adopted": false
+}
