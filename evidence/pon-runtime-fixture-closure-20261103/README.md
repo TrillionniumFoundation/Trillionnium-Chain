@@ -7,17 +7,21 @@ liabilities, recovery and independent confirmation conditions remain required.
 
 **Latest recorded scopes:** b280's four actual hosted Node lanes each complete
 948 passed / 0 failed / 23 original ignored; its two runtime lanes both fail the
-evaluation fixture's missing original CPU termination scope. The separate
-bounded-diagnostics source completes all 974 local Node entries with 950 passed,
-one original UnixListener EPERM failure and 23 original ignored. Its full build,
-formatting and strict workspace Clippy pass. The subsequent same-owner evaluation
-fixture correction passes its own final-source Cargo build, formatting, strict
-Clippy, History and named paid-activation control. Its 57 selected controls retain
-56 passes and the same one original UnixListener EPERM failure. Its complete 974
-entries remain PENDING in the dated prepublish snapshot and do not inherit either
-earlier ELF's result. Original four-second, F0 and three-campaign business gates
-remain failed. Detailed sources, raw records and remaining limits are retained
-below; no all-blocker or activation claim is made.
+evaluation fixture's missing original CPU termination scope. The final fixture
+and bounded-diagnostics composition now independently completes all 974 local
+Node entries: 950 passed, one original UnixListener EPERM failure and 23 original
+ignored. Its original-profile build, formatting, strict Clippy, History and named
+paid-activation control pass. The earlier diagnostics-only source has its own
+separate 950 / 1 / 23 result. The final composition's dated prepublish snapshot
+remains unchanged; the later actual terminal records are appended below.
+
+Actual c5dd W1 fresh head and merge executions expose a source-receipt filename mismatch
+before Host/native preparation. Its producer now writes the canonical
+`source.json` consumed by the unchanged source guard. Real clean-source controls
+reproduce the old failure, accept the corrected producer and still reject wrong
+or stale receipts; actual repaired Host execution remains required. Original
+four-second, F0 and three-campaign business failures remain source-bound evidence.
+No all-blocker, service performance or activation claim is made.
 
 ## Committed CAS and late live use
 
@@ -765,3 +769,84 @@ The [artifact index](fixture-composed-prepublish/artifact-index.json),
 [full scope notes](fixture-composed-prepublish/README.addendum.md), and
 [read-only verifier](fixture-composed-prepublish/verify_bundle.py) preserve the
 completed receipts, original failures, exact commands and pending boundaries.
+
+
+## Final composed 974-entry terminal and exact committed source
+
+The [actual terminal summary](fixture-composed-terminal/terminal-summary.json)
+records **950 passed / 1 failed / 23 original ignored**, all **974 identities**
+with no timeout and native exit **101**. The independent reader verifies the
+complete, unique and mutually disjoint original 971 plus three diagnostic names.
+The sole failure remains the independent Unix witness child failing before ready
+with `PermissionDenied / Operation not permitted`; it is not waived or reclassified.
+Outer wall time is `1384514025368 ns` and the original libtest reports `1384.48 s`.
+The original 2700-second supervisor and native budgets remain unchanged.
+
+The [complete native log](fixture-composed-terminal/native.log.gz) decompresses
+to **7,289,315 bytes**, SHA256
+`5204bbe992a2a21216aa44ffa521e602d2cd0ec0ca57fe40d8a97f0954ac86a1`.
+Manifest `545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82`
+and ELF `34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf`
+bind this run; neither older ELF's result is inherited. The
+[independent complete-name readback](fixture-composed-terminal/independent-native-readback.json),
+[original records](fixture-composed-terminal/terminal-records.json.gz),
+[artifact index](fixture-composed-terminal/artifact-index.json) and
+[read-only verifier](fixture-composed-terminal/verify_bundle.py) retain the raw
+exit, failures and exact counts. The previous PENDING snapshot remains dated and
+unchanged rather than being rewritten as a completed run.
+
+The [exact-commit native association](fixture-composed-terminal/exact-commit-native-association.json)
+preserves the invocation's actual `8ebded73` base and its frozen native bytes.
+The clean `c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1` source gate completed at
+`22:10:08.051381 UTC` while the full native run was still executing. The native
+driver completed at `22:16:52.525096 UTC` and again verified the same 1190-path
+manifest. No second 974-entry run was launched from the clean checkout. A
+[chronology correction](fixture-composed-terminal/chronology-correction.json)
+preserves the initial derived wording and records this ordering explicitly.
+
+The [c5dd exact-source gate summary](c5dd-exact-commit-gates.json) and its
+[98 complete original records](c5dd-exact-commit-gates.json.gz) preserve the clean
+commit checks, all 56 command stdout/stderr streams and the three actual locked
+Linux dependency graphs. Preflight audit, exact source before/after, repository
+links, 376 source pins, inventory and default/all-feature/fuzz graphs pass. The
+whole tree contains 7723 tracked entries and 882506480 bytes; the two lockfiles
+and all native bytes stay unchanged. These static/graph checks do not execute
+native tests or qualify a later whole-tree source by implication.
+
+## W1 fresh-service source receipt path
+
+Actual c5dd head job `126239416973` in run `41728500666` fails before Host/native
+preparation because the unchanged lease source verifier requires
+`$TRNM_CI_RECEIPT_DIR/source.json`, but the workflow's fresh-service source step
+writes `source-before.json`. Its artifact contains the two original source
+receipts, preflight and three passing control logs, but no canonical source
+receipt, native service output or Host controller acceptance. The
+[original hosted readback](w1-fresh-source-receipt/review/hosted-original-readback.json)
+and [complete original records](w1-fresh-source-receipt/review/hosted-original-records.json.gz)
+retain the exact failure. This is a source-gate failure, not a measured History
+or service-performance failure. The actual-merge job `126239417154` independently
+reports the same missing canonical filename under `7a3e125cb343bd85fb806aba87a21f99eac082de`.
+Its [separate original readback](w1-fresh-source-receipt/hosted-merge/w1-fresh-merge-first-failure-readback.json)
+and [complete raw records](w1-fresh-source-receipt/hosted-merge/w1-fresh-merge-original-records.json.gz)
+bind that lane's source-before/after, actual failure and 78 / 104 / 20 passing
+control counts; no native or Host acceptance is inferred from either lane.
+
+The correction changes **only the fresh-service producer's output basename** to
+`source.json`. The source verifier's arguments, event-selected head/merge,
+tracked-tree comparison, Host resources, native commands and deadlines remain
+unchanged. The other three W1 jobs keep `source-before.json`; every after-source
+receipt remains unchanged. The
+[independent review](w1-fresh-source-receipt/review/independent-review.json),
+[one-line patch](w1-fresh-source-receipt/review/candidate.patch), and
+[complete source-gate controls](w1-fresh-source-receipt/review/source-gate-original-records.json.gz)
+show the real clean c5dd source producer succeeding with both names, the real
+consumer failing with the old name and accepting the canonical name, and three
+wrong/stale receipt variants still being refused. No Host context was fabricated
+or provisioned and no native service was executed by these controls.
+
+The [application record](w1-fresh-source-receipt/applied/applied.json) and
+[applied check receipts](w1-fresh-source-receipt/applied/applied-checks.json)
+retain the subsequent one-line application, 98 existing CI contract controls,
+376 source pins and whitespace check. The review package remains its own earlier
+NOT-APPLIED snapshot; application records are separate. Repaired exact-source
+Host execution is still required.

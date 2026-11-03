@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-terminal-derived-chronology-correction-v1",
+  "corrected_utc": "2026-11-03T22:23:58.976876+00:00",
+  "reason": "Previous derived wording could imply the clean exact-commit gate happened after full native termination. Actual gate completed while full native run was in progress.",
+  "exact_commit_gate_finished_utc": "2026-11-03T22:10:08.051381+00:00",
+  "native_driver_terminal_completed_utc": "2026-11-03T22:16:52.525096+00:00",
+  "original_receipts_log_and_gzip_changed": false,
+  "original_PENDING_snapshot_changed": false,
+  "preserved_derived_v1": {
+    "terminal-summary.json": {
+      "bytes": 3177,
+      "sha256": "c93c55c6dec98fd0b0577c80973224484753663a28bc2454d455a1c16fcbeb1c"
+    },
+    "exact-commit-native-association.json": {
+      "bytes": 784,
+      "sha256": "4e02649736688451632636b9bfd1b56cb7ce2d3992037ef024792e63e6e1b44b"
+    },
+    "prepare_terminal.py": {
+      "bytes": 19152,
+      "sha256": "4fb324acddd30eaf1f3c8e97ca2dd524564f43fc5964de5a7d51c834386145fb"
+    },
+    "artifact-index.json": {
+      "bytes": 947,
+      "sha256": "6dc1ce60ebd7f8fb111a6bba50ccf2dabe0941fda0453372d83dd6ab4746ab84"
+    }
+  },
+  "parser_function_changed": false,
+  "parser_control_evidence": "reader-preparation-checks.json;13/13 on original parser, chronology wording correction only"
+}

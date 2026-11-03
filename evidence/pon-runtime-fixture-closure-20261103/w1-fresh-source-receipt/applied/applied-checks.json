@@ -1,0 +1,38 @@
+[
+  {
+    "name": "ci-contract",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "wall_ns": 6376089253,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "a5ffd1abaa386f4a7c56b27d2e3270b54e9e4f666e3c118590d0538d0c68cd3f"
+  },
+  {
+    "name": "source-pins",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "wall_ns": 111564945,
+    "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_ns": 7897450,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

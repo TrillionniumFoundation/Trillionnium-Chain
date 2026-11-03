@@ -5307,3 +5307,46 @@ hardware/operators/review/evaluation, quantum/DAA, model benefit, custody,
 external effects, whole-chain PQ, release and activation remain HOLD under the
 existing exit conditions. Source coverage, functional corrections and an
 explicitly failed business observation cannot promote those qualifications.
+
+
+### 2026-11-03 final composed registry and W1 source-receipt continuation
+
+The final fixture/diagnostics composition now has its own complete actual
+974-entry terminal: 950 passed, one original UnixListener EPERM failure before
+witness ready, and 23 original ignored. Native exit remains 101, no timeout,
+all original 971 names plus the three diagnostics names are accounted for, and
+the original 2700-second supervisor remains. Manifest `545222b5...` and ELF
+`34bd6631...` are unchanged through terminal. The earlier PENDING snapshot and
+separate diagnostic-only result remain untouched; the
+[complete terminal record](../../evidence/pon-runtime-fixture-closure-20261103/fixture-composed-terminal/terminal-summary.json)
+and original raw log are appended.
+
+The clean c5dd source gate finished at 22:10:08 UTC while that native invocation
+was still running; the native driver recorded completion at 22:16:52 UTC with
+its terminal manifest again matching. The invocation retains its actual 8ebded
+base; there was no second full native run in the clean checkout. Exact c5dd
+source, all 7723 tracked entries, preflight, repository links, 376 pins, inventory
+and the three actual locked Linux graphs pass with unchanged locks. The
+[complete source-gate archive](../../evidence/pon-runtime-fixture-closure-20261103/c5dd-exact-commit-gates.json)
+retains all original command streams and graph bytes.
+
+The next actual hosted failure is the W1 fresh source gate: head job126239416973
+and actual-merge job126239417154 independently fail because the producer
+writes source-before.json but the existing Host lease verifier requires
+source.json. It fails before native preparation or Host acceptance, so none of
+the unexecuted service/History checks becomes a failed native observation or a
+pass. Change only that workflow producer's output basename to source.json; keep
+the event-bound source arguments, complete current tracked-tree comparison,
+Host resources, original native commands and budgets. Real clean-source controls
+reproduce the old missing-file refusal, accept the corrected producer and reject
+three wrong/stale receipts. The applied 98 CI-contract controls and all 376 pins
+pass; these source-gate controls do not qualify repaired real-Host execution.
+The [source-receipt continuation](../../evidence/pon-runtime-fixture-closure-20261103/README.md#w1-fresh-service-source-receipt-path)
+retains the actual hosted failure, unchanged source guards and separate
+review/application evidence.
+
+The original four-second, F0, three-campaign, cheapest-work economics and
+independent-acceptance exit conditions remain unchanged. New hosted outcomes
+continue to bind their own exact head/actual merge, source, ELF and complete
+terminal evidence. No all-blocker, performance qualification or activation
+statement follows from these local functional and CI wiring corrections.
