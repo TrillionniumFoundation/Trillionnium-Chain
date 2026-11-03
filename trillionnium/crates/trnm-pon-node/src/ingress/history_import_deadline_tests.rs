@@ -152,7 +152,10 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
     assert!(paid.balance_identity_verified);
     assert_eq!(cpu.observe().unwrap().in_flight, 0);
     assert!(cpu.accounting_available());
-    assert_eq!(cpu.observe_completion_work().unwrap().retained_identities, 1);
+    assert_eq!(
+        cpu.observe_completion_work().unwrap().retained_identities,
+        1
+    );
 
     let observed_w1 = w1.clone();
     OBSERVER.with(|hook| {
@@ -172,7 +175,10 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
     OBSERVER.with(|hook| *hook.borrow_mut() = None);
     assert_eq!(retry.unwrap(), (false, Some(id)));
     assert_eq!(w1.load(Ordering::SeqCst), verified);
-    assert_eq!(cpu.observe_completion_work().unwrap().retained_identities, 1);
+    assert_eq!(
+        cpu.observe_completion_work().unwrap().retained_identities,
+        1
+    );
     let after_retry = cpu.observe_actual_flow().unwrap().unwrap();
     assert!(after_retry.paid_cpu_debit_ns >= paid.paid_cpu_debit_ns);
     assert_eq!(after_retry.initial_credit_ns, paid.initial_credit_ns);

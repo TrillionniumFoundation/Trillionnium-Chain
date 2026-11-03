@@ -5113,3 +5113,22 @@ formatting, Clippy, native controls and exact-source gates remain pending.
 The existing Host-context mismatch in the signed-DAG integration also remains
 open. Original service windows, work-cost/security, independent evidence,
 whole-chain PQ, public-readiness and activation gates are not promoted.
+
+### 2026-11-03 Recovered History execution and bounded delivery readback
+
+Continue the published `9f046408...` candidate after execution became available
+again. Preserve its first formatter failure: two recovered assertions require
+the pinned formatter's multiline layout. Correct that layout and only the
+corresponding source pin; the History behavior and its three controls are
+unchanged.
+
+The ordinary signed-DAG integration now emits bounded failing-sample details
+after all original CPU/wall snapshots and complete report persistence. At most
+18 rows expose the original cold-reopen/state results, mode and sample identity,
+with at most four errors of 96 Unicode scalars each. The original 18-sample
+schedule, deadlines, actual Host requirements and final assertion remain.
+Console diagnostics do not establish the cause of an older failed run.
+
+Validate the recovered combination under the original profiles and retain
+source-bound raw results. Host fixture acceptance, original public-service
+windows, work/security qualification and public activation remain separate.

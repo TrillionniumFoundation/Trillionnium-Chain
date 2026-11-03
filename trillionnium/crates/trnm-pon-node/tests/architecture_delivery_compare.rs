@@ -741,6 +741,39 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
         "{}",
         json!({"schema": report["schema"], "samples": 18, "all_finite_business_targets_met": all_business, "report_path": output.join("report.json")})
     );
+    // Emit bounded failure details after every original timing/CPU observation
+    // and the complete report write. Preserve the original predicate below.
+    for sample in samples.iter().take(18) {
+        if sample["cold_reopen_equal"] == true && sample["errors"] == json!([]) {
+            continue;
+        }
+        let text = |key: &str| {
+            sample[key]
+                .as_str()
+                .map(|value| value.chars().take(32).collect::<String>())
+        };
+        let raw_errors = sample["errors"].as_array();
+        let errors = raw_errors
+            .into_iter()
+            .flatten()
+            .take(4)
+            .map(|error| {
+                error
+                    .as_str()
+                    .unwrap_or("<non-string error>")
+                    .chars()
+                    .take(96)
+                    .collect::<String>()
+            })
+            .collect::<Vec<_>>();
+        eprintln!(
+            "{}",
+            json!({"schema": "native-signed-dag-delivery-failure-v1", "scenario": text("scenario"),
+                "sample": sample["sample"].as_u64(), "position": sample["position"].as_u64(), "mode": text("mode"),
+                "cold_reopen_equal": sample["cold_reopen_equal"].as_bool(), "native_state_equal": sample["native_state_equal"].as_bool(),
+                "error_count": raw_errors.map(Vec::len), "error_limit": 4, "error_text_limit_chars": 96, "errors": errors})
+        );
+    }
     assert!(
         samples
             .iter()
