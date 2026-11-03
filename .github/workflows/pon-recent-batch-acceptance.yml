@@ -67,15 +67,15 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = c7669f3107ec806ecc680ab5a56fc0883dedc999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c01ca1e0756ec8e041e628bcbdad933e338da772
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = aa6c50f60f631574b341632be63d6cf20f40a8d1
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d8a84be950eda77104d91fc389166c2581e5cd88
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e250df3f9b6bbd792ba186e563677c36c8ba8959
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = e3ec8bf4bdd510f3fe718e63a4df595d342c61c6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 526f155f2215184aa607da6d453423ca6930ded2
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = b75d92560ba797854bc8e59be9a1f35efe1b8cc6
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = 2ce748ff0c884060b104cff6d62e924f75332925
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = f460c9fa2e57506ce5f82fd579f7d013bbc8e215
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = ad8a51675dda63901e2223bcf7f6d7162243b9e3
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 308ee4541d34682f82debb574eb523f23d1faad4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 5bbb4469977972020ae5c0f324239ee56dfaf888
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = ac0a694a02610bf494abdd5ee708a6f5c03adf49
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11
@@ -160,7 +160,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 79 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 83 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -169,9 +169,9 @@ jobs:
           names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
           summaries = [line for line in lines if line.startswith('test result:')]
           post_write = [name for name in names if name.startswith('store::native_authenticated::post_write_readback::tests::')]
-          if (len(names) != 79 or len(set(names)) != 79 or len(post_write) != 19
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 79 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 60 retained and 19 post-write executions in one log')
+          if (len(names) != 83 or len(set(names)) != 83 or len(post_write) != 23
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 83 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires 60 retained and 23 post-write executions in one log')
           PYLOG
             fi
           done

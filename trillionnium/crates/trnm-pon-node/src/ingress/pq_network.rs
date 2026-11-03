@@ -3,6 +3,7 @@
 //! The loopback-only profile retains a bounded durable replay ledger. It has no
 //! confidentiality, public saturation, account migration or WAN qualification.
 use super::{Request, WorkCheckedPacket};
+use crate::pq_rollback_witness::{observe_operation, observe_phase};
 use crate::{ensure, Error, ErrorCode, Node, Result, Settings};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -685,12 +686,35 @@ pub fn serve_pq_authenticated(
         match listener.accept() {
             Ok((mut stream, _)) => {
                 let deadline = end.min(Instant::now() + Duration::from_secs(10));
-                let result = server
-                    .read_request(&owner, &mut stream, deadline)
-                    .and_then(|wire| server.handle(&owner, &wire, deadline))
-                    .and_then(|response| {
-                        super::write_frame_deadline(&mut stream, &response, deadline)
-                    });
+                let result = observe_operation!(
+                    observation,
+                    crate::pq_rollback_witness::test_observation::Kind::TcpRequest,
+                    {
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.deadlines(Some(deadline), deadline);
+                        }
+                        observe_phase!(
+                            observation,
+                            TcpReadRequest,
+                            server.read_request(&owner, &mut stream, deadline)
+                        )
+                        .and_then(|wire| {
+                            observe_phase!(
+                                observation,
+                                TcpHandle,
+                                server.handle(&owner, &wire, deadline)
+                            )
+                        })
+                        .and_then(|response| {
+                            observe_phase!(
+                                observation,
+                                TcpWriteFrame,
+                                super::write_frame_deadline(&mut stream, &response, deadline)
+                            )
+                        })
+                    }
+                );
                 if result.is_ok() {
                     metrics.accepted += 1;
                 } else {

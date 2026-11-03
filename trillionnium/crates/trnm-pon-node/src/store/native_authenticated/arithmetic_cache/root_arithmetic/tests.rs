@@ -191,9 +191,16 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
             before.partition_roots_computed
         );
         assert_eq!(
-            after.partition_inputs_hashed,
-            before.partition_inputs_hashed + state.len() as u64
+            after.partition_inputs_observed,
+            before.partition_inputs_observed + state.len() as u64
         );
+        let hashed = after.partition_inputs_hashed - before.partition_inputs_hashed;
+        let exact = after.partition_exact_string_hits - before.partition_exact_string_hits;
+        let encodings =
+            after.partition_string_encodings_reused - before.partition_string_encodings_reused;
+        assert_eq!(hashed + exact, state.len() as u64);
+        assert!(hashed > 0 && exact > 0);
+        assert_eq!(encodings, exact);
         assert!(after.partition_roots_reused > before.partition_roots_reused);
     }
 

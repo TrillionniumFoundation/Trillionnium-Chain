@@ -8,6 +8,9 @@ use trnm_mvcc_fee::pon_executor::State;
 #[path = "fence_tests.rs"]
 mod fences;
 
+#[path = "frontier_tests.rs"]
+mod frontier;
+
 struct Fixture {
     node: Node,
     directory: tempfile::TempDir,

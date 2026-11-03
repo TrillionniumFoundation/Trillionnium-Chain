@@ -345,14 +345,25 @@ pub fn root_with_arithmetic(
     if state.len() > 65_536 {
         return Err("LIMIT");
     }
-    arithmetic
-        .root_from_entries(state.iter().map(|(key, value)| {
-            canonical_after_validation(value).map(|bytes| (key.as_bytes(), bytes))
-        }))
-        .map_err(|error| match error {
-            StateRootInputError::Input(error) => error,
-            StateRootInputError::Wire(_) => "LIMIT",
-        })
+    let mut input = arithmetic.input_builder();
+    for (key, value) in state {
+        // Only a full current String/key equality can skip encoding. The
+        // builder proves eligibility from its private original wire bytes;
+        // every miss keeps the existing encoder and its actual allocations.
+        if let Value::String(value) = value {
+            if input
+                .try_plain_json_string(key.as_bytes(), value)
+                .map_err(|_| "LIMIT")?
+            {
+                continue;
+            }
+        }
+        let bytes = canonical_after_validation(value)?;
+        input
+            .add_encoded(key.as_bytes(), &bytes)
+            .map_err(|_| "LIMIT")?;
+    }
+    input.finish().map_err(|_| "LIMIT")
 }
 
 #[cfg(test)]

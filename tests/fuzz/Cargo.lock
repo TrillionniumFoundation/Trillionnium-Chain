@@ -958,6 +958,7 @@ dependencies = [
  "fs2",
  "libc",
  "rusqlite",
+ "rustix",
  "sha2",
  "trnm-crypto-primitives",
  "trnm-protocol",

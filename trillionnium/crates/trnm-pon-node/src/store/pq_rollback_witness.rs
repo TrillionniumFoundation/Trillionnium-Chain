@@ -4,7 +4,9 @@ use super::Node;
 use crate::{
     ensure,
     ingress::pq_network::{PqNetworkPolicy, MAX_LEDGER_BYTES, MAX_RECORDS},
-    pq_rollback_witness::{Checkpoint, WitnessBinding, WitnessClient},
+    pq_rollback_witness::{
+        observe_operation, observe_phase, Checkpoint, WitnessBinding, WitnessClient,
+    },
     Result,
 };
 use rusqlite::{params, types::ValueRef, Connection, Transaction, TransactionBehavior};
@@ -168,57 +170,76 @@ impl<'a> Mutation<'a> {
         Self::begin_until(node, None)
     }
     pub(crate) fn begin_until(node: &'a Node, deadline: Option<Instant>) -> Result<Self> {
-        let mut client = node
-            .pq_witness
-            .as_ref()
-            .map(|client| {
-                client
-                    .try_borrow_mut()
-                    .map_err(|_| crate::Error::from("PQ_WITNESS_BUSY"))
-            })
-            .transpose()?;
-        invalidate_failed_client(&client, &node.pq_network_epoch);
-        if let Some(client) = client.as_ref() {
-            client.available()?;
-        }
-        ensure(node.db.is_autocommit(), "PQ_WITNESS_TRANSACTION")?;
-        let tx = Transaction::new_unchecked(&node.db, TransactionBehavior::Immediate)?;
-        let previous: Result<Option<Checkpoint>> = (|| {
-            let Some(client) = client.as_mut() else {
-                return Ok(None);
-            };
-            // Preserve the client's known-before-send cancellation distinction.
-            let local = match checkpoint(&tx) {
-                Ok(local) => local,
-                Err(error) => {
-                    client.fail_closed();
-                    return Err(error);
-                }
-            };
-            let current = client.current_until(deadline)?;
-            let verified: Result<Checkpoint> = (|| {
-                ensure(current == local, "PQ_WITNESS_ROLLBACK")?;
-                ensure(
-                    protected_root(&tx, client.binding())? == local.root,
-                    "PQ_WITNESS_LOCAL_ROOT",
+        observe_operation!(
+            observation,
+            crate::pq_rollback_witness::test_observation::Kind::MutationBegin,
+            {
+                let mut client = observe_phase!(
+                    observation,
+                    MutationBegin,
+                    node.pq_witness
+                        .as_ref()
+                        .map(|client| {
+                            client
+                                .try_borrow_mut()
+                                .map_err(|_| crate::Error::from("PQ_WITNESS_BUSY"))
+                        })
+                        .transpose()
                 )?;
-                Ok(local)
-            })();
-            if verified.is_err() {
-                client.fail_closed();
+                invalidate_failed_client(&client, &node.pq_network_epoch);
+                if let Some(client) = client.as_ref() {
+                    client.available()?;
+                }
+                ensure(node.db.is_autocommit(), "PQ_WITNESS_TRANSACTION")?;
+                let tx = observe_phase!(
+                    observation,
+                    MutationBegin,
+                    Transaction::new_unchecked(&node.db, TransactionBehavior::Immediate)
+                )?;
+                let previous: Result<Option<Checkpoint>> = (|| {
+                    let Some(client) = client.as_mut() else {
+                        return Ok(None);
+                    };
+                    // Preserve the client's known-before-send cancellation distinction.
+                    let local = match observe_phase!(observation, LocalCheckpoint, checkpoint(&tx))
+                    {
+                        Ok(local) => local,
+                        Err(error) => {
+                            client.fail_closed();
+                            return Err(error);
+                        }
+                    };
+                    let current =
+                        observe_phase!(observation, Current, client.current_until(deadline))?;
+                    let verified: Result<Checkpoint> = (|| {
+                        ensure(current == local, "PQ_WITNESS_ROLLBACK")?;
+                        ensure(
+                            observe_phase!(
+                                observation,
+                                ProtectedRoot,
+                                protected_root(&tx, client.binding())
+                            )? == local.root,
+                            "PQ_WITNESS_LOCAL_ROOT",
+                        )?;
+                        Ok(local)
+                    })();
+                    if verified.is_err() {
+                        client.fail_closed();
+                    }
+                    Ok(Some(verified?))
+                })();
+                // Current or integrity checks may fail before a Mutation is returned.
+                invalidate_failed_client(&client, &node.pq_network_epoch);
+                let previous = previous?;
+                Ok(Self {
+                    tx: Some(tx),
+                    client,
+                    previous,
+                    deadline,
+                    epoch: &node.pq_network_epoch,
+                })
             }
-            Ok(Some(verified?))
-        })();
-        // Current or integrity checks may fail before a Mutation is returned.
-        invalidate_failed_client(&client, &node.pq_network_epoch);
-        let previous = previous?;
-        Ok(Self {
-            tx: Some(tx),
-            client,
-            previous,
-            deadline,
-            epoch: &node.pq_network_epoch,
-        })
+        )
     }
     pub(crate) fn commit(self) -> Result<()> {
         self.commit_with_check(&mut || Ok(()))
@@ -227,36 +248,77 @@ impl<'a> Mutation<'a> {
         mut self,
         check: &mut impl FnMut() -> Result<()>,
     ) -> Result<()> {
-        check()?;
-        if let (Some(client), Some(previous)) = (self.client.as_mut(), self.previous) {
-            let root = protected_root(
-                self.tx.as_ref().ok_or("PQ_WITNESS_TRANSACTION")?,
-                client.binding(),
-            )?;
-            if root != previous.root {
-                let next = Checkpoint::new(
-                    previous
-                        .sequence
-                        .checked_add(1)
-                        .ok_or("PQ_WITNESS_SEQUENCE")?,
-                    root,
-                )?;
-                ensure(self.tx.as_ref().ok_or("PQ_WITNESS_TRANSACTION")?.execute("UPDATE pq_witness_checkpoint_v1 SET sequence=?,root=? WHERE singleton=1 AND sequence=? AND root=?", params![next.sequence, next.root.as_slice(), previous.sequence, previous.root.as_slice()])? == 1, "PQ_WITNESS_LOCAL_CHECKPOINT")?;
-                // Known local cancellation rolls back before sending CAS.
-                check()?;
-                client.advance_until(previous, next, self.deadline)?;
-                // A verified successful external receipt must always be paired
-                // with local commit before reporting any late live-use error.
-                if let Err(error) = self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?.commit() {
-                    client.fail_closed();
-                    return Err(error.into());
+        observe_operation!(
+            observation,
+            crate::pq_rollback_witness::test_observation::Kind::MutationCommit,
+            {
+                #[cfg(test)]
+                if let (Some(observation), Some(deadline)) = (observation.as_ref(), self.deadline) {
+                    observation.deadlines(Some(deadline), deadline);
                 }
-                return check();
+                observe_phase!(observation, FinalLiveCheck, check())?;
+                if let (Some(client), Some(previous)) = (self.client.as_mut(), self.previous) {
+                    let root = observe_phase!(
+                        observation,
+                        ProtectedRoot,
+                        protected_root(
+                            self.tx.as_ref().ok_or("PQ_WITNESS_TRANSACTION")?,
+                            client.binding(),
+                        )
+                    )?;
+                    if root != previous.root {
+                        let next = Checkpoint::new(
+                            previous
+                                .sequence
+                                .checked_add(1)
+                                .ok_or("PQ_WITNESS_SEQUENCE")?,
+                            root,
+                        )?;
+                        ensure(self.tx.as_ref().ok_or("PQ_WITNESS_TRANSACTION")?.execute("UPDATE pq_witness_checkpoint_v1 SET sequence=?,root=? WHERE singleton=1 AND sequence=? AND root=?", params![next.sequence, next.root.as_slice(), previous.sequence, previous.root.as_slice()])? == 1, "PQ_WITNESS_LOCAL_CHECKPOINT")?;
+                        // Known local cancellation rolls back before sending CAS.
+                        observe_phase!(observation, FinalLiveCheck, check())?;
+                        observe_phase!(
+                            observation,
+                            AdvanceCas,
+                            client.advance_until(previous, next, self.deadline)
+                        )?;
+                        // A verified successful external receipt must always be paired
+                        // with local commit before reporting any late live-use error.
+                        let tx = self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?;
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.mark(crate::pq_rollback_witness::test_observation::Mark::LocalCommitAttempted);
+                        }
+                        if let Err(error) = observe_phase!(observation, LocalCommit, tx.commit()) {
+                            client.fail_closed();
+                            return Err(error.into());
+                        }
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.mark(
+                                crate::pq_rollback_witness::test_observation::Mark::LocalCommitted,
+                            );
+                        }
+                        return observe_phase!(observation, FinalLiveCheck, check());
+                    }
+                }
+                observe_phase!(observation, FinalLiveCheck, check())?;
+                let tx = self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?;
+                #[cfg(test)]
+                if let Some(observation) = observation.as_ref() {
+                    observation.mark(
+                        crate::pq_rollback_witness::test_observation::Mark::LocalCommitAttempted,
+                    );
+                }
+                observe_phase!(observation, LocalCommit, tx.commit())?;
+                #[cfg(test)]
+                if let Some(observation) = observation.as_ref() {
+                    observation
+                        .mark(crate::pq_rollback_witness::test_observation::Mark::LocalCommitted);
+                }
+                observe_phase!(observation, FinalLiveCheck, check())
             }
-        }
-        check()?;
-        self.tx.take().ok_or("PQ_WITNESS_TRANSACTION")?.commit()?;
-        check()
+        )
     }
 }
 impl Drop for Mutation<'_> {

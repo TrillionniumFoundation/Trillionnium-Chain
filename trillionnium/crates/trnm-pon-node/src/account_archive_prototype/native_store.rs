@@ -17,6 +17,8 @@ mod node_decode;
 #[path = "native_node_reader.rs"]
 mod node_reader;
 use node_reader::NodeReader;
+#[path = "native_scoped_readback.rs"]
+pub(crate) mod scoped_readback;
 
 /// Exact mathematical inputs only. Every stored node is still read from SQL.
 /// Node decoding can reuse only the complete actual bytes and expected ID;

@@ -25,6 +25,52 @@ use std::{
 use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
 use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, ML_DSA_65_SIGNATURE_BYTES};
 
+// These wrappers compile to the original expressions outside libtests. Test
+// scopes are explicit; an absent scope never reads a clock, allocates or emits data.
+#[cfg(test)]
+macro_rules! observe_phase {
+    ($operation:expr, $phase:ident, $action:expr) => {{
+        #[cfg(test)]
+        let guard = $operation.as_ref().map(|operation| {
+            operation.phase($crate::pq_rollback_witness::test_observation::Phase::$phase)
+        });
+        let result = $action;
+        #[cfg(test)]
+        if let Some(guard) = guard {
+            guard.finish(&result);
+        }
+        result
+    }};
+}
+#[cfg(not(test))]
+macro_rules! observe_phase {
+    ($operation:expr, $phase:ident, $action:expr) => {
+        $action
+    };
+}
+#[cfg(test)]
+macro_rules! observe_operation {
+    ($operation:ident, $kind:expr, $action:block) => {{
+        #[cfg(test)]
+        let $operation = $crate::pq_rollback_witness::test_observation::start($kind);
+        let result: $crate::Result<_> = (|| $action)();
+        #[cfg(test)]
+        if let Some(operation) = $operation {
+            operation.finish(&result);
+        }
+        result
+    }};
+}
+#[cfg(not(test))]
+macro_rules! observe_operation {
+    ($operation:ident, $kind:expr, $action:block) => {
+        $action
+    };
+}
+pub(crate) use {observe_operation, observe_phase};
+#[cfg(test)]
+pub(crate) mod test_observation;
+
 const REQUEST_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/request/v1\0";
 const REPLY_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/reply/v1\0";
 const BINDING_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/binding/v1\0";
@@ -241,72 +287,136 @@ impl WitnessClient {
         next: Option<Checkpoint>,
         original: Option<Instant>,
     ) -> Result<Checkpoint> {
-        self.available()?;
-        let cap = Instant::now() + MAX_EXCHANGE;
-        let until = original.map_or(cap, |v| v.min(cap));
-        deadline(until)?;
-        // Until transport entry no remote mutation or unread response exists.
-        // A local preparation failure or cancellation must leave this client
-        // usable; latching here would turn a short request into a service outage.
-        let mut challenge = [0; 32];
-        File::open("/dev/urandom")?.read_exact(&mut challenge)?;
-        ensure(challenge != [0; 32], "PQ_WITNESS_CHALLENGE")?;
-        let mut body = b"PWR1".to_vec();
-        body.push(if previous.is_some() { 2 } else { 1 });
-        body.extend(self.binding.id);
-        body.extend(previous.map_or([0; 72], Checkpoint::bytes));
-        body.extend(next.map_or([0; 72], Checkpoint::bytes));
-        body.extend(challenge);
-        body.extend(
-            self.writer
-                .sign_exact_message(&message(REQUEST_DOMAIN, &body))
-                .map_err(crypto)?,
-        );
-        #[cfg(test)]
-        if let Some(before_send) = self.before_send.as_mut() {
-            before_send(until);
-        }
-        deadline(until)?;
-        let result: Result<Checkpoint> = (|| {
-            let reply = self.transport.exchange(&body, until)?;
-            ensure(
-                reply.len() == REPLY_BYTES
-                    && &reply[..4] == b"PWS1"
-                    && reply[4..68] == self.binding.id
-                    && reply[140..172] == challenge,
-                "PQ_WITNESS_REPLY_CONTEXT",
-            )?;
-            self.binding
-                .witness
-                .verify_exact_message(
-                    &message(REPLY_DOMAIN, &reply[..REPLY_BODY]),
-                    &reply[REPLY_BODY..],
-                )
-                .map_err(crypto)?;
-            let observed = Checkpoint::decode(&reply[68..140])?;
-            // A fresh challenge authenticates this response, but does not by
-            // itself establish that the independent service never rewound.
-            // Other legitimate clients may advance it by several generations.
-            ensure(
-                self.last_verified.is_none_or(|previous| {
-                    observed.sequence > previous.sequence || observed == previous
-                }),
-                "PQ_WITNESS_OBSERVATION_ROLLBACK",
-            )?;
-            // Authenticated matching CAS success must be persisted locally even
-            // if its verification completed after the live-use deadline.
-            if next != Some(observed) {
-                deadline(until)?;
+        observe_operation!(
+            observation,
+            if previous.is_some() {
+                test_observation::Kind::ClientCas
+            } else {
+                test_observation::Kind::ClientCurrent
+            },
+            {
+                let until = observe_phase!(
+                    observation,
+                    ClientEntry,
+                    (|| {
+                        self.available()?;
+                        let cap = Instant::now() + MAX_EXCHANGE;
+                        let until = original.map_or(cap, |v| v.min(cap));
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.deadlines(original, until);
+                        }
+                        deadline(until)?;
+                        Ok::<_, Error>(until)
+                    })()
+                )?;
+                // Until transport entry no remote mutation or unread response exists.
+                // A local preparation failure or cancellation must leave this client
+                // usable; latching here would turn a short request into a service outage.
+                let (challenge, mut body) = observe_phase!(
+                    observation,
+                    ChallengeAndBody,
+                    (|| {
+                        let mut challenge = [0; 32];
+                        File::open("/dev/urandom")?.read_exact(&mut challenge)?;
+                        ensure(challenge != [0; 32], "PQ_WITNESS_CHALLENGE")?;
+                        let mut body = b"PWR1".to_vec();
+                        body.push(if previous.is_some() { 2 } else { 1 });
+                        body.extend(self.binding.id);
+                        body.extend(previous.map_or([0; 72], Checkpoint::bytes));
+                        body.extend(next.map_or([0; 72], Checkpoint::bytes));
+                        body.extend(challenge);
+                        Ok::<_, Error>((challenge, body))
+                    })()
+                )?;
+                body.extend(
+                    observe_phase!(
+                        observation,
+                        RequestSignIncludingSelfVerify,
+                        self.writer
+                            .sign_exact_message(&message(REQUEST_DOMAIN, &body))
+                    )
+                    .map_err(crypto)?,
+                );
+                #[cfg(test)]
+                if let Some(before_send) = self.before_send.as_mut() {
+                    observe_phase!(observation, BeforeSendHook, {
+                        before_send(until);
+                        Ok::<_, Error>(())
+                    })?;
+                }
+                observe_phase!(observation, BeforeTransport, deadline(until))?;
+                let result: Result<Checkpoint> = (|| {
+                    #[cfg(test)]
+                    if let Some(observation) = observation.as_ref() {
+                        observation.mark(test_observation::Mark::TransportEntered);
+                    }
+                    let reply = observe_phase!(
+                        observation,
+                        Transport,
+                        self.transport.exchange(&body, until)
+                    )?;
+                    observe_phase!(
+                        observation,
+                        ReplyContext,
+                        ensure(
+                            reply.len() == REPLY_BYTES
+                                && &reply[..4] == b"PWS1"
+                                && reply[4..68] == self.binding.id
+                                && reply[140..172] == challenge,
+                            "PQ_WITNESS_REPLY_CONTEXT",
+                        )
+                    )?;
+                    observe_phase!(
+                        observation,
+                        ClientReplyVerify,
+                        self.binding
+                            .witness
+                            .verify_exact_message(
+                                &message(REPLY_DOMAIN, &reply[..REPLY_BODY]),
+                                &reply[REPLY_BODY..],
+                            )
+                            .map(|_| ())
+                    )
+                    .map_err(crypto)?;
+                    observe_phase!(
+                        observation,
+                        ClientFinal,
+                        (|| {
+                            let observed = Checkpoint::decode(&reply[68..140])?;
+                            // A fresh challenge authenticates this response, but does not by
+                            // itself establish that the independent service never rewound.
+                            // Other legitimate clients may advance it by several generations.
+                            ensure(
+                                self.last_verified.is_none_or(|previous| {
+                                    observed.sequence > previous.sequence || observed == previous
+                                }),
+                                "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                            )?;
+                            // Authenticated matching CAS success must be persisted locally even
+                            // if its verification completed after the live-use deadline.
+                            if next != Some(observed) {
+                                deadline(until)?;
+                            }
+                            #[cfg(test)]
+                            if next == Some(observed) {
+                                if let Some(observation) = observation.as_ref() {
+                                    observation.mark(test_observation::Mark::MatchingCasReceipt);
+                                }
+                            }
+                            self.last_verified = Some(observed);
+                            Ok::<_, Error>(observed)
+                        })()
+                    )
+                })();
+                // Once exchange begins an error can leave an unread response or an
+                // uncertain external CAS. This transport instance cannot be reused.
+                if result.is_err() {
+                    self.fail_closed();
+                }
+                result
             }
-            self.last_verified = Some(observed);
-            Ok(observed)
-        })();
-        // Once exchange begins an error can leave an unread response or an
-        // uncertain external CAS. This transport instance cannot be reused.
-        if result.is_err() {
-            self.fail_closed();
-        }
-        result
+        )
     }
     pub fn current(&mut self) -> Result<Checkpoint> {
         self.current_until(None)
@@ -323,19 +433,27 @@ impl WitnessClient {
         next: Checkpoint,
         until: Option<Instant>,
     ) -> Result<()> {
-        // Checkpoint fields are public. Refuse malformed local arguments
-        // before signing or entering transport, without poisoning the client.
-        Checkpoint::new(previous.sequence, previous.root)?;
-        Checkpoint::new(next.sequence, next.root)?;
-        ensure(
-            previous.sequence.checked_add(1) == Some(next.sequence),
-            "PQ_WITNESS_SEQUENCE",
-        )?;
-        if self.request(Some(previous), Some(next), until)? != next {
-            self.fail_closed();
-            return Err("PQ_WITNESS_CAS".into());
-        }
-        Ok(())
+        observe_operation!(observation, test_observation::Kind::ClientAdvance, {
+            // Checkpoint fields are public. Refuse malformed local arguments
+            // before signing or entering transport, without poisoning the client.
+            observe_phase!(
+                observation,
+                ClientEntry,
+                (|| {
+                    Checkpoint::new(previous.sequence, previous.root)?;
+                    Checkpoint::new(next.sequence, next.root)?;
+                    ensure(
+                        previous.sequence.checked_add(1) == Some(next.sequence),
+                        "PQ_WITNESS_SEQUENCE",
+                    )
+                })()
+            )?;
+            if self.request(Some(previous), Some(next), until)? != next {
+                self.fail_closed();
+                return Err("PQ_WITNESS_CAS".into());
+            }
+            Ok(())
+        })
     }
 }
 
@@ -479,84 +597,151 @@ impl DurableWitness {
         Ok(head)
     }
     pub fn handle(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
-        deadline(until)?;
-        self.check_storage()?;
-        ensure(
-            request.len() == REQUEST_BYTES
-                && &request[..4] == b"PWR1"
-                && request[5..69] == self.binding.id
-                && request[213..245] != [0; 32],
-            "PQ_WITNESS_REQUEST_CONTEXT",
-        )?;
-        ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
-        if request[4] == 1 {
-            ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
-        }
-        self.binding
-            .writer
-            .verify_exact_message(
-                &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
-                &request[REQUEST_BODY..],
-            )
-            .map_err(crypto)?;
-        deadline(until)?;
-        let head = if request[4] == 2 {
-            let previous = Checkpoint::decode(&request[69..141])?;
-            let next = Checkpoint::decode(&request[141..213])?;
-            ensure(
-                previous.sequence.checked_add(1) == Some(next.sequence),
-                "PQ_WITNESS_SEQUENCE",
-            )?;
-            let tx = self
-                .db
-                .transaction_with_behavior(TransactionBehavior::Immediate)?;
-            validate_row(&tx, self.binding.canonical().len())?;
-            let (binding,seq,root,old_seq,old_root):(Vec<u8>,u64,Vec<u8>,u64,Vec<u8>)=tx.query_row("SELECT binding,sequence,root,previous_sequence,previous_root FROM witness_v1 WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
-            ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
-            let current = Checkpoint::new(seq, root.try_into().map_err(|_| "PQ_WITNESS_STATE")?)?;
-            ensure(
-                self.known_head == Some(current),
-                "PQ_WITNESS_STORAGE_ROLLBACK",
-            )?;
-            if current == next {
-                ensure(
-                    old_seq == previous.sequence && old_root == previous.root,
-                    "PQ_WITNESS_RETRY_CONFLICT",
+        observe_operation!(
+            observation,
+            match request.get(4) {
+                Some(1) => test_observation::Kind::ServiceCurrent,
+                Some(2) => test_observation::Kind::ServiceCas,
+                _ => test_observation::Kind::ServiceUnknown,
+            },
+            {
+                #[cfg(test)]
+                if let Some(observation) = observation.as_ref() {
+                    observation.deadlines(Some(until), until);
+                }
+                observe_phase!(
+                    observation,
+                    ServiceEntryAndStorage,
+                    (|| {
+                        deadline(until)?;
+                        self.check_storage()
+                    })()
                 )?;
-            } else {
-                ensure(current == previous, "PQ_WITNESS_CAS")?;
-                ensure(tx.execute("UPDATE witness_v1 SET sequence=?,root=?,previous_sequence=?,previous_root=? WHERE singleton=1 AND sequence=? AND root=?",params![next.sequence,next.root.as_slice(),previous.sequence,previous.root.as_slice(),previous.sequence,previous.root.as_slice()])?==1,"PQ_WITNESS_CAS")?;
+                observe_phase!(
+                    observation,
+                    ServiceRequestContext,
+                    (|| {
+                        ensure(
+                            request.len() == REQUEST_BYTES
+                                && &request[..4] == b"PWR1"
+                                && request[5..69] == self.binding.id
+                                && request[213..245] != [0; 32],
+                            "PQ_WITNESS_REQUEST_CONTEXT",
+                        )?;
+                        ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
+                        if request[4] == 1 {
+                            ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
+                        }
+                        Ok::<_, Error>(())
+                    })()
+                )?;
+                observe_phase!(
+                    observation,
+                    ServiceRequestVerify,
+                    self.binding
+                        .writer
+                        .verify_exact_message(
+                            &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
+                            &request[REQUEST_BODY..],
+                        )
+                        .map(|_| ())
+                )
+                .map_err(crypto)?;
+                observe_phase!(observation, ServiceRequestContext, deadline(until))?;
+                let head = if request[4] == 2 {
+                    observe_phase!(
+                        observation,
+                        ServiceCas,
+                        (|| {
+                            let previous = Checkpoint::decode(&request[69..141])?;
+                            let next = Checkpoint::decode(&request[141..213])?;
+                            ensure(
+                                previous.sequence.checked_add(1) == Some(next.sequence),
+                                "PQ_WITNESS_SEQUENCE",
+                            )?;
+                            let tx = self
+                                .db
+                                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+                            validate_row(&tx, self.binding.canonical().len())?;
+                            let (binding,seq,root,old_seq,old_root):(Vec<u8>,u64,Vec<u8>,u64,Vec<u8>)=tx.query_row("SELECT binding,sequence,root,previous_sequence,previous_root FROM witness_v1 WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+                            ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
+                            let current = Checkpoint::new(
+                                seq,
+                                root.try_into().map_err(|_| "PQ_WITNESS_STATE")?,
+                            )?;
+                            ensure(
+                                self.known_head == Some(current),
+                                "PQ_WITNESS_STORAGE_ROLLBACK",
+                            )?;
+                            if current == next {
+                                ensure(
+                                    old_seq == previous.sequence && old_root == previous.root,
+                                    "PQ_WITNESS_RETRY_CONFLICT",
+                                )?;
+                            } else {
+                                ensure(current == previous, "PQ_WITNESS_CAS")?;
+                                ensure(tx.execute("UPDATE witness_v1 SET sequence=?,root=?,previous_sequence=?,previous_root=? WHERE singleton=1 AND sequence=? AND root=?",params![next.sequence,next.root.as_slice(),previous.sequence,previous.root.as_slice(),previous.sequence,previous.root.as_slice()])?==1,"PQ_WITNESS_CAS")?;
+                            }
+                            deadline(until)?;
+                            // All legitimate writers use this exclusive owner's handle. If a
+                            // local COMMIT has an unknown result, refuse later requests until
+                            // explicit reopen; a disk read must not silently resolve it.
+                            self.commit_uncertain = true;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitAttempted);
+                            }
+                            observe_phase!(observation, ServiceCommit, tx.commit())?;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitted);
+                            }
+                            self.known_head = Some(next);
+                            self.commit_uncertain = false;
+                            Ok::<_, Error>(next)
+                        })()
+                    )?
+                } else {
+                    observe_phase!(observation, ServiceRead, self.read_head())?
+                };
+                observe_phase!(observation, ServiceFinalStorage, self.check_storage())?;
+                let mut reply = b"PWS1".to_vec();
+                reply.extend(self.binding.id);
+                reply.extend(head.bytes());
+                reply.extend(&request[213..245]);
+                reply.extend(
+                    observe_phase!(
+                        observation,
+                        ReplySignIncludingSelfVerify,
+                        self.signer
+                            .sign_exact_message(&message(REPLY_DOMAIN, &reply))
+                    )
+                    .map_err(crypto)?,
+                );
+                observe_phase!(observation, ServiceFinal, deadline(until))?;
+                Ok(reply)
             }
-            deadline(until)?;
-            // All legitimate writers use this exclusive owner's handle. If a
-            // local COMMIT has an unknown result, refuse later requests until
-            // explicit reopen; a disk read must not silently resolve it.
-            self.commit_uncertain = true;
-            tx.commit()?;
-            self.known_head = Some(next);
-            self.commit_uncertain = false;
-            next
-        } else {
-            self.read_head()?
-        };
-        self.check_storage()?;
-        let mut reply = b"PWS1".to_vec();
-        reply.extend(self.binding.id);
-        reply.extend(head.bytes());
-        reply.extend(&request[213..245]);
-        reply.extend(
-            self.signer
-                .sign_exact_message(&message(REPLY_DOMAIN, &reply))
-                .map_err(crypto)?,
-        );
-        deadline(until)?;
-        Ok(reply)
+        )
     }
     pub fn serve_one(&mut self, stream: &mut UnixStream, until: Instant) -> Result<()> {
-        let mut request = vec![0; REQUEST_BYTES];
-        read_until(stream, &mut request, until)?;
-        let reply = self.handle(&request, until)?;
-        write_until(stream, &reply, until)
+        observe_operation!(observation, test_observation::Kind::WitnessConnection, {
+            #[cfg(test)]
+            if let Some(observation) = observation.as_ref() {
+                observation.deadlines(Some(until), until);
+            }
+            let mut request = vec![0; REQUEST_BYTES];
+            observe_phase!(
+                observation,
+                WitnessRead,
+                read_until(stream, &mut request, until)
+            )?;
+            let reply = observe_phase!(observation, WitnessHandle, self.handle(&request, until))?;
+            observe_phase!(
+                observation,
+                WitnessWrite,
+                write_until(stream, &reply, until)
+            )
+        })
     }
     pub fn storage_path(&self) -> &Path {
         &self.path

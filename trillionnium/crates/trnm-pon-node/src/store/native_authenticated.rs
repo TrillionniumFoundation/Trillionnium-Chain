@@ -23,6 +23,7 @@ pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
 pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
 mod post_write_readback;
+pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
@@ -60,6 +61,16 @@ pub(crate) struct Record {
     pub delta_count: u64,
     pub delta_root: Hash,
 }
+
+/// Only verify_state_with_readback constructs this after comparing the entire
+/// CURRENT StateCommitment, using the same accounts parser as the real graph.
+/// Its immutable borrows prevent a caller from pairing another State or Root
+/// with a scoped graph access. This is arithmetic binding, not DB authority.
+struct CurrentAccountGraph<'a> {
+    record: &'a Record,
+    state: &'a State,
+}
+
 impl Record {
     fn digest(&self) -> Result<Hash> {
         Ok(hash(
@@ -686,15 +697,38 @@ pub(super) fn verify_state_with_readback(
             Some(scope) => scope.matches(db, settings, &record)?,
             None => false,
         };
+        let mut scoped_graph = None;
         if !reused {
             let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
-            native_store::verify_with_lifts(
-                db,
-                &record.accounts,
-                state,
-                progress,
-                cache.map(|c| &c.lifts),
-            )?;
+            let access = readback
+                .as_deref_mut()
+                .map(|scope| {
+                    scope.graph_access(
+                        db,
+                        settings,
+                        CurrentAccountGraph {
+                            record: &record,
+                            state,
+                        },
+                    )
+                })
+                .transpose()?
+                .flatten();
+            if let Some(access) = access {
+                scoped_graph = Some(native_store::scoped_readback::verify(
+                    access,
+                    progress,
+                    cache.map(|c| &c.lifts),
+                )?);
+            } else {
+                native_store::verify_with_lifts(
+                    db,
+                    &record.accounts,
+                    state,
+                    progress,
+                    cache.map(|c| &c.lifts),
+                )?;
+            }
         }
         // Keep the original boundary checkpoint. A scoped graph hit creates no
         // synthetic progress events; every real traversal keeps every node check.
@@ -711,8 +745,27 @@ pub(super) fn verify_state_with_readback(
                 {
                     scope.hits += 1;
                 }
+            } else if let Some(source) = scoped_graph.as_ref().and_then(|graph| graph.source_used())
+            {
+                // A partial graph needs its OWN unchanged-source fence. Whole
+                // Root matches is deliberately false for this different Root.
+                if !scope.frontier_current(db, settings, &record, source)? {
+                    return verify_state_with_cache(db, settings, block, state, progress, cache);
+                }
+                scope.consumed = true;
+                #[cfg(test)]
+                {
+                    scope.partial_uses += 1;
+                    scope.subtree_hits += scoped_graph.as_ref().unwrap().hits();
+                }
+                // Partial results never nominate a new parent, retain a new
+                // whole-Root receipt, replace the source or expand its frontier.
             } else {
-                scope.remember(db, record)?;
+                scope.remember(
+                    db,
+                    record,
+                    scoped_graph.and_then(|graph| graph.into_pending()),
+                )?;
             }
         }
         Ok(())

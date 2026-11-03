@@ -4800,11 +4800,12 @@ result is not a ledger throughput, physical-isolation or public-readiness gate.
 
 The baseline's original four-second, sixteen-attacker receipts retain all seven
 receiver ACKs and zero independently confirmed transactions under pressure.
-The separate original thirty-second campaign also failed; its 1,024-account
-baseline attributes about 80.5% of inclusive client-import calling-thread CPU
-to account-graph verification, despite nearly all node-decode arithmetic being
-cache hits. Graph SQL reads and per-node Host checks remain inside that span;
-the new aggregates must distinguish them before another default optimization.
+The separate original thirty-second campaign also failed. Correction to its
+earlier attribution: account-graph phase snapshots include later confirmation
+and read-active work as well as imports, so the former 80.5% graph/import ratio
+is invalid. Retain each raw observation with its actual scope. Graph SQL reads
+and per-node Host checks overlap; their inclusive intervals cannot be added.
+The new aggregates must distinguish these costs before another optimization.
 These different workloads must not be combined into a throughput claim.
 
 All performance decisions require complete planned outcomes and independently
@@ -4856,3 +4857,67 @@ synchronize event. No protection, permission, scanning configuration, merge or
 activation is changed. Original public-service, cheapest-work, heterogeneous
 hardware, DAA/quantum, independent-operator, model, custody, economics and
 whole-chain PQ qualifications remain HOLD.
+
+
+### 2026-11-03 scoped graph and complete-root continuation
+
+Preserve published #688 head `469c4d4bb36efb37045d968f35f83cb2c1771933`
+and the subsequently selected main parent
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`. The local merge actually changes
+only README relative to that head before this implementation; older hosted
+results still identify their tested `bfe1f33959a02d0766b33f6acc082e5990d82ea1`
+merge against the older base. Source identities and observed outcomes must not
+be relabelled after a base change.
+
+The private original writer can seal at most sixteen exact account subtrees
+after one complete graph, complete current State binding and the original final
+callback. Different-root use reads every exposed SQL edge, retains original
+node/side/prefix/lift checks, counts covered descendants and rechecks the original
+no-write fence. Partial reuse cannot nominate a fifth role, expand its source,
+become a whole-root result or survive a write/transaction. The independent ordinary
+verifier stays intact. Fixed buckets can be adversarially skewed; first graphs,
+complete State and History still have their original full-size work.
+
+Complete-root arithmetic uses the original retained pool for a bounded subset
+of exact plain JSON strings after tree-array priority. The private input builder
+requires actual complete keys and values, complete grammar/count validation and
+all original error/collision handling. Canonical cache-offer encoding is unchanged.
+New observation v3 separates observed inputs from hashes and exact encoding hits.
+Retained bytes are not peak RSS; cold/refused retention costs remain real work.
+The [native storage contract](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+records both scopes and limits.
+
+Before the math/PQ continuation, the scoped-graph prototype compiled with the
+original test profile and passed 113 distinct selected native tests: 83 in the
+authenticated module, 21 state, 6 reorg and 3 ancestry. All four new actual partial
+reuse/corruption/cancellation/write-fence tests passed. These were an uncommitted
+intermediate source and do not qualify the final combined source or public Host.
+The first compile ran out of shared disk, and one mistyped selector matched zero
+tests; retain both preparation failures. Exact registered counts are now required
+by the local runner, and the original hosted module requires 83 unique executions
+including 23 post-write tests in one log. No original assertion is waived.
+
+Retain the [469 hosted outcomes](../../evidence/pon-scoped-root-continuation-20261103/README.md):
+all four pressure four-second phases remain 0/1; F0 is 1/6 in thirty seconds and
+0/6 in four seconds; the three original campaigns confirm 3/27 of the planned
+27 transactions / 189 packet exposures. Original ARM test-profile CPU refusals
+remain; release success does not replace them. PQ selected controls retain their
+six x64 failures even though later full x64 libraries pass. Missing stage CPU
+attribution and the server cause behind a reset remain unknown until actual
+bounded observations resolve them. Independent review, original Host/WAN,
+whole-chain PQ and activation remain separate unclosed gates.
+
+Preserve the subsequent published f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d
+continuation in full, including Cell retirement deadlines, bounded W1 failure
+metadata, its evidence and the exact empty-README contract. Compose this candidate
+on its complete c27b9918037068f697199d7b3398415a0dd3c543 tree and retain main
+as an additional parent; the sparse local checkout is not the published tree.
+The fuzz repair adds only the already-declared rustix dependency edge to its
+independent lockfile. All 146 package identities and 134 registry checksums stay
+fixed; complete offline locked metadata and fetch pass. Original hosted fuzz
+execution remains a separate gate. Test-only PQ observation retains fixed typed
+failure classes, bounded per-process output and panic/drop diagnostics without
+changing the original 250 ms/200 ms boundaries or mandatory self-verification.
+Its two new diagnostic controls and the final combined source require fresh
+hosted execution. Shared-disk exhaustion prevents a complete local combined
+build; component runs are not relabelled as that missing result.

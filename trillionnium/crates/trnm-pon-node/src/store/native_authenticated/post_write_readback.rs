@@ -1,13 +1,46 @@
 //! Same-transaction graph readback, ported from the existing c165 owner.
 //! No receipt survives its original writer, connection, SQL epoch or schema.
-use super::Record;
+use super::{CurrentAccountGraph, Record};
+use crate::account_archive_prototype::native_store::{scoped_readback::Frontier, Root};
 use crate::{Error, Result, Settings};
 use rusqlite::Connection;
 use std::collections::BTreeMap;
+use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
 use trnm_sqlite_io_boundary::TransactionScope;
 
 type ReadbackSchema = Vec<(String, String, String, String, i64, Option<String>)>;
+
+/// Only this original writer issues access, and only for one of its original
+/// four nominated records after the private complete-State comparison. Pending
+/// frontiers have no constructor for this loan and cannot consume themselves.
+pub(crate) struct GraphAccess<'input, 'scope> {
+    db: &'scope Connection,
+    binding: CurrentAccountGraph<'input>,
+    frontier: Option<&'scope Frontier>,
+}
+
+impl GraphAccess<'_, '_> {
+    pub(crate) fn connection(&self) -> &Connection {
+        self.db
+    }
+
+    pub(crate) fn root(&self) -> &Root {
+        &self.binding.record.accounts
+    }
+
+    pub(crate) fn state(&self) -> &State {
+        self.binding.state
+    }
+
+    pub(crate) fn record_id(&self) -> Hash {
+        self.binding.record.id
+    }
+
+    pub(crate) fn frontier(&self) -> Option<&Frontier> {
+        self.frontier
+    }
+}
 
 fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
     // A configuration change is not necessarily an executed write: SQLite
@@ -66,10 +99,15 @@ pub(in crate::store) struct PostWriteReadback<'db> {
     schema: ReadbackSchema,
     ids: [Option<Hash>; 4],
     graphs: [Option<Record>; 4],
+    frontier: Option<Frontier>,
     enabled: bool,
     pub(super) consumed: bool,
     #[cfg(test)]
     pub(super) hits: usize,
+    #[cfg(test)]
+    pub(super) partial_uses: usize,
+    #[cfg(test)]
+    pub(super) subtree_hits: usize,
 }
 
 impl<'db> PostWriteReadback<'db> {
@@ -126,10 +164,15 @@ impl<'db> PostWriteReadback<'db> {
             schema,
             ids: [Some(child), Some(settings.genesis()), None, None],
             graphs: [None, None, None, None],
+            frontier: None,
             enabled: true,
             consumed: false,
             #[cfg(test)]
             hits: 0,
+            #[cfg(test)]
+            partial_uses: 0,
+            #[cfg(test)]
+            subtree_hits: 0,
         }))
     }
 
@@ -144,6 +187,7 @@ impl<'db> PostWriteReadback<'db> {
         if !same || self.enabled && readback_schema(db)?.as_ref() != Some(&self.schema) {
             self.enabled = false;
             self.graphs = [None, None, None, None];
+            self.frontier = None;
             // A previous caller has already consumed a successful graph hit.
             // Merely disabling FUTURE hits cannot validate its result after a
             // later outer callback writes. The owning transaction must refuse.
@@ -209,10 +253,73 @@ impl<'db> PostWriteReadback<'db> {
                 .any(|verified| verified.accounts == record.accounts))
     }
 
-    pub(super) fn remember(&mut self, db: &Connection, record: Record) -> Result<()> {
+    pub(super) fn graph_access<'input>(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        binding: CurrentAccountGraph<'input>,
+    ) -> Result<Option<GraphAccess<'input, '_>>> {
+        if !self.current(db)?
+            || self.context
+                != [
+                    settings.network(),
+                    settings.parameters(),
+                    settings.genesis(),
+                ]
+            || !self.ids.contains(&Some(binding.record.block))
+        {
+            return Ok(None);
+        }
+        Ok(Some(GraphAccess {
+            db: self.db,
+            binding,
+            frontier: self.frontier.as_ref(),
+        }))
+    }
+
+    pub(super) fn frontier_current(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        record: &Record,
+        source: Hash,
+    ) -> Result<bool> {
+        Ok(self.current(db)?
+            && self.context
+                == [
+                    settings.network(),
+                    settings.parameters(),
+                    settings.genesis(),
+                ]
+            && self.ids.contains(&Some(record.block))
+            && self
+                .frontier
+                .as_ref()
+                .is_some_and(|frontier| frontier.source_record() == source))
+    }
+
+    pub(super) fn remember(
+        &mut self,
+        db: &Connection,
+        record: Record,
+        pending: Option<Frontier>,
+    ) -> Result<()> {
         // Called only AFTER the original successful graph, its Exit and the
         // final caller callback. A mutation during that validation mints none.
         if self.current(db)? {
+            // Only an original named Record's COMPLETE successful graph can
+            // seal the unique fixed-size frontier, after the final callback.
+            // Fifth records and partial graphs cannot supply or replace it.
+            if self.frontier.is_none() && self.ids.contains(&Some(record.block)) {
+                if let Some(pending) = pending {
+                    crate::ensure(
+                        pending.is_for(record.id, &record.accounts),
+                        "NATIVE_ACCOUNT_FRONTIER",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    self.frontier = Some(pending);
+                }
+            }
             // Nominate the parent only from the fully verified child Record.
             // This introduces no earlier SQL read, validation or error order.
             if self.ids[0] == Some(record.block) && self.ids[2].is_none() {

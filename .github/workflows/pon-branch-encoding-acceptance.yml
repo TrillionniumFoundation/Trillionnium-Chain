@@ -50,7 +50,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = d4327221fe1af4d0479915371634bdbf6e9cf4c1
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = cb07d1606590b1979a64f8b662c6a8349738226b
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -70,9 +70,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 46bb09a69d68318580e2856116267376489aaf78
+          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 9333ce92c6ba130dd182538bfd8f69ec289acc83
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib pon_wire:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/state-wire.log"
-          grep -E '^test result: ok\. 18 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
+          grep -E '^test result: ok\. 22 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
           selector=pon_wire::tests::every_header_field_binds_its_wire_bytes_challenge_and_block_identity
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/header-binding.log"
           python3 scripts/ci/check_required_native_test.py "$OUT/header-binding.log" --test "$selector"

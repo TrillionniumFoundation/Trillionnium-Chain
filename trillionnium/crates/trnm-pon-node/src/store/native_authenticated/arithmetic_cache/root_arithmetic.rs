@@ -3,9 +3,11 @@
 //! The native owner may offer M06's private canonical map/tree. No supplied
 //! digest is an answer: derive_snapshot re-encodes every current State value,
 //! compares the complete key set and applies every real addition/change/removal.
-//! When canonical payloads do not fit, an alternate entry stores only original
-//! leaf hashes and partition-root arithmetic. Every actual row is still encoded,
-//! bounded and hashed before any reuse. The entry and byte limits are unchanged.
+//! When canonical payloads do not fit, an alternate entry stores original leaf
+//! hashes and partition roots, then uses remaining space for exact plain JSON
+//! strings. Every actual row is bounded and fully observed: a complete key and
+//! string-byte match can reuse its encoding/hashes; misses are encoded/hashed.
+//! The entry, combined payload and retained-charge limits are unchanged.
 //! SQL reads, typed decoding, account graphs, metadata and validity stay outside.
 use crate::Settings;
 use serde::Serialize;
@@ -60,7 +62,10 @@ struct Counters {
     derived_full_root: u64,
     actual_changed_keys: u64,
     original_error_fallbacks: u64,
+    partition_inputs_observed: u64,
     partition_inputs_hashed: u64,
+    partition_exact_string_hits: u64,
+    partition_string_encodings_reused: u64,
     partition_roots_reused: u64,
     partition_roots_computed: u64,
     partition_retention_refusals: u64,
@@ -91,7 +96,8 @@ impl RootArithmetic {
     /// Arc contents are charged in full even when another owner already holds
     /// them. A refused canonical offer discards the old canonical entry. It may
     /// keep the sole same-context original-hash partition entry: every later
-    /// calculation still encodes and hashes all actual rows before comparison.
+    /// calculation still observes all actual rows, reusing an encoding/hash only
+    /// after exact current key/string equality within the same byte budget.
     /// An absent M06 snapshot is not evidence that this pure arithmetic is stale.
     pub(super) fn offer(&self, settings: &Settings, snapshot: Option<&CheckedCommitment>) {
         self.count(|c| c.offers = c.offers.saturating_add(1));
@@ -275,9 +281,18 @@ impl RootArithmetic {
         if result.is_ok() {
             let observation = arithmetic.observation();
             self.count(|c| {
+                c.partition_inputs_observed = c
+                    .partition_inputs_observed
+                    .saturating_add(observation.input_keys as u64);
                 c.partition_inputs_hashed = c
                     .partition_inputs_hashed
-                    .saturating_add(observation.input_keys as u64);
+                    .saturating_add(observation.leaf_hashes_computed as u64);
+                c.partition_exact_string_hits = c
+                    .partition_exact_string_hits
+                    .saturating_add(observation.exact_string_hits as u64);
+                c.partition_string_encodings_reused = c
+                    .partition_string_encodings_reused
+                    .saturating_add(observation.string_encodings_reused as u64);
                 c.partition_roots_reused = c
                     .partition_roots_reused
                     .saturating_add(observation.reused_partitions as u64);
@@ -318,22 +333,28 @@ impl RootArithmetic {
     pub(super) fn observation(&self) -> Value {
         let retained = self.material.try_borrow().ok().map(|material| {
             material.as_ref().map(|material| {
-                let (kind, keys) = match &material.source {
+                let (kind, keys, strings, string_charge) = match &material.source {
                     MaterialSource::Canonical(snapshot) => {
-                        ("canonical-map-and-tree", snapshot.keys())
+                        ("canonical-map-and-tree", snapshot.keys(), 0, 0)
                     }
-                    MaterialSource::Partitions(arithmetic) => (
-                        "original-leaf-hashes-and-partition-roots",
-                        arithmetic.observation().input_keys,
-                    ),
+                    MaterialSource::Partitions(arithmetic) => {
+                        let observation = arithmetic.observation();
+                        (
+                            "original-leaf-hashes-and-partition-roots",
+                            observation.input_keys,
+                            observation.retained_string_entries,
+                            observation.retained_string_charge_bytes,
+                        )
+                    }
                 };
                 json!({"kind":kind,"keys":keys,
                     "payload_bytes":material.payload_bytes(),
+                    "exact_string_entries":strings,"exact_string_charge_bytes":string_charge,
                     "retained_software_charge_bytes":material.charged})
             })
         });
-        json!({"schema":"pon-native-complete-root-arithmetic-v2",
-            "scope":"one opaque canonical map/tree OR original leaf-hash/partition-root entry; every current State key and canonical value is encoded and compared or hashed; no stored state, row-set, root claim or validity verdict is supplied",
+        json!({"schema":"pon-native-complete-root-arithmetic-v3",
+            "scope":"one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
             "retained_material":retained,
             "retention_observation_available":retained.is_some(),
             "entry_limit":1,"payload_limit_bytes":MAX_PAYLOAD_BYTES,

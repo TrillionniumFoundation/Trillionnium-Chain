@@ -10,7 +10,7 @@ use crate::{
         },
         Request,
     },
-    pq_rollback_witness::{ConnectedWitnessTransport, DurableWitness},
+    pq_rollback_witness::{test_observation, ConnectedWitnessTransport, DurableWitness},
     Settings,
 };
 use std::{
@@ -82,7 +82,15 @@ struct Process {
 }
 impl Process {
     fn start(directory: &Path, genesis: u64) -> Self {
-        for name in ["witness.sock", "ready", "ready.pending", "stop", "receipt"] {
+        for name in [
+            "witness.sock",
+            "ready",
+            "ready.pending",
+            "stop",
+            "receipt",
+            test_observation::CHILD_FILE,
+            test_observation::CHILD_PENDING,
+        ] {
             match fs::remove_file(directory.join(name)) {
                 Ok(()) => {}
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
@@ -114,6 +122,7 @@ impl Process {
             );
             if let Some(status) = process.child.as_mut().unwrap().try_wait().unwrap() {
                 let output = process.child.take().unwrap().wait_with_output().unwrap();
+                test_observation::forward_child(directory);
                 // Preserve the child's actual failure without printing its
                 // nested libtest summary into the parent's exact-test receipt.
                 panic!(
@@ -141,6 +150,7 @@ impl Process {
         let child = self.child.take().unwrap();
         let pid = child.id();
         let output = child.wait_with_output().unwrap();
+        test_observation::forward_child(&self.directory);
         assert!(
             output.status.success(),
             "independent witness child failed: {}",
@@ -159,6 +169,7 @@ impl Drop for Process {
         if let Some(child) = self.child.as_mut() {
             let _ = child.kill();
             let _ = child.wait();
+            test_observation::forward_child(&self.directory);
         }
     }
 }
@@ -170,6 +181,7 @@ fn independent_witness_process_child() {
         return;
     };
     let directory = PathBuf::from(directory);
+    let _diagnostics = test_observation::Scope::child(&directory);
     let genesis = std::env::var(TIME_ENV).unwrap().parse().unwrap();
     let (_, policy) = settings_and_policy(genesis);
     // The service process only opens existing state; no enrollment fallback.
@@ -190,17 +202,23 @@ fn independent_witness_process_child() {
         assert!(Instant::now() < end, "independent witness fixture lifetime");
         match listener.accept() {
             Ok((mut stream, _)) => {
+                let mut failed_request = None;
                 while !directory.join("stop").exists() && Instant::now() < end {
-                    if owner
-                        .serve_one(
-                            &mut stream,
-                            end.min(Instant::now() + Duration::from_secs(10)),
-                        )
-                        .is_err()
-                    {
+                    if let Err(error) = owner.serve_one(
+                        &mut stream,
+                        end.min(Instant::now() + Duration::from_secs(10)),
+                    ) {
+                        failed_request = Some(error);
                         break;
                     }
                     operations += 1;
+                }
+                // Preserve the old connection close before any diagnostic I/O.
+                // At most one completed-failure checkpoint and one final scope
+                // snapshot use the same bounded file; neither renews a budget.
+                drop(stream);
+                if let Some(error) = failed_request {
+                    _diagnostics.save_child_failure(&error);
                 }
             }
             Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
@@ -225,6 +243,7 @@ impl Drop for StopOnDrop {
 
 #[test]
 fn guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart() {
+    let diagnostics = test_observation::Scope::new();
     let directory = tempfile::tempdir().unwrap();
     let genesis = ingress::now().unwrap() - 100;
     let (settings, policy) = settings_and_policy(genesis);
@@ -268,7 +287,9 @@ fn guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_
     let _stop_on_drop = StopOnDrop(stop.clone());
     let stopped = stop.clone();
     let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let worker_observations = diagnostics.recorder();
     let worker = thread::spawn(move || {
+        let _observations = test_observation::Scope::attach(worker_observations);
         serve_pq_authenticated(listener, node, Duration::from_secs(30), stopped, server).unwrap()
     });
     let sender = PqClient::new(policy.clone(), key(72)).unwrap();

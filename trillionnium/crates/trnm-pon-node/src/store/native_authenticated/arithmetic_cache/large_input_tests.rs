@@ -42,12 +42,35 @@ fn large_complete_inputs_keep_actual_accounts_conservation_and_context_checks() 
         root_material["retained_software_charge_limit_bytes"],
         16 * 1024 * 1024
     );
-    assert!(
-        root_material["retained_material"]["payload_bytes"]
-            .as_u64()
-            .unwrap()
-            < 300_000
+    assert_eq!(
+        root_material["schema"],
+        "pon-native-complete-root-arithmetic-v3"
     );
+    let payload = root_material["retained_material"]["payload_bytes"]
+        .as_u64()
+        .unwrap();
+    let strings = root_material["retained_material"]["exact_string_charge_bytes"]
+        .as_u64()
+        .unwrap();
+    assert!(payload <= 2 * 1024 * 1024);
+    assert!(strings > 0 && strings <= payload);
+    // The original tree remains compact; strings occupy only its old pool's
+    // remaining space, including every key/value allocation and descriptor.
+    assert!(payload - strings < 300_000);
+    let string_entries = root_material["retained_material"]["exact_string_entries"]
+        .as_u64()
+        .unwrap();
+    assert!(string_entries > 0 && string_entries < 2100);
+    let counters = &root_material["counters"];
+    let observed = counters["partition_inputs_observed"].as_u64().unwrap();
+    let hashed = counters["partition_inputs_hashed"].as_u64().unwrap();
+    let exact = counters["partition_exact_string_hits"].as_u64().unwrap();
+    let encodings = counters["partition_string_encodings_reused"]
+        .as_u64()
+        .unwrap();
+    assert_eq!(observed, hashed + exact);
+    assert!(hashed > 0 && exact > 0);
+    assert_eq!(encodings, exact);
     assert!(
         root_material["counters"]["partition_roots_reused"]
             .as_u64()

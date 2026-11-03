@@ -259,3 +259,51 @@ fn arithmetic_root_distinguishes_exact_numeric_values_and_full_non_account_views
     assert_eq!(root_with_arithmetic(&state, &mut arithmetic), root(&state));
     assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Err("LIMIT"));
 }
+
+#[test]
+fn exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encoding() {
+    let state = State::from([
+        ("000-warm".into(), json!("x".repeat(4080))),
+        ("empty".into(), json!("")),
+        ("del".into(), json!("\u{007f}")),
+        ("escaped".into(), json!("\n")),
+        ("nested".into(), json!(["plain", 0, false])),
+    ]);
+    let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);
+    let expected = root(&state).unwrap();
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, state.len());
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    let warm = arithmetic.observation();
+    assert_eq!(warm.input_keys, state.len());
+    assert_eq!(warm.exact_string_hits, 3);
+    assert_eq!(warm.string_encodings_reused, 3);
+    assert_eq!(warm.leaf_hashes_computed, 2);
+    assert_eq!(
+        warm.leaf_hashes_computed + warm.exact_string_hits,
+        warm.input_keys
+    );
+
+    for late in [json!(0.0), json!(-0.0), json!("λ"), json!({"λ":0})] {
+        let mut invalid = state.clone();
+        invalid.insert("a".repeat(161), json!("x".repeat(4095)));
+        invalid.insert("zz-invalid".into(), late);
+        let original = root(&invalid);
+        assert!(original.is_err() && original != Err("LIMIT"));
+        assert_eq!(root_with_arithmetic(&invalid, &mut arithmetic), original);
+        assert_eq!(arithmetic.observation(), warm);
+    }
+    let mut changed = state.clone();
+    changed.insert("000-warm".into(), json!(format!("{}y", "x".repeat(4079))));
+    changed.insert("empty".into(), Value::Null);
+    let changed_root = root(&changed).unwrap();
+    assert_ne!(changed_root, expected);
+    assert_eq!(
+        root_with_arithmetic(&changed, &mut arithmetic),
+        Ok(changed_root)
+    );
+    assert_eq!(arithmetic.observation().exact_string_hits, 1);
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, 4);
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    assert!(arithmetic.retained_payload_bytes() <= 2 * 1024 * 1024);
+}

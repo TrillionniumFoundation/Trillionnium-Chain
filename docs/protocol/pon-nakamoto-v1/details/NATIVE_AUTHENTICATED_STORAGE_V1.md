@@ -200,6 +200,80 @@ error as a cold cache. Existing late-trigger, old-delta, cancellation, branch an
 reopen regressions remain required. This change reduces repeated hash arithmetic;
 the State and history scans remain linear in their respective sizes.
 
+### Exact strings in the existing complete-root arithmetic pool
+
+The separate complete-root arithmetic entry keeps the existing 2 MiB retained
+payload and 16 MiB retained software-charge limits. Original leaf-hash and
+partition-root arrays have priority. Only remaining payload space may retain
+complete keys and unescaped ASCII JSON string bytes, with their original hashes.
+The charge includes all retained key/value bytes, entry descriptors and the added
+string-array handle. Boxed slices retain no spare vector capacity. These are
+retained-material limits, not peak RSS or an exemption for transient input work.
+
+An opaque complete-input builder accepts actual keys and values; no public API
+accepts a precomputed hash, partial update, claimed root or validity decision.
+M06 first performs its original complete grammar and key-count validation.
+A raw string hit requires the full current key and all current string bytes to
+match a private prior canonical encoding. Every miss uses the original encoder
+and original key/leaf hash domains. Escapes, controls, non-ASCII values, integers,
+floats, nested values, additions, removals and changed keys cannot alias that hit.
+Original cache-offer encoding and its allocation/workspace charging are unchanged.
+
+New strings get no replacement credit while old retained bytes remain owned.
+Successful complete calculation can drop unused strings and refill on a later
+call; tree material remains first in the same pool. Failure, collision, an input
+producer error or an abandoned builder cannot publish partial material. When the
+tree itself cannot be retained, bounded candidate-string work can be discarded;
+this cold cost remains part of the actual calculation and needs measurement.
+
+The local root observation uses `pon-native-complete-root-arithmetic-v3`.
+It separates all input rows observed, leaves actually hashed, exact-string hits
+and encodings reused. For a successful complete partition calculation,
+`observed = hashed + exact hits`; a warm hit must not be reported as a fresh hash.
+Current account graphs, SQL, context, nonce, liabilities, revocation and live-use
+checks remain owned by their original validators. This math entry is never an
+authorization cache or a promise that state access is proportional to touched keys.
+
+### Bounded account-graph readback inside one writer
+
+After the original transaction's writes, the private `PostWriteReadback` scope
+may share graph work among its original four roles: the child, genesis, the
+parent nominated by the fully verified child, and the actual active tip. Each
+use first checks its current Record, block, delta bindings and **complete current
+StateCommitment**, including account root, count, balance, nonce/existence and
+all non-account obligations. Identical whole roots require the same exact node
+identity, digest, count and balance; digest equality alone is insufficient.
+
+The first complete graph can also produce one fixed frontier of at most sixteen
+disjoint subtrees, selected by the first four account-path bits. A frontier entry
+binds the actual encoded node ID, path, depth, digest, descendant-node count,
+account count and checked balance. It is sealed only after the original final
+callback and the scope's no-write/context/schema checks. A private access object
+binds the actual Connection, current immutable State/Record and sealed frontier;
+there is no externally supplied preverified root or serializable receipt.
+
+A later different root still loads the real SQL root and every exposed edge,
+preserving the original node identity, depth, prefix, side and lifted-hash checks.
+Only an exact subtree match can omit descendants already checked in that same
+unchanged writer. All exposed leaves must equal current State; hidden leaves
+remain bound by the complete current State commitment. Covered descendants
+still count toward the original graph-node bound. Potential aggregate overflow
+or node-limit refusal uses the original traversal to preserve error ordering.
+
+The final callback and original transaction fence remain mandatory. Writes,
+including no-row writes, invalidate the frontier; a write after any successful
+reuse refuses the owning transaction. A partial result cannot nominate another
+record, become a whole-root result, replace the source, or enlarge the frontier.
+No graph result survives its writer, connection, SQL epoch or schema. Ordinary
+no-scope verification, cold open, recovery, required ancestry and live authority
+checks retain their original paths.
+
+This is a bounded local readback optimization. The first complete graph, current
+State reconstruction/commitment and historical scans remain. Deliberately chosen
+owners can occupy one path bucket and obtain no partial-reuse benefit; sixteen
+buckets do not establish balanced work or O(touched-set) cost. The original
+public Host and confirmation gates must measure the resulting end-to-end work.
+
 There is one native `active` selection and one existing reorganization journal.
 The backend does not introduce a second active account pointer that would need
 a separate cross-database commit. Required-work selection retains its original

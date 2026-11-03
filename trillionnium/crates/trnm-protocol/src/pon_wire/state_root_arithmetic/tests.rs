@@ -203,3 +203,198 @@ fn retention_refusal_and_eviction_preserve_root_and_existing_budget() {
     assert!(disabled.observation().retention_refused);
     assert_eq!(disabled.retained_payload_bytes(), 0);
 }
+
+#[test]
+fn exact_strings_require_full_current_keys_values_and_complete_row_sets() {
+    let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);
+    let mut values = BTreeMap::from([
+        (b"alpha".to_vec(), br#""unchanged""#.to_vec()),
+        (b"beta".to_vec(), br#""body""#.to_vec()),
+        (b"empty".to_vec(), br#""""#.to_vec()),
+    ]);
+    let original = calculated(&mut arithmetic, &values);
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, 3);
+    assert_eq!(arithmetic.observation().retained_string_entries, 3);
+    let mut input = arithmetic.input_builder();
+    // Shared prefixes, different keys and caller-provided JSON delimiters
+    // cannot substitute for an exact complete current String.
+    assert!(!input.try_plain_json_string(b"alien", "unchanged").unwrap());
+    assert!(!input.try_plain_json_string(b"alpha", "unchangeD").unwrap());
+    assert!(!input
+        .try_plain_json_string(b"alpha", "unchanged\"")
+        .unwrap());
+    assert!(!input.try_plain_json_string(b"beta", "body\\").unwrap());
+    assert!(input.try_plain_json_string(b"empty", "").unwrap());
+    assert!(input.try_plain_json_string(b"beta", "body").unwrap());
+    assert!(input.try_plain_json_string(b"alpha", "unchanged").unwrap());
+    assert_eq!(input.finish(), Ok(original));
+    let warm = arithmetic.observation();
+    assert_eq!(warm.input_keys, 3);
+    assert_eq!(warm.leaf_hashes_computed, 0);
+    assert_eq!(warm.exact_string_hits, 3);
+    assert_eq!(warm.string_encodings_reused, 3);
+
+    values.insert(b"alpha".to_vec(), br#""unchangeD""#.to_vec());
+    values.remove(b"beta".as_slice());
+    values.insert(b"renamed".to_vec(), br#""body""#.to_vec());
+    let expected = state_root(&values).unwrap();
+    assert_ne!(expected, original);
+    let mut input = arithmetic.input_builder();
+    for (key, value) in values.iter().rev() {
+        let raw = std::str::from_utf8(&value[1..value.len() - 1]).unwrap();
+        if !input.try_plain_json_string(key, raw).unwrap() {
+            input.add_encoded(key, value).unwrap();
+        }
+    }
+    assert_eq!(input.finish(), Ok(expected));
+    let changed = arithmetic.observation();
+    assert_eq!(changed.input_keys, 3);
+    assert_eq!(changed.exact_string_hits, 1);
+    assert_eq!(changed.leaf_hashes_computed, 2);
+    assert_eq!(changed.string_encodings_reused, 1);
+    assert_eq!(changed.retained_string_entries, 3);
+}
+
+#[test]
+fn exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes() {
+    let mut values: BTreeMap<_, _> = (0..=u8::MAX)
+        .map(|byte| (vec![byte], vec![b'"', byte, b'"']))
+        .collect();
+    values.insert(b"empty".to_vec(), br#""""#.to_vec());
+    values.insert(b"escaped".to_vec(), br#""\u0020""#.to_vec());
+    values.insert(b"newline".to_vec(), br#""\n""#.to_vec());
+    let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);
+    let expected = calculated(&mut arithmetic, &values);
+    // Space through DEL comprises 96 bytes; quote/backslash are excluded.
+    // The empty string adds one. Wire input itself still accepts arbitrary bytes.
+    assert_eq!(arithmetic.observation().retained_string_entries, 95);
+    assert_eq!(calculated(&mut arithmetic, &values), expected);
+    assert_eq!(arithmetic.observation().exact_string_hits, 95);
+    assert_eq!(arithmetic.observation().string_encodings_reused, 0);
+    let mut input = arithmetic.input_builder();
+    assert!(!input.try_plain_json_string(b"escaped", " ").unwrap());
+    assert!(!input.try_plain_json_string(b"escaped", r"\u0020").unwrap());
+    assert!(!input.try_plain_json_string(b"newline", "\n").unwrap());
+    for (key, value) in &values {
+        let raw = std::str::from_utf8(&value[1..value.len() - 1]);
+        let hit = raw.is_ok_and(|raw| input.try_plain_json_string(key, raw).unwrap());
+        if !hit {
+            input.add_encoded(key, value).unwrap();
+        }
+    }
+    assert_eq!(input.finish(), Ok(expected));
+    let observation = arithmetic.observation();
+    assert_eq!(observation.exact_string_hits, 95);
+    assert_eq!(observation.string_encodings_reused, 95);
+    assert_eq!(
+        observation.leaf_hashes_computed + observation.exact_string_hits,
+        observation.input_keys
+    );
+}
+
+#[test]
+fn exact_string_hits_cannot_publish_after_failure_collision_or_abandonment() {
+    let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);
+    let values = BTreeMap::from([(b"key".to_vec(), br#""plain""#.to_vec())]);
+    calculated(&mut arithmetic, &values);
+    let retained = arithmetic.observation();
+    {
+        let mut input = arithmetic.input_builder();
+        assert!(input.try_plain_json_string(b"key", "plain").unwrap());
+        // An abandoned operation cannot publish a partial input.
+    }
+    assert_eq!(arithmetic.observation(), retained);
+    let mut input = arithmetic.input_builder();
+    assert!(input.try_plain_json_string(b"key", "plain").unwrap());
+    assert_eq!(input.add_encoded(&[0; 161], b"null"), Err(WireError::Limit));
+    assert_eq!(
+        input.try_plain_json_string(b"key", "plain"),
+        Err(WireError::Limit)
+    );
+    assert_eq!(input.finish(), Err(WireError::Limit));
+    assert_eq!(arithmetic.observation(), retained);
+    let mut input = arithmetic.input_builder();
+    assert!(input.try_plain_json_string(b"key", "plain").unwrap());
+    assert!(input.try_plain_json_string(b"key", "plain").unwrap());
+    assert_eq!(input.finish(), Err(WireError::KeyCollision));
+    assert_eq!(arithmetic.observation(), retained);
+    let entries = || {
+        [
+            Ok((b"key".as_slice(), br#""plain""#.as_slice())),
+            Err("CANCELLED"),
+        ]
+    };
+    assert_eq!(
+        arithmetic.root_from_entries(entries()),
+        state_root_from_entries(entries())
+    );
+    assert_eq!(arithmetic.observation(), retained);
+    assert_eq!(
+        arithmetic.retained_payload_bytes(),
+        retained.retained_payload_bytes
+    );
+}
+
+#[test]
+fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit() {
+    let tree_charge = std::mem::size_of::<(Hash, Hash)>() + std::mem::size_of::<Partition>();
+    let string_charge = STRING_SET_CHARGE + std::mem::size_of::<ExactString>() + 1 + 5;
+    let values = BTreeMap::from([(b"k".to_vec(), br#""old""#.to_vec())]);
+    let expected = state_root(&values).unwrap();
+    for budget in [
+        0,
+        tree_charge - 1,
+        tree_charge,
+        tree_charge + string_charge - 1,
+    ] {
+        let mut arithmetic = StateRootArithmetic::new(budget);
+        assert_eq!(calculated(&mut arithmetic, &values), expected);
+        assert_eq!(arithmetic.observation().retained_string_entries, 0);
+        assert!(arithmetic.retained_payload_bytes() <= budget);
+        if budget >= tree_charge {
+            assert_eq!(arithmetic.retained_payload_bytes(), tree_charge);
+            assert!(!arithmetic.observation().retention_refused);
+        }
+    }
+    let budget = tree_charge + string_charge;
+    let mut arithmetic = StateRootArithmetic::new(budget);
+    assert_eq!(calculated(&mut arithmetic, &values), expected);
+    assert_eq!(arithmetic.retained_payload_bytes(), budget);
+    assert_eq!(
+        arithmetic.observation().retained_string_charge_bytes,
+        string_charge
+    );
+    let material = arithmetic.material.as_ref().unwrap();
+    assert_eq!(
+        material.string_charge(),
+        STRING_SET_CHARGE
+            + std::mem::size_of_val(material.strings.as_ref())
+            + material
+                .strings
+                .iter()
+                .map(|entry| entry.key.len() + entry.value.len())
+                .sum::<usize>()
+    );
+    assert_eq!(calculated(&mut arithmetic, &values), expected);
+    assert_eq!(arithmetic.observation().exact_string_hits, 1);
+    let changed = BTreeMap::from([(b"k".to_vec(), br#""new""#.to_vec())]);
+    assert_ne!(calculated(&mut arithmetic, &changed), expected);
+    assert_eq!(arithmetic.observation().exact_string_hits, 0);
+    // The full old pool gets no replacement credit. A successful complete
+    // operation drops unused bytes; only the following call can refill them.
+    assert_eq!(arithmetic.observation().retained_string_entries, 0);
+    assert_eq!(arithmetic.retained_payload_bytes(), tree_charge);
+    calculated(&mut arithmetic, &changed);
+    assert_eq!(arithmetic.observation().retained_string_entries, 1);
+    assert_eq!(arithmetic.retained_payload_bytes(), budget);
+    calculated(&mut arithmetic, &BTreeMap::new());
+    assert_eq!(arithmetic.retained_payload_bytes(), 0);
+    assert_eq!(arithmetic.observation().retained_string_entries, 0);
+    let mut tree_only = StateRootArithmetic::new(tree_charge);
+    calculated(&mut tree_only, &values);
+    let mut larger = values;
+    larger.insert(b"another".to_vec(), br#""another""#.to_vec());
+    calculated(&mut tree_only, &larger);
+    assert!(tree_only.observation().retention_refused);
+    assert_eq!(tree_only.retained_payload_bytes(), 0);
+}

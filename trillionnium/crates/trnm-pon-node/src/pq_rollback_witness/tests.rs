@@ -10,10 +10,12 @@ use std::{
 };
 
 fn fixture() -> (
+    test_observation::Scope,
     tempfile::TempDir,
     Arc<crate::ingress::pq_network::PqNetworkPolicy>,
     DurableWitness,
 ) {
+    let diagnostics = test_observation::Scope::new();
     let directory = tempfile::tempdir().unwrap();
     let (_, policy) = setup();
     let binding =
@@ -25,7 +27,7 @@ fn fixture() -> (
         key(73),
     )
     .unwrap();
-    (directory, policy, owner)
+    (diagnostics, directory, policy, owner)
 }
 
 struct DirectTransport {
@@ -67,7 +69,7 @@ fn client(
 
 #[test]
 fn cancellation_after_signing_before_send_preserves_same_client() {
-    let (_directory, policy, owner) = fixture();
+    let (_diagnostics, _directory, policy, owner) = fixture();
     let calls = Arc::new(AtomicUsize::new(0));
     let cuts = Arc::new(AtomicUsize::new(0));
     let mut client = client(&policy, owner, calls.clone(), false);
@@ -102,7 +104,7 @@ fn cancellation_after_signing_before_send_preserves_same_client() {
 
 #[test]
 fn schema_rejects_extra_sqlite_objects_and_oversized_sql_text() {
-    let (_directory, _policy, owner) = fixture();
+    let (_diagnostics, _directory, _policy, owner) = fixture();
     owner.check_storage().unwrap();
 
     // ANALYZE adds SQLite's own sqlite_stat1. The fixed one-table witness
@@ -113,7 +115,7 @@ fn schema_rejects_extra_sqlite_objects_and_oversized_sql_text() {
         "PQ_WITNESS_SCHEMA"
     );
 
-    let (_directory, _policy, owner) = fixture();
+    let (_diagnostics, _directory, _policy, owner) = fixture();
     // Exercise a restored valid SQL string with a noncanonical giant suffix.
     // No claim about SQLite's internal allocation follows from this test.
     owner
@@ -135,7 +137,7 @@ fn schema_rejects_extra_sqlite_objects_and_oversized_sql_text() {
 
 #[test]
 fn same_keys_under_different_binding_generation_cannot_authorize_current() {
-    let (_directory, policy, owner) = fixture();
+    let (_diagnostics, _directory, policy, owner) = fixture();
     let calls = Arc::new(AtomicUsize::new(0));
     let mut client = WitnessClient::new(
         WitnessBinding::new(&policy, 2, key(73).public_spki(), key(74).public_spki()).unwrap(),
@@ -160,7 +162,7 @@ fn same_keys_under_different_binding_generation_cannot_authorize_current() {
 
 #[test]
 fn authenticated_matching_late_cas_is_known_success_and_client_stays_usable() {
-    let (_directory, policy, owner) = fixture();
+    let (_diagnostics, _directory, policy, owner) = fixture();
     let calls = Arc::new(AtomicUsize::new(0));
     let mut client = client(&policy, owner, calls.clone(), true);
     let initial = Checkpoint::new(1, [1; 64]).unwrap();
@@ -175,7 +177,7 @@ fn authenticated_matching_late_cas_is_known_success_and_client_stays_usable() {
 
 #[test]
 fn malformed_local_checkpoints_never_enter_transport_or_poison_client() {
-    let (_directory, policy, owner) = fixture();
+    let (_diagnostics, _directory, policy, owner) = fixture();
     let calls = Arc::new(AtomicUsize::new(0));
     let mut client = client(&policy, owner, calls.clone(), false);
     let first = Checkpoint::new(1, [1; 64]).unwrap();
@@ -231,7 +233,7 @@ fn signed_current_cannot_regress_or_change_an_observed_generation() {
         Checkpoint::new(2, [2; 64]).unwrap(),
         Checkpoint::new(1, [2; 64]).unwrap(),
     ] {
-        let (_directory, policy, owner) = fixture();
+        let (_diagnostics, _directory, policy, owner) = fixture();
         let calls = Arc::new(AtomicUsize::new(0));
         let mut client = client(&policy, owner, calls.clone(), false);
         // Set the client's trusted memory to the boundary under test. The
@@ -271,7 +273,7 @@ fn shared_client(
 
 #[test]
 fn independent_clients_accept_other_writers_advances_and_cold_reopen() {
-    let (directory, policy, owner) = fixture();
+    let (_diagnostics, directory, policy, owner) = fixture();
     let owner = Arc::new(Mutex::new(owner));
     let mut first = shared_client(&policy, &owner);
     let mut second = shared_client(&policy, &owner);
@@ -305,7 +307,7 @@ fn active_owner_requires_its_known_head_for_current_and_cas() {
             Checkpoint::new(2, [2; 64]).unwrap(),
             Checkpoint::new(1, [2; 64]).unwrap(),
         ] {
-            let (_directory, policy, mut owner) = fixture();
+            let (_diagnostics, _directory, policy, mut owner) = fixture();
             owner.known_head = Some(known);
             let calls = Arc::new(AtomicUsize::new(0));
             let mut client = client(&policy, owner, calls.clone(), false);
@@ -326,7 +328,7 @@ fn active_owner_requires_its_known_head_for_current_and_cas() {
 
 #[test]
 fn failed_local_commit_fences_owner_until_explicit_reopen() {
-    let (directory, policy, owner) = fixture();
+    let (_diagnostics, directory, policy, owner) = fixture();
     owner.db.commit_hook(Some(|| true)).unwrap();
     let owner = Arc::new(Mutex::new(owner));
     let mut first = shared_client(&policy, &owner);

@@ -5,7 +5,7 @@ use crate::{
         pq_network::{canonical_tests::key, PqClient, PqNetworkPolicy, PqServer, VerifiedRequest},
         Request,
     },
-    pq_rollback_witness::{DurableWitness, WitnessTransport},
+    pq_rollback_witness::{test_observation, DurableWitness, WitnessTransport},
     Settings,
 };
 use std::{
@@ -27,6 +27,7 @@ struct Fixture {
     service: Arc<Mutex<Option<DurableWitness>>>,
     mode: Arc<AtomicU8>,
     captured: Arc<Mutex<Option<Vec<u8>>>>,
+    diagnostics: test_observation::Scope,
 }
 struct Transport {
     service: Arc<Mutex<Option<DurableWitness>>>,
@@ -35,46 +36,55 @@ struct Transport {
 }
 impl WitnessTransport for Transport {
     fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
-        let mode = self.mode.load(Ordering::Acquire);
-        if mode == 3 {
-            return Err("WITNESS_OUTAGE".into());
-        }
-        if mode == 2 {
-            return self
-                .captured
-                .lock()
-                .unwrap()
-                .clone()
-                .ok_or_else(|| "NO_OLD_REPLY".into());
-        }
-        let reply = self
-            .service
-            .lock()
-            .unwrap()
-            .as_mut()
-            .ok_or("WITNESS_MISSING")?
-            .handle(request, until)?;
-        *self.captured.lock().unwrap() = Some(reply.clone());
-        if request[4] == 2 {
-            if mode == 1 {
-                return Err("LOST_CAS_REPLY".into());
+        observe_operation!(observation, test_observation::Kind::FixtureTransport, {
+            let mode = self.mode.load(Ordering::Acquire);
+            if mode == 3 {
+                return Err("WITNESS_OUTAGE".into());
             }
-            if mode == 5 {
+            if mode == 2 {
+                return self
+                    .captured
+                    .lock()
+                    .unwrap()
+                    .clone()
+                    .ok_or_else(|| "NO_OLD_REPLY".into());
+            }
+            let mut service = observe_phase!(
+                observation,
+                FixtureServiceMutex,
+                Ok::<_, crate::Error>(self.service.lock().unwrap())
+            )?;
+            let reply = service
+                .as_mut()
+                .ok_or("WITNESS_MISSING")?
+                .handle(request, until)?;
+            drop(service);
+            *self.captured.lock().unwrap() = Some(reply.clone());
+            if request[4] == 2 {
+                if mode == 1 {
+                    return Err("LOST_CAS_REPLY".into());
+                }
+                if mode == 5 {
+                    self.mode.store(7, Ordering::Release);
+                }
+                if mode == 6 {
+                    if let Some(observation) = observation.as_ref() {
+                        observation.mark(test_observation::Mark::FixtureDelayEntered);
+                    }
+                    thread::sleep(
+                        until.saturating_duration_since(Instant::now()) + Duration::from_millis(2),
+                    );
+                }
+            } else if mode == 4 {
                 self.mode.store(7, Ordering::Release);
             }
-            if mode == 6 {
-                thread::sleep(
-                    until.saturating_duration_since(Instant::now()) + Duration::from_millis(2),
-                );
-            }
-        } else if mode == 4 {
-            self.mode.store(7, Ordering::Release);
-        }
-        Ok(reply)
+            Ok(reply)
+        })
     }
 }
 impl Fixture {
     fn new() -> Self {
+        let diagnostics = test_observation::Scope::new();
         let directory = tempfile::tempdir().unwrap();
         let settings = Settings::development(Some(7)).unwrap();
         let policy = Arc::new(
@@ -96,6 +106,7 @@ impl Fixture {
         )
         .unwrap();
         Self {
+            diagnostics,
             directory,
             settings,
             policy,
@@ -771,7 +782,9 @@ fn cached_permission_is_rechecked_after_actual_native_tcp_success() {
     let stop = Arc::new(AtomicBool::new(false));
     let stopped = stop.clone();
     let policy = f.policy.clone();
+    let diagnostics = f.diagnostics.recorder();
     let server = thread::spawn(move || {
+        let _observations = test_observation::Scope::attach(diagnostics);
         ingress::pq_network::serve_pq_authenticated(
             listener,
             node,
