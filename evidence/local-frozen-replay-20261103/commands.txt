@@ -1,0 +1,8 @@
+bash scripts/project-preflight.sh
+python scripts/ci/check_repository.py
+python scripts/ci/check_detailed_contracts.py
+bash scripts/ci/ci_job.sh repository-truth
+python formal/pon-nakamoto-v1/test_evaluation_bundle.py
+python formal/pon-nakamoto-v1/test_model_contract.py
+python evidence/local-frozen-replay-20261103/replay.py
+python formal/pon-nakamoto-v1/experiments/settle_model.py --input evidence/pon-evaluation-bundle-v1/model --out /tmp/chain-settlement-FRESH-OUTPUT-DIRECTORY --bundle-hash 68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937

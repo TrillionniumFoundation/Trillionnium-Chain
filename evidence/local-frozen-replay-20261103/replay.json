@@ -1,0 +1,59 @@
+{
+  "schema": "local-frozen-replay-v1",
+  "source_base": "cca911b47731c9c6f6b61e39758ca3ad17a33555",
+  "python": "3.12.14",
+  "bundle_hash": "68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937",
+  "input_sha256": {
+    "base.json": "6b46e865deecde3c4c1fa3ff2ebbaee451d7bb72fc54f57e2d97d2de4eea0cc8",
+    "calibration.json": "0a6f83a7381806536f4de52bd73423cd42cd228ac3636d3315c4d31615113ad0",
+    "consumer-result.json": "386135068641d8f970704eff2d42a5c994d4a8ff8e55d0d2aff9a12fca166725",
+    "consumer.json": "7becde6e63b89a1cd692339795df5bfe93dd47e413b4f891c3f985f8865ad2c6",
+    "evaluation-bundle.json": "70d7da8ef5e90e07e966ca0a83c411166dc80b6cb889faea71cba482f64805e2",
+    "evaluation_a-result.json": "3ef075f3e35b744dd95665821b2598aea6ce047419c91eb9180600d129caa9d8",
+    "evaluation_a.json": "fa8ae34632a91c195cffd51ce0fcd9a4ca4dea7362a3a09ef4a070b0b0c3a6aa",
+    "evaluation_b-result.json": "bf54d6aee4419e59500514106d12f91ffbd2f66227bd036c5cacb818a1d9471f",
+    "evaluation_b.json": "37dcb2632e9453fda79d6335295e8e471fe2c863d933d01fe77774c59c9f24f4",
+    "model.json": "899139b91fabf43167c9d4ee640ca363700a70c5da7497022352596d910b595e",
+    "node-0.json": "0b147885394ea44aaa817ff78a85f5ed2635dbab1813648becd310fe49b7a1e8",
+    "node-1.json": "3e01a1821cbe1f70373f656a83eba8bd181feea388f21db240d27e1622b194ea",
+    "node-2.json": "013f2caa81b1c065f8b96baaa0e7b027cc11ce49347a166eb0fac09e5386d896",
+    "report.json": "d1a00622588045bd7c86eeb9e33b3f5ab037345daaca85f0dbff8196fd5ae88c",
+    "train.json": "bde4f99f3d1adc49ed06ee170a204f33057d93d0ddfce598148cc535c47b48fe"
+  },
+  "results": [
+    {
+      "partition": "evaluation_a",
+      "samples": 170,
+      "candidate_correct": 130,
+      "locked_control": "best_single",
+      "locked_control_correct": 127,
+      "gate": false,
+      "original_predictions_and_gate_exact_match": true,
+      "public_reward_eligible": false
+    },
+    {
+      "partition": "evaluation_b",
+      "samples": 184,
+      "candidate_correct": 126,
+      "locked_control": "best_single",
+      "locked_control_correct": 125,
+      "gate": false,
+      "original_predictions_and_gate_exact_match": true,
+      "public_reward_eligible": false
+    },
+    {
+      "partition": "consumer",
+      "samples": 213,
+      "candidate_correct": 125,
+      "locked_control": "best_single",
+      "locked_control_correct": 129,
+      "gate": false,
+      "original_predictions_and_gate_exact_match": true,
+      "public_reward_eligible": false
+    }
+  ],
+  "new_training": false,
+  "new_future_window": false,
+  "independent_acceptance": false,
+  "production_activation": false
+}

@@ -56,6 +56,18 @@ class RepositoryMutants(unittest.TestCase):
             data=json.loads(text);mutate(data);return json.dumps(data)
         self.reject_text(relative,transform)
     def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],25)
+    def test_owner_cleared_readme_accepts_empty_or_single_newline(self):
+        path=self.root/'README.md';old=path.read_bytes()
+        try:
+            for content in (b'', b'\n'):
+                with self.subTest(content=content):
+                    path.write_bytes(content)
+                    self.assertEqual(check(self.root)['workspace_packages'],25)
+        finally:path.write_bytes(old)
+    def test_owner_cleared_readme_rejects_content_and_extra_whitespace(self):
+        for content in ('Restored homepage\n', ' ', '\n\n'):
+            with self.subTest(content=content):
+                self.reject_text('README.md',lambda _:content)
     def test_duplicate_package(self):
         self.reject_json('config/portability-inventory-v1.json',lambda d:d['packages'].append(copy.deepcopy(d['packages'][0])))
     def test_omitted_package(self):
