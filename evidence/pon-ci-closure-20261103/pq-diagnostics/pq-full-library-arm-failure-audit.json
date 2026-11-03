@@ -1,0 +1,2153 @@
+{
+  "schema": "trnm-pq-complete-library-arm-failure-audit-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 41658914755,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914755",
+  "candidate_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "tested_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "common_tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "scope": "Read-only audit of the original completed bebb PQ CI artifacts; no source edits, builds or reruns.",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "git_blob": "89c338175a2f8eee9d6c7edb114524e522daaeb9",
+      "bytes": 38989,
+      "sha256": "e43389ec29d827d1f2f8c24b23dbf3e22f0cbebf0360d703fad73927bd4df6b2",
+      "matches_published_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "git_blob": "e50508731d30f2b2bb33f6dafac1a90d1176d5a3",
+      "bytes": 5106,
+      "sha256": "d0ade11bcbc3a83e9500e2d92b4d7c0c70061ea89f57516b8cf4a32b3306d020",
+      "matches_published_bebb": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "git_blob": "f8aea8a3de78d0b1be65a30d88cc534b6f9c2ea2",
+      "bytes": 207316,
+      "sha256": "8f4469372d3a91fd5df3f0345638f15a4a4843c6b4e4be8440f09a87cf8c368b",
+      "matches_published_bebb": true
+    }
+  ],
+  "all_lane_outcomes": [
+    {
+      "artifact": {
+        "id": 13246158556,
+        "name": "pq-system-ubuntu-24.04-arm-prospective-merge-bebb1f3289cd7050fefde89ea8f2cf33c6c37588-1",
+        "bytes": 1052980,
+        "sha256": "fafd9d6e97fcf549365d999257c4e9b71f3109513216700ed1549ad39ea8bbdd",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13246158556/zip",
+        "run_id": 41658914755,
+        "job_id": 125996625124,
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+      },
+      "node_lib_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "node_lib_environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "41658914755",
+        "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.bI7CmUmi/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": "ARM64",
+        "RUSTC": null,
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.bI7CmUmi/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "6a9602f6bd4e937c414c67b6539ab4ab7734817f5ea22ca6e11e48423da60846",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "source_before": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "prospective-merge",
+        "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "prospective-merge",
+        "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "top_level_test_summary": "test result: FAILED. 932 passed; 2 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2171.14s",
+      "preceding_child_summary_count": 2,
+      "new_diagnostic_helper_tests": [
+        "test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok",
+        "test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok"
+      ],
+      "node_lib_exit_code": 101,
+      "node_lib_log": {
+        "bytes": 7281952,
+        "sha256": "9289da65893025fb18b3e040004f13889004730480e409251f2e19cc35267769"
+      },
+      "clippy_exit_code": 101,
+      "clippy_errors": [
+        "error: try not to call a closure in the expression where it is declared",
+        "   --> crates/trnm-pon-node/src/pq_rollback_witness.rs:56:41",
+        "    = note: `-D clippy::redundant-closure-call` implied by `-D warnings`",
+        "    = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ],
+      "phase_log_limit_markers": 1,
+      "compiler_identity": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "build_log": {
+        "bytes": 111823,
+        "sha256": "ec913d9169ebff683328e445600b6d19d45b18176d50fcca01981584cdda89e8"
+      },
+      "compiled_artifact": {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd"
+        ],
+        "executable": "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd",
+        "fresh": false
+      },
+      "running_binary_record": "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd)",
+      "binary_content_sha256": null,
+      "binary_identity_limit": "Cargo artifact and run path are recorded; this artifact does not retain the executable or its content digest."
+    },
+    {
+      "artifact": {
+        "id": 13245912966,
+        "name": "pq-system-ubuntu-24.04-arm-head-bebb1f3289cd7050fefde89ea8f2cf33c6c37588-1",
+        "bytes": 1049918,
+        "sha256": "d5be1c0bb014f3322849993b30a0d693560021e263bd80e7cc845d3cffd92996",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13245912966/zip",
+        "run_id": 41658914755,
+        "job_id": 125996625779,
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+      },
+      "node_lib_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "node_lib_environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "41658914755",
+        "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": "ARM64",
+        "RUSTC": null,
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3mjijLdm/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "dfd23584f0cf1066d81ba9c8af134d846aae9eaee27f71f0072c422797fec57b",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "top_level_test_summary": "test result: FAILED. 932 passed; 2 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2181.23s",
+      "preceding_child_summary_count": 2,
+      "new_diagnostic_helper_tests": [
+        "test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok",
+        "test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok"
+      ],
+      "node_lib_exit_code": 101,
+      "node_lib_log": {
+        "bytes": 7282027,
+        "sha256": "c3b73d5e7ffbcf0a38c154b83c58f93d28dc5b00aabc0ef2fc29c5aa1b0e24da"
+      },
+      "clippy_exit_code": 101,
+      "clippy_errors": [
+        "error: try not to call a closure in the expression where it is declared",
+        "   --> crates/trnm-pon-node/src/pq_rollback_witness.rs:56:41",
+        "    = note: `-D clippy::redundant-closure-call` implied by `-D warnings`",
+        "    = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ],
+      "phase_log_limit_markers": 1,
+      "compiler_identity": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "build_log": {
+        "bytes": 111823,
+        "sha256": "512ab76346f41f4f3b58e2eb0784320927037d1268d57b4bbf61990b289a98fa"
+      },
+      "compiled_artifact": {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd"
+        ],
+        "executable": "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd",
+        "fresh": false
+      },
+      "running_binary_record": "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd)",
+      "binary_content_sha256": null,
+      "binary_identity_limit": "Cargo artifact and run path are recorded; this artifact does not retain the executable or its content digest."
+    },
+    {
+      "artifact": {
+        "id": 13246460191,
+        "name": "pq-system-ubuntu-24.04-prospective-merge-bebb1f3289cd7050fefde89ea8f2cf33c6c37588-1",
+        "bytes": 1055060,
+        "sha256": "83bea79238e5f2f0f5eda1ad47d1e4c689a8bb404dc1f4f68a6b785b4fcfcddb",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13246460191/zip"
+      },
+      "node_lib_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "node_lib_environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "41658914755",
+        "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.UbNlaXm4/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": "X64",
+        "RUSTC": null,
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.UbNlaXm4/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "de4d2f4aba39964a1b467b4d383b8c5beba03a6835dc6b0dec16c915d28998e0",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "source_before": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "prospective-merge",
+        "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "prospective-merge",
+        "prospective_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "top_level_test_summary": "test result: ok. 934 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1215.98s",
+      "preceding_child_summary_count": 2,
+      "new_diagnostic_helper_tests": [
+        "test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok",
+        "test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok"
+      ],
+      "node_lib_exit_code": 0,
+      "node_lib_log": {
+        "bytes": 7280763,
+        "sha256": "29036d9bbcd387b720e712d84637b415ceb1466b50254f17a4ff6a23743f3940"
+      },
+      "clippy_exit_code": 101,
+      "clippy_errors": [
+        "error: try not to call a closure in the expression where it is declared",
+        "   --> crates/trnm-pon-node/src/pq_rollback_witness.rs:56:41",
+        "    = note: `-D clippy::redundant-closure-call` implied by `-D warnings`",
+        "    = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ],
+      "phase_log_limit_markers": 1,
+      "compiler_identity": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "build_log": {
+        "bytes": 109234,
+        "sha256": "4cbd9a0546c88263850cccb2c39350e6b8180b6db2f043c43b5a2746168f7fbc"
+      },
+      "compiled_artifact": {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c"
+        ],
+        "executable": "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "fresh": false
+      },
+      "running_binary_record": "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c)",
+      "binary_content_sha256": null,
+      "binary_identity_limit": "Cargo artifact and run path are recorded; this artifact does not retain the executable or its content digest."
+    },
+    {
+      "artifact": {
+        "id": 13246585980,
+        "name": "pq-system-ubuntu-24.04-head-bebb1f3289cd7050fefde89ea8f2cf33c6c37588-1",
+        "bytes": 1051612,
+        "sha256": "7774d8b6b1c56f6e3d80bfc8ae3e826e94f476e0a7e1883f7d7d0f842213bef8",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13246585980/zip",
+        "run_id": 41658914755,
+        "job_id": 125996625953,
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7"
+      },
+      "node_lib_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "node_lib_environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "41658914755",
+        "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.xiNiNxps/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": "X64",
+        "RUSTC": null,
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.xiNiNxps/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "a57fd65fa51905f64303f619534cb4048e0f0e3f11ac2a8d2056cd2dc3772953",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tested_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 862029405,
+        "tracked_entries": 7315,
+        "tracked_worktree_verified": true
+      },
+      "top_level_test_summary": "test result: ok. 934 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1385.98s",
+      "preceding_child_summary_count": 2,
+      "new_diagnostic_helper_tests": [
+        "test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok",
+        "test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok"
+      ],
+      "node_lib_exit_code": 0,
+      "node_lib_log": {
+        "bytes": 7281071,
+        "sha256": "213320ae56259dff6e31088dfaab9747d1fa1bd7b3cc74f6bc51db247269fa56"
+      },
+      "clippy_exit_code": 101,
+      "clippy_errors": [
+        "error: try not to call a closure in the expression where it is declared",
+        "   --> crates/trnm-pon-node/src/pq_rollback_witness.rs:56:41",
+        "    = note: `-D clippy::redundant-closure-call` implied by `-D warnings`",
+        "    = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+        "error: could not compile `trnm-pon-node` (lib test) due to 1 previous error"
+      ],
+      "phase_log_limit_markers": 1,
+      "compiler_identity": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "build_log": {
+        "bytes": 109234,
+        "sha256": "3eabb285dd589663e2d3ae1c577e11c5c630efb2c293a03eda9235a92bae5a7c"
+      },
+      "compiled_artifact": {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c"
+        ],
+        "executable": "/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "fresh": false
+      },
+      "running_binary_record": "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c)",
+      "binary_content_sha256": null,
+      "binary_identity_limit": "Cargo artifact and run path are recorded; this artifact does not retain the executable or its content digest."
+    }
+  ],
+  "original_failure_blocks": [
+    {
+      "file": "final-13246158556-test-failures.json",
+      "bytes": 88636,
+      "sha256": "b97bec78f42f9b5b78bdc17c1a62b84fef95a97d224691158d34d7eb6f6a97d8"
+    },
+    {
+      "file": "final-13245912966-test-failures.json",
+      "bytes": 88636,
+      "sha256": "eae64ce0df3855d6e341c465f2aa54c7b67b21d6ce649a0ba3f04f8a1f4729c5"
+    }
+  ],
+  "samples": [
+    {
+      "artifact_id": 13246158556,
+      "job_id": 125996625124,
+      "lane": "ARM64 prospective-merge",
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "failure_block_start_line": 2330,
+      "failure_block_end_line": 2340,
+      "authenticated_backend": false,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2368490723,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Ok": "ok"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2366089520,
+        "live_refused": false,
+        "owner_cpu_ns": 2365694656,
+        "residual_cpu_ns": 3664,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 398528,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2366093184
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 225430779,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 591523963,
+        "discarded_refill_ns": 642835,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2366089520,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2366093184,
+        "remaining_paid_credit_ns": 225430779,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2366093184,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3664,
+        "stored_credit_ns": 225430779,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "packet": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "delta": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "verify_state": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "verify_history": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "publish": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "read_active": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "state_at": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "execute": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "admission": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "activation": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "complete_commitment": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "complete_state_root": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "account_graph": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "persisted_state_root": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "execution_parent_binding": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 0,
+        "partition_inputs_hashed": 0,
+        "partition_inputs_observed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0,
+        "partition_string_encodings_reused": 0
+      },
+      "root_material_before": null,
+      "root_material_after": null,
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": null,
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    },
+    {
+      "artifact_id": 13246158556,
+      "job_id": 125996625124,
+      "lane": "ARM64 prospective-merge",
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "failure_block_start_line": 2330,
+      "failure_block_end_line": 2340,
+      "authenticated_backend": true,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2942551658,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2795932888,
+        "live_refused": true,
+        "owner_cpu_ns": 2795558856,
+        "residual_cpu_ns": 3344,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 377376,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2795936232
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": -60831414,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 735104818,
+        "discarded_refill_ns": 591002,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2795932888,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2795936232,
+        "remaining_paid_credit_ns": -60831414,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2795936232,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3344,
+        "stored_credit_ns": -60831414,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 30,
+          "cpu_known_calls": 30,
+          "cpu_ns": 829464,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 853910
+        },
+        "packet": {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 233485864,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 233468812
+        },
+        "delta": {
+          "calls": 17,
+          "cpu_known_calls": 17,
+          "cpu_ns": 1166144,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1174805
+        },
+        "verify_state": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 940189512,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 940079773
+        },
+        "verify_history": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 699375696,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 699278069
+        },
+        "publish": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 577240632,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 577057100
+        },
+        "read_active": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 551491992,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 551325393
+        },
+        "state_at": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 821888208,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 821695947
+        },
+        "execute": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 271816496,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 272060613
+        },
+        "admission": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 2228934208,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 2374864047
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 563612576,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 563626213
+        },
+        "complete_commitment": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 935992472,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 935854491
+        },
+        "complete_state_root": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 462270760,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 462216495
+        },
+        "account_graph": {
+          "calls": 6,
+          "cpu_known_calls": 6,
+          "cpu_ns": 1630448,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1636637
+        },
+        "persisted_state_root": {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 324706512,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 324692403
+        },
+        "execution_parent_binding": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 116981408,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 116938372
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 12033,
+        "partition_inputs_hashed": 44873,
+        "partition_inputs_observed": 56906,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045,
+        "partition_string_encodings_reused": 12033
+      },
+      "root_material_before": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2104,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096574,
+        "retained_software_charge_bytes": 2097598
+      },
+      "root_material_after": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2107,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096878,
+        "retained_software_charge_bytes": 2097902
+      },
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (22884) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:724:31:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }\n",
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    },
+    {
+      "artifact_id": 13246158556,
+      "job_id": 125996625124,
+      "lane": "ARM64 prospective-merge",
+      "test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "failure_block_start_line": 2341,
+      "failure_block_end_line": 2349,
+      "authenticated_backend": true,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2749101101,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2700483248,
+        "live_refused": true,
+        "owner_cpu_ns": 2700105016,
+        "residual_cpu_ns": 3272,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 381504,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2700486520
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": -13750546,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 686735974,
+        "discarded_refill_ns": 597846,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2700483248,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2700486520,
+        "remaining_paid_credit_ns": -13750546,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2700486520,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3272,
+        "stored_credit_ns": -13750546,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 30,
+          "cpu_known_calls": 30,
+          "cpu_ns": 840168,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 862634
+        },
+        "packet": {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 233078160,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 233081367
+        },
+        "delta": {
+          "calls": 17,
+          "cpu_known_calls": 17,
+          "cpu_ns": 1138640,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1147819
+        },
+        "verify_state": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 942712352,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 942691422
+        },
+        "verify_history": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 607389008,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 607369958
+        },
+        "publish": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 578236248,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 578253403
+        },
+        "read_active": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 550775368,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 550785336
+        },
+        "state_at": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 821317408,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 821330457
+        },
+        "execute": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 268862280,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 269224191
+        },
+        "admission": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 2228048288,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 2275978802
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 469065072,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 469071426
+        },
+        "complete_commitment": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 939664104,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 939665403
+        },
+        "complete_state_root": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 463726824,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 463744972
+        },
+        "account_graph": {
+          "calls": 6,
+          "cpu_known_calls": 6,
+          "cpu_ns": 1605448,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1611917
+        },
+        "persisted_state_root": {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 325144624,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 325165924
+        },
+        "execution_parent_binding": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 116162048,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 116208848
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 12033,
+        "partition_inputs_hashed": 44873,
+        "partition_inputs_observed": 56906,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045,
+        "partition_string_encodings_reused": 12033
+      },
+      "root_material_before": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2104,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096574,
+        "retained_software_charge_bytes": 2097598
+      },
+      "root_material_after": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2107,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096878,
+        "retained_software_charge_bytes": 2097902
+      },
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": "thread 'store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator' (22897) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:724:31:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }\n\n",
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    },
+    {
+      "artifact_id": 13245912966,
+      "job_id": 125996625779,
+      "lane": "ARM64 head",
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "failure_block_start_line": 2330,
+      "failure_block_end_line": 2340,
+      "authenticated_backend": false,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2377565352,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Ok": "ok"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2374676736,
+        "live_refused": false,
+        "owner_cpu_ns": 2374273456,
+        "residual_cpu_ns": 5336,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 408616,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2374682072
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 219228557,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 593910629,
+        "discarded_refill_ns": 525035,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2374676736,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2374682072,
+        "remaining_paid_credit_ns": 219228557,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2374682072,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 5336,
+        "stored_credit_ns": 219228557,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "packet": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "delta": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "verify_state": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "verify_history": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "publish": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "read_active": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "state_at": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "execute": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "admission": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "activation": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "complete_commitment": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "complete_state_root": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "account_graph": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "persisted_state_root": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        "execution_parent_binding": {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 0,
+        "partition_inputs_hashed": 0,
+        "partition_inputs_observed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0,
+        "partition_string_encodings_reused": 0
+      },
+      "root_material_before": null,
+      "root_material_after": null,
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": null,
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    },
+    {
+      "artifact_id": 13245912966,
+      "job_id": 125996625779,
+      "lane": "ARM64 head",
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "failure_block_start_line": 2330,
+      "failure_block_end_line": 2340,
+      "authenticated_backend": true,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2741716285,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2699884136,
+        "live_refused": true,
+        "owner_cpu_ns": 2699465792,
+        "residual_cpu_ns": 3568,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 421912,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2699887704
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": -14919617,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 684968087,
+        "discarded_refill_ns": 533578,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2699884136,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2699887704,
+        "remaining_paid_credit_ns": -14919617,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2699887704,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3568,
+        "stored_credit_ns": -14919617,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 30,
+          "cpu_known_calls": 30,
+          "cpu_ns": 866936,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 891455
+        },
+        "packet": {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 234082416,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 234168807
+        },
+        "delta": {
+          "calls": 17,
+          "cpu_known_calls": 17,
+          "cpu_ns": 1151936,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1160206
+        },
+        "verify_state": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 944486056,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 944671427
+        },
+        "verify_history": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 609646000,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 609785724
+        },
+        "publish": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 577618944,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 577750193
+        },
+        "read_active": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 547882792,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 547958457
+        },
+        "state_at": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 819310792,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 819411009
+        },
+        "execute": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 269495304,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 269884556
+        },
+        "admission": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 2228864560,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 2269922381
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 467508792,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 467616917
+        },
+        "complete_commitment": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 939138624,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 939377308
+        },
+        "complete_state_root": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 463161944,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 463340719
+        },
+        "account_graph": {
+          "calls": 6,
+          "cpu_known_calls": 6,
+          "cpu_ns": 1742424,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1750450
+        },
+        "persisted_state_root": {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 325546888,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 325645534
+        },
+        "execution_parent_binding": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 116793920,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 116811730
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 12033,
+        "partition_inputs_hashed": 44873,
+        "partition_inputs_observed": 56906,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045,
+        "partition_string_encodings_reused": 12033
+      },
+      "root_material_before": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2104,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096574,
+        "retained_software_charge_bytes": 2097598
+      },
+      "root_material_after": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2107,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096878,
+        "retained_software_charge_bytes": 2097902
+      },
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (22663) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:724:31:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }\n",
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    },
+    {
+      "artifact_id": 13245912966,
+      "job_id": 125996625779,
+      "lane": "ARM64 head",
+      "test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "failure_block_start_line": 2341,
+      "failure_block_end_line": 2349,
+      "authenticated_backend": true,
+      "fixture_complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "original_held_capacity_lower_bound_bytes": 8391103,
+      "dispatch_wall_ns": 2749503037,
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "final_native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2712798512,
+        "live_refused": true,
+        "owner_cpu_ns": 2712405048,
+        "residual_cpu_ns": 5208,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 398672,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2712803720
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": -25847223,
+        "worker_limit": 2
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 686956497,
+        "discarded_refill_ns": 485827,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2712798512,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2712803720,
+        "remaining_paid_credit_ns": -25847223,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2712803720,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 5208,
+        "stored_credit_ns": -25847223,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "active_state_unchanged_on_refusal": null,
+      "refusal_readback_error": null,
+      "stage_delta": {
+        "record": {
+          "calls": 30,
+          "cpu_known_calls": 30,
+          "cpu_ns": 869792,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 895423
+        },
+        "packet": {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 234636424,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 234683973
+        },
+        "delta": {
+          "calls": 17,
+          "cpu_known_calls": 17,
+          "cpu_ns": 1112648,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1121165
+        },
+        "verify_state": {
+          "calls": 9,
+          "cpu_known_calls": 9,
+          "cpu_ns": 948921432,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 949099496
+        },
+        "verify_history": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 610436152,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 610537230
+        },
+        "publish": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 581287408,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 581381757
+        },
+        "read_active": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 550599216,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 550703521
+        },
+        "state_at": {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 823134560,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 823274391
+        },
+        "execute": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 273643136,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 274038217
+        },
+        "admission": {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 2241337832,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 2277267746
+        },
+        "activation": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 467984608,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 468079819
+        },
+        "complete_commitment": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 944417464,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 944594757
+        },
+        "complete_state_root": {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 467103296,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 467174443
+        },
+        "account_graph": {
+          "calls": 6,
+          "cpu_known_calls": 6,
+          "cpu_ns": 1738504,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 1745889
+        },
+        "persisted_state_root": {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 326812416,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 326869632
+        },
+        "execution_parent_binding": {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 117369816,
+          "cpu_unknown_calls": 0,
+          "unwinding_calls": 0,
+          "wall_ns": 117390985
+        }
+      },
+      "complete_root_counter_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_exact_string_hits": 12033,
+        "partition_inputs_hashed": 44873,
+        "partition_inputs_observed": 56906,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045,
+        "partition_string_encodings_reused": 12033
+      },
+      "root_material_before": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2104,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096574,
+        "retained_software_charge_bytes": 2097598
+      },
+      "root_material_after": {
+        "exact_string_charge_bytes": 1870526,
+        "exact_string_entries": 446,
+        "keys": 2107,
+        "kind": "original-leaf-hashes-and-partition-roots",
+        "payload_bytes": 2096878,
+        "retained_software_charge_bytes": 2097902
+      },
+      "stage_observation_failed_before": false,
+      "stage_observation_failed_after": false,
+      "assertion_failure": "thread 'store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator' (22675) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:724:31:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }\n\n",
+      "sample_scope": "This original PQ complete-library run only; not another workflow or a rerun."
+    }
+  ],
+  "findings": [
+    "All four lanes completed their original 43 exact native selectors; those subset receipts are independently audited in pq-controls-phase-analysis.json.",
+    "Complete-library x64 head and merge each passed 934 tests with 23 ignored. Complete-library ARM head and merge each passed 932, failed the same 2 original large-parent CPU gates, and ignored 23.",
+    "All four complete-library runs passed the two new diagnostic helper tests. All four strict Clippy commands independently failed the known redundant_closure_call in the cfg(test) observation macro.",
+    "Both ARM tests panic at detached_admission/tests.rs:724, result.native.unwrap(), with PublicMutationCpuBudget / Capacity / PUBLIC_MUTATION_CPU_BUDGET. The outer attempt.unwrap() already succeeded.",
+    "dispatch_shared_with_metered_w1 obtains the native result, then operation.finish settles the CPU tail, then returns Ok(MeteredWorkFactOutcome { native, cpu }). The outer Ok does not assert native success, and finish does not rewrite the native Result.",
+    "The original test only reads active-state equality if the OUTER attempt is Err. These four auth samples therefore record null equality. Durable admission/publication or active-state outcome cannot be inferred from that null.",
+    "The original 2-second burst, 0.25-second-per-second refill, 0.1-second start reserve, worker limit 2 and held schedule remain; all four auth samples have measured negative final paid credit and PUBLIC_MUTATION_CPU_BUDGET.",
+    "Each failing auth operation has 10 complete_commitment calls and 10 nested complete_state_root calls, 7 persisted_state_root calls, and 6 account_graph calls. Inclusive/nested stage CPU must not be summed as disjoint costs.",
+    "All observed clocks are known in these emitted stage deltas; absence of a more precise refusal checkpoint still prevents assigning the failure to one exact Host callback.",
+    "No independent fixture logic defect is established by these artifacts. Preserve the strict original acceptance assertion; optimize measured repeated complete-state encoding/math within the original budget and rerun only a new reviewed candidate through its original gates."
+  ],
+  "measurement_limits": [
+    "These samples are independent of root's workspace CPU artifact set and are not pooled with its 2.686-2.725-second ARM measurements.",
+    "No executable content digest was supplied by the archived build/run receipts; source/tree, compiler, Cargo profile and exact executable path are preserved.",
+    "Full-library diagnostics reached the fixed process log cap once in each lane; that limit is not a pass/fail result and does not suppress the test summaries or these CPU JSON records.",
+    "All 43 exact controls passing does not establish stable wall-deadline margin, full-suite success, whole-chain security qualification or active-state rollback.",
+    "Successful ordinary-backend cases preceding the failing authenticated-backend cases are useful differentials, not randomized or isolated causal performance experiments.",
+    "The candidate string-value-pool optimization and macro lint fix are separate untested-by-these-artifacts source changes."
+  ]
+}

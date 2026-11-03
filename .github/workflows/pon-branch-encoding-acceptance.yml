@@ -72,7 +72,7 @@ jobs:
           set -euo pipefail
           test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 9333ce92c6ba130dd182538bfd8f69ec289acc83
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib pon_wire:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/state-wire.log"
-          grep -E '^test result: ok\. 22 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
+          grep -E '^test result: ok\. 27 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
           selector=pon_wire::tests::every_header_field_binds_its_wire_bytes_challenge_and_block_identity
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/header-binding.log"
           python3 scripts/ci/check_required_native_test.py "$OUT/header-binding.log" --test "$selector"

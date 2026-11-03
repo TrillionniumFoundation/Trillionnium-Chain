@@ -160,13 +160,38 @@ fn large_complete_inputs_keep_actual_accounts_conservation_and_context_checks() 
         .unwrap();
     assert!(payload <= 2 * 1024 * 1024);
     assert!(strings > 0 && strings <= payload);
-    // The original tree remains compact; strings occupy only its old pool's
-    // remaining space, including every key/value allocation and descriptor.
+    // The original tree remains compact. Every key/leaf entry is independent;
+    // one immutable value allocation fits all repeated strings in the SAME
+    // pool, including descriptors and the shared allocation's software charge.
     assert!(payload - strings < 300_000);
     let string_entries = root_material["retained_material"]["exact_string_entries"]
         .as_u64()
         .unwrap();
-    assert!(string_entries > 0 && string_entries < 2100);
+    // Count the actual complete non-account view using the independent serde
+    // encoder. The pre-existing model:current String also belongs to this set.
+    let expected_strings: Vec<_> = settings
+        .initial
+        .iter()
+        .filter(|(key, _)| !key.starts_with("account:"))
+        .filter_map(|(key, value)| {
+            let raw = value.as_str()?;
+            let encoded = serde_json::to_vec(value).unwrap();
+            (raw.is_ascii()
+                && encoded.len() == raw.len() + 2
+                && &encoded[1..encoded.len() - 1] == raw.as_bytes())
+            .then_some(key.as_str())
+        })
+        .collect();
+    assert!(expected_strings.contains(&"model:current"));
+    assert_eq!(
+        expected_strings
+            .iter()
+            .filter(|key| key.starts_with("fixture-large-parent:"))
+            .count(),
+        2100
+    );
+    assert_eq!(string_entries, expected_strings.len() as u64);
+    assert!(payload < 512 * 1024);
     let counters = &root_material["counters"];
     let observed = counters["partition_inputs_observed"].as_u64().unwrap();
     let hashed = counters["partition_inputs_hashed"].as_u64().unwrap();

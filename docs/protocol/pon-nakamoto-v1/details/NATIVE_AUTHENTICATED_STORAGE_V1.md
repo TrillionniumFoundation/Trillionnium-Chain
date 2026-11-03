@@ -206,8 +206,19 @@ The separate complete-root arithmetic entry keeps the existing 2 MiB retained
 payload and 16 MiB retained software-charge limits. Original leaf-hash and
 partition-root arrays have priority. Only remaining payload space may retain
 complete keys and unescaped ASCII JSON string bytes, with their original hashes.
-The charge includes all retained key/value bytes, entry descriptors and the added
-string-array handle. Boxed slices retain no spare vector capacity. These are
+Each key retains independently computed original key/leaf hashes. Different keys
+may share one private immutable value allocation only after full canonical-byte
+equality. A bounded single-candidate index uses length and edge bytes to locate
+a possible allocation; it is not a fact key or a substitute for complete input
+comparison. An index collision retains independently charged storage when space
+allows, without an unbounded candidate bucket or cross-key hash reuse.
+
+The charge includes all retained key bytes, entry descriptors, value descriptors,
+reference-count/alignment allowance, unique value-allocation bytes and added
+string-array bookkeeping. Actual allocation identity determines charging only:
+equal bytes in distinct allocations are charged separately, rejected entries
+cannot mark a value as paid, and a new key borrowing an old allocation still pays
+for it if no prior key survives. Boxed slices retain no spare vector capacity. These are
 retained-material limits, not peak RSS or an exemption for transient input work.
 
 An opaque complete-input builder accepts actual keys and values; no public API
@@ -225,6 +236,10 @@ call; tree material remains first in the same pool. Failure, collision, an input
 producer error or an abandoned builder cannot publish partial material. When the
 tree itself cannot be retained, bounded candidate-string work can be discarded;
 this cold cost remains part of the actual calculation and needs measurement.
+The operation-local value index is lazy and bounded by prior/pending retained
+entries. It is discarded with the builder and does not constitute retained
+material. A complete successful publication stores its calculated string charge;
+warm exact-key hits still compare every current byte and need no index build.
 
 The local root observation uses `pon-native-complete-root-arithmetic-v3`.
 It separates all input rows observed, leaves actually hashed, exact-string hits

@@ -199,7 +199,8 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
         let encodings =
             after.partition_string_encodings_reused - before.partition_string_encodings_reused;
         assert_eq!(hashed + exact, state.len() as u64);
-        assert!(hashed > 0 && exact > 0);
+        assert_eq!(hashed, 0);
+        assert_eq!(exact, state.len() as u64);
         assert_eq!(encodings, exact);
         assert!(after.partition_roots_reused > before.partition_roots_reused);
     }
@@ -209,7 +210,17 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
     let initial_root = pon_executor::root(&state).unwrap();
     state.insert("large-partition-0001".into(), json!("y".repeat(4094)));
     cache.offer(&settings, None);
+    let before = cache.counters.get();
     equal(&cache, &settings, &state);
+    let after = cache.counters.get();
+    assert_eq!(
+        after.partition_inputs_hashed - before.partition_inputs_hashed,
+        1
+    );
+    assert_eq!(
+        after.partition_exact_string_hits - before.partition_exact_string_hits,
+        state.len() as u64 - 1
+    );
     assert_ne!(pon_executor::root(&state).unwrap(), initial_root);
     state.remove("large-partition-0002");
     equal(&cache, &settings, &state);

@@ -75,7 +75,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = b75d92560ba797854bc8e59be9a1f35efe1b8cc6
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = 3fcbc873fcc89de208922e6ffd74361442797bed
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 1c528e1bf2435331d91ae627fd5b1541da70c3a4
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 74af81e2e181f6639dd1719a65d91c0ba5323c9b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 86a3576d24fb55e42e2b26e125f2c117c9a0f255
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = ac0a694a02610bf494abdd5ee708a6f5c03adf49
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11

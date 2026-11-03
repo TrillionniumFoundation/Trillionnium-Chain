@@ -1,0 +1,32 @@
+{
+  "base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "bytes": 15043,
+      "sha256": "64dd7e47ad7c9916884a581f1e9ad50c00fa3aa4393b3546c44dd628ba106585"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "bytes": 9082,
+      "sha256": "3ffea2ad182185f1d027aad62ce7aa699ece156a416ad8ae1ff527b13bb53280"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "bytes": 12457,
+      "sha256": "59b964d342a650c0f9b1b395034e113647841e939a6f5b30c1ed1f95c2995ca9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "bytes": 21099,
+      "sha256": "937c50d53c0e77ee524196bea4b543fa7acb26233a01c11534db9cc32af1d73d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "bytes": 30195,
+      "sha256": "5f09649f79ca5fe7f71da0776f88598bb071f5ccabf983ea5bcb13b2446582ab"
+    }
+  ],
+  "compiled": false,
+  "scope": "private value allocation sharing only; original budgets/Host/CPU fixture unchanged"
+}
