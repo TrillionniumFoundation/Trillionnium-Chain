@@ -50,4 +50,44 @@ The pre-isolation descriptor Node binary `68d9d1ba7ad5b3eb657a020a46ebd2aee57646
 
 [Setup observations](setup-observations.json) preserve verified log excerpts and hashes for the offline dependency failure, the cached 10-test M06 result, the initial zero-match Node selector, its corrected one-test selector, the initial unused-import warning, unused release preparation, and subsequent test-profile example build, overflow control, and narrow Clippy completion. Missing standalone exit receipts remain explicitly null. The zero-test run and unused release build are not accepted as validation or measurement evidence.
 
-This directory contains no binaries, hosted ZIPs, or complete source snapshots. [File checksums](SHA256SUMS) cover the package files; [copy provenance](retained-file-provenance.json) links retained raw bytes to their original observation files. Final-source validation and the sole development-plan update belong to the integration owner and remain separate from these frozen experimental receipts.
+This directory contains no binaries, hosted ZIPs, or complete source snapshots. [File checksums](SHA256SUMS) cover the package files; [copy provenance](retained-file-provenance.json) links retained raw bytes to their original observation files. The integration results below remain separate from these frozen experimental receipts.
+
+## Isolated integration validation
+
+[Final validation](final-validation.json) binds the isolated code to commit
+`751e75b8f11fecad612bb95c33ea3a2567dc131b`, tree
+`24e310522368f3816b333fc0b80e4f67a8ecb669`. An independent clean checkout verified
+all 7,348 tracked entries. All 1,156 native source/config inputs remained identical
+through the final runs; subsequent evidence-only additions must preserve that hash.
+
+| Local check | Observed result |
+| --- | --- |
+| Selected Node controls after clean package build | 120 passed, 1 failed, 1 explicitly release-only ignored |
+| Remaining Node failure | Original supplementary large-parent `PUBLIC_MUTATION_CPU_BUDGET` |
+| M06 library after clean package build | 101 passed, 0 failed, 6 original explicit cost experiments ignored |
+| DA library | 173 passed, 0 failed, 0 ignored |
+| Workspace/all-target/all-feature Clippy | PASS with `-D warnings` |
+| Formatting and offline locked graph | PASS; 26 packages, 138 all-feature Linux resolve nodes |
+| CI contract / execution / PQ source / project boundary checks | 98 / 67 / 34 / 16 executions passed respectively |
+
+The first final Node build failed to link: its M06 archive still held the old
+filtered constructor symbols while the consumer expected descriptor symbols.
+The receipt retains that failure and symbol evidence. Cleaning only the task's
+M06 and Node package caches and rebuilding the same source/profile resolved the
+link error. The original CPU refusal remained; the controls were not retried to
+obtain an all-pass result. The default path's first large-parent control passed
+in this final run, without erasing the earlier baseline or experimental failures.
+
+[Direct binary inspection](descriptor-v2-binary-forensics.json) separately
+confirmed that both actual v2 measurement executables contain the one-pass Vec
+descriptor constructor, its 16-byte pointer-pair elements and the matching arm
+calls. They do not contain the stale filtered constructor found in the unrelated
+root build artifact. This inspection did not execute the binaries or change HOLD.
+
+[Parent hosted outcomes](parent-hosted-outcomes.json) retain their exact `bebb1f3`
+head/merge scope: pressure four-second confirmation 0/1, F0 1/6 in thirty seconds,
+and the three original native campaigns 3/27. The prior 43 PQ selectors passed
+each of the four matrices, while original ARM CPU and test-only lint failures
+remained. Those results are not relabelled as this continuation's hosted results.
+Final HEAD/prospective-merge hosting, public-service acceptance, whole-chain PQ
+qualification and activation remain separate unclosed gates.

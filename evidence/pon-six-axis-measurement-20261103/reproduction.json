@@ -27,7 +27,7 @@
     "runtime_candidate_selected": false,
     "production_isolation_identity": "production-isolation-identity.json",
     "measurements_after_isolation": false,
-    "final_integration_validation": "Pending integration-owner receipt; this package asserts no final committed-source acceptance."
+    "final_integration_validation": "final-validation.json; code source isolated, 120 selected Node passes / 1 original CPU failure / 1 explicitly ignored; HOLD remains."
   },
   "scope": {
     "component": "M06 non-account partition construction, grammar validation and root arithmetic",
