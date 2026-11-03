@@ -4,8 +4,9 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: pon-priority-${{ github.ref }}
-  # Retain an executing source's native evidence; the next candidate waits.
+  group: ${{ github.head_ref == 'fix/chain-hepta-fixed-pressure-20261103' && format('pon-priority-{0}-{1}', github.ref, github.event.pull_request.head.sha) || format('pon-priority-{0}', github.ref) }}
+  # Retain every running source. This fixed-pair repair can qualify a new exact
+  # source while an earlier source finishes the original 180-minute state lane.
   cancel-in-progress: false
 env:
   CI: "true"
