@@ -33,6 +33,17 @@ PRODUCER_SCOPE = "one-actual-setup-and-all-complete-transcripts-tickets-and-proo
 EVIDENCE_SCOPE = "complete-attempt-digests-and-json-value-construction-after-producer-timer-excludes-json-serialization-write-and-native-verification"
 VERIFY_SCOPE = "native-full-verification-call-only-no-fact-cache"
 MUTATION_SCOPE = "clone-and-canonical-last-product-word-increment-only-excludes-proof-hashing-json-and-verification"
+RATE_SCOPE = {
+    "observation": "finite-recorded-cohorts-at-one-fixed-strategy-class-target-and-reuse-horizon",
+    "denominator": PRODUCER_SCOPE,
+    "aggregation": "ratio-of-sums-including-every-setup-miss-exhaustion-and-materialization",
+    "common_material_setup": "reported-once-per-shard-separately-not-added-to-each-strategy",
+    "cross_horizon_aggregation": "none-shared-search-prefixes-are-not-independent",
+    "work_equivalent": "recorded-relation-valid-target-hits-times-required-target-weight-not-ledger-chainwork",
+    "native_chainwork_observed": False,
+    "network_work_share": None,
+    "confidence_bound": None,
+}
 # The largest new shard may retain 32 * 64 * 4096 attempts on full exhaustion.
 # The bound scales with this separate eight-sample/four-cell schema; v1 is unchanged.
 # Bound the parser without excluding that complete fixed-denominator observation.
@@ -277,8 +288,33 @@ class Records:
         self.ended = True
 
 
+def rate_diagnostic(searches, cpu_ns, target_weight, semantic_alerts):
+    """Exact finite rates of retained producer intervals, not admitted blocks.
+
+    Count a hit once, not once per verifier. A shard alert suppresses every
+    validity-based rate, including apparently unaffected samples/strategies.
+    Attempts remain observable even when native verdicts disagree. Exhaustion
+    yields an observed zero-hit rate, not an upper bound on future production.
+    """
+    accepted = 0
+    for searched in searches:
+        legal = [v for v in searched["verifiers"] if v["case"] == "legal"]
+        accepted += (searched["winner"] is not None and len(legal) == len(PATHS)
+                     and all(v["outcome"] == "Accepted" for v in legal))
+    attempts = sum(s["attempt_count"] for s in searches)
+    return dict(recorded_relation_valid_hits=accepted,
+        valid_rates_suppressed_by_shard_alerts=bool(semantic_alerts),
+        attempts_per_cpu_second=fraction(attempts * 1_000_000_000, cpu_ns),
+        recorded_relation_valid_hits_per_cpu_second=(
+            fraction(accepted * 1_000_000_000, cpu_ns) if not semantic_alerts else None),
+        hypothetical_required_work_total=(accepted * target_weight if not semantic_alerts else None),
+        hypothetical_required_work_per_cpu_second=(
+            fraction(accepted * target_weight * 1_000_000_000, cpu_ns) if not semantic_alerts else None))
+
+
 def summary(records):
     result = []
+    target_weight = (1 << 256) // (int(records.campaign["target"], 16) + 1)
     for strategy in STRATEGIES:
         cohorts = [records.cohorts[sample, strategy] for sample in range(SAMPLES)]
         searches = [searched for cohort in cohorts for searched in cohort["searches"]]
@@ -292,13 +328,24 @@ def summary(records):
             attempts=sum(s["attempt_count"] for s in searches), inclusive_cohort_total=full,
             arithmetic=factors(strategy)[0], materialization=factors(strategy)[1],
             per_sample_cohort_totals=[dict(sample=c["sample"], **c["total"]) for c in cohorts],
+            per_sample_denominators=[dict(sample=c["sample"], actual_setup_calls=1,
+                actual_searches=len(c["searches"]),
+                attempts=sum(s["attempt_count"] for s in c["searches"]),
+                target_hits=sum(s["winner"] is not None for s in c["searches"]),
+                exhausted_searches=sum(s["winner"] is None for s in c["searches"]),
+                setup=c["setup"], inclusive_cohort_total=c["total"],
+                proof_materializations=sum(s["proof_materializations"] for s in c["searches"]),
+                serialized_proof_bytes=sum(s["serialized_proof_bytes"] for s in c["searches"]),
+                rate_diagnostic=rate_diagnostic(c["searches"], c["total"]["cpu_ns"],
+                                                target_weight, records.alerts)) for c in cohorts],
             proof_materializations=sum(s["proof_materializations"] for s in searches),
             serialized_proof_bytes=sum(s["serialized_proof_bytes"] for s in searches),
             separate_attempt_evidence_total={axis: sum(s["evidence_timing"][axis] for s in searches) for axis in full},
             setup_total={axis: sum(c["setup"][axis] for c in cohorts) for axis in full},
             separate_product_mutation_total={axis: sum(s["mutation_timing"][axis] for s in searches if s["mutation_timing"] is not None) for axis in full},
             native_outcome_counts=outcomes,
-            cpu_per_observed_valid_winner=fraction(full["cpu_ns"], winners) if good else None,
+            cpu_per_observed_valid_winner=fraction(full["cpu_ns"], winners) if good and not records.alerts else None,
+            rate_diagnostic=rate_diagnostic(searches, full["cpu_ns"], target_weight, records.alerts),
             verification={case: {path: {axis: sum(v["timing"][axis] for v in verifiers if v["path"] == path and v["case"] == case)
                 for axis in full} for path in PATHS} for case in CASES}))
     return result
@@ -340,6 +387,8 @@ def analyze_shard(path):
         selection=selection, input_sha256=digest.hexdigest(), input_bytes=size, record_counts=dict(records.counts),
         semantic_alerts=records.alerts, strategy_costs=rows, eager_transposed_over_lazy_full_limb_cpu=ratio, factorial_cpu_differences_ns=effects,
         material_setup=records.campaign["material_setup"], search_fingerprints=fingerprints,
+        required_target_weight=(1 << 256) // (int(records.campaign["target"], 16) + 1),
+        rate_diagnostic_scope=dict(RATE_SCOPE),
         matched_full_search_streams=True, w1_transcript_replayed=False, native_execution_authenticated=False,
         fastest_adversary_lower_bound=False, complete_fixed_grid=False, **FALSE_FLAGS)
 
@@ -383,6 +432,7 @@ def analyze(paths):
             "Binary trial retention is paid in producer CPU. Complete attempt proof digests and JSON values are separately timed evidence overhead; JSON output, verification and retained buffer destruction are outside those scopes.",
             "Common material generation is reported separately and is not repeated per winner.",
             "Matched horizons deliberately reuse search prefixes; totals are observations, not newly credited chainwork.",
+            "Finite rates divide each fixed strategy's complete producer totals; shared material setup, evidence, verification and end-to-end node costs remain separate. Work-equivalent rates are hypothetical, not observed ledger credit or network share.",
             "Timing and native verdict/source/hardware authenticity require the enclosing execution receipt.",
             "No model improvement, independent WAN service, universally cheapest algorithm or quantum cost is established."], **FALSE_FLAGS)
 
