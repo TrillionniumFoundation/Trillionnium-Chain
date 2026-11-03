@@ -5188,3 +5188,31 @@ manifest field are unchanged. The original 376-blob check now exits zero with
 changes no Rust/Cargo/workflow input and claims no new native execution; previous
 174-test DA and fixed-Host evidence keep their exact source scope. Original
 hosted runtime, 4-second/16-hostile and 30-second service gates remain required.
+
+The corrected Draft subsequently combines exact owner `8a74a9e4` with
+`368b39cd`. Preserve both complete plan appends and all owner PQ-test,
+architecture-diagnostic and proof-scope bytes. The merged corpus and original
+CI contract pass, as do 9 architecture, 9 shard, 34 source-integrity and 16
+project-boundary controls. Source composition and raw outputs are recorded in
+`qualification/cell-rendezvous-readiness-20261103/OWNER_8A74_MERGE.json`.
+The original hosted native gates must execute the new owner tests independently;
+previous DA results do not qualify them. No resource or service bound changes.
+
+### 2026-11-03 Recovered History execution and bounded delivery readback
+
+Continue the published `9f046408...` candidate after execution became available
+again. Preserve its first formatter failure: two recovered assertions require
+the pinned formatter's multiline layout. Correct that layout and only the
+corresponding source pin; the History behavior and its three controls are
+unchanged.
+
+The ordinary signed-DAG integration now emits bounded failing-sample details
+after all original CPU/wall snapshots and complete report persistence. At most
+18 rows expose the original cold-reopen/state results, mode and sample identity,
+with at most four errors of 96 Unicode scalars each. The original 18-sample
+schedule, deadlines, actual Host requirements and final assertion remain.
+Console diagnostics do not establish the cause of an older failed run.
+
+Validate the recovered combination under the original profiles and retain
+source-bound raw results. Host fixture acceptance, original public-service
+windows, work/security qualification and public activation remain separate.

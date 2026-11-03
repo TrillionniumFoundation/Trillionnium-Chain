@@ -147,3 +147,26 @@ earlier exact `116a3caf` source have now been independently verified across
 x64/ARM and head/prospective merge. Their [source-bound proof](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/adb90322aee5675fdd410bc813a9782e881f0024/evidence/pon-original-cpu-independent-20261103/README.md)
 does not qualify this later composition or the still-failing 4-second and
 30-second service gates.
+
+
+## Concurrent owner integration
+
+GitHub reported the corrected Draft as conflicting after its base advanced.
+The next merge retains both exact parents: `368b39cdf37868b7e16d9b04e8451177386433cc`
+and owner `8a74a9e42a9efbc52d83e861f64f03efd40f1406`, with common ancestor
+`9f04640877078204d367f753eba684d94e705a74`. The only content conflict was
+parallel appends to the sole development plan; both complete additions remain.
+The owner's PQ test correction, bounded architecture failure diagnostics and
+proof-scope documents retain their exact bytes. Its 376-entry corpus is kept,
+with only the already-validated fixed-Host workflow pin from this Draft.
+
+`OWNER_8A74_MERGE.json` records the exact equality checks and current controls:
+original 376-pin checker and CI contract, 9 architecture controls, 9 shard
+controls, 34 source-integrity controls and 16 project-boundary controls all
+pass. No second large local Node build was started while the shared host was
+already compiling the owner's native tests near its resource limit. The three
+History completion controls, PQ refusal regression and original hosted runtime
+must actually execute on the combined source; their status remains pending.
+The DA library/dependency sources, fixed-Host workflow and runner inputs are
+unchanged from the previous qualified source. This merge does not close the
+original service or performance gates.
