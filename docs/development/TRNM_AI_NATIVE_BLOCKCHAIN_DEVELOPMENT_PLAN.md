@@ -4367,3 +4367,52 @@ upstream [456d original outcomes](TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md
 with that historical source. This new combined source has not yet been built
 or accepted; it requires fresh exact-head and actual-merge evidence. All eight
 machine assertions remain false and PN0-PN6 remain HOLD.
+
+### 2026-11-03 retain complete PQ component outcomes and bind the W1 profile
+
+Continue PN0–PN6 with Chain code commit `12fe5f2c1f19704fe7eb635dede6839ed8b1e91e`,
+tree `c44112da731e3f958e55eb024e5762d6723ea2c9`, parent `1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c`.
+The [component evidence record](../../evidence/pq-full-continuation-20261103/README.md)
+retains exact sources and raw outcomes. Ordinary PNQ2 admission keeps a fresh
+guard and permission reads in one IMMEDIATE transaction; actual expiry still
+commits retirement, publishes the epoch and reacquires the guard. Retain all
+43 original controls plus two new controls and unchanged deadlines.
+
+The isolated SDK 3.0.6 verifier selects the fixed Poseidon2 profile. Main and all
+four hosted research lanes passed four unit tests, the real complete receipt,
+26 controls (one acceptance, 25 rejections, no panics), real prefix lift and
+strict Clippy. Run `41628135456` tested head and actual merge
+`0357031364787574cb7058b05329aa2e2730f947`, both with tree
+`c44112da731e3f958e55eb024e5762d6723ea2c9`. Full artifacts and before/after
+source records were verified. This supplies no PQ-128 or consensus qualification.
+
+All four hosted all-feature witness lanes passed 45 controls and strict Clippy.
+Complete Node suites differ: x64 head/merge each passed 897 with zero failed and
+22 ignored; ARM head/merge each passed 895, failed two original large-genesis/
+large-parent controls with `PUBLIC_MUTATION_CPU_BUDGET`, and retained 22 ignored.
+The workflow failed; original budgets and failures remain. Retain main's 27/45
+pass and 18 failures, X230's 45 passing controls and strict Clippy, and its
+complete-library 2400-second orchestration timeout. No completed X230 library
+total is claimed.
+
+The X230 baseline reached the original admission count assertion: `[1,1,2]`
+against required `[1,2]`; original expiry passed. Fixed execution observed
+ordinary `[1,2]`, pending replay `[1]`, and expiry `[1,2,1,2]`. All eight fixed
+source hashes were restored. Main's earlier baseline deadline remains separate.
+
+Paired Hepta `a7c523f366de3aaf9bce923be885ad275d0ecc22` reserves write ownership
+before mutation snapshots. Both new controls failed on original production
+files; fixed package passed 136 tests with zero skipped/retries, build and
+original strict fix/Clippy. V5 binds published Chain code/tree, retaining 42 file
+rows and V1–V4 history; 51 source tests, 32 diversity tests and actual 42-file
+verification passed. Private raw evidence remains in Hepta. These executions
+do not establish paired deployment acceptance or the historical 133/134 cause.
+By 12:53:43 UTC four hosted effect-recovery artifacts also confirmed 136/136,
+zero skipped/retries. Historical pair lanes retained `CONFIRMATION_TARGET`
+failures on older `c165071` Chain source; V5 installed-host remained incomplete.
+
+All six whole-chain gates and PN0–PN6 remain HOLD / UNQUALIFIED. Three-table
+witness scope, authorization/recovery gaps, migration, quantum proof/mining
+arguments, original capacity budgets and independent deployment/WAN/fault
+acceptance remain open. This evidence/plan continuation neither activates nor
+merges the candidate.
