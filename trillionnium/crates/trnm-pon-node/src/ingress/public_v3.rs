@@ -1006,6 +1006,24 @@ impl Write for ExactCanonical<'_> {
         Ok(())
     }
 }
+// Fold fixed-size chunks so the compiler can compare all bytes in parallel.
+// This changes neither the complete lowercase-hex language nor the body bound.
+// The scalar tail checks every remaining byte; no successful prefix is enough.
+fn canonical_packet_hex(bytes: &[u8]) -> bool {
+    let mut chunks = bytes.chunks_exact(32);
+    for chunk in &mut chunks {
+        let invalid = chunk.iter().fold(0_u8, |invalid, byte| {
+            invalid | u8::from(!(byte.is_ascii_digit() || (b'a'..=b'f').contains(byte)))
+        });
+        if invalid != 0 {
+            return false;
+        }
+    }
+    chunks
+        .remainder()
+        .iter()
+        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+}
 fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
     ensure(
         !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
@@ -1029,9 +1047,7 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
         ensure(
             text.len() <= 2 * MAX_PACKET
                 && text.len().is_multiple_of(2)
-                && text
-                    .iter()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+                && canonical_packet_hex(text),
             "PUBLIC_PACKET_TEXT",
         )?;
         // The complete fixed envelope and every byte of its only field have
@@ -6754,6 +6770,28 @@ mod tests {
         assert_eq!(actual.is_ok(), reference.is_ok(), "op={op} bytes={bytes:?}");
         if let (Ok(actual), Ok(reference)) = (actual, reference) {
             assert_eq!(actual, reference);
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_hex_blocks_match_scalar_at_every_alignment() {
+        for length in 0..=96 {
+            let mut text = vec![b'a'; length];
+            assert!(canonical_packet_hex(&text));
+            for position in 0..length {
+                for byte in 0..=u8::MAX {
+                    text[position] = byte;
+                    let reference = text
+                        .iter()
+                        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b));
+                    assert_eq!(
+                        canonical_packet_hex(&text),
+                        reference,
+                        "length={length} position={position} byte={byte}"
+                    );
+                }
+                text[position] = b'a';
+            }
         }
     }
 
