@@ -1,0 +1,71 @@
+{
+  "schema": "documentation-source-preservation-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_private_at_publication": false,
+  "parent_commit": "2a937d25fd9a4a44aae6292072a4963507ccdc90",
+  "branch": "chore/chain-library-small-source-20261103-gpt6",
+  "candidate_count": 2,
+  "candidate_bytes": 378415,
+  "frozen_candidate_union_size": 6116,
+  "original_candidate_sets_unchanged": true,
+  "preserved_source_executed": false,
+  "patches_applied": false,
+  "scientific_or_runtime_acceptance": false,
+  "original_archive_and_history_completeness_proven": false,
+  "all_library_source_synced": false,
+  "eligible_to_clear_library": false,
+  "library_deletion_performed": false,
+  "boundaries": [
+    "DRAFT",
+    "SHADOW_ONLY",
+    "DENY_ALL",
+    "HOLD_NO_GO"
+  ],
+  "candidates": [
+    {
+      "git_blob_sha": "a7657c92170bc466c8cd146b8e8cdc9175470085",
+      "sha256": "edbb47918824f09299ec9fac0af6df82fe604ade42319870dc1083786eec0ac8",
+      "bytes": 358649,
+      "candidate_group": "bundle-new-34",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_names": [
+        "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "original_bundle_sha256": "aa944900b3557081d4566f41da5e1280f6afbb7f2a250fc38e6469645d8a7a78",
+      "role": "historical Chain development or Cell retention reference document",
+      "attribution_basis": "The original parsed Chain bundle records this exact document blob. A fresh full Git Blob API read from the same repository matches all frozen bytes. Inspected document interfaces bind PoN, I05/I09 and native Cell owners; this is current archival attribution, not a new historical path or sole-authorship claim.",
+      "remote_blob_payload_verified_before_publication": true,
+      "reuse_existing_blob": true,
+      "relative_path": "objects/a7657c92170bc466c8cd146b8e8cdc9175470085.md",
+      "historical_claims_independently_requalified": false,
+      "patch_applied": false,
+      "preserved_source_executed": false,
+      "original_archive_and_history_completeness_proven": false
+    },
+    {
+      "git_blob_sha": "f0fe7902c8509816b4e1816cdcf34cf13cbf84d6",
+      "sha256": "fd19f6b23cc2f71c4cc2c48335450171d5a8bed05a598af7b2325a1ca74bbfd1",
+      "bytes": 19766,
+      "candidate_group": "bundle-new-34",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_names": [
+        "CELL_RETENTION_V1.md"
+      ],
+      "original_bundle_sha256": "aa944900b3557081d4566f41da5e1280f6afbb7f2a250fc38e6469645d8a7a78",
+      "role": "historical Chain development or Cell retention reference document",
+      "attribution_basis": "The original parsed Chain bundle records this exact document blob. A fresh full Git Blob API read from the same repository matches all frozen bytes. Inspected document interfaces bind PoN, I05/I09 and native Cell owners; this is current archival attribution, not a new historical path or sole-authorship claim.",
+      "remote_blob_payload_verified_before_publication": true,
+      "reuse_existing_blob": true,
+      "relative_path": "objects/f0fe7902c8509816b4e1816cdcf34cf13cbf84d6.md",
+      "historical_claims_independently_requalified": false,
+      "patch_applied": false,
+      "preserved_source_executed": false,
+      "original_archive_and_history_completeness_proven": false
+    }
+  ],
+  "notices": []
+}
