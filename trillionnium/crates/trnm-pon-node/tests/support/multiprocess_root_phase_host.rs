@@ -656,11 +656,12 @@ fn fixed_phase(
                 );
                 if support::on_time(&row) {
                     let import_stamp = ClientOperationStamp::start(epoch);
+                    let import_observer = ingress::HistoryImportObserver::new();
                     let imported =
                         serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                             .map_err(|e| e.to_string())
                             .and_then(|page| {
-                                ingress::receive_public_page_from_before(
+                                ingress::receive_public_page_from_before_observed(
                                     &mut verifier,
                                     address,
                                     page,
@@ -668,6 +669,7 @@ fn fixed_phase(
                                     after,
                                     support::now(),
                                     import_deadline,
+                                    Some(&import_observer),
                                 )
                                 .map_err(|e| e.to_string())
                             });
@@ -676,6 +678,11 @@ fn fixed_phase(
                         "deserialize Page and ordinary receive_page, including activation only on the original complete page"
                     );
                     row["client_import"]["succeeded"] = json!(imported.is_ok());
+                    // Retain success and returned failure under the original
+                    // absolute deadline; nested Host/phase CPU is not additive.
+                    row["client_import"]["error"] = json!(imported.as_ref().err());
+                    row["client_import"]["native_import_observation"] =
+                        json!(import_observer.snapshot());
                     match imported {
                         Ok(next_after) => after = next_after,
                         Err(error) => errors.push(error),

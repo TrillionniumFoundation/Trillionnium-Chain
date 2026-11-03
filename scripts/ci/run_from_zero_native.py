@@ -23,7 +23,9 @@ from verify_ci_source import verify as verify_source
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from pon_public_v3_phase_read import validate_v4_phases, validate_v4_record
+from pon_public_v3_phase_read import (
+    validate_history_import_observation, validate_v4_record,
+)
 # Reuse the existing wire owner for bounded metadata consistency. This reader
 # does not verify work, signatures, state transitions or operator independence.
 sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
@@ -121,105 +123,6 @@ def observer_cpu_scope(captured: dict) -> None:
                                           'public-v3-local-request-resource-observation-v2')
                 and captured.get('cpu_includes_reactor_authentication_or_response_signing') is False,
                 'OBSERVER_HISTORICAL_CPU_SCOPE')
-
-
-def validate_history_import_observation(value: dict) -> None:
-    """Local diagnostic consistency only; no Host, work or State authority."""
-    def number(value):
-        require(type(value) is int and 0 <= value < 1 << 64, 'IMPORT_OBSERVATION_U64')
-        return value
-
-    def known(value):
-        return None if value is None else number(value)
-
-    def hash_or_unknown(value):
-        require(value is None or (isinstance(value, list) and len(value) == 32
-                and all(type(n) is int and 0 <= n <= 255 for n in value)), 'IMPORT_OBSERVATION_HASH')
-
-    require(isinstance(value, dict)
-            and value.get('schema') == 'pon-local-history-import-observation-v1', 'IMPORT_OBSERVATION_SCHEMA')
-    require(value.get('packet_capacity') == 16 and type(value.get('packet_capacity')) is int
-            and all(value.get(key) is True for key in ('cpu_intervals_are_nested_not_additive',
-                    'host_checks_are_nested_not_additive', 'phase_cpu_excludes_scoped_workers',
-                    'host_cpu_includes_each_calling_thread'))
-            and value.get('host_cpu_is_full_worker_cpu') is False
-            and value.get('observation_has_consensus_authority') is False,
-            'IMPORT_OBSERVATION_SCOPE')
-    require(isinstance(value.get('clock_scope'), str) and 0 < len(value['clock_scope']) <= 2048,
-            'IMPORT_OBSERVATION_SCOPE')
-    failures = number(value.get('measurement_failures'))
-    for field in ('tip', 'after', 'supplied_packets'):
-        require(field in value, 'IMPORT_OBSERVATION_CONTEXT_REQUIRED')
-    hash_or_unknown(value['tip'])
-    hash_or_unknown(value['after'])
-    known(value['supplied_packets'])
-    validate_v4_phases(value.get('phases'))
-    packets = value.get('packets')
-    require(isinstance(packets, list) and len(packets) <= 16, 'IMPORT_OBSERVATION_PACKET_BOUND')
-    indices = []
-    for packet in packets:
-        require(isinstance(packet, dict) and set(packet) == {'packet_index', 'packet_id', 'phases'},
-                'IMPORT_OBSERVATION_PACKET_SHAPE')
-        index = number(packet['packet_index'])
-        require(index < 16, 'IMPORT_OBSERVATION_PACKET_BOUND')
-        indices.append(index)
-        hash_or_unknown(packet['packet_id'])
-        validate_v4_phases(packet['phases'])
-    require(indices == sorted(set(indices)), 'IMPORT_OBSERVATION_PACKET_IDENTITY')
-    host = value.get('host_checks')
-    names = ('resolve', 'initial', 'checkpoint', 'final')
-    require(isinstance(host, list) and len(host) == 4
-            and [row.get('phase') for row in host if isinstance(row, dict)] == list(names),
-            'IMPORT_OBSERVATION_HOST_SLOTS')
-    count_fields = ('calls_started', 'calls_completed', 'calls_accepted', 'calls_rejected',
-                    'calls_unfinished', 'wall_clock_unknown_calls', 'cpu_clock_unknown_calls')
-    time_fields = ('first_started_ns', 'last_ended_ns', 'wall_ns', 'thread_cpu_ns')
-    for row in host:
-        require(set(row) == {'phase', 'last_error_code', *count_fields, *time_fields},
-                'IMPORT_OBSERVATION_HOST_SHAPE')
-        for key in count_fields:
-            number(row[key])
-        for key in time_fields:
-            known(row[key])
-        ended = row['calls_completed'] + row['calls_unfinished']
-        require(row['calls_completed'] == row['calls_accepted'] + row['calls_rejected']
-                and ended <= row['calls_started'] and (failures != 0 or ended == row['calls_started'])
-                and row['wall_clock_unknown_calls'] <= ended and row['cpu_clock_unknown_calls'] <= ended,
-                'IMPORT_OBSERVATION_HOST_COUNTS')
-        if row['phase'] != 'checkpoint':
-            require(row['calls_started'] <= 1 or failures != 0, 'IMPORT_OBSERVATION_HOST_REUSED')
-        start, end = row['first_started_ns'], row['last_ended_ns']
-        if start is not None and end is not None:
-            require(start <= end, 'IMPORT_OBSERVATION_HOST_TIME')
-        if row['calls_started'] == 0:
-            require(all(row[key] is None for key in time_fields) and row['last_error_code'] is None,
-                    'IMPORT_OBSERVATION_HOST_UNENTERED')
-        for total, unknown in (('wall_ns', 'wall_clock_unknown_calls'),
-                               ('thread_cpu_ns', 'cpu_clock_unknown_calls')):
-            if row[unknown] or ended == 0:
-                require(row[total] is None, 'IMPORT_OBSERVATION_HOST_UNKNOWN_TOTAL')
-            elif failures == 0:
-                require(row[total] is not None, 'IMPORT_OBSERVATION_HOST_MISSING_TOTAL')
-        code = row['last_error_code']
-        require(code is None or (isinstance(code, str) and re.fullmatch('[A-Z][A-Z0-9_]*', code)
-                and row['calls_rejected'] > 0), 'IMPORT_OBSERVATION_HOST_ERROR')
-    native = next(phase for phase in value['phases'] if phase['phase'] == 'history_import')
-    if native['completed'] and native['started_ns'] is not None and native['ended_ns'] is not None:
-        for packet in packets:
-            for phase in packet['phases']:
-                if phase['completed'] and phase['started_ns'] is not None and phase['ended_ns'] is not None:
-                    require(native['started_ns'] <= phase['started_ns'] <= phase['ended_ns'] <= native['ended_ns'],
-                            'IMPORT_OBSERVATION_PACKET_OUTSIDE_NATIVE')
-        checkpoint = host[2]
-        if checkpoint['first_started_ns'] is not None and checkpoint['last_ended_ns'] is not None:
-            require(native['started_ns'] <= checkpoint['first_started_ns']
-                    <= checkpoint['last_ended_ns'] <= native['ended_ns'], 'IMPORT_OBSERVATION_HOST_OUTSIDE_NATIVE')
-        if host[1]['last_ended_ns'] is not None:
-            require(host[1]['last_ended_ns'] <= native['started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
-        if host[3]['first_started_ns'] is not None:
-            require(native['ended_ns'] <= host[3]['first_started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
-    if host[0]['last_ended_ns'] is not None and host[1]['first_started_ns'] is not None:
-        require(host[0]['last_ended_ns'] <= host[1]['first_started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
 
 
 def validate_service_report(path: Path) -> dict:

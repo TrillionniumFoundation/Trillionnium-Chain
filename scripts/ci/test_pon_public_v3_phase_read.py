@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reader counterexamples only; these synthetic records are not native evidence."""
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -74,6 +75,21 @@ def attribution_call(body_digest):
             'response': {'value': {'error': 'SYNTHETIC_CONTROL'}}, 'error': None}
 
 
+def observed_history_call():
+    """Synthetic failed import sharing the existing History validator fixture."""
+    from test_run_from_zero_native import simulated_import_observation
+    native = simulated_import_observation()
+    row = attribution_call('ab' * 32)
+    row.update(status='ok', request=dict(op='history', tip='01' * 32, after='02' * 32),
+        response={'value': {'packets': ['synthetic-not-a-native-packet']}},
+        client_import=dict(started_ns=1000, ended_ns=1100, wall_ns=99, thread_cpu_ns=9,
+            thread_cpu_observation_available=True, succeeded=False, error='PUBLIC_REQUEST_DEADLINE',
+            operation='synthetic full import interval', native_import_observation=native,
+            scope='calling client thread only; excludes scoped execution worker CPU; '
+                  'unknown clock is null; no deadline or acceptance authority'))
+    return row
+
+
 def arithmetic_work(reused=False, completed=True):
     return dict(schema='public-v3-work-arithmetic-observation-v1', slots=64,
         retained_software_bytes=4000000, completed=completed,
@@ -113,6 +129,92 @@ def arithmetic_report():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators(self):
+        row = observed_history_call()
+        row['client_import'].update(thread_cpu_ns=None, thread_cpu_observation_available=False)
+        row['client_import']['native_import_observation']['host_checks'][2].update(
+            thread_cpu_ns=None, cpu_clock_unknown_calls=1)
+        legacy = copy.deepcopy(row)
+        del legacy['client_import']['native_import_observation']
+        self.assertIsNone(reader.client_history_import_observations([legacy]))
+        old_phase = reader.phase_summary(attribution_phase([], [legacy], [], []))
+        self.assertNotIn('client_history_import_observations', old_phase)
+        calls = [row, legacy, attribution_call('bc' * 32)]
+        before = copy.deepcopy(calls)
+        phase = reader.phase_summary(attribution_phase([], calls, [], []))
+        value = phase['client_history_import_observations']
+        self.assertEqual(calls, before)
+        self.assertEqual((value['history_calls'], value['retained_client_imports'],
+                          value['observed_imports'], value['legacy_imports_without_observation'],
+                          value['history_calls_without_import_stage']), (3, 2, 1, 1, 1))
+        self.assertEqual(value['observed_outcomes'], {'rejected': 1})
+        retained = value['records'][0]['client_import']
+        self.assertIsNone(retained['thread_cpu_ns'])
+        self.assertIsNone(retained['native_import_observation']['host_checks'][2]['thread_cpu_ns'])
+        self.assertEqual(retained['error'], 'PUBLIC_REQUEST_DEADLINE')
+        self.assertNotIn('total_cpu_ns', value)
+        self.assertTrue(value['scope']['nested_intervals_are_not_additive'])
+        self.assertFalse(value['scope']['host_cpu_is_full_worker_cpu'])
+        self.assertIsNone(value['scope']['business_tps_capacity'])
+        self.assertEqual(phase['confirmed_rounds'], 0)
+
+    def test_client_history_import_rejects_bad_shapes_clocks_and_missing_host_data(self):
+        mutations = [
+            lambda r: r['client_import'].pop('thread_cpu_ns'),
+            lambda r: r['client_import'].update(thread_cpu_ns=float('nan')),
+            lambda r: r['client_import'].update(thread_cpu_observation_available=False),
+            lambda r: r['client_import'].update(ended_ns=999),
+            lambda r: r['client_import'].update(error=None),
+            lambda r: r['client_import'].update(scope='all workers CPU'),
+            lambda r: r.update(status='refused'),
+            lambda r: r.update(returned_after_window=True),
+            lambda r: r['client_import'].update(native_import_observation=None),
+            lambda r: r['client_import']['native_import_observation'].pop('host_checks'),
+            lambda r: r['client_import']['native_import_observation']['host_checks'][2].update(calls_started=3),
+            lambda r: r['client_import']['native_import_observation']['host_checks'][2].update(first_started_ns=9),
+        ]
+        for index, mutate in enumerate(mutations):
+            row = observed_history_call()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.client_history_import_observations([row])
+
+    def test_client_history_import_binds_actual_request_and_supplied_count(self):
+        for index, mutate in enumerate((
+            lambda r: r['request'].update(op='head'),
+            lambda r: r['request'].update(tip='ff' * 32),
+            lambda r: r['request'].update(after='ff' * 32),
+            lambda r: r['response']['value'].update(packets=[]),
+            lambda r: r['client_import'].update(succeeded=True, error=None),
+        )):
+            row = observed_history_call()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.client_history_import_observations([row])
+        row = observed_history_call()
+        with self.assertRaisesRegex(ValueError, 'bounded client History'):
+            reader.client_history_import_observations([row] * 65)
+
+    def test_client_history_import_preserves_native_success_followed_by_final_host_refusal(self):
+        row = observed_history_call()
+        native = row['client_import']['native_import_observation']
+        for slots in [native['phases'], *(p['phases'] for p in native['packets'])]:
+            for phase in slots:
+                if phase['completed']:
+                    phase.update(accepted=True, error_code=None)
+        native['host_checks'][2].update(calls_accepted=2, calls_rejected=0, last_error_code=None)
+        row['client_import'].update(succeeded=True, error=None)
+        value = reader.client_history_import_observations([row])
+        self.assertEqual(value['observed_outcomes'], {'accepted': 1})
+        native['host_checks'][3].update(calls_accepted=0, calls_rejected=1,
+                                       last_error_code='PUBLIC_HOST_KERNEL_CONTEXT')
+        row['client_import'].update(succeeded=False, error='PUBLIC_HOST_KERNEL_CONTEXT')
+        value = reader.client_history_import_observations([row])
+        self.assertEqual(value['observed_outcomes'], {'rejected': 1})
+        retained = value['records'][0]['client_import']['native_import_observation']
+        self.assertTrue(retained['phases'][reader.PHASES_V4.index('history_import')]['accepted'])
+        self.assertEqual(retained['host_checks'][3]['calls_rejected'], 1)
+
     def test_v4_nested_failed_and_cancelled_intervals_are_separate(self):
         row = record_v4()
         for name, start, end, cpu in [('admission', 10, 110, 30), ('execution', 20, 90, 22),

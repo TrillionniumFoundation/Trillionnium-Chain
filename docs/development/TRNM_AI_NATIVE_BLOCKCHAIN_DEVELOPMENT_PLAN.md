@@ -4697,7 +4697,13 @@ client History observations, including failed, cancelled and unfinished work.
 Parent/child CPU intervals are inclusive; calling-thread CPU excludes scoped
 worker CPU. Four local Host aggregates measure original resolve, initial,
 checkpoint and final checks without replacing any live check or extending a
-deadline. Short boot/membership text uses stack storage; longer text continues
+deadline. The original thirty-second/1,024-account regular and fixed-root
+campaign importers also retain the same optional History snapshot for every
+success or returned error; their original aggregate clock and absolute window
+remain unchanged. The phase reader and four-second reader share one strict
+validator. Legacy absent observations remain unknown, and a successful native
+commit followed by final Host refusal remains an outer failed import.
+Short boot/membership text uses stack storage; longer text continues
 from the same freshly opened stream through real EOF. No Host authorization
 decision or descriptor is cached.
 
