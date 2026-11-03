@@ -17,11 +17,11 @@ The guard checks actual negative authority and activation assertions in the sour
 
 | Gate | Current boundary | Evidence needed to close |
 | --- | --- | --- |
-| Authorization | NPQ6 account/task and PNQ2 transport are separate; Hepta V1 is Ed25519 and the new [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) is not wired to all Hepta owners or FinalUse; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
-| Proof PQ-128 | No production-qualified W1 security parameter proof in the active candidate. | Freeze exact relation, verifier, guest/compiler hashes, commitment/FRI/Fiat–Shamir settings, recursion and security model; obtain independent quantum-soundness argument and worst-invalid-input cost. Groth16/fake receipts cannot satisfy PQ-128. |
+| Authorization | NPQ6 account/task and PNQ2 transport are separate. The paired [Hepta ordinary host at b446a3f](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b446a3f0745e0f7fa9ace98749aeb3e2f845807f/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs) explicitly selects the `ml_dsa65_v2` consumer profile with protected clock/frontier; untagged legacy configuration remains classical. This is component wiring, not complete governance, release, recovery or deployed key-custody qualification. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
+| Proof PQ-128 | No production-qualified W1 security parameter proof in the active candidate. The [frozen research verifier](../../formal/pon-nakamoto-v1/w1_hardened_verifier/README.md) explicitly binds its existing SDK 3.0.6 Poseidon2 parameter set; it is separate from Node consensus admission. | Freeze exact relation, verifier, guest/compiler hashes, commitment/FRI/Fiat–Shamir settings, recursion and security model; obtain independent quantum-soundness argument and worst-invalid-input cost. Groth16/fake receipts cannot satisfy PQ-128. |
 | Quantum mining and fork choice | Current cumulative-work/DAA incentives have no full adversarial quantum lower bound. | Test cheapest valid complete W1, data loads, reversible oracle/uncompute, challenge amortization, Grover advantage, retarget/timestamp manipulation, reorganization and propagation on equal attack budgets. |
 | Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [research reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) and the explicit [native PNQ2 witness component](PQ_NETWORK_DURABLE_WITNESS_V1.md) have separate evidence. The native component covers three PNQ2 tables under an independent-witness-state assumption; it does not cover all Node/Hepta state or provide a trusted deployed remote service. | Bind early PQ ownership, historic liabilities, old nonce floors, all effect-bearing state, cross-reorg recovery, an independently administered monotonic anchor and independent cold-restart adversarial tests. |
-| Capacity and invalid input | Research TPQ1 signature frame is 3487 bytes; original devnet maximum transaction remains 2048 bytes. | Full native NPQ6 block and mempool capacity, invalid-signature CPU cost, wire/relay amplification, p95/p99, RSS and recovery under fixed hardware/traffic constraints. |
+| Capacity and invalid input | Research TPQ1 signature frame is 3487 bytes; original legacy devnet maximum transaction remains 2048 bytes. Explicit NPQ6/PQP6 application limits are a separate profile and do not establish public capacity. Original CPU, History and business-confirmation budgets remain required. | Full native NPQ6 block and mempool capacity, invalid-signature CPU cost, wire/relay amplification, p95/p99, RSS and recovery under fixed hardware/traffic constraints. |
 | Independent end-to-end | Existing exact negative assertions exclude production, WAN, entire PQ node, quantum hardness, rollback and Hepta FinalUse claims. | At-head source/lockfile evidence, independent crypto review, reproducible deployment, WAN/fault benchmarks, economic attacks and authorized activation process. |
 
 This guard does not create permission, switch profiles, sign an artifact, accept a proof, change chainwork or modify the consensus rules. All six gates remain UNQUALIFIED. This research-only v1 guard must not be weakened to force a green release; any later upgrade requires a reviewed new security schema and independently verifiable evidence.
@@ -51,3 +51,24 @@ test modules are refused by the claim guard; their presence does not qualify
 their runtime behavior. Actual positive effects, refusal, cold reopen and failure
 records remain separate from the source/claim checks. All six gate states remain
 UNQUALIFIED and every existing negative activation assertion is preserved.
+
+## 2026-11-03 component continuation
+
+Ordinary PNQ2 admission now keeps the fresh external-witness guard and permission
+reads in the same IMMEDIATE transaction when no pending request expires. An
+actual expiry still commits retirement, publishes the new epoch, and obtains
+a fresh guard before the next admission. The original 43 required controls are
+retained and two native exchange-count/state/reopen controls are added. Fewer
+exchanges do not by themselves close any original deadline or resource failure.
+
+The independent W1 research verifier now selects the measured Poseidon2 suite
+and exact verifier-parameter digest for both full and recursion-only verification.
+The existing PQ workflow also runs that separate workspace against retained real
+receipts on head/prospective-merge and x64/ARM. A workflow definition is not a
+completed CI result. Matching metadata still requires actual cryptographic
+verification; recursion-only acceptance never establishes the complete W1 claim.
+
+These changes neither expand the witness's original three-table state root nor
+qualify a new public transport or a PQ-128 proof system. All six gates and the
+existing whole-chain/production assertions remain UNQUALIFIED/false. Historical
+failures retain their original source, profile and meaning.
