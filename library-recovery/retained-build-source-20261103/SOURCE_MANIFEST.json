@@ -1,0 +1,239 @@
+{
+  "schema": "retained-build-source-projection-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_private_at_publication": false,
+  "branch": "chore/chain-library-small-source-20261103-gpt6",
+  "parent_commit": "4c606c0c16a2e99ff3904ea6f7db43855914f7be",
+  "original_archival_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "source_count": 4,
+  "source_bytes": 128239,
+  "frozen_candidate_union_size": 6116,
+  "candidate_sets_unchanged": true,
+  "archived_source_executed": false,
+  "scientific_or_runtime_acceptance": false,
+  "deployment_or_production_activation": false,
+  "all_library_source_synced": false,
+  "library_deletion_performed": false,
+  "boundaries": [
+    "DRAFT",
+    "SHADOW_ONLY",
+    "DENY_ALL",
+    "HOLD_NO_GO"
+  ],
+  "packages": [
+    {
+      "name": "frozen-7eb-retained-build-inputs.tar.gz",
+      "size_bytes": 10500326,
+      "sha256": "0f0b7f74a901717d795298fbb2c6f51ad582bd5f596152413e74fab463749a5b",
+      "bytes": 10500326,
+      "physical_regular_members": 3718
+    },
+    {
+      "name": "official-artifact-12906474339.zip",
+      "size_bytes": 14288600,
+      "sha256": "3f22a3bfe047fa365bb52e3fe25ab299206e094f0e23be9967c60dd67cde8eba",
+      "bytes": 14288600,
+      "physical_regular_members": 67
+    }
+  ],
+  "third_party_license_provenance": [
+    {
+      "name": "serde",
+      "version": "1.0.228",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "archive_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e",
+      "archive_bytes": 83652,
+      "checksum_verified_against": "official cached sparse-index exact version",
+      "license_members": [
+        {
+          "member": "serde-1.0.228/LICENSE-APACHE",
+          "git_blob_sha": "1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "member": "serde-1.0.228/LICENSE-MIT",
+          "git_blob_sha": "31aa79387f27e730e33d871925e152e35e428031",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.228",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "archive_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad",
+      "archive_bytes": 63111,
+      "checksum_verified_against": "official cached sparse-index exact version",
+      "license_members": [
+        {
+          "member": "serde_core-1.0.228/LICENSE-APACHE",
+          "git_blob_sha": "1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "member": "serde_core-1.0.228/LICENSE-MIT",
+          "git_blob_sha": "31aa79387f27e730e33d871925e152e35e428031",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "libsqlite3-sys",
+      "version": "0.37.0",
+      "registry_source": "registry+https://github.com/rust-lang/crates.io-index",
+      "archive_sha256": "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1",
+      "archive_bytes": 5295554,
+      "checksum_verified_against": "official cached sparse-index exact version",
+      "license_members": [
+        {
+          "member": "libsqlite3-sys-0.37.0/LICENSE",
+          "git_blob_sha": "08c660f5be514958a1179ccadf63a1f488807aa1",
+          "sha256": "c10c1f27337546471e5f7e4e97fdd398b35b9d4e126115dcd22de8d8e65abf6f",
+          "bytes": 1067
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "git_blob_sha": "08f232bbdb9bba7b7ae5b458043bac920eb9aca7",
+      "sha256": "27ad1b5fb4eebeb1da6419cbfad3ac1922ed1d817fcbab0a1dae1bdfd38d8307",
+      "bytes": 90,
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "source"
+      ],
+      "original_package_sha256": "0f0b7f74a901717d795298fbb2c6f51ad582bd5f596152413e74fab463749a5b",
+      "original_package_bytes": 10500326,
+      "relative_path": "objects/08f232bbdb9bba7b7ae5b458043bac920eb9aca7.rs",
+      "original_package": "frozen-7eb-retained-build-inputs.tar.gz",
+      "original_member": "debug/build/serde_core-ffb8c76bc1dc7e36/out/private.rs",
+      "archive_chain": [],
+      "sensitive_pattern_findings": [],
+      "existing_remote_blob_precheck": "404 NOT_FOUND in this target repository",
+      "source_kind": "generated third-party Rust build input; not authored product implementation",
+      "attribution_basis": "The original retained target archive contains trnm-pon-node hepta_task_fixture and trnm-sqlite-io-boundary products. Its libsqlite3-sys build output points to chain-pon-cargo/libsqlite3-sys-0.37.0 and the matching TRNM SQLite 3.51.3 layout fence. This selects Chain as archival project context, without claiming exclusive authorship or current build compatibility.",
+      "generator_package": "serde_core 1.0.228"
+    },
+    {
+      "git_blob_sha": "49832285e899cc042616b4c5e47597559fab91f8",
+      "sha256": "bb1d6be1b7e921973c9f5f62cf7e57f073573afa1c8b28543639c44d8570222a",
+      "bytes": 4366,
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "source"
+      ],
+      "original_package_sha256": "3f22a3bfe047fa365bb52e3fe25ab299206e094f0e23be9967c60dd67cde8eba",
+      "original_package_bytes": 14288600,
+      "relative_path": "objects/49832285e899cc042616b4c5e47597559fab91f8.py",
+      "original_package": "official-artifact-12906474339.zip",
+      "original_member": "capture-host-resources.py",
+      "archive_chain": [],
+      "sensitive_pattern_findings": [],
+      "existing_remote_blob_precheck": "404 NOT_FOUND in this target repository",
+      "source_kind": "CI-generated Python host-resource collector; not an active workflow",
+      "attribution_basis": "Collector uses TRNM_EXPECTED_SOURCE_SHA and pon-w1-cost-host-resources-v1. Original source-before/source-after identities pin Chain commit 007b80cc99ba52fe7afcd6d0e0dea52628f5a026 and tree 71d6353a744dff0c2e68d484679a1d7e9498e02c; the immutable Git commit/tree pair was independently read from that repository.",
+      "original_commit_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+    },
+    {
+      "git_blob_sha": "c892eefa6d15577af6379e39872420b9829903b7",
+      "sha256": "3640b99203cb2c2dfa5797043cf01dc8dcee8cef62c6b88e937e364a8614744b",
+      "bytes": 123641,
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "source"
+      ],
+      "original_package_sha256": "0f0b7f74a901717d795298fbb2c6f51ad582bd5f596152413e74fab463749a5b",
+      "original_package_bytes": 10500326,
+      "relative_path": "objects/c892eefa6d15577af6379e39872420b9829903b7.rs",
+      "original_package": "frozen-7eb-retained-build-inputs.tar.gz",
+      "original_member": "debug/build/libsqlite3-sys-3d4b08bddecd514c/out/bindgen.rs",
+      "archive_chain": [],
+      "sensitive_pattern_findings": [],
+      "existing_remote_blob_precheck": "404 NOT_FOUND in this target repository",
+      "source_kind": "generated third-party Rust build input; not authored product implementation",
+      "attribution_basis": "The original retained target archive contains trnm-pon-node hepta_task_fixture and trnm-sqlite-io-boundary products. Its libsqlite3-sys build output points to chain-pon-cargo/libsqlite3-sys-0.37.0 and the matching TRNM SQLite 3.51.3 layout fence. This selects Chain as archival project context, without claiming exclusive authorship or current build compatibility.",
+      "generator_package": "libsqlite3-sys 0.37.0 / rust-bindgen 0.72.1 / SQLite 3.51.3"
+    },
+    {
+      "git_blob_sha": "ed2927ea1a64f641a0f4589e95e215a15c14e053",
+      "sha256": "f8e9470772811a1bdcd201fb21e14cbf37a57d192b38cd98f66bd4a83442c26b",
+      "bytes": 142,
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "source"
+      ],
+      "original_package_sha256": "0f0b7f74a901717d795298fbb2c6f51ad582bd5f596152413e74fab463749a5b",
+      "original_package_bytes": 10500326,
+      "relative_path": "objects/ed2927ea1a64f641a0f4589e95e215a15c14e053.rs",
+      "original_package": "frozen-7eb-retained-build-inputs.tar.gz",
+      "original_member": "debug/build/serde-8ae291735a1e1168/out/private.rs",
+      "archive_chain": [],
+      "sensitive_pattern_findings": [],
+      "existing_remote_blob_precheck": "404 NOT_FOUND in this target repository",
+      "source_kind": "generated third-party Rust build input; not authored product implementation",
+      "attribution_basis": "The original retained target archive contains trnm-pon-node hepta_task_fixture and trnm-sqlite-io-boundary products. Its libsqlite3-sys build output points to chain-pon-cargo/libsqlite3-sys-0.37.0 and the matching TRNM SQLite 3.51.3 layout fence. This selects Chain as archival project context, without claiming exclusive authorship or current build compatibility.",
+      "generator_package": "serde 1.0.228"
+    }
+  ],
+  "notices": [
+    {
+      "git_blob_sha": "1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "bytes": 9723,
+      "origins": [
+        {
+          "package": "serde",
+          "version": "1.0.228",
+          "member": "serde-1.0.228/LICENSE-APACHE",
+          "archive_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+        },
+        {
+          "package": "serde_core",
+          "version": "1.0.228",
+          "member": "serde_core-1.0.228/LICENSE-APACHE",
+          "archive_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+        }
+      ],
+      "relative_path": "notices/1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d.txt"
+    },
+    {
+      "git_blob_sha": "31aa79387f27e730e33d871925e152e35e428031",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "bytes": 1023,
+      "origins": [
+        {
+          "package": "serde",
+          "version": "1.0.228",
+          "member": "serde-1.0.228/LICENSE-MIT",
+          "archive_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+        },
+        {
+          "package": "serde_core",
+          "version": "1.0.228",
+          "member": "serde_core-1.0.228/LICENSE-MIT",
+          "archive_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+        }
+      ],
+      "relative_path": "notices/31aa79387f27e730e33d871925e152e35e428031.txt"
+    },
+    {
+      "git_blob_sha": "08c660f5be514958a1179ccadf63a1f488807aa1",
+      "sha256": "c10c1f27337546471e5f7e4e97fdd398b35b9d4e126115dcd22de8d8e65abf6f",
+      "bytes": 1067,
+      "origins": [
+        {
+          "package": "libsqlite3-sys",
+          "version": "0.37.0",
+          "member": "libsqlite3-sys-0.37.0/LICENSE",
+          "archive_sha256": "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1"
+        }
+      ],
+      "relative_path": "notices/08c660f5be514958a1179ccadf63a1f488807aa1.txt"
+    }
+  ]
+}
