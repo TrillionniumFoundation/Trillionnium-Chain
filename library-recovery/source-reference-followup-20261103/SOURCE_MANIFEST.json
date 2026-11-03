@@ -1,0 +1,56 @@
+{
+  "schema": "source-reference-followup-projection-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_private_at_publication": false,
+  "parent_commit": "fb52d33b822aa63c1a24a746898cef3f25f8ef46",
+  "branch": "chore/chain-library-small-source-20261103-gpt6",
+  "candidate_count": 1,
+  "candidate_bytes": 11020,
+  "frozen_candidate_union_size": 6116,
+  "original_candidate_sets_unchanged": true,
+  "attribution_scope": "Current archival attribution in the same repository that already held the exact source-reference blobs; no new product implementation or experiment acceptance.",
+  "preserved_source_executed": false,
+  "scientific_or_runtime_acceptance": false,
+  "original_archive_and_history_completeness_proven": false,
+  "all_library_source_synced": false,
+  "eligible_to_clear_library": false,
+  "library_deletion_performed": false,
+  "boundaries": [
+    "DRAFT",
+    "SHADOW_ONLY",
+    "DENY_ALL",
+    "HOLD_NO_GO"
+  ],
+  "candidates": [
+    {
+      "git_blob_sha": "dc1d4419d861f38addf3fe767ed56b573d9d477a",
+      "sha256": "7277810468afab0196f64cd7a8ad8871ff664c4a14e5c6001954b4b71546dfa6",
+      "bytes": 11020,
+      "relative_path": "objects/dc1d4419d861f38addf3fe767ed56b573d9d477a.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "chain-model-release-network-2e9fa256.zip",
+          "member": "chain-model-release-network-2e9fa256/CELL_MODEL_RELEASE_ROOT_V1.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-reproduction reference document",
+      "reuse_existing_repository_blob": true,
+      "newly_uploaded_source_bytes": false,
+      "attribution_basis": "This exact Git blob was independently returned by the same repository before publication. Original archive project-source peers and the inspected document interfaces or history schema establish the current archival context. This is not a claim of exclusive authorship or a newly discovered historical source commit/path.",
+      "lookup_scope_basis": "all already verified project-source peers in the same original archive map to one repository",
+      "verified_original_archive_peers": {
+        "chain-model-release-network-2e9fa256.zip": {
+          "TrillionniumFoundation/Trillionnium-Chain": 1
+        }
+      },
+      "historical_claims_independently_requalified": false,
+      "original_archive_and_history_completeness_proven": false
+    }
+  ],
+  "notices": []
+}
