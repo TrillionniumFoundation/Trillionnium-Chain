@@ -1,0 +1,27 @@
+test_classical_fallback_refused (test_pq_chain_claim_guard.TestClaimGuard.test_classical_fallback_refused) ... ok
+test_corrupt_independent_qualification_refused (test_pq_chain_claim_guard.TestClaimGuard.test_corrupt_independent_qualification_refused) ... ok
+test_duplicate_json_keys_refused (test_pq_chain_claim_guard.TestClaimGuard.test_duplicate_json_keys_refused) ... ok
+test_hepta_final_use_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_hepta_final_use_claim_refused) ... ok
+test_history_storage_and_rehearsal_owner_paths_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear) ... ok
+test_hold_is_not_pq_success (test_pq_chain_claim_guard.TestClaimGuard.test_hold_is_not_pq_success) ... ok
+test_missing_authority_surface_inventory_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_authority_surface_inventory_refused) ... ok
+test_missing_external_rollback_oracle_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_external_rollback_oracle_refused) ... ok
+test_missing_or_non_directory_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_or_non_directory_checkout_root_refused) ... ok
+test_missing_pq_hepta_verifier_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_pq_hepta_verifier_refused) ... ok
+test_missing_proof_relation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_proof_relation_refused) ... ok
+test_missing_quantum_daa_model_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_quantum_daa_model_refused) ... ok
+test_native_witness_and_live_admission_sources_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_native_witness_and_live_admission_sources_cannot_disappear) ... ok
+test_nonfinite_and_nonstandard_json_numbers_refused (test_pq_chain_claim_guard.TestClaimGuard.test_nonfinite_and_nonstandard_json_numbers_refused) ... ok
+test_pq_128_guest_promotion_refused (test_pq_chain_claim_guard.TestClaimGuard.test_pq_128_guest_promotion_refused) ... ok
+test_production_activation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_production_activation_refused) ... ok
+test_quantum_hardness_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_quantum_hardness_claim_refused) ... ok
+test_rollback_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_rollback_claim_refused) ... ok
+test_symlink_source_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlink_source_refused) ... ok
+test_symlinked_checkout_ancestor_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_ancestor_refused) ... ok
+test_symlinked_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_root_refused) ... ok
+test_unbounded_or_unaccepted_candidate_refused (test_pq_chain_claim_guard.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.153s
+
+OK

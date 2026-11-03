@@ -112,16 +112,15 @@ impl Process {
                 Instant::now() < until,
                 "independent witness startup deadline"
             );
-            assert!(
-                process
-                    .child
-                    .as_mut()
-                    .unwrap()
-                    .try_wait()
-                    .unwrap()
-                    .is_none(),
-                "independent witness exited before ready"
-            );
+            if let Some(status) = process.child.as_mut().unwrap().try_wait().unwrap() {
+                let output = process.child.take().unwrap().wait_with_output().unwrap();
+                // Preserve the child's actual failure without printing its
+                // nested libtest summary into the parent's exact-test receipt.
+                panic!(
+                    "independent witness exited before ready ({status}): {}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+            }
             thread::sleep(Duration::from_millis(5));
         }
         let recorded: u32 = fs::read_to_string(directory.join("ready"))
