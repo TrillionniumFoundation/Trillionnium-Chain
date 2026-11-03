@@ -17,7 +17,7 @@ The guard checks actual negative authority and activation assertions in the sour
 
 | Gate | Current boundary | Evidence needed to close |
 | --- | --- | --- |
-| Authorization | NPQ6 account/task and PNQ2 transport are separate; Hepta V1 is Ed25519 and the new [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) is not wired to all Hepta owners or FinalUse; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
+| Authorization | NPQ6 account/task and PNQ2 transport are separate. The paired Hepta #4497 candidate supports explicitly selected ML-DSA ordinary Cell and initial consumers; untagged compatibility remains classical. RunStart V1 and production grant/recovery owners still have classical-only paths. The [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) does not complete every owner; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
 | Proof PQ-128 | No production-qualified W1 security parameter proof in the active candidate. | Freeze exact relation, verifier, guest/compiler hashes, commitment/FRI/Fiat–Shamir settings, recursion and security model; obtain independent quantum-soundness argument and worst-invalid-input cost. Groth16/fake receipts cannot satisfy PQ-128. |
 | Quantum mining and fork choice | Current cumulative-work/DAA incentives have no full adversarial quantum lower bound. | Test cheapest valid complete W1, data loads, reversible oracle/uncompute, challenge amortization, Grover advantage, retarget/timestamp manipulation, reorganization and propagation on equal attack budgets. |
 | Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [research reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) and the explicit [native PNQ2 witness component](PQ_NETWORK_DURABLE_WITNESS_V1.md) have separate evidence. The native component covers three PNQ2 tables under an independent-witness-state assumption; it does not cover all Node/Hepta state or provide a trusted deployed remote service. | Bind early PQ ownership, historic liabilities, old nonce floors, all effect-bearing state, cross-reorg recovery, an independently administered monotonic anchor and independent cold-restart adversarial tests. |
@@ -51,3 +51,42 @@ test modules are refused by the claim guard; their presence does not qualify
 their runtime behavior. Actual positive effects, refusal, cold reopen and failure
 records remain separate from the source/claim checks. All six gate states remain
 UNQUALIFIED and every existing negative activation assertion is preserved.
+
+
+## 2026-11-03 integrated source continuation
+
+This continuation starts from Chain #688 `116a3caf6046dd0db3caf1d0797e636c35c877b8`
+and checks Hepta #4497 `f28af9b7700a61fbbcdcc121521cb879297d5e31`. A component
+result from #683 does not qualify the combined #688 source. The missing admission
+guard retention and two original controls are now integrated; the required list
+keeps all 43 original controls in order and adds those two. Actual execution on
+this new composition must be recorded separately.
+
+The selected backend remains `StateBackend::PqWitnessV4`. Its SHA-512 root
+covers only PNQ2 resource, peer and request tables. V5 in paired evidence names
+a qualification configuration, not a new whole-state witness backend. Chain
+reorganization may change canonical balances and History; it must not rewind
+local spent-use identities, revocation generations or effect reconciliation.
+Extending the witness root requires a defined owner protocol across these two
+state classes, rather than mechanically hashing additional database tables.
+
+The isolated hardened W1 verifier fixes SDK 3.0.6, Poseidon2 and its verifier
+parameter digest while retaining real cryptographic verification. It remains
+outside the Node consensus backend. Fixing a profile does not provide a QROM
+soundness proof or upgrade the published component estimates to PQ-128.
+
+For every primitive or hash use, qualification must record the standard and
+parameter set, security property, quantum model, cost metric and claim scope.
+[NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) defines signature
+algorithms; [FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) defines key
+establishment. NIST security categories are not whole-system bit counts.
+Hash preimage, second-preimage and collision obligations must be evaluated
+for each actual use and domain; an identity digest and a proof transcript
+cannot inherit the same argument merely because both use a hash. The NIST
+FIPS 204 page's 2026-07-31 errata note is an input to future conformance review,
+not evidence that the current implementation is incorrect.
+
+The remaining proof, quantum-work, complete migration/rollback, network
+capacity and independently deployed end-to-end gates remain UNQUALIFIED.
+The original witness, CPU and business budgets and all activation negatives
+are unchanged.

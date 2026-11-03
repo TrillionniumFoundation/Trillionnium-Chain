@@ -5094,3 +5094,29 @@ retains all 32 cost observations. Neither this correction nor the prior source's
 success replaces composition, ARM, release or original public-service evidence.
 The later successful CodeQL check-run remains bound to old `bebb`, without
 dismissing existing warnings or granting whole-chain security acceptance.
+
+
+### 2026-11-03 whole-chain PQ integration continuation
+
+Continue #688 from `116a3caf6046dd0db3caf1d0797e636c35c877b8` and pair source
+review with Hepta #4497 `f28af9b7700a61fbbcdcc121521cb879297d5e31`. Integrate
+#683's missing same-transaction witness admission guard, its two required
+controls, and the isolated SDK 3.0.6 Poseidon2 verifier profile. Preserve the
+current observation diagnostics, all 43 earlier required controls and original
+250 ms witness and four-second business bounds. The new 45-control composition
+requires its own native result; historical component passes do not transfer.
+
+The paired Hepta repair makes every final consumer boundary validate the same
+revocation head captured by its authenticated claim, while preserving consumed
+nonces and explicit revocation precedence. Ordinary explicitly selected PQ Cell
+composition does not close the classical-only RunStart V1 and production
+grant/recovery paths. Those paths need versioned owner migration and current
+frontier checks, not an OR fallback.
+
+The [whole-chain claim record](../security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md#2026-11-03-integrated-source-continuation)
+keeps the three-table PqWitnessV4 scope distinct from paired V5 evidence names,
+canonical reorganization state distinct from monotonic local effect state, and
+primitive category distinct from a whole-system PQ-128 claim. Local source and
+format checks, resource failures and remote native outcomes are separate
+observations. All six qualification domains and production activation remain
+HOLD until their own evidence is accepted.
