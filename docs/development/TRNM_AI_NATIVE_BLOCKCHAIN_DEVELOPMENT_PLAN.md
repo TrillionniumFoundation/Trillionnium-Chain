@@ -5185,3 +5185,50 @@ its partial log and UNKNOWN outcome. The subsequent concurrent `8a74a9e` test
 separates local guard refusal from real-owner fork refusal; retain it and remove
 the temporary local CAS error-category compatibility change. Rebuild and execute
 the final combination under the original profiles and limits.
+
+### 2026-11-03 source-bound History and committed-CAS regression validation
+
+The recovered History fences now have an executed
+[validation record](../../evidence/pon-history-close-deadline-20261103/validation/README.md).
+Preserve the original `9f046408` formatter failure, the interrupted direct Cargo
+invocation, original-profile rustc SIGKILL and later missing-terminal UNKNOWN
+outcome. The unmodified release profile is a separate functional check; its
+success does not qualify the original test profile or ARM CPU budgets.
+
+Freeze `3898f6a6` and `8a74a9e4` separately: nine and ten selected native
+controls pass, with clean before/after source and binary identities. Their
+formatter, full workspace/all-target/all-feature strict Clippy, source-pins,
+negative source-integrity controls, locked graphs and repository contracts pass.
+The original offline fuzz dependency miss remains recorded; locked resolution
+then succeeds without changing either lockfile. Their CodeQL aggregates succeed
+only for those source identities.
+
+Preserve the full concurrent `b28098c092dca72165c0d26054fce95a8636d777`
+continuation and validate its freshly built release executable independently.
+The [composed validation record](../../evidence/pon-history-close-deadline-20261103/validation-b280/README.md)
+retains 14 passing native controls: seven History controls, three retained
+client/store CAS controls, and four new pre-COMMIT/late-Current/late-write/
+committed-alignment controls. None failed or was ignored. The 78 unique local
+Host adapter/controller controls and 68 source/integrity controls pass. The
+aggregate controller invocation imports the earlier 41-control subset, so those
+repeated executions do not increase the unique denominator. Actual pidfds,
+flock and owned-child cleanup remain distinct from mocked Host/systemd setup.
+The original fixed-Host positive selectors still need hosted acceptance.
+
+Exact source checks, original formatter, strict Clippy, both locked Linux
+graphs, all 376 source pins, the embedded inventory and repository links pass on
+that composed source. Every native result remains release-profile functional
+evidence, with no changed acceptance budget or qualification flag. The cleanup-
+only deadline interval remains statically covered without a separately injected
+runtime case. The original complete-workspace, service and CPU gates remain.
+
+Read the retained `116a3caf` protocol-contract ZIP as data only and bind its
+digest/size/source to the GitHub artifact metadata. The five named tests pass,
+but the separate manifest still fails `CONFIRMATION_TARGET`. Baseline confirms;
+the paired original four-second run has seven successful submissions, only two
+completed History imports/replays, a third challenge-stage errno 11 refusal,
+and no confirmation. This narrows the observed honest path without assigning
+server root cause or public amplification. Calling-thread and nested timing
+scopes remain separate. Work security, original public service, independent
+operators/evaluators, quantum/DAA, model benefit, custody, economics, external
+effects, whole-chain PQ, release and activation remain HOLD.
