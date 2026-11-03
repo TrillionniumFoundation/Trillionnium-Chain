@@ -1,0 +1,17 @@
+{
+ "schema":"chain-seed-final-quantization-2x2-v1",
+ "question":"At fixed source-file folds, does quantizing the shared seed affect pooled-model predictions, and how does final weight rounding change that effect?",
+ "scope":"Paired deterministic computational ablation on reused TRAIN development data; not independent replicates or unseen-data causal efficacy.",
+ "input":"evidence/pon-evaluation-bundle-v1/model/train.json",
+ "input_sha256":"bde4f99f3d1adc49ed06ee170a204f33057d93d0ddfce598148cc535c47b48fe",
+ "fold_reference":"evidence/train-only-quantization-20261103/report.json",
+ "folds":"Exactly reuse five whole-file folds. Check each against original class-stratified SHA256(file) index modulo5; never move or split a file.",
+ "seed":"First20 fit rows per class, in original order, eight original train() steps. Compute once/fold. Arms use that same float64 result or quantize(seed)/1024.",
+ "pooled_fit":"Two fits/fold, each original120 full-batch steps, original class weighting, regularizer, learning rate and 257 fixed features. Identical fit rows and seed identities.",
+ "arms":{"FF":"float seed, float final weights","FQ":"float seed, final quantized weights","QF":"quantized/dequantized seed, float final weights","QQ":"quantized/dequantized seed, final quantized weights"},
+ "primary_endpoint":"Total out-of-fold prediction disagreements FF vs QF across all1005 original TRAIN rows, isolating seed treatment before final weight quantization.",
+ "secondary_endpoints":"FQ vs QQ seed-treatment disagreements after final quantization; FF vs FQ and QF vs QQ final-rounding disagreements; all full-population accuracies, confusion matrices and file-macro values; per-fold counts, shared-unit logits/margins, weight changes and clipping counts. Retain every outcome.",
+ "numerics":"Unchanged np.argmax lowest-index ties. Float logits use raw integer feature x @ float weights. Integer logits are computed exactly in int64, then divided by1024 for comparable reported values; never divide feature x by8 for reporting.",
+ "controls":"QF and QQ predictions must exactly reproduce the earlier retained float and integer OOF controls, respectively; fail otherwise. No calibration/evaluation/consumer task files may be loaded.",
+ "stop":"Run the frozen five folds once; no hyperparameter selection, winning-arm adoption, data filtering or model publication. A nonzero effect establishes computational sensitivity only; zero disagreement does not prove zero logit/parameter perturbation."
+}
