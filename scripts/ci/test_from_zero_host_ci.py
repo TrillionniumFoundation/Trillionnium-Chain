@@ -16,6 +16,10 @@ from unittest.mock import patch
 import public_host_ci_observation as observation
 import run_from_zero_host as host
 import run_history_native as history
+import run_public_fixture_native as architecture
+from test_architecture_host_ci import ArchitectureAdapterControls
+from test_public_fixture_process import PublicFixtureProcessControls
+from test_public_fixture_lease import PublicFixtureLeaseControls, PublicFixtureLockControls
 from check_ci_contract import (HISTORY_EXPECTED_SOURCE, HISTORY_HOST_STEPS,
                                check_from_zero_host_call, check_from_zero_host_callsites,
                                check_history_host_call)
@@ -154,6 +158,32 @@ class OriginalHostControls(unittest.TestCase):
         for command in changes:
             with self.subTest(command=command), self.assertRaises(ValueError):
                 host.validate_command(command)
+
+    def test_architecture_mode_is_exact_existing_elf_only_and_not_a_general_runner(self):
+        command = ['python3', architecture.SCRIPT, '--out', '/tmp/architecture-output']
+        self.assertEqual(host.validate_command(command), Path(command[-1]))
+        for invalid in (command + ['--skip'], command + ['--launch'],
+                        ['python3', architecture.SCRIPT, '--binary', '/tmp/arbitrary']):
+            with self.subTest(command=invalid), self.assertRaises(ValueError):
+                host.validate_command(invalid)
+        with patch.object(host, 'prepare_native_build') as build, \
+                patch.object(architecture, 'validate_preparation', return_value={'current_elf': True}) as bind:
+            self.assertEqual(host.prepare_command(command, Path(command[-1]), Path('/tmp/receipts')),
+                             {'current_elf': True})
+            build.assert_not_called()
+            bind.assert_called_once_with(Path(command[-1]))
+
+    def test_architecture_child_marker_cannot_substitute_for_actual_host(self):
+        sample = synthetic_sample()
+        sample['thread_cgroup'] = '0::/user.slice/runner.service'
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(host, 'capture', return_value=sample), \
+                patch.dict(os.environ, {architecture.CHILD: '1'}), \
+                patch.object(host.subprocess, 'run') as run:
+            self.assertEqual(host.inside(Path(temporary), sample['service'], 1001, 1001,
+                ['python3', architecture.SCRIPT, '--out', '/tmp/architecture-output']), 1)
+            run.assert_not_called()
+        self.assertNotIn(architecture.CHILD, host.ENVIRONMENT)
 
     def test_transient_service_preserves_command_and_unprivileged_identity(self):
         command = ['python3', 'scripts/ci/run_from_zero_native.py', '--out', '/tmp/out']

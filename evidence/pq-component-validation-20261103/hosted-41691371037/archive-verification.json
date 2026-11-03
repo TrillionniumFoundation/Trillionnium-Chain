@@ -1,0 +1,63 @@
+{
+  "schema": "trnm-pq-ci-repack-verification-v1",
+  "packaged_at_utc": "2026-11-03T19:45:29.958510+00:00",
+  "archive": {
+    "path": "chain-pq-ci-run-41691371037-full-members.tar.xz",
+    "bytes": 705720,
+    "sha256": "4f218c1f30760e81ab06740c3a7db02a0667d510385bdca8fa58cdba3f9157f6"
+  },
+  "full_original_members_verified": 652,
+  "full_original_member_bytes_verified": 40861110,
+  "metadata_copies_verified": 4,
+  "total_archive_members_verified": 656,
+  "all_member_lengths_and_sha256_match": true,
+  "no_missing_or_extra_members": true,
+  "original_zip_containers_hashed": 8,
+  "original_zip_hashes_unchanged_before_after": true,
+  "summary_files_copied_byte_exact": true,
+  "original_control_payload_coverage": [
+    {
+      "lane": "x64-head",
+      "control_artifact_id": 13262116480,
+      "full_artifact_id": 13263326083,
+      "members_compared": 159,
+      "bytes_compared": 2967607,
+      "all_payload_bytes_identical": true,
+      "path_mapping": "ZIP member path -> x64-head/ZIP member path"
+    },
+    {
+      "lane": "arm64-head",
+      "control_artifact_id": 13262010223,
+      "full_artifact_id": 13263262338,
+      "members_compared": 159,
+      "bytes_compared": 2861329,
+      "all_payload_bytes_identical": true,
+      "path_mapping": "ZIP member path -> arm64-head/ZIP member path"
+    },
+    {
+      "lane": "arm64-merge",
+      "control_artifact_id": 13261235455,
+      "full_artifact_id": 13263163201,
+      "members_compared": 159,
+      "bytes_compared": 2871314,
+      "all_payload_bytes_identical": true,
+      "path_mapping": "ZIP member path -> arm64-merge/ZIP member path"
+    },
+    {
+      "lane": "x64-merge",
+      "control_artifact_id": 13260673197,
+      "full_artifact_id": 13261143324,
+      "members_compared": 159,
+      "bytes_compared": 2975912,
+      "all_payload_bytes_identical": true,
+      "path_mapping": "ZIP member path -> x64-merge/ZIP member path"
+    }
+  ],
+  "rust_commands_executed_by_packager": 0,
+  "original_failures_relabelled_as_pass": false,
+  "later_fix_native_evidence": {
+    "commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+    "tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+    "status": "PENDING_AT_HANDOFF_NOT_INCLUDED_IN_THIS_CI_ARCHIVE"
+  }
+}

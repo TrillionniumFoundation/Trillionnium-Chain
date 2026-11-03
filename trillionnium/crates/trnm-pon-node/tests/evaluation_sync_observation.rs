@@ -1,4 +1,7 @@
 //! Actual pinned public sync consumes a typed local round without a new RPC.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
+
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -365,6 +368,14 @@ fn optional_sync_inputs_reject_before_open_without_changing_old_defaults() {
 
 #[test]
 fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
+    if current_elf_host::execute_in_fixed_host(
+        "evaluation_sync_observation",
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
+
     let dir = tempfile::tempdir().unwrap();
     let now = ingress::now().unwrap();
     let genesis = now - 5000;

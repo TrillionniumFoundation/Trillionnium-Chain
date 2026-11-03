@@ -43,8 +43,6 @@ jobs:
         run: python3 scripts/ci/test_pq_provider_ci.py
       - name: Check original public Host CI ownership and failure controls
         run: python3 scripts/ci/test_from_zero_host_ci.py
-      - name: Check Cargo architecture Host binding and failure controls
-        run: python3 scripts/ci/test_architecture_delivery_host.py
       - name: Run actual repository-truth checks
         run: bash scripts/ci/ci_job.sh repository-truth
       - name: Verify source remained unchanged

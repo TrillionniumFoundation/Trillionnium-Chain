@@ -5216,3 +5216,124 @@ Console diagnostics do not establish the cause of an older failed run.
 Validate the recovered combination under the original profiles and retain
 source-bound raw results. Host fixture acceptance, original public-service
 windows, work/security qualification and public activation remain separate.
+
+### 2026-11-03 readiness composition adopts the complete owner Host framework
+
+The isolated readiness Draft preserves its complete `4a32fe34` history and
+adopts owner `12171edc890df1611bf68503038bfad3d66a5a88`. The owner's current-ELF
+framework already covers the signed-DAG fixture and eight other exact public
+selectors. Retire the now-overlapping architecture-only Cargo runner and its
+workflow/shard hooks; keep all historical source and negative receipts. The
+active controller, original required workflow, History helper, shard driver and
+376 source pins now match the owner exactly. Only the Cell readiness fixture
+differs among workspace Rust sources. Neither parent's new business assertions are removed.
+
+The [current composition record](../../qualification/cell-rendezvous-readiness-20261103/README.md)
+retains 78 Host, 104 native-driver, 8 shard, 34 source-integrity, 16 boundary,
+34 corpus and 22 claim controls, plus actual source pins, original CI contract,
+preflight and formatting checks. Two sparse-import failures and the exact Git
+input restoration remain recorded. These are local controls, not a provisioned
+public Host or a new native execution. The original hosted workspace and owner
+CAS/History regressions still require their exact combined source. No prior DA,
+CPU, service or failure receipt is relabeled; original resource/window/work
+requirements and HOLD conditions remain.
+
+### 2026-11-03 committed-CAS and original public fixture continuation
+
+Preserve published `8a74a9e42a9efbc52d83e861f64f03efd40f1406`, including
+the concurrent local/owner CAS test split and History completion fences, their recovered formatting and the
+post-observation bounded signed-DAG failure diagnostics. The
+[runtime fixture record](../../evidence/pon-runtime-fixture-closure-20261103/README.md)
+retains the old-production COMMIT counterexample, the initial pre-CAS error-code
+regression, both pinned-peer fixture failures and their original native outcomes.
+
+A successfully committed and fully signed witness CAS keeps its reconciliation
+receipt when the final completion crosses the original deadline. Current and
+the real socket write retain the original absolute cutoff. Local state aligns
+only after authenticating the matching receipt, then rejects late live use.
+Known local CAS contradictions keep the incoming observed-checkpoint category
+without signing or transport. The concurrent fresh-client fork control still
+reaches the real owner CAS check; both persistent-head assertions remain.
+
+Nine original public integration selectors may delegate their current ELF and
+original compiled CLI to the existing fixed Host controller. Complete source,
+job, process, cwd, binary and root-sealed parent identities are checked; actual
+native Host verification and original assertions remain. A stable nonblocking
+parent lock closes the cross-receipts ownership race. Only the new exact-fixture
+mode may reuse a freshly revalidated lease. Old controller modes still refuse
+preexisting parents; native retries, larger budgets and shared-parent cleanup
+are absent. The original single-thread required workflow remains unchanged.
+
+The local peer fixture now owns a real service CPU domain and activates its
+prepared fork through the public paid Submit path. It joins the old service
+before reopening with the same domain. Its original 30-second polling limit,
+10-second owner-binding wait, two-second policy and 34 assertions remain. The
+formatter copy includes the existing nested fresh-challenge module; this does
+not supersede the original CONFIRMATION_TARGET business failure.
+
+The first composed complete Node run executes all 971 registered entries with
+947 passes, one Unix-listener EPERM failure before witness ready, and 23 original
+ignored entries. History's 25 meaningful controls and all new CAS boundary
+controls pass. Host adapter controls pass 78/78, including real pidfd/owned-PG
+cleanup and flock conflicts; root/systemd mocks do not certify hosted isolation.
+Later fixture composition changes embedded-source bytes, requiring a separately
+identified final library build/run. Exact source records retain that distinction.
+
+Original four-second/F0/three-campaign confirmation, work-cost security,
+independent hardware/operators/evaluation, quantum/DAA, custody, external-effect
+safety, whole-chain PQ and activation remain HOLD under their original owners
+and exit conditions. No metric or local component result closes those gates.
+
+The restored executor retained all source and completed validation records, but
+the later full Node process became unavailable without a terminal result. Keep
+its partial log and UNKNOWN outcome. The subsequent concurrent `8a74a9e` test
+separates local guard refusal from real-owner fork refusal; retain it and remove
+the temporary local CAS error-category compatibility change. Rebuild and execute
+the final combination under the original profiles and limits.
+
+### 2026-11-03 source-bound History and committed-CAS regression validation
+
+The recovered History fences now have an executed
+[validation record](../../evidence/pon-history-close-deadline-20261103/validation/README.md).
+Preserve the original `9f046408` formatter failure, the interrupted direct Cargo
+invocation, original-profile rustc SIGKILL and later missing-terminal UNKNOWN
+outcome. The unmodified release profile is a separate functional check; its
+success does not qualify the original test profile or ARM CPU budgets.
+
+Freeze `3898f6a6` and `8a74a9e4` separately: nine and ten selected native
+controls pass, with clean before/after source and binary identities. Their
+formatter, full workspace/all-target/all-feature strict Clippy, source-pins,
+negative source-integrity controls, locked graphs and repository contracts pass.
+The original offline fuzz dependency miss remains recorded; locked resolution
+then succeeds without changing either lockfile. Their CodeQL aggregates succeed
+only for those source identities.
+
+Preserve the full concurrent `b28098c092dca72165c0d26054fce95a8636d777`
+continuation and validate its freshly built release executable independently.
+The [composed validation record](../../evidence/pon-history-close-deadline-20261103/validation-b280/README.md)
+retains 14 passing native controls: seven History controls, three retained
+client/store CAS controls, and four new pre-COMMIT/late-Current/late-write/
+committed-alignment controls. None failed or was ignored. The 78 unique local
+Host adapter/controller controls and 68 source/integrity controls pass. The
+aggregate controller invocation imports the earlier 41-control subset, so those
+repeated executions do not increase the unique denominator. Actual pidfds,
+flock and owned-child cleanup remain distinct from mocked Host/systemd setup.
+The original fixed-Host positive selectors still need hosted acceptance.
+
+Exact source checks, original formatter, strict Clippy, both locked Linux
+graphs, all 376 source pins, the embedded inventory and repository links pass on
+that composed source. Every native result remains release-profile functional
+evidence, with no changed acceptance budget or qualification flag. The cleanup-
+only deadline interval remains statically covered without a separately injected
+runtime case. The original complete-workspace, service and CPU gates remain.
+
+Read the retained `116a3caf` protocol-contract ZIP as data only and bind its
+digest/size/source to the GitHub artifact metadata. The five named tests pass,
+but the separate manifest still fails `CONFIRMATION_TARGET`. Baseline confirms;
+the paired original four-second run has seven successful submissions, only two
+completed History imports/replays, a third challenge-stage errno 11 refusal,
+and no confirmation. This narrows the observed honest path without assigning
+server root cause or public amplification. Calling-thread and nested timing
+scopes remain separate. Work security, original public service, independent
+operators/evaluators, quantum/DAA, model benefit, custody, economics, external
+effects, whole-chain PQ, release and activation remain HOLD.

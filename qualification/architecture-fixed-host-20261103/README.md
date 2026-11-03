@@ -1,5 +1,15 @@
 # Complete architecture tests in the existing fixed Host
 
+**Historical candidate, superseded in the current composition.** The active
+architecture-only Cargo runner described here was replaced by the owner's
+current-ELF public-fixture framework from `b28098c092dca72165c0d26054fce95a8636d777`,
+retained in `12171edc890df1611bf68503038bfad3d66a5a88`. This file preserves its
+actual original failures and controls. To reproduce these historical helper
+commands, check out `4204c4b0b1300cbb5d5325d9915a161173983491` in a separate
+worktree. The current integration is documented in
+[the readiness composition](../cell-rendezvous-readiness-20261103/README.md).
+No original native failure is promoted by supersession.
+
 This candidate repairs an actual runtime fixture failure. It does not qualify
 the original four-second, sixteen-hostile-client service budget or declare a
 consensus architecture winner.

@@ -726,7 +726,22 @@ impl DurableWitness {
                     )
                     .map_err(crypto)?,
                 );
-                observe_phase!(observation, ServiceFinal, deadline(until))?;
+                // A successful CAS has already committed its exact successor.
+                // Keep the completed, signed receipt for the client's existing
+                // reconciliation path even when COMMIT/signing crossed `until`.
+                // The client still authenticates the complete reply and aligns
+                // its local commit before refusing late live use. Current has
+                // no such committed outcome; serve_one also retains the same
+                // absolute write deadline for every reply.
+                observe_phase!(
+                    observation,
+                    ServiceFinal,
+                    if request[4] == 2 {
+                        Ok(())
+                    } else {
+                        deadline(until).map(|_| ())
+                    }
+                )?;
                 Ok(reply)
             }
         )

@@ -1,4 +1,7 @@
 //! Actual native replay and process-cut tests on private valueless development stores.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
+
 use serde_json::Value;
 use std::{
     fs,
@@ -1459,6 +1462,14 @@ fn test_authentication_options_are_scoped_to_network_commands() {
 fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
     use trnm_crypto_primitives::{public_key_hex, signing_key_from_hex};
     use trnm_protocol::pon_wire::hash;
+
+    if current_elf_host::execute_in_fixed_host(
+        "native_node",
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
 
     let temp = tempfile::tempdir().unwrap();
     let genesis_time = ingress::now().unwrap() - 100;

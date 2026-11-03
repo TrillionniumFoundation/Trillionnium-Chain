@@ -1,6 +1,14 @@
 # Cell rendezvous fixture readiness — original-budget candidate
 
-This candidate composes owner `9f04640877078204d367f753eba684d94e705a74`
+The current composition adopts owner
+`12171edc890df1611bf68503038bfad3d66a5a88`, including its complete current-ELF
+fixed-Host framework. The only workspace Rust difference from that owner is the Cell
+rendezvous readiness fixture. See **Current Host framework supersession** below
+for the current commands and source-bound control results. The earlier sections
+retain the initial candidate's exact results, not qualification of this later
+composition.
+
+The initial candidate composes owner `9f04640877078204d367f753eba684d94e705a74`
 and fixed-Host candidate `4204c4b0b1300cbb5d5325d9915a161173983491`.
 It adds a real worker-initialization handshake to the existing test fixture.
 The only other Rust edit is two formatting-only line wraps in the owner's
@@ -66,8 +74,11 @@ No local native qualification of the History test or whole workspace is claimed.
 
 ## Reproduce the positive and negative
 
-From this candidate checkout, with Rust 1.95 on PATH and independent Cargo
-home/target directories:
+For these exact historical receipts, use a separate checkout of
+`801bc063d64eff483cbd52804debfa6638cf96dd`, with Rust 1.95 on PATH and
+independent Cargo home/target directories. Its old architecture-only helper
+has been superseded in the current composition; use the current commands below
+when validating the current source.
 
 ```sh
 bash scripts/project-preflight.sh
@@ -108,7 +119,7 @@ and the explicitly corrected first discovery receipt field. Verbose Cargo
 metadata is reproducible; its exact stdout hash and complete normalized
 resolved graph are retained without the large repeated raw listing.
 
-The existing fixed-Host source from #697 is unchanged. Its resource limits,
+In that initial candidate, the fixed-Host source from #697 was unchanged. Its resource limits,
 source/binary/environment binding, actual controller readback, two original
 tests and 18 business records remain required. This local DA result does not
 qualify that original hosted architecture run.
@@ -170,3 +181,64 @@ must actually execute on the combined source; their status remains pending.
 The DA library/dependency sources, fixed-Host workflow and runner inputs are
 unchanged from the previous qualified source. This merge does not close the
 original service or performance gates.
+
+## Current Host framework supersession
+
+The target branch subsequently introduced its own complete current-ELF Host
+adapter in `b28098c092dca72165c0d26054fce95a8636d777`, retained by
+`af570eaef44870ba3ec1f3d5be2cbdde2981931d` and the evidence-only
+`12171edc890df1611bf68503038bfad3d66a5a88`. That implementation covers nine
+exact public fixture selectors, including the architecture comparison. Keeping
+the earlier Cargo runner active would leave two overlapping provisioning modes;
+its old path also refuses the sealed parent created by the new fixture path.
+
+The new merge therefore retains the complete owner implementation and retires
+the earlier architecture-only runner and its hook. The original workflow,
+History helper, shard driver/control and all 376 corpus entries now exactly
+match the owner. All old source remains reachable in first parent
+`4a32fe3418ea9b6eb18a44c93d8a282fa83fb426`; the original failure, nine earlier
+adapter controls and historical qualification files remain retained. Removing
+a superseded active helper is not evidence that its native gate passed.
+
+The adopted path launches the already compiled current test ELF, binds the
+actual source/job/process/cwd/binary and original compiled CLI, checks the real
+kernel Host, and revalidates a root-sealed fixed-parent lease. A generic marker
+cannot authorize execution. The full original signed-DAG test still produces
+18 samples and runs its original business reader; its other original test
+remains in the full workspace command. No new Cargo invocation, native retry,
+larger Host allocation, confirmation window or request deadline is introduced.
+
+The actual current controls pass: **78 Host adapter/controller/lease/process,
+104 native driver, 8 shard, 34 source integrity, 16 project boundary, 34 corpus
+and 22 claim controls**. The actual 376-pin checker, original CI contract,
+preflight and complete workspace formatting also pass. Two earlier import
+failures are retained: this sparse checkout initially lacked the owner's
+`architecture_compare.py`, then its synthetic control module. Both were
+restored byte-for-byte from the same Git index; only the affected Host suite
+was rerun. No production source or test expectation was edited to fix imports.
+
+`OWNER_12171_MERGE.json`, `OWNER_12171_CONTROLS.json` and
+`OWNER_12171_HOST_CONTROLS.json` bind these observations. The control scripts
+are retained under `owner-12171-controls/`; their recorded absolute scratch
+paths describe the actual invocation, while the commands below reproduce the
+checks from a current complete checkout:
+
+```sh
+bash scripts/project-preflight.sh
+python3 scripts/ci/test_from_zero_host_ci.py -v
+python3 scripts/ci/test_run_from_zero_native.py -v
+python3 scripts/ci/test_rust_baseline_shards.py -v
+python3 scripts/ci/test_ci_source_integrity.py -v
+python3 scripts/ci/test_project_boundary.py -v
+python3 scripts/ci/test_pq_research_integration.py -v
+python3 scripts/ci/test_pq_chain_claim_guard.py -v
+python3 scripts/ci/check_pq_research_integration.py
+python3 scripts/ci/check_ci_contract.py
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+```
+
+This merge preserves the owner's committed-CAS production correction and new
+native regressions unchanged. Their fresh original hosted execution is still
+required. The earlier 174-test DA receipt is not relabeled as this merged
+binary. All original service, work-cost, 4-second/16-hostile, 30-second and
+activation gates retain their original status and acceptance conditions.

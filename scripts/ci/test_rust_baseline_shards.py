@@ -193,14 +193,6 @@ class RustShardTests(unittest.TestCase):
         self.assertEqual((row['status'], row['exit_code']), ('failed', 7))
         self.assertEqual(row['before'], row['after'])
 
-    def test_zero_child_without_current_host_execution_stays_failed(self):
-        with patch.dict(os.environ, self.child('exit 0\n'), clear=True):
-            self.assertNotEqual(shards.run_shard(self.args, self.root), 0)
-        row = json.loads(self.args.output.read_text())
-        self.assertEqual((row['status'], row['exit_code']), ('failed', 0))
-        self.assertEqual(row['before'], row['after'])
-        self.assertIn('error', row)
-
     def test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner(self):
         file = self.root / 'scripts/ci/ci_job.sh'
         environment = self.child('printf changed >> "$SHARD_TEST_SOURCE"\nexit 0\n')

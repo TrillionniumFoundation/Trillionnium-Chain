@@ -1,5 +1,10 @@
 # History completion deadline candidate, 2026-11-03
 
+This is the historical recovered-candidate snapshot. Subsequent execution is
+recorded separately for [3898/8a74](validation/README.md) and the later
+[b280 composition](validation-b280/README.md). The original pending/failure
+record below is retained for its original source and time.
+
 This candidate repairs the ordinary History wrappers' successful return after
 mandatory CPU settlement and epoch closure. It is based on parent
 `45962558a7133375b16c0ac2600f2edb4a115585`, tree
