@@ -1,0 +1,80 @@
+{
+  "production_source": "/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "production_sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+  "original_library_error_type": "component harness uses boxed errors, not a complete Node build",
+  "command": [
+    "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+    "--edition=2021",
+    "-C",
+    "opt-level=3",
+    "-L",
+    "dependency=/tmp/chain-cell-target-20261103/debug/deps",
+    "/tmp/chain-host-open-probe-20261103/main.rs",
+    "-o",
+    "/tmp/chain-host-open-probe-20261103/fresh-open-probe",
+    "--extern",
+    "serde=/tmp/chain-cell-target-20261103/debug/deps/libserde-3bd1ca99d837caa4.rlib",
+    "--extern",
+    "serde_json=/tmp/chain-cell-target-20261103/debug/deps/libserde_json-bfa9b4537b69e7ab.rlib",
+    "--extern",
+    "rustix=/tmp/chain-cell-target-20261103/debug/deps/librustix-29e439e872df5563.rlib"
+  ],
+  "dependencies": {
+    "serde": {
+      "path": "/tmp/chain-cell-target-20261103/debug/deps/libserde-3bd1ca99d837caa4.rlib",
+      "sha256": "bb68143b7b53463a500fe9ed88a2a03fe32e18159764313030d718694588620c"
+    },
+    "serde_json": {
+      "path": "/tmp/chain-cell-target-20261103/debug/deps/libserde_json-bfa9b4537b69e7ab.rlib",
+      "sha256": "9df838b567664d062c3c025cd938e10e5d2c24a3d57f61d976cf7c3a92a690a9"
+    },
+    "rustix": {
+      "path": "/tmp/chain-cell-target-20261103/debug/deps/librustix-29e439e872df5563.rlib",
+      "sha256": "6b85cb8268b9029bd18ee53be52814556ca5cd15d137843d3ac79c6cabb32454"
+    }
+  },
+  "rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "production_source_edited": false,
+  "compile": {
+    "argv": [
+      "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+      "--edition=2021",
+      "-C",
+      "opt-level=3",
+      "-L",
+      "dependency=/tmp/chain-cell-target-20261103/debug/deps",
+      "/tmp/chain-host-open-probe-20261103/main.rs",
+      "-o",
+      "/tmp/chain-host-open-probe-20261103/fresh-open-probe",
+      "--extern",
+      "serde=/tmp/chain-cell-target-20261103/debug/deps/libserde-3bd1ca99d837caa4.rlib",
+      "--extern",
+      "serde_json=/tmp/chain-cell-target-20261103/debug/deps/libserde_json-bfa9b4537b69e7ab.rlib",
+      "--extern",
+      "rustix=/tmp/chain-cell-target-20261103/debug/deps/librustix-29e439e872df5563.rlib"
+    ],
+    "start_unix_ns": 1793737257094654122,
+    "end_unix_ns": 1793737257754275362,
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "run": {
+    "argv": [
+      "/tmp/chain-host-open-probe-20261103/fresh-open-probe"
+    ],
+    "start_unix_ns": 1793737257754517064,
+    "end_unix_ns": 1793737257869784289,
+    "exit": 0,
+    "stdout_sha256": "8ccf8250d5fdd0d49df714f36413214fb3b328dfc190e63896523b476bbe7e54",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "production_after_sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+  "binary_sha256": "b65da260123d95113cd48392c244e85e7e666005606515455bd94c7ebd3ba2bd",
+  "source_manifest": {
+    "observed_production_reader.rs": "8f56a321b5224270ec6897dcead0581c436f80ede3255a2ae6d0e968d1ba6668",
+    "probe_addition.rs": "bd007009035cee9ba5ef40e44050ba00934b69e79b9e66dc522ca10419df4334",
+    "build_and_run.py": "1407a6dad9ccc555e3db585a5950709bccbf11f13a0499bf2804915e069f9275",
+    "main.rs": "17802b078be24768ae4d10f723a2dbf60c34cb72be4bcbb6dd702273a4f50815"
+  }
+}
