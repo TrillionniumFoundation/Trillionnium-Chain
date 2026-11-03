@@ -1,0 +1,1670 @@
+{
+  "comparability": "Different stopping points perform different work; nested stage totals overlap.",
+  "observations": [
+    {
+      "authenticated_backend": false,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 918183112,
+      "dispatch_wall_ns": 3675600549,
+      "local_commit": "3f3a5c5017367eefc0970d512920a6eaa4a29c35",
+      "local_tree": "ad6b9160edb3306ed2a1fdddb99c71dc7a166c55",
+      "log_file": "baseline-large-genesis.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 3673086940,
+      "remaining_paid_credit_ns": -754903828,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "record",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "packet",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "delta",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_state",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_history",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "publish",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "read_active",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "state_at",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execute",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "admission",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_commitment",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "account_graph",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "persisted_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execution_parent_binding",
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 10,
+        "cold_roots": 0,
+        "complete_computations": 4,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 10,
+        "offers": 2,
+        "offers_absent_or_refused": 2,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 2,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 21078,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 41,
+        "partition_roots_reused": 16309
+      },
+      "credited_refill_ns": 693311194,
+      "dispatch_wall_ns": 2776245228,
+      "local_commit": "3f3a5c5017367eefc0970d512920a6eaa4a29c35",
+      "local_tree": "ad6b9160edb3306ed2a1fdddb99c71dc7a166c55",
+      "log_file": "baseline-auth-parent.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2774009147,
+      "remaining_paid_credit_ns": -80697953,
+      "stage_deltas": [
+        {
+          "calls": 13,
+          "cpu_ns": 684857,
+          "stage": "record",
+          "wall_ns": 702712
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 292819432,
+          "stage": "packet",
+          "wall_ns": 292843874
+        },
+        {
+          "calls": 7,
+          "cpu_ns": 691558,
+          "stage": "delta",
+          "wall_ns": 697625
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1029653133,
+          "stage": "verify_state",
+          "wall_ns": 1029749962
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 453482151,
+          "stage": "verify_history",
+          "wall_ns": 453498053
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 1362707795,
+          "stage": "publish",
+          "wall_ns": 1362899952
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 645186439,
+          "stage": "read_active",
+          "wall_ns": 645219705
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 645223889,
+          "stage": "state_at",
+          "wall_ns": 645257179
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 701590921,
+          "stage": "execute",
+          "wall_ns": 702722967
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2766827390,
+          "stage": "admission",
+          "wall_ns": 2768183497
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1172017065,
+          "stage": "complete_commitment",
+          "wall_ns": 1172234386
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 583668012,
+          "stage": "complete_state_root",
+          "wall_ns": 583846737
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 930975,
+          "stage": "account_graph",
+          "wall_ns": 934918
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 291563756,
+          "stage": "persisted_state_root",
+          "wall_ns": 291582395
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 305675322,
+          "stage": "execution_parent_binding",
+          "wall_ns": 306117983
+        }
+      ]
+    },
+    {
+      "authenticated_backend": false,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 748980279,
+      "dispatch_wall_ns": 3143218076,
+      "local_commit": "09d56ed6d795e4fe5eca30b3fc0d59956c9f9c2e",
+      "local_tree": "dd0b2ab595d6fa14a9ecaf6eca33aaf3b02bf2d7",
+      "log_file": "fixed-large-genesis.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 3141448758,
+      "remaining_paid_credit_ns": -392468479,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "record",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "packet",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "delta",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_state",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_history",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "publish",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "read_active",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "state_at",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execute",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "admission",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_commitment",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "account_graph",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "persisted_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execution_parent_binding",
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 12,
+        "cold_roots": 0,
+        "complete_computations": 5,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 12,
+        "offers": 2,
+        "offers_absent_or_refused": 2,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 2,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 25288,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 42,
+        "partition_roots_reused": 19573
+      },
+      "credited_refill_ns": 665396338,
+      "dispatch_wall_ns": 2806255094,
+      "local_commit": "09d56ed6d795e4fe5eca30b3fc0d59956c9f9c2e",
+      "local_tree": "dd0b2ab595d6fa14a9ecaf6eca33aaf3b02bf2d7",
+      "log_file": "fixed-auth-parent.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2804676256,
+      "remaining_paid_credit_ns": -139279918,
+      "stage_deltas": [
+        {
+          "calls": 13,
+          "cpu_ns": 598874,
+          "stage": "record",
+          "wall_ns": 615241
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 273672315,
+          "stage": "packet",
+          "wall_ns": 273680333
+        },
+        {
+          "calls": 7,
+          "cpu_ns": 738885,
+          "stage": "delta",
+          "wall_ns": 744866
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1254548248,
+          "stage": "verify_state",
+          "wall_ns": 1254561194
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 704366080,
+          "stage": "verify_history",
+          "wall_ns": 704373224
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 1562448467,
+          "stage": "publish",
+          "wall_ns": 1562462235
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 507389101,
+          "stage": "read_active",
+          "wall_ns": 507411377
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 507427234,
+          "stage": "state_at",
+          "wall_ns": 507449512
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 672946512,
+          "stage": "execute",
+          "wall_ns": 673647145
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2797770128,
+          "stage": "admission",
+          "wall_ns": 2798503297
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 1392750587,
+          "stage": "complete_commitment",
+          "wall_ns": 1392776001
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 692008749,
+          "stage": "complete_state_root",
+          "wall_ns": 692021434
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1149620,
+          "stage": "account_graph",
+          "wall_ns": 1155291
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 272480663,
+          "stage": "persisted_state_root",
+          "wall_ns": 272495589
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 292273893,
+          "stage": "execution_parent_binding",
+          "wall_ns": 292299540
+        }
+      ]
+    },
+    {
+      "authenticated_backend": false,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 746662852,
+      "dispatch_wall_ns": 3129980087,
+      "local_commit": "86ae806b6dda372bb475d4f2d607eeca4230504b",
+      "local_tree": "cae15dec91d4018e58447c297479c184e2212bb1",
+      "log_file": "combined-large-genesis.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 3117776531,
+      "remaining_paid_credit_ns": -371113679,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "record",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "packet",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "delta",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_state",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_history",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "publish",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "read_active",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "state_at",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execute",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "admission",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_commitment",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "account_graph",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "persisted_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execution_parent_binding",
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 12,
+        "cold_roots": 0,
+        "complete_computations": 5,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 12,
+        "offers": 2,
+        "offers_absent_or_refused": 2,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 2,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 25288,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 42,
+        "partition_roots_reused": 19573
+      },
+      "credited_refill_ns": 663461889,
+      "dispatch_wall_ns": 2797272530,
+      "local_commit": "86ae806b6dda372bb475d4f2d607eeca4230504b",
+      "local_tree": "cae15dec91d4018e58447c297479c184e2212bb1",
+      "log_file": "combined-auth-parent.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2795011881,
+      "remaining_paid_credit_ns": -131549992,
+      "stage_deltas": [
+        {
+          "calls": 13,
+          "cpu_ns": 621060,
+          "stage": "record",
+          "wall_ns": 636815
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 273554857,
+          "stage": "packet",
+          "wall_ns": 273719059
+        },
+        {
+          "calls": 7,
+          "cpu_ns": 754826,
+          "stage": "delta",
+          "wall_ns": 760952
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1242337626,
+          "stage": "verify_state",
+          "wall_ns": 1242840750
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 698301882,
+          "stage": "verify_history",
+          "wall_ns": 698585653
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 1553131097,
+          "stage": "publish",
+          "wall_ns": 1553657878
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 506638212,
+          "stage": "read_active",
+          "wall_ns": 506715629
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 506673441,
+          "stage": "state_at",
+          "wall_ns": 506750760
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 672768535,
+          "stage": "execute",
+          "wall_ns": 673902583
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2787806422,
+          "stage": "admission",
+          "wall_ns": 2789562873
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 1381814208,
+          "stage": "complete_commitment",
+          "wall_ns": 1382223770
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 685602103,
+          "stage": "complete_state_root",
+          "wall_ns": 685891150
+        },
+        {
+          "calls": 4,
+          "cpu_ns": 1106821,
+          "stage": "account_graph",
+          "wall_ns": 1111886
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 272376747,
+          "stage": "persisted_state_root",
+          "wall_ns": 272536125
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 292678226,
+          "stage": "execution_parent_binding",
+          "wall_ns": 292712455
+        }
+      ]
+    },
+    {
+      "authenticated_backend": false,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 302560632,
+      "dispatch_wall_ns": 1228683289,
+      "local_commit": "1cdc8338403e06cdf6d6daf3cc8b7d249f4f2a2f",
+      "local_tree": "192e5e04559ac91bf155c2a2dd355ab969ff3179",
+      "log_file": "final-large-genesis.log",
+      "native_result": {
+        "Ok": "ok"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 1205424040,
+      "remaining_paid_credit_ns": 1097136592,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "record",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "packet",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "delta",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_state",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_history",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "publish",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "read_active",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "state_at",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execute",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "admission",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_commitment",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "account_graph",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "persisted_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execution_parent_binding",
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 23,
+        "cold_roots": 0,
+        "complete_computations": 9,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 23,
+        "offers": 4,
+        "offers_absent_or_refused": 4,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 4,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 48466,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 76,
+        "partition_roots_reused": 37517
+      },
+      "credited_refill_ns": 686178010,
+      "dispatch_wall_ns": 2761963622,
+      "local_commit": "1cdc8338403e06cdf6d6daf3cc8b7d249f4f2a2f",
+      "local_tree": "192e5e04559ac91bf155c2a2dd355ab969ff3179",
+      "log_file": "final-large-genesis.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2760106922,
+      "remaining_paid_credit_ns": -73928912,
+      "stage_deltas": [
+        {
+          "calls": 23,
+          "cpu_ns": 956643,
+          "stage": "record",
+          "wall_ns": 993795
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 298208145,
+          "stage": "packet",
+          "wall_ns": 298222214
+        },
+        {
+          "calls": 13,
+          "cpu_ns": 1296120,
+          "stage": "delta",
+          "wall_ns": 1307260
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 1321539962,
+          "stage": "verify_state",
+          "wall_ns": 1321666644
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 873647125,
+          "stage": "verify_history",
+          "wall_ns": 873698656
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 921747279,
+          "stage": "publish",
+          "wall_ns": 922125070
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 513006955,
+          "stage": "read_active",
+          "wall_ns": 513061199
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 883834233,
+          "stage": "state_at",
+          "wall_ns": 883888846
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 225373220,
+          "stage": "execute",
+          "wall_ns": 225985329
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2753258018,
+          "stage": "admission",
+          "wall_ns": 2754316532
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 9,
+          "cpu_ns": 1323379540,
+          "stage": "complete_commitment",
+          "wall_ns": 1323847294
+        },
+        {
+          "calls": 9,
+          "cpu_ns": 649246485,
+          "stage": "complete_state_root",
+          "wall_ns": 649671435
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 1410050,
+          "stage": "account_graph",
+          "wall_ns": 1416737
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 368699715,
+          "stage": "persisted_state_root",
+          "wall_ns": 368700615
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 101437791,
+          "stage": "execution_parent_binding",
+          "wall_ns": 101446399
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 23,
+        "cold_roots": 0,
+        "complete_computations": 9,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 23,
+        "offers": 4,
+        "offers_absent_or_refused": 4,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 4,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 48466,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 76,
+        "partition_roots_reused": 37517
+      },
+      "credited_refill_ns": 683142833,
+      "dispatch_wall_ns": 2745997609,
+      "local_commit": "1cdc8338403e06cdf6d6daf3cc8b7d249f4f2a2f",
+      "local_tree": "192e5e04559ac91bf155c2a2dd355ab969ff3179",
+      "log_file": "final-auth-parent.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2744519145,
+      "remaining_paid_credit_ns": -61376312,
+      "stage_deltas": [
+        {
+          "calls": 23,
+          "cpu_ns": 928112,
+          "stage": "record",
+          "wall_ns": 957167
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 284335307,
+          "stage": "packet",
+          "wall_ns": 284331341
+        },
+        {
+          "calls": 13,
+          "cpu_ns": 1240654,
+          "stage": "delta",
+          "wall_ns": 1250954
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 1323495856,
+          "stage": "verify_state",
+          "wall_ns": 1323575075
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 869920239,
+          "stage": "verify_history",
+          "wall_ns": 869916015
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 913133300,
+          "stage": "publish",
+          "wall_ns": 913161050
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 509229034,
+          "stage": "read_active",
+          "wall_ns": 509241329
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 883905905,
+          "stage": "state_at",
+          "wall_ns": 883938405
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 220667767,
+          "stage": "execute",
+          "wall_ns": 221371135
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2737536055,
+          "stage": "admission",
+          "wall_ns": 2738218965
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 9,
+          "cpu_ns": 1323448539,
+          "stage": "complete_commitment",
+          "wall_ns": 1323523650
+        },
+        {
+          "calls": 9,
+          "cpu_ns": 644283258,
+          "stage": "complete_state_root",
+          "wall_ns": 644343459
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 1493816,
+          "stage": "account_graph",
+          "wall_ns": 1501491
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 354439777,
+          "stage": "persisted_state_root",
+          "wall_ns": 354424662
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 99308863,
+          "stage": "execution_parent_binding",
+          "wall_ns": 99298851
+        }
+      ]
+    },
+    {
+      "authenticated_backend": false,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_projection_compared_keys": 0,
+        "partition_projection_uses": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 299100380,
+      "dispatch_wall_ns": 1215163946,
+      "local_commit": "b518e0639b56175ce0fc8361d8be3d479ae113e4",
+      "local_tree": "9db0f5b634cd7e64c84faddd605b806359a78d63",
+      "log_file": "projection-large-genesis.log",
+      "native_result": {
+        "Ok": "ok"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 1150628991,
+      "remaining_paid_credit_ns": 1148471389,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "record",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "packet",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "delta",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_state",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "verify_history",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "publish",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "read_active",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "state_at",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execute",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "admission",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_commitment",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "complete_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "account_graph",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "persisted_state_root",
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "execution_parent_binding",
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 35864,
+        "partition_projection_compared_keys": 21042,
+        "partition_projection_uses": 10,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045
+      },
+      "credited_refill_ns": 754669721,
+      "dispatch_wall_ns": 3036555522,
+      "local_commit": "b518e0639b56175ce0fc8361d8be3d479ae113e4",
+      "local_tree": "9db0f5b634cd7e64c84faddd605b806359a78d63",
+      "log_file": "projection-large-genesis.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2772250757,
+      "remaining_paid_credit_ns": -17581036,
+      "stage_deltas": [
+        {
+          "calls": 30,
+          "cpu_ns": 1150384,
+          "stage": "record",
+          "wall_ns": 1189038
+        },
+        {
+          "calls": 18,
+          "cpu_ns": 378487593,
+          "stage": "packet",
+          "wall_ns": 378551860
+        },
+        {
+          "calls": 17,
+          "cpu_ns": 1603063,
+          "stage": "delta",
+          "wall_ns": 1616775
+        },
+        {
+          "calls": 9,
+          "cpu_ns": 1047728832,
+          "stage": "verify_state",
+          "wall_ns": 1047923888
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 871850560,
+          "stage": "verify_history",
+          "wall_ns": 872040415
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 699141387,
+          "stage": "publish",
+          "wall_ns": 699176144
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 404747426,
+          "stage": "read_active",
+          "wall_ns": 404781363
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 731293175,
+          "stage": "state_at",
+          "wall_ns": 731379563
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 222440034,
+          "stage": "execute",
+          "wall_ns": 223146651
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2325873028,
+          "stage": "admission",
+          "wall_ns": 2589173251
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 439456566,
+          "stage": "activation",
+          "wall_ns": 439607116
+        },
+        {
+          "calls": 10,
+          "cpu_ns": 983350173,
+          "stage": "complete_commitment",
+          "wall_ns": 983547899
+        },
+        {
+          "calls": 10,
+          "cpu_ns": 745305999,
+          "stage": "complete_state_root",
+          "wall_ns": 745508760
+        },
+        {
+          "calls": 6,
+          "cpu_ns": 1591319,
+          "stage": "account_graph",
+          "wall_ns": 1599446
+        },
+        {
+          "calls": 7,
+          "cpu_ns": 531295097,
+          "stage": "persisted_state_root",
+          "wall_ns": 531443371
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 99411299,
+          "stage": "execution_parent_binding",
+          "wall_ns": 99410530
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "complete_root_counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 27,
+        "cold_roots": 0,
+        "complete_computations": 10,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 27,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 35864,
+        "partition_projection_compared_keys": 21042,
+        "partition_projection_uses": 10,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 95,
+        "partition_roots_reused": 44045
+      },
+      "credited_refill_ns": 762166304,
+      "dispatch_wall_ns": 3065835454,
+      "local_commit": "b518e0639b56175ce0fc8361d8be3d479ae113e4",
+      "local_tree": "9db0f5b634cd7e64c84faddd605b806359a78d63",
+      "log_file": "projection-auth-parent.log",
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "outer_dispatch_result": {
+        "Ok": "ok"
+      },
+      "overlapping_stages_do_not_sum": true,
+      "paid_cpu_ns": 2847231272,
+      "remaining_paid_credit_ns": -85064968,
+      "stage_deltas": [
+        {
+          "calls": 30,
+          "cpu_ns": 1146303,
+          "stage": "record",
+          "wall_ns": 1193082
+        },
+        {
+          "calls": 18,
+          "cpu_ns": 365302448,
+          "stage": "packet",
+          "wall_ns": 365330411
+        },
+        {
+          "calls": 17,
+          "cpu_ns": 1631737,
+          "stage": "delta",
+          "wall_ns": 1646077
+        },
+        {
+          "calls": 10,
+          "cpu_ns": 1022409968,
+          "stage": "verify_state",
+          "wall_ns": 1022427518
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 973735860,
+          "stage": "verify_history",
+          "wall_ns": 973767394
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 712198388,
+          "stage": "publish",
+          "wall_ns": 712207529
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 401560353,
+          "stage": "read_active",
+          "wall_ns": 401551180
+        },
+        {
+          "calls": 3,
+          "cpu_ns": 729952949,
+          "stage": "state_at",
+          "wall_ns": 729936628
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 219021704,
+          "stage": "execute",
+          "wall_ns": 219609165
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 2313559604,
+          "stage": "admission",
+          "wall_ns": 2531296871
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 526857903,
+          "stage": "activation",
+          "wall_ns": 526862695
+        },
+        {
+          "calls": 10,
+          "cpu_ns": 960475834,
+          "stage": "complete_commitment",
+          "wall_ns": 960474507
+        },
+        {
+          "calls": 10,
+          "cpu_ns": 728172843,
+          "stage": "complete_state_root",
+          "wall_ns": 728178169
+        },
+        {
+          "calls": 6,
+          "cpu_ns": 1487484,
+          "stage": "account_graph",
+          "wall_ns": 1495693
+        },
+        {
+          "calls": 7,
+          "cpu_ns": 509077751,
+          "stage": "persisted_state_root",
+          "wall_ns": 509098885
+        },
+        {
+          "calls": 1,
+          "cpu_ns": 98236771,
+          "stage": "execution_parent_binding",
+          "wall_ns": 98236630
+        }
+      ]
+    }
+  ],
+  "original_cpu_selectors_passed": false,
+  "schema": "trnm-pq-large-parent-original-observations-v1",
+  "whole_chain_quantum_security_qualified": false
+}

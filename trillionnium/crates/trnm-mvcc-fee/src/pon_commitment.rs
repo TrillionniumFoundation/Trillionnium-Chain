@@ -46,6 +46,19 @@ impl Default for FullRootArithmetic {
 }
 
 impl FullRootArithmetic {
+    /// Complete actual-State root with the original configured validation order.
+    /// This supplies only optional tree arithmetic: profile/account validation
+    /// still runs on every call, before every canonical or wire-bound decision.
+    /// The growth profile retains its independent original commitment grammar.
+    pub fn root_for_config(&self, state: &State, cfg: &Config) -> Result<Hash> {
+        pon_executor::pq_accounts_v2::validate_state(state, cfg)?;
+        if crate::growth_profile_v2::enabled(cfg) {
+            Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
+        } else {
+            self.root(state)
+        }
+    }
+
     fn root(&self, state: &State) -> Result<Hash> {
         // The guard covers only pure arithmetic, never SQL, worker joins or a
         // caller's progress/Host check. Contention and poison keep the original

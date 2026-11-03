@@ -1,0 +1,559 @@
+{
+  "schema": "trnm-dag-parent-refusal-readback-v1",
+  "observations": [
+    {
+      "artifact_id": 13228623338,
+      "original_zip_sha256": "sha256:aa4f451d8ff39620b5c42660496b15997f4a45bdb01268b0737b64b1908ed1a4",
+      "source": {
+        "base": "2e72a989d001cf51bd0aed0e1401526e45db31f1",
+        "candidate": "12fe5f2c1f19704fe7eb635dede6839ed8b1e91e",
+        "kind": "prospective-merge",
+        "prospective_merge": "0357031364787574cb7058b05329aa2e2730f947",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0357031364787574cb7058b05329aa2e2730f947",
+        "tested_tree": "c44112da731e3f958e55eb024e5762d6723ea2c9",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 782174381,
+        "tracked_entries": 6831,
+        "tracked_worktree_verified": true
+      },
+      "runtime_exit_code": 101,
+      "report_sha256": "8be6ea845162fe7c768134814145b7d2d7897b7aae4242e3a213fc152aab42c0",
+      "full_log_sha256": "b14026fb2b9b3749074fa7b3d85f8cad54a86c4718a6dc36281fe4b36211e0d8",
+      "samples": [
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 331255349
+        },
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 274066220
+        },
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 281358905
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 271300022
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 274556900
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 367457162
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 271033820
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 335295279
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 271432666
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 722558862
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 262715284
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 265480539
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 267243093
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 263063720
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 322037318
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 273552937
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 328657520
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 265639001
+        }
+      ],
+      "failure_waived": false,
+      "workload_rerun": false
+    },
+    {
+      "artifact_id": 13229776793,
+      "original_zip_sha256": "sha256:305ee106b95d8e07b1e976e53862ce215da60862c80502800b0111bd77f6b8d5",
+      "source": {
+        "base": null,
+        "candidate": "12fe5f2c1f19704fe7eb635dede6839ed8b1e91e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "12fe5f2c1f19704fe7eb635dede6839ed8b1e91e",
+        "tested_tree": "c44112da731e3f958e55eb024e5762d6723ea2c9",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 782174381,
+        "tracked_entries": 6831,
+        "tracked_worktree_verified": true
+      },
+      "runtime_exit_code": 101,
+      "report_sha256": "88b333e7ff9341d44c5b35a5fdf57ab1f0b8b68b1c14d4b2d52eb072e261753c",
+      "full_log_sha256": "98d1f84c9d3c0025ed13a45bd7d809147ae07ff570a121c550f8086bd3195be6",
+      "samples": [
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 469174151
+        },
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 403305793
+        },
+        {
+          "sample": 0,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 397620792
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 401331452
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 398526922
+        },
+        {
+          "sample": 1,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 459202910
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "signed-reference-dag",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 419232038
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "serial-signed-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 494742211
+        },
+        {
+          "sample": 2,
+          "scenario": "disjoint-recipients",
+          "mode": "concurrent-proposer-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 434615806
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 473840072
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 422340491
+        },
+        {
+          "sample": 0,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 411387816
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 417861078
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 438970221
+        },
+        {
+          "sample": 1,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 480516053
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "signed-reference-dag",
+          "position": 0,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 455510790
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "serial-signed-batches",
+          "position": 1,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 503557116
+        },
+        {
+          "sample": 2,
+          "scenario": "hot-recipient",
+          "mode": "concurrent-proposer-batches",
+          "position": 2,
+          "errors": [
+            "PUBLIC_HOST_KERNEL_PARENT"
+          ],
+          "confirmed_transactions": 0,
+          "finite_business_target_met": false,
+          "native_state_equal": false,
+          "cold_reopen_equal": true,
+          "full_business_latency_ns": 416611124
+        }
+      ],
+      "failure_waived": false,
+      "workload_rerun": false
+    }
+  ],
+  "whole_system_qualified": false,
+  "production_activation": false
+}

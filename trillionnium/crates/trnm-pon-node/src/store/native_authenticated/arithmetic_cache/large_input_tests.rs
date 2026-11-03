@@ -39,6 +39,19 @@ fn large_complete_inputs_keep_actual_accounts_conservation_and_context_checks() 
     assert_eq!(root_material["entry_limit"], 1);
     assert_eq!(root_material["payload_limit_bytes"], 2 * 1024 * 1024);
     assert_eq!(
+        root_material["operation_projection_payload_limit_bytes"],
+        2 * 1024 * 1024
+    );
+    assert_eq!(root_material["counters"]["partition_projection_uses"], 1);
+    assert_eq!(
+        root_material["counters"]["partition_projection_compared_keys"],
+        json!(initial.non_account_count)
+    );
+    assert_eq!(
+        root_material["counters"]["partition_inputs_hashed"],
+        json!(settings.initial.len())
+    );
+    assert_eq!(
         root_material["retained_software_charge_limit_bytes"],
         16 * 1024 * 1024
     );
@@ -77,11 +90,18 @@ fn large_complete_inputs_keep_actual_accounts_conservation_and_context_checks() 
     assert_ne!(account_changed.account_root, initial.account_root);
     assert_eq!(account_changed.non_account_root, initial.non_account_root);
 
+    let projection_uses_before_error = cache.observation()["complete_root_arithmetic"]["counters"]
+        ["partition_projection_uses"]
+        .clone();
     changed.insert("meta:issued".into(), json!(initial.issued + 1));
     let warm = cache.complete(&settings, &changed).unwrap_err();
     let original = complete(&settings, &changed).unwrap_err();
     assert_eq!(warm.to_string(), original.to_string());
     assert_eq!(warm.kind(), original.kind());
+    assert_eq!(
+        cache.observation()["complete_root_arithmetic"]["counters"]["partition_projection_uses"],
+        projection_uses_before_error
+    );
     changed.insert("account:malformed".into(), json!({"balance":0}));
     changed.insert("zz-invalid-number".into(), json!(-0.0));
     let before =

@@ -7,10 +7,10 @@ use super::StateCommitment;
 use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_roots;
 use crate::account_archive_prototype::native_store::LiftCache;
 use crate::{Result, Settings};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::VecDeque;
 use std::io::{self, Write};
-use trnm_mvcc_fee::pon_executor::State;
+use trnm_mvcc_fee::pon_executor::{NonAccountRootProjection, State};
 use trnm_protocol::pon_wire::Hash;
 
 mod root_arithmetic;
@@ -69,12 +69,14 @@ impl ArithmeticCache {
         value
     }
 
-    fn complete_root(
+    fn complete_root<'a>(
         &self,
         settings: &Settings,
-        state: &State,
+        state: &'a State,
         current_bytes: Option<&[u8]>,
+        projection: &mut Option<NonAccountRootProjection<'a>>,
     ) -> trnm_mvcc_fee::pon_executor::Result<Hash> {
+        *projection = None;
         let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
         // The separate root entry is genesis arithmetic. It must not evict the
         // offered successor tree or force a large child->genesis->child rebuild.
@@ -96,7 +98,8 @@ impl ArithmeticCache {
                 return Ok(entry.value);
             }
         }
-        self.root_arithmetic.calculate(settings, state)
+        self.root_arithmetic
+            .calculate_with_projection(settings, state, projection)
     }
 
     fn retain_initial_complete_root(
@@ -211,14 +214,22 @@ impl ArithmeticCache {
             }
         }
         self.root_arithmetic.complete_computation();
+        // A one-use calculation result belongs only to this immutable State.
+        // It is never stored in Material, CompleteEntry or another operation.
+        let projection = Cell::new(None);
         let value = commitment_from_complete_state_with_roots(
             settings,
             state,
             Some(&self.lifts),
-            || self.complete_root(settings, state, bytes.as_deref()),
+            || {
+                let mut current = None;
+                let root = self.complete_root(settings, state, bytes.as_deref(), &mut current);
+                projection.set(current);
+                root
+            },
             |partition| {
                 self.root_arithmetic
-                    .calculate_non_accounts(settings, partition)
+                    .calculate_non_accounts(settings, partition, projection.take())
             },
         )
         .map_err(|error| {

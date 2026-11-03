@@ -1,9 +1,11 @@
 //! Bounded reuse of the original sparse-tree arithmetic from complete inputs.
 //!
-//! The only public calculation accepts actual key/value bytes. Every call hashes
-//! every supplied row with the original key/leaf domains and checks all original
-//! wire bounds and key-path collisions. No caller can install leaf hashes, a
-//! root claim, a partial update, a row-set verdict or an authenticated capability.
+//! Entry calculations accept actual key/value bytes, hash every supplied row
+//! with the original key/leaf domains and check all original wire bounds and
+//! key-path collisions. One complete calculation may also yield a bounded,
+//! opaque subset projection for one later original reduction. No caller can
+//! install raw leaf hashes, a root claim, a partial update, a row-set verdict
+//! or an authenticated capability.
 //!
 //! One retained entry groups the sorted original leaf hashes by a fixed prefix.
 //! A partition root is reused only when its complete original hash tuple slice
@@ -25,6 +27,20 @@ struct Partition {
 struct Material {
     leaves: Box<[(Hash, Hash)]>,
     partitions: Box<[Partition]>,
+}
+
+/// One bounded subset of a successful complete input, not a root claim.
+/// Only the entries calculation can create it; consuming it performs the
+/// original reducer. It has no public fields, hash constructor or codec and
+/// cannot be cloned. Callers must bind it to their immutable current input.
+pub struct StateRootProjection {
+    leaves: Box<[(Hash, Hash)]>,
+}
+
+impl StateRootProjection {
+    pub fn payload_bytes(&self) -> usize {
+        std::mem::size_of_val(self.leaves.as_ref())
+    }
 }
 
 /// Arithmetic work from the last successful complete input, not a validation
@@ -93,6 +109,62 @@ impl StateRootArithmetic {
         }
         self.root_from_hashes(leaves)
             .map_err(StateRootInputError::Wire)
+    }
+
+    /// Hash every complete current entry once and optionally retain a bounded
+    /// projection of those same tuples. Refusal drops the whole projection;
+    /// it never changes the complete root or any original input error.
+    pub fn root_from_entries_with_projection<K, V, E>(
+        &mut self,
+        entries: impl IntoIterator<Item = Result<(K, V), E>>,
+        mut select: impl FnMut(&[u8]) -> bool,
+    ) -> Result<(Hash, Option<StateRootProjection>), StateRootInputError<E>>
+    where
+        K: AsRef<[u8]>,
+        V: AsRef<[u8]>,
+    {
+        let mut leaves = Vec::new();
+        let mut selected = Some(Vec::new());
+        let limit = self.max_retained_payload_bytes / std::mem::size_of::<(Hash, Hash)>();
+        for row in entries {
+            let (key, value) = row.map_err(StateRootInputError::Input)?;
+            let (key, value) = (key.as_ref(), value.as_ref());
+            if leaves.len() == 65_536 || key.len() > 160 || value.len() > 4096 {
+                return Err(StateRootInputError::Wire(WireError::Limit));
+            }
+            let leaf = (
+                hash(b"state-key", &[key]),
+                hash(b"state-leaf", &[key, value]),
+            );
+            if select(key) {
+                if let Some(rows) = &mut selected {
+                    if rows.len() < limit {
+                        rows.push(leaf);
+                    } else {
+                        selected = None;
+                    }
+                }
+            }
+            leaves.push(leaf);
+        }
+        let root = self
+            .root_from_hashes(leaves)
+            .map_err(StateRootInputError::Wire)?;
+        Ok((
+            root,
+            selected.map(|leaves| StateRootProjection {
+                leaves: leaves.into_boxed_slice(),
+            }),
+        ))
+    }
+
+    /// Consume only tuples derived by the complete-input method above. No raw
+    /// hash vector or stored-root claim can enter this calculation.
+    pub fn root_from_projection(
+        &mut self,
+        projection: StateRootProjection,
+    ) -> Result<Hash, WireError> {
+        self.root_from_hashes(projection.leaves.into_vec())
     }
 
     // Private: raw hashes can never enter through an external/root-claim API.

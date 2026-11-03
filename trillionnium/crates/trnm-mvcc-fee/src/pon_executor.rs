@@ -239,11 +239,9 @@ fn validate_canonical(v: &Value) -> Result<()> {
 fn unescaped_ascii_json(bytes: &[u8]) -> bool {
     const HIGH: u64 = 0x8080_8080_8080_8080;
     const ONE: u64 = 0x0101_0101_0101_0101;
-    let mut chunks = bytes.chunks_exact(8);
-    for chunk in &mut chunks {
-        let mut word_bytes = [0; 8];
-        word_bytes.copy_from_slice(chunk);
-        let word = u64::from_le_bytes(word_bytes);
+    let (chunks, tail) = bytes.as_chunks::<8>();
+    for word_bytes in chunks {
+        let word = u64::from_le_bytes(*word_bytes);
         if word & HIGH != 0 {
             return false;
         }
@@ -254,9 +252,7 @@ fn unescaped_ascii_json(bytes: &[u8]) -> bool {
             return false;
         }
     }
-    chunks
-        .remainder()
-        .iter()
+    tail.iter()
         .all(|&byte| (0x20..=0x7f).contains(&byte) && byte != b'"' && byte != b'\\')
 }
 
@@ -354,6 +350,9 @@ pub fn root_with_arithmetic(
             StateRootInputError::Wire(_) => "LIMIT",
         })
 }
+
+mod root_projection;
+pub use root_projection::{root_with_non_account_projection, NonAccountRootProjection};
 
 #[cfg(test)]
 mod root_arithmetic_tests;

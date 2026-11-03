@@ -176,6 +176,7 @@ const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
 mod authenticated_pending_activation;
+mod canonical_json;
 mod detached_admission;
 pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
 #[cfg(test)]
@@ -2330,7 +2331,11 @@ impl Node {
             self.authenticated_arithmetic
                 .state_root(&self.settings, state)?
         } else {
-            self.settings.state_root(state)?
+            // Re-encode and hash every current row before reusing only the
+            // original bounded partition arithmetic already used by M06.
+            // Configured account/profile validation keeps its original order.
+            self.commitment_root_arithmetic
+                .root_for_config(state, &self.settings.app)?
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -2528,12 +2533,21 @@ impl Node {
                 ))
                 .local_integrity()
             })?;
-            let value: Value = serde_json::from_slice(bytes)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            canonical_bytes.clear();
-            serde_json::to_writer(&mut canonical_bytes, &value)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+            // The complete current SQL bytes still decide this row. A quoted,
+            // unescaped ASCII string already has serde's exact canonical form;
+            // copy its decoded content once. All other inputs keep the original
+            // decoder, canonical comparison and precise failure ordering.
+            let value = if let Some(value) = canonical_json::unescaped_string_value(bytes) {
+                value
+            } else {
+                let value: Value = serde_json::from_slice(bytes)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                canonical_bytes.clear();
+                serde_json::to_writer(&mut canonical_bytes, &value)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+                value
+            };
             state.insert(key, value);
         }
         progress()?;

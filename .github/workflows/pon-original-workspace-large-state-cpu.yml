@@ -325,7 +325,7 @@ jobs:
             assert all(test in registries[crate] for test in names), "missing exact control: " + group
             groups.append({"crate": crate, "group": group, "expected_count": len(names), "tests": names})
             selected.extend((crate, group, test) for test in names)
-        prefix("m06", "full-root-arithmetic", "pon_commitment::full_root_arithmetic_tests::", 5)
+        prefix("m06", "full-root-arithmetic", "pon_commitment::full_root_arithmetic_tests::", 7)
         exact("m06", "canonical-ascii", [
             "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
             "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
