@@ -2,6 +2,16 @@
 """Read-only project/branch/source boundary; never changes remote policy."""
 import json, pathlib, re, subprocess, sys, tomllib
 ROOT=pathlib.Path(__file__).resolve().parents[2]
+# GitHub Actions checkout (persist-credentials=false) may emit the exact
+# canonical HTTPS repository path without the optional .git suffix.  Accept
+# that representation, but never normalize/redirect an attacker-selected URL.
+CANONICAL_ORIGINS=frozenset({
+    'https://github.com/TrillionniumFoundation/Trillionnium-Chain',
+    'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git',
+    'git@github.com:TrillionniumFoundation/Trillionnium-Chain.git',
+})
+def is_authorized_origin(value):
+    return value in CANONICAL_ORIGINS
 def require(ok,msg):
     if not ok: raise ValueError(msg)
 def git(*args):
@@ -16,7 +26,7 @@ def check(mode):
     require(source('PROJECT_ID',mode).strip()=='trillionnium-chain','project id mismatch')
     require(p['canonical_repository']=='TrillionniumFoundation/Trillionnium-Chain','repository mismatch')
     origin=git('remote','get-url','origin')
-    require(origin in {'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git','git@github.com:TrillionniumFoundation/Trillionnium-Chain.git'},'origin mismatch')
+    require(is_authorized_origin(origin),'origin mismatch')
     require(p['lane']=='chain-consensus','lane mismatch')
     require(p['consensus']['production_consensus_activation'] is False,'activation changed')
     require(p['consensus']['development_target']=='pon-nakamoto-v1','target mismatch')
