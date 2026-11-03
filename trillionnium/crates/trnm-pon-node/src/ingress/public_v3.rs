@@ -55,7 +55,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc::{self, TryRecvError, TrySendError},
+        mpsc::{self, RecvTimeoutError, TryRecvError, TrySendError},
         Arc, Mutex,
     },
     thread,
@@ -2095,7 +2095,13 @@ fn serve_public_protected_v3_inner(
                     // task awaits CPU. Release before any native dispatch. The
                     // separate read queue and active workers remain independent.
                     let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
-                    let task = dequeue_order.as_ref().unwrap().try_recv();
+                    // Wait on the bounded channel so a newly queued task wakes
+                    // its worker immediately. The original one-millisecond
+                    // stop/deadline polling bound and FIFO CPU admission remain.
+                    let task = dequeue_order
+                        .as_ref()
+                        .unwrap()
+                        .recv_timeout(Duration::from_millis(1));
                     match task {
                         Ok(task) => {
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
@@ -2305,14 +2311,13 @@ fn serve_public_protected_v3_inner(
                                 return Ok(());
                             }
                         }
-                        Err(TryRecvError::Empty) => {
+                        Err(RecvTimeoutError::Timeout) => {
                             drop(dequeue_order);
                             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                                 return Ok(());
                             }
-                            thread::sleep(Duration::from_millis(1));
                         }
-                        Err(TryRecvError::Disconnected) => return Ok(()),
+                        Err(RecvTimeoutError::Disconnected) => return Ok(()),
                     }
                 }
             }));
