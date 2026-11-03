@@ -458,11 +458,45 @@ pub fn verify_with_progress<E>(
         target,
         bytes,
         progress,
+        VerificationKernel::FullLimb,
+    )
+}
+
+/// Retained original transposed verifier for exact relation and cost comparisons.
+/// This entry preserves the prior u128 accumulation in every matrix product.
+pub fn verify_transposed(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_transposed_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+pub fn verify_transposed_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
         VerificationKernel::Transposed,
     )
 }
 
-/// Explicit arithmetic research comparison; the default verifier is unchanged.
+/// Explicit transcript-only arithmetic comparison against the complete default.
 /// Replays the identical relation and observation sequence, replacing only each
 /// eight-product transcript accumulation with exact bounded u64 limb sums.
 pub fn verify_limb(
@@ -537,6 +571,7 @@ enum VerificationKernel {
     ScalarReference,
     Transposed,
     LimbTranscript,
+    FullLimb,
 }
 
 struct CheckedProofInputs {
@@ -567,7 +602,9 @@ fn checked_proof_inputs(
     // fixed-width wire bytes after the entire original relation has succeeded.
     let decoded_cells = match kernel {
         VerificationKernel::ScalarReference => 3 * CELLS,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => 2 * CELLS,
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb => 2 * CELLS,
     };
     let matrices: Vec<u32> = bytes[4..4 + decoded_cells * 4]
         .chunks_exact(4)
@@ -578,7 +615,9 @@ fn checked_proof_inputs(
     let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
     match kernel {
         VerificationKernel::ScalarReference => validate(claimed)?,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb => {
             // C's field check still precedes A/B, task, ticket and callbacks.
             // No unaligned cast, host-endian assumption or reduced field value.
             if claimed_bytes
@@ -592,7 +631,9 @@ fn checked_proof_inputs(
     let actual_task = match kernel {
         // Retain the scalar reference's independent field re-encoding.
         VerificationKernel::ScalarReference => task_id(a, b)?,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb => {
             validate(a)?;
             validate(b)?;
             // The fixed grammar above decoded these exact little-endian words.
@@ -653,6 +694,9 @@ fn verify_with_kernel<E>(
         VerificationKernel::LimbTranscript => {
             evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?
         }
+        VerificationKernel::FullLimb => {
+            evaluate_transposed_kernel_with_progress::<true, true, E>(challenge, a, b, progress)?
+        }
     };
     // PNW1 submits only a final digest: every transcript update is still replayed.
     // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
@@ -664,11 +708,16 @@ fn verify_with_kernel<E>(
         VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
             finish_transposed_with_progress(a, evaluated, progress)
         }
+        VerificationKernel::FullLimb => {
+            finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
+        }
     }
     .map_err(VerificationError::Cancelled)?;
     let matches_claim = match kernel {
         VerificationKernel::ScalarReference => product == claimed,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => product
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb => product
             .iter()
             .flat_map(|word| word.to_le_bytes())
             .eq(claimed_bytes.iter().copied()),
@@ -712,6 +761,17 @@ fn transposed_mul_with_progress<E>(
     cols: usize,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
+    transposed_mul_kernel_with_progress::<false, E>(a, b, rows, inner, cols, progress)
+}
+
+fn transposed_mul_kernel_with_progress<const LIMB_MATRIX: bool, E>(
+    a: &[u32],
+    b: &[u32],
+    rows: usize,
+    inner: usize,
+    cols: usize,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
     debug_assert!(inner <= N);
     let mut transposed = vec![0; b.len()];
     for k in 0..inner {
@@ -723,11 +783,19 @@ fn transposed_mul_with_progress<E>(
     for i in 0..rows {
         progress(VerificationProgress::MatrixRow { row: i })?;
         for j in 0..cols {
-            let mut sum = 0_u128;
-            for k in 0..inner {
-                sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
-            }
-            out[i * cols + j] = producer_reduce(sum);
+            out[i * cols + j] = if LIMB_MATRIX {
+                maintenance_limb::dot_bounded(
+                    &a[i * inner..(i + 1) * inner],
+                    &transposed[j * inner..(j + 1) * inner],
+                    0,
+                )
+            } else {
+                let mut sum = 0_u128;
+                for k in 0..inner {
+                    sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
+                }
+                producer_reduce(sum)
+            };
         }
     }
     Ok(out)
@@ -742,6 +810,19 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<TranscriptEvaluation, VerificationError<E>> {
+    evaluate_transposed_kernel_with_progress::<LIMB_TRANSCRIPT, false, E>(challenge, a, b, progress)
+}
+
+fn evaluate_transposed_kernel_with_progress<
+    const LIMB_TRANSCRIPT: bool,
+    const LIMB_MATRIX: bool,
+    E,
+>(
+    challenge: Hash,
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<TranscriptEvaluation, VerificationError<E>> {
     #[cfg(test)]
     ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
     validate(a)?;
@@ -750,9 +831,9 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     let er = expand_with_progress(challenge, 1, R * N, progress)?;
     let fl = expand_with_progress(challenge, 2, N * R, progress)?;
     let fr = expand_with_progress(challenge, 3, R * N, progress)?;
-    let e = transposed_mul_with_progress(&el, &er, N, R, N, progress)
+    let e = transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(&el, &er, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
-    let f = transposed_mul_with_progress(&fl, &fr, N, R, N, progress)
+    let f = transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(&fl, &fr, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
     let ap: Vec<u32> = a
         .iter()
@@ -834,13 +915,43 @@ fn finish_transposed_with_progress<E>(
     evaluated: TranscriptEvaluation,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
+    finish_transposed_kernel_with_progress::<false, E>(a, evaluated, progress)
+}
+
+fn finish_transposed_kernel_with_progress<const LIMB_MATRIX: bool, E>(
+    a: &[u32],
+    evaluated: TranscriptEvaluation,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
     progress(VerificationProgress::BeforeProduct)?;
     #[cfg(test)]
     PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
-    let left = transposed_mul_with_progress(a, &evaluated.fl, N, N, R, progress)?;
-    let correction1 = transposed_mul_with_progress(&left, &evaluated.fr, N, R, N, progress)?;
-    let right = transposed_mul_with_progress(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
-    let correction2 = transposed_mul_with_progress(&evaluated.el, &right, N, R, N, progress)?;
+    let left =
+        transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(a, &evaluated.fl, N, N, R, progress)?;
+    let correction1 = transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(
+        &left,
+        &evaluated.fr,
+        N,
+        R,
+        N,
+        progress,
+    )?;
+    let right = transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(
+        &evaluated.er,
+        &evaluated.bp,
+        R,
+        N,
+        N,
+        progress,
+    )?;
+    let correction2 = transposed_mul_kernel_with_progress::<LIMB_MATRIX, E>(
+        &evaluated.el,
+        &right,
+        N,
+        R,
+        N,
+        progress,
+    )?;
     Ok(evaluated
         .cp
         .iter()
@@ -1176,6 +1287,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::FullLimb,
         ];
         for cell in [0, CELLS / 2, CELLS - 1] {
             let offset = 4 + 2 * CELLS * 4 + cell * 4;
@@ -1238,6 +1350,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             let mut calls = 0;
             let result = verify_with_kernel(
@@ -1321,6 +1434,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
             let mut tiles = 0;
@@ -1377,6 +1491,7 @@ mod tests {
                     VerificationKernel::ScalarReference,
                     VerificationKernel::Transposed,
                     VerificationKernel::LimbTranscript,
+                    VerificationKernel::FullLimb,
                 ] {
                     let mut calls = 0;
                     let result = verify_with_kernel(
@@ -1931,6 +2046,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             for (target, expected_error) in
                 [([0; 32], WorkError::Target), ([255; 32], WorkError::Field)]

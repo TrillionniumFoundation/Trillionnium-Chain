@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Launcher counterexamples only; no mocked record qualifies a native run."""
 import copy
+import json
 from pathlib import Path
 import os
 import shutil
@@ -15,6 +16,79 @@ import from_zero_native_host as host
 
 
 class HostBoundaryTests(unittest.TestCase):
+    def test_parent_counter_observation_reopens_the_supplied_parent_not_the_leaf(self):
+        with tempfile.TemporaryDirectory() as raw:
+            parent = Path(raw)
+            (parent / 'cpu.stat').write_text('usage_usec 100\nnr_throttled 7\n')
+            leaf = parent / 'leaf'
+            leaf.mkdir()
+            (leaf / 'cpu.stat').write_text('usage_usec 90\nnr_throttled 0\n')
+            fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                first = host.fixed_parent_cpu_observation(fd)
+                self.assertEqual(first['cpu_stat'], 'usage_usec 100\nnr_throttled 7')
+                (parent / 'cpu.stat').write_text('usage_usec 200\nnr_throttled 9\n')
+                second = host.fixed_parent_cpu_observation(fd)
+                self.assertEqual(second['cpu_stat'], 'usage_usec 200\nnr_throttled 9')
+                self.assertIsNone(second['error'])
+                self.assertFalse(second['observation_is_authority'])
+                self.assertLessEqual(first['started_ns'], first['ended_ns'])
+                self.assertLessEqual(first['ended_ns'], second['started_ns'])
+            finally:
+                os.close(fd)
+
+    def test_parent_counter_read_errors_are_explicit_and_grant_no_authority(self):
+        for failure in (PermissionError('counter denied'), ValueError('counter bound')):
+            with self.subTest(failure=failure), patch.object(host, 'read_at', side_effect=failure):
+                observed = host.fixed_parent_cpu_observation(123)
+                self.assertIsNone(observed['cpu_stat'])
+                self.assertIn(str(failure), observed['error'])
+                self.assertFalse(observed['observation_is_authority'])
+
+    def test_parent_diagnostic_log_is_not_an_attach_authority_field(self):
+        authority = {'attached': True, 'owner': '123.1'}
+        diagnostic = {'fixed_parent_before': {'cpu_stat': 'nr_throttled 7',
+                                              'observation_is_authority': False}}
+        completed = subprocess.CompletedProcess([], 0, json.dumps(authority).encode(),
+                                                 json.dumps(diagnostic).encode())
+        with tempfile.TemporaryDirectory() as raw:
+            folder = Path(raw)
+            with patch.object(host.subprocess, 'run', return_value=completed):
+                result = host.root_call('attach', '123.1', 'a' * 24, [], 5,
+                                        log_directory=folder)
+            self.assertEqual(result, authority)
+            self.assertEqual(json.loads((folder / 'host-attach.stderr').read_bytes()), diagnostic)
+            self.assertNotIn('fixed_parent_before', result)
+
+    def test_extra_attach_field_blocks_the_real_gated_child_before_exec(self):
+        binary = self.owned_elf()
+        original = Path.cwd()
+        try:
+            os.chdir(host.ROOT)
+            with tempfile.TemporaryDirectory() as raw:
+                def root(action, run_owner, nonce, extra, remaining, **kwargs):
+                    if action == 'release':
+                        return {'closed': True, 'forced_cleanup': False}
+                    values = dict(zip(extra[::2], extra[1::2]))
+                    leaf, _ = host.names(run_owner, nonce)
+                    return {'attached': True, 'owner': run_owner, 'leaf': leaf,
+                            'pid': int(values['--pid']), 'start_ticks': 1234,
+                            'uid': os.getuid(), 'gid': os.getgid(), 'source': 'a' * 40,
+                            'binary_sha256': host.sha(binary.read_bytes()),
+                            'membership': '/' + host.FIXED_UNIT + '/' + leaf,
+                            'fixed_parent_before': {'observation_is_authority': False}}
+                with patch.object(host, 'root_call', side_effect=root), \
+                     patch.object(host, 'process_identity', return_value={'start_ticks': 1234}):
+                    result = host.run_host_child(self.command(binary), Path(raw) / 'attempt', 90,
+                        run_owner='123.1', source='a' * 40,
+                        binary_sha256=host.sha(binary.read_bytes()))
+                self.assertEqual(result['host_scope']['error'], 'HOST_ATTACH_RECEIPT')
+                self.assertFalse(result['host_scope']['complete'])
+                self.assertNotEqual(result['exit_code'], 0)
+                self.assertEqual((Path(raw) / 'attempt' / 'stdout').read_bytes(), b'')
+        finally:
+            os.chdir(original)
+
     def owned_elf(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

@@ -4,8 +4,9 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: pon-priority-${{ github.ref }}
-  # Retain an executing source's native evidence; the next candidate waits.
+  group: ${{ github.head_ref == 'fix/chain-hepta-fixed-pressure-20261103' && format('pon-priority-{0}-{1}', github.ref, github.event.pull_request.head.sha) || format('pon-priority-{0}', github.ref) }}
+  # Retain every running source. This fixed-pair repair can qualify a new exact
+  # source while an earlier source finishes the original 180-minute state lane.
   cancel-in-progress: false
 env:
   CI: "true"
@@ -121,6 +122,15 @@ jobs:
       - name: Close only this run owned native confirmation Host
         if: always() && matrix.campaign == 'service-model'
         run: sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup --owner "$TRNM_FROM_ZERO_HOST_OWNER" > "$TRNM_CI_RECEIPT_DIR/from-zero-host-cleanup.json"
+      - name: Retain original from-zero receipts before adjacent controls
+        if: ${{ always() && matrix.campaign == 'service-model' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-from-zero-first-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/priority-observations/from-zero-native
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Execute actual CLI observation boundaries and retain every child result
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash

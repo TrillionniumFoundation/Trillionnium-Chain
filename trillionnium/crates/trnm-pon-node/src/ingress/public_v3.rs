@@ -55,7 +55,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc::{self, TryRecvError, TrySendError},
+        mpsc::{self, RecvTimeoutError, TryRecvError, TrySendError},
         Arc, Mutex,
     },
     thread,
@@ -1006,6 +1006,24 @@ impl Write for ExactCanonical<'_> {
         Ok(())
     }
 }
+// Fold fixed-size chunks so the compiler can compare all bytes in parallel.
+// This changes neither the complete lowercase-hex language nor the body bound.
+// The scalar tail checks every remaining byte; no successful prefix is enough.
+fn canonical_packet_hex(bytes: &[u8]) -> bool {
+    let mut chunks = bytes.chunks_exact(32);
+    for chunk in &mut chunks {
+        let invalid = chunk.iter().fold(0_u8, |invalid, byte| {
+            invalid | u8::from(!(byte.is_ascii_digit() || (b'a'..=b'f').contains(byte)))
+        });
+        if invalid != 0 {
+            return false;
+        }
+    }
+    chunks
+        .remainder()
+        .iter()
+        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+}
 fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
     ensure(
         !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
@@ -1029,11 +1047,24 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
         ensure(
             text.len() <= 2 * MAX_PACKET
                 && text.len().is_multiple_of(2)
-                && text
-                    .iter()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+                && canonical_packet_hex(text),
             "PUBLIC_PACKET_TEXT",
         )?;
+        // The complete fixed envelope and every byte of its only field have
+        // already been checked. ASCII hex cannot contain a JSON escape, quote,
+        // extra field or trailing value. Constructing the typed request avoids
+        // reparsing and reserializing the same bounded packet without widening
+        // the accepted byte language. All current-context and full work checks
+        // still run in the original paid dispatch interval.
+        let packet = std::str::from_utf8(text)
+            .map_err(|_| "PUBLIC_PACKET_TEXT")?
+            .to_owned();
+        return Ok(match op {
+            1 => Request::Submit { packet },
+            6 => Request::GrowthSubmitV1 { packet },
+            7 => Request::GrowthPacketStatusV1 { packet },
+            _ => unreachable!(),
+        });
     }
     let request: Request = serde_json::from_slice(bytes)?;
     let mut writer = ExactCanonical { bytes, cursor: 0 };
@@ -1189,6 +1220,20 @@ enum Stage {
     },
 }
 impl Stage {
+    // This describes only work made visible during one complete reactor pass.
+    // It retains neither an I/O readiness verdict nor any authority decision.
+    fn progress_key(&self) -> (std::mem::Discriminant<Self>, usize) {
+        let cursor = match self {
+            Self::Hello(bytes) | Self::Solution { bytes, .. } | Self::Body { bytes, .. } => {
+                bytes.len()
+            }
+            Self::Challenge { cursor, .. }
+            | Self::Ready { cursor, .. }
+            | Self::Output { cursor, .. } => *cursor,
+            _ => 0,
+        };
+        (std::mem::discriminant(self), cursor)
+    }
     fn phase(&self) -> &'static str {
         match self {
             Self::Hello(_) | Self::WaitChallenge { .. } => "hello",
@@ -1335,19 +1380,26 @@ fn task_alive(deadline: Instant, stop: &AtomicBool, cancelled: &AtomicBool) -> R
         "PUBLIC_REQUEST_DEADLINE",
     )
 }
-fn read_available(socket: &mut TcpStream, bytes: &mut Vec<u8>, expected: usize) -> Result<bool> {
+fn read_available(socket: &mut impl Read, bytes: &mut Vec<u8>, expected: usize) -> Result<bool> {
     ensure(bytes.len() <= expected, "PUBLIC_READ_OVERFLOW")?;
-    let remaining = expected - bytes.len();
+    let before = bytes.len();
+    let remaining = expected - before;
     if remaining == 0 {
         return Ok(true);
     }
-    let mut buffer = [0; IO_QUANTUM];
-    match socket.read(&mut buffer[..remaining.min(IO_QUANTUM)]) {
+    // Each production frame already owns its full bounded capacity. Read into
+    // that allocation rather than clear and copy a 64-KiB stack buffer even
+    // for a 108-byte prefix or an idle socket. Expose only bytes actually read.
+    bytes.resize(before + remaining.min(IO_QUANTUM), 0);
+    let result = socket.read(&mut bytes[before..]);
+    let used = match &result {
+        Ok(n) => *n,
+        Err(_) => 0,
+    };
+    bytes.truncate(before + used);
+    match result {
         Ok(0) => Err("PUBLIC_EOF".into()),
-        Ok(n) => {
-            bytes.extend(&buffer[..n]);
-            Ok(bytes.len() == expected)
-        }
+        Ok(_) => Ok(bytes.len() == expected),
         Err(e)
             if matches!(
                 e.kind(),
@@ -2037,6 +2089,7 @@ fn serve_public_protected_v3_inner(
     let mut last_kernel_check = Instant::now();
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
+        let reactor_thread = thread::current();
         for index in 0..3 {
             let queue = if index < 2 {
                 proof_rx.clone()
@@ -2051,13 +2104,20 @@ fn serve_public_protected_v3_inner(
             let server = &server;
             let settings = &settings;
             let kernel_for_worker = host_kernel.as_ref();
+            let reactor_thread = reactor_thread.clone();
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
                     // Retain FIFO admission order while an already-dequeued
                     // task awaits CPU. Release before any native dispatch. The
                     // separate read queue and active workers remain independent.
                     let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
-                    let task = dequeue_order.as_ref().unwrap().try_recv();
+                    // Wait on the bounded channel so a newly queued task wakes
+                    // its worker immediately. The original one-millisecond
+                    // stop/deadline polling bound and FIFO CPU admission remain.
+                    let task = dequeue_order
+                        .as_ref()
+                        .unwrap()
+                        .recv_timeout(Duration::from_millis(1));
                     match task {
                         Ok(task) => {
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
@@ -2266,21 +2326,22 @@ fn serve_public_protected_v3_inner(
                             {
                                 return Ok(());
                             }
+                            reactor_thread.unpark();
                         }
-                        Err(TryRecvError::Empty) => {
+                        Err(RecvTimeoutError::Timeout) => {
                             drop(dequeue_order);
                             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                                 return Ok(());
                             }
-                            thread::sleep(Duration::from_millis(1));
                         }
-                        Err(TryRecvError::Disconnected) => return Ok(()),
+                        Err(RecvTimeoutError::Disconnected) => return Ok(()),
                     }
                 }
             }));
         }
         let outcome = (|| -> Result<()> {
             while !stop.load(Ordering::Acquire) && Instant::now() < end {
+                let mut made_progress = false;
                 if let Some(budget) = host_kernel.as_ref() {
                     if last_kernel_check.elapsed() >= Duration::from_millis(50) {
                         budget.verify()?;
@@ -2295,6 +2356,7 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match listener.accept() {
                         Ok((socket, peer)) => {
+                            made_progress = true;
                             let observation = observer
                                 .as_ref()
                                 .and_then(PublicRequestObserver::connection);
@@ -2354,6 +2416,7 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match finished_rx.try_recv() {
                         Ok(done) => {
+                            made_progress = true;
                             if let Some(conn) = connections.get_mut(&done.id) {
                                 ensure(
                                     matches!(conn.stage, Stage::Await),
@@ -2414,6 +2477,7 @@ fn serve_public_protected_v3_inner(
                         continue;
                     }
                     let current = std::mem::replace(&mut conn.stage, Stage::Await);
+                    let progress_before = current.progress_key();
                     let phase = current.phase();
                     let pending_before = current.pending();
                     let advanced = (|| -> Result<Stage> {
@@ -2799,7 +2863,10 @@ fn serve_public_protected_v3_inner(
                         }
                     })();
                     match advanced {
-                        Ok(next) => conn.stage = next,
+                        Ok(next) => {
+                            made_progress |= next.progress_key() != progress_before;
+                            conn.stage = next;
+                        }
                         Err(error) => {
                             let observed_now = Instant::now();
                             if let Some(record) = &conn.observation {
@@ -2822,6 +2889,7 @@ fn serve_public_protected_v3_inner(
                 remove.dedup();
                 for id in remove {
                     if let Some(conn) = connections.remove(&id) {
+                        made_progress = true;
                         let pressure = conn
                             .intake_lease
                             .as_ref()
@@ -2861,7 +2929,15 @@ fn serve_public_protected_v3_inner(
                         .count(),
                 );
                 drop(m);
-                thread::sleep(Duration::from_millis(1));
+                // Complete another fair pass immediately after actual byte or
+                // stage progress. Every connection still receives at most its
+                // original 64 KiB I/O quantum per pass, with the same bounded
+                // accepts/completions and unchanged absolute deadlines. Idle
+                // passes keep the original one-millisecond wait ceiling; a
+                // native worker completion can wake this thread sooner.
+                if !made_progress {
+                    thread::park_timeout(Duration::from_millis(1));
+                }
             }
             Ok(())
         })();
@@ -3884,6 +3960,178 @@ mod tests {
             Some((sizes[0] + sizes[1] + 4 + response_raw.len()) as u64)
         );
     }
+    #[test]
+    fn read_buffer_reuses_frame_capacity_and_preserves_quantum_and_trailing_bytes() {
+        struct Fragmented<'a> {
+            input: std::io::Cursor<&'a [u8]>,
+            calls: usize,
+            expected_offer: usize,
+        }
+        impl Read for Fragmented<'_> {
+            fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+                assert_eq!(target.len(), self.expected_offer);
+                assert!(target.len() <= IO_QUANTUM);
+                let limit = [1, 7, HELLO_BYTES, IO_QUANTUM / 2, IO_QUANTUM][self.calls % 5]
+                    .min(target.len());
+                self.calls += 1;
+                self.input.read(&mut target[..limit])
+            }
+        }
+        for expected in [
+            0,
+            1,
+            HELLO_BYTES,
+            IO_QUANTUM - 1,
+            IO_QUANTUM,
+            IO_QUANTUM + 1,
+            2 * IO_QUANTUM + 17,
+            MAX_BODY,
+        ] {
+            let prefix = expected.min(3);
+            let payload: Vec<u8> = (0..expected + 17).map(|i| (i % 251) as u8).collect();
+            let mut bytes = Vec::with_capacity(expected);
+            bytes.extend_from_slice(&payload[..prefix]);
+            let pointer = bytes.as_ptr();
+            let capacity = bytes.capacity();
+            let mut reader = Fragmented {
+                input: std::io::Cursor::new(&payload[prefix..]),
+                calls: 0,
+                expected_offer: 0,
+            };
+            while bytes.len() < expected {
+                let before = bytes.len();
+                reader.expected_offer = (expected - before).min(IO_QUANTUM);
+                let complete = read_available(&mut reader, &mut bytes, expected).unwrap();
+                assert_eq!(complete, bytes.len() == expected);
+                assert!(bytes.len() > before && bytes.len() - before <= IO_QUANTUM);
+                assert!(bytes.len() <= expected);
+                assert_eq!(bytes.capacity(), capacity);
+                assert_eq!(bytes.as_ptr(), pointer);
+            }
+            assert_eq!(bytes, payload[..expected]);
+            assert_eq!(reader.input.position() as usize, expected - prefix);
+            let calls = reader.calls;
+            assert!(read_available(&mut reader, &mut bytes, expected).unwrap());
+            assert_eq!(
+                reader.calls, calls,
+                "a completed frame must not read its successor"
+            );
+            assert_eq!(
+                &reader.input.get_ref()[expected - prefix..],
+                &payload[expected..]
+            );
+        }
+    }
+
+    #[test]
+    fn read_buffer_small_fragments_and_idle_probes_keep_fixed_capacity() {
+        struct SlowInput {
+            remaining: usize,
+            calls: usize,
+        }
+        impl Read for SlowInput {
+            fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+                assert!(!target.is_empty() && target.len() <= IO_QUANTUM);
+                self.calls += 1;
+                if self.calls.is_multiple_of(7) {
+                    target.fill(0xee);
+                    return Err(std::io::ErrorKind::WouldBlock.into());
+                }
+                assert!(self.remaining > 0);
+                target[0] = (self.remaining % 251) as u8;
+                self.remaining -= 1;
+                Ok(1)
+            }
+        }
+        let expected = IO_QUANTUM + 17;
+        let mut bytes = Vec::with_capacity(expected);
+        let capacity = bytes.capacity();
+        let pointer = bytes.as_ptr();
+        let mut reader = SlowInput {
+            remaining: expected,
+            calls: 0,
+        };
+        while reader.remaining != 0 {
+            let before = bytes.len();
+            let complete = read_available(&mut reader, &mut bytes, expected).unwrap();
+            assert!(bytes.len() == before || bytes.len() == before + 1);
+            assert_eq!(bytes.len(), expected - reader.remaining);
+            assert_eq!(complete, reader.remaining == 0);
+            assert_eq!(bytes.capacity(), capacity);
+            assert_eq!(bytes.as_ptr(), pointer);
+        }
+        assert!(reader.calls > expected, "idle probes must actually execute");
+        let wanted: Vec<u8> = (1..=expected).rev().map(|i| (i % 251) as u8).collect();
+        assert_eq!(bytes, wanted);
+    }
+
+    #[test]
+    fn read_buffer_errors_eof_and_overflow_preserve_received_prefix() {
+        struct Fault {
+            kind: Option<std::io::ErrorKind>,
+            calls: usize,
+        }
+        impl Read for Fault {
+            fn read(&mut self, target: &mut [u8]) -> std::io::Result<usize> {
+                self.calls += 1;
+                target.fill(0xee);
+                match self.kind {
+                    Some(kind) => Err(kind.into()),
+                    None => Ok(0),
+                }
+            }
+        }
+        for kind in [
+            Some(std::io::ErrorKind::WouldBlock),
+            Some(std::io::ErrorKind::Interrupted),
+            Some(std::io::ErrorKind::PermissionDenied),
+            Some(std::io::ErrorKind::ConnectionReset),
+            None,
+        ] {
+            let mut bytes = Vec::with_capacity(HELLO_BYTES);
+            bytes.extend_from_slice(&[1, 2, 3]);
+            let capacity = bytes.capacity();
+            let pointer = bytes.as_ptr();
+            let mut fault = Fault { kind, calls: 0 };
+            let result = read_available(&mut fault, &mut bytes, HELLO_BYTES);
+            if matches!(
+                kind,
+                Some(std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted)
+            ) {
+                assert!(!result.unwrap());
+            } else if kind.is_none() {
+                assert_eq!(result.unwrap_err().to_string(), "PUBLIC_EOF");
+            } else {
+                let error = result.unwrap_err();
+                assert_eq!(
+                    std::error::Error::source(&error)
+                        .unwrap()
+                        .downcast_ref::<std::io::Error>()
+                        .unwrap()
+                        .kind(),
+                    kind.unwrap()
+                );
+            }
+            assert_eq!(bytes, [1, 2, 3]);
+            assert_eq!(bytes.capacity(), capacity);
+            assert_eq!(bytes.as_ptr(), pointer);
+            assert_eq!(fault.calls, 1);
+            assert!(read_available(&mut fault, &mut bytes, 3).unwrap());
+            assert_eq!(fault.calls, 1);
+            assert_eq!(
+                read_available(&mut fault, &mut bytes, 2)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_READ_OVERFLOW"
+            );
+            assert_eq!(fault.calls, 1);
+            assert_eq!(bytes, [1, 2, 3]);
+            let mut retry = std::io::Cursor::new([4, 5]);
+            assert!(read_available(&mut retry, &mut bytes, 5).unwrap());
+            assert_eq!(bytes, [1, 2, 3, 4, 5]);
+        }
+    }
+
     #[test]
     fn request_observer_records_actual_partial_read_eof_and_quantum_writes() {
         use std::net::Shutdown;
@@ -6705,6 +6953,170 @@ mod tests {
         assert!(canonical_request(br#" {"op":"head"}"#, 2).is_err());
         assert!(canonical_request(br#"{"op":"head"}"#, 3).is_err());
     }
+
+    fn canonical_packet_reference(bytes: &[u8], op: u8) -> Result<Request> {
+        ensure(
+            !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+            "PUBLIC_BODY_LIMIT",
+        )?;
+        let request: Request = serde_json::from_slice(bytes)?;
+        ensure(
+            request_op(&request)? == op && serde_json::to_vec(&request)? == bytes,
+            "PUBLIC_REQUEST_CANONICAL",
+        )?;
+        let packet = match &request {
+            Request::Submit { packet }
+            | Request::GrowthSubmitV1 { packet }
+            | Request::GrowthPacketStatusV1 { packet } => packet,
+            _ => return Err("PUBLIC_REQUEST_CANONICAL".into()),
+        };
+        ensure(
+            packet.len() <= 2 * MAX_PACKET
+                && packet.len().is_multiple_of(2)
+                && packet
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "PUBLIC_PACKET_TEXT",
+        )?;
+        Ok(request)
+    }
+
+    fn compare_packet_decoder(bytes: &[u8], op: u8) {
+        let reference = canonical_packet_reference(bytes, op);
+        let actual = canonical_request(bytes, op);
+        assert_eq!(actual.is_ok(), reference.is_ok(), "op={op} bytes={bytes:?}");
+        if let (Ok(actual), Ok(reference)) = (actual, reference) {
+            assert_eq!(actual, reference);
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_hex_blocks_match_scalar_at_every_alignment() {
+        for length in 0..=96 {
+            let mut text = vec![b'a'; length];
+            assert!(canonical_packet_hex(&text));
+            for position in 0..length {
+                for byte in 0..=u8::MAX {
+                    text[position] = byte;
+                    let reference = text
+                        .iter()
+                        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b));
+                    assert_eq!(
+                        canonical_packet_hex(&text),
+                        reference,
+                        "length={length} position={position} byte={byte}"
+                    );
+                }
+                text[position] = b'a';
+            }
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_matches_serde_for_every_single_byte_mutation() {
+        for request in [
+            Request::Submit {
+                packet: "01abef".into(),
+            },
+            Request::GrowthSubmitV1 {
+                packet: "01abef".into(),
+            },
+            Request::GrowthPacketStatusV1 {
+                packet: "01abef".into(),
+            },
+        ] {
+            let op = request_op(&request).unwrap();
+            let raw = serde_json::to_vec(&request).unwrap();
+            compare_packet_decoder(&raw, op);
+            for position in 0..raw.len() {
+                let mut changed = raw.clone();
+                for value in 0..=u8::MAX {
+                    changed[position] = value;
+                    compare_packet_decoder(&changed, op);
+                }
+                compare_packet_decoder(&raw[..position], op);
+            }
+            for position in 0..=raw.len() {
+                for byte in [b' ', b'\n', b'"', b'\\', b'{', b'}', b',', 0, 0xff] {
+                    let mut changed = raw.clone();
+                    changed.insert(position, byte);
+                    compare_packet_decoder(&changed, op);
+                }
+            }
+            for wrong_op in [1, 6, 7].into_iter().filter(|other| *other != op) {
+                compare_packet_decoder(&raw, wrong_op);
+            }
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_preserves_empty_maximum_and_structural_refusals() {
+        for op in [1, 6, 7] {
+            for length in [0, 1, 2 * MAX_PACKET, 2 * MAX_PACKET + 1, 2 * MAX_PACKET + 2] {
+                let packet = "a".repeat(length);
+                let request = match op {
+                    1 => Request::Submit { packet },
+                    6 => Request::GrowthSubmitV1 { packet },
+                    7 => Request::GrowthPacketStatusV1 { packet },
+                    _ => unreachable!(),
+                };
+                compare_packet_decoder(&serde_json::to_vec(&request).unwrap(), op);
+            }
+        }
+        for bytes in [
+            br#"{"op":"submit","packet":"\u0061a"}"#.as_slice(),
+            br#"{"op":"submit","packet":"aa","packet":"aa"}"#,
+            br#"{"op":"submit","packet":"aa","authority":true}"#,
+            br#"{"packet":"aa","op":"submit"}"#,
+            br#"{"op":"submit","packet":"aa"}{}"#,
+            br#"{"op":"submit","packet":"aa"} "#,
+            br#"{"op":"submit","packet":"aA"}"#,
+            br#"{"op":"submit","packet":null}"#,
+        ] {
+            compare_packet_decoder(bytes, 1);
+        }
+    }
+
+    #[test]
+    #[ignore = "bounded CPU observation; no timing threshold or qualification authority"]
+    fn canonical_packet_decoder_cpu_observation() {
+        let request = Request::Submit {
+            packet: "ab".repeat(49_152),
+        };
+        let raw = serde_json::to_vec(&request).unwrap();
+        let repeat = 256;
+        for (label, decode) in [
+            (
+                "retained-serde-reference",
+                canonical_packet_reference as fn(&[u8], u8) -> Result<Request>,
+            ),
+            (
+                "exact-envelope",
+                canonical_request as fn(&[u8], u8) -> Result<Request>,
+            ),
+        ] {
+            let cpu = ThreadCpuStamp::start().unwrap();
+            let started = Instant::now();
+            for _ in 0..repeat {
+                let decoded = decode(std::hint::black_box(&raw), 1).unwrap();
+                assert_eq!(decoded, request);
+                std::hint::black_box(decoded);
+            }
+            println!(
+                "{}",
+                serde_json::json!({
+                    "schema": "public-v3-canonical-packet-cpu-observation-v1",
+                    "arm": label,
+                    "bytes": raw.len(),
+                    "calls": repeat,
+                    "thread_cpu_ns": cpu.finish().unwrap(),
+                    "wall_ns": started.elapsed().as_nanos(),
+                    "qualification": false,
+                })
+            );
+        }
+    }
+
     #[test]
     fn hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors() {
         // RFC 4231 section 4.2. Zero-extending its 20-byte key to 32
