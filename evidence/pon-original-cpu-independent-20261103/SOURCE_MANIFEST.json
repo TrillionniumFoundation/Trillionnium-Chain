@@ -1,0 +1,119 @@
+{
+  "schema": "original-cpu-proof-source-v1",
+  "parent_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+  "parent_tree": "e07dee8cad7727845063ced35933c9408341945d",
+  "files": [
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13256017940.json",
+      "bytes": 92358,
+      "sha256": "cbdfebfd571aebab673c1e35a760d4c9d2754f6caef96f8878238ae98ad56d81",
+      "git_blob": "df3140471fc45b2b42aa133e78664d79e729034c",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13256164833.json",
+      "bytes": 92645,
+      "sha256": "7e9f26c01caed5134ff415217076187097c10db1ca5d1202001ae14a930f7570",
+      "git_blob": "b359a93004c48786ed1655e5bcc7004d6839bfa3",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13256388233.json",
+      "bytes": 92619,
+      "sha256": "8e61e74e6831948bfe73bc69fe37bda8dfd680b57767b97793522e88278fd21f",
+      "git_blob": "d54cddbe8f3e876be0989adb98985fe7d1b74d22",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13256749237.json",
+      "bytes": 92341,
+      "sha256": "7cfccb11f5544c7a71700bfbaad2dabc3ee6acc02f3330d9119cdd2765e39acd",
+      "git_blob": "e1f6cf9a61d24984f15e2307fb17158bfa2cb043",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13257264003.json",
+      "bytes": 214785,
+      "sha256": "ecd03b65669ad07f558553297f25ca662afa5bd3d5f89ea671c0a71c85bd9ada",
+      "git_blob": "f352a8a7da41c3d1010d1e68a2eca5ca0b98f8dd",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13257823880.json",
+      "bytes": 215078,
+      "sha256": "ec43f425a7b46e038994d4c4dee889edf590f2de2907817e462664e7df21e187",
+      "git_blob": "a582112a0a0798becc7578bda376067b4801a0c9",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13259280495.json",
+      "bytes": 215121,
+      "sha256": "59898447d01762dac44d9401a4c0b0bcbd9bea2b435bf14976feea9ceace91b1",
+      "git_blob": "347cb399f4e95d949419aa17d5547f192b8a640e",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/13260421203.json",
+      "bytes": 214837,
+      "sha256": "22ef021a7f54790d6411522bd002d8da990ad3ad35e89191e83fbbfdbbd70915",
+      "git_blob": "20ca431d7df1f3bf2ffef34a0fcd2e4e6bdd0321",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/DOWNLOADS_VERIFIED.json",
+      "bytes": 2007,
+      "sha256": "381afc066fc26f536621fa75ac658f227fc89e32b57d1a5587fe1a542c391795",
+      "git_blob": "cf90632ef09195ad9266201a01212501ff8286d2",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/INDEPENDENT_REVIEW.json",
+      "bytes": 1051,
+      "sha256": "9c447def631289f648d18b2b117b601af380ae3f6bca12e04c2d529c14727b27",
+      "git_blob": "abdd2bb6facec6004e928f8642ef26115d0dc524",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/OLD_0443_ARM_FAILURE.json",
+      "bytes": 104797,
+      "sha256": "a752c1100b04dd1df9deed3c3e2f19146e92516b04e41fd81c75c46eea7ac09b",
+      "git_blob": "547ede0550fc8466a0f90fec7125981ec8c04f0e",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/PROSPECTIVE_COMMIT.json",
+      "bytes": 225,
+      "sha256": "3d62143e1f9fc096d5f45e0fa83ab879be185f9420da67869ec06a10c6a65464",
+      "git_blob": "e54c757490d473882560e6213559a32d8c4ac651",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/README.md",
+      "bytes": 5464,
+      "sha256": "8a63ca57aca4d9ac30d49ad230c109855207fd94877a95478f541eb7232ca8fa",
+      "git_blob": "0771783d2b7e34d87bd849471646b94408ccde0b",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/VERIFIED.json",
+      "bytes": 4211,
+      "sha256": "fc1620f1bd69e3c22c3cf34c567d97f212cc895a8c1168e31697dbbc76b93415",
+      "git_blob": "24e09b42494c4a2d26e3aae064cf7f064503105c",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/VERIFIER_EXECUTION.json",
+      "bytes": 5159,
+      "sha256": "5cf6eef3034671716d78227bc4d2b4c60b7be428c2de2d110859e98ffffe43e7",
+      "git_blob": "d62b5f2be8ca0da437b14332ca053f7c81b70544",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-original-cpu-independent-20261103/verify_cpu_receipts.py",
+      "bytes": 12690,
+      "sha256": "f7d55c9a17f6406baf71f6458e79edece6f4bb8c3118a2e613fa276e27faa463",
+      "git_blob": "9d8a3d4e77c347b2dd54bd9b21b8759d45cc2fd2",
+      "mode": "100755"
+    }
+  ]
+}

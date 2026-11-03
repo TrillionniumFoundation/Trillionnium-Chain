@@ -1,0 +1,16 @@
+{
+  "schema": "independent-static-cpu-readback-review-v1",
+  "reviewer": "private_ci_blockers",
+  "scope": "Read-only verifier and all eight proof JSONs, including their recorded SHA256; no native execution or artifact download by this review.",
+  "findings": [
+    "Actual eight cells are two architectures times two profiles times head/prospective-merge. Four original distinct selectors execute 32 times; 45 controls on four workspace cells execute 180 times.",
+    "All 24 parity records retain 8625548 bytes, two accounted workers and false Host/all-honest qualifications. Summary fixed Host/4s16/30s/full-suite flags remain false.",
+    "No observed budget or scope expansion."
+  ],
+  "accepted_refinements": [
+    "Summary explicitly records original_distinct_native_selectors=4 and original_native_selector_executions_passed=32.",
+    "Verifier now rejects source.kind outside head/prospective-merge.",
+    "Verifier now checks the actual rustc and cargo first lines for version 1.95.0."
+  ],
+  "review_did_not_reexecute_native_tests": true
+}

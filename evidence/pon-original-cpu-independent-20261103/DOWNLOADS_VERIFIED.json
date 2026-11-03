@@ -1,0 +1,50 @@
+[
+  {
+    "id": 13256749237,
+    "name": "original-large-state-ubuntu-24.04-head-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 27766,
+    "zip_sha256": "5a1c45e882f253caf28c2ec834d4385b8af28e2a94792f78a8ab32507e6d50c1"
+  },
+  {
+    "id": 13256388233,
+    "name": "original-large-state-ubuntu-24.04-prospective-merge-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 27883,
+    "zip_sha256": "2dad3505c50e4a62d75ff3aaf05fcc18058b6867d2d4ff7289502402acc9f5b7"
+  },
+  {
+    "id": 13256164833,
+    "name": "original-large-state-ubuntu-24.04-arm-prospective-merge-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 27976,
+    "zip_sha256": "4d6f387733201c766bc391d51bb359a9ea4f19a9eb2a0577c7610b835ab7d4b4"
+  },
+  {
+    "id": 13256017940,
+    "name": "original-large-state-ubuntu-24.04-arm-head-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 27869,
+    "zip_sha256": "5fa8173c7fec9eddc58153241cf6dbe5a47fd0b998759c0cc4005e1dd24d9644"
+  },
+  {
+    "id": 13260421203,
+    "name": "original-workspace-test-cpu-ubuntu-24.04-arm-head-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 320128,
+    "zip_sha256": "ac5d8b709b6b2b9cfecb7e5800ca2efd9bf170a1de16f4348923a97d3f3296b4"
+  },
+  {
+    "id": 13259280495,
+    "name": "original-workspace-test-cpu-ubuntu-24.04-arm-prospective-merge-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 320337,
+    "zip_sha256": "9c04120db11601f862455b5c47652e3c17a897cbacb4e2ab012dc5743031df60"
+  },
+  {
+    "id": 13257823880,
+    "name": "original-workspace-test-cpu-ubuntu-24.04-prospective-merge-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 320244,
+    "zip_sha256": "46595faa26d56b7d88d7da9d6655fe0c97c675d1479828d0586be51be6a61da6"
+  },
+  {
+    "id": 13257264003,
+    "name": "original-workspace-test-cpu-ubuntu-24.04-head-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 320157,
+    "zip_sha256": "60bf3f35693abffbd88e2c03fb14cef0c486514fdf9d35fea2860c661706361f"
+  }
+]

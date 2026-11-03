@@ -1,0 +1,2299 @@
+{
+  "all_member_hashes": {
+    "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.execution.json": {
+      "bytes": 208,
+      "sha256": "825cc2a3dc7fa93ab7ff932c02efe79d83bc7f8a142f09143a68166ab04d287e"
+    },
+    "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.execution.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.log": {
+      "bytes": 53075,
+      "sha256": "3642a385e0d798108a0a4abc5a2185afb0fae697d6852b5a26206294bc922ddc"
+    },
+    "admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.resources.txt": {
+      "bytes": 975,
+      "sha256": "e0e4f4f17e166e9471212f00b4cc416428de1ac830215c31bba52d9748a6daad"
+    },
+    "authenticated_large_parent_original_schedule_supplementary_denominator.execution.json": {
+      "bytes": 197,
+      "sha256": "cbfadf865cdbc6dceb25df78a8db5c8b6c6f929d4f8457d011484f293bd81ebe"
+    },
+    "authenticated_large_parent_original_schedule_supplementary_denominator.execution.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "authenticated_large_parent_original_schedule_supplementary_denominator.log": {
+      "bytes": 27692,
+      "sha256": "a296f368a9d20e2a26254f380dcbd933699108ea4ec412bb762e27e08d77614d"
+    },
+    "authenticated_large_parent_original_schedule_supplementary_denominator.resources.txt": {
+      "bytes": 964,
+      "sha256": "26244af99a5660ff5c78c8eef6e223bd5da6fb43678c9acacd438159bd99a7f9"
+    },
+    "binary.json": {
+      "bytes": 1288,
+      "sha256": "2e24a00120d390521c7db2180a28dd05c6742726bef64012aea782dcae258fd9"
+    },
+    "binary.sha256": {
+      "bytes": 162,
+      "sha256": "df162c02a151e6d6560fb8b21dd1be3c3c8f57100ecdb80205b8f0c743d7fc5c"
+    },
+    "binary.txt": {
+      "bytes": 96,
+      "sha256": "4b74479240e02ce50face2438ed5d91436f2f0fddd8b14b8fd45c35220b6c448"
+    },
+    "build-command.json": {
+      "bytes": 845,
+      "sha256": "1fe8e317197bb7c62e367e2178c28edfc4020ddc6c1ebe44366dc0ab01bf3bc5"
+    },
+    "build.jsonl": {
+      "bytes": 111773,
+      "sha256": "2556c3d1f12ab0cb5ef559d83a73f7b21978b4752f9324a875e82db186ff0005"
+    },
+    "build.stderr": {
+      "bytes": 6814,
+      "sha256": "21c8de7dcf14eed2158f70a6b827d1dbb54961c3eaf8ae97fd45d7c3c0370848"
+    },
+    "cargo.txt": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "host.txt": {
+      "bytes": 131,
+      "sha256": "cf87f933675fd523838de37746f681eb975a9b476ebda0f73318abdbf1d9904c"
+    },
+    "public_loop_exit_records_external_stop_after_signed_read.execution.json": {
+      "bytes": 176,
+      "sha256": "46af2b0ef72125c9792add1d9a7cedb35060e302de3d3726795c826e58881403"
+    },
+    "public_loop_exit_records_external_stop_after_signed_read.execution.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_loop_exit_records_external_stop_after_signed_read.log": {
+      "bytes": 210,
+      "sha256": "c6a4821dba195729261f4239dcf257d66fc7c29ebef7faed750eaabba67df742"
+    },
+    "public_loop_exit_records_external_stop_after_signed_read.resources.txt": {
+      "bytes": 933,
+      "sha256": "475112904e309580cd7a2cd6128e1673927507bdad42ffde63bd620480af07d5"
+    },
+    "public_loop_exit_records_lifetime_before_internal_stop.execution.json": {
+      "bytes": 174,
+      "sha256": "2a0257450e11f1667a102348d335ee0086709745aabc95b45d02b850e4555cd5"
+    },
+    "public_loop_exit_records_lifetime_before_internal_stop.execution.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_loop_exit_records_lifetime_before_internal_stop.log": {
+      "bytes": 208,
+      "sha256": "9fa9167318f086eedc553eb11c70aeb4a67a7e23dc1ca7b93d655cde133d8a75"
+    },
+    "public_loop_exit_records_lifetime_before_internal_stop.resources.txt": {
+      "bytes": 932,
+      "sha256": "2e3626e8863d0f12f2d0929fd5e0c03edb824a414b7554c69a4c22d0b8fcde39"
+    },
+    "rustc.txt": {
+      "bytes": 197,
+      "sha256": "9e52f76a6e81c8cce82c76c2ee87a3c9999e56d92106b19142416460b9d2c727"
+    },
+    "source-after.json": {
+      "bytes": 421,
+      "sha256": "ff0143f61b2174f56b7dd7a762ef076b4e6716f4f6c4b7fe49d2fecb84bf34ca"
+    },
+    "source-before.json": {
+      "bytes": 421,
+      "sha256": "ff0143f61b2174f56b7dd7a762ef076b4e6716f4f6c4b7fe49d2fecb84bf34ca"
+    },
+    "test-cwd.txt": {
+      "bytes": 90,
+      "sha256": "14508d5f7965145eda993a3082790bd1d9c3108d1230439cca0273ec872a82cf"
+    },
+    "test-exits.tsv": {
+      "bytes": 453,
+      "sha256": "0762a78b216837814ac76b28cafdd6d2e1510b842c59d25b8351541634a427d4"
+    }
+  },
+  "architecture": "aarch64",
+  "artifact": {
+    "id": 13256017940,
+    "name": "original-large-state-ubuntu-24.04-arm-head-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+    "zip_bytes": 27869,
+    "zip_sha256": "5fa8173c7fec9eddc58153241cf6dbe5a47fd0b998759c0cc4005e1dd24d9644"
+  },
+  "binary_sha256": "b0d21f4230ab7819d7d03df83997ffcef13508e71be16f76ef1e0ffb85434f2b",
+  "original_tests": [
+    {
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+      },
+      "log_sha256": "3642a385e0d798108a0a4abc5a2185afb0fae697d6852b5a26206294bc922ddc",
+      "original_records": [
+        {
+          "active_state_unchanged_on_refusal": null,
+          "actual_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 137905144,
+            "discarded_refill_ns": 181865,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 550753744,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 550788552,
+            "remaining_paid_credit_ns": 1587116592,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 550788552,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 34808,
+            "stored_credit_ns": 1587116592,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "actual_cpu_flow_before": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "arithmetic_after": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 0,
+                "exact_hits": 0,
+                "original_decodes": 0,
+                "retained": 0
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 0,
+                "allocated_slots": 0,
+                "occupied_slots": 0,
+                "retained_record_bytes": 0,
+                "retained_software_charge_bytes": 72
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 0,
+                "cold_roots": 0,
+                "complete_computations": 0,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 0,
+                "offers": 0,
+                "offers_absent_or_refused": 0,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 0,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 0,
+                "partition_inputs_hashed": 0,
+                "partition_inputs_observed": 0,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 0,
+                "partition_roots_reused": 0,
+                "partition_string_encodings_reused": 0
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": null,
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 0,
+              "delta_leaf_hits": 0,
+              "delta_payload_bytes_observed": 0,
+              "delta_rows_observed": 0,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 0,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 0,
+              "packet_computations": 0,
+              "packet_hits": 0,
+              "record_bytes_observed": 0,
+              "record_computations": 0,
+              "record_hits": 0
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              }
+            ]
+          },
+          "arithmetic_before": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 0,
+                "exact_hits": 0,
+                "original_decodes": 0,
+                "retained": 0
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 0,
+                "allocated_slots": 0,
+                "occupied_slots": 0,
+                "retained_record_bytes": 0,
+                "retained_software_charge_bytes": 72
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 0,
+                "cold_roots": 0,
+                "complete_computations": 0,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 0,
+                "offers": 0,
+                "offers_absent_or_refused": 0,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 0,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 0,
+                "partition_inputs_hashed": 0,
+                "partition_inputs_observed": 0,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 0,
+                "partition_roots_reused": 0,
+                "partition_string_encodings_reused": 0
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": null,
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 0,
+              "delta_leaf_hits": 0,
+              "delta_payload_bytes_observed": 0,
+              "delta_rows_observed": 0,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 0,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 0,
+              "packet_computations": 0,
+              "packet_hits": 0,
+              "record_bytes_observed": 0,
+              "record_computations": 0,
+              "record_hits": 0
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 0,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 0
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": 0,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 0
+                }
+              }
+            ]
+          },
+          "authenticated_backend": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "cpu_budget_after": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1587116592,
+            "worker_limit": 2
+          },
+          "cpu_budget_before": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 2000000000,
+            "worker_limit": 2
+          },
+          "dispatch_elapsed_ns": "552155111",
+          "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance",
+          "observed_held_capacity_lower_bound_bytes": 8391103,
+          "original_dispatch_result": {
+            "Ok": "ok"
+          },
+          "original_native_result": {
+            "Ok": "ok"
+          },
+          "refusal_readback_error": null,
+          "refusal_readback_scope": "read-only observation after original native outcome and CPU settlement; neither result is changed",
+          "schema": "native-large-parent-original-dispatch-diagnostic-v1"
+        },
+        {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": false,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Ok": "ok"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 550753744,
+            "live_refused": false,
+            "owner_cpu_ns": 550422416,
+            "residual_cpu_ns": 34808,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 366136,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 550788552
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        },
+        {
+          "active_state_unchanged_on_refusal": null,
+          "actual_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 94670098,
+            "discarded_refill_ns": 182561,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 337199968,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 337202904,
+            "remaining_paid_credit_ns": 1757467194,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 337202904,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 2936,
+            "stored_credit_ns": 1757467194,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "actual_cpu_flow_before": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "arithmetic_after": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 192,
+                "exact_hits": 168,
+                "original_decodes": 24,
+                "retained": 24
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 3342336,
+                "allocated_slots": 8192,
+                "occupied_slots": 24,
+                "retained_record_bytes": 2658,
+                "retained_software_charge_bytes": 3342408
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 88,
+                "cold_roots": 1,
+                "complete_computations": 31,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 87,
+                "offers": 18,
+                "offers_absent_or_refused": 18,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 17,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 182787,
+                "partition_inputs_hashed": 2588,
+                "partition_inputs_observed": 185375,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 1845,
+                "partition_roots_reused": 141932,
+                "partition_string_encodings_reused": 182787
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": {
+                "exact_string_charge_bytes": 241717,
+                "exact_string_entries": 2101,
+                "keys": 2103,
+                "kind": "original-leaf-hashes-and-partition-roots",
+                "payload_bytes": 467645,
+                "retained_software_charge_bytes": 468669
+              },
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 11,
+              "delta_leaf_hits": 88,
+              "delta_payload_bytes_observed": 10408,
+              "delta_rows_observed": 99,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 4,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 1146925,
+              "packet_computations": 2,
+              "packet_hits": 21,
+              "record_bytes_observed": 133818,
+              "record_computations": 3,
+              "record_hits": 63
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 3,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 5788
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 103173
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 3,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 11957
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 66,
+                  "cpu_known_calls": 66,
+                  "cpu_ns": 1149824,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1192444
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 45,
+                  "cpu_known_calls": 45,
+                  "cpu_ns": 267804120,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 267859727
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 43,
+                  "cpu_known_calls": 43,
+                  "cpu_ns": 1162160,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1187695
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 29,
+                  "cpu_known_calls": 29,
+                  "cpu_ns": 435885096,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 436036817
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 7,
+                  "cpu_known_calls": 7,
+                  "cpu_ns": 205724240,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 205743714
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 137206360,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 137224712
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 12,
+                  "cpu_known_calls": 12,
+                  "cpu_ns": 706657088,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 706738509
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 10,
+                  "cpu_known_calls": 10,
+                  "cpu_ns": 271397952,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 271434996
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 88230048,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 88681294
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 554745192,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 635100013
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 139700744,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 140926249
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 31,
+                  "cpu_known_calls": 31,
+                  "cpu_ns": 199714488,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 199831139
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 31,
+                  "cpu_known_calls": 31,
+                  "cpu_ns": 85807888,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 85912524
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 22,
+                  "cpu_known_calls": 22,
+                  "cpu_ns": 2316536,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 2340326
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 26,
+                  "cpu_known_calls": 26,
+                  "cpu_ns": 279049344,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 279146271
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 33399856,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 33413442
+                }
+              }
+            ]
+          },
+          "arithmetic_before": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 117,
+                "exact_hits": 105,
+                "original_decodes": 12,
+                "retained": 12
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 3342336,
+                "allocated_slots": 8192,
+                "occupied_slots": 12,
+                "retained_record_bytes": 1272,
+                "retained_software_charge_bytes": 3342408
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 58,
+                "cold_roots": 1,
+                "complete_computations": 20,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 57,
+                "offers": 13,
+                "offers_absent_or_refused": 13,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 12,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 119757,
+                "partition_inputs_hashed": 2395,
+                "partition_inputs_observed": 122152,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 1749,
+                "partition_roots_reused": 92989,
+                "partition_string_encodings_reused": 119757
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": {
+                "exact_string_charge_bytes": 241717,
+                "exact_string_entries": 2101,
+                "keys": 2104,
+                "kind": "original-leaf-hashes-and-partition-roots",
+                "payload_bytes": 467765,
+                "retained_software_charge_bytes": 468789
+              },
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 4,
+              "delta_leaf_hits": 32,
+              "delta_payload_bytes_observed": 3852,
+              "delta_rows_observed": 36,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 3,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 497090,
+              "packet_computations": 1,
+              "packet_hits": 9,
+              "record_bytes_observed": 69044,
+              "record_computations": 2,
+              "record_hits": 33
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 3180
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 1,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 51285
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 7866
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 35,
+                  "cpu_known_calls": 35,
+                  "cpu_ns": 759088,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 784136
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 26,
+                  "cpu_known_calls": 26,
+                  "cpu_ns": 249291992,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 249335416
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 25,
+                  "cpu_known_calls": 25,
+                  "cpu_ns": 668192,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 686548
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 19,
+                  "cpu_known_calls": 19,
+                  "cpu_ns": 360411032,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 360519554
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 113935464,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 113947294
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 1,
+                  "cpu_known_calls": 1,
+                  "cpu_ns": 69972376,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 69978065
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 10,
+                  "cpu_known_calls": 10,
+                  "cpu_ns": 655346728,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 655411408
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 7,
+                  "cpu_known_calls": 7,
+                  "cpu_ns": 188886224,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 188901895
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 3,
+                  "cpu_known_calls": 3,
+                  "cpu_ns": 64313600,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 64551158
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 292154632,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 330972983
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 1,
+                  "cpu_known_calls": 1,
+                  "cpu_ns": 67708688,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 68428966
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 20,
+                  "cpu_known_calls": 20,
+                  "cpu_ns": 127626440,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 127692067
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 20,
+                  "cpu_known_calls": 20,
+                  "cpu_ns": 54294560,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 54361258
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 15,
+                  "cpu_known_calls": 15,
+                  "cpu_ns": 1534864,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1553451
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 18,
+                  "cpu_known_calls": 18,
+                  "cpu_ns": 254528624,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 254611186
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 3,
+                  "cpu_known_calls": 3,
+                  "cpu_ns": 24830648,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 24840832
+                }
+              }
+            ]
+          },
+          "authenticated_backend": true,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "cpu_budget_after": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1757467194,
+            "worker_limit": 2
+          },
+          "cpu_budget_before": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 2000000000,
+            "worker_limit": 2
+          },
+          "dispatch_elapsed_ns": "379212126",
+          "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance",
+          "observed_held_capacity_lower_bound_bytes": 8391103,
+          "original_dispatch_result": {
+            "Ok": "ok"
+          },
+          "original_native_result": {
+            "Ok": "ok"
+          },
+          "refusal_readback_error": null,
+          "refusal_readback_scope": "read-only observation after original native outcome and CPU settlement; neither result is changed",
+          "schema": "native-large-parent-original-dispatch-diagnostic-v1"
+        },
+        {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": true,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Ok": "ok"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 337199968,
+            "live_refused": false,
+            "owner_cpu_ns": 336927376,
+            "residual_cpu_ns": 2936,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 275528,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 337202904
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        }
+      ],
+      "result_line": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "945",
+        "10.47"
+      ],
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+    },
+    {
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+      },
+      "log_sha256": "a296f368a9d20e2a26254f380dcbd933699108ea4ec412bb762e27e08d77614d",
+      "original_records": [
+        {
+          "active_state_unchanged_on_refusal": null,
+          "actual_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 94986127,
+            "discarded_refill_ns": 192594,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 340060328,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 340068488,
+            "remaining_paid_credit_ns": 1754917639,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 340068488,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 8160,
+            "stored_credit_ns": 1754917639,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "actual_cpu_flow_before": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "arithmetic_after": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 192,
+                "exact_hits": 168,
+                "original_decodes": 24,
+                "retained": 24
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 3342336,
+                "allocated_slots": 8192,
+                "occupied_slots": 24,
+                "retained_record_bytes": 2658,
+                "retained_software_charge_bytes": 3342408
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 88,
+                "cold_roots": 1,
+                "complete_computations": 31,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 87,
+                "offers": 18,
+                "offers_absent_or_refused": 18,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 17,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 182787,
+                "partition_inputs_hashed": 2588,
+                "partition_inputs_observed": 185375,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 1845,
+                "partition_roots_reused": 141932,
+                "partition_string_encodings_reused": 182787
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": {
+                "exact_string_charge_bytes": 241717,
+                "exact_string_entries": 2101,
+                "keys": 2103,
+                "kind": "original-leaf-hashes-and-partition-roots",
+                "payload_bytes": 467645,
+                "retained_software_charge_bytes": 468669
+              },
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 11,
+              "delta_leaf_hits": 88,
+              "delta_payload_bytes_observed": 10408,
+              "delta_rows_observed": 99,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 4,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 1146925,
+              "packet_computations": 2,
+              "packet_hits": 21,
+              "record_bytes_observed": 133818,
+              "record_computations": 3,
+              "record_hits": 63
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 3,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 5788
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 103173
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 3,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 11957
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 66,
+                  "cpu_known_calls": 66,
+                  "cpu_ns": 1134352,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1178831
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 45,
+                  "cpu_known_calls": 45,
+                  "cpu_ns": 267943272,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 267990392
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 43,
+                  "cpu_known_calls": 43,
+                  "cpu_ns": 1199424,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1222458
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 29,
+                  "cpu_known_calls": 29,
+                  "cpu_ns": 436693488,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 436830657
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 7,
+                  "cpu_known_calls": 7,
+                  "cpu_ns": 217162088,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 217182172
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 139306224,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 139317221
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 12,
+                  "cpu_known_calls": 12,
+                  "cpu_ns": 715470512,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 715565896
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 10,
+                  "cpu_known_calls": 10,
+                  "cpu_ns": 271726920,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 271776335
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 101000752,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 101612843
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 556516672,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 639752878
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 146871832,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 148103325
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 31,
+                  "cpu_known_calls": 31,
+                  "cpu_ns": 200883152,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 200991913
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 31,
+                  "cpu_known_calls": 31,
+                  "cpu_ns": 86731464,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 86825954
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 22,
+                  "cpu_known_calls": 22,
+                  "cpu_ns": 2379488,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 2401784
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 26,
+                  "cpu_known_calls": 26,
+                  "cpu_ns": 280538616,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 280618282
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 34079104,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 34109469
+                }
+              }
+            ]
+          },
+          "arithmetic_before": {
+            "account_node_decode_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "borrow_conflicts": 0,
+                "bounded_probe_refusals": 0,
+                "calls": 117,
+                "exact_hits": 105,
+                "original_decodes": 12,
+                "retained": 12
+              },
+              "excluded": "allocator metadata, SQLite, temporary row buffers, stacks and other caches",
+              "hard_software_charge_ceiling_bytes": 4194304,
+              "has_consensus_authority": false,
+              "probe_limit": 8,
+              "record_byte_limit": 163,
+              "retained": {
+                "allocated_slot_bytes": 3342336,
+                "allocated_slots": 8192,
+                "occupied_slots": 12,
+                "retained_record_bytes": 1272,
+                "retained_software_charge_bytes": 3342408
+              },
+              "retained_software_charge_limit_bytes": 3342408,
+              "schema": "pon-native-account-node-decode-arithmetic-v1",
+              "scope": "exact current SQL blob and expected ID only; every row and full graph relation is checked again",
+              "slot_limit": 8192,
+              "slot_size_bytes": 408
+            },
+            "cache_policy": "immutable-first-bounded-material-no-live-eviction",
+            "charge_is_process_rss_bound": false,
+            "complete_root_arithmetic": {
+              "charge_is_process_rss_bound": false,
+              "counters": {
+                "actual_changed_keys": 0,
+                "calculations": 58,
+                "cold_roots": 1,
+                "complete_computations": 20,
+                "complete_hits": 0,
+                "context_misses": 0,
+                "derived_checked_apply": 0,
+                "derived_full_root": 0,
+                "derived_rebuilt_tree": 0,
+                "exact_root_hits": 0,
+                "material_uses": 57,
+                "offers": 13,
+                "offers_absent_or_refused": 13,
+                "offers_borrow_conflicts": 0,
+                "offers_preserved_partitions": 12,
+                "offers_retained": 0,
+                "original_error_fallbacks": 0,
+                "partition_exact_string_hits": 119757,
+                "partition_inputs_hashed": 2395,
+                "partition_inputs_observed": 122152,
+                "partition_retention_refusals": 0,
+                "partition_roots_computed": 1749,
+                "partition_roots_reused": 92989,
+                "partition_string_encodings_reused": 119757
+              },
+              "entry_limit": 1,
+              "has_consensus_authority": false,
+              "payload_limit_bytes": 2097152,
+              "retained_material": {
+                "exact_string_charge_bytes": 241717,
+                "exact_string_entries": 2101,
+                "keys": 2104,
+                "kind": "original-leaf-hashes-and-partition-roots",
+                "payload_bytes": 467765,
+                "retained_software_charge_bytes": 468789
+              },
+              "retained_software_charge_limit_bytes": 16777216,
+              "retention_observation_available": true,
+              "schema": "pon-native-complete-root-arithmetic-v3",
+              "scope": "one opaque canonical map/tree OR original leaf-hash/partition-root entry with bounded exact plain JSON strings in the same payload pool; every current State row is fully observed, with exact current key/string comparisons separated from actual encodings and hashes; no stored state, row-set, root claim or validity verdict is supplied",
+              "temporary_workspace_is_separate": true
+            },
+            "counters": {
+              "delta_leaf_computations": 4,
+              "delta_leaf_hits": 32,
+              "delta_payload_bytes_observed": 3852,
+              "delta_rows_observed": 36,
+              "execution_parent_active_candidates": 0,
+              "execution_parent_checked_apply": 0,
+              "execution_parent_full_root": 3,
+              "execution_parent_historical_candidates": 0,
+              "execution_parent_rebuilt_tree": 0,
+              "packet_bytes_observed": 497090,
+              "packet_computations": 1,
+              "packet_hits": 9,
+              "record_bytes_observed": 69044,
+              "record_computations": 2,
+              "record_hits": 33
+            },
+            "deltas": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 3180
+            },
+            "has_consensus_authority": false,
+            "history_sql_traversal": "complete-original-O(H)-and-actual-delta-bytes",
+            "packets": {
+              "charge_limit_bytes": 4194304,
+              "entries": 1,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 51285
+            },
+            "records": {
+              "charge_limit_bytes": 4194304,
+              "entries": 2,
+              "entry_limit": 64,
+              "retained_software_charge_bytes": 7866
+            },
+            "retained_software_charge_limit_bytes": 12582912,
+            "schema": "pon-native-history-arithmetic-observation-v1",
+            "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+            "stage_observation_failed": false,
+            "stages": [
+              {
+                "stage": "record",
+                "totals": {
+                  "calls": 35,
+                  "cpu_known_calls": 35,
+                  "cpu_ns": 737112,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 761891
+                }
+              },
+              {
+                "stage": "packet",
+                "totals": {
+                  "calls": 26,
+                  "cpu_known_calls": 26,
+                  "cpu_ns": 249115520,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 249150396
+                }
+              },
+              {
+                "stage": "delta",
+                "totals": {
+                  "calls": 25,
+                  "cpu_known_calls": 25,
+                  "cpu_ns": 669552,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 684975
+                }
+              },
+              {
+                "stage": "verify_state",
+                "totals": {
+                  "calls": 19,
+                  "cpu_known_calls": 19,
+                  "cpu_ns": 359881768,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 359973536
+                }
+              },
+              {
+                "stage": "verify_history",
+                "totals": {
+                  "calls": 4,
+                  "cpu_known_calls": 4,
+                  "cpu_ns": 125308720,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 125320107
+                }
+              },
+              {
+                "stage": "publish",
+                "totals": {
+                  "calls": 1,
+                  "cpu_known_calls": 1,
+                  "cpu_ns": 70661552,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 70667448
+                }
+              },
+              {
+                "stage": "read_active",
+                "totals": {
+                  "calls": 10,
+                  "cpu_known_calls": 10,
+                  "cpu_ns": 664098624,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 664191220
+                }
+              },
+              {
+                "stage": "state_at",
+                "totals": {
+                  "calls": 7,
+                  "cpu_known_calls": 7,
+                  "cpu_ns": 188467016,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 188496352
+                }
+              },
+              {
+                "stage": "execute",
+                "totals": {
+                  "calls": 3,
+                  "cpu_known_calls": 3,
+                  "cpu_ns": 77354080,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 77657142
+                }
+              },
+              {
+                "stage": "admission",
+                "totals": {
+                  "calls": 2,
+                  "cpu_known_calls": 2,
+                  "cpu_ns": 290942632,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 334268153
+                }
+              },
+              {
+                "stage": "activation",
+                "totals": {
+                  "calls": 1,
+                  "cpu_known_calls": 1,
+                  "cpu_ns": 75075112,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 75698861
+                }
+              },
+              {
+                "stage": "complete_commitment",
+                "totals": {
+                  "calls": 20,
+                  "cpu_known_calls": 20,
+                  "cpu_ns": 127100248,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 127163012
+                }
+              },
+              {
+                "stage": "complete_state_root",
+                "totals": {
+                  "calls": 20,
+                  "cpu_known_calls": 20,
+                  "cpu_ns": 54349912,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 54413069
+                }
+              },
+              {
+                "stage": "account_graph",
+                "totals": {
+                  "calls": 15,
+                  "cpu_known_calls": 15,
+                  "cpu_ns": 1512488,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 1529683
+                }
+              },
+              {
+                "stage": "persisted_state_root",
+                "totals": {
+                  "calls": 18,
+                  "cpu_known_calls": 18,
+                  "cpu_ns": 255723424,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 255787208
+                }
+              },
+              {
+                "stage": "execution_parent_binding",
+                "totals": {
+                  "calls": 3,
+                  "cpu_known_calls": 3,
+                  "cpu_ns": 25679400,
+                  "cpu_unknown_calls": 0,
+                  "unwinding_calls": 0,
+                  "wall_ns": 25688087
+                }
+              }
+            ]
+          },
+          "authenticated_backend": true,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "cpu_budget_after": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1754917639,
+            "worker_limit": 2
+          },
+          "cpu_budget_before": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 2000000000,
+            "worker_limit": 2
+          },
+          "dispatch_elapsed_ns": "380493291",
+          "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance",
+          "observed_held_capacity_lower_bound_bytes": 8391103,
+          "original_dispatch_result": {
+            "Ok": "ok"
+          },
+          "original_native_result": {
+            "Ok": "ok"
+          },
+          "refusal_readback_error": null,
+          "refusal_readback_scope": "read-only observation after original native outcome and CPU settlement; neither result is changed",
+          "schema": "native-large-parent-original-dispatch-diagnostic-v1"
+        },
+        {
+          "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+          "all_honest_service_qualified": false,
+          "authenticated_backend": true,
+          "budget_depletion_demonstrated": false,
+          "complete_key_utf8_and_canonical_value_bytes": 8625548,
+          "early_capacity_observed_lower_bound_bytes": 8391103,
+          "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+          "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+          "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+          "host_qualified": false,
+          "native_result": {
+            "Ok": "ok"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 340060328,
+            "live_refused": false,
+            "owner_cpu_ns": 339723176,
+            "residual_cpu_ns": 8160,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 345312,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 340068488
+          },
+          "schema": "native-large-parent-schedule-parity-v1"
+        }
+      ],
+      "result_line": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "945",
+        "6.37"
+      ],
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+    },
+    {
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop"
+      },
+      "log_sha256": "9fa9167318f086eedc553eb11c70aeb4a67a7e23dc1ca7b93d655cde133d8a75",
+      "result_line": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "945",
+        "0.04"
+      ],
+      "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop"
+    },
+    {
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      },
+      "log_sha256": "c6a4821dba195729261f4239dcf257d66fc7c29ebef7faed750eaabba67df742",
+      "result_line": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "945",
+        "0.02"
+      ],
+      "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+    }
+  ],
+  "profile": "original-release",
+  "raw_small_members": {
+    "binary.json": "{\n  \"artifact\": {\n    \"reason\": \"compiler-artifact\",\n    \"package_id\": \"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\n    \"manifest_path\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\n    \"target\": {\n      \"kind\": [\n        \"lib\"\n      ],\n      \"crate_types\": [\n        \"lib\"\n      ],\n      \"name\": \"trnm_pon_node\",\n      \"src_path\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs\",\n      \"edition\": \"2021\",\n      \"doc\": true,\n      \"doctest\": true,\n      \"test\": true\n    },\n    \"profile\": {\n      \"opt_level\": \"3\",\n      \"debuginfo\": 0,\n      \"debug_assertions\": false,\n      \"overflow_checks\": false,\n      \"test\": true\n    },\n    \"features\": [\n      \"default\"\n    ],\n    \"filenames\": [\n      \"/home/runner/work/_temp/target-original-large-state/release/deps/trnm_pon_node-535608f433c6bf27\"\n    ],\n    \"executable\": \"/home/runner/work/_temp/target-original-large-state/release/deps/trnm_pon_node-535608f433c6bf27\",\n    \"fresh\": false\n  },\n  \"sha256\": \"b0d21f4230ab7819d7d03df83997ffcef13508e71be16f76ef1e0ffb85434f2b\",\n  \"scope\": \"original standalone CPU-policy tests and native reactor-exit regressions\"\n}\n",
+    "binary.sha256": "b0d21f4230ab7819d7d03df83997ffcef13508e71be16f76ef1e0ffb85434f2b  /home/runner/work/_temp/target-original-large-state/release/deps/trnm_pon_node-535608f433c6bf27\n",
+    "build-command.json": "{\n  \"argv\": [\n    \"cargo\",\n    \"+1.95.0\",\n    \"test\",\n    \"--release\",\n    \"--locked\",\n    \"--manifest-path\",\n    \"trillionnium/Cargo.toml\",\n    \"-p\",\n    \"trnm-pon-node\",\n    \"--lib\",\n    \"--no-run\",\n    \"--message-format=json\"\n  ],\n  \"environment\": {\n    \"CI\": \"true\",\n    \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-original-large-state\",\n    \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-original-large-state\",\n    \"CARGO_BUILD_JOBS\": \"2\",\n    \"CARGO_INCREMENTAL\": \"0\",\n    \"RUST_TEST_THREADS\": \"1\",\n    \"RUSTFLAGS\": null,\n    \"CARGO_ENCODED_RUSTFLAGS\": null,\n    \"RUSTC_WRAPPER\": null,\n    \"RUSTC_WORKSPACE_WRAPPER\": null,\n    \"RUSTC\": null,\n    \"CARGO_BUILD_RUSTC\": null,\n    \"CARGO_BUILD_RUSTFLAGS\": null,\n    \"CARGO_BUILD_TARGET\": null,\n    \"CARGO_BUILD_RUSTC_WRAPPER\": null,\n    \"CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER\": null\n  }\n}\n",
+    "cargo.txt": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+    "host.txt": "Linux runnervmkb2gk 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 19:06:39 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux\n",
+    "rustc.txt": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "source-after.json": "{\n  \"base\": null,\n  \"candidate\": \"116a3caf6046dd0db3caf1d0797e636c35c877b8\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"116a3caf6046dd0db3caf1d0797e636c35c877b8\",\n  \"tested_tree\": \"e07dee8cad7727845063ced35933c9408341945d\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 872290011,\n  \"tracked_entries\": 7533,\n  \"tracked_worktree_verified\": true\n}\n",
+    "source-before.json": "{\n  \"base\": null,\n  \"candidate\": \"116a3caf6046dd0db3caf1d0797e636c35c877b8\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"116a3caf6046dd0db3caf1d0797e636c35c877b8\",\n  \"tested_tree\": \"e07dee8cad7727845063ced35933c9408341945d\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 872290011,\n  \"tracked_entries\": 7533,\n  \"tracked_worktree_verified\": true\n}\n",
+    "test-exits.tsv": "selector\tnative_exit\tlog_exit\treader_exit\nstore::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner\t0\t0\t0\nstore::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator\t0\t0\t0\ningress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop\t0\t0\t0\ningress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read\t0\t0\t0\n"
+  },
+  "scope": "Named CPU and reactor-exit tests; selected semantic controls. No complete native runtime or fixed-Host/pressure qualification.",
+  "semantic_control_count": 0,
+  "semantic_controls": [],
+  "source": {
+    "base": null,
+    "candidate": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "tested_tree": "e07dee8cad7727845063ced35933c9408341945d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 872290011,
+    "tracked_entries": 7533,
+    "tracked_worktree_verified": true
+  }
+}

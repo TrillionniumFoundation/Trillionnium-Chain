@@ -1,0 +1,118 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/tmp/chain-cpu-qualified-116a-20261103/publication/verify_cpu_receipts.py",
+    "--artifact-dir",
+    "/tmp/chain-cpu-qualified-116a-20261103",
+    "--repo",
+    "/tmp/chain-cell-startup-current-20261103",
+    "--output",
+    "/tmp/chain-cpu-qualified-116a-20261103/proof"
+  ],
+  "start_unix_ns": 1793736147533560981,
+  "end_unix_ns": 1793736147737941286,
+  "exit": 0,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "verifier_sha256": "f7d55c9a17f6406baf71f6458e79edece6f4bb8c3118a2e613fa276e27faa463",
+  "stdout_sha256": "69015822acdc5f36b0e4205567d0171d4c822c01a5ccf3a575426a22c354a99d",
+  "stderr": "",
+  "stdout_json": {
+    "schema": "chain-original-cpu-independent-readback-v1",
+    "candidate": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "tree": "e07dee8cad7727845063ced35933c9408341945d",
+    "prospective_merge": "4f10f1858ca9dbf6fdfb55e2abce569bca21acbe",
+    "cells": [
+      {
+        "id": 13256749237,
+        "profile": "original-release",
+        "architecture": "x86_64",
+        "source_kind": "head",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 0,
+        "proof_sha256": "7cfccb11f5544c7a71700bfbaad2dabc3ee6acc02f3330d9119cdd2765e39acd"
+      },
+      {
+        "id": 13256388233,
+        "profile": "original-release",
+        "architecture": "x86_64",
+        "source_kind": "prospective-merge",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 0,
+        "proof_sha256": "8e61e74e6831948bfe73bc69fe37bda8dfd680b57767b97793522e88278fd21f"
+      },
+      {
+        "id": 13256164833,
+        "profile": "original-release",
+        "architecture": "aarch64",
+        "source_kind": "prospective-merge",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 0,
+        "proof_sha256": "7e9f26c01caed5134ff415217076187097c10db1ca5d1202001ae14a930f7570"
+      },
+      {
+        "id": 13256017940,
+        "profile": "original-release",
+        "architecture": "aarch64",
+        "source_kind": "head",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 0,
+        "proof_sha256": "cbdfebfd571aebab673c1e35a760d4c9d2754f6caef96f8878238ae98ad56d81"
+      },
+      {
+        "id": 13260421203,
+        "profile": "original-workspace-test",
+        "architecture": "aarch64",
+        "source_kind": "head",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 45,
+        "proof_sha256": "22ef021a7f54790d6411522bd002d8da990ad3ad35e89191e83fbbfdbbd70915"
+      },
+      {
+        "id": 13259280495,
+        "profile": "original-workspace-test",
+        "architecture": "aarch64",
+        "source_kind": "prospective-merge",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 45,
+        "proof_sha256": "59898447d01762dac44d9401a4c0b0bcbd9bea2b435bf14976feea9ceace91b1"
+      },
+      {
+        "id": 13257823880,
+        "profile": "original-workspace-test",
+        "architecture": "x86_64",
+        "source_kind": "prospective-merge",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 45,
+        "proof_sha256": "ec43f425a7b46e038994d4c4dee889edf590f2de2907817e462664e7df21e187"
+      },
+      {
+        "id": 13257264003,
+        "profile": "original-workspace-test",
+        "architecture": "x86_64",
+        "source_kind": "head",
+        "original_tests_passed": 4,
+        "semantic_controls_passed": 45,
+        "proof_sha256": "ecd03b65669ad07f558553297f25ca662afa5bd3d5f89ea671c0a71c85bd9ada"
+      }
+    ],
+    "unchanged_original_inputs_from_failed_0443": {
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+      ".github/workflows/pon-original-large-state-cpu.yml": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml": "8c47856853361356b055bfea745b90e62cefc77be235b4c7f48f6596cd0daddd",
+      "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+      "scripts/ci/verify_ci_source.py": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6"
+    },
+    "original_setup_dispatch_and_budget_prefix_sha256": "4d04cff7b378140ecd0fa979f9786d8e867483a4b66065dc3aaaa7d20dd54926",
+    "original_strict_unwrap_settlement_and_reopen_suffix_sha256": "e74b4326a551056cc27051db9da1c4af93f0ff2eefd6a1c405b1b48f37ce7809",
+    "intervening_test_delta": "additional diagnostic-only readback when native settlement refuses; original budget, operation and strict acceptance remain unchanged",
+    "original_distinct_native_selectors": 4,
+    "original_native_selector_executions_passed": 32,
+    "semantic_control_executions_passed": 180,
+    "all_verified": true,
+    "fixed_host_qualified": false,
+    "four_second_sixteen_hostile_qualified": false,
+    "thirty_second_campaign_qualified": false,
+    "full_workspace_native_suite_qualified": false
+  }
+}
