@@ -15,6 +15,35 @@ import from_zero_native_host as host
 
 
 class HostBoundaryTests(unittest.TestCase):
+    def test_parent_counter_observation_reopens_the_supplied_parent_not_the_leaf(self):
+        with tempfile.TemporaryDirectory() as raw:
+            parent = Path(raw)
+            (parent / 'cpu.stat').write_text('usage_usec 100\nnr_throttled 7\n')
+            leaf = parent / 'leaf'
+            leaf.mkdir()
+            (leaf / 'cpu.stat').write_text('usage_usec 90\nnr_throttled 0\n')
+            fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                first = host.fixed_parent_cpu_observation(fd)
+                self.assertEqual(first['cpu_stat'], 'usage_usec 100\nnr_throttled 7')
+                (parent / 'cpu.stat').write_text('usage_usec 200\nnr_throttled 9\n')
+                second = host.fixed_parent_cpu_observation(fd)
+                self.assertEqual(second['cpu_stat'], 'usage_usec 200\nnr_throttled 9')
+                self.assertIsNone(second['error'])
+                self.assertFalse(second['observation_is_authority'])
+                self.assertLessEqual(first['started_ns'], first['ended_ns'])
+                self.assertLessEqual(first['ended_ns'], second['started_ns'])
+            finally:
+                os.close(fd)
+
+    def test_parent_counter_read_errors_are_explicit_and_grant_no_authority(self):
+        for failure in (PermissionError('counter denied'), ValueError('counter bound')):
+            with self.subTest(failure=failure), patch.object(host, 'read_at', side_effect=failure):
+                observed = host.fixed_parent_cpu_observation(123)
+                self.assertIsNone(observed['cpu_stat'])
+                self.assertIn(str(failure), observed['error'])
+                self.assertFalse(observed['observation_is_authority'])
+
     def owned_elf(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

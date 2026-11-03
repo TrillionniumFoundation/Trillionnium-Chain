@@ -1,7 +1,7 @@
 //! Separate complete maintenance producer using bounded split-limb accumulation.
 //! The number of scalar products and the complete W1 relation are unchanged.
-//! This arithmetic experiment is not selected by the native producer or default verifier.
-//! Its bounded dot product is shared with the explicit verifier research comparison.
+//! This separate producer is not selected by the native producer.
+//! Its bounded dot products also implement the default complete verifier.
 use super::{
     expand_with_progress, maintenance_periodic::MaintenancePeriodicPreparedTask, Hash,
     PreparedGenerationError, PreparedGenerationProgress, PreparedTask, ProducerCandidate,
@@ -9,18 +9,19 @@ use super::{
 };
 use sha2::{Digest, Sha256};
 
-// For eight canonical u32 products p, use p=lo+2^32*hi and 2^32=5 (mod q).
-// Including the canonical prior, low<9*2^32, high<8*2^32 and s<49*2^32.
-// Hence folded<2^32+240<2q: one conditional subtraction suffices. Every
-// product and accumulator fits u64. No overflowing or wrapping sum is used.
+// For at most N=64 canonical u32 products p, p=lo+2^32*hi and
+// 2^32=5 (mod q). Including a canonical prior, low<65*2^32 and
+// high<64*2^32, so s<385*2^32. The second fold is below 2^32+1920<2q;
+// one subtraction is exact. Products and every accumulator fit u64. This
+// changes neither the product count nor any full-replay observation boundary.
 #[inline]
-pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
-    debug_assert_eq!(left.len(), R);
-    debug_assert_eq!(right.len(), R);
+pub(super) fn dot_bounded(left: &[u32], right: &[u32], prior: u32) -> u32 {
+    debug_assert_eq!(left.len(), right.len());
+    debug_assert!(left.len() <= N);
     let mut low = u64::from(prior);
     let mut high = 0_u64;
-    for k in 0..R {
-        let product = u64::from(left[k]) * u64::from(right[k]);
+    for (&left, &right) in left.iter().zip(right) {
+        let product = u64::from(left) * u64::from(right);
         low += u64::from(product as u32);
         high += product >> 32;
     }
@@ -31,6 +32,13 @@ pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
     } else {
         folded as u32
     }
+}
+
+#[inline]
+pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
+    debug_assert_eq!(left.len(), R);
+    debug_assert_eq!(right.len(), R);
+    dot_bounded(left, right, prior)
 }
 
 fn add(left: u32, right: u32) -> u32 {
@@ -234,6 +242,45 @@ impl MaintenanceLimbPreparedTask {
 mod tests {
     use super::*;
     use crate::pon_work::{hash, prove, task_id, verify, verify_reference, PROOF_BYTES};
+
+    #[test]
+    fn bounded_dots_match_u128_remainder_at_every_inner_length() {
+        for length in 0..=N {
+            for prior in [0, 1, (Q - 1) as u32] {
+                for pattern in 0..4 {
+                    let left: Vec<u32> = (0..length)
+                        .map(|i| match pattern {
+                            0 => 0,
+                            1 => (Q - 1) as u32,
+                            2 => {
+                                if i % 2 == 0 {
+                                    (Q - 1) as u32
+                                } else {
+                                    1
+                                }
+                            }
+                            _ => ((i as u128 * 65_537 + 17) % Q) as u32,
+                        })
+                        .collect();
+                    let right: Vec<u32> = (0..length)
+                        .map(|i| ((Q - 1) - ((i * 257 + pattern) as u128 % Q)) as u32)
+                        .collect();
+                    let expected = (u128::from(prior)
+                        + left
+                            .iter()
+                            .zip(&right)
+                            .map(|(&a, &b)| u128::from(a) * u128::from(b))
+                            .sum::<u128>())
+                        % Q;
+                    assert_eq!(
+                        dot_bounded(&left, &right, prior),
+                        expected as u32,
+                        "length={length} prior={prior} pattern={pattern}"
+                    );
+                }
+            }
+        }
+    }
 
     fn material() -> (Vec<u32>, Vec<u32>) {
         (

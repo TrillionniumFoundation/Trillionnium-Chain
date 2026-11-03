@@ -6,10 +6,11 @@ use trnm_crypto_primitives::pon_work::*;
 
 const LIMIT: usize = 4096;
 const SAMPLES: usize = 9;
-const KERNELS: [&str; 3] = [
-    "production-transposed",
+const KERNELS: [&str; 4] = [
+    "retained-transposed",
     "scalar-reference",
     "limb-transcript",
+    "production-full-limb",
 ];
 const VARIANTS: [&str; 3] = ["legal", "transcript", "product-last-cell"];
 
@@ -74,9 +75,10 @@ fn verifier(
     proof: &[u8],
 ) -> Result<VerifiedWork, WorkError> {
     match kernel {
-        0 => verify(challenge, task, target, proof),
+        0 => verify_transposed(challenge, task, target, proof),
         1 => verify_reference(challenge, task, target, proof),
         2 => verify_limb(challenge, task, target, proof),
+        3 => verify(challenge, task, target, proof),
         _ => unreachable!("fixed verifier kernel"),
     }
 }
@@ -374,9 +376,10 @@ fn probe(
         Ok::<(), std::convert::Infallible>(())
     };
     let result = match kernel {
-        0 => verify_with_progress(challenge, task, target, proof, &mut observe),
+        0 => verify_transposed_with_progress(challenge, task, target, proof, &mut observe),
         1 => verify_reference_with_progress(challenge, task, target, proof, &mut observe),
         2 => verify_limb_with_progress(challenge, task, target, proof, &mut observe),
+        3 => verify_with_progress(challenge, task, target, proof, &mut observe),
         _ => unreachable!("fixed probe kernel"),
     };
     let result = match result {
@@ -469,9 +472,9 @@ fn sample_json(class: &str, target: Hash, sample: usize) -> String {
             mutations[1].proof.as_deref(),
         ];
         let mut measurements = Vec::new();
-        for position in 0..9 {
-            let arm = (position + sample) % 9;
-            let (variant, kernel) = (arm / 3, arm % 3);
+        for position in 0..VARIANTS.len() * KERNELS.len() {
+            let arm = (position + sample) % (VARIANTS.len() * KERNELS.len());
+            let (variant, kernel) = (arm / KERNELS.len(), arm % KERNELS.len());
             if let Some(bytes) = proofs[variant] {
                 let start = Instant::now();
                 let result = black_box(verifier(kernel, *challenge, task, target, bytes));
@@ -589,7 +592,7 @@ mod tests {
         assert_eq!(&mutated[..offset], &proof[..offset]);
         assert_eq!(&mutated[offset + 4..], &proof[offset + 4..]);
         assert_ne!(&mutated[offset..offset + 4], &proof[offset..offset + 4]);
-        for kernel in 0..3 {
+        for kernel in 0..KERNELS.len() {
             assert_eq!(
                 verifier(kernel, challenge, task, [255; 32], &mutated).unwrap_err(),
                 WorkError::Product
@@ -640,7 +643,7 @@ mod tests {
             .iter()
             .position(|p| *p == VerificationProgress::BeforeProduct)
             .unwrap();
-        for kernel in 0..3 {
+        for kernel in 0..KERNELS.len() {
             let (result, _, points) = probe(kernel, challenge, task, [255; 32], &product);
             assert_eq!(result, "Product");
             assert_eq!(points, accepted[..accepted.len() - 1]);

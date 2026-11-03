@@ -120,6 +120,26 @@ def read_at(fd, name, limit=4096):
         os.close(handle)
 
 
+
+def fixed_parent_cpu_observation(parent_fd):
+    """Read-only whole-fixture counters from the already verified fixed parent.
+
+    The owned leaf inherits its quota and has no cpu.max of its own. Its zero
+    nr_throttled cannot describe throttling in this parent. A diagnostic read
+    failure remains explicit and does not mint Host authority or block cleanup.
+    """
+    started = time.monotonic_ns()
+    raw, error = None, None
+    try:
+        raw = read_at(parent_fd, 'cpu.stat')
+    except (OSError, ValueError) as failure:
+        error = f'{type(failure).__name__}: {failure}'
+    return {'schema': 'from-zero-fixed-parent-cpu-observation-v1',
+            'scope': 'whole same-process baseline and pressure fixture; not phase attribution',
+            'started_ns': started, 'ended_ns': time.monotonic_ns(),
+            'cpu_stat': raw, 'error': error, 'observation_is_authority': False}
+
+
 def write_at(fd, name, text):
     handle = os.open(name, os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=fd)
     try:
@@ -236,7 +256,8 @@ def attach(args):
             require(after == {**child, 'cgroup': '/' + FIXED_UNIT + '/' + leaf}, 'HOST_MEMBERSHIP_NOT_ESTABLISHED')
             return {'attached': True, 'owner': args.owner, 'leaf': leaf, 'pid': args.pid,
                     'start_ticks': args.start_ticks, 'uid': uid, 'gid': gid,
-                    'source': args.source, 'binary_sha256': args.sha256, 'membership': after['cgroup']}
+                    'source': args.source, 'binary_sha256': args.sha256, 'membership': after['cgroup'],
+                    'fixed_parent_before': fixed_parent_cpu_observation(parent_fd)}
         finally:
             if leaf_fd is not None:
                 os.close(leaf_fd)
@@ -281,7 +302,8 @@ def release(args):
             require((current.st_dev, current.st_ino) == (meta.st_dev, meta.st_ino), 'HOST_LEAF_REPLACED')
             os.rmdir(leaf, dir_fd=parent_fd)
             path.unlink()
-            return {'closed': True, 'forced_cleanup': forced, 'leaf': leaf, 'kernel_after': counters}
+            return {'closed': True, 'forced_cleanup': forced, 'leaf': leaf, 'kernel_after': counters,
+                    'fixed_parent_after': fixed_parent_cpu_observation(parent_fd)}
         finally:
             os.close(fd)
 
