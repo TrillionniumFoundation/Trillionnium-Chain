@@ -1,0 +1,92 @@
+{
+  "schema": "library.pon.unpushed.standalone-source-snapshot.v1",
+  "date": "2026-11-03",
+  "scope": "research-only unactivated standalone files, not mainline consensus or production readiness",
+  "source": "ChatGPT Library root original snapshots",
+  "files": [
+    {
+      "name": "asert_property_audit.py",
+      "sha256": "76d24ad7d47f3a7c5909dcdc57e01639a6fefcfb3083373bb5aab304d309532b",
+      "git_blob_sha": "7afabbd3ba6ea8a937462b18b4fd638db0b2c373",
+      "bytes": 1499
+    },
+    {
+      "name": "check_native_side_effects.py",
+      "sha256": "590b66eb08e3b8eeb4d2ef30309ced4856fe8263a09bdf258f95e4ad0976d63c",
+      "git_blob_sha": "85f4c2db9ac8e464be56bd320ab11388f3f9102e",
+      "bytes": 5713
+    },
+    {
+      "name": "daa_equal_work_recovery.py",
+      "sha256": "64f117b2dcb617a53aa3d1029591a42b6478aa9985d03dfb75d5c5bea4aa3db4",
+      "git_blob_sha": "c750081fdf9685e9a5df725a44170626774c97fc",
+      "bytes": 11362
+    },
+    {
+      "name": "next_rust_continuity_32slot_append.rs",
+      "sha256": "c8418590f4e884f944f02ce13cd358c6de161905f42b870afe85b7b983fdc859",
+      "git_blob_sha": "26bb80b5fbdcdb90ac7137b5bba0d21703435c2b",
+      "bytes": 4068
+    },
+    {
+      "name": "next_rust_q4_32slot_append.rs",
+      "sha256": "90a53009276f24b687596aefd46e63d4d658a36f761b9e725b9fece4da795d91",
+      "git_blob_sha": "1639da89ef122d09dc9f6b2e2f6bd13b846ddc1c",
+      "bytes": 4996
+    },
+    {
+      "name": "pon_research_v2_rust_daa_incremental_append.rs",
+      "sha256": "e599f5ccdf943366defa0bffe224d6937b8724bfb5b1189af7ce9074294e9c0c",
+      "git_blob_sha": "8c71cfe6a790a9187532bddcf23df2c5ddfb5d92",
+      "bytes": 13040
+    },
+    {
+      "name": "q4_cold_audit_smoke.py",
+      "sha256": "b433ef0aafc669217e4882194de4d9bd8929b00f96a12f9b31df7ed5e3fa5b01",
+      "git_blob_sha": "2b529a04c4a8007c4e7500ca4bf57437f333489b",
+      "bytes": 5595
+    },
+    {
+      "name": "rust_consensus_append.rs",
+      "sha256": "848491e96ea3a4e81478817dec24fc9c61a35de73b8be6891881c79078a3c7e1",
+      "git_blob_sha": "12a08ab3d373e9bbf5edbc52c22d124bbe7f6bde",
+      "bytes": 9368
+    },
+    {
+      "name": "rust_continuity_append.rs",
+      "sha256": "8e75fb0bf446747614420099e52617cd87fd5885c29e6612cfa21bbdd580d9cb",
+      "git_blob_sha": "e0375bb82a3d89d52ba281e48a2c7074a1d575a4",
+      "bytes": 4694
+    },
+    {
+      "name": "rust_daa_incremental_append.rs",
+      "sha256": "6d8419cb912ad9545043f46ebbebb62129dbbe0c67e72c8ecd4a95c0e0ff3a37",
+      "git_blob_sha": "4cb9706e4790b147f97a0a1873ff8371b69ec25f",
+      "bytes": 13080
+    },
+    {
+      "name": "sqlite_postwrite_reproducer.py",
+      "sha256": "f5ab6ca238a2cbd7a8250bd3ae9741094243e1f931cc2aa33a03d08c50e38018",
+      "git_blob_sha": "cb707e8ebbb5d7badeade9d4668fdf87e3db0f6b",
+      "bytes": 2640
+    },
+    {
+      "name": "sqlite_pre_read_probe.py",
+      "sha256": "07be0fb389a0d8c95e93bbd525f20d6fc372f8baf03d04bcdeeec357176678ca",
+      "git_blob_sha": "4346208638e7620a3b0a3c1941da3425bf0ab129",
+      "bytes": 2639
+    },
+    {
+      "name": "test_c_asert_differential.py",
+      "sha256": "1f21cc7ce2b29d48cff0b8fc2b3dd86989645c460440d7097fb710a8c2410315",
+      "git_blob_sha": "6c7db228a8d178d7373049b1332103b0721d2f90",
+      "bytes": 3813
+    },
+    {
+      "name": "test_daa_equal_work_recovery.py",
+      "sha256": "d44f5cca6228559eb1e9eeaafaf3e1d7954353b8a9d241663cac782b40337ccd",
+      "git_blob_sha": "66da64123d310cdd7001dd50e1b18eb29d1efab8",
+      "bytes": 7318
+    }
+  ]
+}
