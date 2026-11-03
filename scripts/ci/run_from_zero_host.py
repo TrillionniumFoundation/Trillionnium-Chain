@@ -6,6 +6,8 @@ The hosted runner provisions the checked-in unit; native code still owns the
 original eligibility checks. This script must never provision a local workstation.
 The same source build first warms this job's Cargo target outside the service
 quota. The original runner still builds, hashes and executes inside that quota.
+The history mode instead binds the existing separate, same-job build step and
+executes its whole original test once, without adding a second build deadline.
 """
 from __future__ import annotations
 
@@ -21,6 +23,7 @@ from pathlib import Path
 from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
                                         capture, validate, write_new)
 import run_from_zero_native as native
+import run_history_native as history
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -71,7 +74,8 @@ def validate_unprovisioned_parent(raw: str) -> dict[str, str]:
 def validate_command(command: list[str]) -> Path:
     require(len(command) == 4 and command[:3] in ([
         'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
-        'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out']), 'ORIGINAL_ARGV_REQUIRED')
+        'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
+        'python3', history.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -218,6 +222,20 @@ def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
             'runtime_limits_or_deadlines_changed': False}
 
 
+def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
+    if command[1] == history.SCRIPT:
+        return history.validate_preparation(output)
+    return prepare_native_build(receipts)
+
+
+def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
+    if command[1] == history.SCRIPT:
+        return history.bind_execution(prepared, output)
+    binder = (bind_prepared_fresh_execution if command[1]
+              == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
+    return binder(prepared, output)
+
+
 def inside(receipts: Path, service: str, uid: int, gid: int, command: list[str]) -> int:
     validate_command(command)
     before = capture('inside-before-native', service)
@@ -303,8 +321,9 @@ def outer(command: list[str]) -> int:
         write_new(receipts / 'unprovisioned-parent.json', properties)
         # Compilation is setup, not public service. Keep its entire cost and
         # failure outside the service denominator, in this same invocation.
-        # The child retains the original build command and every native gate.
-        result['preparation'] = prepare_native_build(receipts)
+        # History binds its existing separate build; the two original modes
+        # retain their original build command and every native gate.
+        result['preparation'] = prepare_command(command, output, receipts)
         require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
                 and not PARENT.exists() and not PARENT.is_symlink(),
                 'PARENT_CHANGED_BEFORE_INSTALL')
@@ -342,10 +361,8 @@ def outer(command: list[str]) -> int:
                     'PROVISIONED_CHILD_CONTEXT_CHANGED:' + name)
         result['passed'] = result['systemd_run_exit'] == 0 and child['native_child_exit'] == 0
         if result['passed']:
-            binder = (bind_prepared_fresh_execution if command[1]
-                      == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
-            result['preparation_execution_binding'] = binder(
-                result['preparation'], output)
+            result['preparation_execution_binding'] = bind_command(
+                command, result['preparation'], output)
     except HostSignal as error:
         result['failure'] = 'SIGNAL_' + str(error.number)
         result['systemd_run_exit'] = 128 + error.number

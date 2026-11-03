@@ -78,6 +78,19 @@ historical evidence and cannot satisfy the current v2 execution contract. These
 are software observations, not cryptographic execution attestation or independent
 operation. See the [public-readiness contract](../protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md).
 
+The original long-history acceptance also requires a closed Host execution mode.
+Bind the unique `ancestry_long_sync` Cargo artifact and its original exact selector
+to the workflow's verified source receipt, then run the entire native test under
+the existing fixed Host owner. Its real block generation, renewal, corruption
+refusal, independent full sync and reopen stay in the same process and resource
+denominator. Compilation remains outside native time/RSS measurement. Preserve
+the original 4105-block/packet, four-renewal, state-equality and reopen conditions,
+fixed Host limits, per-request/import/server deadlines and 180-minute job limit.
+The earlier `PUBLIC_HOST_KERNEL_PARENT` refusal is an execution-placement failure,
+not completed synchronization evidence. Host placement and artifact binding alone
+cannot pass history acceptance; retain every native failure and require the
+original successful test and summary before recording this bounded observation.
+
 Acceptance requires the existing exact-source tests, strict formatting/lint,
 source inventories, head/prospective-merge CI and original resource envelopes.
 Statement correctness, computational qualification and honest service retain

@@ -440,6 +440,31 @@ def check_from_zero_host_call(text: str, exact_block: str) -> None:
             'one unchanged from-zero argv must run through the original fixed Host parent')
 
 
+HISTORY_HOST_STEPS = '''      - name: Build the original long-history test separately from measurement
+        id: history_build
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'history' }}
+        run: python3 scripts/ci/run_history_native.py --prepare --out "$TRNM_CI_RECEIPT_DIR/history-native"
+      - name: Execute 4105 real work blocks and paid public full sync
+        if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
+        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out "$TRNM_CI_RECEIPT_DIR/history-native"
+'''
+HISTORY_EXPECTED_SOURCE = (
+    "      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && "
+    "github.event.pull_request.head.sha || github.sha }}\n")
+
+
+def check_history_host_call(text: str) -> str:
+    require(text.count(HISTORY_HOST_STEPS) == 1
+            and text.count('python3 scripts/ci/run_history_native.py') == 2,
+            'history retains one exact build and one whole native test under the fixed Host')
+    require(text.count(HISTORY_EXPECTED_SOURCE) == 1
+            and text.count('    timeout-minutes: 180\n') == 1,
+            'history retains the event-selected source and original 180-minute job budget')
+    # Remove only the two exact checked history steps. The original from-zero
+    # call must still occur exactly once; no arbitrary second Host command is allowed.
+    return text.replace(HISTORY_HOST_STEPS, '')
+
+
 def check_from_zero_host_callsites(root: Path) -> None:
     command = ('python3 scripts/ci/run_from_zero_host.py -- '
                'python3 scripts/ci/run_from_zero_native.py --out ')
@@ -450,7 +475,8 @@ def check_from_zero_host_callsites(root: Path) -> None:
     check_from_zero_host_call((root / '.github/workflows/trnm-required-baseline.yml').read_text(),
         '      - name: Execute exact native from-zero service controls\n'
         '        if: always()\n' + workflow_command)
-    check_from_zero_host_call((root / '.github/workflows/pon-priority-acceptance.yml').read_text(),
+    priority = check_history_host_call((root / '.github/workflows/pon-priority-acceptance.yml').read_text())
+    check_from_zero_host_call(priority,
         '      - name: Execute original release from-zero controls\n'
         "        if: ${{ !cancelled() && steps.source.outcome == 'success' && "
         "steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}\n"
