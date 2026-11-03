@@ -254,10 +254,11 @@ def attach(args):
             write_at(leaf_fd, 'cgroup.procs', str(args.pid))
             after = process_identity(args.pid)
             require(after == {**child, 'cgroup': '/' + FIXED_UNIT + '/' + leaf}, 'HOST_MEMBERSHIP_NOT_ESTABLISHED')
+            print(json.dumps({'fixed_parent_before': fixed_parent_cpu_observation(parent_fd)},
+                             sort_keys=True), file=sys.stderr)
             return {'attached': True, 'owner': args.owner, 'leaf': leaf, 'pid': args.pid,
                     'start_ticks': args.start_ticks, 'uid': uid, 'gid': gid,
-                    'source': args.source, 'binary_sha256': args.sha256, 'membership': after['cgroup'],
-                    'fixed_parent_before': fixed_parent_cpu_observation(parent_fd)}
+                    'source': args.source, 'binary_sha256': args.sha256, 'membership': after['cgroup']}
         finally:
             if leaf_fd is not None:
                 os.close(leaf_fd)
@@ -302,8 +303,9 @@ def release(args):
             require((current.st_dev, current.st_ino) == (meta.st_dev, meta.st_ino), 'HOST_LEAF_REPLACED')
             os.rmdir(leaf, dir_fd=parent_fd)
             path.unlink()
-            return {'closed': True, 'forced_cleanup': forced, 'leaf': leaf, 'kernel_after': counters,
-                    'fixed_parent_after': fixed_parent_cpu_observation(parent_fd)}
+            print(json.dumps({'fixed_parent_after': fixed_parent_cpu_observation(parent_fd)},
+                             sort_keys=True), file=sys.stderr)
+            return {'closed': True, 'forced_cleanup': forced, 'leaf': leaf, 'kernel_after': counters}
         finally:
             os.close(fd)
 
