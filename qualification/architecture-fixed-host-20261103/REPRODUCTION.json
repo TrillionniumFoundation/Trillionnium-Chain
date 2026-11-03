@@ -1,0 +1,124 @@
+{
+  "schema": "architecture-fixed-host-candidate-reproduction-v1",
+  "base_commit": "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2",
+  "parent_pr": 688,
+  "changed_runtime_inputs_sha256": {
+    ".github/workflows/trnm-required-baseline.yml": "23f3c0993ccf950cf6bab6d04fec0d9a82c80f190545cdff8fdd9554aa2ca560",
+    "scripts/ci/native_test_runner.py": "da8af869bd1897ff40ab704511b7f8bcc77d47d98e1311eaff3e0b01604638c5",
+    "scripts/ci/run_architecture_delivery_native.py": "3cb4518b9eaa24bc16d300f2ebb0e8e6986346ccd219a19079b728d4634789c2",
+    "scripts/ci/run_from_zero_host.py": "f1b83fe95f481fbdb8d3fa393c72ed2c1168bf355b95e1efb983d93c6b6c3a64",
+    "scripts/ci/run_history_native.py": "da3682248b1a69db045fbbc2727507392b6f093a93092d604ba47ce01daaff4b",
+    "scripts/ci/rust_baseline_shards.py": "5755f515491b4a19ef4e285eafc983ae208cf67bcdfb8e09991f532f118fda14",
+    "scripts/ci/test_architecture_delivery_host.py": "c90e2df09a4e54aa2a38f8de9005c7e17b50fea1fd4007b9c9f19137fabebd46",
+    "scripts/ci/test_rust_baseline_shards.py": "d54ff8960663ee8f73c6520b98830bf6ce5d109e5b7ec25064b03a87ab679efb"
+  },
+  "local_controls": [
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_architecture_delivery_host.py",
+        "-v"
+      ],
+      "passed": 9,
+      "log": "test_architecture_delivery_host.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_rust_baseline_shards.py",
+        "-v"
+      ],
+      "passed": 9,
+      "log": "test_rust_baseline_shards.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "passed": 35,
+      "log": "final-check-0.log"
+    }
+  ],
+  "local_native_qualification": false,
+  "hosted_native_qualification": "pending exact published head and prospective-merge original required CI",
+  "original_cargo_command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features"
+  ],
+  "original_job_minutes": 180,
+  "original_architecture_call_limit_seconds": 2,
+  "original_architecture_round_limit_seconds": 15,
+  "original_4_second_16_hostile_gate_qualified": false,
+  "source_or_binary_authenticated_by_transcript": false,
+  "production_activation": false,
+  "recorded_fixture_scope": "The small Rust and Python fixtures execute harmless controls only. Their two named synthetic transcript lines and JSON are intentionally not native business evidence.",
+  "local_commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_architecture_delivery_host.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_architecture_delivery_host.log",
+      "log_sha256": "5510ce9243d225f6cb494aff7a40bba0e0de6cb3edb60dd5658e828ab451477a"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_rust_baseline_shards.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_rust_baseline_shards.log",
+      "log_sha256": "d8c4ef7b37805a41a5fdc671bfbae8d5b7265e2be09f6f18298bb254c5400e95"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "final-check-0.log",
+      "log_sha256": "f04520965ff8ad6c9cbd489b2ff93c01e99a27cd11a29328c540c7af76c0530f"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "log": "ci-contract.log",
+      "log_sha256": "94518a76575e23390cd612172692ce8908c8cad40cfbb59352a309e53b796294"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0,
+      "log": "preflight.log",
+      "log_sha256": "4b399248e59083227a4f6f2d07cb605e7b764617a6728d3e1b7b7f3ca5086b97"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "diff-check.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

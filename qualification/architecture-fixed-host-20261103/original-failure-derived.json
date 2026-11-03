@@ -1,0 +1,968 @@
+{
+  "schema": "architecture-original-failure-derived-v1",
+  "source": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+  "source_tree": "29994c32f554f7f5201bb793a19e54f6616a3354",
+  "workflow_run": 41649603030,
+  "job": 125963945036,
+  "artifact_id": 13241266546,
+  "artifact_sha256": "65a52c44e60fdad1822d70f9c1678e540307841cc5c5baa65e3e4a79ff1cfe12",
+  "full_report_bytes": 3971102,
+  "full_report_sha256": "2429ede2b00691302f94082d6da45b6a6e8d99e1c9711184bf3d20e755ee7450",
+  "derivation": "Exact selected scalar/count fields from the retained native report; signed packet payloads are omitted. This is not a replacement execution or a complete raw artifact.",
+  "samples": [
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "serial-signed-batches",
+      "sample": 0,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 487309297,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15505896
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "concurrent-proposer-batches",
+      "sample": 0,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 430940719,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15446184
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "signed-reference-dag",
+      "sample": 0,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 414350308,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 13777622
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "concurrent-proposer-batches",
+      "sample": 1,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 417365568,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 14994466
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "signed-reference-dag",
+      "sample": 1,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 416075105,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15679422
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "serial-signed-batches",
+      "sample": 1,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 483325632,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 14442370
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "signed-reference-dag",
+      "sample": 2,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 422500148,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 13326585
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "serial-signed-batches",
+      "sample": 2,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 487006851,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 14553441
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "mode": "concurrent-proposer-batches",
+      "sample": 2,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 425340988,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 13943381
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "serial-signed-batches",
+      "sample": 0,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 468357626,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15266938
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "concurrent-proposer-batches",
+      "sample": 0,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 404279424,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15448187
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "signed-reference-dag",
+      "sample": 0,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 407754795,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 14498144
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "concurrent-proposer-batches",
+      "sample": 1,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 407896095,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 13759208
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "signed-reference-dag",
+      "sample": 1,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 405699627,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 13919028
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "serial-signed-batches",
+      "sample": 1,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 497155452,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15613608
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "signed-reference-dag",
+      "sample": 2,
+      "position": 0,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 429253530,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 14770465
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "serial-signed-batches",
+      "sample": 2,
+      "position": 1,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 490315489,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15315942
+        }
+      ],
+      "independent_confirmation_count": 0
+    },
+    {
+      "scenario": "hot-recipient",
+      "mode": "concurrent-proposer-batches",
+      "sample": 2,
+      "position": 2,
+      "errors": [
+        "PUBLIC_HOST_KERNEL_PARENT"
+      ],
+      "signed_transaction_count": 32,
+      "confirmed_transactions": 0,
+      "native_state_equal": false,
+      "cold_reopen_equal": true,
+      "finite_business_target_met": false,
+      "whole_trial_wall_ns_including_cold_reopen": 422137260,
+      "block_submissions": [
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        },
+        {
+          "ok": true,
+          "error": null
+        }
+      ],
+      "history_calls": [
+        {
+          "ok": true,
+          "error": null,
+          "wall_ns": 15264751
+        }
+      ],
+      "independent_confirmation_count": 0
+    }
+  ]
+}
