@@ -1,0 +1,89 @@
+{
+  "schema": "w1-exact-native-control-log-projection-v1",
+  "head": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "tree": "d6b33883fe26700a84aa12f64bafd5a7ef99520b",
+  "run_id": 41715157654,
+  "job_id": 126193117518,
+  "scope": "Original decoded GitHub job log; timestamps removed only. Summary projections are not byte-original tee artifacts. The History section retains the complete selected native execution transcript.",
+  "full_decoded_job_log": {
+    "bytes": 186576,
+    "sha256": "d124771613eac81d6bbe9646ae9b4994b27f34cc92cdb33194673e3b9ba2516f"
+  },
+  "summaries": {
+    "factorial-kernel-tests": {
+      "original_job_line": 1248,
+      "summary": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 124 filtered out; finished in 0.08s"
+    },
+    "factorial-example-tests": {
+      "original_job_line": 1320,
+      "summary": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+    },
+    "header-binding-tests": {
+      "original_job_line": 1329,
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s"
+    },
+    "history-w1-tests": {
+      "original_job_line": 1346,
+      "summary": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 950 filtered out; finished in 0.31s"
+    },
+    "history-import-tests": {
+      "original_job_line": 1397,
+      "summary": "test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 929 filtered out; finished in 18.12s"
+    },
+    "cpu-completion-tests": {
+      "original_job_line": 1418,
+      "summary": "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 944 filtered out; finished in 2.24s"
+    }
+  },
+  "history_native_names": [
+    "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+    "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+    "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+    "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+    "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+    "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+    "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+    "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+    "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+    "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+    "ingress::history_import::tests::history_kill_cut_child",
+    "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+    "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+    "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+    "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+    "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+    "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+    "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+    "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+    "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+    "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+    "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+    "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+    "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+    "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+    "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+  ],
+  "three_newly_included_deadline_controls": [
+    "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+    "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+    "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen"
+  ],
+  "source_inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "bytes": 61544,
+      "sha256": "87ae5a1ba44d007b9abbf071b9c4f4d9bb8599850455ea39c9d8b3833f944c10",
+      "git_blob": "50dc63962d4edbd5379ccecc3f553e9fb6ab8802"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+      "bytes": 7756,
+      "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f",
+      "git_blob": "73e5d3d02611833848409254fc1b37452542e463"
+    }
+  ],
+  "history_native_section": {
+    "bytes": 14821,
+    "sha256": "c9e1950b9e61a6a6ef3f6f183c9ce45c348f1abbaf09068e736f23ce2fafbe09"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "mode": "read-only no execution",
+  "base": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "workflow_sha256": "388edd0b85d8c57c3037d9cb27cf39ad9c84f442f0d7b9627c9e569bc5e0f5e6",
+  "receipt_sha256": "8eea29fc848b9a935943dd8465e1fabda5ff30f778e36041c6a8c627ddf17cde",
+  "all_seven_recorded_inputs_match": true,
+  "exactly_two_expected_workflow_edits": true,
+  "recorded_conditions": 16,
+  "findings": [],
+  "observations": [
+    "Expected History passing count becomes 25 while the single original explicit subprocess fixture remains unchanged; no Rust source or assertion change. Three original deadline controls are present in the unchanged nested test module.",
+    "Fresh directory creation and existing verified source receipt precede a literal copy to the unchanged Host reader path source.json. Shell failures still stop before native execution.",
+    "All 16 recorded conditions match expectations; real source-reader wrong-SHA and changed-source negatives remain failures.",
+    "Receipt explicitly does not claim Host provisioning, native or performance qualification; this independent review did not execute them either."
+  ]
+}

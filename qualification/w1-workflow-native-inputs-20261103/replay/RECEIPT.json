@@ -1,0 +1,288 @@
+{
+  "schema": "w1-workflow-input-replay-v1",
+  "base": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "scope": "Exact workflow validator and source-preparation prefix; real small Git head/ordered-merge receipts; real lease source reader. No Host provisioning, Rust build, native gate or performance qualification.",
+  "script_sha256": "9482bfd4896296a1742186d1fdabd464b4619efb3f827a378f037d07b63be2ff",
+  "observed_native_controls_sha256": "4c10df03a53d6c2e6ae0442627b4123b83b850a6ad3b160b20652dd83bad6431",
+  "old_workflow_sha256": "79635bffa2b6b35918a23dc1a8b7897e1ece6bd0ab9b96c888aef5eb595c8b88",
+  "inputs": {
+    ".github/workflows/pon-w1-work-security.yml": "388edd0b85d8c57c3037d9cb27cf39ad9c84f442f0d7b9627c9e569bc5e0f5e6",
+    "scripts/ci/public_fixture_host_lease.py": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+    "scripts/ci/verify_ci_source.py": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+    "scripts/ci/run_from_zero_host.py": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+    "scripts/ci/run_history_native.py": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "87ae5a1ba44d007b9abbf071b9c4f4d9bb8599850455ea39c9d8b3833f944c10",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f"
+  },
+  "conditions": [
+    {
+      "case": "old-real-counts",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (22, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "new-real-counts",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "missing-original-test",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "unexpected-extra-test",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "lost-ignored-fixture",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "additional-ignore",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "duplicate-summary",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "native-failure",
+      "process": {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (6, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (25, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\n",
+          "/tmp/w1-workflow-input-replay-55nr651_/logs"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "history-import-tests: exact native controls did not execute\n"
+      },
+      "expectation_met": true
+    },
+    {
+      "case": "head-old-source-receipt",
+      "process": {
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\nout=\"$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\nmkdir \"$out\"\nprintf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'TRNM_CI_RECEIPT_DIR=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_HOME=%s/cargo-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_TARGET_DIR=%s/target-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_SOURCE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source-before.json\"\n"
+        ],
+        "cwd": "/tmp/w1-workflow-input-replay-55nr651_/repository",
+        "exit_code": 0,
+        "stdout": "{\n  \"base\": null,\n  \"candidate\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"tested_tree\": \"c48dd9a22b77c9f3a361af2ee9e87b31830a0e20\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 7732,\n  \"tracked_entries\": 2,\n  \"tracked_worktree_verified\": true\n}\n",
+        "stderr": ""
+      },
+      "reader_error": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/w1-workflow-input-replay-55nr651_/head-old/w1-fresh-service-head-123-1/source.json'",
+      "expectation_met": true,
+      "receipt": {
+        "base": null,
+        "candidate": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "tested_tree": "c48dd9a22b77c9f3a361af2ee9e87b31830a0e20",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 7732,
+        "tracked_entries": 2,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "case": "head-new-source-receipt",
+      "process": {
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\nout=\"$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\nmkdir \"$out\"\nprintf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'TRNM_CI_RECEIPT_DIR=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_HOME=%s/cargo-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_TARGET_DIR=%s/target-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_SOURCE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source-before.json\"\ncp -- \"$out/source-before.json\" \"$out/source.json\"\n"
+        ],
+        "cwd": "/tmp/w1-workflow-input-replay-55nr651_/repository",
+        "exit_code": 0,
+        "stdout": "{\n  \"base\": null,\n  \"candidate\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"tested_tree\": \"c48dd9a22b77c9f3a361af2ee9e87b31830a0e20\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 7732,\n  \"tracked_entries\": 2,\n  \"tracked_worktree_verified\": true\n}\n",
+        "stderr": ""
+      },
+      "reader_error": null,
+      "expectation_met": true,
+      "receipt": {
+        "base": null,
+        "candidate": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "tested_tree": "c48dd9a22b77c9f3a361af2ee9e87b31830a0e20",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 7732,
+        "tracked_entries": 2,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "case": "head-wrong-receipt-sha",
+      "reader_error": "FIXTURE_PARENT_WORKFLOW_SOURCE_REQUIRED",
+      "expectation_met": true
+    },
+    {
+      "case": "head-changed-tracked-source",
+      "reader_error": "source is not clean",
+      "expectation_met": true
+    },
+    {
+      "case": "prospective-merge-old-source-receipt",
+      "process": {
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\nout=\"$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\nmkdir \"$out\"\nprintf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'TRNM_CI_RECEIPT_DIR=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_HOME=%s/cargo-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_TARGET_DIR=%s/target-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_SOURCE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source-before.json\"\n"
+        ],
+        "cwd": "/tmp/w1-workflow-input-replay-55nr651_/repository",
+        "exit_code": 0,
+        "stdout": "{\n  \"base\": \"5c90edaec28388c7048a5407e7eeeb84af398afd\",\n  \"candidate\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"a55373f802941bd4a8d9e78b74d9205aace35d5f\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"a55373f802941bd4a8d9e78b74d9205aace35d5f\",\n  \"tested_tree\": \"bc70520935b91dcded579ab395b2c0e51ab59437\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 7737,\n  \"tracked_entries\": 3,\n  \"tracked_worktree_verified\": true\n}\n",
+        "stderr": ""
+      },
+      "reader_error": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/w1-workflow-input-replay-55nr651_/prospective-merge-old/w1-fresh-service-prospective-merge-123-1/source.json'",
+      "expectation_met": true,
+      "receipt": {
+        "base": "5c90edaec28388c7048a5407e7eeeb84af398afd",
+        "candidate": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "kind": "prospective-merge",
+        "prospective_merge": "a55373f802941bd4a8d9e78b74d9205aace35d5f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a55373f802941bd4a8d9e78b74d9205aace35d5f",
+        "tested_tree": "bc70520935b91dcded579ab395b2c0e51ab59437",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 7737,
+        "tracked_entries": 3,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "case": "prospective-merge-new-source-receipt",
+      "process": {
+        "argv": [
+          "bash",
+          "-c",
+          "set -euo pipefail\nout=\"$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\nmkdir \"$out\"\nprintf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'TRNM_CI_RECEIPT_DIR=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_HOME=%s/cargo-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nprintf 'CARGO_TARGET_DIR=%s/target-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_SOURCE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source-before.json\"\ncp -- \"$out/source-before.json\" \"$out/source.json\"\n"
+        ],
+        "cwd": "/tmp/w1-workflow-input-replay-55nr651_/repository",
+        "exit_code": 0,
+        "stdout": "{\n  \"base\": \"5c90edaec28388c7048a5407e7eeeb84af398afd\",\n  \"candidate\": \"1b9b6663bb140650c22a4680958d5fac3fc8ed51\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"a55373f802941bd4a8d9e78b74d9205aace35d5f\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"a55373f802941bd4a8d9e78b74d9205aace35d5f\",\n  \"tested_tree\": \"bc70520935b91dcded579ab395b2c0e51ab59437\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 7737,\n  \"tracked_entries\": 3,\n  \"tracked_worktree_verified\": true\n}\n",
+        "stderr": ""
+      },
+      "reader_error": null,
+      "expectation_met": true,
+      "receipt": {
+        "base": "5c90edaec28388c7048a5407e7eeeb84af398afd",
+        "candidate": "1b9b6663bb140650c22a4680958d5fac3fc8ed51",
+        "kind": "prospective-merge",
+        "prospective_merge": "a55373f802941bd4a8d9e78b74d9205aace35d5f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a55373f802941bd4a8d9e78b74d9205aace35d5f",
+        "tested_tree": "bc70520935b91dcded579ab395b2c0e51ab59437",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 7737,
+        "tracked_entries": 3,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "case": "prospective-merge-wrong-receipt-sha",
+      "reader_error": "FIXTURE_PARENT_WORKFLOW_SOURCE_REQUIRED",
+      "expectation_met": true
+    },
+    {
+      "case": "prospective-merge-changed-tracked-source",
+      "reader_error": "source is not clean",
+      "expectation_met": true
+    }
+  ],
+  "conditions_matched": 16,
+  "all_expectations_met": true,
+  "host_qualified": false,
+  "native_qualified": false,
+  "performance_qualified": false
+}

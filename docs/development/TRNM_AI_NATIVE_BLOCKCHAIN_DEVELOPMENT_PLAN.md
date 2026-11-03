@@ -5337,3 +5337,9 @@ server root cause or public amplification. Calling-thread and nested timing
 scopes remain separate. Work security, original public service, independent
 operators/evaluators, quantum/DAA, model benefit, custody, economics, external
 effects, whole-chain PQ, release and activation remain HOLD.
+
+### 2026-11-03 W1 workflow exact-control and source-receipt successor
+
+The original #699/8543 factorial run executed 25 History controls with the one existing SIGKILL child fixture ignored, but the workflow still required 22. The three final-deadline controls remain unchanged and are now included in the exact expected count. The fresh-service job also now preserves its already verified source-before receipt under the canonical source.json name required by the unchanged Host lease reader.
+
+`qualification/w1-workflow-native-inputs-20261103/` retains the actual two failures, exact source and native test names, and 16 bounded workflow-input replay conditions. No native selector, Rust behavior, timeout, resource limit or Host validation is relaxed. The original two-architecture head/merge matrix and fresh-service executions are still required on the successor; original 4s/16-hostile and 30s campaign failures remain independent OPEN / HOLD_NO_GO / DENY_ALL.
