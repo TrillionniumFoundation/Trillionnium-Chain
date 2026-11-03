@@ -1,0 +1,68 @@
+{
+  "schema": "chain-canonical-ascii-two-lane-probe-v1",
+  "source_commit": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+  "source_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+  "original_function_sha256": "6ba7ec100cc723cbc2f1fe24251145cb033baf0109222f7445306b5fbf78dc52",
+  "candidate_function_sha256": "50199509863932df00f23324fd72e693175694388fedadc30d9e50ddd740a816",
+  "hypothesis": "One 16-byte safe load split into two independent u64 classifications avoids u128 carry chains; inputs shorter than 16 use the original body. This is a different candidate from the rejected single-u128 implementation.",
+  "native_component_only": true,
+  "production_source_modified": false,
+  "runtime_budget_changed": false,
+  "compiler": "rustc 1.95.0",
+  "profiles": [
+    {
+      "name": "debug-component",
+      "flags": [
+        "-C",
+        "opt-level=0",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 0.95,
+      "accept_empirical_p95_ratio_max": 1.05
+    },
+    {
+      "name": "release-component",
+      "flags": [
+        "-C",
+        "opt-level=3",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 1.05,
+      "accept_empirical_p95_ratio_max": 1.1
+    }
+  ],
+  "planned_rounds": 16,
+  "order": "ABBA each round",
+  "strings_per_sample": 2100,
+  "bytes_per_string": 4080,
+  "total_samples_per_profile": 128,
+  "thread_cpu_is_main_metric": true,
+  "no_inference": "No original Node CPU/4-second/pressure/ARM acceptance is inferred. Every semantic oracle check and both per-profile rules must pass before a production candidate is considered.",
+  "short_workload": {
+    "sizes": [
+      0,
+      1,
+      7,
+      8,
+      9,
+      15,
+      16,
+      17,
+      31,
+      32,
+      63,
+      64,
+      127,
+      128
+    ],
+    "strings_per_pass": 2100,
+    "repetitions_per_sample": 64,
+    "rounds": 16,
+    "samples": 64,
+    "median_ratio_max": 1.05,
+    "empirical_p95_ratio_max": 1.1
+  },
+  "previous_candidate_decision": "Rejected: release empirical p95 1.2882904155 exceeded 1.10; retained in sibling probe."
+}

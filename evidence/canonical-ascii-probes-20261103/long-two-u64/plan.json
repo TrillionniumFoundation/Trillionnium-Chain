@@ -1,0 +1,84 @@
+{
+  "schema": "chain-canonical-ascii-long-two-lane-probe-v1",
+  "source_commit": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+  "source_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+  "original_function_sha256": "6ba7ec100cc723cbc2f1fe24251145cb033baf0109222f7445306b5fbf78dc52",
+  "candidate_function_sha256": "df87eb1aa4ac8c61ea3ff4ecf3105635419b657bfcd51311dca0b50a5be45d1b",
+  "hypothesis": "Use two independent u64 lanes only from 256 bytes and share the original 8-byte tail implementation. This addresses the earlier release short-input tail regression without changing encoding, CPU gates or measurement rules.",
+  "native_component_only": true,
+  "production_source_modified": false,
+  "runtime_budget_changed": false,
+  "compiler": "rustc 1.95.0",
+  "profiles": [
+    {
+      "name": "debug-component",
+      "flags": [
+        "-C",
+        "opt-level=0",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 0.95,
+      "accept_empirical_p95_ratio_max": 1.05
+    },
+    {
+      "name": "release-component",
+      "flags": [
+        "-C",
+        "opt-level=3",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 1.05,
+      "accept_empirical_p95_ratio_max": 1.1
+    }
+  ],
+  "planned_rounds": 16,
+  "order": "ABBA each round",
+  "strings_per_sample": 2100,
+  "bytes_per_string": 4080,
+  "total_samples_per_profile": 192,
+  "thread_cpu_is_main_metric": true,
+  "no_inference": "No original Node CPU/4-second/pressure/ARM acceptance is inferred. Every semantic oracle check and both per-profile rules must pass before a production candidate is considered.",
+  "short_workload": {
+    "sizes": [
+      0,
+      1,
+      7,
+      8,
+      9,
+      15,
+      16,
+      17,
+      31,
+      32,
+      63,
+      64,
+      127,
+      128
+    ],
+    "strings_per_pass": 2100,
+    "repetitions_per_sample": 64,
+    "rounds": 16,
+    "samples": 64,
+    "median_ratio_max": 1.05,
+    "empirical_p95_ratio_max": 1.1
+  },
+  "previous_candidate_decision": "Independent-lanes-for-all-lengths candidate rejected: release short-input empirical p95 1.3054662355 exceeded 1.10. Both prior candidates and all outcomes are retained.",
+  "threshold_workload": {
+    "sizes": [
+      255,
+      256,
+      257,
+      511,
+      512,
+      513
+    ],
+    "strings_per_pass": 2100,
+    "repetitions_per_sample": 16,
+    "rounds": 16,
+    "samples": 64,
+    "median_ratio_max": 1.05,
+    "empirical_p95_ratio_max": 1.1
+  }
+}

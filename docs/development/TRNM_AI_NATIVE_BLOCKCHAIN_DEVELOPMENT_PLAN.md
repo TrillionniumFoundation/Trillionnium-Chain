@@ -4881,3 +4881,16 @@ quality or fuzz lanes pass. No Rust runtime path, four-second confirmation
 window, sixteen-hostile-worker workload, Host resource budget, History, W1,
 nonce, liability, recovery, settlement or activation rule changes. Original
 performance and confirmation failures remain open; DRAFT / HOLD remains.
+
+### 2026-11-03 reject standalone ASCII-width performance candidates
+
+Preserve the complete [canonical ASCII component probes](../../evidence/canonical-ascii-probes-20261103/README.md)
+against source `6ee97ee8f2955d2d0cd4a451268a906c5aa07584`. Three different
+word-classification implementations each pass 545,361 scalar-oracle cases,
+and all 768 planned timed samples complete. Every candidate nevertheless
+fails at least one predeclared release tail rule. Keep the original production
+Rust bytes and retain all three source variants, prior plans and raw outcomes.
+These standalone opt-level 0/3 observations neither execute nor qualify the
+original ARM Node CPU selectors, four-second pressure service, Host limits,
+full W1 or confirmation. No deadline, callback, error, accounting, cache or
+activation requirement changes. The implementation remains DRAFT / HOLD.

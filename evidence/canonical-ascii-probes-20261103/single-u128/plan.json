@@ -1,0 +1,43 @@
+{
+  "schema": "chain-canonical-ascii-width-probe-v1",
+  "source_commit": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+  "source_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+  "original_function_sha256": "6ba7ec100cc723cbc2f1fe24251145cb033baf0109222f7445306b5fbf78dc52",
+  "candidate_function_sha256": "def409a2c5b04bb930973afeabf9be41ff6b4241f10e2efdba030266056ec1ff",
+  "hypothesis": "A 16-byte safe integer classification block can reduce loop overhead for the unchanged 4080-byte ASCII values in the original large-state fixture. This is unrelated to the rejected encoder-buffer/cache experiment.",
+  "native_component_only": true,
+  "production_source_modified": false,
+  "runtime_budget_changed": false,
+  "compiler": "rustc 1.95.0",
+  "profiles": [
+    {
+      "name": "debug-component",
+      "flags": [
+        "-C",
+        "opt-level=0",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 0.95,
+      "accept_empirical_p95_ratio_max": 1.05
+    },
+    {
+      "name": "release-component",
+      "flags": [
+        "-C",
+        "opt-level=3",
+        "-C",
+        "debuginfo=0"
+      ],
+      "accept_median_ratio_max": 1.05,
+      "accept_empirical_p95_ratio_max": 1.1
+    }
+  ],
+  "planned_rounds": 16,
+  "order": "ABBA each round",
+  "strings_per_sample": 2100,
+  "bytes_per_string": 4080,
+  "total_samples_per_profile": 64,
+  "thread_cpu_is_main_metric": true,
+  "no_inference": "No original Node CPU/4-second/pressure/ARM acceptance is inferred. Every semantic oracle check and both per-profile rules must pass before a production candidate is considered."
+}

@@ -1,0 +1,127 @@
+{
+  "compiler_inputs": "Exact per-profile command, binary SHA256 and all timed sample outcomes appear in each results.json and JSONL. Compiled binaries are deliberately omitted.",
+  "disposition": "ALL_THREE_CANDIDATES_REJECTED",
+  "files": [
+    {
+      "bytes": 853,
+      "path": "single-u128/baseline.rs",
+      "sha256": "9ba9d55d2f26f210387daae2b85ec8ff355a6da21f9ed0aca1051ce3a2bf38ba"
+    },
+    {
+      "bytes": 1558,
+      "path": "single-u128/candidate.rs",
+      "sha256": "7a0c141065dde4ff99523ed54c4188c4e7e7a0b330282a5bae2218633c969642"
+    },
+    {
+      "bytes": 3421,
+      "path": "single-u128/main.rs",
+      "sha256": "bcb2305eabefbff8199eb10501ce81b5af86c3f8e67b075605397f5c7463ab89"
+    },
+    {
+      "bytes": 1620,
+      "path": "single-u128/plan.json",
+      "sha256": "2d33b94ade621fdeb9ec25c1fab33053f8f5591dd90667c30730f43a0f8d4e89"
+    },
+    {
+      "bytes": 2452,
+      "path": "single-u128/results.json",
+      "sha256": "f0531b2fe5583f0e8c67e43026ba4081ab6505722b13febd7d6da37a4a8bcc8a"
+    },
+    {
+      "bytes": 8844,
+      "path": "single-u128/debug-component.jsonl",
+      "sha256": "52a588dd99126203a201becf2493783509ed30c1f4642723fbc415f273f4db1d"
+    },
+    {
+      "bytes": 8704,
+      "path": "single-u128/release-component.jsonl",
+      "sha256": "e2e4ca2e6d5f9a2095eb9aeacc93f73de085169520cb08cb3c39f3f7b6cb4fed"
+    },
+    {
+      "bytes": 853,
+      "path": "two-u64/baseline.rs",
+      "sha256": "9ba9d55d2f26f210387daae2b85ec8ff355a6da21f9ed0aca1051ce3a2bf38ba"
+    },
+    {
+      "bytes": 2611,
+      "path": "two-u64/candidate.rs",
+      "sha256": "50199509863932df00f23324fd72e693175694388fedadc30d9e50ddd740a816"
+    },
+    {
+      "bytes": 3914,
+      "path": "two-u64/main.rs",
+      "sha256": "41a69467b71b7f11599a5b48b2bf398da9aa67ecc7e75faebd4e87cb2f7321ce"
+    },
+    {
+      "bytes": 2101,
+      "path": "two-u64/plan.json",
+      "sha256": "f33ee3e7b4ebf9a5bbb893fe3cf99dfebf12ba655141f7a1ff6d0a172de3ed2a"
+    },
+    {
+      "bytes": 4390,
+      "path": "two-u64/results.json",
+      "sha256": "cfbfdb97886f724f2090c04c0495fdfa42b412f43f729ed95a428da136953820"
+    },
+    {
+      "bytes": 20196,
+      "path": "two-u64/debug-component.jsonl",
+      "sha256": "768792727dc746ad925264e367b7ca652b05ed22cfb183ff30e9b24887d7f367"
+    },
+    {
+      "bytes": 19870,
+      "path": "two-u64/release-component.jsonl",
+      "sha256": "832bc01b6b1b2a63b48cad856ce9a7ec6c9d4bf10de7297b84f48d1da5d6928d"
+    },
+    {
+      "bytes": 853,
+      "path": "long-two-u64/baseline.rs",
+      "sha256": "9ba9d55d2f26f210387daae2b85ec8ff355a6da21f9ed0aca1051ce3a2bf38ba"
+    },
+    {
+      "bytes": 1907,
+      "path": "long-two-u64/candidate.rs",
+      "sha256": "df87eb1aa4ac8c61ea3ff4ecf3105635419b657bfcd51311dca0b50a5be45d1b"
+    },
+    {
+      "bytes": 4118,
+      "path": "long-two-u64/main.rs",
+      "sha256": "e0bd13f4971e64ca6c45e5112615a3f37e23fba991eb5468bda8de0d2cf7407f"
+    },
+    {
+      "bytes": 2478,
+      "path": "long-two-u64/plan.json",
+      "sha256": "e70d681777615609786157b979c76b124a5a4e9bec9a0fc9ca8c0f1a2ad7c5ed"
+    },
+    {
+      "bytes": 5949,
+      "path": "long-two-u64/results.json",
+      "sha256": "a6b204b00228a7e8588b5ac69e480fa1aa25ade94d795ccc425832041308f966"
+    },
+    {
+      "bytes": 30588,
+      "path": "long-two-u64/debug-component.jsonl",
+      "sha256": "53b512e592a548252d4e71a7133ed5fd06a518e0de3eff1a856ef96d6078115e"
+    },
+    {
+      "bytes": 30178,
+      "path": "long-two-u64/release-component.jsonl",
+      "sha256": "6ff050fb2416889acc7b492a6ac3d1af39b9c3c1a4b3d8b0414a690e644e8097"
+    }
+  ],
+  "measurement_scope": "Local x64 Linux Rust 1.95.0 standalone opt-level 0 and 3 functions. Same executable within each component comparison; not independent whole-Node builds. Calling-thread CPU is measured with CLOCK_THREAD_CPUTIME_ID.",
+  "production_source_changed": false,
+  "qualification": {
+    "arm_runtime_executed": false,
+    "original_cpu_selector_executed": false,
+    "original_four_second_pressure_executed": false,
+    "production_activation": false,
+    "whole_node_performance_qualified": false
+  },
+  "schema": "chain-canonical-ascii-rejected-probes-v1",
+  "selection_rule": "Every predeclared workload/profile rule must pass; no candidate did. Rejected samples remain complete. Different candidate rounds are not pooled.",
+  "source_blob": "a3e7c0d2770bff9da4fe63dfe95636f16eac6448",
+  "source_commit": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+  "source_exports": "baseline.rs is the exact existing helper body with only pub visibility added for the standalone observer. Each candidate is isolated from production. main.rs is an independent scalar byte oracle plus a component observer.",
+  "source_path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+  "source_tree": "29994c32f554f7f5201bb793a19e54f6616a3354"
+}
