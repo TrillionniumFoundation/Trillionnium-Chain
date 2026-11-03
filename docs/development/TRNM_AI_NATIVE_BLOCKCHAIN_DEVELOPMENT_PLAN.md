@@ -4981,3 +4981,25 @@ prove group-commit, head-of-line, retry/drain or PQ aggregation performance; Cel
 component limits do not establish full model installation and inference budgets.
 Original public-service, independent WAN/fault, whole-chain PQ and activation
 qualifications remain HOLD.
+
+### 2026-11-03: retain complete architecture replay in its required Host
+
+Original head runtime run 41649603030 at 6ee97ee8 failed all eighteen signed
+delivery/replay samples with `PUBLIC_HOST_KERNEL_PARENT` after successful first
+History replies. The candidate at base 0443a5e2 keeps the public parent check and
+the Rust tests unchanged. A Cargo target runner places only the complete
+architecture test binary into the existing reviewed fixed Host; all other
+workspace targets retain their original arguments, environment and package cwd.
+The original workspace command, subsequent release tests and model oracles,
+2-second call, 15-second round, 180-minute job and Host resource limits remain.
+
+The adapter binds the Cargo-selected binary, exact source/job, original package
+cwd, runtime environment, both native tests and all eighteen native business
+samples. The outside shard requires the current Host result even after a zero
+child exit. Cargo-specific child environment is checked at execution and in the
+recorded before/after pair, rather than being mistaken for the parent process
+environment. Harmless controls passed 9 new binding, 9 shard and 35 original
+Host tests; no local synthetic control qualifies native business execution.
+The exact-source hosted head/merge CI remains pending at publication. This
+fixture repair does not close the original four-second/sixteen-hostile service
+budget, independent acceptance, architecture choice or production activation.

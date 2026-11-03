@@ -10,6 +10,8 @@ from pathlib import Path
 import re
 import subprocess
 import stat
+import shlex
+import sys
 
 from verify_ci_source import ROOT, verify
 
@@ -82,10 +84,21 @@ def run_shard(args, root=ROOT):
             stream.write(script)
         # No extra native-process timeout or retry. The existing 180-minute
         # hosted job owns cancellation; abrupt loss leaves running/absent proof.
-        code = subprocess.run(['bash', str(command)], cwd=root, check=False).returncode
+        environment = os.environ.copy()
+        if args.shard == 'runtime':
+            runner = shlex.join([sys.executable, str(root / 'scripts/ci/native_test_runner.py')])
+            key = 'CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER'
+            require(not environment.get(key) or environment[key] == runner,
+                    'conflicting Cargo test runner')
+            environment[key] = runner
+        code = subprocess.run(['bash', str(command)], cwd=root, env=environment, check=False).returncode
         result['exit_code'] = code
         result['after'] = identity(args, root)
         require(result['before'] == result['after'], 'source changed during Rust shard')
+        if args.shard == 'runtime' and code == 0:
+            import run_architecture_delivery_native as architecture
+            architecture.require_controller_success(args.output.parent / 'architecture-native',
+                                                    in_cargo_runtime=False)
         result['status'] = 'passed' if code == 0 else 'failed'
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         result.update(status='failed', error=str(error))

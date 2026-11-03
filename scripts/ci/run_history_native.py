@@ -98,7 +98,7 @@ def job_identity() -> dict:
     return result
 
 
-def source_identity() -> dict:
+def source_identity(test_source: str = SOURCE) -> dict:
     """Recheck the workflow's event-bound receipt; never choose bare HEAD as expected."""
     expected = os.environ.get('TRNM_EXPECTED_SOURCE_SHA')
     require(type(expected) is str and re.fullmatch('[0-9a-f]{40}', expected) is not None,
@@ -112,7 +112,7 @@ def source_identity() -> dict:
     actual = verify_source(receipt.get('kind'), receipt.get('candidate'),
                            receipt.get('base'), receipt.get('prospective_merge'), root=ROOT)
     require(actual == receipt, 'HISTORY_WORKFLOW_SOURCE_MISMATCH')
-    test, _ = file_observation(ROOT / SOURCE, JSON_LIMIT)
+    test, _ = file_observation(ROOT / test_source, JSON_LIMIT)
     return {'commit': expected, 'tree': actual['tested_tree'],
             'tracked_source_identity': actual, 'test_sha256': test['sha256']}
 

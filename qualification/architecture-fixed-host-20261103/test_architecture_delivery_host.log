@@ -1,0 +1,14 @@
+test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits (__main__.ArchitectureControls.test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits) ... ok
+test_other_targets_retain_actual_arguments_environment_and_cwd (__main__.ArchitectureControls.test_other_targets_retain_actual_arguments_environment_and_cwd) ... ok
+test_report_requires_every_sample_and_original_confirmation_contract (__main__.ArchitectureControls.test_report_requires_every_sample_and_original_confirmation_contract) ... ok
+test_target_match_is_exact_and_filtered_or_local_invocation_refuses (__main__.ArchitectureControls.test_target_match_is_exact_and_filtered_or_local_invocation_refuses) ... ok
+test_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test (__main__.ArchitectureControls.test_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test) ... ok
+test_actual_child_then_parent_readback_retains_distinct_environment_contexts (__main__.BoundHarmlessProcess.test_actual_child_then_parent_readback_retains_distinct_environment_contexts) ... ok
+test_current_binary_source_or_runtime_mutation_and_reuse_refuse (__main__.BoundHarmlessProcess.test_current_binary_source_or_runtime_mutation_and_reuse_refuse) ... ok
+test_missing_controller_or_late_host_failure_cannot_pass (__main__.BoundHarmlessProcess.test_missing_controller_or_late_host_failure_cannot_pass) ... ok
+test_source_drift_cannot_borrow_completed_result (__main__.BoundHarmlessProcess.test_source_drift_cannot_borrow_completed_result) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.316s
+
+OK

@@ -1,0 +1,10 @@
+   Compiling runner-invocation-probe v0.1.0 (/dev/shm/chain-cargo-runner-invocation-probe-20261103)
+    Finished `test` profile [unoptimized] target(s) in 0.29s
+     Running tests/architecture_delivery_compare.rs (chain-cargo-runner-invocation-probe-20261103/target/debug/deps/architecture_delivery_compare-8b14c7c2b67545e4)
+
+running 2 tests
+test one ... ok
+test two ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
