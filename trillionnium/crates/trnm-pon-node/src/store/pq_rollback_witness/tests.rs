@@ -479,10 +479,17 @@ fn exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse() {
         .is_err());
     client.current().unwrap();
     assert!(Checkpoint::new(u64::MAX, [4; 64]).is_err());
+    let fork = Checkpoint::new(2, [3; 64]).unwrap();
     error(
-        client.advance(initial, Checkpoint::new(2, [3; 64]).unwrap()),
-        "PQ_WITNESS_CAS",
+        client.advance(initial, fork),
+        "PQ_WITNESS_OBSERVATION_ROLLBACK",
     );
+    assert_eq!(client.current().unwrap(), next);
+    assert_eq!(f.head(), next);
+
+    // An unobserved client must still reach the owner CAS check.
+    let mut unobserved = f.client();
+    error(unobserved.advance(initial, fork), "PQ_WITNESS_CAS");
     assert_eq!(f.head(), next);
 }
 
