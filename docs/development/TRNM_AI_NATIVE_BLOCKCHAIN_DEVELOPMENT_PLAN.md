@@ -52,6 +52,43 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### PoN exact-fact decoding and honest-rate sensitivity — 2026-11-03
+
+Continue the composed PR #688 source `e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`.
+Publication also preserves its concurrent descendant
+`c39c65b15cde72c30d69dec62ae630a7ebffa3da`, including the Cell deadline and
+CI-guard repairs, before appending this increment.
+The M01 verifier separates current canonical statement checks from owned A/B
+decoding. Every lookup still validates the current fields, task and ticket/target
+in the original order. Only an actual arithmetic replay decodes the 32-KiB input
+buffer; complete work facts and arithmetic facts retain their existing keys,
+current-claim checks, cancellation, contention, publication and poison behavior.
+The independent scalar implementation remains separate. A same-task proof for
+a different challenge still requires complete replay. This change does not enable a cache by
+default, and no fact supplies execution authority.
+
+The [bounded legal allocation observation](../../evidence/pon-cache-rate-continuation-20261103/README.md)
+links the same observer separately to the clean baseline and candidate in distinct
+Cargo targets. All 24 legal calls per variant match the scalar oracle and the
+same replay paths. Both warm fact paths request 16,384 instead of 49,152 bytes;
+the work-fact cold and changed-challenge paths request 120,832 instead of 153,600.
+Raw complete verification and cold arithmetic verification remain 104,448 bytes.
+These are cumulative successful allocation requests, not RSS, CPU, throughput,
+fresh-invalid rejection costs or a public-service result.
+
+M02/M17 add a bounded same-time-horizon honest-rate fluid model to the existing
+reference-test lane. It reuses the installed target, integer DAA, MTP and dual
+confirmation rules, preserves partial work across supply changes and retains
+unfinished inclusion/confirmation at the horizon. Steady supply, fourfold and
+quarter-rate changes, and an outage have explicitly different assumed attempt
+budgets. The model is neither a random mining sample nor the expectation of a
+nonlinear stochastic process. It does not measure W1 production, hardware,
+partitions, queues, quantum cost or model utility, and does not tune parameters.
+
+The original rejection-CPU condition, four-second honest-service outcome and
+all independent-operation, useful-learning, storage and economic requirements
+remain open. This continuation preserves every qualification and activation flag.
+
 #### PoN complete-verifier and measured-rate continuation — 2026-11-03
 
 Continue the integrated #688 source `af064bf751ed92c82da0b113682a7dfff3225d97`

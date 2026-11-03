@@ -119,6 +119,7 @@ case "${1:?required job}" in
   fuzz-smoke)
     python3 scripts/ci/test_repository.py
     python3 formal/pon-nakamoto-v1/test_reference.py
+    python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
     python3 scripts/ci/run_fuzz_smoke.py
     ;;

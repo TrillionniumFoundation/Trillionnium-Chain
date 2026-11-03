@@ -151,8 +151,7 @@ impl ArithmeticFactCache {
         *observation = ArithmeticObservation::default();
         // Current grammar, fields, task and target precede all cache access and
         // callbacks, exactly as in the retained original production verifier.
-        let checked =
-            checked_proof_inputs(challenge, task, target, bytes, VerificationKernel::FullLimb)?;
+        let checked = checked_proof_statement(challenge, task, target, bytes)?;
         let inputs: &[u8; INPUT_BYTES] = bytes[4..4 + INPUT_BYTES]
             .try_into()
             .map_err(|_| FactError::Relation(WorkError::Length))?;
@@ -183,7 +182,10 @@ impl ArithmeticFactCache {
             // A trace-only fact never supplies a product. If the new claim now
             // matches that trace, perform the original whole arithmetic replay.
         }
-        let (a, b) = checked.matrices.split_at(CELLS);
+        // Exact reuse needs only the current borrowed canonical statement.
+        // Allocate/decode A/B only when this invocation actually replays them.
+        let matrices = checked.decode_inputs();
+        let (a, b) = matrices.split_at(CELLS);
         observation.transcript_entered = true;
         let evaluated = evaluate_transcript_kernel_with_progress::<true, false, true, E>(
             challenge, a, b, progress,

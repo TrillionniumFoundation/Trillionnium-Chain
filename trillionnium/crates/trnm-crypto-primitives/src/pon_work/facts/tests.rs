@@ -16,6 +16,86 @@ fn changed_product(bytes: &[u8], i: usize) -> Vec<u8> {
     out
 }
 #[test]
+fn legal_fact_reuse_and_cancellation_do_not_decode_input_matrices() {
+    let (challenge, task, proof) = fixture(81);
+    let mut reference_progress = Vec::new();
+    let expected =
+        verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            reference_progress.push(point);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+    let cache = WorkFactCache::new(1).unwrap();
+    ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+    let cancelled = cache.verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+        assert_eq!(point, VerificationProgress::BeforeReplay);
+        Err("before-lookup")
+    });
+    assert_eq!(
+        cancelled.unwrap_err(),
+        FactError::Cancelled("before-lookup")
+    );
+    assert_eq!(cache.counters().full_replays, 0);
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 0));
+
+    let mut cold_progress = Vec::new();
+    let cold = cache
+        .verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            cold_progress.push(point);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+    let mut expected_progress = vec![VerificationProgress::BeforeReplay];
+    expected_progress.extend(reference_progress);
+    assert_eq!(cold_progress, expected_progress);
+    assert_eq!(cold.product(), expected.product());
+    assert_eq!(cold.ticket(), expected.ticket());
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+
+    let warm_progress = [
+        VerificationProgress::BeforeReplay,
+        VerificationProgress::BeforeProduct,
+        VerificationProgress::BeforeVerifiedWork,
+    ];
+    for (index, stop) in warm_progress.iter().copied().enumerate() {
+        let mut points = Vec::new();
+        let cancelled =
+            cache.verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+                points.push(point);
+                if point == stop {
+                    Err("warm-cancel")
+                } else {
+                    Ok(())
+                }
+            });
+        assert_eq!(cancelled.unwrap_err(), FactError::Cancelled("warm-cancel"));
+        assert_eq!(points, warm_progress[..=index]);
+        ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+    }
+    let mut points = Vec::new();
+    let warm = cache
+        .verify_with_progress(challenge, task, expected.ticket(), &proof, &mut |point| {
+            points.push(point);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+    assert_eq!(points, warm_progress);
+    assert_eq!(warm.product(), expected.product());
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+
+    // Another fully legal challenge must still perform its own complete replay.
+    let (next_challenge, next_task, next_proof) = fixture(82);
+    assert_eq!(next_task, task);
+    let next = cache
+        .verify(next_challenge, next_task, [255; 32], &next_proof)
+        .unwrap();
+    assert_eq!(next.challenge(), next_challenge);
+    assert_eq!(next.product(), expected.product());
+    assert_eq!(cache.counters().full_replays, 2);
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 2));
+}
+
+#[test]
 fn one_success_avoids_three_full_product_replays() {
     let (c, t, p) = fixture(43);
     let cache = WorkFactCache::new(4).unwrap();
@@ -244,6 +324,7 @@ fn waiter_cancels_without_cancelling_the_leader() {
     });
     started_rx.recv_timeout(Duration::from_secs(3)).unwrap();
     let mut calls = 0;
+    ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
     let result = cache.verify_with_progress(c, t, [255; 32], &p, &mut |_| {
         calls += 1;
         if calls >= 2 {
@@ -256,6 +337,7 @@ fn waiter_cancels_without_cancelling_the_leader() {
     assert!(leader.join().unwrap().is_ok());
     assert!(matches!(result, Err(FactError::Cancelled("waiter-cancel"))));
     assert_eq!(cache.counters().full_replays, 1);
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 0));
 }
 #[test]
 fn cancelled_leader_wakes_waiter_for_its_own_complete_verification() {

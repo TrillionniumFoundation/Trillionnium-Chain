@@ -114,15 +114,10 @@ impl WorkFactCache {
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, FactError<E>> {
         // Cheap errors retain their original order and cannot access/populate a slot.
-        let checked = checked_proof_inputs(
-            challenge,
-            task,
-            target,
-            bytes,
-            VerificationKernel::Transposed,
-        )?;
+        let checked = checked_proof_statement(challenge, task, target, bytes)?;
         let ticket = checked.ticket;
-        drop(checked); // No decoded caller matrices survive into a cache wait.
+        // A cache hit or waiter never allocates decoded caller matrices. A new
+        // computation still enters the original complete native verifier below.
         let trace: Hash = bytes[PROOF_BYTES - 32..]
             .try_into()
             .map_err(|_| WorkError::Length)?;

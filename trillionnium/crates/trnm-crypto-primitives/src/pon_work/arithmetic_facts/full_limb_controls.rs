@@ -34,6 +34,118 @@ fn value(
 }
 
 #[test]
+fn legal_arithmetic_reuse_decodes_only_when_full_replay_is_needed() {
+    let (challenge, task, proof) = field_edge_fixture(156);
+    let mut reference_progress = Vec::new();
+    let expected =
+        verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            reference_progress.push(point);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+    let cache = ArithmeticFactCache::new(2).unwrap();
+    ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+    let cancelled = cache.verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+        assert_eq!(point, VerificationProgress::BeforeReplay);
+        Err("before-lookup")
+    });
+    assert_eq!(
+        cancelled.unwrap_err(),
+        FactError::Cancelled("before-lookup")
+    );
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 0));
+
+    let mut cold_progress = Vec::new();
+    let mut cold_observation = ArithmeticObservation::default();
+    let cold = cache
+        .verify_with_observation(
+            challenge,
+            task,
+            [255; 32],
+            &proof,
+            &mut |point| {
+                cold_progress.push(point);
+                Ok::<_, ()>(())
+            },
+            &mut cold_observation,
+        )
+        .unwrap();
+    assert_eq!(cold_progress, reference_progress);
+    assert!(!cold_observation.exact_fact_found);
+    assert!(cold_observation.transcript_completed && cold_observation.product_completed);
+    assert_eq!(cold.product(), expected.product());
+    assert_eq!(cold.ticket(), expected.ticket());
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+
+    let warm_progress = [
+        VerificationProgress::BeforeReplay,
+        VerificationProgress::BeforeProduct,
+        VerificationProgress::BeforeVerifiedWork,
+    ];
+    for (index, stop) in warm_progress.iter().copied().enumerate() {
+        let mut points = Vec::new();
+        let cancelled =
+            cache.verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+                points.push(point);
+                if point == stop {
+                    Err("warm-cancel")
+                } else {
+                    Ok(())
+                }
+            });
+        assert_eq!(cancelled.unwrap_err(), FactError::Cancelled("warm-cancel"));
+        assert_eq!(points, warm_progress[..=index]);
+        ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+    }
+    let mut points = Vec::new();
+    let mut warm_observation = ArithmeticObservation::default();
+    let warm = cache
+        .verify_with_observation(
+            challenge,
+            task,
+            expected.ticket(),
+            &proof,
+            &mut |point| {
+                points.push(point);
+                Ok::<_, ()>(())
+            },
+            &mut warm_observation,
+        )
+        .unwrap();
+    assert_eq!(points, warm_progress);
+    assert!(warm_observation.trace_reused && warm_observation.product_reused);
+    assert!(!warm_observation.transcript_entered && !warm_observation.product_entered);
+    assert_eq!(warm.product(), expected.product());
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
+
+    // The same legal task under a new challenge needs its own full replay.
+    let next_challenge = [157; 32];
+    let inputs: Vec<_> = proof[4..4 + 2 * CELLS * 4]
+        .chunks_exact(4)
+        .map(|p| u32::from_le_bytes(p.try_into().unwrap()))
+        .collect();
+    let (a, b) = inputs.split_at(CELLS);
+    assert_eq!(task_id(a, b).unwrap(), task);
+    let next_proof = prove(next_challenge, a, b).unwrap();
+    let mut next_observation = ArithmeticObservation::default();
+    let next = cache
+        .verify_with_observation(
+            next_challenge,
+            task,
+            [255; 32],
+            &next_proof,
+            &mut no_cancellation,
+            &mut next_observation,
+        )
+        .unwrap();
+    assert_eq!(next.challenge(), next_challenge);
+    assert_eq!(next.product(), expected.product());
+    assert!(!next_observation.exact_fact_found);
+    assert!(next_observation.transcript_completed && next_observation.product_completed);
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 2));
+}
+
+#[test]
 fn full_field_cold_claims_match_transposed_results_and_all_progress_boundaries() {
     for seed in [151, 152, 153] {
         let (challenge, task, proof) = field_edge_fixture(seed);

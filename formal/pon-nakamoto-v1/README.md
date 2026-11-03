@@ -35,6 +35,41 @@ A test class name, new heading or passing document parser cannot stand in for th
 Vectors are immutable test inputs; generating replacement vectors is an explicit protocol
 change and must never be part of a test's pass path.
 
+## Honest work-rate sensitivity on one time axis
+
+The bounded [honest-rate model](honest_rate_model.py) uses the installed development
+profile and existing reference target, timestamp and required-work arithmetic.
+It does not change consensus parameters. The [campaign](experiments/honest_rate_campaign.py)
+compares steady supply, a fourfold rate increase followed by restoration, a quarter-rate
+period followed by restoration, and a 300-second outage followed by restoration over the
+same default 7,200-second horizon. The cases deliberately have different total assumed
+attempt budgets; a common time axis is not an equal-compute comparison.
+
+```bash
+python3 formal/pon-nakamoto-v1/test_reference.py
+python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v
+python3 formal/pon-nakamoto-v1/experiments/honest_rate_campaign.py --include-events --output /tmp/new-pon-honest-rate.json
+```
+
+The existing required baseline's `fuzz-smoke` lane runs the new tests immediately after
+the reference tests, on both the candidate and prospective-merge source. The standalone
+campaign creates a new receipt and refuses to overwrite an existing file. Its file
+hashes identify the model inputs and source; they do not attest native execution.
+
+Rates mean assumed complete legal attempts per modeled second, never machine counts or
+nominal FLOPs. Exact `Fraction` arithmetic carries unfinished success hazard across rate
+changes, charges the unfinished tail, and retains markers that have not been included or
+confirmed when the horizon ends. Marker confirmation requires both installed depth and
+required-work thresholds, with their distinct arrival times reported.
+
+One modeled event consumes one integrated success-hazard unit. This deterministic fluid
+path is neither a stochastic mining sample nor the expected trajectory of the nonlinear
+stochastic process. Displayed times are floored to nanoseconds for serialization, not
+measured at that precision. No W1 proof, network, partition, queue, quantum computation,
+cheapest legal algorithm, physical cost or model-learning benefit is exercised. Work
+hardness, public-network qualification and production activation remain false, as do
+`finalized` and `execution_authority`.
+
 ## Separate measured workloads
 
 Run every campaign with a NEW output path. The following are different claims:

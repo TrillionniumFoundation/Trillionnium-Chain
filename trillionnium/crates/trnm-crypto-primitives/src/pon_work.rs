@@ -370,6 +370,7 @@ thread_local! {
     static PRODUCT_RECONSTRUCTIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
     static ARITHMETIC_TRANSCRIPT_REPLAYS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
     static ARITHMETIC_TRANSCRIPT_COMPLETIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static ARITHMETIC_INPUT_DECODES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
 fn finish_product(a: &[u32], evaluated: TranscriptEvaluation) -> Vec<u32> {
@@ -642,14 +643,33 @@ struct CheckedProofInputs {
     ticket: Hash,
 }
 
-// Shared original cheap-check order. A successful result is not verified work.
-fn checked_proof_inputs(
+// Current canonical bytes and cheap statement checks only, never a work fact.
+// Borrowing the immutable proof lets cache lookup precede the 32-KiB A/B
+// allocation. Only an actual arithmetic replay needs decoded input matrices.
+struct CheckedProofStatement<'a> {
+    inputs: &'a [u8],
+    actual_task: Hash,
+    ticket: Hash,
+}
+impl CheckedProofStatement<'_> {
+    fn decode_inputs(&self) -> Vec<u32> {
+        #[cfg(test)]
+        ARITHMETIC_INPUT_DECODES.with(|count| count.set(count.get() + 1));
+        self.inputs
+            .chunks_exact(4)
+            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+            .collect()
+    }
+}
+
+// Preserve the complete original optimized cheap-check order before any cache
+// access or callback. This deliberately differs from the wire-only precheck.
+fn checked_proof_statement(
     challenge: Hash,
     expected_task: Hash,
     target: Hash,
     bytes: &[u8],
-    kernel: VerificationKernel,
-) -> Result<CheckedProofInputs, WorkError> {
+) -> Result<CheckedProofStatement<'_>, WorkError> {
     if bytes.len() != PROOF_BYTES {
         return Err(WorkError::Length);
     }
@@ -659,53 +679,26 @@ fn checked_proof_inputs(
     if target == [0; 32] {
         return Err(WorkError::Target);
     }
-    // Keep the scalar reference's original three-matrix decoding. Optimized
-    // paths borrow the exact wire until field, task and ticket checks succeed;
-    // cheap refusal must not allocate the 32-KiB arithmetic input buffer.
-    let mut matrices = match kernel {
-        VerificationKernel::ScalarReference => bytes[4..4 + 3 * CELLS * 4]
+    // Preserve C, A, B field-error precedence before task, ticket and
+    // callbacks. Exact fixed slices need no allocation, unaligned cast,
+    // host-endian assumption or reduction of noncanonical input words.
+    for matrix in [2, 0, 1] {
+        let start = 4 + matrix * CELLS * 4;
+        if bytes[start..start + CELLS * 4]
             .chunks_exact(4)
-            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
-            .collect::<Vec<_>>(),
-        VerificationKernel::Transposed
-        | VerificationKernel::LimbTranscript
-        | VerificationKernel::FullLimb
-        | VerificationKernel::ColumnLimbTranscript => Vec::new(),
-    };
-    let actual_task = match kernel {
-        // Retain the scalar reference's independent field re-encoding.
-        VerificationKernel::ScalarReference => {
-            let (a, tail) = matrices.split_at(CELLS);
-            let (b, claimed) = tail.split_at(CELLS);
-            validate(claimed)?;
-            task_id(a, b)?
+            .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
+        {
+            return Err(WorkError::Field);
         }
-        VerificationKernel::Transposed
-        | VerificationKernel::LimbTranscript
-        | VerificationKernel::FullLimb
-        | VerificationKernel::ColumnLimbTranscript => {
-            // Preserve C, A, B field-error precedence before task, ticket and
-            // callbacks. Exact fixed slices need no allocation, unaligned cast,
-            // host-endian assumption or reduction of noncanonical input words.
-            for matrix in [2, 0, 1] {
-                let start = 4 + matrix * CELLS * 4;
-                if bytes[start..start + CELLS * 4]
-                    .chunks_exact(4)
-                    .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
-                {
-                    return Err(WorkError::Field);
-                }
-            }
-            // These are the current canonical bytes, not a cached task verdict.
-            hash(
-                b"task",
-                &[
-                    &bytes[4..4 + CELLS * 4],
-                    &bytes[4 + CELLS * 4..4 + CELLS * 8],
-                ],
-            )
-        }
-    };
+    }
+    // These are the current canonical bytes, not a cached task verdict.
+    let actual_task = hash(
+        b"task",
+        &[
+            &bytes[4..4 + CELLS * 4],
+            &bytes[4 + CELLS * 4..4 + CELLS * 8],
+        ],
+    );
     if actual_task != expected_task {
         return Err(WorkError::Task);
     }
@@ -716,13 +709,54 @@ fn checked_proof_inputs(
     if ticket > target {
         return Err(WorkError::Target);
     }
+    Ok(CheckedProofStatement {
+        inputs: &bytes[4..4 + 2 * CELLS * 4],
+        actual_task,
+        ticket,
+    })
+}
+
+fn checked_proof_inputs(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    kernel: VerificationKernel,
+) -> Result<CheckedProofInputs, WorkError> {
     if !matches!(kernel, VerificationKernel::ScalarReference) {
-        // Only A and B are arithmetic inputs. The immutable borrowed wire was
-        // checked above; C is still compared in full after relation replay.
-        matrices = bytes[4..4 + 2 * CELLS * 4]
-            .chunks_exact(4)
-            .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
-            .collect();
+        let checked = checked_proof_statement(challenge, expected_task, target, bytes)?;
+        return Ok(CheckedProofInputs {
+            matrices: checked.decode_inputs(),
+            actual_task: checked.actual_task,
+            ticket: checked.ticket,
+        });
+    }
+    // Retain the scalar reference's original three-matrix decoding and
+    // independent field re-encoding, including its original error order.
+    if bytes.len() != PROOF_BYTES {
+        return Err(WorkError::Length);
+    }
+    if &bytes[..4] != b"PNW1" {
+        return Err(WorkError::Version);
+    }
+    if target == [0; 32] {
+        return Err(WorkError::Target);
+    }
+    let matrices = bytes[4..4 + 3 * CELLS * 4]
+        .chunks_exact(4)
+        .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
+        .collect::<Vec<_>>();
+    let (a, tail) = matrices.split_at(CELLS);
+    let (b, claimed) = tail.split_at(CELLS);
+    validate(claimed)?;
+    let actual_task = task_id(a, b)?;
+    if actual_task != expected_task {
+        return Err(WorkError::Task);
+    }
+    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
+    let ticket = hash(b"ticket", &[&challenge, trace_claim]);
+    if ticket > target {
+        return Err(WorkError::Target);
     }
     Ok(CheckedProofInputs {
         matrices,

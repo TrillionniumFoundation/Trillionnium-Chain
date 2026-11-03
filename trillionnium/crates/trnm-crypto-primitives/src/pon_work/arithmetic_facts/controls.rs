@@ -64,7 +64,7 @@ fn every_warm_call_keeps_current_cheap_checks_and_the_original_error_order() {
     reset_native_arithmetic();
     for (current_task, current_target, bytes) in cases {
         let expected =
-            super::super::verify(challenge, current_task, current_target, &bytes).unwrap_err();
+            verify_reference(challenge, current_task, current_target, &bytes).unwrap_err();
         let mut callbacks = 0;
         let mut observation = ArithmeticObservation::default();
         let result = cache.verify_with_observation(
@@ -126,6 +126,7 @@ fn trace_only_fact_must_recompute_product_before_accepting_a_new_matching_trace(
     bad[PROOF_BYTES - 1] ^= 1;
     let cache = ArithmeticFactCache::new(1).unwrap();
     reset_native_arithmetic();
+    ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
     let (result, trace) = observed(&cache, challenge, task, [255; 32], &bad);
     assert_eq!(
         result.unwrap_err(),
@@ -135,6 +136,7 @@ fn trace_only_fact_must_recompute_product_before_accepting_a_new_matching_trace(
     assert!(!trace.product_entered);
     assert_eq!(trace.publication, ArithmeticPublication::Trace);
     assert_eq!(native_arithmetic(), (1, 1, 0));
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
     let (result, product) = observed(&cache, challenge, task, [255; 32], &proof);
     assert!(result.is_ok());
     assert!(product.exact_fact_found);
@@ -142,12 +144,14 @@ fn trace_only_fact_must_recompute_product_before_accepting_a_new_matching_trace(
     assert!(product.transcript_completed && product.product_completed);
     assert_eq!(product.publication, ArithmeticPublication::Product);
     assert_eq!(native_arithmetic(), (2, 2, 1));
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 2));
     let bad_product = changed_product(&proof, CELLS / 2);
     let (result, hit) = observed(&cache, challenge, task, [255; 32], &bad_product);
     assert_eq!(result.unwrap_err(), FactError::Relation(WorkError::Product));
     assert!(hit.trace_reused && hit.product_reused);
     assert!(!hit.transcript_entered && !hit.product_entered);
     assert_eq!(native_arithmetic(), (2, 2, 1));
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 2));
 }
 
 #[test]
@@ -280,6 +284,7 @@ fn holding_the_cache_lock_never_waits_or_reports_reuse_instead_of_real_arithmeti
     let cache = ArithmeticFactCache::new(1).unwrap();
     let held = cache.state.lock().unwrap();
     reset_native_arithmetic();
+    ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
     let (result, observation) = observed(&cache, challenge, task, [255; 32], &proof);
     assert_exact(&result.unwrap(), &expected);
     assert!(observation.lookup_contended);
@@ -287,10 +292,12 @@ fn holding_the_cache_lock_never_waits_or_reports_reuse_instead_of_real_arithmeti
     assert!(observation.transcript_completed && observation.product_completed);
     assert_eq!(observation.publication, ArithmeticPublication::Contended);
     assert_eq!(native_arithmetic(), (1, 1, 1));
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 1));
     drop(held);
     reset_native_arithmetic();
     assert!(cache.verify(challenge, task, [255; 32], &proof).is_ok());
     assert_eq!(native_arithmetic(), (1, 1, 1));
+    ARITHMETIC_INPUT_DECODES.with(|count| assert_eq!(count.get(), 2));
 }
 
 #[test]
