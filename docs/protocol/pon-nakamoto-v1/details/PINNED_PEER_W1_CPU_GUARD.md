@@ -95,3 +95,51 @@ reconcile the original owner before claiming a completed sync.
 This is NOT a signed public V3 outcome modification. The exact current
 source requires native Rust execution and physical CPU-owner evidence before
 P1 is accepted; code inspection alone is not a receipt.
+
+## P1 follow-up: parent-context CPU must be reserved first
+
+Additional child branch starting from parent #340 head
+`563a8c982106dc38880f4a8cbaf37f4f89fa9cb4`.
+This patch moves the **one existing** `ServiceMutationCpuOperation::begin`
+ahead of `check_admission_context_with_progress` in
+`peer_polling.rs::admit_page`. The original code selected the correct
+shared domain first but reconstructed parent context before reservation.
+The new operation covers parent State materialization, task/ancestry checks,
+an exact stored duplicate, full W1 replay, and eventual M06 admission
+execution, with its original progress/deadline/live CPU checkpoints.
+
+A new Linux test first admits a genuine native block locally, then binds
+one original service domain with **both actual operation slots occupied**
+and attempts both the exact stored duplicate and a distinct invalid-header
+packet. Occupied slots avoid racing the donor's natural cold-credit refill.
+Each must refuse
+`PUBLIC_MUTATION_CPU_BUDGET` *before* parent State or proof replay; active
+tip, stats and CPU inflight stay unchanged. Old late Product rejection and
+unbound-domain cases remain in the parent PR. This is a source-level
+security regression; exact Rust compilation, formatting and real host
+resource evidence have not been performed in this assistant container.
+
+This tradeoff deliberately charges an exact duplicate's bounded context
+lookup too. Verified/active historical state is not declared invalid on
+local CPU starvation. It can be retried when the **same** original CPU domain
+has genuine available credit. No new token bucket, epoch, Work relation,
+Chainwork or consensus-invalid error is created.
+
+P1 still requires physical process/cgroup proof, hostile real-page and
+honest mixed-traffic experiments. P2–P6 retain their separate gates.
+
+## Local combined source provenance
+
+This reconciliation starts at local completion-accounting commit
+`e105842a04639fb57ccc5a55a35ff5d8b8264bbd`, itself on #351
+`dcd6860f9037d8f4e14cbaf5e14e4c59dea2f192`. It adopts only the incremental
+reserve-before-context change from #362
+`a8984924a83578ad2de3991e7300cbc4775fa2ee` and outbound physical-owner checks
+from #367 `4ed06b90c36f8ff73354bd38bb251f3d4ea15484`, not an older complete
+#340 file. Completion still reserves and settles the original Node CPU
+domain, uses cooperative native activation, and never rewrites a committed
+fact after accounting failure. The same actual host guard now brackets
+completion before any success marker, including the already-known Head path.
+
+Native tests are authored, not executed. Python source-order sentinels do not
+qualify CPU conservation, kernel custody, runtime cancellation or deployment.

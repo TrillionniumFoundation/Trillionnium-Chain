@@ -342,21 +342,36 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
         // never mint its own allowance or bypass the public service budget.
-        let cpu = owner.public_service_cpu_domain()?;
-        if owner
-            .check_admission_context(&packet, ingress::now()?)?
-            .is_some()
-        {
-            return Ok(false);
-        }
-        cpu
+        // Only fetch the bound budget identity before reserving actual CPU.
+        // A cold historical-parent context check can itself be expensive.
+        owner.public_service_cpu_domain()?
     };
     progress(end, stop)?;
-    // Exactly the original service bucket, across identities/listeners and
-    // inbound V3 and outbound peer polling. No new budget or chain authority.
+    // The ONE original CPU reservation starts BEFORE reconstructing parent
+    // State, checking ancestry/task and replaying any transcript.
     let operation = cpu.begin()?;
     let checkpoint = operation.checkpoint_handle();
     let native = (|| -> Result<bool> {
+        progress(end, stop)?;
+        checkpoint.checkpoint()?;
+        {
+            let owner = lock(node, end, stop)?;
+            if owner
+                .check_admission_context_with_progress(
+                    &packet,
+                    ingress::now()?,
+                    &mut || {
+                        progress(end, stop)?;
+                        checkpoint.checkpoint()
+                    },
+                )?
+                .is_some()
+            {
+                // Exact stored work stays a duplicate, not fresh Chainwork.
+                // This context read was still paid from the same original CPU.
+                return Ok(false);
+            }
+        }
         progress(end, stop)?;
         checkpoint.checkpoint()?;
         let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
@@ -374,8 +389,9 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
         Ok(true)
     })();
-    // Success, false transcript, cancellation, M06 failures and panics cannot
-    // invent a refund. The operation owns all actual scoped workers and
+    // Parent State replay, exact duplicate, success, false transcript,
+    // cancellation, M06 failures and panics all owe actual CPU settlement.
+    // The operation owns all actual scoped workers and
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
     let settlement = operation.finish();
@@ -392,6 +408,7 @@ struct PollContext<'a> {
     settings: &'a Settings,
     end: Instant,
     stop: &'a AtomicBool,
+    host_kernel: Option<&'a crate::host_kernel_parent::HostKernelBudget>,
 }
 struct EventDetail {
     stage: &'static str,
@@ -460,7 +477,7 @@ impl Engine {
         let retained = failure(&error.to_string());
         self.states[index].failures += 1;
         self.states[index].last_error = Some(retained.clone());
-        self.event(
+        let observation = self.event(
             index,
             EventDetail {
                 stage,
@@ -471,11 +488,14 @@ impl Engine {
                 active: None,
             },
             observe,
-        )?;
+        );
         if fatal {
+            // Attempt the observer once, but never let its cancellation/error
+            // replace the original fatal owner cause. The secondary observer
+            // error is not separately returned; retained failure stays primary.
             return Err(error);
         }
-        Ok(())
+        observation
     }
     fn step<F, R>(
         &mut self,
@@ -494,8 +514,14 @@ impl Engine {
             settings,
             end,
             stop,
+            host_kernel,
         } = *context;
         progress(end, stop)?;
+        // The actual pinned-peer worker is a remote CPU-consumer, even when
+        // the sibling public listener is loopback-only. No cgroup = no WAN.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
         if self.calls >= cfg.max_calls {
             return Ok(false);
         }
@@ -626,7 +652,7 @@ impl Engine {
                 }
             };
             if known {
-                self.complete(index, node, end, stop, observe)?;
+                self.complete(index, context, observe)?;
             }
             return Ok(false);
         }
@@ -641,7 +667,17 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            let admission = admit_page(node, packet, end, stop);
+            // This is after the full W1 and M06/SQLite path as well. A
+            // failed actual host identity check invalidates the sync result,
+            // never a previously committed Node fact.
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            match admission {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -681,27 +717,53 @@ impl Engine {
             observe,
         )?;
         if complete {
-            self.complete(index, node, end, stop, observe)?;
+            self.complete(index, context, observe)?;
         }
         Ok(true)
     }
     fn complete<F>(
         &mut self,
         index: usize,
-        node: &Mutex<Node>,
-        end: Instant,
-        stop: &AtomicBool,
+        context: &PollContext<'_>,
         observe: &mut F,
     ) -> Result<()>
     where
         F: FnMut(&PeerPollingEvent) -> Result<()>,
     {
+        let PollContext { node, end, stop, host_kernel, .. } = *context;
         let target = self.states[index].target.ok_or("PEER_TARGET")?;
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
         let activated = (|| -> Result<Hash> {
             let mut owner = lock(node, end, stop)?;
-            // Native accumulated work chooses; lower/equal work never takes over.
-            owner.activate_observed(target, ingress::now()?)
+            // Both an already-known Head and a completed page reach here.
+            // Neither bypasses the original account just because W1 is stored.
+            let cpu = owner.public_service_cpu_domain()?;
+            let operation = cpu.begin()?;
+            let checkpoint = operation.checkpoint_handle();
+            let native = (|| -> Result<Hash> {
+                let mut check = || {
+                    progress(end, stop)?;
+                    checkpoint.checkpoint()
+                };
+                check()?;
+                // Native accumulated work chooses; lower/equal work never takes over.
+                owner.activate_observed_with_progress(target, ingress::now()?, &mut check)
+            })();
+            // Settle failed/cancelled activation too. Unknown CPU cannot qualify
+            // completion, but cannot roll back an already durable native fact.
+            let settlement = operation.finish();
+            if settlement.accounting_unavailable {
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+            native
         })();
+        // Check even after native failure, and before any completion marker.
+        // A changed physical owner cannot undo already committed native facts.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
         let active = match activated {
             Ok(active) => active,
             Err(error) => {
@@ -737,6 +799,7 @@ impl Engine {
             settings: _,
             end,
             stop,
+            host_kernel: _,
         } = *context;
         let count = self.states.len();
         let mut attempted_pages = 0;
@@ -799,6 +862,18 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        // Outgoing pinned peers can be WAN even if the service listener binds
+        // 127.0.0.1. Authenticate physical host membership BEFORE any peer
+        // RPC or W1; use the same fixed root-owned cgroup as V3, never a new
+        // per-peer/process cost owner.
+        let host_kernel = cfg.peers.iter()
+            .find(|peer| !peer.address.ip().is_loopback())
+            .map(|peer| crate::host_kernel_parent::require_for_listener(peer.address))
+            .transpose()?
+            .flatten();
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -836,6 +911,7 @@ where
             settings: &settings,
             end,
             stop: &stop,
+            host_kernel: host_kernel.as_ref(),
         };
         while Instant::now() < end && !stop.load(Ordering::Acquire) && engine.calls < cfg.max_calls
         {
@@ -846,7 +922,14 @@ where
                 break;
             }
             cycles += 1;
-            match engine.cycle(&poll_context, &mut rpc, &mut observe) {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            let outcome = engine.cycle(&poll_context, &mut rpc, &mut observe);
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            match outcome {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
             }
@@ -960,8 +1043,154 @@ mod tests {
             settings: s,
             end: Instant::now() + Duration::from_secs(120),
             stop,
+            host_kernel: None, // local synthetic test fixtures only
         }
     }
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn known_head_completion_requires_and_charges_original_cpu_owner() {
+        use crate::ingress::public_v3::ServiceMutationCpuDomain;
+        // Do not use context(): it automatically binds a warm test domain.
+        for mode in ["unbound", "paid", "occupied", "unknown"] {
+            let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+            let dir = tempfile::tempdir().unwrap();
+            let node = Mutex::new(Node::open(dir.path(), settings.clone(), 2).unwrap());
+            let cpu = ServiceMutationCpuDomain::standalone();
+            if mode != "unbound" {
+                node.lock().unwrap().bind_public_service_cpu_domain(&cpu).unwrap();
+            }
+            let mut occupied = Vec::new();
+            if mode == "occupied" {
+                occupied.push(cpu.begin().unwrap());
+                occupied.push(cpu.begin().unwrap());
+            }
+            if mode == "unknown" {
+                // Real unsettled-operation Drop: prior UNKNOWN, not a simulated
+                // post-commit clock fault or evidence of rollback behavior.
+                drop(cpu.begin().unwrap());
+                assert!(!cpu.accounting_available());
+            }
+            let cfg = config(&settings);
+            let stop = AtomicBool::new(false);
+            let ctx = PollContext {
+                node: &node, cfg: &cfg, settings: &settings,
+                end: Instant::now() + Duration::from_secs(10), stop: &stop,
+                host_kernel: None, // trusted local fixture, not peer provenance
+            };
+            let mut engine = Engine::new(&cfg, &settings);
+            let mut events = Vec::new();
+            let mut observe = |event: &PeerPollingEvent| {
+                events.push(event.kind);
+                Ok(())
+            };
+            let mut rpc = |_: usize, request: &Request| {
+                assert!(matches!(request, Request::Head));
+                Ok(reply(true, serde_json::json!({"tip":hex::encode(settings.genesis())})))
+            };
+            let result = engine.step(0, &ctx, &mut rpc, &mut observe);
+            if mode == "paid" {
+                result.unwrap();
+                assert_eq!(engine.states[0].completed, 1);
+                assert_eq!(engine.states[0].last_completed, Some(settings.genesis()));
+                assert!(events.contains(&"fixed_target_native_complete"));
+                let flow = cpu.observe_actual_flow().unwrap().unwrap();
+                assert!(flow.settled_full_cpu_ns > 0);
+                assert_eq!(flow.live_owners, 0);
+                assert!(node.lock().unwrap().public_service_cpu_domain().unwrap()
+                    .shares_domain_with(&cpu));
+            } else {
+                // An exhausted healthy account is nonfatal; losing the actual
+                // owner is fatal and cannot silently continue to another cycle.
+                let expected = match mode {
+                    "unbound" => "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND",
+                    "occupied" => "PUBLIC_MUTATION_CPU_BUDGET",
+                    "unknown" => "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+                    _ => unreachable!(),
+                };
+                if mode == "occupied" {
+                    assert!(!result.unwrap());
+                } else {
+                    let error = result.unwrap_err();
+                    assert_eq!(error.to_string(), expected);
+                    assert!(error.requires_owner_stop());
+                }
+                assert_eq!(engine.states[0].last_error.as_ref().unwrap().message, expected);
+                assert!(events.contains(&"failure_cursor_retained"));
+                assert_eq!(engine.states[0].completed, 0, "{mode}");
+                assert_eq!(engine.states[0].last_completed, None, "{mode}");
+                assert!(!events.contains(&"fixed_target_native_complete"), "{mode}");
+                assert_eq!(engine.states[0].failures, 1, "{mode}");
+            }
+            for operation in occupied {
+                assert!(!operation.finish().accounting_unavailable);
+            }
+            assert_eq!(cpu.observe().unwrap().in_flight, 0, "{mode}");
+            assert_eq!(node.lock().unwrap().read_active().unwrap().0, settings.genesis());
+        }
+    }
+
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn pinned_activation_failure_settles_without_claiming_completion() {
+        let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Mutex::new(Node::open(dir.path(), settings.clone(), 2).unwrap());
+        let cpu = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+        node.lock().unwrap().bind_public_service_cpu_domain(&cpu).unwrap();
+        let cfg = config(&settings);
+        let stop = AtomicBool::new(false);
+        let mut engine = Engine::new(&cfg, &settings);
+        engine.states[0].target = Some([0xa5; 32]); // No such native history.
+        let mut complete_event = false;
+        let ctx = PollContext {
+            node: &node, cfg: &cfg, settings: &settings,
+            end: Instant::now() + Duration::from_secs(10), stop: &stop,
+            host_kernel: None,
+        };
+        engine.complete(0, &ctx, &mut |event| {
+                complete_event |= event.kind == "fixed_target_native_complete";
+                Ok(())
+            }).unwrap();
+        assert!(!complete_event);
+        assert_eq!(engine.states[0].completed, 0);
+        assert_eq!(engine.states[0].last_completed, None);
+        assert_eq!(engine.states[0].failures, 1);
+        assert_eq!(engine.states[0].last_error.as_ref().unwrap().message, "UNKNOWN_PARENT");
+        let flow = cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(flow.settled_full_cpu_ns > 0);
+        assert_eq!(flow.live_owners, 0);
+        assert_eq!(node.lock().unwrap().read_active().unwrap().0, settings.genesis());
+
+        // Deterministic entry cancellation controls, without timing races or
+        // test-only hooks in the activation/CPU owner implementation.
+        for stopped in [true, false] {
+            let stop = AtomicBool::new(stopped);
+            let end = if stopped {
+                Instant::now() + Duration::from_secs(10)
+            } else {
+                Instant::now()
+            };
+            let before = cpu.observe_actual_flow().unwrap().unwrap();
+            let mut cancelled = Engine::new(&cfg, &settings);
+            cancelled.states[0].target = Some(settings.genesis());
+            let ctx = PollContext {
+                node: &node, cfg: &cfg, settings: &settings, end, stop: &stop,
+                host_kernel: None,
+            };
+            cancelled.complete(0, &ctx, &mut |event| {
+                assert_eq!(event.kind, "failure_cursor_retained");
+                Ok(())
+            }).unwrap();
+            assert_eq!(cancelled.states[0].last_error.as_ref().unwrap().message,
+                "PEER_POLL_CANCELLED");
+            assert_eq!(cancelled.states[0].completed, 0);
+            assert_eq!(cancelled.states[0].last_completed, None);
+            let after = cpu.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(after.settled_full_cpu_ns, before.settled_full_cpu_ns);
+            assert_eq!(after.live_owners, 0);
+        }
+    }
+
     #[test]
     fn pinned_peer_requires_the_existing_service_domain_before_full_work() {
         let now = ingress::now().unwrap();
@@ -987,6 +1216,51 @@ mod tests {
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn pinned_peer_cannot_reconstruct_parent_on_an_exhausted_original_cpu_domain() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let valid = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = node.admit(&valid, now).unwrap();
+        node.activate_observed(id, now).unwrap();
+        let before = node.stats().unwrap();
+        let before_active = node.read_active().unwrap();
+
+        // Occupy the two real slots, rather than racing natural cold refill.
+        // Duplicate/context-only paths must also reserve this original owner.
+        let original = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+        let occupied = [original.begin().unwrap(), original.begin().unwrap()];
+        assert_eq!(original.observe().unwrap().in_flight, 2);
+        node.bind_public_service_cpu_domain(&original).unwrap();
+        let guarded = Mutex::new(node);
+        let stop = AtomicBool::new(false);
+        let deadline = Instant::now() + Duration::from_secs(1);
+        for (index, mut packet) in [valid.clone(), valid].into_iter().enumerate() {
+            if index == 1 {
+                packet.header.nonce = packet.header.nonce.wrapping_add(1);
+                packet.proof[0] ^= 1;
+            }
+            let error = admit_page(&guarded, packet, deadline, &stop).unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+            assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+            assert_eq!(guarded.lock().unwrap().read_active().unwrap(), before_active);
+        }
+        assert_eq!(original.observe().unwrap().in_flight, 2);
+        for operation in occupied {
+            assert!(!operation.finish().accounting_unavailable);
+        }
+        assert_eq!(original.observe().unwrap().in_flight, 0);
     }
 
     #[test]
@@ -1041,6 +1315,50 @@ mod tests {
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn wan_pinned_peer_cannot_bypass_fixed_host_parent_using_loopback_listener() {
+        // The currently selected public listener address is irrelevant:
+        // this worker obtains packets from its actual pinned peer address.
+        let remote: SocketAddr = "192.0.2.31:4242".parse().unwrap();
+        let host = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(host, Ok(None)), "WAN must have a real kernel owner");
+        match host {
+            Ok(Some(ref kernel)) => kernel.verify().unwrap(),
+            Err(ref expected) => {
+                let settings = Settings::development(Some(1)).unwrap();
+                for mixed_roster in [false, true] {
+                    let directory = tempfile::tempdir().unwrap();
+                    let owner = Arc::new(Mutex::new(Node::open(
+                        directory.path(),
+                        settings.clone(),
+                        1,
+                    ).unwrap()));
+                    let original = owner.lock().unwrap().stats().unwrap();
+                    let mut cfg = config(&settings);
+                    if mixed_roster {
+                        let public = cfg.peers[0].server_public.clone();
+                        cfg.peers.push(PinnedPeer {
+                            address: remote,
+                            server_public: public,
+                        });
+                    } else {
+                        cfg.peers[0].address = remote;
+                    }
+                    cfg.validate(&settings).unwrap();
+                    let stop = Arc::new(AtomicBool::new(false));
+                    let result = run_pinned_peer_polling(
+                        owner.clone(), cfg, identity(72), stop.clone(),
+                        |_| panic!("no remote RPC/observer before a valid host owner"),
+                    );
+                    assert_eq!(result.unwrap_err().to_string(), expected.to_string());
+                    assert!(stop.load(Ordering::Acquire));
+                    assert_eq!(owner.lock().unwrap().stats().unwrap(), original);
+                }
+            }
+            Ok(None) => unreachable!("remote parent cannot be None"),
+        }
     }
 
     #[test]
@@ -1546,6 +1864,133 @@ mod tests {
         }
         assert_eq!(engine.states[0].failures, 7);
     }
+    #[test]
+    fn fatal_owner_error_survives_failed_observer_without_changing_cursor() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let cfg = config(&settings);
+        for code in [
+            ErrorCode::PublicMutationCpuUnavailable,
+            ErrorCode::OwnerPublicServiceCpuDomain,
+            ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerPublicServiceUncleanEpoch,
+            ErrorCode::NamespaceChanged,
+        ] {
+            for observer_error in [None, Some("PEER_POLL_CANCELLED"), Some("OBSERVER_FULL")] {
+                let mut engine = Engine::new(&cfg, &settings);
+                let cursor = [19; 32];
+                let target = [20; 32];
+                engine.states[0].cursor = cursor;
+                engine.states[0].target = Some(target);
+                let primary = Error::new(code);
+                let message = primary.to_string();
+                let mut attempts = 0;
+                let actual = engine.reject(0, "activation", primary, 0, None, &mut |event| {
+                    attempts += 1;
+                    // Retain the original effect/error before attempting observation.
+                    assert_eq!(event.kind, "failure_cursor_retained");
+                    assert_eq!(event.error.as_ref().unwrap().message, message);
+                    match observer_error {
+                        Some(error) => Err(error.into()),
+                        None => Ok(()),
+                    }
+                }).unwrap_err();
+                assert!(actual.is(code));
+                assert!(actual.requires_owner_stop());
+                assert_eq!(actual.to_string(), message);
+                assert_eq!(attempts, 1);
+                assert_eq!(engine.states[0].last_error.as_ref().unwrap().message, message);
+                assert_eq!(engine.states[0].failures, 1);
+                assert_eq!(engine.states[0].cursor, cursor);
+                assert_eq!(engine.states[0].target, Some(target));
+                assert_eq!(engine.states[0].completed, 0);
+                assert_eq!(engine.states[0].last_completed, None);
+            }
+        }
+        // Nonfatal errors still propagate observer cancellation/error unchanged.
+        for remote in [false, true] {
+            for observer_error in ["PEER_POLL_CANCELLED", "OBSERVER_FULL"] {
+                let mut engine = Engine::new(&cfg, &settings);
+                let primary = if remote {
+                    Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE")
+                } else {
+                    Error::new(ErrorCode::PublicMutationCpuBudget)
+                };
+                let mut attempts = 0;
+                let actual = engine.reject(0, "history", primary, 0, None, &mut |_| {
+                    attempts += 1;
+                    Err(observer_error.into())
+                }).unwrap_err();
+                assert_eq!(actual.to_string(), observer_error);
+                assert!(!actual.requires_owner_stop());
+                assert_eq!(attempts, 1);
+                assert_eq!(engine.states[0].completed, 0);
+            }
+        }
+    }
+
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn real_poller_fatal_owner_is_not_hidden_by_observer_cancellation() {
+        // Real loopback signed Head transport; no host/cgroup changes or W1 load.
+        let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+        let remote_dir = tempfile::tempdir().unwrap();
+        let local_dir = tempfile::tempdir().unwrap();
+        let mut remote = Node::open(remote_dir.path(), settings.clone(), 2).unwrap();
+        remote.enable_local_mempool(crate::PoolLimits {
+            max_records: 16, max_bytes: 32768, max_group_members: 4,
+            critical_reserve: 0, max_removals: 64,
+            preview_miner: development_public(0).unwrap(),
+        }).unwrap();
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let remote_stop = Arc::new(AtomicBool::new(false));
+        let signal = remote_stop.clone();
+        let server = public_v3::PublicServer::new(
+            identity(71), PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        ).unwrap();
+        let server_thread = thread::spawn(move || public_v3::serve_public_protected_v3(
+            listener, Arc::new(Mutex::new(remote)), Duration::from_secs(10), signal, server,
+        ));
+        let mut local = Node::open(local_dir.path(), settings.clone(), 2).unwrap();
+        let original = public_v3::ServiceMutationCpuDomain::standalone();
+        local.bind_public_service_cpu_domain(&original).unwrap();
+        drop(original.begin().unwrap()); // Actual unknown original accounting.
+        assert!(!original.accounting_available());
+        let local = Arc::new(Mutex::new(local));
+        let before = local.lock().unwrap().stats().unwrap();
+        let mut cfg = config(&settings);
+        cfg.peers[0].address = address;
+        cfg.max_calls = 1;
+        cfg.runtime_ms = 5000;
+        let stop = Arc::new(AtomicBool::new(false));
+        let mut failures = 0;
+        let mut failure_message = None;
+        let mut completions = 0;
+        let result = run_pinned_peer_polling(local.clone(), cfg, identity(72), stop.clone(), |event| {
+            if event.kind == "fixed_target_native_complete" {
+                completions += 1;
+            }
+            if event.kind == "failure_cursor_retained" {
+                failures += 1;
+                failure_message = event.error.as_ref().map(|error| error.message.clone());
+                return Err("PEER_POLL_CANCELLED".into());
+            }
+            Ok(())
+        });
+        // Stop/join the real local fixture before asserting the poller outcome.
+        remote_stop.store(true, Ordering::Release);
+        server_thread.join().unwrap().unwrap();
+        let error = result.unwrap_err();
+        assert!(error.is(ErrorCode::PublicMutationCpuUnavailable));
+        assert!(error.requires_owner_stop());
+        assert!(stop.load(Ordering::Acquire));
+        assert_eq!(failures, 1);
+        assert_eq!(failure_message.as_deref(), Some("PUBLIC_MUTATION_CPU_UNAVAILABLE"));
+        assert_eq!(completions, 0);
+        assert_eq!(local.lock().unwrap().stats().unwrap(), before);
+        assert_eq!(local.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
     #[test]
     fn normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does() {
         let settings = Settings::development(Some(1)).unwrap();
