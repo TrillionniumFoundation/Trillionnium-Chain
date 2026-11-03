@@ -1,0 +1,93 @@
+{
+  "schema": "w1-workflow-input-local-controls-v1",
+  "source_base": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "workflow_sha256": "388edd0b85d8c57c3037d9cb27cf39ad9c84f442f0d7b9627c9e569bc5e0f5e6",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 2.783672440000373,
+      "stdout": "{\"receipt\": \"/tmp/trnm-ci-raw-source-9sto0meh/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-09y7c2pw/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-el9wxtsi/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-g0swp83i/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-icqeo9hi/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-icqeo9hi/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n",
+      "stderr": "test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok\ntest_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok\ntest_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok\ntest_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected) ... ok\ntest_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok\ntest_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok\ntest_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok\ntest_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok\ntest_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ok\ntest_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok\ntest_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok\ntest_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok\ntest_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok\ntest_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ok\ntest_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ok\ntest_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ok\ntest_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ok\ntest_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ok\ntest_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ok\ntest_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ok\ntest_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ok\ntest_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ok\ntest_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ok\ntest_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ok\ntest_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ok\ntest_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ok\ntest_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ok\ntest_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ok\ntest_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ok\ntest_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected) ... ok\ntest_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok\ntest_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok\ntest_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok\ntest_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok\n\n----------------------------------------------------------------------\nRan 34 tests in 2.666s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_public_fixture_lease.py"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 0.17969886300124926,
+      "stdout": "",
+      "stderr": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.080s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_run_w1_fresh_service_v1.py"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 1.2931330030005483,
+      "stdout": "",
+      "stderr": "....................\n----------------------------------------------------------------------\nRan 20 tests in 1.149s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 0.09318571499898098,
+      "stdout": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 20, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 0.06204425000032643,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-native-control-inputs-20261103-gpt6\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 12.913818722998258,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "exit_code": 0,
+      "elapsed_seconds": 0.01622196099924622,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "all_commands_passed": true,
+  "native_service_tested": false,
+  "host_provisioned": false
+}

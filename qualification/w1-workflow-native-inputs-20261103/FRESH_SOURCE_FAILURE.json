@@ -1,0 +1,16 @@
+{
+  "schema": "w1-fresh-source-receipt-failure-v1",
+  "run_id": 41715157654,
+  "job_id": 126193117107,
+  "source_head": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "decoded_full_log_bytes": 144318,
+  "decoded_full_log_sha256": "49ad04ec0c469eec3dd297be02da48f583316db81e3a9764473e23fd1d1e29f0",
+  "original_failure_lines": [
+    {
+      "line": 1040,
+      "text": "2026-11-03T20:48:19.0596246Z {\"passed\": false, \"failure\": \"[Errno 2] No such file or directory: '/home/runner/work/_temp/w1-fresh-service-head-41715157654-1/source.json'\", \"host_readiness_only\": true}"
+    }
+  ],
+  "native_service_executed": false,
+  "performance_result_available": false
+}
