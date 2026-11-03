@@ -4367,3 +4367,64 @@ upstream [456d original outcomes](TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md
 with that historical source. This new combined source has not yet been built
 or accepted; it requires fresh exact-head and actual-merge evidence. All eight
 machine assertions remain false and PN0-PN6 remain HOLD.
+
+### 2026-11-03 retain complete PQ component outcomes and bind the W1 profile
+
+Continue PN0–PN6 with Chain code commit `12fe5f2c1f19704fe7eb635dede6839ed8b1e91e`,
+tree `c44112da731e3f958e55eb024e5762d6723ea2c9`, parent `1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c`.
+The [component evidence record](../../evidence/pq-full-continuation-20261103/README.md)
+retains exact sources and raw outcomes. Ordinary PNQ2 admission keeps a fresh
+guard and permission reads in one IMMEDIATE transaction; actual expiry still
+commits retirement, publishes the epoch and reacquires the guard. Retain all
+43 original controls plus two new controls and unchanged deadlines.
+
+The isolated SDK 3.0.6 verifier selects the fixed Poseidon2 profile. Main and all
+four hosted research lanes passed four unit tests, the real complete receipt,
+26 controls (one acceptance, 25 rejections, no panics), real prefix lift and
+strict Clippy. Run `41628135456` tested head and actual merge
+`0357031364787574cb7058b05329aa2e2730f947`, both with tree
+`c44112da731e3f958e55eb024e5762d6723ea2c9`. Full artifacts and before/after
+source records were verified. This supplies no PQ-128 or consensus qualification.
+
+All four hosted all-feature witness lanes passed 45 controls and strict Clippy.
+Complete Node suites differ: x64 head/merge each passed 897 with zero failed and
+22 ignored; ARM head/merge each passed 895, failed two original large-genesis/
+large-parent controls with `PUBLIC_MUTATION_CPU_BUDGET`, and retained 22 ignored.
+The workflow failed; original budgets and failures remain. Retain main's 27/45
+pass and 18 failures, X230's 45 passing controls and strict Clippy, and its
+complete-library 2400-second orchestration timeout. No completed X230 library
+total is claimed.
+
+The X230 baseline reached the original admission count assertion: `[1,1,2]`
+against required `[1,2]`; original expiry passed. Fixed execution observed
+ordinary `[1,2]`, pending replay `[1]`, and expiry `[1,2,1,2]`. All eight fixed
+source hashes were restored. Main's earlier baseline deadline remains separate.
+
+Paired Hepta `a7c523f366de3aaf9bce923be885ad275d0ecc22` reserves write ownership
+before mutation snapshots. Both new controls failed on original production
+files; fixed package passed 136 tests with zero skipped/retries, build and
+original strict fix/Clippy. V5 binds published Chain code/tree, retaining 42 file
+rows and V1–V4 history; 51 source tests, 32 diversity tests and actual 42-file
+verification passed. Private raw evidence remains in Hepta. These executions
+do not establish paired deployment acceptance or the historical 133/134 cause.
+By 12:53:43 UTC four hosted effect-recovery artifacts also confirmed 136/136,
+zero skipped/retries. Historical pair lanes retained `CONFIRMATION_TARGET`
+failures on older `c165071` Chain source; V5 installed-host reached terminal evidence: installation, startup, History and growth controls passed; independent `CONFIRMATION_TARGET` failed with `PUBLIC_REQUEST_DEADLINE` after two History pages downloaded and one replay was accepted. See the [retained V5 terminal evidence](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/2f0ad551f63be3acc0580997f5867597f3b1cef4/evidence/pq-full-followup-20261103/README.md).
+
+All six whole-chain gates and PN0–PN6 remain HOLD / UNQUALIFIED. Three-table
+witness scope, authorization/recovery gaps, migration, quantum proof/mining
+arguments, original capacity budgets and independent deployment/WAN/fault
+acceptance remain open. This evidence/plan continuation neither activates nor
+merges the candidate.
+
+### 2026-11-03 exact local CPU follow-up and retained terminal failures
+
+Reviewed local source `b518e0639b56175ce0fc8361d8be3d479ae113e4` (tree `9db0f5b634cd7e64c84faddd605b806359a78d63`) retains original budgets and safety checks. The [complete local evidence](../../evidence/pon-pq-large-parent-cpu-20261103/README.md) preserves the local commit/tree/patch history, all earlier failures, the zero-test guards after the target directory became unavailable, and the same-hash rebuild. Canonical provider commit identities may differ; local measurements bind the recorded local commits and full trees, not an unexecuted canonical SHA.
+
+Both original CPU selectors still fail `PUBLIC_MUTATION_CPU_BUDGET`. Legacy passes at 1,150,628,991 ns paid CPU. The first Authenticated branch pays 2,772,250,757 ns and standalone Authenticated pays 2,847,231,272 ns; final credits are −17,581,036 ns and −85,064,968 ns. The latter reaches ten complete commitments, ten successful one-use projections and one original activation call. The earlier `1cdc8338` stopped after nine complete commitments; overlapping stage totals and different work denominators cannot be used as a direct total-CPU speed comparison.
+
+Protocol 8, M06 projection 4, original encoder 7, full-root 7 and byte-budget 1 controls pass, together with strict Clippy and all 14 other selected Node command groups. The original normal workflow keeps its five full-root controls and adds the two registered configured-root controls by updating the expected count to seven. Local default-feature results do not replace new hosted all-features or ARM checks.
+
+The [original DAG artifacts](../../evidence/pon-pq-dag-parent-refusal-20261103/README.md) retain `PUBLIC_HOST_KERNEL_PARENT` in all 18 samples of each original lane; the gate remains failed and no particular filesystem cause is inferred. The [V5 original terminal evidence](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/2f0ad551f63be3acc0580997f5867597f3b1cef4/evidence/pq-full-followup-20261103/README.md) retains 17 receipts, 51 source, 32 diversity, 14 handoff, 8 installed, 14 startup, 15 History, 3+4 growth, 20 host and 98 reader controls passing, with five native process exits of zero. Independent `CONFIRMATION_TARGET` fails: seven blocks submit in 1.879015810 seconds, two pages download, one replays, then `PUBLIC_REQUEST_DEADLINE`. No new pressure workflow or waiver is supplied.
+
+PN0-PN6, whole-chain PQ and production remain HOLD. Publication uses `[skip ci]` to avoid unrelated automatic workloads. Separate exact-source normal x64/ARM validation, when run, is additional evidence and does not rewrite old required failures.

@@ -4,7 +4,7 @@ use std::{
     net::Shutdown,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
-        mpsc, Arc,
+        mpsc, Arc, Mutex,
     },
     thread,
 };
@@ -171,6 +171,220 @@ fn authenticated_matching_late_cas_is_known_success_and_client_stays_usable() {
     client.available().unwrap();
     assert_eq!(client.current().unwrap(), next);
     assert_eq!(calls.load(Ordering::SeqCst), 2);
+}
+
+#[test]
+fn malformed_local_checkpoints_never_enter_transport_or_poison_client() {
+    let (_directory, policy, owner) = fixture();
+    let calls = Arc::new(AtomicUsize::new(0));
+    let mut client = client(&policy, owner, calls.clone(), false);
+    let first = Checkpoint::new(1, [1; 64]).unwrap();
+    let second = Checkpoint::new(2, [2; 64]).unwrap();
+    for (previous, next) in [
+        (
+            Checkpoint {
+                sequence: 0,
+                root: [1; 64],
+            },
+            first,
+        ),
+        (
+            Checkpoint {
+                sequence: 1,
+                root: [0; 64],
+            },
+            second,
+        ),
+        (
+            first,
+            Checkpoint {
+                sequence: 2,
+                root: [0; 64],
+            },
+        ),
+        (
+            Checkpoint {
+                sequence: i64::MAX as u64,
+                root: [1; 64],
+            },
+            Checkpoint {
+                sequence: i64::MAX as u64 + 1,
+                root: [2; 64],
+            },
+        ),
+    ] {
+        assert_eq!(
+            client.advance(previous, next).unwrap_err().to_string(),
+            "PQ_WITNESS_CHECKPOINT"
+        );
+        client.available().unwrap();
+    }
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    assert_eq!(client.current().unwrap(), first);
+    client.advance(first, second).unwrap();
+    assert_eq!(client.current().unwrap(), second);
+}
+
+#[test]
+fn signed_current_cannot_regress_or_change_an_observed_generation() {
+    for observed in [
+        Checkpoint::new(2, [2; 64]).unwrap(),
+        Checkpoint::new(1, [2; 64]).unwrap(),
+    ] {
+        let (_directory, policy, owner) = fixture();
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut client = client(&policy, owner, calls.clone(), false);
+        // Set the client's trusted memory to the boundary under test. The
+        // reply comes from the original native signer and unmodified fixture.
+        client.last_verified = Some(observed);
+        assert_eq!(
+            client.current().unwrap_err().to_string(),
+            "PQ_WITNESS_OBSERVATION_ROLLBACK"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            client.current().unwrap_err().to_string(),
+            "PQ_WITNESS_UNAVAILABLE"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+}
+
+struct SharedTransport(Arc<Mutex<DurableWitness>>);
+impl WitnessTransport for SharedTransport {
+    fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+        self.0.lock().unwrap().handle(request, until)
+    }
+}
+
+fn shared_client(
+    policy: &crate::ingress::pq_network::PqNetworkPolicy,
+    owner: &Arc<Mutex<DurableWitness>>,
+) -> WitnessClient {
+    WitnessClient::new(
+        WitnessBinding::new(policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        key(74),
+        Box::new(SharedTransport(owner.clone())),
+    )
+    .unwrap()
+}
+
+#[test]
+fn independent_clients_accept_other_writers_advances_and_cold_reopen() {
+    let (directory, policy, owner) = fixture();
+    let owner = Arc::new(Mutex::new(owner));
+    let mut first = shared_client(&policy, &owner);
+    let mut second = shared_client(&policy, &owner);
+    let initial = first.current().unwrap();
+    assert_eq!(second.current().unwrap(), initial);
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    let later = Checkpoint::new(3, [3; 64]).unwrap();
+    let last = Checkpoint::new(4, [4; 64]).unwrap();
+    first.advance(initial, next).unwrap();
+    first.advance(next, later).unwrap();
+    assert_eq!(second.current().unwrap(), later);
+    assert_eq!(second.current().unwrap(), later);
+    second.advance(later, last).unwrap();
+    assert_eq!(first.current().unwrap(), last);
+    drop(first);
+    drop(second);
+    drop(owner);
+    let reopened = DurableWitness::open_existing(
+        &directory.path().join("witness.sqlite"),
+        WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        key(73),
+    )
+    .unwrap();
+    assert_eq!(reopened.read_head().unwrap(), last);
+}
+
+#[test]
+fn active_owner_requires_its_known_head_for_current_and_cas() {
+    for use_cas in [false, true] {
+        for known in [
+            Checkpoint::new(2, [2; 64]).unwrap(),
+            Checkpoint::new(1, [2; 64]).unwrap(),
+        ] {
+            let (_directory, policy, mut owner) = fixture();
+            owner.known_head = Some(known);
+            let calls = Arc::new(AtomicUsize::new(0));
+            let mut client = client(&policy, owner, calls.clone(), false);
+            let error = if use_cas {
+                client.advance(
+                    Checkpoint::new(1, [1; 64]).unwrap(),
+                    Checkpoint::new(2, [2; 64]).unwrap(),
+                )
+            } else {
+                client.current().map(|_| ())
+            }
+            .unwrap_err();
+            assert_eq!(error.to_string(), "PQ_WITNESS_STORAGE_ROLLBACK");
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+        }
+    }
+}
+
+#[test]
+fn failed_local_commit_fences_owner_until_explicit_reopen() {
+    let (directory, policy, owner) = fixture();
+    owner.db.commit_hook(Some(|| true)).unwrap();
+    let owner = Arc::new(Mutex::new(owner));
+    let mut first = shared_client(&policy, &owner);
+    let initial = first.current().unwrap();
+    assert!(first
+        .advance(initial, Checkpoint::new(2, [2; 64]).unwrap())
+        .is_err());
+    {
+        let service = owner.lock().unwrap();
+        assert!(service.commit_uncertain);
+        service.db.commit_hook(None::<fn() -> bool>).unwrap();
+    }
+    let mut reconnected = shared_client(&policy, &owner);
+    assert_eq!(
+        reconnected.current().unwrap_err().to_string(),
+        "PQ_WITNESS_COMMIT_UNCERTAIN"
+    );
+    drop(first);
+    drop(reconnected);
+    drop(owner);
+    // This injected commit failure rolled back. Reopen is explicit and reads
+    // the original durable state; it does not enroll or advance any checkpoint.
+    let reopened = DurableWitness::open_existing(
+        &directory.path().join("witness.sqlite"),
+        WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        key(73),
+    )
+    .unwrap();
+    assert_eq!(reopened.read_head().unwrap(), initial);
+}
+
+#[test]
+fn durable_predecessor_shape_distinguishes_registration_from_advancement() {
+    for (sequence, previous_sequence, previous_root, accepted) in [
+        (1, 0, [0_u8; 64], true),
+        (2, 1, [1; 64], true),
+        (3, 2, [2; 64], true),
+        (1, 1, [1; 64], false),
+        (1, 0, [1; 64], false),
+        (2, 0, [0; 64], false),
+        (3, 1, [1; 64], false),
+        (2, 1, [0; 64], false),
+    ] {
+        let db = Connection::open_in_memory().unwrap();
+        db.execute_batch(DDL).unwrap();
+        db.execute(
+            "INSERT INTO witness_v1 VALUES(1,?,?,?,?,?)",
+            params![
+                [1_u8].as_slice(),
+                sequence,
+                [9_u8; 64].as_slice(),
+                previous_sequence,
+                previous_root.as_slice()
+            ],
+        )
+        .unwrap();
+        assert_eq!(validate_row(&db, 1).is_ok(), accepted);
+    }
 }
 
 #[test]

@@ -203,3 +203,129 @@ fn retention_refusal_and_eviction_preserve_root_and_existing_budget() {
     assert!(disabled.observation().retention_refused);
     assert_eq!(disabled.retained_payload_bytes(), 0);
 }
+
+#[test]
+fn opaque_projection_preserves_current_inputs_empty_subsets_and_payload_edges() {
+    fn reference(rows: &[(Vec<u8>, Vec<u8>)]) -> Hash {
+        crate::pon_wire::state_root_from_entries(
+            rows.iter()
+                .map(|(k, v)| Ok::<_, &'static str>((k.as_slice(), v.as_slice()))),
+        )
+        .unwrap()
+    }
+    let rows = vec![
+        (b"account:a".to_vec(), vec![1; 48]),
+        (b"retained:a".to_vec(), vec![2; 4096]),
+        (b"retained:z".to_vec(), vec![3; 64]),
+    ];
+    let selected = rows[1..].to_vec();
+    for cap in [0, 63, 64, 127, 128, 2 * 1024 * 1024] {
+        let mut arithmetic = StateRootArithmetic::new(cap);
+        let (full, projection) = arithmetic
+            .root_from_entries_with_projection(
+                rows.iter()
+                    .map(|(k, v)| Ok::<_, &'static str>((k.as_slice(), v.as_slice()))),
+                |key| !key.starts_with(b"account:"),
+            )
+            .unwrap();
+        assert_eq!(full, reference(&rows));
+        assert_eq!(projection.is_some(), cap >= 128);
+        if let Some(projection) = projection {
+            assert_eq!(projection.payload_bytes(), 128);
+            assert_eq!(
+                arithmetic.root_from_projection(projection).unwrap(),
+                reference(&selected)
+            );
+        }
+        let (_, empty) = arithmetic
+            .root_from_entries_with_projection(
+                rows.iter()
+                    .map(|(k, v)| Ok::<_, &'static str>((k.as_slice(), v.as_slice()))),
+                |_| false,
+            )
+            .unwrap();
+        let empty = empty.unwrap();
+        assert_eq!(empty.payload_bytes(), 0);
+        assert_eq!(
+            arithmetic.root_from_projection(empty).unwrap(),
+            reference(&[])
+        );
+    }
+    let mut current = rows.clone();
+    current[2].1[0] ^= 1;
+    let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);
+    for actual in [&rows, &current, &rows] {
+        let (full, projection) = arithmetic
+            .root_from_entries_with_projection(
+                actual
+                    .iter()
+                    .map(|(k, v)| Ok::<_, &'static str>((k.as_slice(), v.as_slice()))),
+                |key| !key.starts_with(b"account:"),
+            )
+            .unwrap();
+        assert_eq!(full, reference(actual));
+        assert_eq!(
+            arithmetic
+                .root_from_projection(projection.unwrap())
+                .unwrap(),
+            reference(&actual[1..])
+        );
+    }
+}
+
+#[test]
+fn failed_complete_input_never_publishes_a_projection_or_partial_material() {
+    type Row = std::result::Result<(Vec<u8>, Vec<u8>), &'static str>;
+    let good: Vec<Row> = vec![Ok((b"seed".to_vec(), vec![7; 64]))];
+    let mut actual = StateRootArithmetic::new(2 * 1024 * 1024);
+    actual.root_from_entries(good.clone()).unwrap();
+    let before = actual.observation();
+    let cases: Vec<Vec<Row>> = vec![
+        vec![Ok((b"a".to_vec(), vec![1])), Err("late-producer")],
+        vec![Ok((vec![b'a'; 161], vec![1])), Err("late-producer")],
+        vec![Err("first-producer"), Ok((vec![b'a'; 161], vec![1]))],
+        vec![Ok((b"a".to_vec(), vec![0; 4097]))],
+        vec![
+            Ok((b"duplicate".to_vec(), vec![1])),
+            Ok((b"duplicate".to_vec(), vec![2])),
+        ],
+    ];
+    for rows in cases {
+        let expected = StateRootArithmetic::new(2 * 1024 * 1024).root_from_entries(rows.clone());
+        let observed = actual
+            .root_from_entries_with_projection(rows, |_| true)
+            .map(|value| value.0);
+        assert!(observed.is_err());
+        assert_eq!(
+            observed.map_err(|e| format!("{e:?}")),
+            expected.map_err(|e| format!("{e:?}"))
+        );
+        assert_eq!(actual.observation(), before);
+    }
+}
+
+#[test]
+fn projection_payload_limit_uses_hash_tuples_at_the_two_mib_boundary() {
+    let cap = 2 * 1024 * 1024;
+    let mut rows: Vec<_> = (0..cap / 64)
+        .map(|index| (format!("bounded:{index:05}").into_bytes(), b"0".to_vec()))
+        .collect();
+    let mut arithmetic = StateRootArithmetic::new(cap);
+    for expected_projection in [true, false] {
+        let actual_rows = || rows.iter().map(|(key, value)| Ok::<_, ()>((key, value)));
+        let expected = state_root_from_entries(actual_rows()).unwrap();
+        let (full, projection) = arithmetic
+            .root_from_entries_with_projection(actual_rows(), |_| true)
+            .unwrap();
+        assert_eq!(full, expected);
+        assert_eq!(projection.is_some(), expected_projection);
+        if let Some(projection) = projection {
+            assert_eq!(projection.payload_bytes(), cap);
+            assert_eq!(
+                arithmetic.root_from_projection(projection).unwrap(),
+                expected
+            );
+        }
+        rows.push((b"bounded:extra".to_vec(), b"0".to_vec()));
+    }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "path": "13228623338.manifest.json",
+    "bytes": 9011,
+    "sha256": "ab0b6f60e0bef84262bc83026a5503054d64ef771990cf9f8f00db88d2829640"
+  },
+  {
+    "path": "13228623338.payload.tar.xz",
+    "bytes": 89812,
+    "sha256": "9b17ee74fb88cd684e6af4d83f91000edbc5de299beb04b80e9fe8a15a1fe1bc"
+  },
+  {
+    "path": "13229776793.manifest.json",
+    "bytes": 8998,
+    "sha256": "517f0b8f9f3d5429dbb76095cb990fa31e14d1e9efc5c66e029c975c5c988341"
+  },
+  {
+    "path": "13229776793.payload.tar.xz",
+    "bytes": 90208,
+    "sha256": "3915f074fa3277d28c77acb0d7b0052414c6bf4d7399c748dfe3c2ffdaf592d5"
+  },
+  {
+    "path": "README.md",
+    "bytes": 3371,
+    "sha256": "6c5a476ac919b6acd845eaf182ca18ea5eea1e5684c723ee921da3bd1b98cfc3"
+  },
+  {
+    "path": "observations.json",
+    "bytes": 18030,
+    "sha256": "299fc285160ea3b09f39ed62f8f0e9e821e37092acabf4df799443315f23aff6"
+  },
+  {
+    "path": "verify_payloads.py",
+    "bytes": 5236,
+    "sha256": "1ea07e0ec2f80d3e742c66c12d97c8311d81fea1dced80b3721bc8fc61f76674"
+  }
+]

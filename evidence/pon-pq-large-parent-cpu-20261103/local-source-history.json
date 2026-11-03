@@ -1,0 +1,100 @@
+{
+  "canonical_provider_shas_may_differ": true,
+  "commits": [
+    {
+      "changed_paths": [],
+      "changed_paths_scope": "published prerequisite; no delta replayed at the shallow boundary",
+      "commit": "3f3a5c5017367eefc0970d512920a6eaa4a29c35",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "12fe5f2c1f19704fe7eb635dede6839ed8b1e91e"
+      ],
+      "subject": "docs(pq): retain complete four-lane outcomes and paired source evidence",
+      "tree": "ad6b9160edb3306ed2a1fdddb99c71dc7a166c55"
+    },
+    {
+      "changed_paths": [
+        "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+        "M\tscripts/ci/check_pq_research_integration.py",
+        "M\ttrillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store.rs",
+        "A\ttrillionnium/crates/trnm-pon-node/src/store/canonical_json.rs"
+      ],
+      "commit": "09d56ed6d795e4fe5eca30b3fc0d59956c9f9c2e",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "3f3a5c5017367eefc0970d512920a6eaa4a29c35"
+      ],
+      "subject": "perf(storage): decode exact current ASCII string cells without redundant JSON work",
+      "tree": "dd0b2ab595d6fa14a9ecaf6eca33aaf3b02bf2d7"
+    },
+    {
+      "changed_paths": [
+        "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+        "M\ttrillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "commit": "86ae806b6dda372bb475d4f2d607eeca4230504b",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "09d56ed6d795e4fe5eca30b3fc0d59956c9f9c2e"
+      ],
+      "subject": "perf(ingress): keep exact packet envelopes without redundant JSON parsing",
+      "tree": "cae15dec91d4018e58447c297479c184e2212bb1"
+    },
+    {
+      "changed_paths": [
+        "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+        "M\ttrillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "M\ttrillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs"
+      ],
+      "commit": "481f6965e438517ecd43161e850b12fab94ca671",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "86ae806b6dda372bb475d4f2d607eeca4230504b"
+      ],
+      "subject": "perf(storage): reuse original partition arithmetic for legacy readback",
+      "tree": "ce0a4c04647c1a067e600cc9f522ca5470322e45"
+    },
+    {
+      "changed_paths": [
+        "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+        "M\ttrillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store/canonical_json.rs"
+      ],
+      "commit": "1cdc8338403e06cdf6d6daf3cc8b7d249f4f2a2f",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "481f6965e438517ecd43161e850b12fab94ca671"
+      ],
+      "subject": "perf(codec): keep exact ASCII guards in fixed byte arrays",
+      "tree": "192e5e04559ac91bf155c2a2dd355ab969ff3179"
+    },
+    {
+      "changed_paths": [
+        "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+        "M\tscripts/ci/check_pq_research_integration.py",
+        "M\ttrillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "A\ttrillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+        "M\ttrillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+        "M\ttrillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "M\ttrillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "M\ttrillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+      ],
+      "commit": "b518e0639b56175ce0fc8361d8be3d479ae113e4",
+      "parent_source": "raw commit object headers (shallow boundary does not erase parents)",
+      "parents": [
+        "1cdc8338403e06cdf6d6daf3cc8b7d249f4f2a2f"
+      ],
+      "subject": "perf: reuse one-operation complete-state leaf projection [skip ci]",
+      "tree": "9db0f5b634cd7e64c84faddd605b806359a78d63"
+    }
+  ],
+  "execution_identity_scope": "local commits and exact full trees",
+  "published_prerequisite": "3f3a5c5017367eefc0970d512920a6eaa4a29c35",
+  "schema": "trnm-local-source-history-v1"
+}
