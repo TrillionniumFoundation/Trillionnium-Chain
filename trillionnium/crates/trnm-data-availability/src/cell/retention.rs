@@ -713,10 +713,35 @@ impl CellRetentionStoreV1 {
         successor: Option<&mut CellRetentionStoreV1>,
         deadline: Instant,
     ) -> CellResultV1<CellRetentionReadbackV1> {
-        check_deadline(deadline)?;
-        let mut row = self.required_row(operation)?;
+        self.retire_controlled(operation, current_height, successor, deadline, &mut || {
+            Ok(())
+        })
+    }
+
+    /// Keep the original deadline through writer contention and retirement
+    /// readback. Cancellation before commit rolls back this metadata update;
+    /// cancellation after commit leaves the retirement durable for exact retry.
+    /// Checkpoints cannot preempt a blocking filesystem or SQLite operation.
+    pub fn retire_controlled(
+        &mut self,
+        operation: CellDigestV1,
+        current_height: u64,
+        successor: Option<&mut CellRetentionStoreV1>,
+        deadline: Instant,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<CellRetentionReadbackV1> {
+        let mut control = OperationControl {
+            deadline,
+            checkpoint,
+            stopped: false,
+        };
+        control.check()?;
+        let row = self.required_row(operation)?;
+        control.check()?;
         if row.status == 2 {
-            return self.readback(&row);
+            let readback = self.readback(&row)?;
+            control.check()?;
+            return Ok(readback);
         }
         require(
             current_height >= row.contract.retain_until_height,
@@ -730,7 +755,12 @@ impl CellRetentionStoreV1 {
                 successor.config.store_id == store_id && store_id != self.config.store_id,
                 "retention successor store",
             )?;
-            let next = successor.verify(successor_operation, deadline)?;
+            let next_row = successor.required_row(successor_operation)?;
+            control.check()?;
+            require(next_row.status == 1, "retention unavailable")?;
+            successor.verify_payload_controlled(&next_row, &mut control)?;
+            let next = successor.readback(&next_row)?;
+            control.check()?;
             require(
                 next.manifest == row.contract.manifest.id()
                     && next.retain_from_height <= current_height
@@ -739,10 +769,74 @@ impl CellRetentionStoreV1 {
                 "retention successor coverage",
             )?;
         }
-        check_deadline(deadline)?;
-        row.status = 2;
-        self.write_row(&row, false)?;
-        self.readback(&row)
+        self.retire_row_controlled(&row, &mut control)?;
+        let retired = self.required_row(operation)?;
+        control.check()?;
+        let readback = self.readback(&retired)?;
+        control.check()?;
+        Ok(readback)
+    }
+
+    fn retire_row_controlled(
+        &mut self,
+        row: &Row,
+        control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
+    ) -> CellResultV1<()> {
+        self.check_arena_controlled(control)?;
+        let original_busy_ms: u64 =
+            self.connection
+                .pragma_query_value(None, "busy_timeout", |value| value.get(0))?;
+        control.check()?;
+        let original_busy = std::time::Duration::from_millis(original_busy_ms);
+        self.connection.busy_timeout(
+            original_busy.min(control.deadline.saturating_duration_since(Instant::now())),
+        )?;
+        let result = (|| {
+            control.check()?;
+            // Acquire the writer before changing status. A lock wait never
+            // moves the operation deadline or authorizes a late retirement.
+            let transaction = self
+                .connection
+                .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+            control.check()?;
+            validate_schema(&transaction)?;
+            let mut retired = Self::row_from(&transaction, &self.config, row.contract.operation)?
+                .ok_or(CellErrorV1::Invalid("retention missing retirement"))?;
+            control.check()?;
+            require(
+                row_checksum(&retired) == row_checksum(row) && retired.status == 1,
+                "retention retirement prior",
+            )?;
+            retired.status = 2;
+            Self::write_row_on_connection_controlled(
+                &transaction,
+                &self.config,
+                &retired,
+                false,
+                control,
+            )?;
+            control.check()?;
+            transaction.busy_timeout(
+                original_busy.min(control.deadline.saturating_duration_since(Instant::now())),
+            )?;
+            control.check()?;
+            transaction.commit()?;
+            // A failure here is an unknown caller outcome, never evidence that
+            // retirement rolled back. The next exact retry reads status 2.
+            control.check()?;
+            validate_schema(&self.connection)?;
+            let committed = self.required_row(row.contract.operation)?;
+            control.check()?;
+            require(
+                row_checksum(&committed) == row_checksum(&retired),
+                "retention retirement readback",
+            )?;
+            control.check()
+        })();
+        // Do not leave a short operation's timeout installed on the owner for
+        // later independent calls, including refusal and uncertain completion.
+        self.connection.busy_timeout(original_busy)?;
+        result
     }
 
     fn copy_payload(
@@ -1154,6 +1248,22 @@ impl CellRetentionStoreV1 {
         control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
     ) -> CellResultV1<()> {
         self.check_arena_controlled(control)?;
+        Self::write_row_on_connection_controlled(
+            &self.connection,
+            &self.config,
+            row,
+            insert,
+            control,
+        )
+    }
+
+    fn write_row_on_connection_controlled(
+        connection: &Connection,
+        config: &CellRetentionConfigV1,
+        row: &Row,
+        insert: bool,
+        control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
+    ) -> CellResultV1<()> {
         let checksum = row_checksum(row);
         control.check()?;
         let (next_store, next_operation) = row
@@ -1161,7 +1271,7 @@ impl CellRetentionStoreV1 {
             .successor
             .map_or((None, None), |(a, b)| (Some(a.to_vec()), Some(b.to_vec())));
         if insert {
-            self.connection.execute(
+            connection.execute(
                 "INSERT INTO obligations VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)",
                 params![
                     row.contract.operation.as_slice(),
@@ -1181,13 +1291,14 @@ impl CellRetentionStoreV1 {
                 ],
             )?;
         } else {
-            let count=self.connection.execute("UPDATE obligations SET status=?2,initial_bytes=?3,repair_bytes=?4,checksum=?5 WHERE operation=?1",
+            let count=connection.execute("UPDATE obligations SET status=?2,initial_bytes=?3,repair_bytes=?4,checksum=?5 WHERE operation=?1",
                 params![row.contract.operation.as_slice(),row.status,row.initial_bytes as i64,row.repair_bytes as i64,checksum])?;
             control.check()?;
             require(count == 1, "retention missing update")?;
         }
         control.check()?;
-        let reread = self.required_row(row.contract.operation)?;
+        let reread = Self::row_from(connection, config, row.contract.operation)?
+            .ok_or(CellErrorV1::Invalid("retention unknown obligation"))?;
         control.check()?;
         require(
             row_checksum(&reread) == row_checksum(row),
