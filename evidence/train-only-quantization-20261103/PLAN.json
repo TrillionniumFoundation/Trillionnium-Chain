@@ -1,0 +1,13 @@
+{
+ "schema": "chain-train-only-diagnostic-v1",
+ "question": "Does current integer quantization materially change held-out-file development predictions from identical floating-point weights?",
+ "input": "evidence/pon-evaluation-bundle-v1/model/train.json",
+ "input_sha256": "bde4f99f3d1adc49ed06ee170a204f33057d93d0ddfce598148cc535c47b48fe",
+ "folds": 5,
+ "assignment": "For each class, sort whole-file groups by SHA256(file UTF-8); assign index modulo 5. Never split a file.",
+ "training": "Within each fold only: first 20 training rows per class seed an 8-step base; pooled train uses 120 steps, original class weighting, learning rate, regularizer and features.",
+ "comparison": "Compare identical pooled float64 weights against original scale=1024 rounding/clipping; no hyperparameter search.",
+ "report": "All folds, out-of-fold predictions, class confusion, per-file errors, feature collision labels and quantization disagreements.",
+ "restrictions": "Only original train.json may be loaded as data. No calibration, evaluation or consumer data. No adoption, reward or independent efficacy claims. This is development data reused from historical training.",
+ "stop": "Complete five fixed folds once, retain all outcomes, do not change model or quantization absent an independently validated case."
+}
