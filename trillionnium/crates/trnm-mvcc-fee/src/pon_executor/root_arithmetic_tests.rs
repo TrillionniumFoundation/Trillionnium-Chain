@@ -307,3 +307,56 @@ fn exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encodi
     assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
     assert!(arithmetic.retained_payload_bytes() <= 2 * 1024 * 1024);
 }
+
+#[test]
+fn shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation() {
+    const BUDGET: usize = 64 * 1024;
+    let state: State = (0..128)
+        .map(|index| (format!("shared:{index:04}"), json!("x".repeat(4080))))
+        .collect();
+    let expected = root(&state).unwrap();
+    let mut arithmetic = StateRootArithmetic::new(BUDGET);
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    let cold = arithmetic.observation();
+    assert_eq!(cold.input_keys, state.len());
+    assert_eq!(cold.leaf_hashes_computed, state.len());
+    assert_eq!(cold.exact_string_hits, 0);
+    assert_eq!(cold.string_encodings_reused, 0);
+    assert_eq!(cold.retained_string_entries, state.len());
+    assert!(cold.retained_payload_bytes <= BUDGET);
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    let warm = arithmetic.observation();
+    assert_eq!(warm.input_keys, state.len());
+    assert_eq!(warm.leaf_hashes_computed, 0);
+    assert_eq!(warm.exact_string_hits, state.len());
+    assert_eq!(warm.string_encodings_reused, state.len());
+
+    // Shared storage never relaxes the complete grammar pass. The later
+    // error must still precede an earlier key/value wire-limit violation.
+    for late in [json!(0.0), json!(-0.0), json!("λ"), json!({"λ":0})] {
+        let mut invalid = state.clone();
+        invalid.insert("a".repeat(161), json!("x".repeat(4095)));
+        invalid.insert("zz-invalid".into(), late);
+        let original = root(&invalid);
+        assert!(original.is_err() && original != Err("LIMIT"));
+        assert_eq!(root_with_arithmetic(&invalid, &mut arithmetic), original);
+        assert_eq!(arithmetic.observation(), warm);
+    }
+    let mut changed = state.clone();
+    changed.insert(
+        "shared:0000".into(),
+        json!(format!("{}y{}", "x".repeat(2000), "x".repeat(2079))),
+    );
+    let renamed = changed.remove("shared:0001").unwrap();
+    changed.insert("renamed:0001".into(), renamed);
+    let actual = root(&changed).unwrap();
+    assert_ne!(actual, expected);
+    assert_eq!(root_with_arithmetic(&changed, &mut arithmetic), Ok(actual));
+    let current = arithmetic.observation();
+    assert_eq!(current.input_keys, changed.len());
+    assert_eq!(current.leaf_hashes_computed, 2);
+    assert_eq!(current.exact_string_hits, changed.len() - 2);
+    assert_eq!(current.string_encodings_reused, current.exact_string_hits);
+    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+    assert!(arithmetic.retained_payload_bytes() <= BUDGET);
+}

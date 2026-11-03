@@ -4921,3 +4921,82 @@ changing the original 250 ms/200 ms boundaries or mandatory self-verification.
 Its two new diagnostic controls and the final combined source require fresh
 hosted execution. Shared-disk exhaustion prevents a complete local combined
 build; component runs are not relabelled as that missing result.
+
+
+### 2026-11-03 original CI readback and bounded value-allocation continuation
+
+Preserve published `bebb1f3289cd7050fefde89ea8f2cf33c6c37588`, its complete
+`58c31e8a6220c6be20029b33cb060f3a2034d1a7` tree and actual main merge
+`0153600a002c420d20128983c3280ff6c16e70c4`. The
+[new CI/evidence closure record](../../evidence/pon-ci-closure-20261103/README.md)
+retains each native source, complete denominator, failed observation and typed
+scope. Original locked fuzz fetch plus all three sixty-second ASan targets now
+pass on both published sources. All four recent modules execute 83 controls,
+all four branch wire lanes execute 22 ordinary controls, and all four PQ lanes
+execute their original 43 exact selectors. Their common strict-Clippy macro
+failure remains a failure in those old runs; a test-only FnOnce helper preserves
+action-local errors, returns and unwind while resolving that lint locally.
+
+The published x64 PQ complete libraries pass 934 tests with 23 ignored; both ARM
+libraries pass 932 and fail the same two original large-state CPU selectors.
+Separate workspace CPU artifacts also refuse on ARM with the original budget.
+Each failed workspace operation performs ten complete commitments costing
+0.935–0.940 seconds CPU, including nested complete-root cost 0.463–0.466 seconds.
+The outer dispatch can return an outcome container while its inner native
+result is already a budget error; CPU tail settlement does not rewrite that
+result. Test diagnostics now observe both refusal forms after settlement, with
+failed readback retained as unknown. Old null observations are not upgraded to
+proof of unchanged state, rollback or absent durable publication.
+
+The root arithmetic pool shares only private immutable canonical value bytes.
+Each full key keeps independently computed original hashes; complete current
+bytes decide equality, and the bounded single-candidate length/edge index never
+authorizes a hash hit. Allocation-identity accounting charges every retained
+allocation once, including equal bytes in distinct allocations. New entries get
+no premature old-allocation credit. Original 2 MiB payload / 16 MiB retained
+charge, tree priority, full canonical checks, full cache-offer encoding and all
+failure/cancellation/publication rules remain.
+
+The preregistered x64 component uses independent binaries and unchanged test
+profiles for all ten processes / 700 samples. The median of five paired CPU
+ratios is 0.146361711 for repeated warm root and 0.621036472 for complete warm
+commitment. All eight unique/common-edge cold/warm limits also pass their
+original 1.05 rule, but common-edge warm root is 1.049715288 and one pair is
+1.222894; retain that narrow margin and regression. Correlated warm calls do not
+become independent samples or p95/p99 evidence. Original ARM, complete-workspace
+and public Host gates must judge the newly composed source separately.
+
+The two published required-runtime shards stop at different Cell sequence
+fixture failures. A bounded test-only ready signal now follows actual serving
+thread DB/listener setup before signed TTL creation. Shared setup has one fixed
+ten-second cutoff; all original request/TTL/server budgets, three selectors and
+32 assertions remain. Both exact failures and all three controls pass locally
+with the original reachable workspace feature closure; startup is not asserted
+as the sole explanation for old errno 11. Hosted runtime remains separately
+required. The initial Node string-count assertion failure and initial wrong
+local fuzz manifest path are retained as preparation/test errors.
+
+Fixed-owner Growth V2 completes all nine account/history cohorts in each
+published x64/ARM lane, retaining 72 signed blocks, nine cancellations and nine
+cold reopens per lane. Point reads grow from 16 to 37 as accounts grow from 64
+to 16,384; cold reopen still scales materially. This does not turn ordinary
+public State/History work into a touched-set bound.
+
+All four published pressure confirmations remain 0/1. F0 remains 1/6 in thirty
+seconds and 0/6 in four seconds; three original campaigns confirm 3/27 with
+189 planned packet exposures, 72 actual submissions and 69 timely ACKs. One
+native import succeeds after thirty seconds and is counted separately from
+timely success. RPC thread and process CPU remain distinct. Host spans include
+all actual calling threads, while client graph snapshots include imports and
+confirmation/internal reads but exclude the final standalone read_active;
+these scopes cannot be summed or divided into an exact attribution. F0's
+valid-work-root phase never reaches import, so its upstream failure is not
+assigned to the baseline importer bottleneck.
+
+Current CodeQL producer/export completes with 506 Rust warnings and no
+authenticated target-PR gate verdict. No warning is dismissed and no acceptance
+flag is promoted. The executor reset is recorded; complete source and pinned
+toolchain/provider were restored before new checks. Original four-second
+service, cheapest-work, independent hardware/operators/security review,
+quantum/DAA, model utility, custody, economics, whole-chain PQ and activation
+remain open under their original owners and exit conditions.

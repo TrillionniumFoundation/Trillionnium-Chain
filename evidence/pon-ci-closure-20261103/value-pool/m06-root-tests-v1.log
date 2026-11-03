@@ -1,0 +1,74 @@
+   Compiling zeroize v1.8.2
+   Compiling semver v1.0.27
+   Compiling syn v2.0.117
+   Compiling winnow v1.0.4
+   Compiling shlex v1.3.0
+   Compiling equivalent v1.0.2
+   Compiling find-msvc-tools v0.1.9
+   Compiling hashbrown v0.16.1
+   Compiling vcpkg v0.2.15
+   Compiling hybrid-array v0.4.15
+   Compiling rustc_version v0.4.1
+   Compiling cc v1.2.59
+   Compiling der v0.8.3
+   Compiling curve25519-dalek v4.1.3
+   Compiling indexmap v2.13.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling pkg-config v0.3.32
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling signature v2.2.0
+   Compiling rustix v1.1.4
+   Compiling anyhow v1.0.103
+   Compiling spki v0.8.1
+   Compiling cfg_aliases v0.2.2
+   Compiling foldhash v0.2.0
+   Compiling bitflags v2.11.0
+   Compiling digest v0.11.3
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling subtle v2.6.1
+   Compiling libsqlite3-sys v0.37.0
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling pkcs8 v0.11.0
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling module-lattice v0.2.3
+   Compiling once_cell v1.21.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling smallvec v1.15.1
+   Compiling hashlink v0.11.1
+   Compiling proc-macro-crate v3.5.0
+   Compiling ml-dsa v0.1.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fastrand v2.3.0
+   Compiling fallible-iterator v0.3.0
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-verification-profiles)
+   Compiling thiserror-impl v1.0.69
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling borsh-derive v1.8.0
+   Compiling tempfile v3.27.0
+   Compiling thiserror v1.0.69
+   Compiling ed25519-dalek v2.2.0
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-crypto-primitives)
+   Compiling rusqlite v0.39.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.97s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/value-pool-target/debug/deps/trnm_mvcc_fee-71186ba6fe283ca3)
+
+running 9 tests
+test pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference ... ok
+test pon_executor::root_arithmetic_tests::arithmetic_root_distinguishes_exact_numeric_values_and_full_non_account_views ... ok
+test pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities ... ok
+test pon_executor::root_arithmetic_tests::exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encoding ... ok
+test pon_executor::root_arithmetic_tests::shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 97 filtered out; finished in 0.45s
+

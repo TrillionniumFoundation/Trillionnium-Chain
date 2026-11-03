@@ -1,0 +1,160 @@
+{
+  "schema": "cell-ready-feature-closure-observation-v1",
+  "original_command": [
+    "/root/.cargo/bin/cargo",
+    "+1.95.0",
+    "tree",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--edges",
+    "normal,build,dev",
+    "--prefix",
+    "none",
+    "--format",
+    "{p}|{f}",
+    "--workspace"
+  ],
+  "selected_command": [
+    "/root/.cargo/bin/cargo",
+    "+1.95.0",
+    "tree",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--edges",
+    "normal,build,dev",
+    "--prefix",
+    "none",
+    "--format",
+    "{p}|{f}",
+    "-p",
+    "trnm-data-availability",
+    "--features",
+    "trnm-crypto-primitives/pq-native-openssl"
+  ],
+  "original_exit": 0,
+  "selected_exit": 0,
+  "selected_package_count": 86,
+  "differences": [
+    {
+      "package": "rusqlite v0.39.0",
+      "selected": [
+        "bundled",
+        "cache",
+        "default",
+        "fallible_uint",
+        "hashlink",
+        "modern_sqlite"
+      ],
+      "workspace": [
+        "bundled",
+        "cache",
+        "default",
+        "fallible_uint",
+        "hashlink",
+        "hooks",
+        "modern_sqlite"
+      ]
+    },
+    {
+      "package": "rustix v1.1.4",
+      "selected": [
+        "alloc",
+        "default",
+        "event",
+        "fs",
+        "net",
+        "std",
+        "time"
+      ],
+      "workspace": [
+        "alloc",
+        "default",
+        "event",
+        "fs",
+        "net",
+        "process",
+        "std",
+        "time"
+      ]
+    },
+    {
+      "package": "linux-raw-sys v0.12.1",
+      "selected": [
+        "auxvec",
+        "elf",
+        "errno",
+        "general",
+        "if_ether",
+        "ioctl",
+        "net",
+        "netlink",
+        "no_std",
+        "xdp"
+      ],
+      "workspace": [
+        "auxvec",
+        "elf",
+        "errno",
+        "general",
+        "if_ether",
+        "ioctl",
+        "net",
+        "netlink",
+        "no_std",
+        "prctl",
+        "xdp"
+      ]
+    },
+    {
+      "package": "ml-dsa v0.1.1",
+      "selected": [
+        "alloc",
+        "zeroize"
+      ],
+      "workspace": [
+        "alloc",
+        "default",
+        "getrandom",
+        "pkcs8",
+        "rand_core",
+        "zeroize"
+      ]
+    },
+    {
+      "package": "crypto-common v0.2.2",
+      "selected": [],
+      "workspace": [
+        "getrandom",
+        "rand_core"
+      ]
+    },
+    {
+      "package": "signature v3.0.0",
+      "selected": [
+        "alloc",
+        "digest"
+      ],
+      "workspace": [
+        "alloc",
+        "digest",
+        "rand_core"
+      ]
+    },
+    {
+      "package": "getrandom v0.4.2",
+      "selected": [],
+      "workspace": [
+        "sys_rng"
+      ]
+    }
+  ],
+  "scope": "Cargo tree reports normal/build/dev feature sets; host/build context distinctions may be unioned per package identity. This is not runtime qualification.",
+  "stderr_original": "",
+  "stderr_selected": ""
+}

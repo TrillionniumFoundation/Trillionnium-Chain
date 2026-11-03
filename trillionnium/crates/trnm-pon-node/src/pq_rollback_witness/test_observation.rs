@@ -19,6 +19,11 @@ use std::{
 };
 use trnm_crypto_primitives::pq_auth::PqNativeError;
 
+/// Preserve the action-local question-mark and return boundary and its exact result.
+pub(crate) fn invoke<T>(action: impl FnOnce() -> crate::Result<T>) -> crate::Result<T> {
+    action()
+}
+
 pub(crate) const PREFIX: &str = "TRNM_PQ_PHASE_DIAGNOSTIC ";
 pub(crate) const CHILD_FILE: &str = "witness-phase-diagnostic.jsonl";
 pub(crate) const CHILD_PENDING: &str = "witness-phase-diagnostic.pending";

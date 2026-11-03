@@ -668,11 +668,17 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     let cpu_budget_after = original.observe().ok();
     let cpu_flow_after = original.observe_actual_flow().ok().flatten();
     let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
-    let (unchanged_on_refusal, refusal_readback_error) = if attempt.is_err() {
+    let native_refused = attempt
+        .as_ref()
+        .is_ok_and(|outcome| outcome.native.is_err());
+    let (unchanged_on_refusal, refusal_readback_error) = if attempt.is_err() || native_refused {
         // A null equality in the old observation concealed whether the
         // reason was a poisoned owner lock or a real native readback error.
-        // Keep the original failure, but retain the exact failed read path
-        // rather than treating an unavailable integrity check as success.
+        // The outer result can be Ok while its settled native outcome is Err.
+        // Observe both refusal forms after the original operation and its CPU
+        // settlement, without changing either result or retrying admission.
+        // Keep the original failure and any actual readback error; unavailable
+        // readback is unknown, never evidence that active state is unchanged.
         match owner.lock() {
             Ok(node) => match node.read_active() {
                 Ok(actual) => (Some(actual == before), None),
@@ -692,8 +698,10 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
             "observed_held_capacity_lower_bound_bytes": observed_payload_bytes,
             "dispatch_elapsed_ns": elapsed_ns.to_string(),
             "original_dispatch_result": attempt.as_ref().map(|_| "ok").map_err(ToString::to_string),
+            "original_native_result": attempt.as_ref().ok().map(|outcome| outcome.native.as_ref().map(|_| "ok").map_err(ToString::to_string)),
             "active_state_unchanged_on_refusal": unchanged_on_refusal,
             "refusal_readback_error": refusal_readback_error,
+            "refusal_readback_scope": "read-only observation after original native outcome and CPU settlement; neither result is changed",
             "cpu_budget_before": cpu_budget_before,
             "cpu_budget_after": cpu_budget_after,
             "actual_cpu_flow_before": cpu_flow_before,

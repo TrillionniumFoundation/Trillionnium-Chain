@@ -338,7 +338,8 @@ fn exact_string_hits_cannot_publish_after_failure_collision_or_abandonment() {
 #[test]
 fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit() {
     let tree_charge = std::mem::size_of::<(Hash, Hash)>() + std::mem::size_of::<Partition>();
-    let string_charge = STRING_SET_CHARGE + std::mem::size_of::<ExactString>() + 1 + 5;
+    let string_charge =
+        STRING_SET_CHARGE + std::mem::size_of::<ExactString>() + 1 + PlainValue::charge_for(5);
     let values = BTreeMap::from([(b"k".to_vec(), br#""old""#.to_vec())]);
     let expected = state_root(&values).unwrap();
     for budget in [
@@ -372,8 +373,9 @@ fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_c
             + material
                 .strings
                 .iter()
-                .map(|entry| entry.key.len() + entry.value.len())
+                .map(|entry| entry.key.len())
                 .sum::<usize>()
+            + PlainValue::charge_for(5)
     );
     assert_eq!(calculated(&mut arithmetic, &values), expected);
     assert_eq!(arithmetic.observation().exact_string_hits, 1);
@@ -397,4 +399,313 @@ fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_c
     calculated(&mut tree_only, &larger);
     assert!(tree_only.observation().retention_refused);
     assert_eq!(tree_only.retained_payload_bytes(), 0);
+}
+
+#[test]
+fn shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool() {
+    const BUDGET: usize = 64 * 1024;
+    let encoded = format!("\"{}\"", "x".repeat(4080)).into_bytes();
+    let values: BTreeMap<_, _> = (0..128)
+        .map(|index| (format!("shared:{index:04}").into_bytes(), encoded.clone()))
+        .collect();
+    assert!(values.values().map(Vec::len).sum::<usize>() > BUDGET);
+    let mut arithmetic = StateRootArithmetic::new(BUDGET);
+    let expected = calculated(&mut arithmetic, &values);
+    let cold = arithmetic.observation();
+    assert_eq!(cold.leaf_hashes_computed, values.len());
+    assert_eq!(cold.exact_string_hits, 0);
+    assert_eq!(cold.string_encodings_reused, 0);
+    assert_eq!(cold.retained_string_entries, values.len());
+    assert!(cold.retained_payload_bytes <= BUDGET);
+    let material = arithmetic.material.as_ref().unwrap();
+    let shared = &material.strings[0].value;
+    for entry in &material.strings {
+        assert!(Arc::ptr_eq(&entry.value, shared));
+        assert_eq!(
+            entry.hashes,
+            (
+                hash(b"state-key", &[&entry.key]),
+                hash(b"state-leaf", &[&entry.key, &encoded]),
+            )
+        );
+    }
+    assert_eq!(
+        material.string_charge(),
+        STRING_SET_CHARGE
+            + std::mem::size_of_val(material.strings.as_ref())
+            + values.keys().map(Vec::len).sum::<usize>()
+            + PlainValue::charge_for(encoded.len())
+    );
+    let mut input = arithmetic.input_builder();
+    for key in values.keys().rev() {
+        assert!(input
+            .try_plain_json_string(
+                key,
+                std::str::from_utf8(&encoded[1..encoded.len() - 1]).unwrap()
+            )
+            .unwrap());
+    }
+    assert!(
+        input.values.is_none(),
+        "warm exact keys build no allocation index"
+    );
+    assert_eq!(input.finish(), Ok(expected));
+    let warm = arithmetic.observation();
+    assert_eq!(warm.input_keys, values.len());
+    assert_eq!(warm.exact_string_hits, values.len());
+    assert_eq!(warm.string_encodings_reused, values.len());
+    assert_eq!(warm.leaf_hashes_computed, 0);
+
+    // Same length and fingerprint, but a changed middle byte is a real miss.
+    // Renaming another key cannot reuse that key's old leaf hash either.
+    let mut changed = values.clone();
+    changed.get_mut(b"shared:0000".as_slice()).unwrap()[2048] = b'y';
+    let renamed = changed.remove(b"shared:0001".as_slice()).unwrap();
+    changed.insert(b"moved:0001".to_vec(), renamed);
+    assert_ne!(calculated(&mut arithmetic, &changed), expected);
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, 2);
+    assert_eq!(arithmetic.observation().exact_string_hits, values.len() - 2);
+    assert_eq!(calculated(&mut arithmetic, &values), expected);
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, 2);
+    calculated(&mut arithmetic, &BTreeMap::new());
+    assert_eq!(arithmetic.retained_payload_bytes(), 0);
+}
+
+#[test]
+fn shared_value_index_collisions_and_unique_values_only_limit_optional_retention() {
+    let first = format!("\"prefix00{}suffix00\"", "a".repeat(96)).into_bytes();
+    let second = format!("\"prefix00{}suffix00\"", "b".repeat(96)).into_bytes();
+    assert!(ValueIndex::from_bytes(&first) == ValueIndex::from_bytes(&second));
+    let values = BTreeMap::from([
+        (b"alpha".to_vec(), first.clone()),
+        (b"beta".to_vec(), second),
+        (b"gamma".to_vec(), first),
+    ]);
+    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
+    let expected = calculated(&mut arithmetic, &values);
+    assert_eq!(arithmetic.observation().retained_string_entries, 3);
+    let material = arithmetic.material.as_ref().unwrap();
+    assert!(Arc::ptr_eq(
+        &material.strings[0].value,
+        &material.strings[2].value
+    ));
+    assert!(!Arc::ptr_eq(
+        &material.strings[0].value,
+        &material.strings[1].value
+    ));
+    assert_eq!(calculated(&mut arithmetic, &values), expected);
+    assert_eq!(arithmetic.observation().exact_string_hits, 3);
+    assert_eq!(arithmetic.observation().leaf_hashes_computed, 0);
+
+    let unique: BTreeMap<_, _> = (0..128)
+        .map(|index| {
+            (
+                format!("unique:{index:04}").into_bytes(),
+                format!("\"{index:04x}{}\"", "z".repeat(500)).into_bytes(),
+            )
+        })
+        .collect();
+    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
+    let expected = calculated(&mut arithmetic, &unique);
+    let retained = arithmetic.observation().retained_string_entries;
+    assert!(retained > 0 && retained < unique.len());
+    let material = arithmetic.material.as_ref().unwrap();
+    let identities: BTreeSet<_> = material
+        .strings
+        .iter()
+        .map(|entry| Arc::as_ptr(&entry.value))
+        .collect();
+    assert_eq!(identities.len(), retained);
+    assert!(arithmetic.retained_payload_bytes() <= 32 * 1024);
+    let mut input = arithmetic.input_builder();
+    for (key, value) in &unique {
+        input.add_encoded(key, value).unwrap();
+    }
+    if let Some(index) = &input.values {
+        assert!(index.len() <= retained + input.pending_strings.len());
+    }
+    assert_eq!(input.finish(), Ok(expected));
+    assert_eq!(arithmetic.observation().exact_string_hits, retained);
+    assert_eq!(
+        arithmetic.observation().leaf_hashes_computed,
+        unique.len() - retained
+    );
+    assert!(arithmetic.retained_payload_bytes() <= 32 * 1024);
+}
+
+#[test]
+fn shared_values_charge_only_selected_allocations_and_migrate_unused_old_values() {
+    let value = format!("\"{}\"", "x".repeat(256)).into_bytes();
+    let long = vec![b'a'; 160];
+    let short = b"z".to_vec();
+    let values = BTreeMap::from([
+        (long.clone(), value.clone()),
+        (short.clone(), value.clone()),
+    ]);
+    assert_ne!(
+        prefix(&hash(b"state-key", &[&long])),
+        prefix(&hash(b"state-key", &[&short]))
+    );
+    let tree = 2 * (std::mem::size_of::<(Hash, Hash)>() + std::mem::size_of::<Partition>());
+    let short_charge = std::mem::size_of::<ExactString>() + short.len();
+    let string_charge = STRING_SET_CHARGE + short_charge + PlainValue::charge_for(value.len());
+    let mut arithmetic = StateRootArithmetic::new(tree + string_charge + 16);
+    let mut input = arithmetic.input_builder();
+    input.add_encoded(&long, &value).unwrap();
+    input.add_encoded(&short, &value).unwrap();
+    assert_eq!(
+        input.pending_strings.len(),
+        2,
+        "both candidates must reach tree-priority trimming"
+    );
+    assert!(Arc::ptr_eq(
+        &input.pending_strings[0].value,
+        &input.pending_strings[1].value
+    ));
+    assert_eq!(input.finish(), state_root(&values));
+    let material = arithmetic.material.as_ref().unwrap();
+    assert_eq!(material.strings.len(), 1);
+    assert_eq!(material.strings[0].key.as_ref(), short.as_slice());
+    // The rejected first entry did not make the later value allocation free.
+    assert_eq!(material.string_charge(), string_charge);
+    assert_eq!(material.retained_payload_bytes(), tree + string_charge);
+
+    let one_tree = tree / 2;
+    let entry_charge = std::mem::size_of::<ExactString>() + 3;
+    let one_charge =
+        one_tree + STRING_SET_CHARGE + entry_charge + PlainValue::charge_for(value.len());
+    let mut arithmetic = StateRootArithmetic::new(one_charge + STRING_SET_CHARGE + entry_charge);
+    let old = BTreeMap::from([(b"old".to_vec(), value.clone())]);
+    calculated(&mut arithmetic, &old);
+    let saved = Arc::downgrade(&arithmetic.material.as_ref().unwrap().strings[0].value);
+    let mut input = arithmetic.input_builder();
+    assert_eq!(input.pending_budget, entry_charge);
+    input.add_encoded(b"new", &value).unwrap();
+    assert_eq!(input.pending_budget, 0);
+    assert_eq!(input.pending_strings.len(), 1);
+    assert_eq!(Arc::as_ptr(&input.pending_strings[0].value), saved.as_ptr());
+    let new = BTreeMap::from([(b"new".to_vec(), value)]);
+    assert_eq!(input.finish(), state_root(&new));
+    let material = arithmetic.material.as_ref().unwrap();
+    assert_eq!(material.strings.len(), 1);
+    assert_eq!(material.strings[0].key.as_ref(), b"new");
+    assert_eq!(Arc::as_ptr(&material.strings[0].value), saved.as_ptr());
+    // No old entry was used. The pending Arc alone keeps its value alive and
+    // the new material charges the payload again, exactly once.
+    assert_eq!(material.retained_payload_bytes(), one_charge);
+    assert_eq!(saved.strong_count(), 1);
+    calculated(&mut arithmetic, &BTreeMap::new());
+    assert!(saved.upgrade().is_none());
+}
+
+#[test]
+fn equal_value_bytes_in_distinct_allocations_are_never_charged_as_one() {
+    let first = format!("\"prefix00{}suffix00\"", "a".repeat(32)).into_bytes();
+    let value = format!("\"prefix00{}suffix00\"", "b".repeat(32)).into_bytes();
+    assert!(ValueIndex::from_bytes(&first) == ValueIndex::from_bytes(&value));
+    let values = BTreeMap::from([
+        (b"a".to_vec(), first),
+        (b"b".to_vec(), value.clone()),
+        (b"c".to_vec(), value.clone()),
+    ]);
+    let partitions: BTreeSet<_> = values
+        .keys()
+        .map(|key| prefix(&hash(b"state-key", &[key])))
+        .collect();
+    let tree = values.len() * std::mem::size_of::<(Hash, Hash)>()
+        + partitions.len() * std::mem::size_of::<Partition>();
+    let entry = std::mem::size_of::<ExactString>() + 1;
+    let each_value = PlainValue::charge_for(value.len());
+    let total = tree + STRING_SET_CHARGE + 3 * entry + 3 * each_value;
+    for budget in [total, total - 1] {
+        let mut arithmetic = StateRootArithmetic::new(budget);
+        let mut input = arithmetic.input_builder();
+        for (key, value) in &values {
+            input.add_encoded(key, value).unwrap();
+        }
+        assert_eq!(input.pending_strings.len(), 3);
+        // The first candidate has different middle bytes. The later two
+        // public inputs therefore acquire independent, equally valid copies.
+        // Neither equal bytes nor equal fingerprints may hide either copy.
+        assert_eq!(
+            input.pending_strings[1].value.bytes,
+            input.pending_strings[2].value.bytes
+        );
+        assert!(!Arc::ptr_eq(
+            &input.pending_strings[1].value,
+            &input.pending_strings[2].value
+        ));
+        assert_eq!(input.finish(), state_root(&values));
+        let material = arithmetic.material.as_ref().unwrap();
+        if budget == total {
+            assert_eq!(material.strings.len(), 3);
+            assert_eq!(material.retained_payload_bytes(), total);
+        } else {
+            assert_eq!(material.strings.len(), 2);
+            assert_eq!(
+                material.retained_payload_bytes(),
+                tree + STRING_SET_CHARGE + 2 * entry + 2 * each_value
+            );
+        }
+        assert!(material.retained_payload_bytes() <= budget);
+    }
+}
+
+#[test]
+fn pending_shared_values_preserve_old_material_and_release_on_every_failed_finish() {
+    let value = br#""old complete value""#.to_vec();
+    let values = BTreeMap::from([(b"old".to_vec(), value.clone())]);
+    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
+    calculated(&mut arithmetic, &values);
+    let prior = arithmetic.observation();
+    let old = Arc::downgrade(&arithmetic.material.as_ref().unwrap().strings[0].value);
+    for failure in 0..3 {
+        let mut input = arithmetic.input_builder();
+        assert!(input
+            .try_plain_json_string(b"old", "old complete value")
+            .unwrap());
+        input.add_encoded(b"renamed", &value).unwrap();
+        input
+            .add_encoded(b"unique", br#""new complete value""#)
+            .unwrap();
+        assert_eq!(input.pending_strings.len(), 2);
+        assert_eq!(Arc::as_ptr(&input.pending_strings[0].value), old.as_ptr());
+        let pending = Arc::downgrade(&input.pending_strings[1].value);
+        match failure {
+            0 => drop(input),
+            1 => {
+                assert_eq!(input.add_encoded(&[0; 161], b"null"), Err(WireError::Limit));
+                assert_eq!(input.finish(), Err(WireError::Limit));
+            }
+            _ => {
+                assert!(input
+                    .try_plain_json_string(b"old", "old complete value")
+                    .unwrap());
+                assert_eq!(input.finish(), Err(WireError::KeyCollision));
+            }
+        }
+        assert_eq!(arithmetic.observation(), prior);
+        assert_eq!(
+            arithmetic.retained_payload_bytes(),
+            prior.retained_payload_bytes
+        );
+        assert_eq!(old.strong_count(), 1);
+        assert!(pending.upgrade().is_none());
+    }
+    let entries = || {
+        [
+            Ok((b"old".as_slice(), value.as_slice())),
+            Ok((b"renamed".as_slice(), value.as_slice())),
+            Ok((b"unique".as_slice(), br#""new complete value""#.as_slice())),
+            Err("CANCELLED"),
+        ]
+    };
+    assert_eq!(
+        arithmetic.root_from_entries(entries()),
+        state_root_from_entries(entries())
+    );
+    assert_eq!(arithmetic.observation(), prior);
+    assert_eq!(old.strong_count(), 1);
+    calculated(&mut arithmetic, &BTreeMap::new());
+    assert!(old.upgrade().is_none());
 }
