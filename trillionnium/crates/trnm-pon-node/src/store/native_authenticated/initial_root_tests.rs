@@ -498,7 +498,7 @@ fn history_rereads_callback_changed_sql_fields_types_records_and_snapshot_bytes(
             if reference {
                 expected = Some(observed);
             } else {
-                assert_eq!(observed, expected.unwrap(), "{update}");
+                assert_eq!(&observed, expected.as_ref().unwrap(), "{update}");
             }
             foreign
                 .execute(update, params![&original, id.as_slice()])
@@ -603,7 +603,7 @@ fn history_still_checks_complete_commitment_and_actual_account_nodes() {
         if reference {
             expected = Some(observed);
         } else {
-            assert_eq!(observed, expected.unwrap());
+            assert_eq!(&observed, expected.as_ref().unwrap());
         }
     }
     foreign
@@ -654,7 +654,7 @@ fn history_still_checks_complete_commitment_and_actual_account_nodes() {
         if reference {
             expected = Some(observed);
         } else {
-            assert_eq!(observed, expected.unwrap());
+            assert_eq!(&observed, expected.as_ref().unwrap());
         }
     }
     foreign
@@ -714,7 +714,7 @@ fn history_cancellation_keeps_every_original_checkpoint_and_discards_unused_root
             if reference {
                 expected = Some(observed);
             } else {
-                assert_eq!(observed, expected.unwrap());
+                assert_eq!(&observed, expected.as_ref().unwrap());
                 history(false, &node, &mut || Ok(()), Some(&cache)).unwrap();
                 assert_eq!(counter(&cache, "operation_initial_root_reuses"), uses + 1);
             }
@@ -750,7 +750,7 @@ fn history_cancellation_keeps_every_original_checkpoint_and_discards_unused_root
         if reference {
             expected = Some(observed);
         } else {
-            assert_eq!(observed, expected.unwrap());
+            assert_eq!(&observed, expected.as_ref().unwrap());
         }
         foreign
             .execute("UPDATE blocks SET height=0 WHERE id=?", [id.as_slice()])

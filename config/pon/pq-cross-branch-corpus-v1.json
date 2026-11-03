@@ -676,7 +676,7 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
     "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs": "f3a6e69ce6aee5aadcf11be7c5e5500a3b10dff4",
-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs": "28fbcb8e0f951cf3b2b7f66235bb7be9bbc0c667",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs": "c309029c555e3877b63a7aa167d625eb5e7ca432",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests/reference.rs": "609ff6993c4eb7aad0bfa11a2381950e0f8a3d51"
   },
   "assertions": {
