@@ -7,7 +7,7 @@ use std::{
         Arc, Mutex,
     },
     thread,
-    time::Duration,
+    time::{Duration, Instant},
 };
 use trnm_crypto_primitives::qualified_work_task::{
     lifecycle_v2::verify_lifecycle_admission, TaskMaterial,
@@ -24,6 +24,45 @@ use trnm_pon_node::{
 };
 fn identity(n: u8) -> DevelopmentIdentity {
     DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap()
+}
+struct LocalService {
+    stop: Arc<AtomicBool>,
+    worker: Option<thread::JoinHandle<trnm_pon_node::Result<public_v3::PublicMetrics>>>,
+}
+impl LocalService {
+    fn start(node: Arc<Mutex<Node>>, server: PublicServer) -> Self {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let worker = thread::spawn(move || {
+            public_v3::serve_public_protected_v3(
+                listener,
+                node,
+                Duration::from_secs(60),
+                signal,
+                server,
+            )
+        });
+        Self {
+            stop,
+            worker: Some(worker),
+        }
+    }
+    fn finish(mut self) {
+        self.stop.store(true, Ordering::Release);
+        self.worker.take().unwrap().join().unwrap().unwrap();
+    }
+}
+impl Drop for LocalService {
+    fn drop(&mut self) {
+        self.stop.store(true, Ordering::Release);
+        if let Some(worker) = self.worker.take() {
+            let result = worker.join();
+            if !thread::panicking() {
+                result.unwrap().unwrap();
+            }
+        }
+    }
 }
 #[test]
 fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission() {
@@ -49,7 +88,7 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
         .unwrap();
     let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
     let (model, input, a, b) = settings.bootstrap_task_material().unwrap();
-    let make = |remote: &mut Node, parent, height: u64, offset: u64| {
+    let make = |remote: &Node, parent, height: u64, offset: u64| {
         let material = || TaskMaterial {
             model: &model,
             input: &input,
@@ -63,7 +102,7 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
             height,
         )
         .unwrap();
-        let p = remote
+        remote
             .make_with_task(
                 parent,
                 vec![],
@@ -73,20 +112,39 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
                 &admission,
                 material(),
             )
-            .unwrap();
-        let id = remote.admit(&p, clock).unwrap();
-        remote.activate_observed(id, clock).unwrap();
-        p
+            .unwrap()
     };
     let mut packets = vec![];
     for height in 1..=3 {
         let parent = remote.active().unwrap().0;
-        packets.push(make(&mut remote, parent, height, 0));
+        let p = make(&remote, parent, height, 0);
+        let id = remote.admit(&p, clock).unwrap();
+        remote.activate_observed(id, clock).unwrap();
+        packets.push(p);
     }
     let a_tip = remote.active().unwrap().0;
-    let local = Arc::new(Mutex::new(
-        Node::open(local_dir.path(), settings.clone(), 2).unwrap(),
-    ));
+    // Prepare the real fork before service startup, leaving its active tip alone.
+    // The callback below must publish it through the bound owner's paid reorg path.
+    let mut fork_packets = vec![];
+    let mut parent = packets[0].id().unwrap();
+    for height in 2..=4 {
+        let p = make(&remote, parent, height, 1);
+        parent = remote.admit(&p, clock).unwrap();
+        fork_packets.push(p);
+    }
+    assert_eq!(remote.active().unwrap().0, a_tip);
+    let mut local = Node::open(local_dir.path(), settings.clone(), 2).unwrap();
+    local
+        .enable_local_mempool(PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 16,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: development_public(0).unwrap(),
+        })
+        .unwrap();
+    let local = Arc::new(Mutex::new(local));
     let remote = Arc::new(Mutex::new(remote));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -94,13 +152,15 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
     let service_stop = Arc::new(AtomicBool::new(false));
     let signal = service_stop.clone();
     let server = remote.clone();
+    let remote_server = PublicServer::new(identity(71), policy).unwrap();
+    let remote_domain = remote_server.mutation_cpu_domain();
     let worker = thread::spawn(move || {
         public_v3::serve_public_protected_v3(
             listener,
             server,
             Duration::from_secs(60),
             signal,
-            PublicServer::new(identity(71), policy).unwrap(),
+            remote_server,
         )
         .unwrap()
     });
@@ -121,9 +181,14 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
         max_calls: 10,
         max_pages_per_cycle: 1,
     };
+    // Pinned imports use the same owner's actual public service CPU account.
+    let local_server = PublicServer::new(identity(73), policy).unwrap();
+    let local_domain = local_server.mutation_cpu_domain();
+    let local_service = LocalService::start(local.clone(), local_server);
     let peer_stop = Arc::new(AtomicBool::new(false));
     let mut events = vec![];
     let mut added_fork = false;
+    let polling_deadline = Instant::now() + Duration::from_millis(cfg.runtime_ms);
     let report = run_pinned_peer_polling(
         local.clone(),
         cfg.clone(),
@@ -138,13 +203,33 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
                 && e.active_tip == Some(hex::encode(a_tip))
                 && !added_fork
             {
-                let mut owner = remote.lock().unwrap();
-                let mut parent = packets[0].id().unwrap();
-                for height in 2..=4 {
-                    let p = make(&mut owner, parent, height, 1);
-                    parent = p.id().unwrap();
-                    packets.push(p);
-                }
+                assert!(remote
+                    .lock()
+                    .unwrap()
+                    .public_service_cpu_domain()?
+                    .shares_domain_with(&remote_domain));
+                let fork_tip = fork_packets.last().unwrap();
+                let fork_id = fork_tip.id().unwrap();
+                let outcome = ingress::dispatch_shared_with_metered_w1(
+                    &remote,
+                    ingress::Request::Submit {
+                        packet: hex::encode(fork_tip.encode().unwrap()),
+                    },
+                    &remote_domain,
+                    &|| {
+                        if peer_stop.load(Ordering::Acquire) || Instant::now() >= polling_deadline {
+                            Err("PEER_POLL_CANCELLED".into())
+                        } else {
+                            Ok(())
+                        }
+                    },
+                )?;
+                assert!(!outcome.cpu.accounting_unavailable, "{:?}", outcome.cpu);
+                assert!(outcome.cpu.total_cpu_ns.is_some_and(|cpu| cpu > 0));
+                let submitted = outcome.native?;
+                assert_eq!(submitted["block"], hex::encode(fork_id));
+                assert_eq!(submitted["active"], hex::encode(fork_id));
+                packets.append(&mut fork_packets);
                 added_fork = true;
             }
             Ok(())
@@ -210,10 +295,30 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
     assert!(costs.iter().all(|e| e["solve_trials"].as_u64().unwrap() > 0
         && e["solve_elapsed_ns"].as_u64().unwrap() > 0
         && e["body_bytes_sent"].as_u64().unwrap() > 0));
+    assert!(local
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&local_domain));
+    local_service.finish();
+    assert_eq!(Arc::strong_count(&local), 1);
+    let before_reopen_meter = local_domain.observe().unwrap();
     drop(local); // Actual same persisted owner reopen; replay memory is new.
     let local = Arc::new(Mutex::new(
         Node::open(local_dir.path(), settings.clone(), 2).unwrap(),
     ));
+    // Reopen the native owner while retaining this process's original CPU epoch.
+    let local_server =
+        PublicServer::with_continuous_domain(identity(73), policy, &local_domain).unwrap();
+    assert!(local_server
+        .mutation_cpu_domain()
+        .shares_domain_with(&local_domain));
+    assert_eq!(
+        before_reopen_meter,
+        local_server.mutation_cpu_domain().observe().unwrap()
+    );
+    let local_service = LocalService::start(local.clone(), local_server);
     let mut repeat = cfg;
     repeat.max_calls = 1;
     let report = run_pinned_peer_polling(
@@ -229,6 +334,14 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
     assert_eq!(report.peers[0].completed_targets, 1);
     assert_eq!(local.lock().unwrap().active().unwrap().0, expected_tip);
     assert!(!peer_stop.load(Ordering::Acquire));
+    assert!(local
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&local_domain));
+    local_service.finish();
+    assert_eq!(Arc::strong_count(&local), 1);
     service_stop.store(true, Ordering::Release);
     let metrics = worker.join().unwrap();
     assert_eq!(metrics.completed_read, 10); // eleven signed replies, one native CURSOR refusal

@@ -1,4 +1,7 @@
 //! Exercise the actual executable and its public transport, including shell failures.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
+
 use serde_json::Value;
 use std::{
     fs,
@@ -64,6 +67,14 @@ impl Drop for Running {
 }
 #[test]
 fn actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history() {
+    if current_elf_host::execute_in_fixed_host(
+        "public_cli",
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
+
     let dir = tempfile::tempdir().unwrap();
     let genesis = SystemTime::now()
         .duration_since(UNIX_EPOCH)

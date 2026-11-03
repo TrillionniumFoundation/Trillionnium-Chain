@@ -5132,3 +5132,56 @@ Console diagnostics do not establish the cause of an older failed run.
 Validate the recovered combination under the original profiles and retain
 source-bound raw results. Host fixture acceptance, original public-service
 windows, work/security qualification and public activation remain separate.
+
+### 2026-11-03 committed-CAS and original public fixture continuation
+
+Preserve published `8a74a9e42a9efbc52d83e861f64f03efd40f1406`, including
+the concurrent local/owner CAS test split and History completion fences, their recovered formatting and the
+post-observation bounded signed-DAG failure diagnostics. The
+[runtime fixture record](../../evidence/pon-runtime-fixture-closure-20261103/README.md)
+retains the old-production COMMIT counterexample, the initial pre-CAS error-code
+regression, both pinned-peer fixture failures and their original native outcomes.
+
+A successfully committed and fully signed witness CAS keeps its reconciliation
+receipt when the final completion crosses the original deadline. Current and
+the real socket write retain the original absolute cutoff. Local state aligns
+only after authenticating the matching receipt, then rejects late live use.
+Known local CAS contradictions keep the incoming observed-checkpoint category
+without signing or transport. The concurrent fresh-client fork control still
+reaches the real owner CAS check; both persistent-head assertions remain.
+
+Nine original public integration selectors may delegate their current ELF and
+original compiled CLI to the existing fixed Host controller. Complete source,
+job, process, cwd, binary and root-sealed parent identities are checked; actual
+native Host verification and original assertions remain. A stable nonblocking
+parent lock closes the cross-receipts ownership race. Only the new exact-fixture
+mode may reuse a freshly revalidated lease. Old controller modes still refuse
+preexisting parents; native retries, larger budgets and shared-parent cleanup
+are absent. The original single-thread required workflow remains unchanged.
+
+The local peer fixture now owns a real service CPU domain and activates its
+prepared fork through the public paid Submit path. It joins the old service
+before reopening with the same domain. Its original 30-second polling limit,
+10-second owner-binding wait, two-second policy and 34 assertions remain. The
+formatter copy includes the existing nested fresh-challenge module; this does
+not supersede the original CONFIRMATION_TARGET business failure.
+
+The first composed complete Node run executes all 971 registered entries with
+947 passes, one Unix-listener EPERM failure before witness ready, and 23 original
+ignored entries. History's 25 meaningful controls and all new CAS boundary
+controls pass. Host adapter controls pass 78/78, including real pidfd/owned-PG
+cleanup and flock conflicts; root/systemd mocks do not certify hosted isolation.
+Later fixture composition changes embedded-source bytes, requiring a separately
+identified final library build/run. Exact source records retain that distinction.
+
+Original four-second/F0/three-campaign confirmation, work-cost security,
+independent hardware/operators/evaluation, quantum/DAA, custody, external-effect
+safety, whole-chain PQ and activation remain HOLD under their original owners
+and exit conditions. No metric or local component result closes those gates.
+
+The restored executor retained all source and completed validation records, but
+the later full Node process became unavailable without a terminal result. Keep
+its partial log and UNKNOWN outcome. The subsequent concurrent `8a74a9e` test
+separates local guard refusal from real-owner fork refusal; retain it and remove
+the temporary local CAS error-category compatibility change. Rebuild and execute
+the final combination under the original profiles and limits.

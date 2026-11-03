@@ -1,0 +1,852 @@
+{
+  "schema": "trnm-runtime-fixture-closure-validation-v1",
+  "source_basis": {
+    "parent_commit": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+    "parent_tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+    "candidate_overlay": true,
+    "native_input_manifest_sha256": "da79bc542594f94636bfb5b32d07f61dd6832795b754a4700dcc3de329505fbe",
+    "native_input_paths": 1190
+  },
+  "build": {
+    "name": "build",
+    "command": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--test",
+      "architecture_delivery_compare",
+      "--test",
+      "public_intake_v2",
+      "--test",
+      "public_cli",
+      "--test",
+      "public_pool_cli",
+      "--test",
+      "mining_service_budget",
+      "--test",
+      "evaluation_sync_observation",
+      "--test",
+      "native_node",
+      "--test",
+      "pinned_peer_polling",
+      "--all-features",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "exit_code": 0,
+    "wall_ns": 329681429733,
+    "stdout_sha256": "53ea5c6a4d4fab47ecf2400f3e39cad84fc0b17bdf213fa1bd80ef866be51213",
+    "stderr_sha256": "8860a76461cffc716cbd9da4b797df6dba3e64e8805ad5fa3948ed34dd9e737a"
+  },
+  "artifacts": [
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "pinned_peer_polling",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+      "sha256": "71bf93b4cb031ba0c70abb13c3d8879454ef0648b10b07c89555d51ef9d8a843"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "evaluation_sync_observation",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/evaluation_sync_observation-28496d9b3cdcf560",
+      "sha256": "97be1baf3122f1a14e1568eaa19e68bfd1a0f9aba6e967e1a240bd51fa3e5e85"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "architecture_delivery_compare",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+      "sha256": "b0e772beb032564169fe3d55ae95ae0ca19e6211cc4f07a990f3b78215b92c4b"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "public_pool_cli",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_pool_cli-fb977579b89a95f5",
+      "sha256": "7cbaff2b3b4248e69c06e8f0008c55e3fb83878afb6d7458283771d949ec0766"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "mining_service_budget",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/mining_service_budget-643ab311680759e5",
+      "sha256": "1ca1b442131d45d934c9b4e7b66c067deb86bb51ea901d33be02f917e6cb7eac"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "native_node",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/native_node-a1e1ae1f7daf0349",
+      "sha256": "fdb1711e18aa64b2bd0a59686507dfdef8628704a537428c5927bd78cefc15f4"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "public_intake_v2",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_intake_v2-9fc0852a14291a17",
+      "sha256": "4580bc9e8f6184545cde971c70ffd32963d24f3da615b98794449d13b40ddb8d"
+    },
+    {
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "public_cli",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_cli-1b6f3532731727ff",
+      "sha256": "cb646b967483f36236ee9247a5019b8bd0252b327fb9f833a9a0ab87a92b8b17"
+    },
+    {
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "trnm-pon-node",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/main.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/trnm-pon-node",
+      "sha256": "2b3e578b670faec132d1b1848ee6a0688366edc650c5490a5ff6f61f7fa29b3e"
+    },
+    {
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+      "sha256": "457eaf6d74d849e40d7ae7f9498fe1859254e9a9c6d12a122ca98ca6e66b27b0"
+    }
+  ],
+  "format": {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_ns": 12468991253,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict_clippy": {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "wall_ns": 33326127100,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "0210ae4771730f49af21f6c57288b8913ca262398e4ee9300da467838065cda4"
+  },
+  "source_before_after_build": {
+    "fmt_exit": 0,
+    "clippy_exit": 0,
+    "source_unchanged": true
+  },
+  "static_commands": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit_code": 0,
+      "wall_ns": 68297820,
+      "unittest_summaries": [],
+      "stdout_sha256": "1ebea773352bf1c27a0c6ab4609543680786419acc36a350810bef316946ab3a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-integrity-negative",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 2941023816,
+      "unittest_summaries": [
+        [
+          "34",
+          "2.832"
+        ]
+      ],
+      "stdout_sha256": "433a26e223154b4ed69d6da2fb2cd95c2818a8f69dc50eb16c9e560119e7ecd9",
+      "stderr_sha256": "296e36fec228fea6f0ebc49e054bc8a6f8d5b55dd304afad7bec2faa9fe037ae"
+    },
+    {
+      "name": "pq-source-contract",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 14427121541,
+      "unittest_summaries": [
+        [
+          "34",
+          "14.357"
+        ]
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cdb75e415a6edbae6dd3c686ad9802930c5cc1244b0e5122db72de2585b0da74"
+    },
+    {
+      "name": "ci-contract",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 10618221935,
+      "unittest_summaries": [
+        [
+          "98",
+          "10.549"
+        ]
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "17b1c6a1fdc0d8015adde5c9244163b32c105126af108d1523931de118d102bf"
+    },
+    {
+      "name": "ci-execution",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 24478430079,
+      "unittest_summaries": [
+        [
+          "67",
+          "24.356"
+        ]
+      ],
+      "stdout_sha256": "2daed076e3f076546b6e5ba079331cb23a80fc8dfea92ae79f53ca41f6123d40",
+      "stderr_sha256": "a2d17353c55ed8507fb1acbcf168395431897db810bfdad4ca91abc7baa8075a"
+    },
+    {
+      "name": "claim-guard-controls",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 587658761,
+      "unittest_summaries": [
+        [
+          "22",
+          "0.525"
+        ]
+      ],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "409f5e040b1240cc43ee8ed70e668e187311b477298c38807693a29c7aea885c"
+    },
+    {
+      "name": "claim-guard",
+      "command": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 41482662,
+      "unittest_summaries": [],
+      "stdout_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inventory",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 58641702,
+      "unittest_summaries": [],
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository-links",
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 53716288316,
+      "unittest_summaries": [],
+      "stdout_sha256": "0d5228a1dc84b0615762a5c0b2a60a615e27b612d4d4aff1f9dafe83a5856921",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 28162947,
+      "unittest_summaries": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "actual-pins",
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 168710359,
+      "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "actual_pins": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 376,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "repository_readback": {
+    "activation": false,
+    "head": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+    "local_links": 1848,
+    "normal_dependency_edges": 24,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1080,
+    "source_state": "dirty-candidate",
+    "tree": "9c5df9c0ec1d223ec0a189a61644b099d9a72b46",
+    "workspace_packages": 26
+  },
+  "locked_graphs": [
+    {
+      "name": "default",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version=1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "wall_ns": 315290825,
+      "stdout_sha256": "071f3d1da3092ae8b590438133d9d1ab48f1354cc80a9e664df98377a1879f91",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages": 133,
+      "resolve_nodes": 133,
+      "workspace_members": 26
+    },
+    {
+      "name": "all-features",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version=1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "wall_ns": 158533168,
+      "stdout_sha256": "ec6c0813ae5d406663cfba94b923a79501dd18db3f19c248958b65ce21bc1a2b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages": 138,
+      "resolve_nodes": 138,
+      "workspace_members": 26
+    },
+    {
+      "name": "fuzz",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/fuzz/Cargo.toml",
+        "--format-version=1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 101,
+      "wall_ns": 30613130,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "17a729c2449391e7219ef32fc39598b04ec0c6d88420549b4d70b6d440817385"
+    },
+    {
+      "name": "fuzz-corrected",
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version=1",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "wall_ns": 125877925,
+      "original_wrong_path_retained": "fuzz.stderr",
+      "stdout_sha256": "02bfba919bfc43a77b219b44d6f64772ff9c6a821cb43e088a1231332335b3aa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages": 106,
+      "resolve_nodes": 106,
+      "workspace_members": 1
+    }
+  ],
+  "first_wrong_fuzz_manifest_path_error": "error: manifest path `trillionnium/fuzz/Cargo.toml` does not exist\n",
+  "final_fixture_native_controls": {
+    "registry": {
+      "pinned_peer_polling": [
+        "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+      ],
+      "evaluation_sync_observation": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+        "optional_sync_inputs_reject_before_open_without_changing_old_defaults"
+      ],
+      "architecture_delivery_compare": [
+        "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "public_pool_cli": [
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "peer_cli_rejects_unused_options_and_wrong_context_before_store_creation",
+        "real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst",
+        "v3_mining_options_refuse_v2_and_unused_or_logical_clock_options"
+      ],
+      "mining_service_budget": [
+        "invalid_or_unused_mining_runtime_refuses_before_store_creation",
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "native_node": [
+        "abrupt_child",
+        "test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation",
+        "test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "test_authentication_options_are_scoped_to_network_commands",
+        "test_cached_work_never_reuses_an_old_clock_verdict",
+        "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_existing_output_path_cannot_publish_a_new_cli_block",
+        "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+        "test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent",
+        "test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+        "test_initialization_process_cuts_recover_only_the_owned_context",
+        "test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
+        "test_lower_height_higher_required_work_wins_after_native_retarget",
+        "test_malformed_work_and_changed_duplicate_never_mutate_state",
+        "test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+        "test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+        "test_native_batch_checks_one_history_and_one_shared_body",
+        "test_native_batch_cli_uses_the_real_persisted_owner",
+        "test_native_batch_generation_change_is_detected_before_any_response",
+        "test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success",
+        "test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+        "test_native_body_membership_is_still_checked_after_header_projection",
+        "test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
+        "test_native_header_projection_rejects_changed_header_or_trace",
+        "test_native_writer_and_namespace_fences_are_not_optional",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+        "test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store",
+        "test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry",
+        "test_socket_history_uses_real_native_validation_and_separate_stores"
+      ],
+      "public_intake_v2": [
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+      ],
+      "public_cli": [
+        "actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse",
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        "public_cli_requires_explicit_profile_and_rejects_private_session_options"
+      ]
+    },
+    "exact_fixed_host_selectors": [
+      {
+        "target": "architecture_delivery_compare",
+        "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+        "cli_required": false
+      },
+      {
+        "target": "public_intake_v2",
+        "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+        "cli_required": false
+      },
+      {
+        "target": "public_intake_v2",
+        "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "cli_required": false
+      },
+      {
+        "target": "public_cli",
+        "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        "cli_required": true
+      },
+      {
+        "target": "public_pool_cli",
+        "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "cli_required": true
+      },
+      {
+        "target": "public_pool_cli",
+        "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "cli_required": true
+      },
+      {
+        "target": "mining_service_budget",
+        "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+        "cli_required": true
+      },
+      {
+        "target": "evaluation_sync_observation",
+        "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+        "cli_required": true
+      },
+      {
+        "target": "native_node",
+        "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "cli_required": true
+      }
+    ],
+    "controls": [
+      {
+        "name": "dag-original-negative",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "environment_overlay": {},
+        "exit_code": 0,
+        "wall_ns": 220548388,
+        "binary_sha256": "b0e772beb032564169fe3d55ae95ae0ca19e6211cc4f07a990f3b78215b92c4b",
+        "log_sha256": "87b95131cb596c05d6e754856cde908301d9a99a219c1b5efdb8270dff361833",
+        "expected_exit": 0,
+        "expectation_met": true,
+        "native_reader": {
+          "result": "PASS",
+          "test": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        }
+      },
+      {
+        "name": "generic-marker-without-host",
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "--exact",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "environment_overlay": {
+          "TRNM_PUBLIC_FIXTURE_HOST_CHILD": "architecture_delivery_compare::signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+        },
+        "exit_code": 101,
+        "wall_ns": 185368519,
+        "binary_sha256": "b0e772beb032564169fe3d55ae95ae0ca19e6211cc4f07a990f3b78215b92c4b",
+        "log_sha256": "c4c68460130c8aa08fb996cdf44860295ca231b66eb790c0bde1fb4b9fed2791",
+        "expected_exit": 101,
+        "expectation_met": true,
+        "actual_original_kernel_refusal_seen": true
+      }
+    ],
+    "real_fixed_host_positive_executed": false,
+    "all_blockers_closed": false
+  },
+  "final_full_node": {
+    "status": "interrupted_without_terminal_result",
+    "plan": {
+      "base": "3898f6a6dc65105bd4e3b52c94cc7625102f66da",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "binary_sha256": "457eaf6d74d849e40d7ae7f9498fe1859254e9a9c6d12a122ca98ca6e66b27b0",
+      "native_source_manifest_sha256": "da79bc542594f94636bfb5b32d07f61dd6832795b754a4700dcc3de329505fbe",
+      "supervisor_seconds": 2700,
+      "native_budgets_changed": false
+    },
+    "planned_registered": 971,
+    "original_ignored": 23,
+    "earlier_complete_run": "full-node-terminal-readback.json",
+    "earlier_run_does_not_qualify_this_changed_elf": true,
+    "partial_log_sha256": "c003985caceb21787876b6372ffff6dfa42fec49dfcb3b15f2b098906f5f32f2",
+    "final_result_known": false
+  },
+  "original_service_gates": "HOLD; no new fixed-Host positive execution is asserted",
+  "real_fixed_host_positive_executed_locally": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "all_blockers_closed": false,
+  "executor_recovery": {
+    "native_and_config_files_match_compiled_manifest": true,
+    "files_retained": true,
+    "prior_process_unavailable": true,
+    "interrupted_native_result": "UNKNOWN",
+    "error": "exec-server transport disconnected; recovery timed out after 45s"
+  },
+  "scope_note": "3898-based prior candidate; temporary local CAS error compatibility differs from final 8a74 composition"
+}

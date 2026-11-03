@@ -9,6 +9,7 @@ from contextlib import redirect_stdout
 import io
 import json
 import os
+import re
 import struct
 from pathlib import Path
 import tempfile
@@ -340,17 +341,23 @@ class BinarySelectionTests(unittest.TestCase):
             root = Path(directory)
             source = root / 'source/tests/public_v3_from_zero.rs'
             support = root / 'source/examples/support/w1_from_zero.rs'
+            fresh = source.parent / 'public_v3_from_zero/fresh_challenge.rs'
             source.parent.mkdir(parents=True)
             support.parent.mkdir(parents=True)
+            fresh.parent.mkdir()
             source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
-                              'mod w1_from_zero;\n')
+                              'mod w1_from_zero;\n'
+                              '#[path = "public_v3_from_zero/fresh_challenge.rs"]\n'
+                              'mod fresh_challenge;\n')
             support.write_text('pub fn trial() {}\n')
+            fresh.write_text('pub fn fresh_trial() {}\n')
             out = root / 'observations'
             out.mkdir()
             flattened = out / 'formatted.rs'
             flattened.write_bytes(source.read_bytes())
             self.assertFalse((flattened.parent / '../examples/support/w1_from_zero.rs').is_file())
-            original_source, original_support = source.read_bytes(), support.read_bytes()
+            original_source, original_support, original_fresh = (
+                source.read_bytes(), support.read_bytes(), fresh.read_bytes())
 
             staged = driver.stage_format_copy(source, support, out)
             self.assertEqual(staged, out / 'format-copy-source/tests/public_v3_from_zero.rs')
@@ -358,8 +365,24 @@ class BinarySelectionTests(unittest.TestCase):
             self.assertEqual(
                 (staged.parent / '../examples/support/w1_from_zero.rs').resolve().read_bytes(),
                 original_support)
+            self.assertEqual(
+                (staged.parent / 'public_v3_from_zero/fresh_challenge.rs').read_bytes(),
+                original_fresh)
             self.assertEqual(source.read_bytes(), original_source)
             self.assertEqual(support.read_bytes(), original_support)
+            self.assertEqual(fresh.read_bytes(), original_fresh)
+
+    def test_format_copy_covers_every_current_explicit_module_path(self):
+        source = driver.ROOT / driver.SOURCE
+        paths = re.findall(r'^#\[path = "([^"]+)"\]$', source.read_text(), re.MULTILINE)
+        self.assertTrue(paths)
+        with tempfile.TemporaryDirectory() as directory:
+            staged = driver.stage_format_copy(source, driver.ROOT / driver.FORMAT_SUPPORT,
+                                              Path(directory))
+            for relative in paths:
+                with self.subTest(relative=relative):
+                    self.assertEqual((staged.parent / relative).read_bytes(),
+                                     (source.parent / relative).read_bytes())
 
     def test_missing_out_of_line_module_cannot_be_silently_substituted(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -469,7 +492,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
                  missing_report=False, report_edit=None, log_drift=False, report_drift=False,
                  missing_sustained=False, sustained_edit=None, sustained_drift=False,
-                 missing_confirmation=False, confirmation_edit=None, confirmation_drift=False):
+                 missing_confirmation=False, confirmation_edit=None, confirmation_drift=False,
+                 missing_format_module=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -478,6 +502,11 @@ class ExecutionBoundaryTests(unittest.TestCase):
             support = root / driver.FORMAT_SUPPORT
             support.parent.mkdir(parents=True)
             support.write_text('// simulated Rust out-of-line module\n')
+            if not missing_format_module:
+                for relative in driver.FORMAT_TEST_MODULES:
+                    module = test_source.parent / relative
+                    module.parent.mkdir(parents=True, exist_ok=True)
+                    module.write_text('// simulated Rust test-local module\n')
             binary = root / 'fake-binary'; binary.write_bytes(b'not a real executable')
             identity = {'commit': 'a'*40, 'tree': 'b'*40, 'test_sha256': driver.digest(test_source.read_bytes())}
             after = copy.deepcopy(identity)
@@ -566,6 +595,15 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertTrue(result['passed'])
         self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
         self.assertTrue(all(r['process']['simulated_control'] for r in result['runs']))
+
+    def test_missing_format_module_is_retained_failure_before_any_child_runs(self):
+        result, seen = self.exercise(missing_format_module=True)
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['format_passed'])
+        self.assertFalse(result['source_recompiled'])
+        self.assertEqual(result['runs'], [])
+        self.assertEqual(seen, [])
+        self.assertTrue(any('fresh_challenge.rs' in error for error in result['failures']))
 
     def test_build_failure_preserved_without_test_execution(self):
         result, seen = self.exercise(build_exit=101)

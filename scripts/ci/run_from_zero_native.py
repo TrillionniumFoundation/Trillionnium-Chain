@@ -33,6 +33,7 @@ from contract_wire import H, header_decode, tx_decode
 TARGET = 'public_v3_from_zero'
 SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
 FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs'
+FORMAT_TEST_MODULES = ('public_v3_from_zero/fresh_challenge.rs',)
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
@@ -78,8 +79,9 @@ def select_binary(lines: list[str]) -> Path:
 def stage_format_copy(test_source: Path, support_source: Path, out: Path) -> Path:
     """Preserve the original #[path] module layout in a disposable rustfmt copy.
 
-    Flattening the test into out/formatted.rs loses ../examples/support and
-    gives rustfmt a false missing-module error. This is only diagnostic:
+    Retain both the shared support and test-local modules; flattening the test
+    or copying only its entry point gives rustfmt a missing-module error.
+    This is only diagnostic:
     cargo fmt --check and all real native acceptance gates are unchanged.
     """
     root = out / 'format-copy-source'
@@ -90,6 +92,10 @@ def stage_format_copy(test_source: Path, support_source: Path, out: Path) -> Pat
     staged = tests / test_source.name
     shutil.copyfile(test_source, staged)
     shutil.copyfile(support_source, support / support_source.name)
+    for relative in FORMAT_TEST_MODULES:
+        copied = tests / relative
+        copied.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(test_source.parent / relative, copied)
     return staged
 
 

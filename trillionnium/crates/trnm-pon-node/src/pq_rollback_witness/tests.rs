@@ -30,6 +30,17 @@ fn fixture() -> (
     (diagnostics, directory, policy, owner)
 }
 
+impl DurableWitness {
+    // Test-only access to the real SQLite COMMIT boundary, also used by the
+    // store fixture. No injected result substitutes for a durable COMMIT.
+    pub(crate) fn fixture_commit_hook<F>(&self, hook: Option<F>)
+    where
+        F: FnMut() -> bool + Send + 'static,
+    {
+        self.db.commit_hook(hook).unwrap();
+    }
+}
+
 struct DirectTransport {
     owner: DurableWitness,
     calls: Arc<AtomicUsize>,
@@ -269,6 +280,148 @@ fn shared_client(
         Box::new(SharedTransport(owner.clone())),
     )
     .unwrap()
+}
+
+#[test]
+fn service_expiry_after_update_before_commit_keeps_original_checkpoint() {
+    let (_diagnostics, _directory, policy, owner) = fixture();
+    let owner = Arc::new(Mutex::new(owner));
+    let mut client = shared_client(&policy, &owner);
+    let initial = client.current().unwrap();
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    let updates = Arc::new(AtomicUsize::new(0));
+    let commits = Arc::new(AtomicUsize::new(0));
+    let until = Instant::now() + Duration::from_millis(200);
+    {
+        let service = owner.lock().unwrap();
+        let observed_updates = updates.clone();
+        service
+            .db
+            .update_hook(Some(
+                move |action: rusqlite::hooks::Action, _: &str, table: &str, _: i64| {
+                    if action == rusqlite::hooks::Action::SQLITE_UPDATE && table == "witness_v1" {
+                        observed_updates.fetch_add(1, Ordering::SeqCst);
+                        thread::sleep(
+                            until.saturating_duration_since(Instant::now())
+                                + Duration::from_millis(2),
+                        );
+                    }
+                },
+            ))
+            .unwrap();
+        let observed_commits = commits.clone();
+        service
+            .db
+            .commit_hook(Some(move || {
+                observed_commits.fetch_add(1, Ordering::SeqCst);
+                false
+            }))
+            .unwrap();
+    }
+    assert_eq!(
+        client
+            .advance_until(initial, next, Some(until))
+            .unwrap_err()
+            .to_string(),
+        "PQ_WITNESS_DEADLINE"
+    );
+    assert_eq!(updates.load(Ordering::SeqCst), 1);
+    assert_eq!(commits.load(Ordering::SeqCst), 0);
+    assert_eq!(
+        client.available().unwrap_err().to_string(),
+        "PQ_WITNESS_UNAVAILABLE"
+    );
+    let service = owner.lock().unwrap();
+    assert!(!service.commit_uncertain);
+    assert_eq!(service.read_head().unwrap(), initial);
+}
+
+#[test]
+fn authenticated_late_current_receipt_cannot_supply_live_authority() {
+    struct LateCurrent {
+        owner: Arc<Mutex<DurableWitness>>,
+        delivered: Arc<AtomicUsize>,
+    }
+    impl WitnessTransport for LateCurrent {
+        fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+            assert_eq!(request[4], 1);
+            let reply = self.owner.lock().unwrap().handle(request, until)?;
+            thread::sleep(
+                until.saturating_duration_since(Instant::now()) + Duration::from_millis(2),
+            );
+            self.delivered.fetch_add(1, Ordering::SeqCst);
+            Ok(reply)
+        }
+    }
+
+    let (_diagnostics, _directory, policy, owner) = fixture();
+    let owner = Arc::new(Mutex::new(owner));
+    let delivered = Arc::new(AtomicUsize::new(0));
+    let mut client = WitnessClient::new(
+        WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        key(74),
+        Box::new(LateCurrent {
+            owner: owner.clone(),
+            delivered: delivered.clone(),
+        }),
+    )
+    .unwrap();
+    let until = Instant::now() + Duration::from_millis(200);
+    assert_eq!(
+        client.current_until(Some(until)).unwrap_err().to_string(),
+        "PQ_WITNESS_DEADLINE"
+    );
+    assert_eq!(delivered.load(Ordering::SeqCst), 1);
+    assert_eq!(client.last_verified, None);
+    assert_eq!(
+        client.available().unwrap_err().to_string(),
+        "PQ_WITNESS_UNAVAILABLE"
+    );
+    assert_eq!(
+        shared_client(&policy, &owner).current().unwrap(),
+        Checkpoint::new(1, [1; 64]).unwrap()
+    );
+}
+
+#[test]
+fn late_committed_cas_cannot_write_past_original_connection_deadline() {
+    let (_diagnostics, _directory, policy, mut owner) = fixture();
+    let (client_stream, mut service_stream) = UnixStream::pair().unwrap();
+    let mut client = WitnessClient::new(
+        WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        key(74),
+        Box::new(ConnectedWitnessTransport::new(client_stream)),
+    )
+    .unwrap();
+    let commits = Arc::new(AtomicUsize::new(0));
+    let observed_commits = commits.clone();
+    let until = Instant::now() + Duration::from_millis(200);
+    owner.fixture_commit_hook(Some(move || {
+        observed_commits.fetch_add(1, Ordering::SeqCst);
+        thread::sleep(until.saturating_duration_since(Instant::now()) + Duration::from_millis(2));
+        false
+    }));
+    let service = thread::spawn(move || {
+        let result = owner.serve_one(&mut service_stream, until);
+        (owner, result)
+    });
+    let initial = Checkpoint::new(1, [1; 64]).unwrap();
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    let result = client.advance_until(initial, next, Some(until));
+    let (owner, service_result) = service.join().unwrap();
+    assert_eq!(result.unwrap_err().to_string(), "PQ_WITNESS_DEADLINE");
+    assert_eq!(
+        service_result.unwrap_err().to_string(),
+        "PQ_WITNESS_DEADLINE"
+    );
+    assert_eq!(commits.load(Ordering::SeqCst), 1);
+    assert_eq!(owner.read_head().unwrap(), next);
+    assert!(!owner.commit_uncertain);
+    assert_eq!(client.last_verified, None);
+    assert_eq!(
+        client.available().unwrap_err().to_string(),
+        "PQ_WITNESS_UNAVAILABLE"
+    );
 }
 
 #[test]

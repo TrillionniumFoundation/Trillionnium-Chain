@@ -1,5 +1,7 @@
 //! Signed reference-DAG dissemination feeding the unchanged native PoN owners.
 //! This is not a Conflux, Narwhal, Bullshark or Mysticeti consensus implementation.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -650,6 +652,13 @@ fn trial(
 
 #[test]
 fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract() {
+    if current_elf_host::execute_in_fixed_host(
+        "architecture_delivery_compare",
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+        None,
+    ) {
+        return;
+    }
     let temporary = tempfile::tempdir().unwrap();
     let output = std::env::var_os("TRNM_ARCHITECTURE_COMPARE_DIR")
         .map(std::path::PathBuf::from)
