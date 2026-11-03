@@ -1,0 +1,104 @@
+{
+  "schema": "source-context-archive-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_private_at_publication": false,
+  "parent_commit": "9e1fb03767b0f430c277a0926738a66205269a5b",
+  "branch": "chore/chain-library-small-source-20261103-gpt6",
+  "candidate_count": 2,
+  "candidate_bytes": 8740,
+  "frozen_candidate_union_size": 6116,
+  "original_candidate_sets_unchanged": true,
+  "preserved_source_executed": false,
+  "reproduction_commands_executed": false,
+  "scientific_or_runtime_acceptance": false,
+  "historical_result_claims_requalified": false,
+  "original_archive_and_history_completeness_proven": false,
+  "all_library_source_synced": false,
+  "eligible_to_clear_library": false,
+  "library_deletion_performed": false,
+  "boundaries": [
+    "DRAFT",
+    "SHADOW_ONLY",
+    "DENY_ALL",
+    "HOLD_NO_GO"
+  ],
+  "candidates": [
+    {
+      "git_blob_sha": "1ff5b5869c3ddcc2f48376d926ba32bdb5596a0f",
+      "sha256": "ff118cb7863f148c861faf7300533954b2a183c0979fa2bca3237feba7248332",
+      "bytes": 5020,
+      "relative_path": "objects/1ff5b5869c3ddcc2f48376d926ba32bdb5596a0f.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "trnm-pq-genesis-native-v1.zip",
+          "member": "PQ_GENESIS_NATIVE_DUAL_VERIFY_V1.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction or interface contracts",
+      "attribution_basis": "The original document names this project or its implementation and reproduction interfaces; source peers from the same original package are listed where available. Placement is an inactive preservation context, not unique historical ownership.",
+      "verified_context_peers": [],
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific repository exact blob only, not all refs/history absence.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false,
+      "original_document_title": "# PQN2: native C/OpenSSL PQG1 dual-possession conformance (HOLD / NO GO)",
+      "selected_original_occurrence": {
+        "file": "trnm-pq-genesis-native-v1.zip",
+        "member": "PQ_GENESIS_NATIVE_DUAL_VERIFY_V1.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "trnm-pq-genesis-native-v1.zip",
+        "sha256": "cff43f76dbf9dcc32d51532ae9e769e93b5c6ce5363e2dc505201f354e514074",
+        "bytes": 13527
+      }
+    },
+    {
+      "git_blob_sha": "54ecc667c9c6b7fc9d1c405531639e3b435f2f25",
+      "sha256": "3620094038381acfdb214f71ad65d7f60e608eb0e2796f1f466fe22634ce6528",
+      "bytes": 3720,
+      "relative_path": "objects/54ecc667c9c6b7fc9d1c405531639e3b435f2f25.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "trnm-pq-cell-custody-research.zip",
+          "member": "README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction or interface contracts",
+      "attribution_basis": "The original document names this project or its implementation and reproduction interfaces; source peers from the same original package are listed where available. Placement is an inactive preservation context, not unique historical ownership.",
+      "verified_context_peers": [],
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific repository exact blob only, not all refs/history absence.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false,
+      "original_document_title": "# PCQ1 / PCR1: post-quantum Cell chunk retrieval (research only)",
+      "selected_original_occurrence": {
+        "file": "trnm-pq-cell-custody-research.zip",
+        "member": "README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "trnm-pq-cell-custody-research.zip",
+        "sha256": "ae8fde4b9500a7f677a60ae9db33788cb98a9b1919673bd09ec273ba4a734ade",
+        "bytes": 12144
+      }
+    }
+  ],
+  "notices": []
+}
