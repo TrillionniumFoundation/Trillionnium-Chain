@@ -1,0 +1,28 @@
+{
+  "all_original_test_blocks_byte_identical": true,
+  "candidate_count": 17,
+  "final_file_sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9",
+  "new_test": [
+    "rendezvous_fixture_waits_for_initialization_before_starting_request_budget"
+  ],
+  "original_blocks_sha256": {
+    "bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate": "85dc386779828d14a3d5e534bdc6f8b5ef084bf3aa1647f6de0f738465e950bf",
+    "cached_advertisements_cannot_replace_an_actual_bootstrap_reply": "c0e5117672a8d4e90f685090c1d858fb629fa22a9ce9071ec855a4a1c1cc17ac",
+    "canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding": "0e8215a960c4b2fb7585b1862fe993aa77b1b1cb1e87fcb193e7b1ae6545ae9a",
+    "discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets": "da488fee18e1d5d80a5cab5babb67b04b00a4f0b7e3c99141d23af6cce0cdaab",
+    "expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed": "084e0cfaec0fe14865c437fb809a6bf6f5aaad014babf1d11a43d59c4e242c1f",
+    "explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports": "b3782364307f9e4fcc6fe59b5280eb5127388a4252630385f208093222139baa",
+    "first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts": "0b6cd95c521429f5c2393d1d46844c80c8e58ae7c7d0d585485f377f7c13e4ba",
+    "fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys": "c292a7ad4a8bfa0466467b47aa4088921b3258e3acd29a17b42122dd9ded188c",
+    "four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals": "9881c0f2ae2ff8a2d645ad5e2a00adc15c1811e8204d8e1f588f33119ccb67c2",
+    "live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack": "c73d36b0d9ddca8df9cfb921e03ae4fbf55f77c3df7feecb43925ec92994a3a0",
+    "lookup_rejects_old_signed_wire_with_retained_new_highwater_columns": "2c0aef61ec5b2220e15523e6a6bd397e944eefcf2fe80cbc6c339153e172535d",
+    "oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts": "937f89a5448beb1ead44106f4eea664c62c78ac0875df0927e40cfe1ab29723e",
+    "owner_manifest_and_observed_source_limits_are_independent_permanent_caps": "b12160adb56c8517dbd1492b180ae29bbc38017afee9e38d27fc42c8eb7f5c0c",
+    "slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes": "2ba21ea2cdb9d651fc759e12c270b4d01b7279ce0e0fa3b7feaead86344daf78",
+    "tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit": "1af56217f047e2c7444255b684b072cf3bf763e4630f8d5d869bff7feff31dc7",
+    "tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater": "bc4eee810509a6baf221fe11e01c79b9164b423230f2322ff5fc018b7dd763d2"
+  },
+  "original_count": 16,
+  "original_file_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd"
+}

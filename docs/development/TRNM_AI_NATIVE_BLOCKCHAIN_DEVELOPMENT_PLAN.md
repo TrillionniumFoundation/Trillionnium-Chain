@@ -5113,3 +5113,64 @@ formatting, Clippy, native controls and exact-source gates remain pending.
 The existing Host-context mismatch in the signed-DAG integration also remains
 open. Original service windows, work-cost/security, independent evidence,
 whole-chain PQ, public-readiness and activation gates are not promoted.
+
+### 2026-11-03: retain complete architecture replay in its required Host
+
+Original head runtime run 41649603030 at 6ee97ee8 failed all eighteen signed
+delivery/replay samples with `PUBLIC_HOST_KERNEL_PARENT` after successful first
+History replies. The candidate at base 0443a5e2 keeps the public parent check and
+the Rust tests unchanged. A Cargo target runner places only the complete
+architecture test binary into the existing reviewed fixed Host; all other
+workspace targets retain their original arguments, environment and package cwd.
+The original workspace command, subsequent release tests and model oracles,
+2-second call, 15-second round, 180-minute job and Host resource limits remain.
+
+The adapter binds the Cargo-selected binary, exact source/job, original package
+cwd, runtime environment, both native tests and all eighteen native business
+samples. The outside shard requires the current Host result even after a zero
+child exit. Cargo-specific child environment is checked at execution and in the
+recorded before/after pair, rather than being mistaken for the parent process
+environment. Harmless controls passed 9 new binding, 9 shard and 35 original
+Host tests; no local synthetic control qualifies native business execution.
+The exact-source hosted head/merge CI remains pending at publication. This
+fixture repair does not close the original four-second/sixteen-hostile service
+budget, independent acceptance, architecture choice or production activation.
+
+
+## 2026-11-03 — Cell rendezvous fixture readiness with original budgets
+
+The isolated candidate composes owner `9f04640877078204d367f753eba684d94e705a74`
+and fixed-Host continuation `4204c4b0b1300cbb5d5325d9915a161173983491` while
+preserving both parents and all their plan additions. The original #697 runtime
+job executed 173 DA tests with 172 PASS / 1 FAIL (`cell absolute deadline` in
+TCP bootstrap), before reaching architecture delivery. That original failure
+is retained and is not declared closed by local results.
+
+The existing rendezvous test fixture now waits for the actual serving thread's
+limits/address validation and nonblocking listener initialization. The message
+consumes no probe connection or signed record. All 16 existing test bodies are
+byte-identical; the added delayed-start control passes and removing only the
+readiness receive produces a real native failure. Request 200 ms, server request
+250 ms, caller 10 s, lifetime 30 s, and connection limit 64 remain unchanged.
+Synchronous Drop/join is not represented as a hard cancellation deadline.
+
+Actual local Rust 1.95 locked/default-profile verification: DA 174/174 with
+zero ignored or filtered tests on the composed source (21.51 s); strict DA
+all-target Clippy `-D warnings` PASS; full locked metadata 174 packages and
+26 members, lock unchanged; 53 existing Host/shard/architecture controls,
+34 source-integrity negatives, and 16 boundary controls PASS. Original CI
+contract pins remain 20. Owner 9f046's two assertion wraps initially failed
+workspace formatting; only those whitespace wraps were changed and original
+`cargo fmt --all -- --check` then passed. They are outside DA dependencies;
+no native execution of that History regression is inferred.
+
+Full source/hash/command/output bindings, original failures, removed-handshake
+negative, retained test bodies and independent static-review limits are in
+[the readiness qualification](../../qualification/cell-rendezvous-readiness-20261103/README.md).
+The original selector passed locally before the change, so this controlled
+startup defect does not by itself establish the sole cause of the hosted
+historical timeout. Exact head/prospective original CI remains required.
+Fixed-Host native execution, original 4 s / 16-hostile pressure, ARM CPU,
+and 30 s campaign gates remain independently OPEN. No runtime/model/security
+acceptance or activation is promoted: DRAFT / SHADOW_ONLY / DENY_ALL /
+HOLD_NO_GO remains in force.

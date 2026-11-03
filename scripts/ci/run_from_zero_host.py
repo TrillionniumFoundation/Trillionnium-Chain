@@ -24,6 +24,7 @@ from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
                                         capture, validate, write_new)
 import run_from_zero_native as native
 import run_history_native as history
+import run_architecture_delivery_native as architecture
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,6 +43,8 @@ ENVIRONMENT = (
     'GITHUB_JOB', 'GITHUB_SHA', 'GITHUB_EVENT_NAME', 'GITHUB_EVENT_PATH',
     'TRNM_CI_RECEIPT_DIR', 'TRNM_EXPECTED_SOURCE_SHA', 'TRNM_EXPECTED_CANDIDATE_SHA',
     'TRNM_EXPECTED_BASE_SHA', 'TRNM_COST_RUNNER_LABEL',
+    'LD_LIBRARY_PATH', 'CARGO_MANIFEST_DIR', 'CARGO_PKG_NAME', 'CARGO_PKG_VERSION',
+    'TRNM_ARCHITECTURE_COMPARE_DIR', 'TMPDIR', 'TMP', 'TEMP',
 )
 
 
@@ -75,7 +78,8 @@ def validate_command(command: list[str]) -> Path:
     require(len(command) == 4 and command[:3] in ([
         'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
         'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
-        'python3', history.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
+        'python3', history.SCRIPT, '--out'], [
+        'python3', architecture.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -223,12 +227,16 @@ def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
 
 
 def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
+    if command[1] == architecture.SCRIPT:
+        return architecture.validate_preparation(output)
     if command[1] == history.SCRIPT:
         return history.validate_preparation(output)
     return prepare_native_build(receipts)
 
 
 def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
+    if command[1] == architecture.SCRIPT:
+        return architecture.bind_execution(prepared, output)
     if command[1] == history.SCRIPT:
         return history.bind_execution(prepared, output)
     binder = (bind_prepared_fresh_execution if command[1]

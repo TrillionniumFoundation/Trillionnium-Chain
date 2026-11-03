@@ -1,0 +1,19 @@
+{
+  "run_id": 41685898301,
+  "job_id": 126091416148,
+  "commit": "4204c4b0b1300cbb5d5325d9915a161173983491",
+  "tree": "26fec9d40b808624bbc53557d2c24dcd2e03ba88",
+  "decoded_log_bytes": 229070,
+  "decoded_log_git_blob": "909fb454b29bb8620896de44275626ae9dc64ee8",
+  "decoded_log_sha256": "d222cd4d8c1142b30b0e5a5d6b83606c5f186cb37fb89628e1e14c6b37245eb8",
+  "source": "GitHub decoded job-log API text; exact UTF-8 blob compared with locally retained bytes",
+  "native_da_result": {
+    "passed": 172,
+    "failed": 1,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "observed_failure": "Io TimedOut cell absolute deadline at announce_cell_provider unwrap",
+  "architecture_tests_reached": false,
+  "historical_race_root_cause_proven": false
+}
