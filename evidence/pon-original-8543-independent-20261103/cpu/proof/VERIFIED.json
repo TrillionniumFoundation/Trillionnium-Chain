@@ -1,0 +1,99 @@
+{
+  "all_verified": true,
+  "candidate": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f",
+  "cells": [
+    {
+      "architecture": "x86_64",
+      "id": 13271111862,
+      "original_tests_passed": 4,
+      "profile": "original-release",
+      "proof_sha256": "29a88064e72cea397d06f00f90bb72f33a3d65bfbfff551faf954c3c843d60f6",
+      "semantic_controls_passed": 0,
+      "source_kind": "head"
+    },
+    {
+      "architecture": "aarch64",
+      "id": 13270279031,
+      "original_tests_passed": 4,
+      "profile": "original-release",
+      "proof_sha256": "02a2d8d52e5ef8d2eebb6121c705d277dcc3f8ca702d85479dabb6edabb2c18c",
+      "semantic_controls_passed": 0,
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "x86_64",
+      "id": 13269173323,
+      "original_tests_passed": 4,
+      "profile": "original-release",
+      "proof_sha256": "dabb4454b388e34b829a573d68ea01e0a4765592d17e2f4a91a4add92a4ed4fe",
+      "semantic_controls_passed": 0,
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "aarch64",
+      "id": 13268988992,
+      "original_tests_passed": 4,
+      "profile": "original-release",
+      "proof_sha256": "31f2b527c936dfeb48ee0fc1c103907c3549c34f74c4df17e6df20c6c36d8a69",
+      "semantic_controls_passed": 0,
+      "source_kind": "head"
+    },
+    {
+      "architecture": "aarch64",
+      "id": 13273072035,
+      "original_tests_passed": 4,
+      "profile": "original-workspace-test",
+      "proof_sha256": "e722c9b7639d587ed41cf1d6e2abfcf367c35620bbc643b639ba3229937c780d",
+      "semantic_controls_passed": 45,
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "aarch64",
+      "id": 13273055591,
+      "original_tests_passed": 4,
+      "profile": "original-workspace-test",
+      "proof_sha256": "185353a222c684bc85c1859e7e3e702f5044dad63123a98b2f92e0e58858943a",
+      "semantic_controls_passed": 45,
+      "source_kind": "head"
+    },
+    {
+      "architecture": "x86_64",
+      "id": 13272245106,
+      "original_tests_passed": 4,
+      "profile": "original-workspace-test",
+      "proof_sha256": "fc9ef7fceeb2c176cc966a39a679e337bfc79270d37a854e9c64636546de01d2",
+      "semantic_controls_passed": 45,
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "x86_64",
+      "id": 13272230611,
+      "original_tests_passed": 4,
+      "profile": "original-workspace-test",
+      "proof_sha256": "bb5663d21c9f55f585bd4ff76f5ec80bafbf04d31aeb06c5ad11eacb613b2094",
+      "semantic_controls_passed": 45,
+      "source_kind": "head"
+    }
+  ],
+  "fixed_host_qualified": false,
+  "four_second_sixteen_hostile_qualified": false,
+  "full_workspace_native_suite_qualified": false,
+  "intervening_test_delta": "additional diagnostic-only readback when native settlement refuses; original budget, operation and strict acceptance remain unchanged",
+  "original_distinct_native_selectors": 4,
+  "original_native_selector_executions_passed": 32,
+  "original_setup_dispatch_and_budget_prefix_sha256": "4d04cff7b378140ecd0fa979f9786d8e867483a4b66065dc3aaaa7d20dd54926",
+  "original_strict_unwrap_settlement_and_reopen_suffix_sha256": "e74b4326a551056cc27051db9da1c4af93f0ff2eefd6a1c405b1b48f37ce7809",
+  "prospective_merge": "38f5174e762458f4d87b5d759ef953ef00681b33",
+  "schema": "chain-original-cpu-independent-readback-v1",
+  "semantic_control_executions_passed": 180,
+  "thirty_second_campaign_qualified": false,
+  "tree": "d6b33883fe26700a84aa12f64bafd5a7ef99520b",
+  "unchanged_original_inputs_from_failed_0443": {
+    ".github/workflows/pon-original-large-state-cpu.yml": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "8c47856853361356b055bfea745b90e62cefc77be235b4c7f48f6596cd0daddd",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "scripts/ci/verify_ci_source.py": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  }
+}

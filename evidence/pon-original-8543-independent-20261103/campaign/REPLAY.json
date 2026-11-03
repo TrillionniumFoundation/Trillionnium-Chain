@@ -1,0 +1,27 @@
+{
+  "schema": "chain-campaign-reader-execution-v1",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/1f1d02319616/chain-current-campaign-8543-20261103/verify_campaign.py",
+    "--archive",
+    "/workspace/scratch/1f1d02319616/chain-current-campaign-8543-20261103/campaign-13270905947.zip",
+    "--repo",
+    "/tmp/chain-cell-startup-current-20261103",
+    "--compare",
+    "/workspace/scratch/1f1d02319616/chain-current-campaign-8543-20261103/VERIFIED_CAMPAIGN.json",
+    "--output",
+    "/workspace/scratch/1f1d02319616/chain-current-campaign-8543-20261103/REPLAYED_CAMPAIGN.json"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"archive_verified\": true, \"original_native_passed\": false, \"replayed_projection_sha256\": \"8486b58da4be1b4694d22a53287f931a7075cd77287c4c2380677710c0aa1487\", \"verifier_sha256\": \"65ebad8fc531355dbf3a4e730ab335de67bb07406e87859165646defa7db9317\"}\n",
+  "stderr": "",
+  "script_sha256": "65ebad8fc531355dbf3a4e730ab335de67bb07406e87859165646defa7db9317",
+  "output_sha256": "8486b58da4be1b4694d22a53287f931a7075cd77287c4c2380677710c0aa1487",
+  "prior_projection_json_exactly_equal": true,
+  "native_test_executed": false,
+  "initial_local_reader_attempt": {
+    "selected_runner": "scripts/run_pon_w1_native_campaign.py",
+    "failure": "ValueError: runner source mismatch",
+    "correction": "bind exact workflow heredoc, including retained run-native-campaign.py byte equality"
+  }
+}
