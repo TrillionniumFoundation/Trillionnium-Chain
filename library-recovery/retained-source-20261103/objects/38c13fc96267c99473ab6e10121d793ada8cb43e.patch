@@ -1,0 +1,233 @@
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
+index 1b0e61b..586ea9d 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
+@@ -945,6 +945,7 @@ fn oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attemp
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     let body = request([11; 32]).encode();
+@@ -986,6 +987,7 @@ fn slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes() {
+         overall: original,
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     let body = request([11; 32]).encode();
+@@ -1044,6 +1046,7 @@ fn bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate() {
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let options = CellDiscoveryOptionsV1 {
+         request: pin,
+@@ -1108,6 +1111,7 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     assert!(transport::discover(&directory, &options, &transport, &mut observed).is_err());
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
+index d01fe30..9bcfa4f 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
+@@ -84,6 +84,7 @@ pub fn fetch_discovered_cell_to_file(
+         overall,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observation = CellDiscoveryObservationV1::default();
+     let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
+@@ -365,6 +366,7 @@ pub fn announce_cell_provider(
+         overall,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observation = CellDiscoveryObservationV1 {
+         record_validation_attempts: 1,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/network.rs b/trillionnium/crates/trnm-data-availability/src/cell/network.rs
+index 323064b..0711018 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/network.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/network.rs
+@@ -155,6 +155,7 @@ fn fetch_cell_inner(
+         overall: deadline,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     fetch_cell_in_session(store, pinned, peers, limits, &transport, output)
+ }
+@@ -318,9 +319,10 @@ pub(super) fn fetch_manifest_observed(
+         None => {
+             let mut received = None;
+             let mut last_io = None;
+-            for peer in peers {
++            for peer_index in transport.peer_indices(peers.len(), 0)? {
++                let peer = peers[peer_index];
+                 let candidate =
+-                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
++                    request(peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
+                         let manifest = CellManifestV1::decode(&wire)?;
+                         require(manifest.id() == pinned, "manifest digest")?;
+                         require(
+@@ -337,6 +339,7 @@ pub(super) fn fetch_manifest_observed(
+                         break;
+                     }
+                     Err(error) => {
++                        transport.peer_failed(peer_index);
+                         rejected += 1;
+                         if let CellErrorV1::Io(error) = error {
+                             last_io = Some(error);
+@@ -364,17 +367,25 @@ fn download_chunk(
+     transport: &RequestContext<'_>,
+ ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
+     let mut last_io = None;
+-    for offset in 0..peers.len() {
+-        let peer = peers[(order + offset) % peers.len()];
++    for (attempt, peer_index) in transport
++        .peer_indices(peers.len(), order)?
++        .into_iter()
++        .enumerate()
++    {
++        let peer = peers[peer_index];
+         let candidate =
+             request(peer, 2, chunk.sha256, chunk.size as usize, transport).and_then(|bytes| {
+                 verify_chunk(chunk, &bytes)?;
+                 Ok(bytes)
+             });
+         match candidate {
+-            Ok(bytes) => return Ok((bytes, peer, offset)),
+-            Err(CellErrorV1::Io(error)) => last_io = Some(error),
+-            Err(_) => (),
++            Ok(bytes) => return Ok((bytes, peer, attempt)),
++            Err(error) => {
++                transport.peer_failed(peer_index);
++                if let CellErrorV1::Io(error) = error {
++                    last_io = Some(error);
++                }
++            }
+         }
+     }
+     Err(unavailable_with_transport_cause(transport, last_io))
+@@ -488,6 +499,34 @@ pub(super) struct RequestContext<'a> {
+     pub(super) overall: Instant,
+     pub(super) requests_left: &'a AtomicU64,
+     pub(super) responses: &'a ResponseBudget,
++    /// The configured/discovered provider list stays fixed for one session.
++    /// Bootstrap discovery does not populate these provider ordering hints.
++    pub(super) peer_failures: [AtomicU64; 8],
++}
++
++impl RequestContext<'_> {
++    /// Snapshot once before sorting: concurrent workers must not change the
++    /// comparator's ordering. Equal scores retain the original cyclic order.
++    /// Every configured peer remains a fallback for every missing object,
++    /// including a peer that previously lacked a different required member.
++    fn peer_indices(&self, count: usize, start: usize) -> CellResultV1<Vec<usize>> {
++        require(count <= self.peer_failures.len(), "configured peer count")?;
++        let failures: Vec<_> = self.peer_failures[..count]
++            .iter()
++            .map(|failure| failure.load(Ordering::Relaxed))
++            .collect();
++        let mut indices: Vec<_> = (0..count).map(|offset| (start + offset) % count).collect();
++        indices.sort_by_key(|index| failures[*index]);
++        Ok(indices)
++    }
++
++    fn peer_failed(&self, index: usize) {
++        let _ = self.peer_failures[index].fetch_update(
++            Ordering::Relaxed,
++            Ordering::Relaxed,
++            |failures| Some(failures.saturating_add(1)),
++        );
++    }
+ }
+ 
+ pub(super) struct ResponseBudget {
+@@ -780,6 +819,7 @@ mod budget_tests {
+                 overall: Instant::now() + Duration::from_secs(5),
+                 requests_left: &requests_left,
+                 responses: &responses,
++                peer_failures: Default::default(),
+             };
+             let succeeded = thread::scope(|scope| {
+                 let clients: Vec<_> = (0..4)
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/release.rs b/trillionnium/crates/trnm-data-availability/src/cell/release.rs
+index a336f12..0686428 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/release.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/release.rs
+@@ -119,6 +119,7 @@ pub fn fetch_release_to_file(
+         overall: deadline,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut report = CellReleaseFetchReportV1 {
+         release_id: pinned,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
+index d2c5225..cd959f2 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
+@@ -268,6 +268,53 @@ fn release_fetch_collects_all_members_from_two_distinct_loopback_stores() {
+     assert_eq!(report.connection_attempts, a.finish() + b.finish());
+ }
+ 
++#[test]
++fn release_fetch_reuses_observed_peer_failures_within_original_connection_budget() {
++    let fixture = Fixture::new();
++    let empty_path = fixture.path("empty.sqlite");
++    let empty_store = CellStoreV1::open(&empty_path, cache_config()).unwrap();
++    drop(empty_store);
++    let empty = Peer::start(&empty_path);
++    let available = Peer::start(&fixture.origin_path);
++    let receiver = fixture.cache("receiver.sqlite");
++    let output = fixture.path("complete.tcr");
++    let mut reservation = limits();
++    // Two actual manifests and four actual chunks, plus one observed empty
++    // provider. The single worker makes the session's request order explicit.
++    // No request, byte or absolute-time reservation is renewed after a miss.
++    reservation.peer.max_connections = 7;
++    reservation.peer.parallelism = 1;
++    let result = fetch_release_to_file(
++        &receiver,
++        &fixture.release,
++        fixture.release.id(),
++        &[empty.address, available.address],
++        reservation,
++        &output,
++    );
++    let empty_requests = empty.finish();
++    let available_requests = available.finish();
++    let report = result.unwrap_or_else(|error| {
++        panic!(
++            "complete release failed: {error}; empty_requests={empty_requests}, available_requests={available_requests}"
++        )
++    });
++    assert_eq!(empty_requests, 1);
++    assert_eq!(available_requests, 6);
++    assert_eq!(report.connection_attempts, 7);
++    assert_eq!(report.rejected_responses, 1);
++    assert_eq!(report.downloaded_chunks, 4);
++    assert_eq!(report.downloaded_bytes, 40_000);
++    assert_eq!(
++        report.received_response_bytes,
++        fixture.successful_response_bytes() + 9
++    );
++    receiver
++        .verify_release_complete(&fixture.release, limits().release)
++        .unwrap();
++    assert_eq!(fs::read(&output).unwrap(), fixture.release.encode());
++}
++
+ #[test]
+ fn post_link_failure_preserves_complete_marker_for_same_identity_readback() {
+     let fixture = Fixture::new();
