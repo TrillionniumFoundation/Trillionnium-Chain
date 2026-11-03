@@ -1,0 +1,11 @@
+{
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "local_plan_commit": "88f89ad7",
+  "source_parent": "f8724b69e1569b45ddaa2a042fa320df0bc0e888",
+  "source_hashes": {
+    "formal/pon-nakamoto-v1/experiments/model_loop.py": "ad4cf37ae1dc3726e2dde3af93af8d08430451f7b8105833377f93f8f164e1a4",
+    "formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+  },
+  "run_exit": 0
+}

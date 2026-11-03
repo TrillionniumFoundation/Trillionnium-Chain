@@ -1,0 +1,1 @@
+PASS: input and plan hashes; 1005 unique OOF identities; 150 whole-file groups; five folds; exact confusion and prediction parity.
