@@ -7,8 +7,10 @@ import copy
 import hashlib
 import json
 import math
+import os
 import re
 import sqlite3
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -17,13 +19,16 @@ from report_module_evidence import rust_code, rust_group_end
 
 ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
-         'future_window_accepted', 'work_profile_qualified', 'physical_power_loss')
+         'future_window_accepted', 'work_profile_qualified', 'physical_power_loss',
+         'native_execution_authenticated')
 CASES = (('hot', 'legacy'), ('hot', 'protected'), ('disjoint4', 'protected'), ('growth', 'protected'))
 TESTS = ('test_model_attribution', 'test_work_utility', 'test_public_evaluation_lifecycle', 'test_llm_adapter_contract')
 SOCKET_RUN = 'transport-sustained-paid-unpaid'
 NEGATIVE_RUN = 'public-readiness-evidence-negative-tests'
 SOURCE_NEGATIVE_RUN = 'evidence-source-negative-tests'
 SOURCE_PREPARATION_RUN = 'evidence-source-preparation'
+PIPELINE_BINARY_LIMIT = 512 * 1024 * 1024
+PIPELINE_OBSERVATION_SCOPE = 'software-file-snapshots-and-launcher-exit-not-execution-attestation'
 
 
 def require(ok, message):
@@ -47,6 +52,20 @@ def load(path):
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
+
+
+def hash_file(path, *, limit=None):
+    fingerprint, size = hashlib.sha256(), 0
+    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    with os.fdopen(descriptor, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        require(stat.S_ISREG(info.st_mode) and (limit is None or 0 < info.st_size <= limit),
+                'artifact bounded regular file')
+        while chunk := stream.read(65536 if limit is None else min(65536, limit - size + 1)):
+            size += len(chunk)
+            require(limit is None or size <= limit, 'artifact file limit')
+            fingerprint.update(chunk)
+    return fingerprint.hexdigest(), size
 
 
 def integer(value, minimum=0, maximum=None):
@@ -128,7 +147,9 @@ def validate_artifacts(root, folder, manifest, *, tracked=True):
             observed.add(path.relative_to(folder).as_posix())
     require(set(files) == observed, 'artifact inventory mismatch')
     for name, fingerprint in files.items():
-        require(sha(safe(folder, name).read_bytes()) == digest(fingerprint), 'artifact bytes changed '+name)
+        limit = PIPELINE_BINARY_LIMIT if name == 'binaries/continuous_pipeline' else None
+        observed_sha, _ = hash_file(safe(folder, name), limit=limit)
+        require(observed_sha == digest(fingerprint), 'artifact bytes changed '+name)
         if name.endswith('.json'):
             scope_flags(load(safe(folder,name)))
     if tracked and folder.is_relative_to(root):
@@ -735,15 +756,117 @@ def validate_attribution(root, folder, command, commit):
     return verified
 
 
+def validate_pipeline_executable(folder, report, by_name):
+    """Bind retained bytes and observed launches, without authenticating execution."""
+    binding = report.get('pipeline_executable')
+    require(isinstance(binding, dict) and set(binding) == {
+        'cargo_artifact', 'build_log', 'retained_path', 'initial', 'retained', 'observation_scope'},
+        'pipeline executable binding required')
+    require(binding['observation_scope'] == PIPELINE_OBSERVATION_SCOPE,
+            'pipeline executable observation scope')
+    environment = report.get('environment')
+    require(isinstance(environment, dict), 'pipeline observer environment')
+    observer = environment.get('resource_observer')
+    require(isinstance(observer, dict) and set(observer) == {'executable', 'sha256', 'identity', 'observation'},
+            'pipeline resource observer record')
+    require(isinstance(observer['executable'], str) and Path(observer['executable']).is_absolute()
+            and isinstance(observer['identity'], str) and re.match(r'^time \(GNU [Tt]ime\)', observer['identity'])
+            and observer['observation'] == 'software-file-snapshot-not-execution-attestation',
+            'pipeline resource observer scope')
+    digest(observer['sha256'])
+    build = by_name['pipeline-build']
+    require(binding['build_log'] == build['log'] == 'logs/pipeline-build.log', 'pipeline build log binding')
+    messages = []
+    for line in safe(folder, build['log']).read_text().splitlines():
+        try:
+            message = json.loads(line, object_pairs_hook=unique)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(message, dict):
+            messages.append(message)
+    candidates = [message for message in messages if message.get('reason') == 'compiler-artifact'
+                  and isinstance(message.get('target'), dict)
+                  and message['target'].get('name') == 'continuous_pipeline']
+    finished = [message for message in messages if message.get('reason') == 'build-finished']
+    require(len(candidates) == 1 and len(finished) == 1 and finished[0].get('success') is True,
+            'pipeline unique successful Cargo artifact')
+    artifact = candidates[0]
+    require(binding['cargo_artifact'] == artifact, 'pipeline Cargo artifact changed')
+    manifest = artifact.get('manifest_path')
+    suffix = '/trillionnium/crates/trnm-pon-node/Cargo.toml'
+    require(isinstance(manifest, str) and manifest.endswith(suffix)
+            and Path(manifest).is_absolute() and Path(manifest).as_posix() == manifest
+            and '..' not in Path(manifest).parts, 'pipeline package manifest')
+    target = artifact['target']
+    profile = artifact.get('profile')
+    require(target.get('src_path') == manifest[:-len(suffix)] +
+            '/trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs'
+            and target.get('kind') == ['example'] and target.get('crate_types') == ['bin']
+            and isinstance(profile, dict) and profile.get('opt_level') == '3'
+            and profile.get('test') is False and type(artifact.get('fresh')) is bool,
+            'pipeline compiled target/profile')
+    for snapshot in (binding['initial'], binding['retained']):
+        require(isinstance(snapshot, dict) and set(snapshot) == {
+            'path', 'bytes', 'sha256', 'device', 'inode', 'mtime_ns', 'ctime_ns'},
+            'pipeline file snapshot')
+        path = snapshot['path']
+        require(isinstance(path, str) and Path(path).is_absolute()
+                and Path(path).as_posix() == path and '..' not in Path(path).parts,
+                'pipeline absolute observed path')
+        integer(snapshot['bytes'], 1, PIPELINE_BINARY_LIMIT)
+        digest(snapshot['sha256'])
+        for field in ('device', 'inode', 'mtime_ns', 'ctime_ns'):
+            integer(snapshot[field])
+    initial, retained = binding['initial'], binding['retained']
+    filenames = artifact.get('filenames')
+    require(artifact.get('executable') == initial['path'] and isinstance(filenames, list)
+            and all(isinstance(path, str) for path in filenames)
+            and initial['path'] in filenames, 'pipeline executable artifact path')
+    require(binding['retained_path'] == 'binaries/continuous_pipeline', 'pipeline retained file binding')
+    require((retained['bytes'], retained['sha256']) == (initial['bytes'], initial['sha256'])
+            and report['pipeline_binary_sha256'] == initial['sha256'], 'pipeline retained hash/length binding')
+    fingerprint, size = hash_file(safe(folder, binding['retained_path']), limit=PIPELINE_BINARY_LIMIT)
+    require(size == retained['bytes'] and fingerprint == retained['sha256'],
+            'pipeline retained executable bytes')
+    original_out = Path(retained['path']).parent.parent
+    require(Path(retained['path']) == original_out/binding['retained_path'], 'pipeline retained observed path')
+    for pattern, profile_name in CASES:
+        name = 'pipeline-'+pattern+'-'+profile_name
+        row = by_name[name]
+        require(row.get('resource_observer') == observer and 'resource_observer_error' not in row,
+                'pipeline resource observer binding/failure')
+        command = row['command']
+        require(isinstance(command, list) and all(isinstance(value, str) for value in command)
+                and len(command) == 7 and command[0] == initial['path']
+                and command[1] == str(original_out/name), 'pipeline exact executable/output argv')
+        execution = row.get('pipeline_execution')
+        require(isinstance(execution, dict) and set(execution) == {
+            'requested_argv', 'launched_argv', 'launcher_pid', 'before', 'after', 'observation_scope'},
+            'pipeline complete execution observations')
+        require(execution['requested_argv'] == command
+                and execution['observation_scope'] == PIPELINE_OBSERVATION_SCOPE,
+                'pipeline requested argv/scope')
+        expected_launcher = [row['resource_observer']['executable'], '-f', '%M %U %S', '-o',
+                             str(original_out/'logs'/(name+'.usage')), *command]
+        require(execution['launched_argv'] == expected_launcher, 'pipeline actual launcher argv')
+        integer(execution['launcher_pid'], 1)
+        expected_snapshot = dict(source=initial, retained=retained)
+        require(execution['before'] == execution['after'] == expected_snapshot,
+                'pipeline before/after file binding')
+        require(type(row['returncode']) is int and row['returncode'] == 0
+                and row['timed_out'] is False, 'pipeline actual child outcome')
+    return binding
+
+
 def validate(root=ROOT, evidence=None, *, tracked=True):
     root = Path(root).resolve()
-    folder = Path(evidence or root/'evidence/pon-public-readiness-v1').absolute()
+    folder = Path(evidence or root/'evidence/pon-public-readiness-v2').absolute()
     require(not folder.is_symlink(), 'symlink evidence root')
     manifest = load(safe(folder,'manifest.json'))
-    require(manifest['schema'] == 'trnm-public-readiness-evidence-v1', 'manifest schema')
+    require(manifest['schema'] == 'trnm-public-readiness-evidence-v2', 'manifest schema: current execution requires v2; retain v1 as historical')
     validate_artifacts(root,folder,manifest,tracked=tracked)
     report = load(safe(folder,'qualification.json'))
-    require(report['schema'] == 'trnm-public-readiness-engineering-v1', 'qualification schema')
+    require(report['schema'] == 'trnm-public-readiness-engineering-v2', 'qualification schema')
     for value in (manifest,report):
         require(value['source_clean'] is True and value['all_commands_passed'] is True, 'failed/dirty engineering run')
         for flag in FLAGS: require(value[flag] is False, 'unsupported authority '+flag)
@@ -756,6 +879,7 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
     by_name = {r['name']:r for r in records}
     for row in records:
         require(type(row['returncode']) is int and row['returncode'] == 0 and row['timed_out'] is False, 'failed command')
+        require('resource_observer_error' not in row, 'failed resource observer')
         integer(row['elapsed_ns'],1)
         require(row['vram_bytes'] is None and row['log'] in manifest['files'] and isinstance(row['command'],list) and row['command'], 'command evidence')
         if row['peak_rss_kib'] is not None: integer(row['peak_rss_kib'],1)
@@ -776,8 +900,8 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
     baseline = baseline_validate(root=root,evidence=folder/'baseline')
     require(baseline['measured_commit'] == commit and baseline['runtime_matches'] is True and baseline['native_development_entry'] is True, 'baseline execution scope')
     build = by_name['pipeline-build']['command']
-    require(build == ['cargo','build','--offline','--locked','--release','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--examples','--bins'], 'pipeline actual build')
-    digest(report['pipeline_binary_sha256'])
+    require(build == ['cargo','build','--offline','--locked','--release','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--examples','--bins','--message-format=json-render-diagnostics'], 'pipeline actual build')
+    validate_pipeline_executable(folder, report, by_name)
     transfers = 0
     for pattern, profile in CASES:
         name = 'pipeline-'+pattern+'-'+profile
@@ -796,6 +920,8 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
     require(report['environment']['cargo_jobs'] == 2 and report['environment']['test_threads'] == 1 and report['environment']['gpu_used'] is False and report['environment']['vram_bytes'] is None, 'environment scope')
     return {'measured_commit':commit,'current_source_qualified_by_this_check':True,'runtime_matches':True,
             'engineering_observations_verified':True,'pipeline_cases':4,'actual_confirmed_transfers':transfers,
+            'pipeline_file_and_launcher_bindings_verified':True,
+            'pipeline_observation_scope':PIPELINE_OBSERVATION_SCOPE,
             **{flag:False for flag in FLAGS}}
 
 
@@ -805,7 +931,7 @@ if __name__ == '__main__':
     parser.add_argument('--evidence',type=Path)
     parser.add_argument('--historical',action='store_true')
     args = parser.parse_args()
-    folder = args.evidence or args.root/'evidence/pon-public-readiness-v1'
+    folder = args.evidence or args.root/('evidence/pon-public-readiness-v1' if args.historical else 'evidence/pon-public-readiness-v2')
     if args.historical:
         from historical_evidence import measured_checkout
         validate_artifacts(args.root.resolve(),folder.absolute(),load(safe(folder,'manifest.json')))

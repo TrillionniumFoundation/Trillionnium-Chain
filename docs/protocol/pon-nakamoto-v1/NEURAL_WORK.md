@@ -126,3 +126,21 @@ profile/domain, parameter/genesis and storage context, old/new independent
 vectors and explicit migration/replay review. Byte-equivalent P2 verifier
 optimization must retain the existing relation, error/cancellation order and
 full checks; throughput gains cannot replace P0 security qualification.
+
+### Current verifier resource continuation
+
+The 2026-11-03 continuation keeps the W1 statement and work-credit rules intact.
+Its optimized path delays owned A/B buffers until canonical fields, task binding
+and the ticket have passed the existing preliminary checks. Private temporary
+types keep row-major and transposed matrices distinct; any retained transpose is
+owned by this one verification and cannot cache an acceptance result across
+parents, statements, proofs or calls. Product and transcript checks still consume
+all required arithmetic. The independent scalar path remains a correctness and
+error-order reference.
+
+An allocation count or legal-proof timing from this implementation is a scoped
+implementation observation. It cannot replace complete submitter setup/search
+costs, unsuccessful attempts, receiver costs, hardware/reuse assumptions or the
+original honest-service campaign. In particular, reduced temporary-buffer cost
+does not establish the cheapest legal algorithm or close a measured rejection
+amplification failure. Computational and public-service qualification remain open.

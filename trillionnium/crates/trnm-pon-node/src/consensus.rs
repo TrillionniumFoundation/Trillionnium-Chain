@@ -146,6 +146,45 @@ pub fn required_work(target: [u8; 32]) -> Result<Work> {
     numerator.divided(denominator)
 }
 
+/// Checked successor height, created before either storage owner reads history.
+/// Keeping that order preserves the height-overflow refusal before ancestor work.
+#[derive(Debug)]
+pub(crate) struct BranchTargetHeight(u64);
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum TargetWindow {
+    Parent([u8; 32]),
+    Retarget {
+        target: [u8; 32],
+        first: u64,
+        last: u64,
+    },
+}
+
+impl BranchTargetHeight {
+    pub(crate) fn after(parent_height: u64) -> Result<Self> {
+        Ok(Self(parent_height.checked_add(1).ok_or("HEIGHT")?))
+    }
+
+    /// Select only from this parent's locally validated, parent-first history.
+    /// Parameter decoding and retarget arithmetic remain deferred until needed.
+    pub(crate) fn window(self, recent: &[(u64, [u8; 32])], interval: u64) -> Result<TargetWindow> {
+        let &(last, target) = recent.first().ok_or("UNKNOWN_PARENT")?;
+        let remainder = self.0.checked_rem(interval).ok_or("TARGET_PARAMETERS")?;
+        if remainder != 0 {
+            return Ok(TargetWindow::Parent(target));
+        }
+        // Do not truncate a configured window index on a narrower usize host.
+        let index = usize::try_from(interval - 1).map_err(|_| "UNKNOWN_PARENT")?;
+        let first = recent.get(index).ok_or("UNKNOWN_PARENT")?.0;
+        Ok(TargetWindow::Retarget {
+            target,
+            first,
+            last,
+        })
+    }
+}
+
 pub fn retarget(
     parent: [u8; 32],
     first: u64,
@@ -176,7 +215,10 @@ pub fn retarget(
 /// `ancestors` is the locally validated parent-first window, including genesis as needed.
 pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Result<()> {
     ensure(!ancestors.is_empty(), "UNKNOWN_PARENT")?;
-    let mut recent: Vec<_> = ancestors.iter().take(11).copied().collect();
+    let count = ancestors.len().min(11);
+    let mut window = [0; 11];
+    window[..count].copy_from_slice(&ancestors[..count]);
+    let recent = &mut window[..count];
     recent.sort_unstable();
     ensure(candidate > recent[recent.len() / 2], "TIME")?;
     ensure(
@@ -188,6 +230,156 @@ pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn native_arithmetic_matches_python_integer_vectors() {
+        // Formal test_reference independently recomputes every committed result
+        // with Python integers. No native wrapping_sub is shared by that oracle.
+        let vectors: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json"
+        ))
+        .unwrap();
+        assert_eq!(vectors["schema"], "pon-native-consensus-integer-vectors-v1");
+        fn bytes<const N: usize>(value: &serde_json::Value) -> [u8; N] {
+            hex::decode(value.as_str().unwrap())
+                .unwrap()
+                .try_into()
+                .unwrap()
+        }
+        for row in vectors["rows"].as_array().unwrap() {
+            let operation = row["operation"].as_str().unwrap();
+            let left = || Work::from_bytes(bytes(&row["left"]));
+            let right = || Work::from_bytes(bytes(&row["right"]));
+            let result = match operation {
+                "divide" => left().divided(right()),
+                "add" => left().checked_add(right()),
+                "subtract" => left().checked_sub(right()),
+                "multiply" => left().mul_small(row["factor"].as_u64().unwrap()),
+                "required_work" => required_work(bytes(&row["target"])),
+                "retarget" => retarget(
+                    bytes(&row["target"]),
+                    row["first"].as_u64().unwrap(),
+                    row["last"].as_u64().unwrap(),
+                    row["interval"].as_u64().unwrap(),
+                    row["spacing"].as_u64().unwrap(),
+                    bytes(&row["pow_limit"]),
+                )
+                .map(Work::from_target),
+                _ => panic!("unknown arithmetic vector {operation}"),
+            };
+            if let Some(error) = row["error"].as_str() {
+                assert_eq!(result.unwrap_err().to_string(), error, "{row}");
+            } else {
+                assert_eq!(result.unwrap().bytes(), bytes(&row["expected"]), "{row}");
+            }
+        }
+    }
+
+    #[test]
+    fn branch_target_window_uses_checked_child_height_and_exact_parent_period() {
+        let target = [37; 32];
+        let recent: Vec<_> = (0..17)
+            .map(|index| (1000 - 10 * index, if index == 0 { target } else { [9; 32] }))
+            .collect();
+        for parent_height in [0, 14, 16, 30, 32, u64::MAX - 1] {
+            assert_eq!(
+                BranchTargetHeight::after(parent_height)
+                    .unwrap()
+                    .window(&recent[..1], 16)
+                    .unwrap(),
+                TargetWindow::Parent(target)
+            );
+        }
+        for parent_height in [15, 31, u64::MAX - 16] {
+            assert_eq!(
+                BranchTargetHeight::after(parent_height)
+                    .unwrap()
+                    .window(&recent, 16)
+                    .unwrap(),
+                TargetWindow::Retarget {
+                    target,
+                    first: 850,
+                    last: 1000,
+                }
+            );
+            assert_eq!(
+                BranchTargetHeight::after(parent_height)
+                    .unwrap()
+                    .window(&recent[..15], 16)
+                    .unwrap_err()
+                    .to_string(),
+                "UNKNOWN_PARENT"
+            );
+        }
+        assert_eq!(
+            BranchTargetHeight::after(u64::MAX).unwrap_err().to_string(),
+            "HEIGHT"
+        );
+        for parent_height in [0, 15] {
+            assert_eq!(
+                BranchTargetHeight::after(parent_height)
+                    .unwrap()
+                    .window(&[], 16)
+                    .unwrap_err()
+                    .to_string(),
+                "UNKNOWN_PARENT"
+            );
+        }
+        assert_eq!(
+            BranchTargetHeight::after(15)
+                .unwrap()
+                .window(&recent, 0)
+                .unwrap_err()
+                .to_string(),
+            "TARGET_PARAMETERS"
+        );
+    }
+
+    #[test]
+    fn retarget_checks_both_time_products_before_adjusting_work() {
+        let mut target = [0; 32];
+        target[31] = 1;
+        for (interval, spacing) in [
+            (16, u64::MAX / 15 + 1),
+            (16, u64::MAX / 60 + 1),
+            (u64::MAX, 1),
+            (16, 0),
+            (15, 10),
+        ] {
+            assert_eq!(
+                retarget(target, 0, u64::MAX, interval, spacing, [255; 32])
+                    .unwrap_err()
+                    .to_string(),
+                "TARGET_PARAMETERS"
+            );
+        }
+    }
+
+    #[test]
+    fn parent_first_median_keeps_short_even_windows_and_error_precedence() {
+        assert_eq!(
+            check_time(0, &[], 0, 0).unwrap_err().to_string(),
+            "UNKNOWN_PARENT"
+        );
+        assert_eq!(
+            check_time(2, &[2, 1], 0, 0).unwrap_err().to_string(),
+            "TIME"
+        );
+        check_time(3, &[2, 1], 3, 0).unwrap();
+        let recent = [100, 1, 90, 2, 80, 3, 70, 4, 60, 5, 50, 0, 0, 0];
+        assert_eq!(
+            check_time(50, &recent, 0, 0).unwrap_err().to_string(),
+            "TIME"
+        );
+        assert_eq!(
+            check_time(51, &recent, 50, 0).unwrap_err().to_string(),
+            "TIME_DEFERRED"
+        );
+        check_time(51, &recent, 50, 1).unwrap();
+        check_time(u64::MAX, &[u64::MAX - 1], u64::MAX - 1, 1).unwrap();
+        check_time(u64::MAX, &[1], u64::MAX, u64::MAX).unwrap();
+    }
+
     // Independent original fixed-width restoring division. Keep its full
     // 512-round loop and overflow handling; do not call the aligned kernel.
     fn original_division(numerator: Work, divisor: Work) -> Result<Work> {

@@ -499,21 +499,24 @@ impl Node {
         parent: Hash,
         progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
-        let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
+        let height = consensus::BranchTargetHeight::after(self.record(parent)?.height)?;
         let recent = self.growth_recent_with_progress(parent, progress)?;
         let interval = self.settings.limit("retarget_interval")?;
-        let target = recent.first().ok_or("UNKNOWN_PARENT")?.1;
-        if !height.is_multiple_of(interval) {
-            return Ok(target);
+        match height.window(&recent, interval)? {
+            consensus::TargetWindow::Parent(target) => Ok(target),
+            consensus::TargetWindow::Retarget {
+                target,
+                first,
+                last,
+            } => consensus::retarget(
+                target,
+                first,
+                last,
+                interval,
+                self.settings.limit("target_spacing_seconds")?,
+                self.settings.target("pow_limit_hex")?,
+            ),
         }
-        consensus::retarget(
-            target,
-            recent.get(interval as usize - 1).ok_or("UNKNOWN_PARENT")?.0,
-            recent[0].0,
-            interval,
-            self.settings.limit("target_spacing_seconds")?,
-            self.settings.target("pow_limit_hex")?,
-        )
     }
 }
 
