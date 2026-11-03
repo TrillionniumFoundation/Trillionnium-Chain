@@ -1,0 +1,3667 @@
+[
+  {
+    "role": "baseline",
+    "blob": "a8ee11166851ded22605ec4d3e5ad08a7dee77a7",
+    "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3ebaaca8588d129f956204fffa48e318cfeda8a8",
+    "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "06d1cfaae94c57e623710b1d3315ff32a31587c2",
+    "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon-v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d4c2d01f9bc8577d473a70cf5aa07b5a54d7d673",
+    "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a5cd019a48ab71863edae7a7fe0ab290aaf37c1a",
+    "path": "trillionnium/crates/trnm-peer-lease/src/lib.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "928a96f20d12c957cfb88ea37ac7dc929e58c9b6",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4e500a4709d0a5c3aeb82754639c3a3ede1e2ccc",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1696360a4d6de9d10bf3a240307716a02ae0dc69",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b2491209d5c0bbe9c4a6f9a1a89f2c6942a8ecbe",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ccfbc4e7a17f5f82f2ebcb4cdef5cac76694c429",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a67b04392b5960c1d23de4fac7d41a028b83c881",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "35dd286849308e4f358813b764e0e0537d1f299c",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ceaa750ae0bfeb596624ab2dc5d6164f6bafa6e5",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dabea8e3d05c2dce0aa9d98548bf8c12be2e7ed0",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "142cde73d0d40fe9922a4f256ac1dff412a3f00a",
+    "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5583cb001548beaa7d029386870274c02c3a301",
+    "path": "trillionnium/crates/trnm-peer-lease/src/protocol.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "80ef797b9f4369fb0a2c56a2e8c7a1b7bfacd339",
+    "path": "trillionnium/crates/trnm-peer-lease/src/store.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9e3c32483facefc0d8bc8e04f04bd267527400da",
+    "path": "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7624b6ec6bdb7e37443e6547d85641b0ab6bd9ec",
+    "path": "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4b204136a1d88ff7906018a6767cfd107f2fc3d1",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/cross_process.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "71004261923840c9bc386748d8800dd9e5c29638",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/payload_recovery_quarantine_collision.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "860e3e0e6889c7e2400565a31433b46347c9a708",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_cross_process.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6a461da26b7040dd1327cf2e4de7e85807276c04",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_owner_socket.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f1b118cda931ce29cb0475f151f662aca67b0da9",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8be0a992a4bf7d1219d8721c3a4c46d51470db6f",
+    "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process_matrix.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "227d3296e7271fc8e8108244caadbc6eab9dbf73",
+    "path": "trillionnium/crates/trnm-protocol/examples/pon_wire.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "523c91846a53e509a8d83d8d13db4444bc45036c",
+    "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4ea8e30cb15880c6e645b2f7950f6cf3d94cd9f9",
+    "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "19a3b31da74e889cb7427354feb6ac492e81b7f4",
+    "path": "trillionnium/crates/trnm-research-protocol/src/canonical.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "518b49ce93861966e8cf239c9651e5d02a1fd6c8",
+    "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cec078765580cd1f3008721ef9a0b9b96f3a7d6a",
+    "path": "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bce4fcf5894150681b2a5ff27d251b753673fdfd",
+    "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ade501df57ff576cb1a6b71ff7444cfc794806f5",
+    "path": "trillionnium/crates/trnm-research-protocol/src/types.rs",
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "baseline",
+    "blob": "01783e9592890512506585908deb59c8b06915a2",
+    "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "630908c808e9ba92fb7f05f6b662ced2d16524a6",
+    "path": "trillionnium/crates/trnm-task-kernel/examples/agent_transaction_wire_v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2eecc06d93fc74964c21361ea10e118625d3a7fa",
+    "path": "trillionnium/crates/trnm-task-kernel/src/agent_transaction_wire_v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "66541fced3ba70bd1a715bb398f9dd4fea573ff7",
+    "path": "trillionnium/crates/trnm-task-kernel/src/archive.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "69aefd479b85860e7c3f745958743fa9cfa11be1",
+    "path": "trillionnium/crates/trnm-task-kernel/src/archive_store.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "879812d5351a7c8e55b9ce30b349e983bddd400d",
+    "path": "trillionnium/crates/trnm-task-kernel/src/archive_verifier.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0fb036705dfa72c048dbd176482085bb17a65212",
+    "path": "trillionnium/crates/trnm-task-kernel/src/codec.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3b5bc92c2ac753f14cc9a27531f7ba1a6104e6a0",
+    "path": "trillionnium/crates/trnm-task-kernel/src/error.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1e5df4cf1ee57b4af3187d0502420d69d71ac27a",
+    "path": "trillionnium/crates/trnm-task-kernel/src/lib.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "45a709b205b845a0d99c537881a07f8414458220",
+    "path": "trillionnium/crates/trnm-task-kernel/src/store.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0fe44de1abca3b9653202df64325d2732a8ba2af",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bad1a7a4c1ae076c63f8b3dfecc6418d636a4200",
+    "path": "trillionnium/crates/trnm-task-kernel/src/types.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1c8a3c83e835322aab8dd6fb354365c682f0fd3e",
+    "path": "trillionnium/crates/trnm-task-kernel/tests/agent_transaction_wire_v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "637be350906a80fa8cfffe9bcc65ce5f62ce6eef",
+    "path": "trillionnium/crates/trnm-task-kernel/tests/task_archive_store_recovery.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c97cbe56f8e9ce02e6232d2dd1631950078dc7a2",
+    "path": "trillionnium/crates/trnm-transport/examples/pon_admission_load.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "82c0e78ea28aacd94546c73917702c25183f0917",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cead7d5025897cda771f897213652cce776220fc",
+    "path": "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9181de9c730c06e288578c0b26c38c45c0073df5",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d80bba053d5c7d3b7cdc9b1a5e05a88829d2d47b",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d2fea3f6b6a514c455663c4809eae69f3b531280",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "819b72af296e6ce0fe514ebf89cfb81984bffeea",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/identity.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c3936410516ff16d7c470c3f6c02a7750b0cec5f",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5069dc5ef693357cd01bf67eb0ba21ad8a0a6bb3",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f72ddbcd0b8767c30cc9cab720691df85eb19f63",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0fd3c44612298af7bf58d782a0a88f71e53f33b3",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1428c4d0f8366db6b528c82d91bb1fdad614b3df",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5ccd2c610ed430ac8347ccb059b46ba81fd2ee24",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6911f6338ae48a73f278f5d81ae6886727561155",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1ced1629faf31e705f330116fca00f362c44102b",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ffeef1a2920b0d4e3496dfd188cd7afbbb7c677c",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "90b92fab3b0db09cf01171e5be74bd72dffab152",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f28edca5a9cf470d513f0f375f48c44cdc90bbea",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d34333188e40913aa3fcc17cc69fdb4c6195c8f2",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "768403d4bafde4e6309d81c47bfe1a93c56d5afe",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c5b762615831343c1dabba7ad0c335c02cde3397",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "529d823dd35125b6d1265b99cb489db7dfbcd1c5",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6756ff732ff1031b53a29dfe024f57b6c73582e2",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "de08a295a7a24af25027af2c94a849bb711d9b14",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "619689a1cf58180d1bc4a25b2dfc25c4865ec555",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f0030b060727fd572de2768e338bac42ed4c1dc9",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d93eb6dce1b3a0c9269028ce0e8d1954464a4ba0",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6a76a8eeccb65314ac356b8ef6af1ebec29b2f80",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8a61566a1ae2effb65dbe908c15924dfceb29968",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "936f77ccc17dbcd1edfd0b97adcb4ea1f5ee97bc",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e5afdf2380751ec6d6bdb7229972e61ebd5ae7af",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "463aaec1e704e3ec94029ff0b9d7dfbc45323959",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d66821944a3bd65c3a779c58283603507eac1db2",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "be9cfae14c57a281bc9d127040cb300a28809501",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "49bd4997db5c1c9e43125b6dba6e5119111ece24",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c46cc246a597e607aaffb4835611c403918a7325",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d97a684194dd17c8558f6a7b0981e7100246be59",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9b15269f6dd296dc3286bc596b8b1b8209610e5a",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3483aa747f6b6459b0f9f5918c792e5091b62104",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6189f18296a45027caa25b4199ea97d4831f6bc2",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a66a52e529cc9adeddd9466d7380a473536a0ca0",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e0e4de25f76b8c48ccc33213931d5eee1d1fe0dc",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "43e70a11dd927c3edbd2e3f44e5fba7b6383e59e",
+    "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c8e8fa8c27633d44a3fcc9801f24d370ed944a57",
+    "path": "trillionnium/crates/trnm-types/src/lib.rs",
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "baseline",
+    "blob": "5579dde5b81e177d597df8d3d78dcc332539a091",
+    "path": "trillionnium/crates/trnm-types/src/market_reputation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "443998a11f439439805b9df68919901ac0013a0a",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c0dd1bbb152acf7a3f2958d976c08fed0c9fd3b8",
+    "path": "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5cdab18edcf3e88862cf245baa1e570020ccc71",
+    "path": "trillionnium/crates/trnm-types/src/relay/records.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "01e1c9f39044d2e43eb9505f7e59da0dffe1aafa",
+    "path": "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "eec3839f0d1e6b699305a93dd82aab2547d3441f",
+    "path": "trillionnium/crates/trnm-types/src/request_status/mod.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c1cb7e8e87bc0444fc0d34f5aa8fef90865b294b",
+    "path": "trillionnium/crates/trnm-types/src/request_status/models.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "95eb0e2db148e2bee1337c5cd10d6db2e421fde1",
+    "path": "trillionnium/crates/trnm-types/src/request_status/parsing.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f9d04aa4d651e2c59ef80012a9dba6315e4b6214",
+    "path": "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c180596a888f8705876354dc317f656d50999c7c",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "07da3166b2b244b81e8272fdcb69b0e8ef9ec971",
+    "path": "trillionnium/crates/trnm-types/src/transcript/normalization.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ec7efff288eb1515a704ee39b18486b2b9de8462",
+    "path": "trillionnium/crates/trnm-types/src/transcript/records.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7b25ae36192a3fcea7dab15b71b49c3ac91a75bf",
+    "path": "trillionnium/crates/trnm-types/src/transcript/verification.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "90f1f7106b302aeea147800bec02aef635d59539",
+    "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dd79714afecff105c331fabafb56a13f69485cb2",
+    "path": "trillionnium/crates/trnm-types/tests/i1_did_activity_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bb42b1116521468f136a6c12ba14f08d18706ed2",
+    "path": "trillionnium/crates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "91508a326d6852d8c636fe892f9ae9602a196f24",
+    "path": "trillionnium/crates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "62751b3cdef953a0d940ab642c938685bc484176",
+    "path": "trillionnium/crates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7ebd90551765db43648ce5262af099b798f3e102",
+    "path": "trillionnium/crates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c767d1de4a992524e64c089442605f5fdcf13423",
+    "path": "trillionnium/crates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d7d11ef8588513fa45255ec63be4052a25dbc3dd",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0f1ee603271af0df78fa3716bf047c57d394e381",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "751452c01a069b55282a79bdb2bb236c18a957e2",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f02110d5e410adc433d87d5474a7a3a0cf69840f",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "df5b26721529b539ef793867fcc29b3922e4f3ff",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b3f7e95d2aeb5f088bd939ff0d044fe69a778001",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cd9e8b0ec63b48a3f0d8415ebf24853a08682ad4",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "17a18592076436ad7f5f9bd6fd9d9c5ea23819ad",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f3f562c87311378027fd57b154c7ef816052f540",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "188333ba13562fe4cc1e6fd1e21940d3c0c0eb6a",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "afd056bdbfdf3c8dd815c529e5d9429c56abea32",
+    "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8677c5ef7853f180d93b42d7035dc8a8dd326a1b",
+    "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7078d4fc1c1695ac0d53945458fad537867383fa",
+    "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "add7b2ed5bfc59291c8f4896c0992a15ffbdd907",
+    "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5b567d5eaf80d19cf3f4dbee3116b5e0deb1db2",
+    "path": "trillionnium/crates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "37d46e14544cca43ff4864c8b5e5b66a18f55dee",
+    "path": "trillionnium/crates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "acde0eb09097f8cbe2fab31bb381efbd4e52643c",
+    "path": "trillionnium/crates/trnm-types/tests/m2_reputation_upper_bound.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fe1fb25de0c8b741053d3c074889789f27c2a1b0",
+    "path": "trillionnium/crates/trnm-types/tests/task_metadata_compatibility_truth_table.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f86a1c28520e4ec50392905aef1cb983a39f796d",
+    "path": "trillionnium/crates/trnm-types/tests/task_metadata_settlement_alias.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d49b269bbd5fce68b823b5cc8d242b633ceb04f5",
+    "path": "trillionnium/crates/trnm-types/tests/task_metadata_settlement_threading.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "068acc75ccff16cc0db68206432dccff60b87978",
+    "path": "trillionnium/crates/trnm-types/tests/x3_settlement_stale_pending_replay.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "94ecafe5d237789fc6e6005e9fbee0540f3edebe",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "deae55950cb2427b49257e2024a2293d15022f62",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_constants.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "de6c0dee4d538938bf62329aee53cdd954a39464",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "21d7f4a152c303add90b8c6b16729b0f463b96a7",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_models.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fcb8895eb4030170509cd963bf0abf585c004ff8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_ops.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8ff4bcf3932964248a68a23e4c6d25643fec9d0d",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_flow.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d3cdcb958087799569fcbf1f15f6f6fe6bdcaa99",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_model.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f2e25f0b0b82808db5845404e1bd2ec89d7685e1",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5b9c55e04230893039a55c011bdc0d7f576b7781",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_hash.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5fa56f48c604e559d992f76801092763d65534eb",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f2d001ebe01500ec158599d90f894c75e1f81cb0",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/common.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3ad6af075cd9e9415389fbee0bd1610daadf5cbd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/compliance.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8eed143d0993d24531228cede952f5b08e56091c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "139e9de8ad347498a0c5de2e77585150851944c6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mcp_aliases.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d4e13ddd59cbcfa92bb34b9cf445a9402801a758",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mod.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "013a13bf1945383080e248fe54479ea784437d16",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/sanitization.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7c00dc6dbf3314fde914c678fb5defd4d6231e4f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/token_match.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "61581657fee1c272671aa1aa6d8377f44b7f0bd2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_provenance.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a82df8de90bca53bfadd4427508dc509818971f2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "35c386410e153414710fd3049d1062ed4e1435b1",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2747c7f51b77d0cb84e72c6e67fef000f00f4d55",
+    "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_policy.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "52defb0c01c615c79cd9229e527f9fd65de352eb",
+    "path": "trillionnium/crates/trnm-worker-agent/src/assigned.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1589a526485ffb99980543082163f2c2a0e657df",
+    "path": "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "95b7a1d62478fbf6ec30efd885c94f4dd2c736a8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "137a738ebacd8a0ebd3460a4d9183c8e4985751c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "71ccd75233f6d866f4b090f6adf57acdd75781d0",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_conversion.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e87f9ba2fb80149106333433d6088c9c62e774f8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_format.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a8c98663b94aedabe74b0af58ad669d1c95c3604",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_index.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "740c5cabf2124fd9dbef9b7338a34e1b16455fb1",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_types.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "12150fad7e31e2cc4e799f1f53e2e62aae16069a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_ops.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bc38b98f24b18e8c043869b4f576409eb35f7fc8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_query.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b5a093dff3e4e34284d2e4f8417c1a365c8c690d",
+    "path": "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e39a24206af7e52f3016097f1b41e5ff1249e789",
+    "path": "trillionnium/crates/trnm-worker-agent/src/cli.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "253d44f558b58ed20e6ab508a114d5ee2af8fe23",
+    "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5093abb169471997b5382137c589bba88a4bcb5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e6960b3374ae7ef99ae88eabf1768acf297c9b17",
+    "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c5e65a2746427a7f7032a6c54a7bc1f04462a1be",
+    "path": "trillionnium/crates/trnm-worker-agent/src/dispatch.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bb76e529bef16ad9b4d603bd7db5e16ef6cb6908",
+    "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_assigned.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "221d674f50f698f4370fc034cfc59bb082352e75",
+    "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_audit.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f1b078c86ecb85cd2aa298b3fc5c998b493511cd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2a2920dbc99aede2d65fef08ecddf69ee85b2f5a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_workflow.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "92b75fdb36219981cfbca130eaa10229bcbba3b9",
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a262bb210150438afa83fe2dddd9fb1f9169284c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a96bdca191c438afa8116d04a46c6c14a5e4790f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/bookkeeping.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bf9d5d2001c798c47a3a66d2f3bece10bd90001f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/receipt_update.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "bbeaae773fb980c752a0de9e2090ebf11be1ea11",
+    "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/retry_outcome.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0f90ac2c190a0d30b4e515278bbfa64ba65233b0",
+    "path": "trillionnium/crates/trnm-worker-agent/src/llm_retry.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d37dd7f0cb6059fceeea848d83db08c8d8d7667e",
+    "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d848f665d5ae43f8798a4620967e6e69710d715a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cd8f0495a9a587246224237b40f1e00edd755e88",
+    "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_retry.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dfad82f222c186f7016635ee137711e2162c52e9",
+    "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e87d5db3e89f2e4b33cda8b03ad3073e3d15a06f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ba8de66b9e24bde67ae572aa1dacb82656e9daa9",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1c99e0d0d455e37e24c3d0388f0699db5c5285b4",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7431cd7ce897481f1fa6e85cd0e2e94278769e14",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7d5293a9aef55ccd95e6d88bfc74d487e943293b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6845e4eddd9ab28c9950845594a9773fe7777571",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d83e783178a5226e876b057ec58620480e8a4874",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "23685839a4f600a31c598784340e0924fdda5978",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fa63d4a23a39221697fcbfaaa32c17aef3e85783",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "eb4dc43f8327728215e42ee0927e1d0f2ebe62d8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "63eeb76a3f54d42e4e7490d3322566bc42c7e655",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "84c9cf175fb3db2c05fb64d09f3303ba240d90c5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_accepts.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "748e88253de7bc0550486142e49293fde186cc7f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_separators.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8d9ff0591bdf38e02eedc393ec9493476b172581",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8c4cec4018ab366086027a02d37008e9b1e069a6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_json.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "69076e598fc724b26ce2157888cd8f2744eb2a78",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_label.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2cd230d8b6c2061d18557d48ecdef0f8d6bc1083",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9a32e6161d94ef996150002a888b8edae915b928",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4891db6d55ebd5658ea3939866777e8c068ffde2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_noise.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c29acc59e1cf9f1ff120bb4785e2a24b6a270b27",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "914ad1a438551459bb8ca256dd4fbec9bbbccb21",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1ab0ac7d9fbfc14e62c55ad5154efa7d6de58dae",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_tee.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3c40a17dda401018f7c713240fc28f3ddc849fd6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_zk.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "75b585df48b808aa1163a6d22cef9bec358dc2a8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "202494de5a616c06c314dec8a7b306b239471f45",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_json.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9afbb52e1a410382752b15497e61a8f4b8aeb86f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_norm.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "96358924ca5f0ee2b75535e6ac6f424fe6bdb3a5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "48b21d89065e7bd029d86aae1faca588e837ed56",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "32430f761dbce95f4800e3eb2da584c48ede9b81",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fa52e11b63ff04ea22a35403ae8ab38568509dd2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "11734525b884bb0dbade06f7e2dad6a2c5f1d28c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7cbffedd1f9d7b54005810ed8bde100366820b21",
+    "path": "trillionnium/crates/trnm-worker-agent/src/state.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8775db920e20b33a957a1e46cfa683b8d344ccdc",
+    "path": "trillionnium/crates/trnm-worker-agent/src/state_models.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9726487a13b4e73dcccec77e75ae0c5c7929eaae",
+    "path": "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "26cd716c7271b7e6c03973496eb75b8d7930f7e3",
+    "path": "trillionnium/crates/trnm-worker-agent/src/state_persistence.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "14436361907c885358cd140abecd0f57692c7df6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests.rs",
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "baseline",
+    "blob": "f228ab898806c61ef137eb73a0b73039aa4b9081",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fa78636c87e9762ee3fbb284ba9986c6a60db8ca",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cd66a25db0f6e07ed0f80b701d85b02ab86cc5f0",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5c1b51a2b7949096760888329d5ee35be59ffda",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4f3c5710f4f901da2f8c318b3a30976ec63b827c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "da32cdfd03290a61a7313b58b3bccf076a99328b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps_tail.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7863d61da6973e1bf430666d271160fc40b398ac",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_precedence.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fd13970284252146f62aa6c7c7cfa462d8902acf",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_unified.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f06e4d6115c07684e01089deda05b54a3eb99f78",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_output.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b97e7b5f04969e4f193da3963e1ca50590530c68",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2841ba71ceb608ebba26926515a8d80da4172046",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation_score_bps.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0558a7dcb0a0605824f14c5012646c9bc1659db6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation_surface_export.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4885332f20587e6b1ea79b99770b2ffb9b0dae37",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_retry.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0ba5658d91b3bf50746a64f6c583768a3fe4ea95",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "385b8e46bc7a8504a0f099e4c43c24c1305e3ebe",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_config.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f46b5dd526f1097c5e93b64e5f450273573165c2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_llm.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6d397b63a36fb596092ca7bafd0fc287e73ff0dd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_misc.rs",
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "baseline",
+    "blob": "7eed855e29b6bc5d6650c9299a30be26c93e5c2d",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "0618b0b36ebae264813adeca094d10a831381fb3",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_tee.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2340a6aa45f7ec57c47f947bcc8c75c1b871c18a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_timeout.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4fb3d2698248b9d748746c77a7c4c9df4a58b811",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4d65e82da7405a13ffc3f3ef7c2184a07a5a2b14",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f874723807fd0c71e5b7dde1d54e09154c9c3069",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "67eb17ac0a830a5b6fa7d95102d804f3662bf620",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "32a906d23eb3f9cbf4b34d5aad6fbe0451c68b76",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "6ab003ba775b181a8c1b1d175065fc0d3ee0d6ba",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "26fdb49a3de82ffa5e57a90e88a14a726fb60ff2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "aa07620a8080086c2760ee301360a2b70a82eca6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cac0d16a6a61da8c36b8e455539830d8728bc955",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_provider.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a2cd38d7f8b1c4c99e7556ceb71ef6a8c0d5878a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_reputation.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ef5994e6aa92d4e71d16dfe493380205379d4f4c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "14e05ed7262d2034c1c6a82101c85915aa481a6e",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_alias.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5dd0abf391dbec394d435e51fec94ccbb53cfe42",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "34777f8668a11c9d493e49f7ca8dbfe850563e90",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_compat.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f883e7bf5fe3dc5506f0d8876371e2c309b6b4ec",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_gating.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ce8881c7bb1614b1302d92a047825c7d5d3ff8e1",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_fail.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "32adc2f3f931cbf61fcdd2c69dea093e2bb87ca9",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dd18d54b3c88b07ab24cefa82124e3919939363b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_normalize.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a20253fe69472fbba3e50083f985673a5d164b11",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1bb53498821fd813d4513b1647ef8736f28b85f5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7980ac562dbcbcb2bbe6307340a8c1ab03559e01",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "aa814705cfe7ef6fabe0b60d58128ce75628c811",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_flatten.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e267f3ace79ff292ec5d1306b4345e5b88982a49",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_normalize.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e14b44271c526498bb7df16367b3604234cb8f8b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_sse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f881c5bba73afbe5b8cf0e5a701a6169fdcd63c9",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_streamable.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9c703f6bfe8ca2ca404d5278a60b8cd7c6bbab92",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_websocket.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1a50cb949528994529055c9b7c4e193e97a165b5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "7ab2b8e0e0345cec97d94ae3497804b47fa455cd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "704c740a9526cde10b33c127653f8a668a6186ac",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "55e535d4fa115710cf49d32e1425a78b3e9e922a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_fingerprint.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8782926363dc82dca9af33fcbfa786c96ae38754",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_protocol_profile.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4ea012d4ae2d8ece0e7e6162c501a516e4b0004f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "647cb611fc658cee3bb7aed892a4c43952c3051e",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "4b63fe3e89191ecc6b6b3297dfba185238de810b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_accept.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e206185e461c42cfa161ca0a39a2c7a5c17273ff",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c88274802474c2d68ee4d807fe747e94e3d362c2",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "029c12b761a0af559178945a68902f93f2a54c9b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "8cdfa77e11a9a76b808bf497a052f6cefda61ece",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_base.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dbccb05fbb8ad2b5bcb556138abb028a4f14c3cb",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_normalize.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "92e9cf1a40da0326ad37a33c4b1de192c7865850",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5f018840815fddc69ac10fce16b6da790ee5555f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "851e44b4c3f5e2d231a2013ed63ddd14ad5122ab",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_label.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ade9ac4166efb81804571d8f130baa9ed77428be",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "077995b66bc46d200daa99f740525b97d8cb966c",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fb93a332b3ee4cebb5a4827bce4f7eab6e2b5b59",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_provenance.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c425479521d1a336886fdb5b7cf70f20a3f7b6ec",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_schema.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "61c079aedc736feb0e27f77a34d493177e3b322f",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5394e662212bf4daa6071b875ea9665e9f71d943",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_keep_v1.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ae1d80582ac4a2514206ead450cc0a4855a0eb55",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "088a37afc7e272406fe16cc33d33c96c0c1b8622",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_tests.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1888c521d77065e8b0617066c218a784f75d3ae6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3edbd05dce3dc03d412dd70bd689e3b634c4bf4b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "f2052263083900af2f647265dfc7351f381cdfa5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_future.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "223266602f282ff340fd1809742e2e5692f09de3",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "047745f60743c53b5b8aede6ff4845c67184be93",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_base.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b3e8cb1ae9bd6587b906bc287c3db8af45b02b68",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_google.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "878af75c12b231fcb92ac6b70cee4299b19c89dd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "110b443320c9add70ef9c38b394994799b1ba869",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "88ccefb8acc86362385e737a0672686a241f416a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_websocket.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d5b1916e3108d418447750cd57c83f5f5c6e44f3",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "05017bb0b16013ea1cda2f243e05887c047e1219",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "19456fe6cd855770ac31ea879664b1c7c2799a57",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "84f9dca7cacab6dbe6cbb351e409905d1737e2ee",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "fa784d075634ba7ec7f9e8f5517e57d0e9fb2275",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_normalize.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "30a6cacfaec43d6c3d70de5dbd8d9d76a6fb4279",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_quotes.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "1aa7ec6d61b5c739b364d2788680642a907c004a",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3a5adfe7515e0bed0c96b82fc6f1ecf6b7ab4acd",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_output.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a0cd3ab4c8171392769e782fd1b58dae7c45b641",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "05c23007b2ddabe02698aab542a0e3dc82766bba",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c021d51b1e3ed34da2d0b6474fd36f03eadd1922",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "dee70e550641bdea1fab8f433225b0408900e71e",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_ok.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "a5db96108dab3d30857e4312b21fbe55454846f5",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "034d52d2339b7bb5f62c20bb86c87caf30b33c89",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_invalid.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3637e5d93fb90730079ee17c9302696cb62fe9ef",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_separators.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "235f38b8c82b3841c3f5c58047fd452a3ff848a4",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_label.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "319dd6e05f56353ba0563b11358726433c3c8414",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "137a187ba1799062854c7977189d4569880bc09b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_boundary.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "ae6bfd216e825d81067a7ec53f51b38f0d0bc6a6",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e19d728a97428eba5c73f0cb7a565a5a3a07b079",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_separators.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "3abf0b79242cb584354a53485b3976cd19fb6745",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_tokens.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "b25c8d9669e238fefb76e52c93182dc73f2ca8c8",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9f9e11195e6bc540cbb618a9f6b9ca55d9cef90d",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_status.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "cc291f24b1a7ccf9d2e9debc439f45619c8eea39",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "e88bb76572291724e6ed8b9a608621b7e2ba3d74",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_alias.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "c470a9c416d915b7de4f36cfdc7c846bf484012b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_misc.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "889e4c9c28789c0b29e77397e6a5768ad60be132",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "2483ca5e7d3089185d16ef31501b107eb6452979",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_delimiters.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "93bfff60a18d94c2efe96123f872659534588684",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "9d40b4eff28172faefc5d8ea14438f1182d31e84",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_quotes.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "53a535bcc73cabdbea5411aafc3fd7f36fb6b98b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "5009faf45ebbce5970c1ec489bcc6f095910870e",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d879967334f98ac5c9130b797d4821dc3788926b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "baseline",
+    "blob": "d081f4381bf831aecd99130a5ddc50491f588e3b",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "106de4bc5d466b9ec2d12a22b69747dd5c8ae5a4",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "candidate",
+    "blob": "dc8c9ad84519c789c550f6afa90236a6e86702f8",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "788393bea295b075fa09386cec73be766f2db54f",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6b556163921abcea93513759125022c28e3689fc",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_growth.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "3d5338b5597f294f9d36bbb98c28a9e025cb184f",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8843c980bf9c502b31f014dea26903160ce5bfd0",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d67077da9799f7996838d853e9c3ef53796b9496",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "4492ffa49e8ca980beee52f4f17505c6a3f7be38",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "5f835457eef4bcd560cdcc6973a0a57922309f6a",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "9e52815b3783f1017b606ed7280c728605fcbb2f",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e7ca624311723723e48b507ba2fdf420cd75f480",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "2959ffb3dd8f802fa24f0ba1253fbc5771178769",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/command.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "1fb62c18270da8a0657c340dc87e3364c9b48cb5",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "a74998c640bcfa1c95e6ee21cdce38529fa49564",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "4edef08b3cc3f997cb12b2c45d3a4b25818b6446",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "1c51bc7104e9c96abc45c185cf1f5140e5ce107b",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c4dab21a45104062f3a0a5251ecfa063193cd2d4",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d236c97ace74c9a09f68f2fd0858ed1a83f23893",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "18c692ccec1f75079a6bd20d0f19bddc8bfd9fc3",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "0a5029b5b41b74ba0e47c72da20de08edbe9e67c",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f831f465f1cd32d89a84ec429abd9862a53a9eff",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "a2dd80371a81b99576626518aeb474c9a329965f",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "1480b708459ee1f194103e81f72c306b6d3ff0d9",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "ba8a6f0216ad4076177a5bfc03aee90e9b3b96b4",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8653863813f222d92cee72f58d2860ac7b134206",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_journal_security.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "5c70ca8bf2e4f002093a58cb681db70090d99c22",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/worker_journal.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "fb23872a547b93a76fe3cd7ddd458851f8f33fde",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "45d92fc5f479659874ed29894e06acfc3fb0cda9",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "b05c534aafb544deb72a631bdd8ee5cf49205298",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6b0e3687c7c1348dec11fd5fff91b7eda884d561",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6b3289048df36ba5a8b5184f58ef3899e57de57c",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c05ab30c5e531ad343bbf3ae51d420d4bee53ab7",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 2
+  },
+  {
+    "role": "candidate",
+    "blob": "019cfc40eb58839fd5184e0731d58dd628d47259",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_transaction.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 1
+  },
+  {
+    "role": "candidate",
+    "blob": "178bd386421ec8245ce0031f625769b0fdad3063",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8d27dc28a1fc72750d12427d619e03028db304a4",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e9bc1c18e2c56b917a1ceaeaf09d16b564552dd8",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 3
+  },
+  {
+    "role": "candidate",
+    "blob": "c134de102047d6029a263e4d6d5e3478c4948264",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d5df645418cd6c4317d83961e859bd94254443fb",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "df74a7b13e469887c9b0e44053881ab2014a3cca",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c5dee3aa0d3cdd34803ce1c79bdbfae14e345c58",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "69e23b53f18bb53b437c930858802843c9abdb0d",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "4be5679595004e4bbc40afabafd54d315cf585a7",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "01a9781c127dbb22388920d0738898be867403dc",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f5ad30e7430ab42d3662190c8e7af048a63843f7",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d32a3de85be0f60f0478294985431e6f2b3af1dd",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c036a84a3199da568278a98401d1e6a7d7bf807a",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "5379fc902bb9c4124f52c0a9cc0205baf3035e75",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "5470d41a32698272e0b1fab8b7911130560314e4",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "00cf63722c73426ed9b2dacfb61b7965a83a94e2",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "2ceb1c9f46d5df6583488fce07b45bef3d4187cb",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "221b02653432507b14c8f90f35bf688b85c0eeed",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "294befcb49b001fc3dedc35366f9a498c5a8dad5",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 2
+  },
+  {
+    "role": "candidate",
+    "blob": "083f8bbfa8c707d67bdc172dde4786e20d520f3c",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_native_transfer_v1.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 4
+  },
+  {
+    "role": "candidate",
+    "blob": "f958996dc0e680d30569c6e52856fb30cdd58241",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_transfer.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 3
+  },
+  {
+    "role": "candidate",
+    "blob": "abc57563a63d7738ba406c26d510ae27e4bdf86b",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "010b22ff7e0a81d7157973580c1e1e5bf19324f9",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "49aabd2c3114ef78815388538fa53097ade2923d",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "38212a9ce6458e47c213124ade2dc05d3c07f0b5",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6154ccdc5395614f8ad97867ed6dfcf827e81ef7",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "da5746ebebbcf1bffcd361425a3762fee34d9339",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "ba0ebef95ce63b77fe590489b59b176d6bc3cfa3",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "7c5dabd5da23889de3e0a668eac2bb6bbfd1cab0",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "06d016297b7fc9e9698332e508baf877dbc1ddf7",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "358d40314e4471fe4075560dadc8f4a90bda0e23",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "3e755b9f225cb8363b55907c942282b1a5146348",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "03eb8cecf02e5828fa9b4b3a413d05ac62a9c746",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "4c53db3ef227b7c948627ed856ddf3d08a004d9d",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "440551945d0af918656b1465bf9bef3a988b36ad",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8e073cab311d3c454d230cc979af56cb1fd5db56",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "ce23a727461ad9c47f914e390aa481057d808925",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "63a5c159e22fb778fc340fb889a956956415ce15",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "281b569e12f571e38fe953bf5bba58dd9e77db52",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "96a43e6a2db42e90a40d1eb404bf80f30465b250",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d2480f6bb8e643e5c54c6b0b8b1946dabea6eae1",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6daf8e2a0693147f0ae598382571e9d78c860b79",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "4759c3a3d74b4b6a6509fb40a18c474e9e3342e9",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f71fdb60455d95ed194c7c31a4601ad61c76cf00",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "a6885d7a0fdf18e536b0360e545f2829c8bbc49d",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "1bdfbb5bc8bbb568dd255e354e1b93727935310f",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6898f8298f73185163bc4c22a1f1c2294157e8cb",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "b0134c9b958019915e62a2188a8c90177ff01435",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "336b5615c10fae1890ff947a20ab5a182c862921",
+    "paths": [
+      "trillionnium/crates/trnm-transport/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c9c4b5110596143f775e4f5b6f798e83d29ef923",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "46bb09a69d68318580e2856116267376489aaf78",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "77752656bc6f4403eec8567d19df5fdabb0e741b",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8b03c31b4b0bd2e0bc39f6058d837e1a67639254",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_body.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "775597459251b4b1eff466e787138bf54ac8a02d",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "24d197379c930cdcd0615bc31cfecbeaa7cc26a4",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "bd21aa8e78d651b6e50cc65c982416c7f7f73742",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/protocol.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "737ef1ad60cf9bea816c8656c5f3e270e7aa3479",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/unix.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "81f655c309d681ea35a6932dbf7f847b057d8e9c",
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "23f55148585323fca1eceec0dcb51cb2814145d3",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "778c285abc8e35c633281e9b520d949fdf119d7d",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/canonical.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "edc0969d277d34a00b43a365bb13c41bc834f655",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/command.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "971a9707a1d8f26b3b2fb79a3e71ccfc9ef52cdf",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "0a237ba63d07f901b741b027ad7a7baf1eed2bd5",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f12c340e2a21f23a9a28f89c50b68b9a1246871f",
+    "paths": [
+      "trillionnium/crates/trnm-task-kernel/src/store.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "67c6e588af0427b54b6a5a2ea4ead19c07e919de",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/interop_identity.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e3e4f02de7dff8ac0b3cc4d5742d376a5841544f",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "21b5107f4e1ed1cded4ce67cb6e692acba4edaf6",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/transfer.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c773fa685b30c10d7cde0835ee1ce666772b7305",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "17333a47c7b7eed3440d006cedb91082a1ee0c59",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/audit.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "7c846e985ca0157e0e5f8bd6b390b80fef508fe8",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "70e2a7f4f47465f17a153ad34ba0b4f519b551bf",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "39c6223c03a27be4f240e925147ec85f90264fd8",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6cc0e1ff1f25dec1e71fe7c93624559659d371b1",
+    "paths": [
+      "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e16c75c51faacf25096645e7715c9ff91baf95ad",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "5781e75638e38d4f23df92786520b0d5c9fe78ee",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c5afc05d541b7b87e5996119e8e78afd740c34bb",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "0549819e3b86d8fcd30057068e67d928df3a14a8",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f547af5f651e70abd949b7b96a9cf4942ccba7ea",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "1229dfe04b0fb7202a0541b08e3482eb5d7eeff9",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "9734363a3e8884189468b0ca706aa96094d826f7",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "71dd28026d40f4c61b50d108fb05834961af2e6a",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "b0fc4a1f5b70a2d5d1a7eae4370688ee88e313b2",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 2
+  },
+  {
+    "role": "candidate",
+    "blob": "577ec27d0af60757d7e9ed49a1a82b9196ac993e",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6e9f52fa2ca4e3afd15f4e396e95e0ae0a9ec8a0",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "dd00de515d05f3ab84873b6cf88eb67e0ef84418",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "826c7fff8c31a532976805319fe67a5631053946",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/state.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "178420a3a45b5d62bc3b04de6ed59e818664425c",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "572c9136229c24062c19bbc0c0b6a81446ab82c4",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6f67a0a2f9f4472928af36427241b4256e3efc63",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f7a04cffa4bc4dc5c4a73ca479b53514e7cf66f1",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "a30e171006469d45fcffa1dc15b8336c0d9551d2",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "39396ac6458b9ad60a0c23b5aa142fdd89e791c9",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "c2b8180f740be0436149ddb4171b017468b79054",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "865470336a4cdb69481f69545ff5f91ad7e43ad7",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "05acd261db56f43e3bde90d36b225b8ea274ba00",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f31e936f952cd773c53534c385c9ebdf143cf713",
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6e28e94da44717cf5f207d080f6cb734e2f62e83",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "77da9cacbe9da26a1a11b8624301083a0ad6f07f",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "bad46dcee707bc7c9fa27a0c33047ca3f4ee7ccd",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "30eb59db0febf0217f8a23227021e685ce8a3803",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "d75388625d9052d54853699155fcd1f96557501e",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "721619cf927a2e2608a7646e4d8f0ffdbd190b46",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "2f83b651373d54f4cd345622f1ea42a0d0cf5bc7",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "8caf4368f2e3d5bae3a8f43af213d9456c8a8733",
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "cd5f73a48dc41fb07730b22d9b9485815a921e52",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "3efc9343d1845d469208ba6e98a79fbd3f908db6",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "6e2b2d5d808a4543429fbb5ed4b868fa9c67e2b3",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "a985a746d674d7bbd18d2949bc82ad8ed0f5e40f",
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "f637d6eac0e34d54ece35f377d467e0fac8cf271",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+    ],
+    "file_parse_errors": true,
+    "rejected_function_nodes": 2
+  },
+  {
+    "role": "candidate",
+    "blob": "22e776bc53cf6a4b0a0af7b53326fc39dca3cd99",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e9904db38a75475104ea12ed7933e62468d29bf1",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "e172955a2640f18fb7f0df36ef422aed367f78f1",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  },
+  {
+    "role": "candidate",
+    "blob": "770c7f48c814999763bce2d196f41b4d6b65c2d3",
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "file_parse_errors": false,
+    "rejected_function_nodes": 0
+  }
+]

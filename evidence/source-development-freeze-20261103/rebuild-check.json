@@ -1,0 +1,25 @@
+{
+  "result": "PASS_WITH_DISCLOSED_ORDER_LIMIT",
+  "portable_collector_and_projected_metadata_used": true,
+  "exact_byte_matches": [
+    "summary.json",
+    "groups.json",
+    "parse-audit.json",
+    "excluded.json",
+    "mixed-owner-quarantine.json",
+    "rows.json (decoded)"
+  ],
+  "edge_sets": {
+    "near-edges.json": {
+      "records": 32,
+      "canonical_sha256": "225ae08d4ac6014c951d9bfa18e47ba477791fdb97e214d9b24d526278e6add2",
+      "equivalent_ignoring_array_order": true
+    },
+    "family-edges.json": {
+      "records": 942,
+      "canonical_sha256": "10a494ee09529069a1802b3b68df25d4b6bb7c6d6cae7697de29ef5d4b39a3ac",
+      "equivalent_ignoring_array_order": true
+    }
+  },
+  "initial_check_failure_retained": "Initial reconstruction byte comparison failed on near-edges.json because iteration order of sets changes edge-list order. No rows or group membership changed. No failed result was treated as a byte-identical pass."
+}

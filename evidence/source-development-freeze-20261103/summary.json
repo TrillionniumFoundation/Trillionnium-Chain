@@ -1,0 +1,41 @@
+{
+  "schema": "chain-frozen-development-v2",
+  "collection_plan_sha256": "ac67d8b33d77ac700c9096e95cdc2c069971f13de30e448b543975402f459b0b",
+  "baseline_unique_ast_functions": 2073,
+  "candidate_unique_ast_before_near_filter": 558,
+  "excluded": {
+    "near_baseline": 139
+  },
+  "eligibility_rejections": {
+    "candidate_parse_error_blob_quarantine": 9,
+    "exact_baseline_function_occurrences": 2248,
+    "baseline_parse_error_path_quarantine": 2,
+    "excluded_test_path": 8,
+    "blob_in_baseline_history": 2
+  },
+  "retained_functions": 419,
+  "connected_components": 29,
+  "mixed_owner_components_quarantined": 0,
+  "near_duplicate_edges": 32,
+  "split_counts": {
+    "dev_fit": {
+      "M10": 184,
+      "M00": 100,
+      "M04": 8
+    },
+    "dev_probe": {
+      "M00": 96,
+      "M10": 31
+    }
+  },
+  "split_components": {
+    "dev_fit": 20,
+    "dev_probe": 9
+  },
+  "collection_split_viable": false,
+  "parser_file_error_records": 13,
+  "functions_rejected_parse_errors": 24,
+  "model_training_run": false,
+  "independent_acceptance": false,
+  "future_window": false
+}

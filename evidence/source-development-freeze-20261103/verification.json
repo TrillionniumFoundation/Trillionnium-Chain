@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "functions": 419,
+  "source_range_proofs": 888,
+  "families": 29,
+  "parser_stress_cases": 2,
+  "family_and_near_edges_no_cross_split": true,
+  "M04_families": 4,
+  "M04_probe_functions": 0,
+  "split_gate_failed_as_expected": true,
+  "training_not_run": true
+}

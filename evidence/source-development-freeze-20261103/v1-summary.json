@@ -1,0 +1,39 @@
+{
+  "schema": "chain-frozen-development-v1",
+  "collection_plan_sha256": "31f4874c0c3241043a9c7be2cb4e4c1f8b9cec48e1a9db561c3820085c715961",
+  "baseline_unique_ast_functions": 2073,
+  "candidate_unique_ast_before_near_filter": 661,
+  "excluded": {
+    "near_baseline": 144
+  },
+  "eligibility_rejections": {
+    "exact_baseline_function_occurrences": 2387,
+    "excluded_test_path": 8,
+    "blob_in_baseline_history": 2
+  },
+  "retained_functions": 517,
+  "connected_components": 35,
+  "near_duplicate_edges": 89,
+  "split_counts": {
+    "dev_fit": {
+      "M10": 193,
+      "M00": 227,
+      "M04": 7
+    },
+    "dev_probe": {
+      "M00": 58,
+      "M10": 31,
+      "M04": 1
+    }
+  },
+  "split_components": {
+    "dev_fit": 25,
+    "dev_probe": 10
+  },
+  "collection_split_viable": true,
+  "parser_file_error_records": 15,
+  "functions_rejected_parse_errors": 26,
+  "model_training_run": false,
+  "independent_acceptance": false,
+  "future_window": false
+}

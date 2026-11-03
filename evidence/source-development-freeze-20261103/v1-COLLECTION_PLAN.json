@@ -1,0 +1,15 @@
+{
+ "schema":"chain-source-development-collection-v1",
+ "status":"freeze collection before model outcomes; development only",
+ "base_source":"6cdbf9551aae1754e489773bac29bc0598e20a9b",
+ "candidate_inventory":"../owner-discovery.json",
+ "parser":"tree-sitter 0.25.2 with tree-sitter-rust 0.24.0",
+ "boundaries":"Complete AST function_item nodes with body; no nested function whose ancestor is a function; reject functions with parser errors. Preserve exact byte offsets and source hash.",
+ "eligibility":"Source paths under inventory-owned M00/M04/M10 packages; exclude /tests/ and /tests.rs as original path policy; function text >=80 bytes. Keep direct inline tests tagged, not silently removed.",
+ "novelty":"Exclude exact AST token-sequence duplicates of baseline source; exclude candidates whose 5-token shingle Jaccard similarity >=0.85 or containment >=0.90 with length ratio >=0.50 versus baseline. No labels or model outcomes influence novelty decisions.",
+ "families":"Union same source path across branches; union paths after removing _vN/-vN version suffixes; union shared qualified package+impl/module+function identity; union exact-token duplicates and candidate near duplicates by same similarity rule. Never split connected components.",
+ "labels":"Inventory package owner, checked against exact source head and package Cargo manifest; reject any exact function identity with conflicting module labels. These are declared static ownership labels, not independently accepted change destinations.",
+ "split":"Deterministic SHA256(component sorted token IDs), modulo 5: 0 -> dev_probe, otherwise dev_fit. No retry, balancing search or outcome-based reassignment. Fail closed if either split lacks a class or fewer than 5 independent components overall.",
+ "training":"None in collection step. No old calibration/evaluation/consumer task data loaded. Any later fit/control comparison requires separate frozen plan.",
+ "claims":"Historical development corpus only; no future window, independent production acceptance, reward or deployment. Grouping and token thresholds are conservative operational definitions, not proof of statistical independence."
+}

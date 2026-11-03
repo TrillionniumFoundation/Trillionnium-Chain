@@ -1,0 +1,809 @@
+[
+  {
+    "component": "03a11b7a8f33b726c01cc18209c3fc950a3ba8adb49f0c4f880ce40f05dce88e",
+    "split": "dev_fit",
+    "functions": 1,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-task-kernel/src/store.rs"
+    ],
+    "token_ids": [
+      "319dfb7c6e6bd566889ac3d1306a83494ff8ca1b3928be9b593778d2dec80778"
+    ]
+  },
+  {
+    "component": "0cb0789e8a51ee28483ec52dba52f1dd89cff067fec3594bc5cfd7d6e6d6eed4",
+    "split": "dev_fit",
+    "functions": 4,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/command.rs"
+    ],
+    "token_ids": [
+      "4d3f7d31c327c01cad6fb35b2bd0689e9edd9721ae8aa845a11aeba813934183",
+      "73977abfd5a612bdad3602a2d355ea95e7c90aa766dda52df18f2dcfb274835b",
+      "a155206fa545485cbb18d585a236433c750eb5cbce09b9b3e93e3b66b7a9d611",
+      "acbf28f9a5da942d277605f3046829582c20e9f02c1fa60a720550ddcf6d9a76"
+    ]
+  },
+  {
+    "component": "1b8a6ec54cfcc7c9b109fe2a87629a6ffb96c04f43dfc7e738c58205f4b05331",
+    "split": "dev_fit",
+    "functions": 16,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+    ],
+    "token_ids": [
+      "030e8585a3e82207b709a79ecccac3f2dbcdbc64db261e7e009bcf96e74e3bfd",
+      "101e2bf21cbe3695a08de4e6e67c7a74e704a8f229e5f76bedd784008338fe86",
+      "267384439147c30bd93a09eab24f18ce4b38e0fe44fafed22878b59833e1c537",
+      "3796e9ff0bad7e6ad552280d2c9e351a458dff621218ffcf2e7e0efe5836c032",
+      "548b3cefae94cea2a11eea0c6490107a099b6d8ee9c20524360b549c698712b4",
+      "559bf71bc43cbe9257a05d77e93ecdfcf4958cf66a9cf0d4d3334eb0f2ac89c5",
+      "62f2bda6da8d4e780685aebd5abe604626992f5b7dff94d4b55e709626a2f08b",
+      "69d513088c1250e90161100c40e214d7b2e130e9107ee39e7b1e0a0814c4f9b5",
+      "92fe53679a7da4190ac737d89a8964da70065ff06ee68b32c632da0ce6e56f34",
+      "b241eb0e14be9ed24daafcca61d26e508531ac1a92cff58b7ebdde797d5da066",
+      "b2ef826914ffc1c1544e0f0af9f56aaa1b1083a327dc834bf3ec81a311c0a730",
+      "bf734f411bcc6f71dfd1517f875d7a6b8c5a8a3419e1becebf6b3ca218e85a8b",
+      "c385ad1c1a89051fd8acba5298fe0aaa01e0b74c806deee8ab6ea35991c1c932",
+      "cffb3546a76d9c4e71688cad7206339829ab4334b1aaf461b0e06e2e78a17918",
+      "d77fc3ae07dd2c81feaba41d9c48cbe8236c34a14841e58a9d7712d957778d89",
+      "f086a36024c893eb1641f24cc5178635c3df5ee81f7130d85f9929a106a5de26"
+    ]
+  },
+  {
+    "component": "29d90ae62fe9e2d1ec44358cebfb77c7ef39d819457935ff6cb61915ec4e1e23",
+    "split": "dev_fit",
+    "functions": 35,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs"
+    ],
+    "token_ids": [
+      "0a1640f908c99811ffe0e89934dd40aec56a49f1e7f8553b7ee4b9fc320d9fe1",
+      "0a9fb623ee2f2e6449f13e55e68352538e05e969a4273b488ee0ad081f5ad607",
+      "1590ee6bdf3aa26b58af9580bf51d546068fc6ad1a8ba57073a6de8a4237f5c6",
+      "1ba2b9b53bdc06787f8a9ce8faf787dcf9efb2bf29df376a26989ecb6960d3bf",
+      "26faf9103e1be0756df0d6284e21e8db7ab4479286a1485f7d88e200b41c86dc",
+      "2f0993d575141fa02f31fcdeb1cdeea8b6b65e7f84a99618067ab1e37208156d",
+      "40ff56691658fd510ef527a394d2c0b9d497f91a715630aad4cbdd5ee325bb0b",
+      "42854d3304c9357cad703aec81a17e3fb1cb0b1737caf4384db82eaa71dc5b7f",
+      "46cf42b4e6d40c207bec779cf15d66c9dcdfad04352f6df86329c6198ce8d79d",
+      "4cb724b9648b16ee4ab5738f08ed9741a6a64c07c7aa17b1fad1e1b99918f0ba",
+      "51df6f08b3ed050055edcafb7ab37d28401fccbe55a143defd97d007d2a45466",
+      "53f6e950d85be184ea29fcca1754560a3f4016423cef4f64eb1c48fb2dc7bade",
+      "5cb25e2da8b2c2e9d705ca35e4b63682914b44f8e9d42d099be856ce7a0a882b",
+      "6091131be76ce967aed7159e42e78affd561b924a90b5f049de0af6172e1a0d6",
+      "6bffec58260cae448cbe2b48ab25e09b03b24c5dcefcbe1a48cc8f1247df88dc",
+      "6dbb97754751d3e008165933048a76976208a9f39e003ad99669ab2eac781ff2",
+      "70ebb39646ca6d8a48ef8464cf2ad55834171cc88d16baec7d98ee8532ea8733",
+      "71b2efd400620720a05823e6de97200ccc44022aec7245ef57ace97154a7f941",
+      "8b53b8c073f2da1c663dc9ff2823f02c09e6cb858ed4a3306a3b487b58218c6c",
+      "906d9dd47b76d65c2dfc7a0ad542299bde8fe4033bd9fec743a0c69cb5716b95",
+      "9255c35bfbdd9147d3cb28fdef17433747bb5d3ebc84c4f6ec93a055932dcfe2",
+      "9b4eb8dab9e6f27293892458267584d084894d2599ba0ab4e3a689fee0200f7d",
+      "9c0ca545432a929460d7ce65a821621026bfd78957c9386c4e873415838613a9",
+      "a34c72ff8e740137d2811c82b315a424403ff2abf0dbe3db44641650fc16767f",
+      "b523c0636ee0c9377de29de97e4fd3c968f0b165991fefe481ed04c36d298803",
+      "bae82844dd7f86d944464ac7f8d59df805cb9301b1ae6058fb7af63e4ce5c1bf",
+      "c1c0bbeb644bd11881eece62b6acb6447b487d14c3c163b383ac3ac28682b678",
+      "c7b5254ec5ca41a4a624bdb998ce791319b4cdb7ae1efdbf6428fd587fba719f",
+      "c89580e96664dac9bcc2469eea38d6dae387bc10362b32ec4971089fff5e887a",
+      "d3de3fbe9e8da3ef18a54a2dd763b10a9a659f92f5b66bb8466681d00672bfcf",
+      "eec9e648b245a8fc203dcc69bfd497ee441aa10f2144c556b75d84945e1a1ba5",
+      "efbd7058f28f7579d7eafa67912a5d0540a205f879fc51b96e33b26e73056dd0",
+      "f1c4953782a56aca631b3999a12e52ee0ab7f4def59866e68fd0d867e7c62a9c",
+      "f405bc0838a5069884d2095249a0135a61f5da4e0d4dcb40f1de2721fa00b179",
+      "f48fc79ff71f6c3faf53bb36430108803499ff947d3d80197febdbca5a6240ea"
+    ]
+  },
+  {
+    "component": "2a240e7e7082257ee256dcf26cecccf3b06382771ffc3cd9e672ea593b602563",
+    "split": "dev_probe",
+    "functions": 12,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+    ],
+    "token_ids": [
+      "0b386ba21b3326cf8d6f6bdf780daebdaaf7dd4df4826b46ea4657598f96223c",
+      "1d7ff453053753cd1d7bf17e53c2a0e69ac3351e432e9c170c923d89a6461877",
+      "36dddbb5365d65628b3bf1571ed5ccfdb9d21af55a92147189d111d8d4c26483",
+      "5d65ef651d270ff34c4351c038f44357d2d9d2424cb6a8628dfd7ea971065d13",
+      "677ef20c5bc69737eaade1a413eb2de22c024af5eb07297be58dfdb62a2231db",
+      "6e895f2d0811e6474f1fab9dbb16f7f48fc2ce615c394a4612a061e3529992ef",
+      "75f1ce03c2758856bbeb053b0415b1f9c2dbb99baaad4ff57073b3352ab401bb",
+      "7bebccc8eefa79ba12ac17761dce8f71778b5ad70d9258cafe3f24e513acbcaa",
+      "8749d9aec75a2824a87f1d298837f144a6be96aa996c4385c61d4aa44ebf48b6",
+      "956dda6809e0de341456bc63eae21c337264dd51f7d4079b7e53a59e869c7023",
+      "dea351cc5a4d70660b540827bd46edeaed5b0449e286d69398ce05cc48d933e2",
+      "dfb6b42f5497183330ec5c81d762447b46ce79720ecff61056fbc1ef684310a7"
+    ]
+  },
+  {
+    "component": "46938bf0d2c4317e1ad421797365871b8fa3dcfeda7f4bbdfad941b41e6ce77d",
+    "split": "dev_fit",
+    "functions": 4,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+    ],
+    "token_ids": [
+      "01f70363cf56f09f7d947cdcbdc5f3dfd7942a64874a98a36af823064a4af571",
+      "a2ac02b41f662ab874f746a0dba479be125baec94c64cafd267785930025ffbd",
+      "a93e6c66281372db4c07052a84fa7bbf57391881ef1dc70b97d5f5c5f6e11615",
+      "bf3d00a399eeda27961cc0a4e4ef0c820d66934d73f66c447adf4641ccdfeb51"
+    ]
+  },
+  {
+    "component": "47a401e85a093ca91f3938e636ce63e5781aa81c37976fcc5e92934c83588ec7",
+    "split": "dev_fit",
+    "functions": 2,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-types/src/transfer.rs"
+    ],
+    "token_ids": [
+      "11898a817240983933e5444abb9da2d106ae1e5ff7796bc324165705b3c93ea4",
+      "c3e92c06c407dac3458cf56257a142ed3050983a75b4aac40980a01af274124c"
+    ]
+  },
+  {
+    "component": "4a19d68b40ce0c479e85e24aeb337656251b9d155e3b8cd2bdf4a1a04cf066d5",
+    "split": "dev_fit",
+    "functions": 10,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+    ],
+    "token_ids": [
+      "0dd66d46403c12f5b53471a142012f470060585f3a752ae30b0a33ac2fae1579",
+      "1c8ec3200683da466560fe8d59e902080ec201aa9668a19d6f0a689091c6fce0",
+      "25d70321e11c129bf046abd4b291d9f269333a7d412451edeabb586bb8b4b5b6",
+      "5e295714cffd02ca1e30d1d125dc1a6424641e6aa2e09e08cc4d8707e6069d91",
+      "6123bda91f960c01688c477bd75e286d73f3710f446881802973e696f64b8c07",
+      "72befc874fe59f6979f7e573cdf1e83c18b56b59aabc483a1a100834d5ed4a09",
+      "78020c985be3566ccb7bfcb170135effcd00d5ddeb4cd5d6a96a5660827c7809",
+      "8eebffdcea2c2121e70eb59237ffeb06e7e601b29bc2a729977ccc639a5269ec",
+      "a70b0ec962640295b44a3c211c595cb9664a98cd9054ac1823cf185aaaf981f0",
+      "aa06c1703a9d7cf6dc42576108bbed66d3331668934787fcd36ced5bd4527392"
+    ]
+  },
+  {
+    "component": "5213720d27be84c19c9035a2f6a2e0e040197b36d8334e60cc000c191d16bddd",
+    "split": "dev_fit",
+    "functions": 60,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+      "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs",
+      "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+    ],
+    "token_ids": [
+      "0690eaacebd98408f5baf3eb2d2490fc56b48f6f8ea024b3a41b40f20655dc6d",
+      "0d2c7f076b895563fbeb3ea9cecb0786aff820a3245483dfa645b1745341f56b",
+      "199ffd8499cb0d2a1526945cb2c75ea717354f2e023a1baa22dabee82ea19af5",
+      "1f4e52df83b25e908ce68e1f9891c7441f0a97c8e247fa6025f3f48c397c2cef",
+      "21961aafc02cde90576893fd6b97644e5af0c6d327df4969da9771297c11dd73",
+      "2ca7dfbc4ede2c24671e35426c43f117ff080eab36e4f9edd046a3f3f62310e1",
+      "35720f6b29cf8e26eaab89c951d479b4acdf3676ec984cc22383b0f46e3337df",
+      "3708d40f9e368da0530cd4be642a8bca8211da3a3e4a294c84d91cde2a329965",
+      "38c95bebd0c451b10bc58a33ea9d01bd689b919dfd7a10ee52aef2a6a6243012",
+      "39e3de77767cf9d493541901daf2533a7e4acb9e8ea46881f112c708378a69e5",
+      "3a4eba39ec3c1599a8ef3f69c0b9df3891dc2335c861d460e00cc538367a72a5",
+      "3a4f54bbaf1b9abf3cfff52883118ba2ba52ad13d8209413961316f64695cd4f",
+      "3a964ddf68d25d5678b534320fe59b3d145127b4701ea2c813b459f1bdfcfcaa",
+      "42032736c8afe20e96b99069b4a41f2af29be220b363090185264a0bf9b74b00",
+      "471c5cce50be9e607f6412739c38902a81e333f6df57724633467562e7fad259",
+      "50d36885a4d0da4d06b81f1ce6ce7906ff014fd4fa4236a6b323afff90b8bb3e",
+      "54670aad92d917dc472814118b326e3203803dda16bd089393fd55ebc843ec17",
+      "54e66637c58b8cf5720c7c5a6d66ffde74ce80636a1bd285d896e8add1ca34a4",
+      "62a38eb5e589ba52c96a4bf00c7f28e08abd3c1c61966cb8eef2f6fac71230b4",
+      "6798fb00f4065d3e99819f5d9e31556a9480fb65ea50f87d064a6e025eacb90c",
+      "68293aeb46d242552c7668c4cf519ea7ee1d29bf06870e87516fab50648a7a77",
+      "68df8c7996de977a44d22bccf2430ae4573881c1b105801e8d8a972681c9ab91",
+      "7491a8c3ab2f867a4bf8337febd5eb1958115d4c3eb6d6c5bc5e89666c57700f",
+      "74d7f148d46a212e2af3accbabbeb70767e0853c06a579291c6fdfbd70ce5653",
+      "7d75d7eef9193e6aee0be9b9bb9440da068c09bbc13a9dc70e39fe8b21a71fbd",
+      "806a1840270e433fe41c24209e95da9e6586ea85de445307c685e39ddf3bcb61",
+      "8195037fc1d2725e844fd67107f9a7bedafbe516b62efe567d764224e643c4e9",
+      "8301ac1afaa42d72434c9c0ce4121370dd5051f62c67a26977fd5f2a1b5b8376",
+      "83aede1ab457accdaad2e83ce6ed1375b8f4b9b4ceae26290056ccd83530e50a",
+      "88fc1aad91dae96a9ed3090020cf437956892ce0f8ff4ef2bba365542b7338f9",
+      "8b50325f6b57f2bb0c0e7ed257c9af821f733d8db5dcb314f6deb0a684288cee",
+      "8b6463242e3e04cad471f9f8de3e1164d6436692537d3e6cd384ed0f0324438f",
+      "8ca049c99f45040cfa71212d993e2b5d1adc0e0168c4797348aea32a382d03ad",
+      "8ccbd35c863273b4eaaf1fcfb83721e6db3255e6df81d38ea75800fd21dde818",
+      "8d0adfb3e66ed1f5842077f153d3f83c1ec921f03628667e8e2e43347b13bbd3",
+      "9cd3e303434cc00848e8919c920aa5c9960966f0e5c22b5c5f8cee6e0816505d",
+      "9e77bfeba076d06706860daeb848a40a97f0b035cc8dae65375e0d802cf22e85",
+      "9f7c5424168a25a1fd9cc538cd0da84eb4f303ffffbe2de94648e7cfb0de2bc6",
+      "a0862f25ebf1c0e150e4f8649540cebf75b69deb506723221b988f1636689073",
+      "a0cded24c5fe70383edcca17a728c9f8f1bbc38c566896aa16aa616d884af119",
+      "aa652177a402bc3621c84d75f8c5a622341bf4fde2f8c6ebcc6168f890fd288c",
+      "aa9e1ae77fac74b3bc851d2652d04655361fc2bf91d10d87a57da73b15a7052d",
+      "b04fd9be937c3c55e558559405a1b2f1c33a204518b438f00d3e012a06011fcd",
+      "b29ae94b549be315fe9332e32bedf735cf237e994555ccb1f2395d02956913ec",
+      "b3176c6b5749baa522707095dc9d66a5d4795c68fa3a8c043ba3e87d5d588126",
+      "b9f144d06ce29a7c42a35a089396dbd27b090f311486c49d644d9d98ca6cc1b1",
+      "bc521bf1d50d4713f90d4d3fa5aefe117530f3f6416ef209eb3b48038602bb8c",
+      "c49923efc35f038e117dbdc8036af301c54387be195a4cd33d523469184415dd",
+      "c52ec80a8c24dd5bd6addb46134a75d9d7dee258238651ade319f2ef165c9608",
+      "c58d31e50fc058e0caa0ee0f6042b8cfd7468c832d4cb034877d748e935aa5fb",
+      "c59e79f2c6191086d31f7c20fc16972f846503cb9116c01611b5dd252d47e3c1",
+      "ca041f870f2f32add9aca90913a653799aa8bf5f55b97436dd6bca8bd574d8af",
+      "cdf2a6b346e1c6d685222be04ccc2c874151f42fc29583e03b80e9ed6099e9fb",
+      "d889c55396ff5b7e22cf462ffa193f50d6ee123b3e53e8dcf9fe16a3be3ab48c",
+      "e5d5b564edfb1bfd647dc6e7a336ab65a9f767329f506ce294f88fa8f71234da",
+      "ec593781b034e6babe5abf3f61d37fb9bd8dfbfd2e048001bab4c01fcbb15145",
+      "ecf49d3b4149e5b1961623afafdf00f286d73e393e69e52047a950d8542cb60b",
+      "efc5f395343d42fc9778a7debcb0de4a6d6d0c6f9d05367c9afcf69adb362f25",
+      "f7aaee65df08824efaceb337c54e82fa6e4adc7e4f92b03dbb7d692dad87e86b",
+      "fda903ee77a2a19d122d6df1d415293eedc1336fc2e836c1ec280e0efd422006"
+    ]
+  },
+  {
+    "component": "59982648b0928351462a36df0e44abce7c3bd07c6ab1b6187a28d16178e6b7b6",
+    "split": "dev_probe",
+    "functions": 2,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-types/src/interop_identity.rs"
+    ],
+    "token_ids": [
+      "203530d01b1e0cd6ff451fbdee74e131774e55b36e79e81e33f451e5acbb6aad",
+      "9727e3d3dbaf0eb2aa3bb9141947f0e4afcf0f966de4347579fc78938f059f5e"
+    ]
+  },
+  {
+    "component": "5b372e4b958105c8eb469ae385536ab120b020099d98da7be2faca2e5663b8e9",
+    "split": "dev_probe",
+    "functions": 1,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/canonical.rs"
+    ],
+    "token_ids": [
+      "860a32d36e60ce682f0327bff2a9db4e23a18c86b553da1ccd460889bae810eb"
+    ]
+  },
+  {
+    "component": "6582c6a818bcce6aad2ccf5caab49995046e1c67a6620c74c9525240538084a1",
+    "split": "dev_fit",
+    "functions": 40,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-types/src/relay.rs"
+    ],
+    "token_ids": [
+      "02e8dbb9a56bafbabd5b27d17f56f87b3279cb7a9bc5210017027e286258d373",
+      "049babab14907ff9cf5a31b5044576bfd8e0517517a5c2a5daa5695021222942",
+      "0eeb149709bc14dcc9dd0d4a0e262b66a2de72ed6c5bc1762aa3266bff7e8978",
+      "11ea8bd01e390b57658ab16eb624802ca9e3deab06c0a979f01860f165457c90",
+      "25e9c710a1da4787bc618896878a91909d32e539c8fdd19734c8b8712b987178",
+      "27006c41fc6dc88ba80adef408290f0713435ea376cb5229757001a288043610",
+      "29859ed892990b53ef94eac22c4064f945978cb6096f14f9a4455e68c1e4867f",
+      "2ce08659ded3c5e15a7ebd1758e6e35f6e7dd5b7d886a167d0978f490d37e97d",
+      "3f95494da06e6b0dad1b2feed17a737dbf7da5435586bb7bec55f228245acac2",
+      "404efbb21450151ee463a0185cc7d05c7a6decb814f4d65ed912374a294f395e",
+      "509c0184a2a7172aed89e707f34d57a92a3e30f6d6c08a7b1ad96ede99cb312e",
+      "50fb1aa69a56315b1642f3b1ea5939965c04e006541dd63e4d328b4e93c90076",
+      "534e763030a5325d4fb532396e2fd9759808280376d9ff316940a10201017841",
+      "53e4e68e1d2ed223b8123eecc1ba4f97226fa26fdd53d68e3fb3192c3c2df4d8",
+      "56de52d433719436d7b30bd5c9c0825b489a909b6dd413adfe49d0888432dd8c",
+      "5e70b59317b2c6c8a6d9c16a1ab6b99de0fc6177239dd3179658295abb4e2715",
+      "64532b5650fe593d6a80e88c92be51ea40871c7eda819ec2f125b2b5a5bf48f1",
+      "68c9499c40468f649e331779da46e0809f1794491566923cc330a58608b618fe",
+      "6d5e239bdf8a8fe738b18a87d884cc7cd4e429d85ddf7cb7d1db2846c8b91160",
+      "6ea9ff478776634e034d51da6eafa7d959ab05b5928faf9917945287c7aaa555",
+      "7b347fb5397a85c5b88d8334d9c7a06345c2ee2ca435a79b9b91b117cd134b05",
+      "7cd647863009dab43890f2a4ba4449cf7b3840bb51f644e87202175d26a3f581",
+      "83f0181e6561ae995720f8bd008627cb7faff05523f4667dccd5071740c73536",
+      "89d25864b6af8b504fd07f4676b3c1612e49b101f7923dfba3c6ef420e105e12",
+      "916bc8f4efcabdc282543eba6bca7007411ac70032ca7b326d55fec52cc3c506",
+      "93674763f14b51fdb45790e5dcc69d88de93e2637a9ab49b5963877fa625dbfe",
+      "960b3de30d39f0f661c59d6f31e82fbd4c19335555ad077429398ee1e5da0b96",
+      "97a67598c86aa0954115f27885fb6a0567869a987487394ede379f94bc156a03",
+      "a0210a1d2f27f6f876084f1791b3b4f2dd4adb41883299dfee23189acc90c4cd",
+      "a9b9db7d5281ed4eb86ca51c9e23b7e305f395ee9dd9e731ffe742edf4985963",
+      "ab55c00c66914d1f922fb1f746cb38db6287dace6e76c403701b85da38deb008",
+      "bec2f6c4aa25ff6da52c40e9f6157437af580193c90067d3a93cb864fcec3e2f",
+      "c9d15baf706bdbb3149030d6f325ec7f54c5033f7817ed703c69d1429700f081",
+      "ccfa5881fe2d381766a710ec7dda37d85ba63b8cc0f3772ed815eb309be4f51c",
+      "d2714fdf2d26a32a53f80299fb69221d50cf9c9ef58cd50f161c0a5f482f08f4",
+      "d70c5dd5357e51174d69df5827e4dc3231fa51bae063a22f0868ec6ed73cbd46",
+      "dea52ae097728d99017cde187a5c4e631dc9fd500f1b1d5644a8ad5b29f05584",
+      "e64626cf7f9c9e7793657fa501e22fc792eccf8e85fa79d95117f2eaf817dfb4",
+      "f8aa266852764f2e0c718303437d5fe9f7b55c0a056834d19b07967f7e7caf98",
+      "fa6a382b0fb68e557a07dbc3890667c75f0c3de2a2226a24eab83e78d23034e9"
+    ]
+  },
+  {
+    "component": "6abf19380272e404769e9c5862ae83b58ce18c9365f2b4426d88211c41476442",
+    "split": "dev_fit",
+    "functions": 63,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+      "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "trillionnium/crates/trnm-worker-agent/src/worker_journal.rs"
+    ],
+    "token_ids": [
+      "02e35c47c7ac1c157a3ea4e623f985a90b389b8e55fcd137a6276a7ba0a2597b",
+      "031a4778df24bd7e651a97f3a06b685217130af470cbe60aaf77cd6a09682536",
+      "03dc2c0045b7d4b6c7f861d43024c223b7188e176c67947b414a7f4d42abc0f5",
+      "06b5911f44bf358211ce65c4a274c86a925910f22390d89d4a3e0cad45b18c11",
+      "0e70d7b35d53f3c7e834f6fab819162ded22ca0ad0580fa1c90887ba48e6e748",
+      "25916981aad7514170ae16893a11626c8a0b6faea10cb00175c3e2c9aa4c54e4",
+      "27963f77c13a41fb9f842c8b3e10798ccc1e40c7f563c15c4d3f0844ee3463a3",
+      "27b409bfddbdd61f2db123b6794d9c36701d4982628184a6c8255390d0657f39",
+      "2afb8f1153b46d0928e075fcafacb1fafa9b0a47e337ff16d3ea976428ac1841",
+      "2c011bf68cb81aafab7e3839f0076766ed86df4f4ffe116475c1e0f4207fd564",
+      "2f3707e044945141b5ae76443715020a50d2c1803733b2ba5265a9e5d7b1dfa4",
+      "2f9033202d1d57a0b1781e4662f281373f3e343609e7274212b4d833297eafc2",
+      "2f91633cf1648b89a96d1be6e713279fe45e0054b28b567ab9b76476a9e6bed7",
+      "2faee772d6214992132bfaed6e5df3981927a0fc5f8ba2a10f92eeb7f7f2c634",
+      "35b9616fd13082a27a2ff50f23c10314f8a13e295b814a91c86adf017b082c1a",
+      "3ab3ed89426a03822d6ed0c728c6ade0e76c5f05f69b7b8a1809ea54d423d8c2",
+      "41af9a6e0f22849fedb481eb6434eba163c3eae0688b4d4bea1df871970aa971",
+      "448ffce677d86dc2dea387bc4016f2555a59e14a9576e7d899211f1810ea97cb",
+      "454943d86a407c65b0a3919f7b67bebb2074c577ec0fccf004520b53d5107f15",
+      "460b0e85ffbb06ac9df51f8a0c08324fb5728385630391d585b7d9f77c6eaaf1",
+      "496e545ce8a4e3ac1875e6c67eeaa9514c42de27443779d7cf3c78f4e72f3752",
+      "49cb3a84ab9c2bf2c4c5236f136ac627c10c545cb1ff64d0b894423086c507d9",
+      "4bdad8a855e4170919f7c34b8527dfc7429669b5c78a2b1c3851a7310f91af2d",
+      "53e7cd77b7c09f1644f21229c6800b26d29314a4f4c2cd8ef7421f818a2dc623",
+      "61d276b4c730d518b415f74ad452a25f6abe4446f3054824b5e8b513d682a1d0",
+      "67cf261b3c2ac3866ee0aacda559dc2949bc668c53cec134e337d25c580a8029",
+      "67fcdbe62b2cce23aa5185ac54fcbf272f6da583badfe2fbb0fe204c17cecffc",
+      "680fc7733635103024a7ac1dc7af141ce5abf749b6898f7ff3ca697fe9936077",
+      "6ef98a6a2a43192b629a185623d057cb8038c90b2e8af77e6898ec7c446b6c75",
+      "712228819a1a665eb7877a38e8d42637095c84d4b6c14cca28056d031fc53026",
+      "7397f1230248f8acc56f29eaf9e2b6cf3f4b8962f716f94cb8683d7d14d7651f",
+      "79e76fcb2b83bdd5f1a9331810790d7af572c077798b9e7a4fc424e14c2090c2",
+      "7be63ed284ed6667bbda21669052641f826ebe482d87dd4ac11076887e419549",
+      "80c8c517323e5207c322aa898786ec26df8b4f6f5df229f680d162a4e4241c04",
+      "849f5b2a96cc3fe111cf9045aa32acf6066fb9fe6b832b0ffac0319a05a127c2",
+      "8a690a1684e93fa5753495990123bf37471622c5805e70b3b913aa040a0bbe5c",
+      "900ee399360505fcf26a0034d4837e68aa8a17d94d39f64a9b667170b7d2b03e",
+      "94ad21280e5f90e360a52820293828f8dce12b9aaf3b85d02fd139916dccb223",
+      "994e9fb67e78c70be5c44d2a4f01e98258dfdbd32205f895a6579134362f98c4",
+      "9d0fb0afd38abcd99a435b8b20c679c5fe2438963546e1d4ba4a2d50e57083ae",
+      "9e4db8eca1c61e462f442f50d67e2ba7433e480f04ea7c9ba5912502d21bf66e",
+      "a15919ddea81c9b5740e0c9289ce87ccaed6d65dc0a05f9b72c417309c6f7cdc",
+      "ac4641523f75ab9ff3c5ee4d143f798ce1a6308f336c6f1cd73011dbb8192fcc",
+      "bab3456d8920712643ab0c5176115acf988f53fc9dcbaab6141100899677f075",
+      "bbb8040c3a5111b60e9902111c79aa11b19a6d97700383d6a0a68e9aeec84924",
+      "bc2eb15ba3815de285f4de02be9770fccc8721798dba294d99622fc7b2fc746c",
+      "bc465432e950fd248acd113b18166507856520088ec954619fb4d78635cc7103",
+      "c11c2f83317ec3465fa4bcdf002fb0b3fe1353498b438f0d29b8ebfe63e4061e",
+      "c1c427c6afcee6d35e1054c4d35bb97807fc714969e1477b6bbdae277a33873a",
+      "c4b098c55935b12f81d2266ab1cbd9bbdc03317d004415f73f2f716a474cf9d0",
+      "c6232ad129dbdf65e8cdf53b62639a7e8d3009883f9cf61db84d48367601896a",
+      "c9c2b71e73394e36ad5b4c9127fc2badba2670f9dd028934052c9e26afab8202",
+      "cee28ed605d234770e225c366bbcc2c9a0484208b933896c4356e74e47c37c68",
+      "cfbcce7d434589d7001c951382a3612f5416df991ce336bfe541b413f4bf2507",
+      "d25bfb896351aad704362eacc55df5faefbd35cfd9dd5b5cd9af4ec617b3b5ce",
+      "d270e73317fb2a6d1a25ba2925febfe8849ef2761e27c40a6395edb8736b11b2",
+      "d2b6d910c56a2f600d413e3a54e7d676f9bab551e3396391a623758502c5387e",
+      "d2e08d2a8fba6694381fb8d9c4ebd10e8ed6af16c35989c801d10dbf97fcd4cc",
+      "de8c865cf1050c426598b6c2c86762336bd817039908e5d77648195d18694a5c",
+      "de8e4a3d443231fb3be288b667606d8b6bfee76920f9ca54a1b839f657c0465f",
+      "e962166d9eaf1b139926a582bd7cd27c89ade632c9e7bd4b72b718ed0b131459",
+      "f1c4ffcb5b956c5620a539136e156c65a99e06903811e0fd8f9f6fc0fdc4fd79",
+      "febb0e6aadc04d1d5da02f27942260ec67768287aac7529faeae4652829a35fc"
+    ]
+  },
+  {
+    "component": "73fd158c1182c0f21abeb226c5ba6aa48495e7cf2a28f812ea188fd39b0ed6e4",
+    "split": "dev_probe",
+    "functions": 12,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_journal_security.rs"
+    ],
+    "token_ids": [
+      "13491ee7f4981a9586db783f65c878d7bf42474f10fe022502c8d1a4f1146b64",
+      "25dc95797f0a4f6d202cee9ed8afd7fcbf2c07fc8b85524e22e629d317e0017b",
+      "2ef439ac9f8c367ff92817e840c65f6347f9685eefd6c458aa391efd515c6a6d",
+      "3cacb5f653723f92adfd8db368d98dec119f24388016ed58a6ea8449cb85ed60",
+      "6402de0d3742fb3820a0fd2ab313701faf2f80ba0aa0bfbce891f265eaf3626d",
+      "7c0b5b249be3e5edfe402244190198edc8b471c613cd17c885a5cba9912c1894",
+      "9d942de57ce3c92906142c04ddd954c58ed9f2209e3a48cddf99e01a404ab8ea",
+      "a95d49e87c3a9f752ae2e643ddfa9a8b5bcd5e72cfc22eb23401ea7f8792eb61",
+      "b47a262d950629db3bc24a6553cc9ca182e98bc2edaf0ce188c1d398f45c71eb",
+      "bd5177e497f88b840a60ec7bfef205f965fa3ad9df516c78cd46d37e124c6a7a",
+      "bf5b89db0655889a461961d360ea6bc8ccfab7b8c2bef99ac06740f96fd9542b",
+      "c7cd61b29055420ccdcf11ea82f2960e4bc99eab3c4e30ed31a4e592eaf7ece7"
+    ]
+  },
+  {
+    "component": "76ae9ac9f66abf6d2076c7b354235d0623080072415ec762d2f654f79474fcf1",
+    "split": "dev_fit",
+    "functions": 1,
+    "modules": [
+      "M04"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs"
+    ],
+    "token_ids": [
+      "f141bd0454fb0950d3aa9ad172f70bc00246a48ca95251eef443ec8cbfe08e19"
+    ]
+  },
+  {
+    "component": "7ac90b85cba86e13f0603aa0a43c0836e979e194a375f18601db62c3e44d12f2",
+    "split": "dev_fit",
+    "functions": 2,
+    "modules": [
+      "M04"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+      "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs"
+    ],
+    "token_ids": [
+      "203c81d8f0c1cb228d1b2ed46cdf91dc003ffd361fc1de42cb0f7618c26b23c3",
+      "d8db0cf05f72a6f10b97eb1b562b82de6f50da1e578dad2cabb51c1817ab5271"
+    ]
+  },
+  {
+    "component": "7f0c5f03c2b9cd267d5d78a7b2c81ba46386331a89292d7308b223b393308d14",
+    "split": "dev_fit",
+    "functions": 1,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+    ],
+    "token_ids": [
+      "6439341cc191519ec4f25489e388833cebd4b8ff223db69f3c3c7fd3ed8d47c6"
+    ]
+  },
+  {
+    "component": "903f8ab3746a8206064c205276417402da90cbffc4f8a442c368a9d24bb93a4a",
+    "split": "dev_fit",
+    "functions": 19,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+    ],
+    "token_ids": [
+      "2dfeb7163309119bec0fb1e9feb46a4df12ef1473e9130d29273b05eb11272d9",
+      "3ba7f1aea9a066ce544d4a693ffc1b1387b8e8099ebe82a95ccec0b4faa04981",
+      "45364a1d42f44d0be9fda549fc6f325f3975aeaf666da2d2a9b53a5cb9e8dc8c",
+      "4598ce1283e0335c3d32c9705671563f823bf941f3b32eb5175a434ed0a346e0",
+      "4a96524a46d19aa24d524a1d02d0556dfe335690dca0c8f20f5a347f9b7480cb",
+      "4fba2784a9fd9132aae5370df67a1c1f1d94b7931e1cefeb73583d0c8137f50c",
+      "59127e94eb9bd99bc3dc1a7a073cf6eefb9a4b492bbcb57a3385f9ba3011419a",
+      "5d495bbb671e247c8ac9c1060597d56fef1f51314f3e0f3c33289888f9ca79a4",
+      "5ede4047ff40d190cb935e835d09a6cd29544f1d8092a6e69fa706d473778fbf",
+      "799511d77e6b75dd114426c3d2d37ad7188ab4ca5239f1ca687fac9db086344b",
+      "8268c45408b2d91faedc2c0f63b4824f749b27278048e707c082cd56c31f1cd3",
+      "9940b555b5d81daa572b8fb55a307936312bfc5b5c4e4f4cc47b465823632bfe",
+      "9f3af38b44ae1f002bf42536974093138d482f6eab91a8a180338e397ce38a5a",
+      "d9d1ffeb80761c6cfff3de13ed04455f093e0da0a5af41146ce85c35b51b5bda",
+      "d9df882c677e1b4a7c5d28cfb27b92212d4afbb156952a474dd85102b8282232",
+      "e5aee1186fe87823d82943277c5daae4a191ede5991dd5851f2495b21275faa0",
+      "eff730eec6a2145017ae2bc39271aad8cad79f8577b93dc6c5300b03c0ed7c74",
+      "f01ab5b4da4ee2260008d617e6abeee9a14988714386610d5b9f6f314c56a2ca",
+      "f426b774227a4a3d06b5dec37d9ca6dfe27104c5b61531a67ad2ec624deab31f"
+    ]
+  },
+  {
+    "component": "a187babbdf8b8f47c2b37386b5cad25e718dc332024b8eefa5fcc5164e5ab9b2",
+    "split": "dev_fit",
+    "functions": 6,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+    ],
+    "token_ids": [
+      "057de74b8d689bc6dc43632f23494429dbc64623a8cfc65afd930525994d7a72",
+      "10a803f06b00e952f8dfa1f31da67d16bfbfa9dacc86a4b833d614dfb543d44c",
+      "5bad8671c9099c7022da148b078f91462babf65697fda10a1ed3a90072f37b80",
+      "5e65f04d6b44dfed5dce0ddba7a669e68c7527719b5bf45c1ed2a82a8f313ce0",
+      "a1f44e42331d13fb7a985965cec873ee12156c06a490c34f2db9bc8682333276",
+      "d069abd27df9da79f117f12974bde0ba7cc46d5ca90acefc169584687a9bb659"
+    ]
+  },
+  {
+    "component": "be90cdddffd6bf9aaa8aec4384e88baa6692d26444fe497780a5ac34843dfa2b",
+    "split": "dev_fit",
+    "functions": 16,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-research-protocol/src/state.rs"
+    ],
+    "token_ids": [
+      "002dd9f06ac8ec863aeeb93c968c8d25fedbe97ea7bda4dbf2740d13199167de",
+      "2357b737473a478d3ca7daf0bcd602d2e29da0736205b27d3db24e8b9c38fce7",
+      "28c6d6387f719cdc01133a61ef13fd15979a911209fceff240a0762dfdcc16e0",
+      "3c47418046d7f6ad8a13fa5d4edbbcb4f91310c95525333fbd76de6a7853ba84",
+      "44cb9db927399ad7b03cc1825df7ec64a397a2dd4a9a43ca3fd09283db59325f",
+      "4d8f96a13135c830aabcd5b8145c7ba3efced085bc9a62f09f2769be7aa91473",
+      "523ecb0e64b26ff0b8649e1a0ee6a83c7560e1eb9df1cb296954e0c2ce967963",
+      "52b01e4ef896587237c4717ccebe78b4eafbc62ac82115d685519a69ced1810e",
+      "87cbef4d626ce84ea330acc28db2b40583c3cc16c33a1be7c6a6f779c1ce8edb",
+      "8cd2ca4511a1203c57040345c044d231787103fed506b4b27e68cde904d60568",
+      "8d2fbf1e925e76ee057c503994b214b2867937c9d0a15bd20098c7aacc65ea3c",
+      "9334a05eef61fe64b14e11b7d9a011bf8ecfae56d531be61e3d8b5759aad4468",
+      "be1c82da415d8911127db4045f8956618fc45a30145ed38465998379f1db9ebb",
+      "e2abfc0f91d815e7f475cf5cf63af88dc98086c2b8319282aa9f6e5c549d9c57",
+      "e4763eb5cdfe8ea94e74826232bf8ca9b696976e93b27f67fceb7af289759078",
+      "e7e77698638d569ea4d62809f5ad65ee9b0a061dc6405cdf6954a66abc43fd43"
+    ]
+  },
+  {
+    "component": "c2de0f31e08c64d1726dd588769ed3d7311a8bf039935f14b3c9721f2632dceb",
+    "split": "dev_fit",
+    "functions": 2,
+    "modules": [
+      "M04"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-peer-lease/src/protocol.rs"
+    ],
+    "token_ids": [
+      "63dca8d5213e612bff3c6d6aed012f943e4b5237e247be2a2501bf6bf294bf37",
+      "f2bb3ab3b5c20242d15a102790b510ebc6dc86404839ca57e2a2d11b4f533c1b"
+    ]
+  },
+  {
+    "component": "ce35b8cb322ad7fe42aece4e1d279c6d3005f159f0d0bd2c8c1ecb2441ffe87e",
+    "split": "dev_probe",
+    "functions": 44,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+      "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs"
+    ],
+    "token_ids": [
+      "0366022a4aaa57531444ef908d2732f2aa9dddf5c3355a49714de0a939be8015",
+      "0afc094db93ed95a99afe2ccb21ff87eb95cac9e24b2a75eb60a897d6081d6c3",
+      "105cf44e798eafdb681f7629ee0966d1bc655512a19e97368fa80ef27f656a14",
+      "1c3b40422ca6a3c51ac4efe313d253f212fe73e04fb5724fb446b2e2c310805c",
+      "207089ee5db2ad8ceb83407d010cefc97c89fa4b1eedc5633a232698d19c6928",
+      "251dab775e96fe4f01ed2abb2b24abda77e7edfd277e6b463560921994bed47c",
+      "25f8d48c1c82b58e2750c5dd122c19cc92d568481684ac7dc804cfe1acd5e6e4",
+      "2776a920f65b7985b62e24de141927eac8a9cb05cef318aaced13e0e2b626f9f",
+      "277879425ca729d657f6a95756e21e531bc1f496cf8db1fbee74114933627e71",
+      "29652aa86026c641660a5751e66ddb7f9c150aed061cbcc7755dfc4895dfd3e7",
+      "29da86f659558560c8fe4859a056987d082153594f2d702e8d8f1ff048ab54f7",
+      "33261f06c469b6f65b177455b5ca20b7494ec0c2c674653172dd098826645714",
+      "46de6a6b5fa6503ec8fdea15c1cceb0404f6d440bcf2381aaa1a105e27756e03",
+      "4aafc7f52da57c2ab980c115d7dc17dc3b5a8d359ee52ffa877867f35013d120",
+      "4fc53a0ed75a8df5f864ed0f2ac736545914c94fbf23dcd34e120af818d13456",
+      "578f3ebb244141e804b005d55c2d9f3bc5fbf5fc8ab1b9ef67d654ed05d19b25",
+      "59d3193f2bab9ed31071e06fe754182a89c721096e912ec982e21171c1300ca6",
+      "5fdbf42b55656f41fc68d5b24654c303e8db332c51d491c64c3204cf1e93461a",
+      "6178fe5b772e817cb6e7810e459ed708b9d23492ca0859f60746870e9feed77c",
+      "67e5123260a0d2d8d41e44fc26cff1057dc75d747d862025e228d409b6a549cf",
+      "6efcd3ce9892f6a878d02cb1d169d798639e6633f4da0320e64773c012bbd5a5",
+      "7427d7624b261cc981e3192e7f404ae03761a08e325849f2498bfbddb0db6128",
+      "78f4ee416fed9d4541813a88d89d6acb7390096436975d357f5edcafa7e6e4f2",
+      "85db06ba2a47b68ffb6aa44d2def0496f1539a63a2e1a7e98a37a76853df5994",
+      "90ce4fef1e27c79ec90e709e51008e22df8977f07d9b961877535c6d43cb23ef",
+      "94feb693db780eb4cd009f412910e93364841abbc4c98147fd674ae98bccbd11",
+      "971aeb80ab870719d928f28beaca23193c9cdc0ef20e43a44ea4edc6fcc37f72",
+      "a1171dc97308e18386c2e18aaa7845c2ead339b8e89690b4116a11bc35d7e8db",
+      "a35f8bd6dd42f2c64afb391eca74d560862eed8aa7cf7f5152b0bc1dd00575be",
+      "a54a68940c7e9a8d16e27bd5d3d84531eda8bb96c04da268f0801f9e1b262337",
+      "a6b9b740142bb4ed6f133304958a873a74f6c3b60347176a875baa47b54e34c2",
+      "b5424181b776b49b7feb9e549e5a503e82b95b12f6305e886729eec27daefae3",
+      "beabc8b0c5d4a37652adecc7e0dde7c6a1beea256fe12de01bc76e4873206a86",
+      "bf1198ce52f178e72d7f89152887f13bef660ce23178195bc0a74d6315bf4192",
+      "bf4fcd1585f81c186b64265b7fcbcd9c035b75c48eb8681d3ee3ddda85fcecdc",
+      "c2dadb3b45c74ec44af1acd0bba9ebb85be83306cf3704058816e919bfd6044c",
+      "c366d96522b63dee5f6dbcb8daace100f0317cf16e6b82e08ff78776086edc6d",
+      "d90d3b1c4645fdb613d60a8055f774bca0c86b39adaf4860c9280fc426225f8f",
+      "d9395064c4dc17c48fdae03a9822ad27278ec30e0bd2a5cb25f642030a146310",
+      "dafb54d85e3160082c32beff6ef866990b00b8b1125149bcc8ae027e6a714423",
+      "dd7cccee3b48e7e5de67d99eb971d9becf55418757c7d6784d201bfe9db01e96",
+      "e232bf2728fe4a14192305f9d0f4a2ce247a5be57a446e40cd37c683988bd180",
+      "e60108097f580f4d12bec14c361e83e691c71c3b82ef329b5c73c29f255b0004",
+      "ef47d72e77979d0e55980739050eda88dba5a3c5923da64449667611c5e30cb0"
+    ]
+  },
+  {
+    "component": "d138f3ee06c7cfd4bf4e6ee1c1bf49961e7e40babbf0235b775beb65786cc8e0",
+    "split": "dev_fit",
+    "functions": 3,
+    "modules": [
+      "M04"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+    ],
+    "token_ids": [
+      "9565df4b9329ea1404c9c886b486f8686bce8909a8274bac686be94b99ec9571",
+      "a6d18b4b74773010d6a0b78b729438aa1b587316a508e408337172be5a5f7cf6",
+      "b8ab2d30dbdc183af4b930390f4970e14b6b4fb0576c097c9304474e270061b4"
+    ]
+  },
+  {
+    "component": "d14b416e52701d32bae880183c2feecbda8e4b0da19e1a5a68638691de8ef471",
+    "split": "dev_fit",
+    "functions": 5,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_growth.rs"
+    ],
+    "token_ids": [
+      "23f66933ff37528404b843ec6395b61d853f896fa32c90f545298c5a50cdf08e",
+      "43cc1a2fcb65773aebc8427ae4587b72b71a98b95f1f9f6a957f2d59fe220289",
+      "599d449c4974b1448ca5483fda23a9a59952d64b5c5198812c7b10fa790d4c0d",
+      "700ec52b5c8ac5b1ee122800efa775688da45633ffd1870dc732673a57e3fd5a",
+      "856969f287973cc36e0c78cf5bc6632792e825a746a3caf5a3fbea26d075d8c9"
+    ]
+  },
+  {
+    "component": "d46501e98b81e4a32683a6a32ce4bb013f0f7a3fbe021203a0547fa7f84a6315",
+    "split": "dev_probe",
+    "functions": 4,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+    ],
+    "token_ids": [
+      "17c26f245ef0316db02a5534ee749cbb08fb4deff4ca4af0f157647766b5b18f",
+      "5e3ca19032ad8b07bec56bc4e632ff300efeef6a2e5222891d27ddf0cde887fb",
+      "85d1d15c5d8340fe19e938ff7c2e240fcab2dc77593903330e323416fb22239a",
+      "9e6379c6b0906a7c5457ec82f29df0922fc5e8257b25e84734b7133d63d36525"
+    ]
+  },
+  {
+    "component": "d7af76b08b0a87facccd9c0e2cbb5ee730c40af5abe4dce1918a133d03c355e1",
+    "split": "dev_fit",
+    "functions": 2,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/lib.rs"
+    ],
+    "token_ids": [
+      "7e7c515cee400a5e89e91856662609105b6e8cc8de0385f35e9c7f7f4cc445f1",
+      "ea7c71301b859ea1db787975b4976085b13408fe2353dc2debc103ac49d0d54b"
+    ]
+  },
+  {
+    "component": "dc7b65fe8f14d424296c92e41d0e6e9fe2887ae57c9c5eeba79576b3b23aaaa0",
+    "split": "dev_probe",
+    "functions": 3,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
+    ],
+    "token_ids": [
+      "2bd32af57e848f34a63bb9cc82f3aa72bebc5faa3bb539ff1a33facc4fa1ba86",
+      "74c6c7ad7bae8ccfe04477d273f1152cce57ef769f10913adf2677b4069e377f",
+      "e91f5a24bcba0ba4c7666b699827c3b36bae1a8e4ded1a77c066a9cad1f32e00"
+    ]
+  },
+  {
+    "component": "f9b7f901de8bfed04a5a17f41f18b35a23b6d218d2d46f6bfdfa2d69d6f10704",
+    "split": "dev_probe",
+    "functions": 47,
+    "modules": [
+      "M00"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs"
+    ],
+    "token_ids": [
+      "0390bf0ed872cdf07798822e4b2e78c02ff8d1f32831b6d34972e004dbb43136",
+      "07827e32d821c89c18c15091eea126d6eb650bbb50f68ebbd0ac5c4d4c58db2e",
+      "0c7c22ec46e3372592ddcd0c810df0a1890be089240dcf3c4c713e9b911e1271",
+      "0c96bd1b321e1503e875e1826c4be03818f98ab5f413549662f7a3c952dac645",
+      "10d4dbf22b4ae3020c1dec00cb596f063e0eb00b2473949779d2757636fd3ea0",
+      "146fd992eb4dda97d92d26d3cd30f27efe333815cbe6bb991b30d6481c58b284",
+      "1bf34e93c45dfab0614653bae2ba22b827d65aa21ac1fc3868b4064c65c1e800",
+      "2722049abbfdd651a11139198580d54a552f3c2668284c777f80bf4b900f933f",
+      "2a5f23ebe980eef529f03ce3e2d890835c31cab4c41cfed6ed14e9031e5bb756",
+      "2e418574797696f00863a06b25f26ec4ee95b5cc592141f0075757dcf9d5fd34",
+      "32ea44c279d71b20fa17a15f3642b8f0420701cb8342513e5b7781ba6f628981",
+      "3f977874c7d893ca65e23041a637c7575b0af0027c5dc221641adb2a0f80dd03",
+      "42bcdf3bb17e9a24a6b71f6b614266b6b64d22c70878bb7fdc44cec5b9c0f330",
+      "43281408e7fcadede92c0d9a43d4fb5f8fbbf01bfc7d10008dddc73828e35fc5",
+      "463b159c9c2ccb33aeac086d15bd9d8d6e6297fce12ee71c5e38c23326aba53c",
+      "49ca38596f0e337380dbafeb8c35e2eea3f2561dc6708c3e8f6918ae4d962702",
+      "4d0d08972e9dd8c5889088a8443b2f5029e40f788e6cba96cd4845996d18bcd4",
+      "63eaa7cc60dab2894a4a72367cea8f809336108443dc3d5818e4d63574d24215",
+      "6d6030c2032a1a5beae216cda71f840e6c7f2d5f4d1ed73808d513c2d911c1cc",
+      "701a30acdf6a22071c25bd2734a08db4e2f9acd25cc399d08a371cec5977703b",
+      "79f0bc8b2e6c6a29b88d16099053b013a07323aa8e60782ecd563e2c7fe71554",
+      "7cc00aecf904fbd90c988885a142653a864b22285ad45858919e868401760dd9",
+      "83a5d4ee28330fdf1d7eff98952e6c0dad72c397c8c05c28afd690fa2c4127b4",
+      "968ff1aebc63c6feb5b74fc3a95cfe1c1c15dfff45b23161e4aac0d120df4e79",
+      "9dd9f95b74bf110b3edb79192153e63ad4bbe28906188c96a0a9776f9d61db9b",
+      "b0b5b82ef73b281d37d4afb39aac16cf6c06ec1e2be67e1cdf5812e20ffedc62",
+      "b2e61530bfbe7dc3ee7da546afd06a8968768727d378387a098c2fed2e778bd4",
+      "b3a86727b1374241261aede2f4e3db0ef91ce97056ade3c33d9816888687a338",
+      "c543878816e5aa411248c068e442184a1ad7244a90629b0f37ea84cff9439a46",
+      "c86d3901368a66a87e6a46309710632aba5469e910aa28d91ac1ab962a4bf842",
+      "c8b5740bc983956aa154dad338e736a1506deddc493d8d6cdc097976e48bf077",
+      "d25dfff998fc34b1e5d88e3f0508ea2429f8d9f52c2eba472f3af29e8dcdd3bf",
+      "da611c351f2c77ffcf2fec2c7066171c5c9640af961f324f9817358a5f308b21",
+      "dbbd75eccc074d9b70cd430754a5cc95596f857716b3ee7eef28dde0fe441db0",
+      "dcf0e477f60bc11f64f7c42952572b2b982d3879192a51aff24ffde1de3cff59",
+      "e1420ef5bf4b705028dbb8793bce215d0dea14797d76c1edfb65a922d31406bd",
+      "e24863f41fd7b45a7bdc182d7358cdc83b1f6ed51adf83bf756d8d0f11741e33",
+      "e7d7eb28a94f919daaf5c85e439e198b324bb1f043ddb42ccc3c1638dfa55592",
+      "ea47d5db925fa49f530f1208e83da63be5de0461d62f5c7d1e7717acf2a2ac6f",
+      "eaaa96adf38fbb196c99231fb61683feb74a266451736652a8490f829b56eeb7",
+      "eb3057a6118b51204a4b857ede20f94a21fdb35c59ea6e4a49417c84ff055ecb",
+      "f1ac71b740fcd38c7bbf459340753b13df78bbb79c92c12d54357a25a6821009",
+      "f3fd93b967196abeba75b75c7ee3fdf7ee61192ee21ada4c5589904197a3e60c",
+      "f4d59f7de4d750151be43ca788ed1b5f04c25555854269b5f2eb884df062e778",
+      "fa32729be6c135913f28c228667a820135d60a7018fc0af7602960f77251193e",
+      "fc9026bd13c4dc87f2ea711b28740ac2ef5451a554137799cac1ae1ddbfe1e0c",
+      "ffd271b04d5c68f60ea36df651dcb8fc40de7eee89ba98139aaaa67a0c30a5e5"
+    ]
+  },
+  {
+    "component": "fcffe61f1a2eaeb69074c05455570cacb3459087457ba5aeb89606abca1dd04a",
+    "split": "dev_probe",
+    "functions": 2,
+    "modules": [
+      "M10"
+    ],
+    "paths": [
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs"
+    ],
+    "token_ids": [
+      "070a6c75d4058d2f812d230a09492606149d2b1f474e6a5384e31cfb4775c62f",
+      "07a7556ee8d8fdd0407b65a2bbbda9f86353601d21b76931e435e137f77d1b62"
+    ]
+  }
+]
