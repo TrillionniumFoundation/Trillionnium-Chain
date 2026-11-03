@@ -503,3 +503,6 @@ pub mod pq_frame;
 pub mod pq_native_accounts_v2;
 pub mod pq_native_transfer_v1;
 pub mod pq_transfer;
+
+#[cfg(test)]
+mod sha2_backend_tests;
