@@ -1,0 +1,1062 @@
+From c9c503e414dc41a392e3b9b98a6bd2c6a5e8f099 Mon Sep 17 00:00:00 2001
+From: Offline PQ Hardening Draft <unapplied-patch@local.invalid>
+Date: Sat, 31 Oct 2026 04:19:48 +0000
+Subject: [PATCH] chore(security): add offline whole-chain PQ evidence gate
+ (unintegrated draft)
+
+---
+ security/pq/README.md                         |  70 +++++
+ security/pq/docs/ENGINEERING_PLAN.md          |  46 +++
+ security/pq/docs/THREAT_MODEL.md              |  80 +++++
+ .../pq/examples/pq_evidence_UNREVIEWED.json   | 232 ++++++++++++++
+ security/pq/policy/pq_policy.json             |  86 +++++
+ security/pq/tests/test_pq_audit.py            | 185 +++++++++++
+ security/pq/tools/pq_audit.py                 | 295 ++++++++++++++++++
+ 7 files changed, 994 insertions(+)
+ create mode 100644 security/pq/README.md
+ create mode 100644 security/pq/docs/ENGINEERING_PLAN.md
+ create mode 100644 security/pq/docs/THREAT_MODEL.md
+ create mode 100644 security/pq/examples/pq_evidence_UNREVIEWED.json
+ create mode 100644 security/pq/policy/pq_policy.json
+ create mode 100644 security/pq/tests/test_pq_audit.py
+ create mode 100755 security/pq/tools/pq_audit.py
+
+diff --git a/security/pq/README.md b/security/pq/README.md
+new file mode 100644
+index 0000000..c092e78
+--- /dev/null
++++ b/security/pq/README.md
+@@ -0,0 +1,70 @@
++# Trillionnium-Chain — Whole-Chain PQ-128 Hardening Kit (offline, unintegrated)
++
++**Status:** independent local tooling, **NOT** a patch merged into Trillionnium-Chain; **NOT** a PQ-128 certification.
++
++The GitHub connector returned `403 / Your account was suspended` on 2026-10-31, and no current repository clone was available. These files were built and tested without current repository source. Historical path hints were provided in the conversation, from snapshot `89218d818a1766c5610b64f09d75fc3d2ff6007d`. They need revalidation against live HEAD before integration. No commits, PRs, or mainline modifications were made.
++
++## What the kit does
++
++* Requires an exact Git HEAD and clean worktree for release evidence.
++* Generates review leads for Ed25519, ECDSA, secp256k1, Schnorr, RSA, Groth16 and BN254 occurrences. **Occurrences are not classified as deployed vulnerabilities**; each must be dispositioned with matching, tracked evidence before a release claim.
++* Requires all 15 pre-seeded critical authorization routes to be verified as `pq-only`, `hybrid-and`, or **proven** `inactive` (no live authority). `hybrid-or` is always rejected.
++* Checks role and chain binding, replay, epoch/version, signed-message downgrade resistance, rollback and classic-only negative tests.
++* Checks that an unqualified W1 candidate **cannot** be active. An inactive unqualified prototype is a warning, not proof that the currently deployed consensus is insecure. The live consensus backend requires independent evidence.
++* Requires an independently bounded quantum proof soundness claim for the **live** proof composition, separate from PoN mining economics.
++* Requires cheapest-legal-solver / quantum cost review, external monotonic rollback anchoring, and resource/DoS evidence.
++* Validates SHA-256 digests of evidence artifacts inside the repository and ensures they are tracked by the pinned commit in release mode.
++
++## Run
++
++Python 3.10+ required; no package dependencies.
++
++```bash
++# From this kit's directory. Replace /path/to/Trillionnium-Chain.
++python3 -m unittest discover -s tests -v
++
++python3 tools/pq_audit.py \
++  --repo /path/to/Trillionnium-Chain \
++  --policy policy/pq_policy.json \
++  --evidence examples/pq_evidence_UNREVIEWED.json \
++  --mode scan \
++  --out /tmp/trnm-pq-scan.json
++```
++
++`--mode scan` enumerates candidates and evaluates evidence completeness; it is expected to say `BLOCKED` with the supplied placeholder evidence. Read the full JSON report, including `classic_crypto_review_leads.hits[].fingerprint`, and do not call any unreviewed occurrence a production vulnerability.
++
++To prepare a release-gate run, add properly reviewed evidence artifacts **to the repository and commit them**. Only *after* source and artifacts are frozen, copy the placeholder evidence JSON **outside the repository**, fill `source_commit` with `git rev-parse HEAD`, use artifact-relative paths with `sha256` hashes, and independently review every listed source finding. Set a route to `inactive` only if its lack of live authority has been independently verified.
++
++```bash
++python3 tools/pq_audit.py \
++  --repo /path/to/Trillionnium-Chain \
++  --policy policy/pq_policy.json \
++  --evidence /outside/repo/pq_evidence_FOR_FROZEN_SHA.json \
++  --mode release \
++  --out /tmp/trnm-pq-release.json
++```
++
++The CLI returns exit code `1` if any mandatory blocker exists, `2` for input errors, or `0` when machine-checkable evidence metadata is complete. Even exit `0` means **`METADATA_READY_INDEPENDENT_SECURITY_REVIEW_STILL_REQUIRED`**, not that crypto security has been proven. Audit statements in metadata are human assertions; SHA-256 artifact integrity is not proof of those assertions' truth. Independent cryptographers and production replay tests must approve any claim.
++
++## Layout
++
++- `tools/pq_audit.py`: runnable evidence validator and source-use heuristic scanner.
++- `policy/pq_policy.json`: required roles, candidate W1 manifest path, and adversarial solver classes.
++- `examples/pq_evidence_UNREVIEWED.json`: explicitly **unqualified** starting evidence, all gates blocked.
++- `tests/test_pq_audit.py`: standalone synthetic tests of the validator (not chain tests).
++- `docs/THREAT_MODEL.md`: protocol threats, trust roots and cryptographic boundaries.
++- `docs/ENGINEERING_PLAN.md`: concrete module-by-module migration and acceptance criteria.
++
++## Constraints
++
++1. Does not verify ML-DSA signatures, proofs, STARK soundness, or quantum gate counts.
++2. Does not follow dynamic authority/control flows or prove complete code coverage; manual source tracing remains required.
++3. `classic_crypto_review_leads` is a heuristic list, not a static taint proof. Comment/test-only signatures can be marked `test_only` / `non_authoritative` with evidence.
++4. Does not handle runtime activation, and has not exercised a real Trillionnium node.
++5. Must be integrated and evaluated against a current cloned HEAD before it can block a real release.
++
++## Grounding
++
++- [NIST FIPS 204 (ML-DSA)](https://csrc.nist.gov/pubs/fips/204/final)
++- [RISC Zero 3.0 cryptographic security model](https://dev.risczero.com/api/security-model): RISC-V STARK 96, recursion 99, Groth16 is not post-quantum.
++- [Bailey and Sattath, 2024, quantum difficulty attack](https://arxiv.org/abs/2403.08023): an adversarial model for certain PoW protocols, **not** a demonstrated exploit of this repository.
+diff --git a/security/pq/docs/ENGINEERING_PLAN.md b/security/pq/docs/ENGINEERING_PLAN.md
+new file mode 100644
+index 0000000..eba82db
+--- /dev/null
++++ b/security/pq/docs/ENGINEERING_PLAN.md
+@@ -0,0 +1,46 @@
++# P0–P6 implementation and acceptance matrix
++
++This is a concrete engineering plan, **not** a statement that the work is already merged.
++
++| Phase | Engineering deliverable | Mandatory executable or independent evidence | Default state |
++|---|---|---|---|
++| P0 | Frozen main SHA + PR/branch candidate matrix, live-authority directed graph | HEAD, base, blob hashes; every authority write traced back to its signer/role; proof of inactive path where claimed | NOT VERIFIED |
++| P1 | Typed authorization envelope + one verified policy engine for account/task/Hepta/provider/upgrade/recovery | Domain separation, PQ ownership anchored, explicit `pq-only` or `hybrid-and`; adversarial negative tests at each ingress and final state mutation | NOT VERIFIED |
++| P2 | Rotation/epoch/cutover and anti-downgrade | Classic-only rejected post-cutover; unknown algorithm rejected; hybrid signature stripping and key misbinding tests; inactive legacy format no authority | NOT VERIFIED |
++| P3 | Live proof system PQ-128 review and W1 candidate qualification | Guest/program digest, recursion/transcript/FRI/FS model, independently validated quantum soundness >= 128, real invalid proof rejection, Groth16 route closed | NOT VERIFIED |
++| P4 | Complete PoN cheapest-legal-solver security | Optimized classical and quantum search on the *valid* relation; low-rank/matrix/batch/precompute; worst-case invalid proof; difficulty/fork-choice attack replay | NOT VERIFIED |
++| P5 | Snapshot, reorg, rollback and revocation resilience | External monotonic anchor or explicitly accepted external trust model; multi-crash tests; restart/reorg/deep fork; key revocation cannot be rolled back | NOT VERIFIED |
++| P6 | Network capacity / DoS + independent replay/sign-off | Real node network and malformed input budgets; peak RSS, verification p99, propagation, block sizes, WAL/restore; third-party review tied to exact SHA | NOT VERIFIED |
++
++## Suggested source-specific code tasks after the actual repo becomes readable
++
++**P0: enumerate actual authority writes.** Search node ingress, task V5, Hepta admission/handoff, Cell provider discovery, model publishing, validator/finality, governance and recovery. Record whether each Ed25519 usage is test-only, historical read-only or active authority. Do not do broad blind `ed25519 -> ml_dsa` replacements: wire format and key lifecycle change.
++
++**P1/P2: implement versioned canonical authorization.** New domain-separated signed envelope should carry chain ID, subject ID, role, keyset digest, policy version, epoch, nonce, event digest, expiry and explicit mode. Centralize verify-to-authorize to remove duplicate legacy fallback. Tests must call real ingress or authorization APIs, not only policy helper functions. A valid ML-DSA signature is insufficient if it has the wrong role, chain, epoch or key registration.
++
++**P3: freeze exactly what W1 proves.** Lock guest image/verifier binary, transcript and recursive composition. A W1 manifest's `production_consensus_activation=false` should remain fail-closed until cryptographic and operational qualification. The code must distinguish research/test receipts from consensus finality receipts, with no Groth16, Fake or untrusted remote receipt accepted as substitutes.
++
++**P4: adversarial solver baseline.** Generate families of legal/invalid witnesses and include preprocessing costs amortized across multiple challenges. Profile real optimized solutions under identical hardware/energy/latency budgets. For quantum analysis, count reversible oracle synthesis, error correction overhead, memory access, uncomputation and end-to-end block creation. Test timestamp manipulation, difficulty transition boundaries and cumulative-work fork choice. Treat any unbounded upper estimate as **not** proof of a lower bound.
++
++**P5: externally anchored restoration.** Persist key rotation and cutover state in a replayable, signed journal but do not trust an entirely self-contained old snapshot as proof of current epoch. Include a separately protected monotonic anchor/certified checkpoint and reject backwards moves unless an explicit disaster-recovery protocol authorizes them.
++
++**P6: capacity limits.** Verify maximum accepted sizes *before* heavy cryptographic work when safe, use bounded allocations, peer abuse controls, peer reputation not as sole security, and measured rejection CPU. Record p95/p99 and worst invalid input, not just happy-path throughput.
++
++## Required negative test checklist
++
++- Classic valid / PQ missing; classic valid / PQ malformed; PQ valid / classic missing in a hybrid epoch.
++- Disagreeing signer keysets; signature stripped/downgraded; unknown algorithm tag; legacy version reinterpreted.
++- Replay in same chain, different chain ID, old epoch, future version, changed role and key rotation.
++- Candidate verifier bound to wrong guest image, wrong public journal, wrong transcript/config, wrong recursion code, Groth16 compression substituted.
++- Malformed/oversize ML-DSA signature, public key, proof and witness; exhaustion across 10k repeated invalid requests.
++- Timestamp and difficulty adversarial forks, private branch withheld, deep reorg, cheapest structured matrices and multi-challenge preprocessing.
++- DB restored to old valid snapshot, rollback to revoked key, power loss before/after anchor persistence, chain state ahead of external anchor.
++
++## Explicit unverified blockers to report on every release review
++
++1. Current HEAD and deployment configuration unknown? **No release qualification.**
++2. Any active authority signable with classic-only? **No whole-chain PQ.**
++3. Any active proof mode without >=128 conservative quantum bound? **No PQ-128 claim.**
++4. PoN quantum adversarial model absent? **No assertion of bounded quantum mining advantage.**
++5. Anti-rollback external trust not defined? **No durable PQ ownership guarantee.**
++6. No actual p99/DoS evidence? **No production-readiness assertion.**
+diff --git a/security/pq/docs/THREAT_MODEL.md b/security/pq/docs/THREAT_MODEL.md
+new file mode 100644
+index 0000000..ba8b04f
+--- /dev/null
++++ b/security/pq/docs/THREAT_MODEL.md
+@@ -0,0 +1,80 @@
++# Whole-chain post-quantum threat model
++
++**Scope:** Trillionnium-Chain; protocol, on-chain transactions, networking, node identity, Hepta workload authority, data availability, model publishing, governance, consensus proof production/verification, recovery and chain fork choice. **Source basis:** user-supplied historical audit at `89218d818a1766c5610b64f09d75fc3d2ff6007d`; live HEAD was inaccessible on 2026-10-31. Each historical observation is a review lead, not a newly confirmed deployed bug.
++
++## 1. Claim levels that must not be conflated
++
++1. A component uses ML-DSA or a STARK family primitive.
++2. A concrete configured component is quantum-resistant under explicit assumptions.
++3. All live **authority** entrypoints and their trust roots have no quantum-breakable bypass.
++4. The complete consensus/recovery/network economy remains secure under a quantified quantum attacker.
++5. The whole deployed chain meets **PQ-128** after independent cryptographic review, parameter analysis, and reproducible implementation evidence.
++
++Only (5), established across all gates, supports a whole-chain PQ-128 claim. A crypto module conforming to FIPS 204 does not imply full protocol or cryptographic-module certification.
++
++## 2. Adversaries and assets
++
++**Adversaries:** future cryptographically relevant fault-tolerant quantum attacker; classical adversaries who exploit migration and rollback; remote peers supplying maximum-size invalid signatures/proofs; malicious miners manipulating timestamp, difficulty, and private fork; compromised operators issuing downgrade upgrades; restore operators with an older internally consistent DB; forged discovery/handoff/model-publication authority.
++
++**Assets:** coins and transaction authorization; account ownership across key rotation and reorg; task funding/reward/finality; identity/admission/peer handoff; DA provider discovery and trust; signed model artifacts, evaluators, release gates; validator participation/finality; upgrades/governance/emergency keys; old snapshots and external checkpoints.
++
++**Capabilities to model:** adversary obtains signatures from a broken classical scheme and may control old persisted state, but does **not** automatically break ML-DSA or the chosen post-quantum proof relation. The quantum oracle must model **complete valid PoN work**, including reversible input computation, uncomputation, data loading, precomputation amortization, and real publication constraints.
++
++## 3. Live authority tracking
++
++Trace each externally controlled entrypoint:
++
++`ingress -> parse/normalize -> algorithm negotiation -> key binding -> signature verification -> nonce/version/epoch -> policy authorization -> final state change -> receipt/ledger/finality -> restart/reorg/restore`.
++
++For each: record source HEAD SHA, code path, critical state write, verified public-key identity, signature algorithm/version, whether legacy options are reachable, trust root, test evidence, and **whether this path is live**. A source-level Ed25519 mention is not automatically exploitable. An inactive config is not a live vulnerability unless a path enables it or its authority leaks.
++
++Historical leads requiring inspection:
++
++| Trust edge | Historical source path | Key question |
++|---|---|---|
++| PQ account/auth | `trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs` | Who controls account ownership, rotation, nonce? |
++| Task V5 | `trillionnium/crates/trnm-pon-node/src/pq_tasks_v5.rs` | Task author, evaluator, installation and settlement? |
++| Node ingress | `trillionnium/crates/trnm-pon-node/src/ingress.rs` | Does classic peer auth ever authorize live activity? |
++| Hepta handoff | `trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs` | Can `SignedHeptaAdmissionV1` affect authority? |
++| Provider discovery | `trillionnium/crates/trnm-data-availability/src/cell/discovery.rs` | Can signed records affect trusted data routing? |
++| W1 candidate | `trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json` | Is it **active** and is the concrete verifier qualified? |
++
++## 4. Authorization policy
++
++For every high-value signed operation, verify a canonical, injectively encoded, domain-separated message such as:
++
++```
++TRNM/PQ-AUTH/v1 || chain_id || genesis_hash || role_id || action_type ||
++subject_id || epoch || generation || nonce || expiry || signer_keyset_digest ||
++algorithm_policy_digest || payload_digest
++```
++
++Use a length-delimited typed encoding, not ambiguous string concatenation. The signed bytes and public-key binding must be identical across all mandatory signature checks. Reject unknown algorithms, inconsistent key IDs, stale epochs, duplicate/replayed nonces, changed chain IDs, version downgrades and signature stripping.
++
++`hybrid-and` accepts only when **both independently bound** signatures validate. A classical-only accepted fallback defeats quantum safety. `pq-only` is viable when PQ ownership is already established under an acceptable trust model; permanent hybrid AND is not universally required. A historical format may remain readable when demonstrably incapable of minting new authority.
++
++**Irreversible migration problem:** a long-dormant account with only a classical key cannot be assumed safely migrated after that key becomes forgeable. Pre-position a PQ owner commitment and activation schedule before the classical break, or use a separately reviewed recovery/freeze policy. Never permit a compromised classical signature to assign a new PQ root unrestricted.
++
++## 5. Proof, STARK and PQ-128
++
++User-supplied historical candidate: RISC Zero 3.0.6, SHA-256 transcript, Poseidon2 commitments, composite receipt, `pq_128_security_qualified=false`, `production_consensus_activation=false`.
++
++RISC Zero 3.0's own published **cryptographic security model** lists 96 bits for its RISC-V STARK prover and 99 bits for its recursion prover, with a `Quantum Safe? Yes` modeling assumption, while STARK-to-SNARK Groth16 is `No` [source](https://dev.risczero.com/api/security-model). Therefore: do not infer 128-bit quantum security from STARK family, transcript hash or a Boolean manifest. Fix concrete relation, guest code/image ID, prover/recursion/verifier versions, FRI/commitment/transcript parameters, Fiat-Shamir in the quantum model and end-to-end composition, then obtain independent conservative quantum-soundness estimates.
++
++For an **inactive** candidate, a false qualification is a warning and forbids activation, not evidence of the live network's proof backend. Independently identify the **live** proof path and prove it meets the advertised claim.
++
++## 6. PoN quantum mining and consensus
++
++Classical vs. quantum work costs must include cheapest **valid** ticket production, not a hand-picked oracle example. Cases: zero/low rank, structured matrices, precomputation, bulk/parallel challenge reuse, GPU/ASIC baselines, full quantum reversible oracle, special difficulty epochs, timestamp manipulation, cumulative-work fork choice, deep reorg and networking/propagation.
++
++A key threat is that expected work weighting `W(d)` can be linear in difficulty while an idealized quantum attack's cost `C_Q(d)` can grow sublinearly, depending on the actual relation and protocol. Bailey/Sattath (2024) show a version of this issue for some PoW rules; the paper does not establish an exploit against PoN specifically. Bound advantage under a declared adversary budget and verify that difficulty adjustment and fork choice remain safe. A quantum **upper** cost for one constructed oracle is **not** a lower bound on the cheapest attacker.
++
++## 7. Rollback and resource economics
++
++A perfectly internally consistent old DB with old nonce and journal cannot always detect that it was restored. Evaluate external monotonic checkpoints, anchored keyset epoch, finality/reorg policy, authority revocation, clock/epoch behavior, power-cut at every update boundary and explicit fail-closed behavior on missing anchors.
++
++Measure ML-DSA public-key/signature storage, peak memory, verify p95/p99 CPU, invalid signatures, malformed proofs, gossip amplification, block limits, mempool pressure, WAL and recovery. Test adversarial combinations; an algorithm's published nominal sizes are not a production network budget.
++
++## 8. Final sign-off
++
++Required independent evidence includes source HEAD SHA, independent evaluator, immutable artifacts with digest, reproducible build/test inputs, negative tests that reject all downgrade paths, quantified assumptions/limits and explicit deployment activation checks. Only then may a security board decide on claim wording. Any unknown remains unqualified.
+diff --git a/security/pq/examples/pq_evidence_UNREVIEWED.json b/security/pq/examples/pq_evidence_UNREVIEWED.json
+new file mode 100644
+index 0000000..c681eb8
+--- /dev/null
++++ b/security/pq/examples/pq_evidence_UNREVIEWED.json
+@@ -0,0 +1,232 @@
++{
++  "schema_version": 1,
++  "source_commit": null,
++  "inventory": {
++    "entrypoints_enumerated": false,
++    "artifacts": []
++  },
++  "routes": {
++    "transaction": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "account-rotation": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "task-auth": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "node-ingress": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "hepta-handoff": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "provider-discovery": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "model-release": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "validator-finality": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "governance-upgrade": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "recovery": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "cross-chain": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "task-evaluation": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "reward-settlement": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "signer-registration": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    },
++    "emergency-upgrade": {
++      "mode": "unknown",
++      "role_and_chain_bound": false,
++      "nonce_replay_rejected": false,
++      "signature_stripping_rejected": false,
++      "epoch_and_version_bound": false,
++      "rollback_rejected": false,
++      "classical_only_rejected": false,
++      "no_live_authority": false,
++      "artifacts": []
++    }
++  },
++  "migration": {
++    "pq_owner_bound_before_classic_break": false,
++    "no_classical_fallback_post_cutover": false,
++    "key_rotation_and_reorg_tested": false,
++    "unknown_algorithm_rejected": false,
++    "artifacts": []
++  },
++  "live_consensus_proof": {
++    "backend": "unknown",
++    "conservative_quantum_soundness_bits": 0,
++    "independent_crypto_review_passed": false,
++    "no_groth16_or_classical_proof_fallback": false,
++    "guest_verifier_transcript_parameter_bound": false,
++    "real_invalid_receipts_rejected": false,
++    "rollback_and_reorg_proof_rejection_tested": false,
++    "artifacts": []
++  },
++  "pon_quantum": {
++    "full_valid_w1_oracle_modeled": false,
++    "precomputation_amortized": false,
++    "resource_and_uncompute_costed": false,
++    "block_propagation_and_reorg_costed": false,
++    "quantum_difficulty_attack_bounded": false,
++    "cumulative_work_fork_choice_tested": false,
++    "independent_adversarial_review_passed": false,
++    "solver_cases": {
++      "zero_or_low_rank": "unreviewed",
++      "special_matrices": "unreviewed",
++      "precompute_amortization": "unreviewed",
++      "multi_challenge_batch": "unreviewed",
++      "hardware_gpu_asic": "unreviewed",
++      "reversible_quantum_oracle": "unreviewed",
++      "invalid_proof_worst_case": "unreviewed",
++      "timestamp_difficulty_manipulation": "unreviewed",
++      "deep_fork_reorganization": "unreviewed"
++    },
++    "artifacts": []
++  },
++  "recovery": {
++    "external_monotonic_anchor": false,
++    "internal_snapshot_replay_rejected": false,
++    "key_revocation_survives_reorg": false,
++    "power_loss_recovery_verified": false,
++    "downgrade_on_restore_rejected": false,
++    "artifacts": []
++  },
++  "capacity": {
++    "ml_dsa_size_budget": false,
++    "invalid_signature_cpu_budget": false,
++    "invalid_proof_cpu_budget": false,
++    "network_propagation_p99_budget": false,
++    "peer_malformed_input_bounded": false,
++    "persistent_storage_budget": false,
++    "artifacts": []
++  },
++  "artifacts": {},
++  "classic_usage_dispositions": {}
++}
+diff --git a/security/pq/policy/pq_policy.json b/security/pq/policy/pq_policy.json
+new file mode 100644
+index 0000000..ad85a69
+--- /dev/null
++++ b/security/pq/policy/pq_policy.json
+@@ -0,0 +1,86 @@
++{
++  "schema_version": 1,
++  "repository": "TrillionniumFoundation/Trillionnium-Chain",
++  "minimum_quantum_security_bits": 128,
++  "critical_routes": [
++    {
++      "id": "transaction",
++      "focus": "account signatures and replay protection",
++      "historical_hint": "trnm-crypto-primitives/src/pq_auth.rs"
++    },
++    {
++      "id": "account-rotation",
++      "focus": "PQ ownership before classic key expiry, nonce and reorg"
++    },
++    {
++      "id": "task-auth",
++      "focus": "task issuance, cancellation, settlement",
++      "historical_hint": "trnm-pon-node/src/pq_tasks_v5.rs"
++    },
++    {
++      "id": "node-ingress",
++      "focus": "peer authentication that grants authority",
++      "historical_hint": "trnm-pon-node/src/ingress.rs"
++    },
++    {
++      "id": "hepta-handoff",
++      "focus": "SignedHeptaAdmissionV1 and transition authority",
++      "historical_hint": "trnm-research-protocol/src/hepta_handoff.rs"
++    },
++    {
++      "id": "provider-discovery",
++      "focus": "Cell provider records granting trust",
++      "historical_hint": "trnm-data-availability/src/cell/discovery.rs"
++    },
++    {
++      "id": "model-release",
++      "focus": "model digest, publisher and evaluator authority"
++    },
++    {
++      "id": "validator-finality",
++      "focus": "validator epoch and finality authority"
++    },
++    {
++      "id": "governance-upgrade",
++      "focus": "upgrade, activation and governance keys"
++    },
++    {
++      "id": "recovery",
++      "focus": "checkpoint, owner recovery and restore"
++    },
++    {
++      "id": "cross-chain",
++      "focus": "bridge and external transaction authorization"
++    },
++    {
++      "id": "task-evaluation",
++      "focus": "evaluator voting, authority and verdict binding"
++    },
++    {
++      "id": "reward-settlement",
++      "focus": "task reward entitlement and settlement authorization"
++    },
++    {
++      "id": "signer-registration",
++      "focus": "key enrollment and identity trust root"
++    },
++    {
++      "id": "emergency-upgrade",
++      "focus": "emergency pause, override and production activation"
++    }
++  ],
++  "proof": {
++    "candidate_manifest_path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json"
++  },
++  "required_solver_cases": [
++    "zero_or_low_rank",
++    "special_matrices",
++    "precompute_amortization",
++    "multi_challenge_batch",
++    "hardware_gpu_asic",
++    "reversible_quantum_oracle",
++    "invalid_proof_worst_case",
++    "timestamp_difficulty_manipulation",
++    "deep_fork_reorganization"
++  ]
++}
+diff --git a/security/pq/tests/test_pq_audit.py b/security/pq/tests/test_pq_audit.py
+new file mode 100644
+index 0000000..504d627
+--- /dev/null
++++ b/security/pq/tests/test_pq_audit.py
+@@ -0,0 +1,185 @@
++"""Tests for evidence-gate logic, using synthetic repositories only."""
++import copy
++import hashlib
++import importlib.util
++import json
++import os
++import subprocess
++import tempfile
++import unittest
++from pathlib import Path
++
++HERE = Path(__file__).resolve().parents[1]
++spec = importlib.util.spec_from_file_location('pq_audit', HERE / 'tools' / 'pq_audit.py')
++auditor = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(auditor)
++POLICY = json.loads((HERE / 'policy' / 'pq_policy.json').read_text())
++BASE = json.loads((HERE / 'examples' / 'pq_evidence_UNREVIEWED.json').read_text())
++
++
++def init_git(root):
++    for command in [['git', 'init', '-q'], ['git', 'config', 'user.email', 'pq-gate@test.invalid'],
++                    ['git', 'config', 'user.name', 'Gate test'], ['git', 'add', '.'],
++                    ['git', 'commit', '-qm', 'fixture']]:
++        subprocess.run(command, cwd=root, check=True, capture_output=True)
++    return subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
++
++
++class GateTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.repo = Path(self.temp.name) / 'repo'
++        self.repo.mkdir()
++        manifest = self.repo / POLICY['proof']['candidate_manifest_path']
++        manifest.parent.mkdir(parents=True)
++        manifest.write_text(json.dumps({'pq_128_security_qualified': False,
++                                        'production_consensus_activation': False}))
++        (self.repo / 'evidence').mkdir()
++        (self.repo / 'evidence' / 'artifact.txt').write_text('SYNTHETIC TEST ARTIFACT; NOT REAL SECURITY EVIDENCE\n')
++        (self.repo / 'node.rs').write_text('fn verify_ed25519_signature() {}\n')
++        self.sha = init_git(self.repo)
++        self.e = copy.deepcopy(BASE)
++        self.e['source_commit'] = self.sha
++
++    def run_audit(self, evidence=None, mode='release'):
++        return auditor.perform_audit(self.repo, POLICY, evidence or self.e, mode=mode, include_scan=True)
++
++    def attest_dummy_artifact(self):
++        a = self.repo / 'evidence' / 'artifact.txt'
++        self.e['artifacts'] = {'synthetic': {'path': 'evidence/artifact.txt',
++                                              'sha256': hashlib.sha256(a.read_bytes()).hexdigest()}}
++        return ['synthetic']
++
++    def prepare_synthetic_pass(self):
++        ref = self.attest_dummy_artifact()
++        self.e['inventory'] = {'entrypoints_enumerated': True, 'artifacts': ref}
++        self.e['classic_usage_dispositions'] = {
++            item['fingerprint']: {'disposition':'test_only', 'artifacts': ref}
++            for item in auditor.scan_source(self.repo)['hits']
++        }
++        for route in self.e['routes'].values():
++            route.update({'mode': 'pq-only', 'role_and_chain_bound': True,
++                          'nonce_replay_rejected': True, 'signature_stripping_rejected': True,
++                          'epoch_and_version_bound': True, 'rollback_rejected': True,
++                          'classical_only_rejected': True, 'artifacts': ref})
++        self.e['migration'].update({key: True for key in
++          ('pq_owner_bound_before_classic_break', 'no_classical_fallback_post_cutover',
++           'key_rotation_and_reorg_tested', 'unknown_algorithm_rejected')})
++        self.e['migration']['artifacts'] = ref
++        self.e['live_consensus_proof'].update({
++            'backend': 'synthetic-not-a-real-proof', 'conservative_quantum_soundness_bits': 128,
++            'independent_crypto_review_passed': True, 'no_groth16_or_classical_proof_fallback': True,
++            'guest_verifier_transcript_parameter_bound': True, 'real_invalid_receipts_rejected': True,
++            'rollback_and_reorg_proof_rejection_tested': True, 'artifacts': ref})
++        p = self.e['pon_quantum']
++        for k in ('full_valid_w1_oracle_modeled', 'precomputation_amortized', 'resource_and_uncompute_costed',
++                  'block_propagation_and_reorg_costed', 'quantum_difficulty_attack_bounded',
++                  'cumulative_work_fork_choice_tested', 'independent_adversarial_review_passed'):
++            p[k] = True
++        p['solver_cases'] = {x:'tested' for x in POLICY['required_solver_cases']}
++        p['artifacts'] = ref
++        for sect, keys in (
++            ('recovery',('external_monotonic_anchor','internal_snapshot_replay_rejected',
++                         'key_revocation_survives_reorg','power_loss_recovery_verified',
++                         'downgrade_on_restore_rejected')),
++            ('capacity',('ml_dsa_size_budget','invalid_signature_cpu_budget',
++                         'invalid_proof_cpu_budget','network_propagation_p99_budget',
++                         'peer_malformed_input_bounded','persistent_storage_budget'))):
++            self.e[sect].update({k:True for k in keys})
++            self.e[sect]['artifacts'] = ref
++
++    def test_unreviewed_baseline_must_block(self):
++        r = self.run_audit()
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertGreater(r['check_counts']['BLOCKER'], 50)
++        self.assertEqual(len(r['classic_crypto_review_leads']['hits']), 1)
++
++    def test_synthetic_metadata_only_pass_not_a_certification(self):
++        self.prepare_synthetic_pass()
++        r = self.run_audit()
++        self.assertEqual(r['verdict'], 'METADATA_READY_INDEPENDENT_SECURITY_REVIEW_STILL_REQUIRED')
++        self.assertGreaterEqual(r['check_counts']['WARNING'], 1)  # inactive candidate
++        self.assertIn('Does NOT independently prove', r['scope'])
++
++    def test_unreviewed_classic_usage_blocks_even_when_other_gates_pass(self):
++        self.prepare_synthetic_pass()
++        self.e['classic_usage_dispositions'] = {}
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_release_cannot_skip_source_scan(self):
++        self.prepare_synthetic_pass()
++        r = auditor.perform_audit(self.repo, POLICY, self.e, mode='release', include_scan=False)
++        self.assertEqual(r['verdict'], 'BLOCKED')
++
++    def test_hybrid_or_is_never_accepted(self):
++        self.prepare_synthetic_pass()
++        self.e['routes']['hepta-handoff']['mode'] = 'hybrid-or'
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_missing_classic_downgrade_negative_test_blocks(self):
++        self.prepare_synthetic_pass()
++        self.e['routes']['node-ingress']['classical_only_rejected'] = False
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_inactive_route_requires_proof_no_live_authority(self):
++        self.prepare_synthetic_pass()
++        self.e['routes']['provider-discovery']['mode'] = 'inactive'
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++        self.e['routes']['provider-discovery']['no_live_authority'] = True
++        self.assertNotEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_activation_with_unqualified_manifest_blocks(self):
++        self.prepare_synthetic_pass()
++        manifest = self.repo / POLICY['proof']['candidate_manifest_path']
++        manifest.write_text(json.dumps({'pq_128_security_qualified': False,
++                                        'production_consensus_activation': True}))
++        r = self.run_audit(mode='scan')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('w1-candidate:activation-safe', [x['id'] for x in r['checks'] if x['status']=='BLOCKER'])
++
++    def test_dirty_source_blocks_release(self):
++        self.prepare_synthetic_pass()
++        (self.repo / 'node.rs').write_text('changed')
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_stale_source_commit_blocks_release(self):
++        self.prepare_synthetic_pass()
++        self.e['source_commit'] = '0' * 40
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_path_escape_rejected_even_if_digest_present(self):
++        self.prepare_synthetic_pass()
++        self.e['artifacts']['synthetic']['path'] = '../secret.txt'
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_bad_artifact_hash_blocks(self):
++        self.prepare_synthetic_pass()
++        self.e['artifacts']['synthetic']['sha256'] = '0'*64
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_untracked_evidence_file_rejected(self):
++        self.prepare_synthetic_pass()
++        (self.repo / 'evidence' / 'untracked.txt').write_text('not committed')
++        self.e['artifacts']['synthetic']['path'] = 'evidence/untracked.txt'
++        self.e['artifacts']['synthetic']['sha256'] = hashlib.sha256(b'not committed').hexdigest()
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_no_external_rollback_anchor_blocks(self):
++        self.prepare_synthetic_pass()
++        self.e['recovery']['external_monotonic_anchor'] = False
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_missing_solver_case_blocks(self):
++        self.prepare_synthetic_pass()
++        self.e['pon_quantum']['solver_cases'].pop('special_matrices')
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++    def test_missing_independent_review_blocks(self):
++        self.prepare_synthetic_pass()
++        self.e['live_consensus_proof']['independent_crypto_review_passed'] = False
++        self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/security/pq/tools/pq_audit.py b/security/pq/tools/pq_audit.py
+new file mode 100755
+index 0000000..667ebaf
+--- /dev/null
++++ b/security/pq/tools/pq_audit.py
+@@ -0,0 +1,295 @@
++#!/usr/bin/env python3
++"""Fail-closed evidence-gate and heuristic source inventory for PQ claims.
++
++This is an evidence-completeness validator, NOT cryptographic verification or an
++independent certification. Works with Python >=3.10 and the standard library.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import re
++import subprocess
++import sys
++from pathlib import Path
++
++EXCLUDED_DIRS = {'.git', 'target', 'node_modules', '.venv', 'venv', 'dist', 'build', '__pycache__'}
++SOURCE_SUFFIXES = {'.rs', '.go', '.ts', '.tsx', '.js', '.sol', '.c', '.h', '.cc', '.cpp', '.hpp', '.proto'}
++CLASSIC_RE = re.compile(r'(?i)(?<![a-z0-9])(?:ed25519|ecdsa|secp256k1|secp256r1|p256|schnorr|rsa(?:_pss)?|groth16|bn254)(?![a-z0-9])')
++AUTH_RE = re.compile(r'(?i)\b(?:verify|verification|authorize|authorization|admission|handoff|governance|provider|identity|nonce|signer|signature|recovery|upgrade|validator|finality|consensus|transaction|account|authenticate)\b')
++CRITICAL_ROUTES = ('transaction', 'account-rotation', 'task-auth', 'node-ingress', 'hepta-handoff',
++                   'provider-discovery', 'model-release', 'task-evaluation', 'reward-settlement',
++                   'signer-registration', 'emergency-upgrade', 'validator-finality',
++                   'governance-upgrade', 'recovery', 'cross-chain')
++ACCEPTED_MODES = {'pq-only', 'hybrid-and', 'inactive'}
++VALID_SHA = re.compile(r'^[a-fA-F0-9]{40}$')
++
++
++def load_json(path: Path):
++    with path.open('r', encoding='utf-8') as f:
++        return json.load(f)
++
++
++def report_check(checks, name, ok, description, severity='BLOCKER'):
++    checks.append({'id': name, 'status': 'PASS' if ok else severity, 'description': description})
++
++
++def inside_repo(repo: Path, relative: str) -> Path:
++    if not isinstance(relative, str) or not relative or Path(relative).is_absolute():
++        raise ValueError('artifact path must be nonempty and relative')
++    p = (repo / relative).resolve()
++    if not p.is_relative_to(repo.resolve()):
++        raise ValueError('artifact escapes repository root')
++    return p
++
++
++def check_artifacts(repo: Path, references, artifacts, checks, label: str) -> bool:
++    if not isinstance(references, list) or not references:
++        report_check(checks, label, False, 'no artifact identifiers declared')
++        return False
++    seen = set()
++    valid = True
++    for ident in references:
++        if not isinstance(ident, str) or ident in seen:
++            report_check(checks, label, False, 'invalid or repeated artifact identifier')
++            valid = False
++            continue
++        seen.add(ident)
++        entry = artifacts.get(ident) if isinstance(artifacts, dict) else None
++        if not isinstance(entry, dict):
++            report_check(checks, label + ':' + ident, False, 'missing artifact metadata')
++            valid = False
++            continue
++        try:
++            path = inside_repo(repo, entry['path'])
++            digest = entry['sha256']
++            if not re.fullmatch(r'[a-fA-F0-9]{64}', digest):
++                raise ValueError('invalid SHA-256')
++            if not path.is_file() or path.stat().st_size > 50_000_000:
++                raise ValueError('artifact missing or exceeds 50 MB limit')
++            actual = hashlib.sha256(path.read_bytes()).hexdigest()
++            if actual != digest.lower():
++                raise ValueError('artifact digest mismatch')
++            report_check(checks, label + ':' + ident, True, 'artifact SHA-256 matched: ' + entry['path'])
++        except (ValueError, KeyError, OSError, TypeError) as exc:
++            report_check(checks, label + ':' + ident, False, str(exc))
++            valid = False
++    return valid
++
++
++def git_revision(repo: Path):
++    try:
++        sha = subprocess.run(['git', '-C', str(repo), 'rev-parse', 'HEAD'], capture_output=True,
++                             text=True, timeout=10, check=True).stdout.strip()
++        dirty = subprocess.run(['git', '-C', str(repo), 'status', '--porcelain', '--untracked-files=all'],
++                               capture_output=True, text=True, timeout=10, check=True).stdout.strip()
++        return sha, bool(dirty)
++    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
++        return None, None
++
++
++def scan_source(repo: Path, limit=1500):
++    """Review leads only: classic signature presence does NOT prove live authority."""
++    hits = []
++    files_examined = 0
++    for folder, dirs, files in os.walk(repo):
++        dirs[:] = sorted(d for d in dirs if d not in EXCLUDED_DIRS and not (Path(folder) / d).is_symlink())
++        for filename in sorted(files):
++            p = Path(folder) / filename
++            if p.suffix.lower() not in SOURCE_SUFFIXES or p.is_symlink():
++                continue
++            try:
++                if p.stat().st_size > 3_000_000:
++                    continue
++                files_examined += 1
++                rel = p.relative_to(repo).as_posix()
++                with p.open('r', encoding='utf-8', errors='replace') as f:
++                    for ln, line in enumerate(f, 1):
++                        pattern = CLASSIC_RE.search(line)
++                        if pattern:
++                            fingerprint = hashlib.sha256((rel + '\0' + str(ln) + '\0' + line.rstrip('\n')).encode('utf-8')).hexdigest()[:24]
++                            hits.append({'fingerprint': fingerprint, 'path': rel, 'line': ln, 'algorithm': pattern.group(0),
++                                         'authority_hint_on_line': bool(AUTH_RE.search(line)),
++                                         'excerpt': line.strip()[:220], 'review_status': 'UNREVIEWED'})
++                            if len(hits) >= limit:
++                                return {'files_examined': files_examined, 'truncated': True, 'hits': hits}
++            except (UnicodeError, OSError):
++                continue
++    return {'files_examined': files_examined, 'truncated': False, 'hits': hits}
++
++
++def check_authority(policy, evidence, repo, artifacts, checks):
++    inventory = evidence.get('inventory', {})
++    report_check(checks, 'authority:inventory-reviewed', inventory.get('entrypoints_enumerated') is True,
++                 'all live authorization entrypoints must be enumerated and reviewed')
++    check_artifacts(repo, inventory.get('artifacts'), artifacts, checks, 'authority:inventory-evidence')
++    routes = evidence.get('routes', {})
++    policy_routes = policy.get('critical_routes', [])
++    config_ids = [x.get('id') for x in policy_routes if isinstance(x, dict)]
++    report_check(checks, 'authority:critical-route-coverage',
++                 len(config_ids) == len(set(config_ids)) and set(CRITICAL_ROUTES).issubset(set(config_ids)),
++                 'policy must include every predefined critical route, without duplicate IDs')
++    for route in policy_routes:
++        rid = route.get('id', 'unknown')
++        record = routes.get(rid, {}) if isinstance(routes, dict) else {}
++        mode = record.get('mode', 'unknown')
++        report_check(checks, f'authority:{rid}:mode', mode in ACCEPTED_MODES,
++                     'allowed only pq-only, hybrid-and, or proven inactive; hybrid-or and unknown are forbidden')
++        fields = ('role_and_chain_bound', 'nonce_replay_rejected', 'signature_stripping_rejected',
++                  'epoch_and_version_bound', 'rollback_rejected', 'classical_only_rejected')
++        if mode != 'inactive':
++            for field in fields:
++                report_check(checks, f'authority:{rid}:{field}', record.get(field) is True,
++                             'required negative-test evidence for active authority')
++        else:
++            report_check(checks, f'authority:{rid}:non-authoritative',
++                         record.get('no_live_authority') is True,
++                         'inactive or historical formats must not grant live authority')
++        check_artifacts(repo, record.get('artifacts'), artifacts, checks, f'authority:{rid}:evidence')
++    ownership = evidence.get('migration', {})
++    for field in ('pq_owner_bound_before_classic_break', 'no_classical_fallback_post_cutover',
++                  'key_rotation_and_reorg_tested', 'unknown_algorithm_rejected'):
++        report_check(checks, 'migration:' + field, ownership.get(field) is True,
++                     'fail-closed migration or cutover requirement')
++    check_artifacts(repo, ownership.get('artifacts'), artifacts, checks, 'migration:evidence')
++
++
++def check_proof(policy, evidence, repo, artifacts, checks):
++    cfg = policy.get('proof', {})
++    manifest_rel = cfg.get('candidate_manifest_path', '')
++    try:
++        manifest = load_json(inside_repo(repo, manifest_rel))
++        qualified = manifest.get('pq_128_security_qualified') is True
++        activated = manifest.get('production_consensus_activation') is True
++        report_check(checks, 'w1-candidate:manifest-pq128', qualified,
++                     'candidate W1 manifest: not qualified for PQ-128 activation', 'WARNING')
++        report_check(checks, 'w1-candidate:activation-safe', not (activated and not qualified),
++                     'unqualified W1 must never be active in production consensus')
++    except (ValueError, KeyError, FileNotFoundError, json.JSONDecodeError, TypeError, OSError) as exc:
++        report_check(checks, 'w1-candidate:manifest', False, 'cannot inspect candidate manifest: ' + str(exc), 'WARNING')
++    live = evidence.get('live_consensus_proof', {})
++    report_check(checks, 'live-proof:backend-known', bool(live.get('backend') and live['backend'] != 'unknown'),
++                 'name and freeze the actual *live* consensus proof backend (may differ from W1 candidate)')
++    report_check(checks, 'live-proof:pq128-bound',
++                 isinstance(live.get('conservative_quantum_soundness_bits'), int) and
++                 live['conservative_quantum_soundness_bits'] >= policy.get('minimum_quantum_security_bits', 128),
++                 'requires independent, concrete quantum soundness bounds across complete proof composition')
++    for field in ('independent_crypto_review_passed', 'no_groth16_or_classical_proof_fallback',
++                  'guest_verifier_transcript_parameter_bound', 'real_invalid_receipts_rejected',
++                  'rollback_and_reorg_proof_rejection_tested'):
++        report_check(checks, 'live-proof:' + field, live.get(field) is True,
++                     'live prover/verifier end-to-end acceptance boundary')
++    check_artifacts(repo, live.get('artifacts'), artifacts, checks, 'live-proof:evidence')
++
++
++def check_pow(policy, evidence, repo, artifacts, checks):
++    pow_e = evidence.get('pon_quantum', {})
++    for field in ('full_valid_w1_oracle_modeled', 'precomputation_amortized', 'resource_and_uncompute_costed',
++                  'block_propagation_and_reorg_costed', 'quantum_difficulty_attack_bounded',
++                  'cumulative_work_fork_choice_tested', 'independent_adversarial_review_passed'):
++        report_check(checks, 'pon:' + field, pow_e.get(field) is True,
++                     'quantum cost model and executable adversarial validation required')
++    cases = pow_e.get('solver_cases', {})
++    for case in policy.get('required_solver_cases', []):
++        report_check(checks, 'pon:solver:' + case, cases.get(case) == 'tested',
++                     'solver class must be compared under equivalent constraints')
++    check_artifacts(repo, pow_e.get('artifacts'), artifacts, checks, 'pon:evidence')
++
++
++def check_recovery_and_capacity(policy, evidence, repo, artifacts, checks):
++    recovery = evidence.get('recovery', {})
++    for field in ('external_monotonic_anchor', 'internal_snapshot_replay_rejected',
++                  'key_revocation_survives_reorg', 'power_loss_recovery_verified',
++                  'downgrade_on_restore_rejected'):
++        report_check(checks, 'recovery:' + field, recovery.get(field) is True,
++                     'restore / rollback / key lifetime invariant')
++    check_artifacts(repo, recovery.get('artifacts'), artifacts, checks, 'recovery:evidence')
++    cap = evidence.get('capacity', {})
++    for field in ('ml_dsa_size_budget', 'invalid_signature_cpu_budget', 'invalid_proof_cpu_budget',
++                  'network_propagation_p99_budget', 'peer_malformed_input_bounded', 'persistent_storage_budget'):
++        report_check(checks, 'capacity:' + field, cap.get(field) is True,
++                     'real-node worst-case resource and rejection-cost measurement')
++    check_artifacts(repo, cap.get('artifacts'), artifacts, checks, 'capacity:evidence')
++
++
++def perform_audit(repo: Path, policy: dict, evidence: dict, mode='scan', include_scan=True):
++    repo = repo.resolve()
++    checks = []
++    sha, dirty = git_revision(repo) if repo.exists() else (None, None)
++    report_check(checks, 'policy:schema', policy.get('schema_version') == 1 and evidence.get('schema_version') == 1,
++                 'expected v1 policy and evidence schemas')
++    report_check(checks, 'repo:exists', repo.is_dir(), 'repository directory must exist')
++    if mode == 'release':
++        report_check(checks, 'git:head', bool(sha and VALID_SHA.fullmatch(sha)), 'release gate requires a Git commit')
++        report_check(checks, 'git:clean', dirty is False, 'tracked source changes must be committed')
++        report_check(checks, 'git:evidence-bound',
++                     bool(sha and sha == evidence.get('source_commit')),
++                     'evidence must bind to exact current HEAD SHA')
++    else:
++        report_check(checks, 'git:head-discovery', bool(sha), 'source HEAD unavailable', 'WARNING')
++    artifacts = evidence.get('artifacts', {})
++    if mode == 'release' and isinstance(artifacts, dict) and sha:
++        for ident, entry in artifacts.items():
++            try:
++                rel = inside_repo(repo, entry['path']).relative_to(repo).as_posix()
++                tracked = subprocess.run(['git', '-C', str(repo), 'ls-files', '--error-unmatch', '--', rel],
++                                         capture_output=True, timeout=10).returncode == 0
++            except (ValueError, KeyError, OSError, TypeError, subprocess.TimeoutExpired):
++                tracked = False
++            report_check(checks, 'artifact-tracked:' + str(ident), tracked,
++                         'release evidence artifacts must be tracked by the frozen source commit')
++    check_authority(policy, evidence, repo, artifacts, checks)
++    check_proof(policy, evidence, repo, artifacts, checks)
++    check_pow(policy, evidence, repo, artifacts, checks)
++    check_recovery_and_capacity(policy, evidence, repo, artifacts, checks)
++    hits = scan_source(repo) if include_scan and repo.is_dir() else {'files_examined': 0, 'truncated': False, 'hits': []}
++    if mode == 'release':
++        report_check(checks, 'scan:enabled', include_scan, 'release must scan classic-cryptography and proof usages')
++        reviewed = evidence.get('classic_usage_dispositions', {})
++        for finding in hits['hits']:
++            fp = finding['fingerprint']
++            entry = reviewed.get(fp, {}) if isinstance(reviewed, dict) else {}
++            accepted = {'non_authoritative', 'historical_readonly', 'test_only', 'pq_guarded'}
++            report_check(checks, 'classic-use:' + fp + ':disposition', entry.get('disposition') in accepted,
++                         'each classic signature/proof site must be traced and explicitly reviewed; presence alone is not vulnerability')
++            check_artifacts(repo, entry.get('artifacts'), artifacts, checks,
++                            'classic-use:' + fp + ':evidence')
++    report_check(checks, 'scan:complete', not hits['truncated'], 'source heuristic inventory must not be truncated')
++    blockers = [x for x in checks if x['status'] == 'BLOCKER']
++    return {
++        'claim': 'Whole-chain PQ-128 (evidence completeness only)',
++        'verdict': 'BLOCKED' if blockers else 'METADATA_READY_INDEPENDENT_SECURITY_REVIEW_STILL_REQUIRED',
++        'scope': 'Does NOT independently prove cryptographic safety, exhaustive authority coverage or quantum lower bounds',
++        'mode': mode, 'source': {'root': str(repo), 'head': sha, 'tracked_dirty': dirty},
++        'check_counts': {s: sum(x['status'] == s for x in checks) for s in ('PASS','WARNING','BLOCKER')},
++        'checks': checks, 'classic_crypto_review_leads': hits,
++    }
++
++
++def main(argv=None):
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--repo', required=True, help='path to Trillionnium-Chain git checkout')
++    ap.add_argument('--policy', required=True, help='reviewed route/required-cases policy JSON')
++    ap.add_argument('--evidence', required=True, help='commit-bound evidence JSON')
++    ap.add_argument('--mode', choices=['scan', 'release'], default='scan')
++    ap.add_argument('--out', help='write JSON report to this path')
++    ap.add_argument('--no-code-scan', action='store_true')
++    args = ap.parse_args(argv)
++    try:
++        result = perform_audit(Path(args.repo), load_json(Path(args.policy)), load_json(Path(args.evidence)),
++                               args.mode, not args.no_code_scan)
++    except (OSError, ValueError, json.JSONDecodeError, TypeError) as exc:
++        print(json.dumps({'verdict':'BLOCKED', 'error':str(exc)}, ensure_ascii=False), file=sys.stderr)
++        return 2
++    serialized = json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True)
++    if args.out:
++        Path(args.out).write_text(serialized + '\n', encoding='utf-8')
++    print(json.dumps({'verdict': result['verdict'], 'source': result['source'],
++                      'check_counts': result['check_counts'],
++                      'classic_crypto_leads': len(result['classic_crypto_review_leads']['hits'])}, ensure_ascii=False))
++    return 1 if result['verdict'] == 'BLOCKED' else 0
++
++if __name__ == '__main__':
++    sys.exit(main())
+-- 
+2.47.3
+
