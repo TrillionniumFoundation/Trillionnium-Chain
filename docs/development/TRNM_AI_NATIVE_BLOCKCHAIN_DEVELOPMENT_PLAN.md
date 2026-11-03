@@ -4814,3 +4814,28 @@ trial; preserve that failed preparation and use fresh, separate target
 directories. Preliminary local tests do not replace exact committed-source,
 actual prospective-merge, x64/ARM, PQ witness or original Host results. Public
 readiness, whole-chain post-quantum qualification and activation remain HOLD.
+
+### 2026-11-03 retain the exact fuzz dependency graph in locked CI
+
+The `469c4d4bb36efb37045d968f35f83cb2c1771933` integration source retains
+the Unix Cell readiness dependency on `rustix =1.1.4`, but its separate fuzz
+lockfile omits that existing dependency edge from `trnm-data-availability`.
+The original required quality and fuzz lanes stop at their locked fetch before
+the dependency auditor or libFuzzer workload can run. Keep those original
+locked commands and failure receipts.
+
+Resolve the current fuzz manifest with Cargo 1.95.0 and retain the resulting
+single dependency-edge addition. All 146 package identities, versions and
+checksums remain unchanged; the native workspace lockfile and manifests are
+unchanged. Update only the corresponding exact blob pin. On the same source,
+the original `cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml`
+changes from exit 101 to exit 0, and locked offline metadata resolves all
+146 packages. The corrected lockfile bytes remain unchanged during both
+locked commands. The [compact reproduction record](../../evidence/ci-fuzz-locked-graph-20261103/reproduction.json)
+binds the original source, hosted failures, dependency delta and local checks.
+
+This repairs a CI setup blocker. It does not assert that the later complete
+quality or fuzz lanes pass. No Rust runtime path, four-second confirmation
+window, sixteen-hostile-worker workload, Host resource budget, History, W1,
+nonce, liability, recovery, settlement or activation rule changes. Original
+performance and confirmation failures remain open; DRAFT / HOLD remains.
