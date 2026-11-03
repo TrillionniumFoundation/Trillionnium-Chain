@@ -1034,6 +1034,19 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
                     .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
             "PUBLIC_PACKET_TEXT",
         )?;
+        // The complete fixed envelope and every byte of its only field have
+        // already been checked. ASCII hex cannot contain a JSON escape, quote,
+        // extra field or trailing value. Constructing the typed request avoids
+        // reparsing and reserializing the same bounded packet without widening
+        // the accepted byte language. All current-context and full work checks
+        // still run in the original paid dispatch interval.
+        let packet = std::str::from_utf8(text)?.to_owned();
+        return Ok(match op {
+            1 => Request::Submit { packet },
+            6 => Request::GrowthSubmitV1 { packet },
+            7 => Request::GrowthPacketStatusV1 { packet },
+            _ => unreachable!(),
+        });
     }
     let request: Request = serde_json::from_slice(bytes)?;
     let mut writer = ExactCanonical { bytes, cursor: 0 };
@@ -6705,6 +6718,148 @@ mod tests {
         assert!(canonical_request(br#" {"op":"head"}"#, 2).is_err());
         assert!(canonical_request(br#"{"op":"head"}"#, 3).is_err());
     }
+
+    fn canonical_packet_reference(bytes: &[u8], op: u8) -> Result<Request> {
+        ensure(
+            !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+            "PUBLIC_BODY_LIMIT",
+        )?;
+        let request: Request = serde_json::from_slice(bytes)?;
+        ensure(
+            request_op(&request)? == op && serde_json::to_vec(&request)? == bytes,
+            "PUBLIC_REQUEST_CANONICAL",
+        )?;
+        let packet = match &request {
+            Request::Submit { packet }
+            | Request::GrowthSubmitV1 { packet }
+            | Request::GrowthPacketStatusV1 { packet } => packet,
+            _ => return Err("PUBLIC_REQUEST_CANONICAL".into()),
+        };
+        ensure(
+            packet.len() <= 2 * MAX_PACKET
+                && packet.len().is_multiple_of(2)
+                && packet
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "PUBLIC_PACKET_TEXT",
+        )?;
+        Ok(request)
+    }
+
+    fn compare_packet_decoder(bytes: &[u8], op: u8) {
+        let reference = canonical_packet_reference(bytes, op);
+        let actual = canonical_request(bytes, op);
+        assert_eq!(actual.is_ok(), reference.is_ok(), "op={op} bytes={bytes:?}");
+        if let (Ok(actual), Ok(reference)) = (actual, reference) {
+            assert_eq!(actual, reference);
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_matches_serde_for_every_single_byte_mutation() {
+        for request in [
+            Request::Submit {
+                packet: "01abef".into(),
+            },
+            Request::GrowthSubmitV1 {
+                packet: "01abef".into(),
+            },
+            Request::GrowthPacketStatusV1 {
+                packet: "01abef".into(),
+            },
+        ] {
+            let op = request_op(&request).unwrap();
+            let raw = serde_json::to_vec(&request).unwrap();
+            compare_packet_decoder(&raw, op);
+            for position in 0..raw.len() {
+                let mut changed = raw.clone();
+                for value in 0..=u8::MAX {
+                    changed[position] = value;
+                    compare_packet_decoder(&changed, op);
+                }
+                compare_packet_decoder(&raw[..position], op);
+            }
+            for position in 0..=raw.len() {
+                for byte in [b' ', b'\n', b'"', b'\\', b'{', b'}', b',', 0, 0xff] {
+                    let mut changed = raw.clone();
+                    changed.insert(position, byte);
+                    compare_packet_decoder(&changed, op);
+                }
+            }
+            for wrong_op in [1, 6, 7].into_iter().filter(|other| *other != op) {
+                compare_packet_decoder(&raw, wrong_op);
+            }
+        }
+    }
+
+    #[test]
+    fn canonical_packet_decoder_preserves_empty_maximum_and_structural_refusals() {
+        for op in [1, 6, 7] {
+            for length in [0, 1, 2 * MAX_PACKET, 2 * MAX_PACKET + 1, 2 * MAX_PACKET + 2] {
+                let packet = "a".repeat(length);
+                let request = match op {
+                    1 => Request::Submit { packet },
+                    6 => Request::GrowthSubmitV1 { packet },
+                    7 => Request::GrowthPacketStatusV1 { packet },
+                    _ => unreachable!(),
+                };
+                compare_packet_decoder(&serde_json::to_vec(&request).unwrap(), op);
+            }
+        }
+        for bytes in [
+            br#"{"op":"submit","packet":"\u0061a"}"#.as_slice(),
+            br#"{"op":"submit","packet":"aa","packet":"aa"}"#,
+            br#"{"op":"submit","packet":"aa","authority":true}"#,
+            br#"{"packet":"aa","op":"submit"}"#,
+            br#"{"op":"submit","packet":"aa"}{}"#,
+            br#"{"op":"submit","packet":"aa"} "#,
+            br#"{"op":"submit","packet":"aA"}"#,
+            br#"{"op":"submit","packet":null}"#,
+        ] {
+            compare_packet_decoder(bytes, 1);
+        }
+    }
+
+    #[test]
+    #[ignore = "bounded CPU observation; no timing threshold or qualification authority"]
+    fn canonical_packet_decoder_cpu_observation() {
+        let request = Request::Submit {
+            packet: "ab".repeat(49_152),
+        };
+        let raw = serde_json::to_vec(&request).unwrap();
+        let repeat = 256;
+        for (label, decode) in [
+            (
+                "retained-serde-reference",
+                canonical_packet_reference as fn(&[u8], u8) -> Result<Request>,
+            ),
+            (
+                "exact-envelope",
+                canonical_request as fn(&[u8], u8) -> Result<Request>,
+            ),
+        ] {
+            let cpu = ThreadCpuStamp::start().unwrap();
+            let started = Instant::now();
+            for _ in 0..repeat {
+                let decoded = decode(std::hint::black_box(&raw), 1).unwrap();
+                assert_eq!(decoded, request);
+                std::hint::black_box(decoded);
+            }
+            println!(
+                "{}",
+                serde_json::json!({
+                    "schema": "public-v3-canonical-packet-cpu-observation-v1",
+                    "arm": label,
+                    "bytes": raw.len(),
+                    "calls": repeat,
+                    "thread_cpu_ns": cpu.finish().unwrap(),
+                    "wall_ns": started.elapsed().as_nanos(),
+                    "qualification": false,
+                })
+            );
+        }
+    }
+
     #[test]
     fn hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors() {
         // RFC 4231 section 4.2. Zero-extending its 20-byte key to 32
