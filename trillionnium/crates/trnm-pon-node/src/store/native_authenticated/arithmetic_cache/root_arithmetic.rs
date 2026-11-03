@@ -53,6 +53,7 @@ struct Counters {
     complete_hits: u64,
     complete_computations: u64,
     exact_root_hits: u64,
+    operation_full_root_reuses: u64,
     calculations: u64,
     material_uses: u64,
     context_misses: u64,
@@ -89,6 +90,11 @@ impl RootArithmetic {
     }
     pub(super) fn exact_root_hit(&self) {
         self.count(|c| c.exact_root_hits = c.exact_root_hits.saturating_add(1));
+    }
+    pub(super) fn operation_full_root_reuse(&self) {
+        self.count(|c| {
+            c.operation_full_root_reuses = c.operation_full_root_reuses.saturating_add(1)
+        });
     }
 
     /// Bound a clone of opaque mathematical material, not an admission permit.
@@ -390,6 +396,7 @@ impl RootArithmetic {
             "temporary_workspace_is_separate":true,
             "operation_projection_payload_limit_bytes":MAX_PAYLOAD_BYTES,
             "operation_projection_scope":"one immutable complete State; every actual partition key and canonical value is compared again before one-use reduction; no retained SQL verdict",
+            "operation_full_root_scope":"one-use successful root of the same immutably borrowed State and Settings, consumed only at the original complete-state full-root callback; no SQL observation or verdict",
             "has_consensus_authority":false,"counters":self.counters.get()})
     }
 }

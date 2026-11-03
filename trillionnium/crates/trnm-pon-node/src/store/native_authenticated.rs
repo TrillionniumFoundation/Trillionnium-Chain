@@ -19,7 +19,7 @@ use trnm_protocol::pon_wire::{hash, Hash};
 use trnm_sqlite_io_boundary::TransactionScope;
 
 mod arithmetic_cache;
-pub(crate) use arithmetic_cache::ArithmeticCache;
+pub(crate) use arithmetic_cache::{ArithmeticCache, FullRootCalculation};
 mod history_arithmetic;
 pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
 mod post_write_readback;
@@ -664,7 +664,23 @@ pub(super) fn verify_state_with_readback(
     state: &State,
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
+    readback: Option<&mut PostWriteReadback<'_>>,
+) -> Result<()> {
+    verify_state_with_readback_and_calculation(
+        db, settings, block, state, progress, cache, readback, None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(super) fn verify_state_with_readback_and_calculation(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
     mut readback: Option<&mut PostWriteReadback<'_>>,
+    calculation: Option<FullRootCalculation<'_>>,
 ) -> Result<()> {
     let result = (|| {
         let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
@@ -677,7 +693,7 @@ pub(super) fn verify_state_with_readback(
         local(ensure(
             record.state
                 == match cache {
-                    Some(cache) => cache.complete(settings, state)?,
+                    Some(cache) => cache.complete_with_calculation(settings, state, calculation)?,
                     None => complete(settings, state)?,
                 },
             "NATIVE_STATE_ROOT",

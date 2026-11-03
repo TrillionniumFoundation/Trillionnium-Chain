@@ -2327,9 +2327,13 @@ impl Node {
         // full root. Compare all current State bytes before arithmetic reuse;
         // a miss retains the original root calculation and error order. Actual
         // SQL State, record, account graph and history checks still follow.
+        let mut calculation = None;
         let actual_root = if self.state_backend == StateBackend::AuthenticatedV1 {
-            self.authenticated_arithmetic
-                .state_root(&self.settings, state)?
+            self.authenticated_arithmetic.state_root_with_calculation(
+                &self.settings,
+                state,
+                &mut calculation,
+            )?
         } else {
             // Re-encode and hash every current row before reusing only the
             // original bounded partition arithmetic already used by M06.
@@ -2339,7 +2343,7 @@ impl Node {
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_readback(
+            native_authenticated::verify_state_with_readback_and_calculation(
                 &self.db,
                 &self.settings,
                 id,
@@ -2347,6 +2351,7 @@ impl Node {
                 progress,
                 Some(&self.authenticated_arithmetic),
                 readback,
+                calculation,
             )?;
         }
         Ok(())

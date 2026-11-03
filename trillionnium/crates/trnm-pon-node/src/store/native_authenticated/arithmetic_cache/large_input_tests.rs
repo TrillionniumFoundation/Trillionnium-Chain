@@ -5,7 +5,7 @@ use serde_json::json;
 use std::cell::Cell;
 use trnm_protocol::pon_wire::hash;
 
-fn large_settings() -> Settings {
+pub(super) fn large_settings() -> Settings {
     let mut settings = Settings::development(Some(1)).unwrap();
     for index in 0..2100 {
         settings.initial.insert(

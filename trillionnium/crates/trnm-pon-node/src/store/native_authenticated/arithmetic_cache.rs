@@ -19,6 +19,9 @@ use root_arithmetic::RootArithmetic;
 #[cfg(test)]
 mod large_input_tests;
 
+#[cfg(test)]
+mod operation_root_tests;
+
 // The normal parent, child and genesis may all be revisited during one commit.
 const MAX_COMPLETE_ENTRIES: usize = 3;
 const MAX_COMPLETE_BYTES: usize = 4 * 1024 * 1024;
@@ -36,6 +39,20 @@ struct RootEntry {
     context: [Hash; 3],
     bytes: Vec<u8>,
     value: Hash,
+}
+
+/// One successful current-input calculation for the immediately following
+/// complete-state callback. The actual State and all Settings stay immutably
+/// borrowed until this value is consumed or dropped. There is no public
+/// constructor, Clone, codec, SQL verdict or persistent-cache slot for it.
+/// Its temporary hash projection keeps the existing payload cap and remains
+/// separate from the persistent Material/CompleteEntry accounting.
+pub(crate) struct FullRootCalculation<'a> {
+    settings: &'a Settings,
+    source: &'a State,
+    context: [Hash; 3],
+    value: Hash,
+    projection: NonAccountRootProjection<'a>,
 }
 
 #[derive(Default)]
@@ -134,6 +151,29 @@ impl ArithmeticCache {
     /// account/conservation checks before the original state-root grammar.
     /// Caller-owned State is serialized anew; no SQL observation is reused.
     pub(crate) fn state_root(&self, settings: &Settings, state: &State) -> Result<Hash> {
+        self.state_root_inner(settings, state, None)
+    }
+
+    /// Produce optional one-use arithmetic only from this successful complete
+    /// input. Existing exact-byte hits and fallback paths publish no calculation.
+    pub(crate) fn state_root_with_calculation<'a>(
+        &self,
+        settings: &'a Settings,
+        state: &'a State,
+        calculation: &mut Option<FullRootCalculation<'a>>,
+    ) -> Result<Hash> {
+        self.state_root_inner(settings, state, Some(calculation))
+    }
+
+    fn state_root_inner<'a>(
+        &self,
+        settings: &'a Settings,
+        state: &'a State,
+        mut calculation: Option<&mut Option<FullRootCalculation<'a>>>,
+    ) -> Result<Hash> {
+        if let Some(output) = calculation.as_mut() {
+            **output = None;
+        }
         let _measurement = self
             .history
             .observe(super::HistoryStage::PersistedStateRoot);
@@ -171,12 +211,25 @@ impl ArithmeticCache {
             && bytes
                 .as_deref()
                 .is_some_and(|actual| bounded_bytes(&settings.initial).as_deref() == Some(actual));
+        let mut projection = None;
         let value = if initial_input {
             trnm_mvcc_fee::pon_executor::root(state)
+        } else if calculation.is_some() {
+            self.root_arithmetic
+                .calculate_with_projection(settings, state, &mut projection)
         } else {
             self.root_arithmetic.calculate(settings, state)
         }
         .map_err(crate::Error::from)?;
+        if let (Some(output), Some(projection)) = (calculation, projection) {
+            *output = Some(FullRootCalculation {
+                settings,
+                source: state,
+                context,
+                value,
+                projection,
+            });
+        }
         if let (true, Some(bytes), Ok(mut entry)) =
             (initial_input, bytes, self.root.try_borrow_mut())
         {
@@ -190,6 +243,15 @@ impl ArithmeticCache {
     }
 
     pub(crate) fn complete(&self, settings: &Settings, state: &State) -> Result<StateCommitment> {
+        self.complete_with_calculation(settings, state, None)
+    }
+
+    pub(crate) fn complete_with_calculation<'a>(
+        &self,
+        settings: &'a Settings,
+        state: &'a State,
+        mut calculation: Option<FullRootCalculation<'a>>,
+    ) -> Result<StateCommitment> {
         let _measurement = self
             .history
             .observe(super::HistoryStage::CompleteCommitment);
@@ -222,6 +284,20 @@ impl ArithmeticCache {
             state,
             Some(&self.lifts),
             || {
+                // Consume at the original full-root callback, after the original
+                // account checks. Immutable borrows prevent changes or address
+                // reuse between production and consumption; context still has
+                // to match. A different object always takes the original path.
+                if let Some(current) = calculation.take().filter(|current| {
+                    current.context == context
+                        && std::ptr::eq(current.settings, settings)
+                        && std::ptr::eq(current.source, state)
+                }) {
+                    let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
+                    self.root_arithmetic.operation_full_root_reuse();
+                    projection.set(Some(current.projection));
+                    return Ok(current.value);
+                }
                 let mut current = None;
                 let root = self.complete_root(settings, state, bytes.as_deref(), &mut current);
                 projection.set(current);

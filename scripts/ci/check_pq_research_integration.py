@@ -103,6 +103,7 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/main.rs",
     "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
