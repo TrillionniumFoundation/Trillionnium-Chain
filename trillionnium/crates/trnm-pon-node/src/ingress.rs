@@ -1264,6 +1264,9 @@ struct SubmitDispatchContext<'a> {
     termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
 }
 
+#[path = "ingress/execution_observation.rs"]
+mod execution_observation;
+
 fn observe_submit_phase<T>(
     observation: Option<&public_v3::request_observation::TaskObservation>,
     phase: public_v3::SubmitPhase,
@@ -1272,7 +1275,7 @@ fn observe_submit_phase<T>(
     let measurement = observation.map(|record| record.phase(phase));
     let result = action();
     if let Some(measurement) = measurement {
-        measurement.finish(result.is_ok());
+        measurement.finish_result(&result);
     }
     result
 }
@@ -1326,10 +1329,17 @@ fn admit_shared_checked<'a>(
         let observed_now = clock()?;
         let checked = owner.attach_owner_work(checked, permit)?;
         let Some(lease) = lease else {
-            let id = owner.admit_work_checked_with_control(checked, observed_now, control)?;
+            let id = execution_observation::run(
+                observation,
+                control,
+                execution_observation::Scope::Held,
+                |control| owner.admit_work_checked_with_control(checked, observed_now, control),
+            )?;
             return Ok((owner, id, observed_now));
         };
-        match owner.prepare_shared_admission(checked, lease, observed_now, control)? {
+        match observe_submit_phase(observation, SubmitPhase::AdmissionPrepare, || {
+            owner.prepare_shared_admission(checked, lease, observed_now, control)
+        })? {
             PreparedSharedAdmission::Existing(id) => Ok((owner, id, observed_now)),
             PreparedSharedAdmission::HeldForSnapshotCapacity {
                 checked,
@@ -1342,29 +1352,46 @@ fn admit_shared_checked<'a>(
                 // This is the identical original checked M06 schedule, with
                 // its current checks and original CPU/deadline. It is not a
                 // Work-primitive fallback or an accepted arbitrary output.
-                let id = owner.admit_held_prepared(*checked, observed_now, control)?;
+                let id = execution_observation::run(
+                    observation,
+                    control,
+                    execution_observation::Scope::PreparedHeld,
+                    |control| owner.admit_held_prepared(*checked, observed_now, control),
+                )?;
                 Ok((owner, id, observed_now))
             }
             PreparedSharedAdmission::Execute(prepared) => {
                 drop(owner);
-                let executed = prepared.execute(control)?;
-                // This wait is nested in the original Admission phase. It does
-                // not overwrite the earlier seven-slot wait measurement.
-                progress(0)?;
-                let mut reacquisition = |amount| {
-                    progress(amount)?;
-                    (control.progress)(ExecutionProgress::BeforeParentBinding)
-                };
-                let mut owner = lock_owner(node, &mut reacquisition)?;
+                let executed = observe_submit_phase(observation, SubmitPhase::Execution, || {
+                    execution_observation::run(
+                        observation,
+                        control,
+                        execution_observation::Scope::DetachedExecution,
+                        |control| prepared.execute(control),
+                    )
+                })?;
+                // All four child phases are inclusive children of Admission,
+                // never additional CPU or an additional request deadline.
+                let mut owner =
+                    observe_submit_phase(observation, SubmitPhase::CommitOwnerWait, || {
+                        progress(0)?;
+                        let mut reacquisition = |amount| {
+                            progress(amount)?;
+                            (control.progress)(ExecutionProgress::BeforeParentBinding)
+                        };
+                        lock_owner(node, &mut reacquisition)
+                    })?;
                 let observed_now = clock()?;
-                let id = owner.commit_shared_admission(executed, observed_now, control)?;
+                let id = observe_submit_phase(observation, SubmitPhase::Commit, || {
+                    owner.commit_shared_admission(executed, observed_now, control)
+                })?;
                 Ok((owner, id, observed_now))
             }
         }
     })
 }
 
-/// Optional seven-slot phase observations use the existing request owner. They
+/// Optional bounded phase observations use the existing request owner. They
 /// never change a native result or mint credit; all old callers pass None.
 fn dispatch_shared_with_execution_observation(
     node: &Mutex<Node>,
@@ -2379,6 +2406,7 @@ fn call_authenticated_durable_inner(
 }
 
 pub(crate) mod history_import;
+pub use history_import::{HistoryImportObservationSnapshot, HistoryImportObserver};
 
 // Retained native test fixtures used the old local five-argument reader.
 // Keep that crate-private test surface, but route it through the same paid
@@ -2500,15 +2528,34 @@ pub fn receive_public_page_from_before(
     clock: u64,
     deadline: Instant,
 ) -> Result<Hash> {
+    receive_public_page_from_before_observed(node, source, page, tip, after, clock, deadline, None)
+}
+
+/// Explicit optional local measurements over the identical full importer. The
+/// observer adds no admission capability, budget, deadline or signed bytes.
+#[allow(clippy::too_many_arguments)] // Original seven inputs plus one optional diagnostic sink.
+pub fn receive_public_page_from_before_observed(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    deadline: Instant,
+    observation: Option<&HistoryImportObserver>,
+) -> Result<Hash> {
+    use history_import::{observe_host, HistoryHostPhase};
     // The ORIGINAL fixed administrator-owned Host parent is required even
     // for a loopback source: a caller's socket address is not provenance.
-    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
-        source,
-        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
-    )?
-    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
-    kernel.verify()?;
-    let native = history_import::receive(
+    let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {
+        crate::host_kernel_parent::require_host_kernel_budget(
+            source,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        )?
+        .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
+    })?;
+    observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;
+    let native = history_import::receive_observed(
         history_import::Owner::Exclusive(node),
         page,
         tip,
@@ -2516,12 +2563,17 @@ pub fn receive_public_page_from_before(
         clock,
         history_import::Control {
             deadline,
-            resource: &|| kernel.verify(),
+            resource: &|| {
+                observe_host(observation, HistoryHostPhase::Checkpoint, || {
+                    kernel.verify()
+                })
+            },
         },
+        observation,
     );
     // Do not convert an already committed block into an invalid work proof
     // when the last local Host owner observation fails.
-    kernel.verify()?;
+    observe_host(observation, HistoryHostPhase::Final, || kernel.verify())?;
     native
 }
 

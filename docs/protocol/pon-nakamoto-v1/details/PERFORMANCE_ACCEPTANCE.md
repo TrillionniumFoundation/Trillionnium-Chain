@@ -171,33 +171,79 @@ verification, root/persistence cost, peak RSS, actual GPU/VRAM use or explicit n
 queue/Busy outcomes, state growth, active physical slots and recovery duration.
 
 The optional public request observer uses
-`public-v3-local-request-resource-observation-v3`. Its outer owner CPU covers the
+`public-v3-local-request-resource-observation-v4`. Its outer owner CPU covers the
 r11 paid body decode, native dispatch and signed response envelope, also retained
 by r12/r13. This observation schema does not identify the scheduling revision: new
 original campaign reports bind their exact signed policy identifier in
 `public_resource_policy`, checked against the independent r10/r11/r12/r13 vectors.
 Historical missing policy metadata stays unknown, and r11 starvation remains
-failed evidence. Historical v1/v2 totals retain their original scope; source/profile
-identifiers must be preserved when comparing them. Each retained request has exactly
-seven Submit slots: decode, context-owner wait, context, full work, admission-owner
-wait, admission, and submit-result generation. Every entered slot records monotonic
-wall time and, where available, the actual dispatcher thread's CPU time. Slots not
-entered remain null; an abandoned or panicked slot retains its measured interval
-with unknown outcome and `completed=false`. A completed error is `accepted=false`.
+failed evidence. Historical v1/v2/v3 totals retain their original scope; source/profile
+identifiers must be preserved when comparing them. V4 preserves the original seven
+Submit slots (decode, context-owner wait, context, full work, admission-owner wait,
+admission and submit-result generation) and adds twelve fixed slots: admission
+preparation, execution, commit-owner wait, commit, CPU wait, paid-body decode,
+response encoding, History epoch open/close, History import, CPU settlement and
+root commitment. The observer retains at most 16,384 requests and never appends
+unbounded phase events. Every entered slot records start/end offsets from one
+observer-local monotonic epoch, wall duration and, where available, the actual
+calling thread's CPU time. Each request retains its original connection ID and
+body digest. Challenge/grant waits, the paid-body-to-dequeue queue interval and
+response writing have separate wall-only intervals; asynchronous waits do not
+claim thread CPU. Slots not entered retain null interval values. A returned
+error or cooperative cancellation has `completed=true`, `accepted=false` and
+its typed error code where available. An abandoned or panicked slot retains its
+measured interval with unknown outcome and `completed=false`; an unclassified
+error cause stays null. A later retry cannot overwrite a prior phase observation.
 An exact durable duplicate does not manufacture work or admission measurements.
 The existing first-record retention bound and nonblocking optional writes still
 apply; capture contention marks the observation failed without changing admission,
 cancellation, durable results, or CPU settlement.
 
-These slots separate waiting from owner-held context/admission work. They are
-nested within dispatch and must not be added to dispatch or full-work CPU a second
-time. Their thread CPU excludes scoped M06 workers, reactor authentication and
-response signing; missing clocks are unknown rather than zero. These diagnostic
-fields add no service credit and do not extend any deadline. They locate the
-remaining cost before attributing it to root reconstruction, history verification,
-SQLite, or execution; they do not by themselves establish a restored baseline or
-improved throughput. Historical Source494 records retain their original schema,
-source and failed outcomes.
+Admission preparation, execution, commit-owner wait and commit are inclusive
+children of admission; root commitment is an inclusive child of execution.
+The detached route times its existing calls, while the held route splits only
+at the original M06 progress boundaries. Parent State/task/witness reads are in
+preparation, M06 commitment arithmetic is between the existing BeforeCommitment
+and AfterCommitment hooks, and commit begins at the existing BeforePersistence
+hook. Final activation/readback remains in submit-result. Preparation of a
+detached execution includes its original parent snapshot checks; binding that
+snapshot inside the detached executor remains execution work. None of these
+intervals is a count of SQL operations or a separate proof of cached validity.
+The original progress callback still runs exactly once at every old boundary.
+Worker preparation callbacks do not close caller-owned spans: failure returns
+through the original worker joins before the caller ends its execution interval.
+CPU-reservation wait is outside the paid dispatch interval. Paid-body decode,
+response encoding and native phase CPU are inside it and must not be added to
+dispatch or full-work CPU a second time. Thread CPU excludes scoped M06 workers
+and reactor authentication; response encoding measures the actual response
+serialization/signing interval. Missing clocks remain unknown rather than zero.
+
+The explicitly optional `pon-local-history-import-observation-v1` recorder uses
+the same phase measurements on the existing complete importer, with at most 16
+packet records and the original tip, cursor and decoded packet IDs. The enclosing
+page import includes its packet imports, CPU reservation/settlement, durable epoch
+open/close and final activation; these nested intervals are not additive. It
+retains pre-work refusal, partial W1 cancellation, execution/root failure and
+post-admission failures without creating a new CPU account or changing the
+absolute business deadline. Four fixed Host aggregates separately retain the
+actual context resolve/open, initial verification, repeated checkpoint verification
+and final verification calls. Each keeps calls started/completed/accepted/rejected,
+unfinished unwinds, first/last monotonic offsets, wall/calling-thread CPU totals,
+unknown-clock counts and the last typed rejection cause. A missing CPU or wall
+sample keeps that aggregate total null; unentered totals are also null. Resolution
+includes the original context-open check. Every original Host invocation still
+runs once against the live paths. No contents, descriptor or authorization verdict
+is cached by this observer. Phase CPU excludes scoped workers; Host CPU sums
+only the actual Host-call intervals on each invoking thread, which may include
+scoped workers. That subset is not complete worker CPU and must not be added
+to the existing worker or enclosing operation accounting. Checkpoint Host intervals are nested within native
+import; outer resolve/initial/final Host intervals are within client replay but
+outside native import. Network fetch remains outside the replay interval. The original
+confirmation report retains each native snapshot alongside its actual History
+call, replay error and calling-thread CPU, including failed pages. These local
+schemas change no signed wire or resource policy. They locate remaining cost;
+they do not establish a restored baseline or improved throughput. Historical
+Source494 records retain their original schema, source and failed outcomes.
 
 The ordinary unowned public V3 Submit preflight now checks bounded packet
 identity, namespace, parent/header/target/time constraints and the cheap PNW1

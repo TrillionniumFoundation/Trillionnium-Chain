@@ -6,6 +6,10 @@ use super::{
     ensure, hex_packet_for_settings, now, public_v3, Hash, Node, Packet, Page, Result, Settings,
     WorkCheckedPacket, MAX_FRAME,
 };
+use public_v3::{request_observation::TaskObservation, SubmitPhase};
+mod observation;
+pub(super) use observation::{observe_host, HistoryHostPhase};
+pub use observation::{HistoryImportObservationSnapshot, HistoryImportObserver};
 use std::{
     sync::{Mutex, TryLockError},
     thread,
@@ -104,17 +108,30 @@ fn scoped<T>(
     control: &Control<'_>,
     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
 ) -> Result<T> {
-    let cpu = owner.with(control, |node| {
-        // #498's continuous-mode deny gate remains before any paid work.
-        // Generic scalar begin is not the continuous durable-operation journal.
-        let cpu = node.remote_history_cpu_domain()?;
-        node.begin_remote_history_cpu_epoch()?;
-        Ok(cpu)
+    scoped_observed(owner, control, None, native)
+}
+
+fn scoped_observed<T>(
+    owner: &mut Owner<'_>,
+    control: &Control<'_>,
+    observation: Option<&TaskObservation>,
+    native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
+) -> Result<T> {
+    let cpu = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochOpen, || {
+        owner.with(control, |node| {
+            // #498's continuous-mode deny gate remains before any paid work.
+            // Generic scalar begin is not the continuous durable-operation journal.
+            let cpu = node.remote_history_cpu_domain()?;
+            node.begin_remote_history_cpu_epoch()?;
+            Ok(cpu)
+        })
     })?;
     let mut guard = EpochGuard { cpu, closed: false };
     cut("epoch");
     let result = native(owner, &guard.cpu);
-    let close = owner.finish(control, &guard.cpu);
+    let close = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochClose, || {
+        owner.finish(control, &guard.cpu)
+    });
     if close.is_ok() {
         guard.closed = true;
     }
@@ -154,15 +171,28 @@ fn metered<T>(
     control: &Control<'_>,
     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
 ) -> Result<T> {
-    let operation = begin_cpu(cpu, control)?;
+    metered_observed(cpu, control, None, native)
+}
+
+fn metered_observed<T>(
+    cpu: &public_v3::ServiceMutationCpuDomain,
+    control: &Control<'_>,
+    observation: Option<&TaskObservation>,
+    native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    let operation = super::observe_submit_phase(observation, SubmitPhase::CpuWait, || {
+        begin_cpu(cpu, control)
+    })?;
     let result = operation
         .bind_history_request(control.deadline)
         .and_then(|()| native(&operation));
-    let receipt = operation.finish();
-    ensure(
-        !receipt.accounting_unavailable,
-        "PUBLIC_MUTATION_CPU_UNAVAILABLE",
-    )?;
+    super::observe_submit_phase(observation, SubmitPhase::CpuSettle, || {
+        let receipt = operation.finish();
+        ensure(
+            !receipt.accounting_unavailable,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )
+    })?;
     result
 }
 
@@ -234,12 +264,13 @@ fn admit_packet(
     clock: u64,
     control: &Control<'_>,
     activate: Option<Hash>,
+    observation: Option<&TaskObservation>,
 ) -> Result<(Hash, bool, Option<Hash>)> {
     if let Some(tip) = activate {
         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
     }
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
-    metered(cpu, control, |operation| {
+    metered_observed(cpu, control, observation, |operation| {
         let progress = operation.checkpoint_handle();
         // history_checkpoint checks the original deadline and actual Host
         // before its CPU observation, then again throughout every refill wait.
@@ -247,25 +278,35 @@ fn admit_packet(
         // control.check() performed no ledger work and duplicated Host reads.
         let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
         check()?;
-        let (existing, permit, settings) = owner.with(control, |node| {
-            let existing =
-                node.precheck_public_admission_context_with_progress(&packet, clock, &mut || {
-                    check()
-                })?;
-            let permit = if existing.is_none() {
-                node.begin_owner_work(&packet)?
-            } else {
-                None
-            };
-            Ok((existing, permit, node.settings().clone()))
-        })?;
+        let (existing, permit, settings) =
+            super::observe_submit_phase(observation, SubmitPhase::Context, || {
+                owner.with(control, |node| {
+                    let existing = node.precheck_public_admission_context_with_progress(
+                        &packet,
+                        clock,
+                        &mut || check(),
+                    )?;
+                    let permit = if existing.is_none() {
+                        node.begin_owner_work(&packet)?
+                    } else {
+                        None
+                    };
+                    Ok((existing, permit, node.settings().clone()))
+                })
+            })?;
         if let Some(id) = existing {
             let active = activate
-                .map(|tip| activate_packet(owner, tip, clock, control, operation))
+                .map(|tip| {
+                    super::observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+                        activate_packet(owner, tip, clock, control, operation)
+                    })
+                })
                 .transpose()?;
             return Ok((id, false, active));
         }
-        let checked = verify_history_work(packet, &progress, owns_node_mutex, control)?;
+        let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
+            verify_history_work(packet, &progress, owns_node_mutex, control)
+        })?;
         operation.history_work_verified_for_settings(&checked, &settings)?;
         // Promotion changes only scheduling for this complete, unique W1.
         // Shared owners retain nonwaiting checkpoints while holding Node;
@@ -291,22 +332,37 @@ fn admit_packet(
                     &mut |_| check(),
                     &execution,
                     || Ok(clock),
-                    None,
+                    observation,
                 )?;
                 drop(guard);
                 id
             }
-            Owner::Exclusive(_) => owner.with(control, |node| {
-                let checked = node.attach_owner_work(checked, permit)?;
-                node.admit_work_checked_with_control(checked, clock, &execution)
-            })?,
+            Owner::Exclusive(_) => {
+                super::observe_submit_phase(observation, SubmitPhase::Admission, || {
+                    owner.with(control, |node| {
+                        let checked = node.attach_owner_work(checked, permit)?;
+                        super::execution_observation::run(
+                            observation,
+                            &execution,
+                            super::execution_observation::Scope::Held,
+                            |execution| {
+                                node.admit_work_checked_with_control(checked, clock, execution)
+                            },
+                        )
+                    })
+                })?
+            }
         };
         // Test-only cut is after the actual native COMMIT, before CPU settle.
         cut("admitted");
         let active = if let Some(tip) = activate {
             // Final activation keeps the original admission operation and
             // deadline. It does not start a new reservation after paid W1.
-            Some(activate_packet(owner, tip, clock, control, operation)?)
+            Some(super::observe_submit_phase(
+                observation,
+                SubmitPhase::SubmitResult,
+                || activate_packet(owner, tip, clock, control, operation),
+            )?)
         } else {
             None
         };
@@ -341,76 +397,119 @@ fn activate_packet(
 }
 
 pub(super) fn receive(
-    mut owner: Owner<'_>,
+    owner: Owner<'_>,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
     control: Control<'_>,
 ) -> Result<Hash> {
-    let (settings, continuous) = owner.with(&control, |node| {
-        validate_page(node.settings(), &page, tip, after)?;
-        Ok((node.settings().clone(), node.is_continuous()))
-    })?;
-    if continuous {
-        // The exclusive owner may use its exact signed receiver pair for one
-        // complete extension. General pages and the shared discovery poller
-        // still need their own durable History authority and remain closed.
-        ensure(
-            matches!(owner, Owner::Exclusive(_))
-                && page.complete
-                && page.packets.len() == 1
-                && page.next == hex::encode(tip),
-            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
-        )?;
-        let text = &page.packets[0];
-        ensure(
-            text.len() <= 2_097_152
-                && text.len().is_multiple_of(2)
-                && text
-                    .bytes()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
-            "PACKET_HEX",
-        )?;
-        let raw = hex::decode(text).map_err(|_| crate::Error::from("PACKET_HEX"))?;
-        return owner.with(&control, |node| {
-            node.receive_owned_continuous_history_packet(&raw, tip, after, clock, &|| {
-                control.check()
-            })
-        });
+    receive_observed(owner, page, tip, after, clock, control, None)
+}
+
+pub(super) fn receive_observed(
+    mut owner: Owner<'_>,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    control: Control<'_>,
+    observation: Option<&HistoryImportObserver>,
+) -> Result<Hash> {
+    if let Some(observer) = observation {
+        observer.enter(tip, after, page.packets.len());
     }
-    scoped(&mut owner, &control, |owner, cpu| {
-        let (packets, next) = metered(cpu, &control, |operation| {
-            let mut packets = Vec::with_capacity(page.packets.len());
-            let mut next = after;
-            for raw in &page.packets {
-                control.check()?;
-                operation.checkpoint()?;
-                let packet = hex_packet_for_settings(raw, &settings)?;
-                ensure(packet.header.parent == next, "PAGE_PARENT")?;
-                next = packet.id()?;
-                packets.push(packet);
-            }
-            ensure(
-                page.next == hex::encode(next) && page.complete == (next == tip),
-                "PAGE_COMPLETE",
-            )?;
-            control.check()?;
-            operation.checkpoint()?;
-            Ok((packets, next))
-        })?;
-        cut("decoded");
-        let count = packets.len();
-        for (index, packet) in packets.into_iter().enumerate() {
-            let activate = (page.complete && index + 1 == count).then_some(tip);
-            admit_packet(owner, cpu, packet, clock, &control, activate)?;
-        }
-        if page.complete && count == 0 {
-            metered(cpu, &control, |operation| {
-                activate_packet(owner, tip, clock, &control, operation)
+    let page_observation = observation.map(HistoryImportObserver::page);
+    super::observe_submit_phase(page_observation, SubmitPhase::HistoryImport, || {
+        let (settings, continuous) =
+            super::observe_submit_phase(page_observation, SubmitPhase::Context, || {
+                owner.with(&control, |node| {
+                    validate_page(node.settings(), &page, tip, after)?;
+                    Ok((node.settings().clone(), node.is_continuous()))
+                })
             })?;
+        if continuous {
+            // The exclusive owner may use its exact signed receiver pair for one
+            // complete extension. General pages and the shared discovery poller
+            // still need their own durable History authority and remain closed.
+            ensure(
+                matches!(owner, Owner::Exclusive(_))
+                    && page.complete
+                    && page.packets.len() == 1
+                    && page.next == hex::encode(tip),
+                "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+            )?;
+            let text = &page.packets[0];
+            ensure(
+                text.len() <= 2_097_152
+                    && text.len().is_multiple_of(2)
+                    && text
+                        .bytes()
+                        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+                "PACKET_HEX",
+            )?;
+            let raw = hex::decode(text).map_err(|_| crate::Error::from("PACKET_HEX"))?;
+            return owner.with(&control, |node| {
+                node.receive_owned_continuous_history_packet(&raw, tip, after, clock, &|| {
+                    control.check()
+                })
+            });
         }
-        Ok(next)
+        scoped_observed(&mut owner, &control, page_observation, |owner, cpu| {
+            let (packets, next) = metered_observed(cpu, &control, page_observation, |operation| {
+                super::observe_submit_phase(page_observation, SubmitPhase::Decode, || {
+                    let mut packets = Vec::with_capacity(page.packets.len());
+                    let mut next = after;
+                    for (index, raw) in page.packets.iter().enumerate() {
+                        control.check()?;
+                        operation.checkpoint()?;
+                        let packet = hex_packet_for_settings(raw, &settings)?;
+                        ensure(packet.header.parent == next, "PAGE_PARENT")?;
+                        next = packet.id()?;
+                        if let Some(observer) = observation {
+                            observer.decoded_packet(index, next);
+                        }
+                        packets.push(packet);
+                    }
+                    ensure(
+                        page.next == hex::encode(next) && page.complete == (next == tip),
+                        "PAGE_COMPLETE",
+                    )?;
+                    control.check()?;
+                    operation.checkpoint()?;
+                    Ok((packets, next))
+                })
+            })?;
+            cut("decoded");
+            let count = packets.len();
+            for (index, packet) in packets.into_iter().enumerate() {
+                let activate = (page.complete && index + 1 == count).then_some(tip);
+                let packet_observation = observation.and_then(|observer| observer.packet(index));
+                super::observe_submit_phase(
+                    packet_observation,
+                    SubmitPhase::HistoryImport,
+                    || {
+                        admit_packet(
+                            owner,
+                            cpu,
+                            packet,
+                            clock,
+                            &control,
+                            activate,
+                            packet_observation,
+                        )
+                    },
+                )?;
+            }
+            if page.complete && count == 0 {
+                metered(cpu, &control, |operation| {
+                    super::observe_submit_phase(page_observation, SubmitPhase::SubmitResult, || {
+                        activate_packet(owner, tip, clock, &control, operation)
+                    })
+                })?;
+            }
+            Ok(next)
+        })
     })
 }
 
@@ -438,7 +537,7 @@ pub(crate) fn admit_shared_packet(
         Ok(())
     })?;
     scoped(&mut owner, &control, |owner, cpu| {
-        admit_packet(owner, cpu, packet, now()?, &control, activate)
+        admit_packet(owner, cpu, packet, now()?, &control, activate, None)
             .map(|(_, inserted, active)| (inserted, active))
     })
 }

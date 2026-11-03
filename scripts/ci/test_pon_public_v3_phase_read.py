@@ -22,6 +22,19 @@ def record():
                               for phase in reader.PHASES]}
 
 
+def record_v4():
+    row = record()
+    row['submit_phases'] = [dict(phase=phase, started=False, completed=False,
+        accepted=None, error_code=None, started_ns=None, ended_ns=None, wall_ns=None,
+        thread_cpu_ns=None, parent_phase=reader.PHASE_PARENTS_V4.get(phase))
+        for phase in reader.PHASES_V4]
+    for field in reader.WAIT_FIELDS_V4:
+        row[field] = dict(started_ns=None, ended_ns=None, wall_ns=None,
+                          completed=False, accepted=None, error_code=None)
+    row['terminal_error_code'] = None
+    return row
+
+
 def attribution_phase(submissions, history, attacks, records):
     """Only role-matching fields vary; this is not a measured native campaign."""
     return {
@@ -100,6 +113,62 @@ def arithmetic_report():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_v4_nested_failed_and_cancelled_intervals_are_separate(self):
+        row = record_v4()
+        for name, start, end, cpu in [('admission', 10, 110, 30), ('execution', 20, 90, 22),
+                                      ('root_commitment', 50, 90, 12)]:
+            phase = row['submit_phases'][reader.PHASES_V4.index(name)]
+            phase.update(started=True, completed=True, accepted=False, error_code='PUBLIC_REQUEST_CANCELLED',
+                         started_ns=start, ended_ns=end, wall_ns=end-start, thread_cpu_ns=cpu)
+        row['paid_task_queue_wait'].update(started_ns=0, ended_ns=10, wall_ns=10,
+                                           completed=True, accepted=True)
+        value = reader.execution_summary([row], True, observer_v4=True)
+        self.assertNotIn('total_cpu_ns', value)
+        root = value['submit_phases'][-1]
+        self.assertEqual(root['parent_phase'], 'execution')
+        self.assertEqual(root['thread_cpu_ns']['sum_known_ns'], 12)
+        self.assertEqual(root['error_code_counts'], {'PUBLIC_REQUEST_CANCELLED': 1})
+        self.assertEqual(value['wait_intervals']['grant_wait']['wall_ns']['known_count'], 0)
+        root = row['submit_phases'][-1]
+        root.update(started_ns=19, ended_ns=90, wall_ns=71)
+        with self.assertRaisesRegex(ValueError, 'escapes its inclusive parent'):
+            reader.execution_summary([row], True, observer_v4=True)
+        # Missing/unfinished parent clocks are not replaced by invented bounds.
+        parent = row['submit_phases'][reader.PHASES_V4.index('execution')]
+        parent.update(started_ns=None)
+        reader.execution_summary([row], True, observer_v4=True)
+
+    def test_v4_rejects_missing_nonfinite_and_inconsistent_slots(self):
+        import copy
+        row = record_v4()
+        cases = []
+        wrong = copy.deepcopy(row); wrong['submit_phases'].pop(); cases.append(wrong)
+        wrong = copy.deepcopy(row); del wrong['submit_phases'][0]['started_ns']; cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['submit_phases'][0]['wall_ns'] = float('nan'); cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['submit_phases'][0]['wall_ns'] = 0; cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['submit_phases'][-1]['parent_phase'] = 'admission'; cases.append(wrong)
+        wrong = copy.deepcopy(row); del wrong['paid_task_queue_wait']; cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['grant_wait'].update(completed=True, accepted=True); cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['grant_wait'].update(started_ns=2, ended_ns=1, wall_ns=0); cases.append(wrong)
+        wrong = copy.deepcopy(row); wrong['terminal_error_code'] = 'unbounded remote text'; cases.append(wrong)
+        for index, wrong in enumerate(cases):
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.execution_summary([wrong], True, observer_v4=True)
+
+    def test_v4_scope_is_explicit_and_does_not_relabel_v3(self):
+        phase = attribution_phase([], [], [], [record_v4()])
+        phase['receiver_observation'].update(
+            schema='public-v3-local-request-resource-observation-v4',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+            dispatch_cpu_includes_response_signing=True, phase_parent_links_are_inclusive=True,
+            cpu_wait_is_outside_dispatch=True, monotonic_epoch_is_observer_local=True)
+        summary = reader.phase_summary(phase)
+        self.assertEqual(len(summary['receiver']['all_retained_records']['submit_phases']), 19)
+        phase['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v3'
+        with self.assertRaisesRegex(ValueError, 'seven ordered'):
+            reader.phase_summary(phase)
+
     def test_r14_policy_preserves_failures_and_cannot_relabel_r13_phases(self):
         report = arithmetic_report()
         report['public_resource_policy'] = arithmetic_policy('r14')

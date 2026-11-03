@@ -80,6 +80,67 @@ fn query(manifest: &CellManifestV1) -> Vec<u8> {
     query
 }
 
+#[cfg(unix)]
+#[test]
+fn listener_wait_is_capped_by_the_original_deadline_and_idle_interval() {
+    let now = Instant::now();
+    assert_eq!(listener_wait_timeout(now, now), Duration::ZERO);
+    assert_eq!(
+        listener_wait_timeout(now, now + Duration::from_nanos(1)),
+        Duration::ZERO
+    );
+    assert_eq!(
+        listener_wait_timeout(now + Duration::from_micros(123), now),
+        Duration::from_micros(123)
+    );
+    assert_eq!(
+        listener_wait_timeout(now + Duration::from_secs(30), now),
+        Duration::from_millis(5)
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let deadline = Instant::now() + Duration::from_millis(2);
+    assert!(!wait_for_listener(&listener, deadline).unwrap());
+    assert!(Instant::now() >= deadline);
+    // Reusing the expired deadline must not start another wait or invent
+    // readiness. No exact wall-clock upper bound assumes scheduler isolation.
+    assert!(!wait_for_listener(&listener, deadline).unwrap());
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        io::ErrorKind::WouldBlock
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn ready_listener_wait_leaves_the_socket_for_the_original_accept_path() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    client.write_all(b"cell-readiness").unwrap();
+    let deadline = Instant::now() + Duration::from_secs(1);
+    assert!(wait_for_listener(&listener, deadline).unwrap());
+    let (mut accepted, _) = listener.accept().unwrap();
+    accepted
+        .set_read_timeout(Some(Duration::from_secs(1)))
+        .unwrap();
+    let mut bytes = [0; 14];
+    accepted.read_exact(&mut bytes).unwrap();
+    assert_eq!(&bytes, b"cell-readiness");
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        io::ErrorKind::WouldBlock
+    );
+    // Even a queued connection does not renew an already expired service.
+    let _next = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    assert!(!wait_for_listener(&listener, Instant::now()).unwrap());
+}
+
 #[test]
 fn half_request_does_not_block_honest_pinned_fetch() {
     let (dir, path, manifest) = fixture();

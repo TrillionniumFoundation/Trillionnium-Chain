@@ -27,6 +27,8 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_growth::GrowthHeader;
 use trnm_protocol::pon_wire::{Envelope, Hash, Header};
+#[cfg(test)]
+mod difference_tests;
 mod observation;
 pub(super) mod observer;
 mod packet;
@@ -132,17 +134,53 @@ fn delta_hash(deltas: &[Delta]) -> Result<Hash> {
     ))
 }
 fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
-    let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
-    keys.into_iter()
-        .filter(|key| before.get(*key) != after.get(*key))
-        .map(|key| {
-            Ok((
+    // Both immutable inputs already have canonical key order. Merge their
+    // iterators instead of allocating a third key tree and looking up each
+    // value again. Keep the original Value comparison BEFORE serialization:
+    // changing it to byte comparison would change this profile's delta bytes.
+    let mut left = before.iter();
+    let mut right = after.iter();
+    let mut prior = left.next();
+    let mut next = right.next();
+    let mut deltas = Vec::new();
+    loop {
+        let (key, old, new) = match (prior, next) {
+            (Some((old_key, old_value)), Some((new_key, new_value))) => {
+                match old_key.cmp(new_key) {
+                    std::cmp::Ordering::Less => {
+                        prior = left.next();
+                        (old_key, Some(old_value), None)
+                    }
+                    std::cmp::Ordering::Equal => {
+                        prior = left.next();
+                        next = right.next();
+                        (old_key, Some(old_value), Some(new_value))
+                    }
+                    std::cmp::Ordering::Greater => {
+                        next = right.next();
+                        (new_key, None, Some(new_value))
+                    }
+                }
+            }
+            (Some((key, value)), None) => {
+                prior = left.next();
+                (key, Some(value), None)
+            }
+            (None, Some((key, value))) => {
+                next = right.next();
+                (key, None, Some(value))
+            }
+            (None, None) => break,
+        };
+        if old != new {
+            deltas.push((
                 key.clone(),
-                before.get(key).map(canonical).transpose()?,
-                after.get(key).map(canonical).transpose()?,
-            ))
-        })
-        .collect()
+                old.map(canonical).transpose()?,
+                new.map(canonical).transpose()?,
+            ));
+        }
+    }
+    Ok(deltas)
 }
 fn load(db: &Connection, id: Hash) -> Result<StoredState> {
     let bytes: Vec<u8> = db

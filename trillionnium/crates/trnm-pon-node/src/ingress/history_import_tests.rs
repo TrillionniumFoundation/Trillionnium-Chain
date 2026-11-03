@@ -643,6 +643,119 @@ fn expired_history_never_starts_an_epoch_or_a_cpu_account() {
 }
 
 #[test]
+fn observed_history_retains_complete_native_path_and_real_w1_cancellation() {
+    for cancel in [false, true] {
+        let (_directory, settings, mut node, packet, clock) = fixture();
+        let id = packet.id().unwrap();
+        let observation = HistoryImportObserver::new();
+        let cancelled = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        if cancel {
+            let cancelled = cancelled.clone();
+            OBSERVER.with(|hook| {
+                *hook.borrow_mut() = Some(Box::new(move |stage| {
+                    if stage == "w1" {
+                        cancelled.store(true, Ordering::Release);
+                    }
+                }))
+            });
+        }
+        let resource = || {
+            ensure(
+                !cancelled.load(Ordering::Acquire),
+                "PUBLIC_REQUEST_CANCELLED",
+            )
+        };
+        let result = receive_observed(
+            Owner::Exclusive(&mut node),
+            page(&settings, &packet),
+            id,
+            settings.genesis(),
+            clock,
+            Control {
+                deadline: Instant::now() + Duration::from_secs(5),
+                resource: &resource,
+            },
+            Some(&observation),
+        );
+        OBSERVER.with(|hook| *hook.borrow_mut() = None);
+        assert_eq!(result.is_ok(), !cancel);
+        let snapshot = observation.snapshot();
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert_eq!(snapshot.packet_capacity, 16);
+        assert_eq!(snapshot.packets.len(), 1);
+        assert_eq!(snapshot.packets[0].packet_id, Some(id));
+        let imported = snapshot.phases[SubmitPhase::HistoryImport as usize];
+        assert!(imported.started && imported.completed);
+        assert_eq!(imported.accepted, Some(!cancel));
+        assert_eq!(
+            imported.ended_ns.unwrap() - imported.started_ns.unwrap(),
+            imported.wall_ns.unwrap()
+        );
+        let phases = &snapshot.packets[0].phases;
+        let work = phases[SubmitPhase::Work as usize];
+        assert!(work.started && work.completed && work.wall_ns.is_some());
+        assert_eq!(work.accepted, Some(!cancel));
+        assert!(phases[SubmitPhase::CpuSettle as usize].completed);
+        if cancel {
+            assert_eq!(work.error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+            assert!(!phases[SubmitPhase::Admission as usize].started);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+            assert!(node.packet(id).is_err());
+        } else {
+            assert_eq!(node.read_active().unwrap().0, id);
+            for phase in [
+                SubmitPhase::AdmissionPrepare,
+                SubmitPhase::Execution,
+                SubmitPhase::RootCommitment,
+                SubmitPhase::Commit,
+                SubmitPhase::SubmitResult,
+            ] {
+                assert_eq!(phases[phase as usize].accepted, Some(true), "{phase:?}");
+            }
+        }
+    }
+}
+
+#[test]
+fn observed_expired_history_keeps_failure_and_unentered_phases_null() {
+    let (_directory, settings, mut node, packet, clock) = fixture();
+    let observation = HistoryImportObserver::new();
+    let result = receive_observed(
+        Owner::Exclusive(&mut node),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now(),
+            resource: &|| Ok(()),
+        },
+        Some(&observation),
+    );
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    let snapshot = observation.snapshot();
+    assert_eq!(snapshot.measurement_failures, 0);
+    assert!(snapshot.packets.is_empty());
+    for phase in &snapshot.phases {
+        let entered = matches!(
+            phase.phase,
+            SubmitPhase::Context | SubmitPhase::HistoryImport
+        );
+        assert_eq!(phase.started, entered);
+        assert_eq!(phase.completed, entered);
+        assert_eq!(phase.accepted, entered.then_some(false));
+        assert_eq!(phase.wall_ns.is_some(), entered);
+        assert_eq!(
+            phase.error_code,
+            entered.then_some("PUBLIC_REQUEST_DEADLINE")
+        );
+    }
+    assert!(node.public_service_cpu_domain().is_err());
+}
+
+#[test]
 fn shared_history_refill_full_w1_and_actual_m06_release_the_original_writer() {
     let (_directory, settings, node, packet, clock) = fixture();
     let owner = Arc::new(Mutex::new(node));

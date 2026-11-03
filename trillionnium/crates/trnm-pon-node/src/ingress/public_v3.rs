@@ -2003,7 +2003,11 @@ fn serve_public_protected_v3_inner(
                     match task {
                         Ok(task) => {
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
-                            if task_alive(task.deadline, &stop, &task.cancelled).is_err() {
+                            let alive = task_alive(task.deadline, &stop, &task.cancelled);
+                            if let Some(record) = &task.observation {
+                                record.queue_finished(&alive);
+                            }
+                            if alive.is_err() {
                                 let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                                 m.tasks_skipped_before_dispatch += 1;
                                 if task.cancelled.load(Ordering::Acquire) {
@@ -2030,14 +2034,20 @@ fn serve_public_protected_v3_inner(
                             let (permit, outcome) = match permit {
                                 Ok(permit) => {
                                     let cpu_permit = if mutating_operation(task.cookie.op) {
-                                        PaidMutationCpuPermit::acquire_before(
-                                            server,
-                                            &metrics,
-                                            task.deadline.min(end),
-                                            &stop,
-                                            &task.cancelled,
+                                        super::observe_submit_phase(
+                                            task.observation.as_ref(),
+                                            SubmitPhase::CpuWait,
+                                            || {
+                                                PaidMutationCpuPermit::acquire_before(
+                                                    server,
+                                                    &metrics,
+                                                    task.deadline.min(end),
+                                                    &stop,
+                                                    &task.cancelled,
+                                                )
+                                                .map(Some)
+                                            },
                                         )
-                                        .map(Some)
                                     } else {
                                         Ok(None)
                                     };
@@ -2088,11 +2098,17 @@ fn serve_public_protected_v3_inner(
                                                 if let Some(cpu) = mutation_cpu {
                                                     cpu.workers.checkpoint()?;
                                                 }
-                                                let decoded = decode_task_body(
-                                                    &task,
-                                                    server,
-                                                    settings,
-                                                    mutation_cpu,
+                                                let decoded = super::observe_submit_phase(
+                                                    task.observation.as_ref(),
+                                                    SubmitPhase::BodyDecode,
+                                                    || {
+                                                        decode_task_body(
+                                                            &task,
+                                                            server,
+                                                            settings,
+                                                            mutation_cpu,
+                                                        )
+                                                    },
                                                 );
                                                 if decoded.is_err() {
                                                     metrics
@@ -2154,6 +2170,9 @@ fn serve_public_protected_v3_inner(
                             }
                             drop(m);
                             let accepted = outcome.is_ok();
+                            if let (Some(record), Err(error)) = (&task.observation, &outcome) {
+                                record.dispatch_error(error);
+                            }
                             let bytes = if task.cancelled.load(Ordering::Acquire) {
                                 None
                             } else {
@@ -2162,7 +2181,11 @@ fn serve_public_protected_v3_inner(
                                 // has been built, including refusal/error responses.
                                 let response_cpu =
                                     accounting.as_ref().and_then(|_| ThreadCpuStamp::start());
-                                let bytes = response(server, settings, &task.cookie, outcome);
+                                let bytes = super::observe_submit_phase(
+                                    task.observation.as_ref(),
+                                    SubmitPhase::ResponseEncoding,
+                                    || response(server, settings, &task.cookie, outcome),
+                                );
                                 // Fault injection cannot skip the actual signing work.
                                 #[cfg(test)]
                                 let bytes = if server.fail_next_output.swap(false, Ordering::AcqRel)
@@ -2304,7 +2327,7 @@ fn serve_public_protected_v3_inner(
                                 )?;
                                 let bytes = match done.bytes {
                                     Ok(bytes) => bytes,
-                                    Err(_) => {
+                                    Err(error) => {
                                         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                                         m.output_serialization_failures += 1;
                                         *m.retained_phase_errors
@@ -2312,12 +2335,15 @@ fn serve_public_protected_v3_inner(
                                             .or_default() += 1;
                                         drop(m);
                                         if let Some(record) = &conn.observation {
-                                            record.terminal("serialization");
+                                            record.terminal_error("serialization", &error);
                                         }
                                         connections.remove(&done.id);
                                         continue;
                                     }
                                 };
+                                if let Some(record) = &conn.observation {
+                                    record.response_started();
+                                }
                                 conn.stage = Stage::Output {
                                     bytes,
                                     cursor: 0,
@@ -2351,7 +2377,10 @@ fn serve_public_protected_v3_inner(
                             .entry(conn.stage.phase().into())
                             .or_default() += 1;
                         if let Some(record) = &conn.observation {
-                            record.terminal(conn.stage.phase());
+                            record.terminal_error(
+                                conn.stage.phase(),
+                                &"PUBLIC_REQUEST_DEADLINE".into(),
+                            );
                         }
                         remove.push(*id);
                         continue;
@@ -2391,6 +2420,9 @@ fn serve_public_protected_v3_inner(
                                     record.request(hello.op, hello.digest);
                                 }
                                 let pending = PendingOrder::next(&mut next_pending_order)?;
+                                if let Some(record) = &conn.observation {
+                                    record.pending_started(false, pending.entered_at);
+                                }
                                 metrics
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
@@ -2423,6 +2455,9 @@ fn serve_public_protected_v3_inner(
                                 conn.deadline = conn
                                     .total_deadline
                                     .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));
+                                if let Some(record) = &conn.observation {
+                                    record.pending_granted(false);
+                                }
                                 Ok(Stage::Challenge {
                                     cookie,
                                     bytes: frame,
@@ -2529,6 +2564,9 @@ fn serve_public_protected_v3_inner(
                                     m.spent_reservations += 1;
                                 }
                                 let pending = PendingOrder::next(&mut next_pending_order)?;
+                                if let Some(record) = &conn.observation {
+                                    record.pending_started(true, pending.entered_at);
+                                }
                                 metrics
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
@@ -2590,6 +2628,9 @@ fn serve_public_protected_v3_inner(
                                 conn.deadline = conn
                                     .total_deadline
                                     .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));
+                                if let Some(record) = &conn.observation {
+                                    record.pending_granted(true);
+                                }
                                 Ok(Stage::Ready {
                                     cookie,
                                     bytes: frame,
@@ -2665,6 +2706,9 @@ fn serve_public_protected_v3_inner(
                                         .min(ready_at + Duration::from_millis(WORK_MS)),
                                     cancelled: conn.cancelled.clone(),
                                 };
+                                if let Some(record) = &task.observation {
+                                    record.queue_started(ready_at);
+                                }
                                 conn.deadline = task.deadline;
                                 Ok(Stage::Enqueue(Box::new(task)))
                             }
@@ -2737,9 +2781,9 @@ fn serve_public_protected_v3_inner(
                     })();
                     match advanced {
                         Ok(next) => conn.stage = next,
-                        Err(_) => {
+                        Err(error) => {
                             if let Some(record) = &conn.observation {
-                                record.terminal(phase);
+                                record.terminal_error(phase, &error);
                             }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             close_pending(&mut m, pending_before);
@@ -2764,7 +2808,10 @@ fn serve_public_protected_v3_inner(
                             .is_some_and(ConnectionLease::pressure_cancelled);
                         if pressure {
                             if let Some(record) = &conn.observation {
-                                record.terminal("unpaid-pressure");
+                                record.terminal_error(
+                                    "unpaid-pressure",
+                                    &"PUBLIC_REQUEST_CANCELLED".into(),
+                                );
                             }
                         }
                         // Actual socket/buffer/lease drop precedes the original
@@ -2814,7 +2861,7 @@ fn serve_public_protected_v3_inner(
             close_pending(&mut m, conn.stage.pending());
             drop(m);
             if let Some(record) = &conn.observation {
-                record.terminal("shutdown");
+                record.terminal_error("shutdown", &"PUBLIC_REQUEST_CANCELLED".into());
             }
         }
         connections.clear();

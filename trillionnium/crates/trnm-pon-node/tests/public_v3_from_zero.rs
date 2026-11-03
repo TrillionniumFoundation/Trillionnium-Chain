@@ -1444,11 +1444,12 @@ fn signed_confirmation_phase_with_builder(
         if row["status"] == "ok" && row["returned_after_window"] == false {
             let replay_started_ns = ns(epoch);
             let page_cpu = ThreadCpuStamp::start();
+            let import_observer = ingress::HistoryImportObserver::new();
             let imported =
                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                     .map_err(|error| error.to_string())
                     .and_then(|page| {
-                        ingress::receive_public_page_from_before(
+                        ingress::receive_public_page_from_before_observed(
                             &mut verifier,
                             client.address,
                             page,
@@ -1456,6 +1457,7 @@ fn signed_confirmation_phase_with_builder(
                             after,
                             ingress::now().unwrap(),
                             end,
+                            Some(&import_observer),
                         )
                         .map_err(|error| error.to_string())
                     });
@@ -1473,6 +1475,8 @@ fn signed_confirmation_phase_with_builder(
                 "prior_after": hex::encode(after),
                 "next_after": imported.as_ref().ok().map(hex::encode),
                 "replay_accepted": imported.is_ok(),
+                "replay_error": imported.as_ref().err(),
+                "native_import_observation": import_observer.snapshot(),
                 "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
             }));
             match imported {

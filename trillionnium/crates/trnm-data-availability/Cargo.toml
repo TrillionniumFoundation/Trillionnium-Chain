@@ -27,6 +27,9 @@ trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 zeroize = "=1.8.2"
 
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "=1.1.4", features = ["event"] }
+
 [dev-dependencies]
 ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc", "zeroize"] }
 hex = "0.4"

@@ -59,6 +59,7 @@ impl KernelResourceSample {
 mod kernel_parent {
     use super::KernelResourceSample;
     use std::{
+        borrow::Cow,
         fs,
         io::{self, Read},
         net::SocketAddr,
@@ -186,13 +187,61 @@ mod kernel_parent {
         )
     }
 
+    // This is a common-case stack size, NOT a new limit on boot or membership
+    // text. Longer input continues from the same stream on the original heap
+    // path. Unlike read_to_string(File), the short path needs no size metadata.
+    const CONTEXT_STACK_BYTES: usize = 256;
+
+    fn read_context_text<'a>(
+        reader: &mut impl Read,
+        bytes: &'a mut [u8; CONTEXT_STACK_BYTES + 1],
+    ) -> io::Result<Cow<'a, str>> {
+        let mut used = 0;
+        loop {
+            let count = match reader.read(&mut bytes[used..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(error) => return Err(error),
+            };
+            if count == 0 {
+                return std::str::from_utf8(&bytes[..used])
+                    .map(Cow::Borrowed)
+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error));
+            }
+            used += count;
+            if used > CONTEXT_STACK_BYTES {
+                let mut complete = bytes[..used].to_vec();
+                // Preserve the already consumed prefix and read errors before
+                // UTF-8 validation, even when the prefix is malformed. Never
+                // reopen here: that could combine two different live files.
+                reader.read_to_end(&mut complete)?;
+                return String::from_utf8(complete)
+                    .map(Cow::Owned)
+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error));
+            }
+        }
+    }
+
+    fn read_context<'a>(
+        path: &Path,
+        bytes: &'a mut [u8; CONTEXT_STACK_BYTES + 1],
+    ) -> Result<Cow<'a, str>> {
+        // A fresh open and complete read on EVERY check, including the current
+        // calling thread's procfs path. Neither a descriptor nor its contents
+        // are retained. I/O and UTF-8 errors keep the original context error.
+        let mut file =
+            fs::File::open(path).map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+        read_context_text(&mut file, bytes)
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))
+    }
+
     fn in_parent_cgroup(parent: &str) -> Result<bool> {
         // A process may have independently placed native worker threads in a
         // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
         // leader and cannot attest the actual calling worker's CPU cgroup.
         // The kernel's /proc/thread-self resolves to the current TID.
-        let text = fs::read_to_string("/proc/thread-self/cgroup")
-            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+        let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+        let text = read_context(Path::new("/proc/thread-self/cgroup"), &mut bytes)?;
         cgroup_within_parent(&text, parent)
     }
 
@@ -278,14 +327,18 @@ mod kernel_parent {
         // Immutable names only. Every check still opens all five actual paths
         // afresh; no descriptor, contents or resource verdict is retained.
         limit_paths: [PathBuf; 5],
+        parent_relative: String,
         identity: (u64, u64),
         boot_id: String,
         limits: Limits,
     }
     impl KernelBudget {
         fn check(&self) -> Result<()> {
-            let now_boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+            let mut boot_bytes = [0; CONTEXT_STACK_BYTES + 1];
+            let now_boot = read_context(
+                Path::new("/proc/sys/kernel/random/boot_id"),
+                &mut boot_bytes,
+            )?;
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
@@ -298,14 +351,7 @@ mod kernel_parent {
             {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
-            let parent_rel = self
-                .parent
-                .strip_prefix(CGROUP_ROOT)
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?
-                .to_str()
-                .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
-                .trim_start_matches('/');
-            if !in_parent_cgroup(parent_rel)? {
+            if !in_parent_cgroup(&self.parent_relative)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
             let observed = read_limits(&self.limit_paths)?;
@@ -335,10 +381,21 @@ mod kernel_parent {
             }
             let boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+            // Only this already approved immutable path spelling is retained.
+            // The boot, current inode/ownership, calling-thread membership and
+            // all five current limits are still observed on every check.
+            let parent_relative = parent
+                .strip_prefix(CGROUP_ROOT)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?
+                .to_str()
+                .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
+                .trim_start_matches('/')
+                .to_owned();
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
                 boot_id: boot.trim().to_owned(),
                 limit_paths: limit_paths(&parent),
+                parent_relative,
                 parent,
                 limits: Limits {
                     cpu_quota_us: 0,
@@ -426,6 +483,208 @@ mod kernel_parent {
             fn read(&mut self, _: &mut [u8]) -> io::Result<usize> {
                 Err(self.0.into())
             }
+        }
+
+        #[test]
+        fn context_reader_keeps_complete_text_and_unbounded_original_long_input() {
+            let mut inputs = vec![b"".to_vec(), b"boot-id\n".to_vec()];
+            for length in [
+                1,
+                CONTEXT_STACK_BYTES - 1,
+                CONTEXT_STACK_BYTES,
+                CONTEXT_STACK_BYTES + 1,
+                4096,
+            ] {
+                inputs.push(vec![b'x'; length]);
+            }
+            // A multi-byte character may straddle the stack/heap boundary.
+            inputs.push(format!("{}λ", "x".repeat(CONTEXT_STACK_BYTES)).into_bytes());
+            inputs.push(format!("{}λ", "x".repeat(CONTEXT_STACK_BYTES - 1)).into_bytes());
+            for input in inputs {
+                let mut reader = ShortReads {
+                    remaining: &input,
+                    interrupts: 3,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+                let actual = read_context_text(&mut reader, &mut bytes).unwrap();
+                let mut reference = String::new();
+                io::Cursor::new(&input)
+                    .read_to_string(&mut reference)
+                    .unwrap();
+                assert_eq!(actual.as_ref(), reference);
+                assert_eq!(
+                    matches!(actual, Cow::Borrowed(_)),
+                    input.len() <= CONTEXT_STACK_BYTES
+                );
+                assert!(reader.eof_seen, "a short read or full stack is not EOF");
+                assert!(reader.remaining.is_empty());
+            }
+        }
+
+        #[test]
+        fn context_reader_validates_all_utf8_after_real_eof_on_both_paths() {
+            for input in [
+                vec![0xff],
+                b"0::/trnmponpublic.slice\n\xff".to_vec(),
+                b"\xf0\x9f".to_vec(),
+                [vec![b'x'; CONTEXT_STACK_BYTES - 1], vec![0xce]].concat(),
+                [vec![b'x'; CONTEXT_STACK_BYTES], vec![0xff]].concat(),
+                [vec![b'x'; 4096], vec![0xff]].concat(),
+            ] {
+                let mut reader = ShortReads {
+                    remaining: &input,
+                    interrupts: 2,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+                let actual = read_context_text(&mut reader, &mut bytes).unwrap_err();
+                let expected = io::Cursor::new(&input)
+                    .read_to_string(&mut String::new())
+                    .unwrap_err();
+                assert_eq!(actual.kind(), expected.kind());
+                assert_eq!(actual.kind(), io::ErrorKind::InvalidData);
+                assert!(reader.eof_seen);
+            }
+        }
+
+        #[test]
+        fn context_reader_retains_late_io_error_before_utf8_or_prefix_acceptance() {
+            for prefix in [
+                b"".to_vec(),
+                b"0::/trnmponpublic.slice\n".to_vec(),
+                vec![b'x'; CONTEXT_STACK_BYTES],
+                vec![b'x'; CONTEXT_STACK_BYTES + 1],
+                vec![0xff],
+                vec![0xff; 4096],
+            ] {
+                for kind in [
+                    io::ErrorKind::PermissionDenied,
+                    io::ErrorKind::UnexpectedEof,
+                    io::ErrorKind::Other,
+                ] {
+                    let mut actual_reader = io::Cursor::new(&prefix).chain(ReadError(kind));
+                    let mut expected_reader = io::Cursor::new(&prefix).chain(ReadError(kind));
+                    let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+                    let actual = read_context_text(&mut actual_reader, &mut bytes).unwrap_err();
+                    let expected = expected_reader
+                        .read_to_string(&mut String::new())
+                        .unwrap_err();
+                    assert_eq!(actual.kind(), expected.kind());
+                    assert_eq!(actual.kind(), kind);
+                }
+            }
+        }
+
+        #[test]
+        fn context_reader_reopens_actual_path_after_replacement_and_failure() {
+            // These temporary bytes exercise only the reader, never Host
+            // authority or the fixed root-owned cgroup admission.
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("context");
+            let replacement = dir.path().join("replacement");
+            let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+            fs::write(&path, "0::/trnmponpublic.slice/first\n").unwrap();
+            assert_eq!(
+                read_context(&path, &mut bytes).unwrap(),
+                fs::read_to_string(&path).unwrap()
+            );
+            let before = fs::metadata(&path).unwrap();
+            let long = format!("0::/trnmponpublic.slice/{}\n", "child".repeat(100));
+            fs::write(&replacement, &long).unwrap();
+            fs::rename(&replacement, &path).unwrap();
+            let after = fs::metadata(&path).unwrap();
+            assert_ne!((before.dev(), before.ino()), (after.dev(), after.ino()));
+            assert_eq!(read_context(&path, &mut bytes).unwrap(), long);
+            fs::write(&path, b"valid-prefix\xff").unwrap();
+            assert_eq!(
+                read_context(&path, &mut bytes).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_CONTEXT"
+            );
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                read_context(&path, &mut bytes).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_CONTEXT"
+            );
+        }
+
+        #[test]
+        fn real_proc_context_readers_keep_abba_stage_cost_samples() {
+            use std::{hint::black_box, time::Instant};
+            let paths = [
+                Path::new("/proc/sys/kernel/random/boot_id"),
+                Path::new("/proc/thread-self/cgroup"),
+            ];
+            let expected = paths.map(|path| fs::read_to_string(path).unwrap());
+            // Fixed small component observation. No mutation, missing-source
+            // skip, whole-Host cost claim or wall-time acceptance assertion.
+            const PAIRS_PER_SAMPLE: usize = 64;
+            let mut samples = Vec::new();
+            let mut all_equal = true;
+            for round in 0..16usize {
+                for (slot, candidate) in [false, true, true, false].into_iter().enumerate() {
+                    let started = Instant::now();
+                    let mut observed_bytes = 0usize;
+                    let mut errors = Vec::new();
+                    let mut same = true;
+                    for _ in 0..PAIRS_PER_SAMPLE {
+                        for (path, expected) in paths.iter().zip(&expected) {
+                            if candidate {
+                                let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+                                match read_context(path, &mut bytes) {
+                                    Ok(value) => {
+                                        same &= black_box(value.as_bytes()) == expected.as_bytes();
+                                        observed_bytes += value.len();
+                                    }
+                                    Err(error) => errors.push(error.to_string()),
+                                }
+                            } else {
+                                match fs::read_to_string(path) {
+                                    Ok(value) => {
+                                        same &= black_box(value.as_bytes()) == expected.as_bytes();
+                                        observed_bytes += value.len();
+                                    }
+                                    Err(error) => errors.push(error.to_string()),
+                                }
+                            }
+                        }
+                    }
+                    let wall_ns = started.elapsed().as_nanos();
+                    same &= observed_bytes
+                        == PAIRS_PER_SAMPLE * expected.iter().map(String::len).sum::<usize>();
+                    all_equal &= same && errors.is_empty();
+                    samples.push(serde_json::json!({
+                        "round": round,
+                        "slot": slot,
+                        "implementation": if candidate { "candidate" } else { "reference" },
+                        "wall_ns": wall_ns,
+                        "thread_cpu_ns": null,
+                        "complete_reads": PAIRS_PER_SAMPLE * paths.len() - errors.len(),
+                        "observed_bytes": observed_bytes,
+                        "original_complete_text_equal": same,
+                        "errors": errors,
+                    }));
+                }
+            }
+            eprintln!(
+                "{}",
+                serde_json::json!({
+                    "schema": "host-context-complete-read-stage-observation-v1",
+                    "comparison_order": ["reference", "candidate", "candidate", "reference"],
+                    "rounds": 16,
+                    "paths": paths,
+                    "pairs_per_sample": PAIRS_PER_SAMPLE,
+                    "samples": samples,
+                    "scope": "two fresh procfs complete text reads only; no authority decision, full Host budget check, Node throughput or CPU attribution",
+                    "production_qualified": false,
+                })
+            );
+            assert!(
+                all_equal,
+                "every fresh procfs read must preserve complete text"
+            );
         }
 
         #[test]
@@ -628,8 +887,10 @@ mod kernel_parent {
                 let path = fs::read_link("/proc/thread-self").unwrap();
                 let by_tid =
                     fs::read_to_string(Path::new("/proc").join(path).join("cgroup")).unwrap();
-                let by_thread_self = fs::read_to_string("/proc/thread-self/cgroup").unwrap();
-                assert_eq!(by_thread_self, by_tid);
+                let mut bytes = [0; CONTEXT_STACK_BYTES + 1];
+                let by_thread_self =
+                    read_context(Path::new("/proc/thread-self/cgroup"), &mut bytes).unwrap();
+                assert_eq!(by_thread_self.as_ref(), by_tid);
                 assert!(by_tid.starts_with("0::/"), "unified v2 thread entry");
                 assert_eq!(by_tid.lines().count(), 1);
             });

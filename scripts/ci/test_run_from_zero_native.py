@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 import run_from_zero_native as driver
 from contract_wire import header_decode, header_encode, tx_unsigned
+from pon_public_v3_phase_read import PHASES_V4, PHASE_PARENTS_V4
 
 
 def artifact(path: Path, **fields: object) -> str:
@@ -238,6 +239,100 @@ def simulated_confirmation_report():
         phases=phases)
 
 
+def simulated_import_observation():
+    """Synthetic failed import/Host intervals, never measured resource evidence."""
+    def phases():
+        return [dict(phase=phase, started=False, completed=False, accepted=None,
+            error_code=None, started_ns=None, ended_ns=None, wall_ns=None, thread_cpu_ns=None,
+            parent_phase=PHASE_PARENTS_V4.get(phase)) for phase in PHASES_V4]
+    def entered(rows, name, start, end):
+        rows[PHASES_V4.index(name)].update(started=True, completed=True, accepted=False,
+            error_code='PUBLIC_REQUEST_DEADLINE', started_ns=start, ended_ns=end,
+            wall_ns=end-start, thread_cpu_ns=2)
+    native, packet = phases(), phases()
+    entered(native, 'history_import', 10, 90)
+    entered(packet, 'history_import', 15, 85)
+    host = []
+    for phase, start, end, calls in [('resolve', 0, 1, 1), ('initial', 2, 3, 1),
+                                   ('checkpoint', 20, 80, 2), ('final', 91, 92, 1)]:
+        failed = int(phase == 'checkpoint')
+        host.append(dict(phase=phase, calls_started=calls, calls_completed=calls,
+            calls_accepted=calls-failed, calls_rejected=failed, calls_unfinished=0,
+            first_started_ns=start, last_ended_ns=end, wall_ns=2 if calls == 2 else end-start,
+            thread_cpu_ns=calls, wall_clock_unknown_calls=0, cpu_clock_unknown_calls=0,
+            last_error_code='PUBLIC_REQUEST_DEADLINE' if failed else None))
+    return dict(schema='pon-local-history-import-observation-v1', tip=[1]*32, after=[2]*32,
+        supplied_packets=1, packet_capacity=16, phases=native,
+        packets=[dict(packet_index=0, packet_id=[3]*32, phases=packet)], measurement_failures=0,
+        host_checks=host, host_checks_are_nested_not_additive=True,
+        cpu_intervals_are_nested_not_additive=True, phase_cpu_excludes_scoped_workers=True,
+        host_cpu_includes_each_calling_thread=True, host_cpu_is_full_worker_cpu=False,
+        observation_has_consensus_authority=False, clock_scope='one observer-local epoch')
+
+
+class HistoryImportObservationTests(unittest.TestCase):
+    def test_failed_import_is_retained_without_changing_its_native_or_host_outcome(self):
+        value = simulated_import_observation()
+        before = copy.deepcopy(value)
+        driver.validate_history_import_observation(value)
+        self.assertEqual(value, before)
+        self.assertFalse(value['phases'][PHASES_V4.index('history_import')]['accepted'])
+
+    def test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit(self):
+        value = simulated_import_observation()
+        row = value['host_checks'][2]
+        row.update(thread_cpu_ns=None, cpu_clock_unknown_calls=1)
+        driver.validate_history_import_observation(value)
+        row.update(calls_started=3)
+        with self.assertRaisesRegex(ValueError, 'HOST_COUNTS'):
+            driver.validate_history_import_observation(value)
+        value['measurement_failures'] = 1
+        driver.validate_history_import_observation(value)
+
+    def test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected(self):
+        mutations = [
+            lambda v: v.pop('host_checks'),
+            lambda v: v['host_checks'].pop(),
+            lambda v: v['host_checks'][2].pop('thread_cpu_ns'),
+            lambda v: v['host_checks'][2].update(calls_completed=3),
+            lambda v: v['host_checks'][2].update(calls_started=3),
+            lambda v: v['host_checks'][2].update(thread_cpu_ns=float('nan')),
+            lambda v: v['host_checks'][2].update(thread_cpu_ns=None),
+            lambda v: v['host_checks'][2].update(cpu_clock_unknown_calls=1),
+            lambda v: v['host_checks'][0].update(last_error_code='PUBLIC_HOST_KERNEL_CONTEXT'),
+            lambda v: v.update(packets=v['packets']*17),
+            lambda v: v.update(packets=v['packets']*2),
+            lambda v: v['packets'][0].update(packet_index=16),
+            lambda v: v['packets'][0].update(packet_id=[1]*31),
+            lambda v: v['phases'].pop(),
+            lambda v: v['phases'][-1].update(parent_phase='admission'),
+            lambda v: v.update(host_checks_are_nested_not_additive=False),
+            lambda v: v.update(cpu_intervals_are_nested_not_additive=False),
+            lambda v: v.update(host_cpu_is_full_worker_cpu=True),
+            lambda v: v.pop('phase_cpu_excludes_scoped_workers'),
+        ]
+        for index, mutate in enumerate(mutations):
+            value = simulated_import_observation()
+            mutate(value)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                driver.validate_history_import_observation(value)
+
+    def test_host_and_packet_times_cannot_escape_known_native_parent(self):
+        mutations = [
+            lambda v: v['host_checks'][2].update(first_started_ns=9),
+            lambda v: v['host_checks'][2].update(last_ended_ns=91),
+            lambda v: v['host_checks'][1].update(last_ended_ns=11),
+            lambda v: v['host_checks'][3].update(first_started_ns=89),
+            lambda v: v['packets'][0]['phases'][PHASES_V4.index('history_import')]
+                .update(started_ns=9, wall_ns=76),
+        ]
+        for index, mutate in enumerate(mutations):
+            value = simulated_import_observation()
+            mutate(value)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                driver.validate_history_import_observation(value)
+
+
 class BinarySelectionTests(unittest.TestCase):
     def test_format_copy_retains_out_of_line_module_and_original_bytes(self):
         # Negative control: the old flat copy cannot resolve #[path].
@@ -285,6 +380,18 @@ class BinarySelectionTests(unittest.TestCase):
                        dispatch_cpu_includes_paid_body_decode=True,
                        dispatch_cpu_includes_response_signing=True)
         driver.observer_cpu_scope(current)
+        successor = dict(current, schema='public-v3-local-request-resource-observation-v4',
+                         phase_parent_links_are_inclusive=True, cpu_wait_is_outside_dispatch=True,
+                         monotonic_epoch_is_observer_local=True, records=[])
+        driver.observer_cpu_scope(successor)
+        for key in ('records', 'phase_parent_links_are_inclusive', 'cpu_wait_is_outside_dispatch',
+                    'monotonic_epoch_is_observer_local'):
+            changed = dict(successor)
+            del changed[key]
+            with self.subTest(v4_missing=key), self.assertRaises(ValueError):
+                driver.observer_cpu_scope(changed)
+        with self.assertRaises(ValueError):
+            driver.observer_cpu_scope(dict(successor, records=[{}]))
         for key in ('cpu_includes_reactor_authentication_or_response_signing',
                     'cpu_includes_reactor_authentication',
                     'dispatch_cpu_includes_paid_body_decode',

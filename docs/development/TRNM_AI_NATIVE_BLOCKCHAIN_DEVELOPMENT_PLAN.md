@@ -4646,3 +4646,83 @@ upstream [456d original outcomes](TRNM_SYSTEM_ORIGINAL_GATES_456D23A_20261101.md
 with that historical source. This new combined source has not yet been built
 or accepted; it requires fresh exact-head and actual-merge evidence. All eight
 machine assertions remain false and PN0-PN6 remain HOLD.
+
+### 2026-11-03 six-axis performance implementation with original gates retained
+
+The integration baseline `af064bf751ed92c82da0b113682a7dfff3225d97`, tree
+`06c2a2493183a48ade725db226fc44b24c1f9b0f`, composes #685's
+`9a05cae09b175a51773db398541b14ab76061a39` with #683's
+`1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c`. Neither parent alone contains
+the other's complete safety and measurement changes. Preserve both parents,
+their failed observations and all original business/resource gates in #688.
+
+Follow the existing [performance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md)
+and the fixed [development observation inputs](../../config/pon/performance-six-axis-v1.json).
+The implementation adds bounded local V4 request phases and explicit optional
+client History observations, including failed, cancelled and unfinished work.
+Parent/child CPU intervals are inclusive; calling-thread CPU excludes scoped
+worker CPU. Four local Host aggregates measure original resolve, initial,
+checkpoint and final checks without replacing any live check or extending a
+deadline. Short boot/membership text uses stack storage; longer text continues
+from the same freshly opened stream through real EOF. No Host authorization
+decision or descriptor is cached.
+
+Growth V2 computes canonical deltas by merging the two existing ordered maps.
+The independent full-State oracle, absent/null and signed-zero distinctions,
+nonce, liabilities, cancellation and cold reorganization remain required.
+An explicitly invoked native observation crosses account counts 64/1,024/16,384
+with actual history lengths 0/16/128, keeping the actual witness-owner set
+fixed. Every cohort retains eight signed full-W1 admissions, one atomic
+cancellation and one cold reopen. It reports SQL/COW/proof/working-partition
+costs and nested persistence intervals; it does not replace the original
+65,536-account crossing gate or claim bounded lifetime storage. The same
+original complete-workspace CPU lane now executes and reads these observations
+after its original selectors, including when an original selector fails.
+
+Retain parallel preparation with one original publication owner and its current
+epoch, nonce, supply, reward and generation fences. Do not promote the earlier
+M06 repeated-sender scheduling experiment whose retained A/B outcome regressed.
+Mathematical cache hits still require complete inputs and current semantic
+checks; they are not authorization, revocation, expiry or generation caches.
+Two confirmation-batch compaction candidates each completed the fixed 24-case,
+16-ABBA functional matrix but retained regressions in small or retained batches;
+preserve both rounds and keep the original default helper. New owned-obligation
+tests retain later RPC failure, panic and retry coverage without changing that
+helper. A fixed Cell worker-pool
+candidate kept one admitted socket per free slot, acceptance-time deadlines,
+the original shared byte budget and complete joins on failure/shutdown. All
+64 planned real TCP trials completed, but the paired median B/A ratio was
+0.993467, below the preregistered 5% improvement requirement; the empirical
+p95 ratio 0.907361 did not supersede that requirement. Preserve the candidate
+patch and full negative result, and retain the original default serving path.
+Neither result establishes physical CPU/IO isolation from the public Host,
+DHT availability or permanent custody.
+
+The separate readiness-wait candidate replaces the Unix listener's blind 5 ms
+idle sleep with safe `rustix` polling, capped by the same 5 ms and remaining
+absolute service deadline. Intake checks, request deadlines, original workers,
+byte accounting and join-all cleanup remain in their original owner; non-Unix
+keeps its existing path. The locked `rustix` 1.1.4 gains only the Unix event
+dependency use. Fifteen serving controls passed. Its independently built,
+fixed 64-trial TCP campaign completed every operation with unchanged request
+and byte denominators: paired median B/A 0.403242 and empirical p95 B/A
+0.768732 satisfy the development component rule. Keep this candidate; retain
+all raw outcomes and background-workload observations. This finite local Cell
+result is not a ledger throughput, physical-isolation or public-readiness gate.
+
+The baseline's original four-second, sixteen-attacker receipts retain all seven
+receiver ACKs and zero independently confirmed transactions under pressure.
+The separate original thirty-second campaign also failed; its 1,024-account
+baseline attributes about 80.5% of inclusive client-import calling-thread CPU
+to account-graph verification, despite nearly all node-decode arithmetic being
+cache hits. Graph SQL reads and per-node Host checks remain inside that span;
+the new aggregates must distinguish them before another default optimization.
+These different workloads must not be combined into a throughput claim.
+
+All performance decisions require complete planned outcomes and independently
+built artifacts. A detected cross-checkout Cargo target reuse produced
+identical Cell binaries from different source and was rejected before any A/B
+trial; preserve that failed preparation and use fresh, separate target
+directories. Preliminary local tests do not replace exact committed-source,
+actual prospective-merge, x64/ARM, PQ witness or original Host results. Public
+readiness, whole-chain post-quantum qualification and activation remain HOLD.

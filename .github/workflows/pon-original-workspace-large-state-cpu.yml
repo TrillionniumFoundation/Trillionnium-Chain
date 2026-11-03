@@ -390,6 +390,32 @@ jobs:
         printf '%s\n' "$index" > "$controls/executed-selector-count.txt"
         printf '%s\n' "$status" > "$controls/semantic-step.exit"
         exit "$status"
+    - name: Observe fixed touched owners across actual account and history growth
+      id: growth_scale
+      if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        # Reuse the exact complete-workspace artifact already validated above.
+        # The original CPU selectors remain required even when this observation passes.
+        binary="$(cat "$TRNM_CI_RECEIPT_DIR/binary.txt")"
+        sha256sum -c "$TRNM_CI_RECEIPT_DIR/binary.sha256"
+        python3 -m unittest discover -s "$GITHUB_WORKSPACE/scripts/ci" -p test_growth_scale_observation.py -v > "$TRNM_CI_RECEIPT_DIR/growth-scale.reader-controls.log" 2>&1
+        selector=store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation
+        export TRNM_GROWTH_SCALE_OBSERVATION_DIR="$TRNM_CI_RECEIPT_DIR/growth-scale"
+        cd "$GITHUB_WORKSPACE/trillionnium/crates/trnm-pon-node"
+        set +e
+        /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/growth-scale.resources.txt" "$binary" "$selector" --exact --ignored --nocapture --test-threads=1 < /dev/null > "$TRNM_CI_RECEIPT_DIR/growth-scale.log" 2>&1
+        native_exit=$?
+        python3 "$GITHUB_WORKSPACE/scripts/ci/check_required_native_test.py" "$TRNM_CI_RECEIPT_DIR/growth-scale.log" --test "$selector" > "$TRNM_CI_RECEIPT_DIR/growth-scale.execution.json" 2> "$TRNM_CI_RECEIPT_DIR/growth-scale.execution.stderr"
+        execution_reader=$?
+        python3 "$GITHUB_WORKSPACE/scripts/ci/check_growth_scale_observation.py" "$TRNM_GROWTH_SCALE_OBSERVATION_DIR" > "$TRNM_CI_RECEIPT_DIR/growth-scale.readback.json" 2> "$TRNM_CI_RECEIPT_DIR/growth-scale.readback.stderr"
+        observation_reader=$?
+        sha256sum -c "$TRNM_CI_RECEIPT_DIR/binary.sha256" > "$TRNM_CI_RECEIPT_DIR/growth-scale.binary-after.log" 2>&1
+        binary_reader=$?
+        set -e
+        printf 'native_exit=%s\nexecution_reader=%s\nobservation_reader=%s\nbinary_reader=%s\n' "$native_exit" "$execution_reader" "$observation_reader" "$binary_reader" > "$TRNM_CI_RECEIPT_DIR/growth-scale.exits.txt"
+        test "$native_exit" -eq 0 && test "$execution_reader" -eq 0 && test "$observation_reader" -eq 0 && test "$binary_reader" -eq 0
     - name: Recheck the same test ELF after success or failure
       if: ${{ always() && steps.build.outcome == 'success' }}
       shell: bash

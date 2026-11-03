@@ -23,6 +23,12 @@ from pon_public_v3_policy_read import ARITHMETIC_PROFILE, ARITHMETIC_REVISIONS, 
 
 PHASES = ('decode', 'context_owner_wait', 'context', 'work',
           'admission_owner_wait', 'admission', 'submit_result')
+PHASES_V4 = PHASES + ('admission_prepare', 'execution', 'commit_owner_wait', 'commit',
+                     'cpu_wait', 'body_decode', 'response_encoding', 'history_epoch_open',
+                     'history_epoch_close', 'history_import', 'cpu_settle', 'root_commitment')
+PHASE_PARENTS_V4 = dict.fromkeys(('admission_prepare', 'execution', 'commit_owner_wait', 'commit'),
+                               'admission') | {'root_commitment': 'execution'}
+WAIT_FIELDS_V4 = ('challenge_wait', 'grant_wait', 'paid_task_queue_wait', 'response_write')
 MODES = ('baseline', 'from-zero', 'late-product')
 ROUNDS = 3
 MAX_REPORT_BYTES = 256 * 1024 * 1024
@@ -53,6 +59,63 @@ def stats(values):
 def outcome(value):
     require(value is None or type(value) is bool, 'boolean or unknown outcome required')
     return 'accepted' if value is True else 'rejected' if value is False else 'unknown'
+
+
+def validate_v4_interval(value, *, phase=False):
+    require(type(value) is dict, 'v4 interval object required')
+    required = {'started_ns', 'ended_ns', 'wall_ns', 'completed', 'accepted', 'error_code'}
+    if phase:
+        required |= {'phase', 'parent_phase', 'started', 'thread_cpu_ns'}
+    require(set(value) == required, 'v4 exact interval shape required')
+    require(type(value['completed']) is bool, 'v4 completed boolean required')
+    outcome(value['accepted'])
+    require(value['completed'] is (value['accepted'] is not None), 'v4 completion/outcome mismatch')
+    code = value['error_code']
+    require(code is None or (isinstance(code, str) and re.fullmatch('[A-Z][A-Z0-9_]*', code)
+                            and value['accepted'] is False), 'v4 typed rejection code required')
+    for key in ('started_ns', 'ended_ns', 'wall_ns') + (('thread_cpu_ns',) if phase else ()):
+        if value[key] is not None:
+            require(integer(value[key]) < 1 << 64, 'v4 interval u64 required')
+    start, end, wall = (value[key] for key in ('started_ns', 'ended_ns', 'wall_ns'))
+    if start is not None and end is not None:
+        require(end >= start and wall == end - start, 'v4 monotonic interval mismatch')
+    if not phase and start is None:
+        require(not value['completed'] and all(value[key] is None for key in
+                ('ended_ns', 'wall_ns', 'accepted', 'error_code')), 'v4 unentered wait must remain unknown')
+    if phase:
+        require(type(value['started']) is bool, 'v4 started boolean required')
+        require(value['parent_phase'] == PHASE_PARENTS_V4.get(value['phase']),
+                'v4 inclusive parent phase mismatch')
+        if not value['started']:
+            require(not value['completed'] and all(value[key] is None for key in
+                    ('accepted', 'error_code', 'started_ns', 'ended_ns', 'wall_ns', 'thread_cpu_ns')),
+                    'v4 unentered phase must remain unknown')
+
+
+def validate_v4_phases(phases):
+    require(isinstance(phases, list) and [p.get('phase') for p in phases if isinstance(p, dict)]
+            == list(PHASES_V4) and len(phases) == len(PHASES_V4),
+            'v4 nineteen ordered phase slots required')
+    for phase in phases:
+        validate_v4_interval(phase, phase=True)
+    by_phase = {phase['phase']: phase for phase in phases}
+    for child in phases:
+        parent = by_phase.get(child['parent_phase'])
+        if parent is not None and child['completed'] and parent['completed'] and all(
+                span[key] is not None for span in (parent, child) for key in ('started_ns', 'ended_ns')):
+            require(parent['started_ns'] <= child['started_ns'] <= child['ended_ns'] <= parent['ended_ns'],
+                    'v4 child interval escapes its inclusive parent')
+
+
+def validate_v4_record(row):
+    require(type(row) is dict, 'v4 request record required')
+    validate_v4_phases(row.get('submit_phases'))
+    for key in WAIT_FIELDS_V4:
+        validate_v4_interval(row.get(key))
+    require('terminal_error_code' in row, 'v4 terminal cause slot required')
+    code = row['terminal_error_code']
+    require(code is None or (isinstance(code, str) and re.fullmatch('[A-Z][A-Z0-9_]*', code)),
+            'v4 terminal cause must be typed or unknown')
 
 
 def digest(value):
@@ -138,7 +201,7 @@ def arithmetic_observation(value):
     return value
 
 
-def execution_summary(rows, instrumented, arithmetic_profile=False):
+def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=False):
     result = {
         'records': len(rows),
         'record_complete': sum(row.get('complete') is True for row in rows),
@@ -171,15 +234,18 @@ def execution_summary(rows, instrumented, arithmetic_profile=False):
         require(all('work_arithmetic' not in row for row in rows),
                 'arithmetic path facts require explicit arithmetic profile')
     if instrumented:
+        names = PHASES_V4 if observer_v4 else PHASES
         columns = defaultdict(list)
         for row in rows:
+            if observer_v4:
+                validate_v4_record(row)
             phases = row.get('submit_phases')
-            require(isinstance(phases, list) and [p.get('phase') for p in phases] == list(PHASES),
+            require(isinstance(phases, list) and [p.get('phase') for p in phases] == list(names),
                     'instrumented observation must retain all seven ordered phase slots')
             for phase in phases:
                 columns[phase['phase']].append(phase)
         result['submit_phases'] = []
-        for name in PHASES:
+        for name in names:
             slots = columns[name]
             entered = [p for p in slots if p.get('started') is True]
             result['submit_phases'].append({
@@ -191,7 +257,21 @@ def execution_summary(rows, instrumented, arithmetic_profile=False):
                 'wall_ns': stats([p.get('wall_ns') for p in entered]),
                 'thread_cpu_ns': stats([p.get('thread_cpu_ns') for p in entered]),
                 'scope': 'entered slots only; unentered slots are counted separately, not zero CPU',
+                **({'parent_phase': PHASE_PARENTS_V4.get(name),
+                    'error_code_counts': dict(Counter(str(p.get('error_code')) for p in entered))}
+                   if observer_v4 else {}),
             })
+        if observer_v4:
+            result['wait_intervals'] = {
+                key: {
+                    'started': sum(row[key]['started_ns'] is not None for row in rows),
+                    'not_started_or_clock_unknown': sum(row[key]['started_ns'] is None for row in rows),
+                    'outcomes': dict(Counter(outcome(row[key]['accepted']) for row in rows)),
+                    'wall_ns': stats([row[key]['wall_ns'] for row in rows
+                                      if row[key]['started_ns'] is not None]),
+                    'scope': 'wall only; queue includes bounded enqueue backpressure and FIFO wait until dequeue',
+                } for key in WAIT_FIELDS_V4
+            }
     return result
 
 
@@ -279,13 +359,19 @@ def phase_summary(phase):
     schema = observer['schema']
     require(schema in ('public-v3-local-request-resource-observation-v1',
                        'public-v3-local-request-resource-observation-v2',
-                       'public-v3-local-request-resource-observation-v3'), 'unknown observer schema')
-    instrumented = schema.endswith(('-v2', '-v3'))
+                       'public-v3-local-request-resource-observation-v3',
+                       'public-v3-local-request-resource-observation-v4'), 'unknown observer schema')
+    instrumented = schema.endswith(('-v2', '-v3', '-v4'))
+    observer_v4 = schema.endswith('-v4')
+    if observer_v4:
+        require(all(observer.get(key) is True for key in (
+            'phase_parent_links_are_inclusive', 'cpu_wait_is_outside_dispatch',
+            'monotonic_epoch_is_observer_local')), 'v4 inclusive/local-clock scope required')
     if policy is not None:
-        require(schema.endswith('-v3') is (policy.get('base_resource_revision', policy['resource_revision'])
+        require(schema.endswith(('-v3', '-v4')) is (policy.get('base_resource_revision', policy['resource_revision'])
                                          in ('r11', 'r12', 'r13', 'r14')),
                 'public policy and observed CPU scope disagree')
-    if schema.endswith('-v3'):
+    if schema.endswith(('-v3', '-v4')):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
                 and observer.get('cpu_includes_reactor_authentication') is False
                 and observer.get('dispatch_cpu_includes_paid_body_decode') is True
@@ -327,10 +413,10 @@ def phase_summary(phase):
             'capacity', 'accepted_connections_seen', 'records_not_retained',
             'measurement_failures', 'counter_overflow')},
             'dispatch_cpu_scope': ('paid-body-decode-native-dispatch-signed-response'
-                                   if schema.endswith('-v3') else 'native-dispatch-only'),
+                                   if schema.endswith(('-v3', '-v4')) else 'native-dispatch-only'),
             'native_observer_complete': phase['observer_complete'],
-            'all_retained_records': execution_summary(observer['records'], instrumented, arithmetic_profile),
-            'by_observed_body_role': {role: execution_summary(rows, instrumented, arithmetic_profile)
+            'all_retained_records': execution_summary(observer['records'], instrumented, arithmetic_profile, observer_v4),
+            'by_observed_body_role': {role: execution_summary(rows, instrumented, arithmetic_profile, observer_v4)
                                       for role, rows in sorted(grouped.items())}},
         'native_service_outcome': phase['service_outcome'],
         'final_cpu_meter': phase['final_meter'], 'final_actual_flow': phase.get('final_actual_flow'),

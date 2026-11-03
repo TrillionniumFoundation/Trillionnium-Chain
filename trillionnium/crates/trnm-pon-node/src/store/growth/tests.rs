@@ -7,6 +7,8 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::hash;
 
+mod scale_observation;
+
 fn base_settings() -> Settings {
     Settings::development_with_profiles(
         Some(1),

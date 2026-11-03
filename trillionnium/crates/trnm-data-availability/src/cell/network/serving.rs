@@ -54,6 +54,46 @@ fn join_worker(
     }
 }
 
+#[cfg(unix)]
+fn listener_wait_timeout(deadline: Instant, now: Instant) -> Duration {
+    Duration::from_millis(5).min(deadline.saturating_duration_since(now))
+}
+
+/// Readiness is only a hint. The caller rechecks shutdown, intake limits and
+/// the original service deadline before retrying the nonblocking accept.
+/// Interrupted polls return to that same outer loop without a timeout reset.
+#[cfg(unix)]
+fn wait_for_listener(listener: &TcpListener, deadline: Instant) -> io::Result<bool> {
+    use rustix::event::{poll, PollFd, PollFlags, Timespec};
+
+    let wait = listener_wait_timeout(deadline, Instant::now());
+    if wait.is_zero() {
+        return Ok(false);
+    }
+    // At most 5 ms: both timespec fields fit on every supported Unix target.
+    // The kernel's timer granularity does not move the service's deadline.
+    let timeout = Timespec {
+        tv_sec: 0,
+        tv_nsec: wait.subsec_nanos() as _,
+    };
+    let mut descriptors = [PollFd::new(listener, PollFlags::IN)];
+    poll(&mut descriptors, Some(&timeout))?;
+    let events = descriptors[0].revents();
+    if events.intersects(PollFlags::ERR | PollFlags::HUP | PollFlags::NVAL) {
+        // Do not spin on a broken listener or bypass the ordinary join-all
+        // failure exit. A borrowed descriptor remains owned by the caller.
+        return Err(io::Error::other("cell serving listener readiness failure"));
+    }
+    Ok(events.contains(PollFlags::IN))
+}
+
+#[cfg(not(unix))]
+fn wait_for_listener(_listener: &TcpListener, _deadline: Instant) -> io::Result<bool> {
+    // Preserve the existing portable path where Unix polling is unavailable.
+    thread::sleep(Duration::from_millis(5));
+    Ok(false)
+}
+
 /// Each active request owns a validated read-only cache connection. Completed
 /// workers return their reader for reuse; no SQLite lock spans socket I/O.
 /// Socket timeouts and all writes use the original absolute service deadline.
@@ -137,7 +177,14 @@ fn serve_cells_inner(
                     observed(&report);
                 }
                 Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
-                    thread::sleep(Duration::from_millis(5))
+                    match wait_for_listener(listener, deadline) {
+                        Ok(_) => (),
+                        Err(error) if error.kind() == io::ErrorKind::Interrupted => (),
+                        Err(error) => {
+                            failure = Some(error.into());
+                            break;
+                        }
+                    }
                 }
                 Err(error) if error.kind() == io::ErrorKind::Interrupted => (),
                 Err(error) => {

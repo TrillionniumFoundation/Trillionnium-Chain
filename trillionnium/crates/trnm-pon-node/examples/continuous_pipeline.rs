@@ -833,6 +833,87 @@ mod tests {
     }
 
     #[test]
+    fn retained_batch_and_single_completion_keep_later_failed_obligations() {
+        let mut pending = vec![(0, 1), (1, 1), (2, 256), (3, 256)];
+        let mut visited = Vec::new();
+        let error = poll_pending_batches(
+            &mut pending,
+            256,
+            |item| item.1,
+            |items| {
+                visited.push(items.iter().map(|item| item.0).collect::<Vec<_>>());
+                match items[0].0 {
+                    0 => Ok(vec![false, false]),
+                    2 => Ok(vec![true]),
+                    _ => Err("LATER_SINGLE_RPC_FAILURE".into()),
+                }
+            },
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "LATER_SINGLE_RPC_FAILURE");
+        assert_eq!(visited, [vec![0, 1], vec![2], vec![3]]);
+        assert_eq!(pending, [(0, 1), (1, 1), (3, 256)]);
+    }
+
+    #[test]
+    fn batch_compaction_preserves_owned_obligations_across_later_panic_and_retry() {
+        use std::sync::Mutex;
+
+        struct Obligation {
+            id: usize,
+            drops: Arc<Mutex<Vec<usize>>>,
+        }
+        impl Drop for Obligation {
+            fn drop(&mut self) {
+                self.drops.lock().unwrap().push(self.id);
+            }
+        }
+
+        let drops = Arc::new(Mutex::new(Vec::new()));
+        let mut pending: Vec<_> = (0..8)
+            .map(|id| Obligation {
+                id,
+                drops: drops.clone(),
+            })
+            .collect();
+        let failure = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            poll_pending_batches(
+                &mut pending,
+                2,
+                |_| 1,
+                |items| {
+                    if items[0].id == 4 {
+                        panic!("later observation interrupted");
+                    }
+                    Ok(items.iter().map(|item| item.id % 2 == 0).collect())
+                },
+            )
+        }));
+        assert!(failure.is_err());
+        assert_eq!(*drops.lock().unwrap(), [0, 2]);
+        assert_eq!(
+            pending.iter().map(|item| item.id).collect::<Vec<_>>(),
+            [1, 3, 4, 5, 6, 7]
+        );
+        let mut retry = Vec::new();
+        poll_pending_batches(
+            &mut pending,
+            3,
+            |_| 1,
+            |items| {
+                retry.extend(items.iter().map(|item| item.id));
+                Ok(vec![true; items.len()])
+            },
+        )
+        .unwrap();
+        assert_eq!(retry, [1, 3, 4, 5, 6, 7]);
+        assert!(pending.is_empty());
+        let mut released = drops.lock().unwrap().clone();
+        released.sort_unstable();
+        assert_eq!(released, (0..8).collect::<Vec<_>>());
+    }
+
+    #[test]
     fn batched_confirmation_validates_late_context_before_claiming_any_success() {
         let settings = Settings::development_with_evaluation_policy(
             Some(1_700_000_000),
