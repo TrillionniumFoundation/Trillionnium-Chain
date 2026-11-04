@@ -2504,7 +2504,20 @@ fn mandatory(
         .and_then(Value::as_str)
         .ok_or("STATE")?
         .to_owned();
-    let keys: Vec<_> = state.keys().cloned().collect();
+    // Capture the same pre-cleanup key set, in its original global order,
+    // without cloning unrelated account/model keys. The five disjoint prefix
+    // ranges are sorted; newly written evaluation archives are still absent
+    // from this snapshot until the next block, exactly as in the full-key walk.
+    let keys: Vec<_> = [
+        "artifact:",
+        "contribution:",
+        "evaluation-archive:",
+        "quota:",
+        "task:",
+    ]
+    .into_iter()
+    .flat_map(|prefix| prefix_rows(state, prefix).map(|(key, _)| key.clone()))
+    .collect();
     if public_evaluation::enabled(cfg) {
         let disqualified = if public_evaluation::quorum_enabled(cfg)
             && !pq_accounts_v2::application_v6::enabled(cfg)
@@ -2589,9 +2602,8 @@ fn mandatory(
         // Remove records only after both active candidate and retained archive vanish.
         // Branch state cleanup never touches physical/local operation journals.
         let namespace = format!("{}:", public_evaluation::record_namespace(cfg));
-        let orphaned: Vec<_> = state
-            .keys()
-            .filter(|key| key.starts_with(&namespace))
+        let orphaned: Vec<_> = prefix_rows(state, &namespace)
+            .map(|(key, _)| key)
             .filter(|key| {
                 key.strip_prefix(&namespace)
                     .and_then(|suffix| suffix.split_once(':'))
@@ -2606,10 +2618,9 @@ fn mandatory(
             state.remove(&key);
         }
     }
-    let retired: Vec<_> = state
-        .iter()
+    let retired: Vec<_> = prefix_rows(state, "release:")
         .filter_map(|(k, v)| {
-            if k.starts_with("release:") && &k[8..] != current.as_str() && v["remaining"] == 0 {
+            if &k[8..] != current.as_str() && v["remaining"] == 0 {
                 Some(k.clone())
             } else {
                 None
@@ -2623,11 +2634,14 @@ fn mandatory(
     // Positive escrow records survive the preceding cleanup unchanged. Range
     // inputs enumerate every original monetary record, including future rows;
     // zero/retired rows are naturally ineligible under the ordinary predicates.
-    for (k, v) in monetary_input.map_or(&*state, |input| input.rows) {
-        if (k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:"))
-            && field(v, "remaining")? > 0
-            && field(v, "deadline")? <= height
-        {
+    let monetary_rows = monetary_input.map_or(&*state, |input| input.rows);
+    for (k, v) in ["quota:", "release:", "task:"]
+        .into_iter()
+        .flat_map(|prefix| prefix_rows(monetary_rows, prefix))
+    {
+        // Preserve the old lexical error order and inspect future/zero rows;
+        // this is namespace selection, never a caller-supplied due-only list.
+        if field(v, "remaining")? > 0 && field(v, "deadline")? <= height {
             due.push((field(v, "deadline")?, k.clone()));
         }
     }
@@ -2649,12 +2663,12 @@ fn mandatory(
         state.insert(k.clone(), v);
         receipts.push(canonical(&json!({"expiry":k}))?);
     }
-    let mature = monetary_input
-        .map_or(&*state, |input| input.rows)
-        .iter()
-        .filter(|(k, _)| k.starts_with("reward:"))
-        .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
-        .collect::<Result<Vec<_>>>()?;
+    let mature = prefix_rows(
+        monetary_input.map_or(&*state, |input| input.rows),
+        "reward:",
+    )
+    .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
+    .collect::<Result<Vec<_>>>()?;
     for (k, maturity) in mature {
         if maturity <= height {
             let reward = state.remove(&k).ok_or("STATE")?;

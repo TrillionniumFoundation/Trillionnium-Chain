@@ -595,6 +595,14 @@ fn begin_authenticated_dispatch(
     }
 }
 
+fn authenticated_dispatch_needs_retry(error: &Error) -> bool {
+    // Only this local capacity refusal leaves native admission incomplete.
+    // Other Capacity codes can express an actual profile/state limit, and a
+    // local-integrity override must never become a retry from its wire text.
+    error.kind() == crate::ErrorKind::Cancelled
+        || (error.kind() == crate::ErrorKind::Capacity && error.is(ErrorCode::PublicQueueBusy))
+}
+
 fn verify_authenticated_response(
     bytes: &[u8],
     session: &AuthSession,
@@ -1941,13 +1949,17 @@ fn serve_inner(
                         );
                         if outcome
                             .as_ref()
-                            .is_err_and(|error| error.kind() == crate::ErrorKind::Cancelled)
+                            .is_err_and(authenticated_dispatch_needs_retry)
                         {
                             // Cancellation can leave a committed block or a
                             // partial original reorg intent. Keep its exact
                             // pending nonce: a new signed socket attempt may
                             // resume it, but this request gets no new deadline
                             // and no terminal ACK is fabricated after cancel.
+                            // A local shared-admission queue refusal also has
+                            // no completed native verdict. Caching that Busy
+                            // as terminal would prevent this exact retry even
+                            // after the original owner releases its capacity.
                             let retry = signed_response(authentication, &request, false, outcome)?;
                             let mut counts = metrics
                                 .lock()

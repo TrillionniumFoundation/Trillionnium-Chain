@@ -52,6 +52,49 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Native request liveness and bounded namespace access — 2026-11-04
+
+Continue the existing PR #688 integration candidate with the original #639
+four-second / sixteen-hostile-W1 business gate unchanged. A completed V3
+worker result must still meet its original Await deadline before the reactor
+installs Output; a late result cannot receive a renewed output window. Signal
+the original cancellation flag, retain timeout and serialization observations,
+and release each reservation only when its actual connection/task owner exits.
+A late response never reverses a committed native outcome or completed CPU charge.
+
+In the retained authenticated entrypoint, only the exact local shared-admission
+`PUBLIC_QUEUE_BUSY` joins the existing cancellation retry path. Preserve its
+pending session/nonce/payload binding; changed-payload replay remains rejected.
+Other capacity/profile failures and fully verified invalid W1 keep their existing
+terminal behavior. This does not establish a durable CPU budget across retries.
+
+The existing batch nonce query now dispatches to GrowthV2. Keep its 1–256,
+distinct-owner checks and caller order, select the active account root within
+one SQLite read transaction, construct and verify the complete requested
+multiproof, and recheck the original Growth storage epoch. Absent accounts,
+overflow, corrupt paths, reorg and cold reopen retain explicit behavior.
+The returned observations reserve no nonce and grant no execution authority.
+This fills the public Node API gap; existing Growth CLI/business callers do not
+yet use the batch query. The selected checkpoint still verifies the complete,
+bounded working partition and schema metadata, not only requested account paths.
+
+M06 mandatory maintenance uses the existing ordered map's namespace ranges for
+candidate/archive/artifact cleanup, release retirement, monetary expiry and
+reward maturity. Preserve the pre-cleanup key snapshot, global lexical error
+order, complete monetary input, expiry priority/cap and every original debit,
+credit and receipt. Model evolution, integer-factor candidate and model-evidence
+cleanup also select only their exact namespaces, preserving errors and mutations
+that precede a later error. These selected passes no longer walk unrelated
+accounts; full State cloning, commitments, global validation and historical
+replay remain separate costs. Do not declare touched-state complexity for the
+complete node.
+
+The [native liveness reproduction record](../../evidence/native-liveness-20261104/README.md)
+separates actual local controls, interrupted builds and unexecuted original Host
+acceptance. Existing exact-head and prospective-merge workflows keep their fixed
+Host, complete W1, independent replay, original deadlines and full denominator.
+No service, whole-chain PQ, consensus or production flag is promoted.
+
 #### Joint source, native admission and reversible-artifact continuation — 2026-11-04
 
 Continue the existing PR #688 candidate from
