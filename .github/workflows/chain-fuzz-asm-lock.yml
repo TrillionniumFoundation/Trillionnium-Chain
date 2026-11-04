@@ -1,0 +1,50 @@
+name: Frozen fuzz ASM lock regeneration
+on:
+  push:
+    branches: [diagnostic/chain-fuzz-asm-lock-20261104-gpt6]
+    paths:
+      - .github/workflows/chain-fuzz-asm-lock.yml
+      - qualification/fuzz-sha2-asm-lock-20261104/**
+permissions:
+  contents: read
+concurrency:
+  group: frozen-fuzz-asm-lock-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact isolated proposal
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Verify exact source and audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/fuzz-lock-source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install the exact original fuzz toolchain
+        run: rustup toolchain install nightly-2026-10-01 --profile minimal
+      - name: Reproduce refusal and generate with real Cargo
+        run: python3 qualification/fuzz-sha2-asm-lock-20261104/run.py --out "$RUNNER_TEMP/fuzz-lock-result"
+      - name: Verify original source remains unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/fuzz-lock-source-after.json"
+      - name: Preserve both outcomes and actual generated lock
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: fuzz-lock-regeneration-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/fuzz-lock-result/
+            ${{ runner.temp }}/fuzz-lock-source-before.json
+            ${{ runner.temp }}/fuzz-lock-source-after.json
+          if-no-files-found: error
+          retention-days: 30

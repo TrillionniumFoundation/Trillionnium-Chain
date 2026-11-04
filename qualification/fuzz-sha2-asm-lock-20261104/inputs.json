@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-fuzz-asm-frozen-inputs-v1",
+  "owner": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "owner_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+  "toolchain": "nightly-2026-10-01",
+  "files": [
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "git_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+      "bytes": 33374,
+      "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+    },
+    {
+      "path": "tests/fuzz/Cargo.toml",
+      "git_blob": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
+      "bytes": 1122,
+      "sha256": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+      "bytes": 39976,
+      "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "git_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "bytes": 684,
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+    },
+    {
+      "path": "scripts/ci/run_fuzz_smoke.py",
+      "git_blob": "62a62cc717f7ffd41cdb9b952f407f215cf9810b",
+      "bytes": 6446,
+      "sha256": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9"
+    },
+    {
+      "path": "scripts/ci/tool-versions.env",
+      "git_blob": "6b7d4459a5e8ae69ac6ad36a0376443138e7b474",
+      "bytes": 185,
+      "sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408"
+    }
+  ],
+  "scope": "Original fuzz dependency fetch environment and argument list. A generated lock is a proposal until the complete original fuzz/quality/native gates run on the composed source; no threshold or mutation budget changes."
+}
