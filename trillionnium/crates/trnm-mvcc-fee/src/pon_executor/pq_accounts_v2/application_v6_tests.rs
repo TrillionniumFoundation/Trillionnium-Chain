@@ -379,6 +379,50 @@ fn actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner() {
     ]
     .concat();
     let adoption = h.signed(0, 3, 8, &payload);
+    for (role, candidate) in [("component", component), ("bundle", bundle)] {
+        let full = h.evaluation(candidate);
+        assert!(evaluation::pq_storage::enabled(&full));
+        let compact = evaluation::compact(&full).unwrap();
+        let prefix = evaluation::record_prefix_for(candidate, &full).unwrap();
+        let evaluator = hex::encode(h.keys[1].id);
+        for field in ["commitment", "salt", "evidence", "score"] {
+            let mut changed = full.clone();
+            if field == "commitment" {
+                changed["commits"][&evaluator] = json!(hex::encode([99; 32]));
+            } else {
+                changed["reveals"][&evaluator][field] = if field == "score" {
+                    json!(score - 1)
+                } else {
+                    json!(hex::encode([99; 32]))
+                };
+            }
+            // Rebuild canonical PQ chunks and their SHA-384 manifests: the
+            // refusal must bind the reveal, not merely detect damaged bytes.
+            // This injected State does not bypass an authenticated chain root.
+            let rows = evaluation::record_rows(candidate, &changed).unwrap();
+            assert_eq!(
+                evaluation::hydrate(&compact, candidate, &rows).err(),
+                Some("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{role} {field} hydrate"
+            );
+            let mut damaged = h.state.clone();
+            damaged.retain(|key, _| !key.starts_with(&prefix));
+            damaged.extend(rows);
+            assert_eq!(
+                evaluation::read_evaluation(&damaged, candidate).err(),
+                Some("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{role} {field} read"
+            );
+            let original = std::mem::replace(&mut h.state, damaged);
+            let result = h.output(std::slice::from_ref(&adoption), Some(1001 + h.height));
+            h.state = original;
+            assert_eq!(
+                result.err(),
+                Some("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{role} {field} adoption"
+            );
+        }
+    }
     assert_eq!(h.block(vec![adoption]), 1);
     assert_eq!(h.state["model:current"], hex::encode(release));
     let maturity = h.state[&format!("release:{}", hex::encode(release))]["maturity"]

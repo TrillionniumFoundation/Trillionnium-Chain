@@ -311,3 +311,79 @@ fn fresh_profile_refuses_attested_models_and_cross_version_replay() {
         Err("PUBLIC_EVAL_GENERATION")
     );
 }
+
+#[test]
+fn retained_reveals_recheck_commitments_at_restore_close_and_adoption() {
+    let input = input();
+    let context = &input["context"];
+    let candidate = digest(&context["candidate"]);
+    // Both retained classic formats use the exact same commitments as live
+    // admission. Altering one retained byte is not a new evaluator statement.
+    for index in [0, 3, 6] {
+        let row = &input["cases"][index];
+        let cfg = configure(context, row["profile"].as_str().unwrap());
+        let mut e =
+            evaluation::hydrate(&frozen(&cfg, context, row), candidate, &BTreeMap::new()).unwrap();
+        for raw in row["commits"].as_array().unwrap() {
+            let tx = transaction(raw, &cfg);
+            evaluation::commit(
+                &mut e,
+                &hex::encode(tx.sender),
+                tx.payload[32..64].try_into().unwrap(),
+                tx.payload[64..96].try_into().unwrap(),
+                16,
+            )
+            .unwrap();
+        }
+        for raw in row["reveals"].as_array().unwrap() {
+            let tx = transaction(raw, &cfg);
+            evaluation::reveal(&mut e, reveal(&tx), 32).unwrap();
+        }
+        evaluation::close(&mut e, 48).unwrap();
+        let signer = e["reveals"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .next()
+            .unwrap()
+            .clone();
+        for field in ["commitment", "salt", "evidence", "score"] {
+            let mut changed = e.clone();
+            if field == "commitment" {
+                changed["commits"][&signer] = json!(hex::encode([91; 32]));
+            } else if field == "score" {
+                changed["reveals"][&signer][field] =
+                    json!(e["reveals"][&signer][field].as_u64().unwrap() + 1);
+            } else {
+                changed["reveals"][&signer][field] = json!(hex::encode([91; 32]));
+            }
+            let adopted = if index == 6 {
+                evaluation::quorum_v2::adoption_allowed(&changed, 56, true, &BTreeSet::new())
+            } else {
+                evaluation::adoption_allowed(&changed, 56)
+            };
+            assert_eq!(
+                adopted,
+                Err("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{}: {field} cannot be adopted",
+                row["name"]
+            );
+            let records = evaluation::record_rows(candidate, &changed).unwrap();
+            let compact = evaluation::compact(&changed).unwrap();
+            assert_eq!(
+                evaluation::hydrate(&compact, candidate, &records),
+                Err("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{}: {field} cannot be restored",
+                row["name"]
+            );
+            changed["closed"] = Value::Null;
+            assert_eq!(
+                evaluation::close(&mut changed, 48),
+                Err("PUBLIC_EVAL_COMMITMENT_BINDING"),
+                "{}: {field} cannot close",
+                row["name"]
+            );
+            assert!(changed["closed"].is_null());
+        }
+    }
+}

@@ -166,7 +166,7 @@ struct Count {
 fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<Count> {
     // Bind the complete frozen roster and threshold as well as the generation
     // context before closing or consuming a retained evaluation.
-    super::round(evaluation)?;
+    super::validate_reveals(evaluation)?;
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut excluded = disqualified(evaluation)?;
     if !super::pq_storage::enabled(evaluation) {

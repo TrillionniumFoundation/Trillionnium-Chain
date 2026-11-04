@@ -52,6 +52,34 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Evaluation integrity and weight-loading continuation — 2026-11-04
+
+Continue the PR #688 lineage from `93e207c8d2ccb8509f78566223abc371b9d8118b`.
+The existing native evaluation owner must revalidate each retained reveal against
+its original commitment when restoring, closing or consuming an evaluation. Live
+admission already requires that relation; a row/chunk hash alone does not establish
+it. Preserve the existing signed domains, stored schemas and every legal closure
+vector. This strengthens malformed-state rejection, not a claim that an attacker
+can bypass the canonical chain state root.
+
+The existing SmolLM pilot must bind the declared artifact kind to the frozen role's
+recipe and actual predecessor, including the immutable baseline. Load only the
+single bounded byte snapshot whose identity was checked. Validate the complete
+F32 tensor inventory, shapes, offsets, finite values and resulting artifact identity
+before parameter mutation. No unsupported kind may silently score the unchanged
+base under a candidate's identity. Preserve the existing scope and all activation
+and qualification flags; parser/orchestration controls are not an executed LLM run.
+
+The [six evaluation attack obligations](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md#preventing-optimization-of-the-evaluation-process)
+bind the remaining closure requirements to the current owners: persistent family
+trial consumption before disclosure, independent custody/evaluation and disputes,
+complete-composition measured channels, full-cost minimum net utility and legitimate
+no-update, behavioral quarantine/revocation/rollback, and separate code/weight
+authorization. Controlled role keys, one scalar correctness metric, supplied-record
+histories or a successful component test cannot close those production obligations.
+Keep the [small reproduction record](../../evidence/model-evaluation-integrity-20261104/REPRODUCE.md)
+with this increment; retain the original failures and fresh-source observations.
+
 #### Bounded Cell prefetch and local byte residency — 2026-11-04
 
 Continue the existing PR #688 integration candidate from

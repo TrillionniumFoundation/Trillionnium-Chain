@@ -40,6 +40,8 @@ PUBLIC_FILES = {
 CONTROLS = ['current-backbone', 'fresh-budget-matched-lora',
             'budget-matched-full-tune', 'randomized-rank-matched-lora']
 PARTICIPANTS = ['candidate', *CONTROLS]
+PARTICIPANT_KINDS = dict(zip(PARTICIPANTS,
+    ('lora', 'immutable-backbone', 'lora', 'full-tune', 'random-lora')))
 QUALIFICATIONS = ['public_network_ready', 'authenticated_inference_accepted',
                   'independent_accepted', 'prospective_accepted', 'public_reward_eligible']
 REPOSITORY = Path(__file__).resolve().parents[1]
@@ -277,8 +279,26 @@ def validate_plan(plan):
                 type(budget['wall_seconds']) is int and 1 <= budget['wall_seconds'] <= wall_limit and
                 type(budget['rss_bytes']) is int and 1 <= budget['rss_bytes'] <= rss_limit,
                 'RUNTIME_BUDGET_LIMIT')
-    require(plan['participants'] == PARTICIPANTS and set(plan['recipes']) == set(PARTICIPANTS),
+    require(plan['participants'] == PARTICIPANTS and type(plan['recipes']) is dict and
+            set(plan['recipes']) == set(PARTICIPANTS),
             'RUNTIME_REQUIRED_CONTROLS')
+    for role, kind in PARTICIPANT_KINDS.items():
+        recipe = plan['recipes'][role]
+        require(type(recipe) is dict and recipe.get('kind') == kind, 'RUNTIME_RECIPE_KIND')
+        fields = {'kind'} if kind == 'immutable-backbone' else {
+            'kind', 'initialization_seed', 'std' if kind == 'random-lora' else 'learning_rate'}
+        require(set(recipe) == fields, 'RUNTIME_RECIPE_FIELDS')
+        if kind != 'immutable-backbone':
+            require(type(recipe['initialization_seed']) is int and
+                    -(1 << 63) <= recipe['initialization_seed'] < (1 << 64), 'RUNTIME_RECIPE_SEED')
+            value = recipe['std' if kind == 'random-lora' else 'learning_rate']
+            require(type(value) is str and 0 < len(value) <= 64 and value.isascii() and
+                    value == value.strip(), 'RUNTIME_RECIPE_NUMERIC')
+            try:
+                number = float(value)
+            except ValueError as error:
+                raise ValueError('RUNTIME_RECIPE_NUMERIC') from error
+            require(math.isfinite(number) and number > 0, 'RUNTIME_RECIPE_NUMERIC')
     require(plan['revision'] == REVISION and plan['model'] == MODEL and plan['dtype'] == 'float32',
             'RUNTIME_PLAN_CONTEXT')
     require(all(plan[name] is False for name in QUALIFICATIONS), 'RUNTIME_QUALIFICATION_SCOPE')
@@ -633,6 +653,87 @@ def wrap_adapter(model, contract, cid):
     return raw, aid, tensors
 
 
+def checked_evaluation_artifact(directory, plan, role, contract, cid, shapes):
+    """Check the existing producer record and complete bytes before any mutation.
+
+    A digest is an observation, not a model/code execution capability. The
+    read descriptor supplies both identities and parsing; no later path reopen
+    can substitute a different safetensors file after the hash check.
+    """
+    from llm_parent_material import read_regular, f32_tensor_bytes, MAX_F32_HEADER_BYTES
+    c = contract_module()
+    admitted = json.loads(read_regular(directory/'artifact.json', 16 * 1024),
+                          object_pairs_hook=unique)
+    require(type(admitted) is dict and set(admitted) == {
+        'role', 'artifact', 'contract', 'kind', 'source_model', 'experiment',
+        'parent_backbone', 'resulting_backbone', 'file_sha256', 'native_artifact_H',
+        'native_domain', 'native_admission_accepted'}, 'RUNTIME_ARTIFACT_FIELDS')
+    require(role in PARTICIPANT_KINDS and admitted['role'] == role and
+            admitted['kind'] == plan['recipes'][role]['kind'] == PARTICIPANT_KINDS[role],
+            'RUNTIME_ARTIFACT_KIND')
+    require(admitted['experiment'] == identity(plan) and admitted['contract'] == cid and
+            admitted['source_model'] == WEIGHT_SHA and admitted['native_domain'] == 'artifact' and
+            admitted['native_admission_accepted'] is False, 'RUNTIME_ARTIFACT_CONTEXT')
+    for name in ('artifact', 'parent_backbone', 'resulting_backbone'):
+        c.digest(admitted[name])
+    before = contract['backbone']['index_root']
+    require(admitted['parent_backbone'] == before, 'RUNTIME_ARTIFACT_PARENT')
+    kind = admitted['kind']
+    if kind == 'immutable-backbone':
+        require(admitted['artifact'] == admitted['resulting_backbone'] == before and
+                admitted['file_sha256'] is None and admitted['native_artifact_H'] is None,
+                'RUNTIME_ARTIFACT_IMMUTABLE')
+        return admitted, {}, {}
+    if kind in ('lora', 'random-lora'):
+        require(admitted['resulting_backbone'] == before, 'RUNTIME_ARTIFACT_BACKBONE')
+        tensor_shapes = {target['module'] + '.' + factor: shape
+            for target in contract['targets']
+            for factor, shape in (('A', [target['rank'], target['in_features']]),
+                                  ('B', [target['out_features'], target['rank']]))}
+    else:
+        require(kind == 'full-tune' and admitted['artifact'] == admitted['resulting_backbone'] and
+                admitted['artifact'] != before, 'RUNTIME_ARTIFACT_BACKBONE')
+        tensor_shapes = shapes
+    c.digest(admitted['file_sha256']); c.digest(admitted['native_artifact_H'])
+    maximum = 8 + MAX_F32_HEADER_BYTES + 4 * sum(math.prod(shape) for shape in tensor_shapes.values())
+    raw = read_regular(directory/'artifact.safetensors', maximum)
+    require(hashlib.sha256(raw).hexdigest() == admitted['file_sha256'] and
+            c.H('artifact', raw).hex() == admitted['native_artifact_H'], 'RUNTIME_ARTIFACT_FILE')
+    material = f32_tensor_bytes(raw, tensor_shapes)
+    if kind in ('lora', 'random-lora'):
+        wrapped = read_regular(directory/'wrapped-adapter.json', c.MAX_MANIFEST_BYTES)
+        c.verify_wrapped_adapter(wrapped, admitted['artifact'], contract, cid, material)
+    else:
+        index = {name: dict(dtype='float32', shape=tensor_shapes[name], byte_length=len(blob),
+            sha256=hashlib.sha256(blob).hexdigest()) for name, blob in material.items()}
+        require(c.H('llm-tensor-index-v1', c.canonical(index)).hex() == admitted['artifact'],
+                'RUNTIME_FULL_TUNE_RELOAD')
+    return admitted, material, tensor_shapes
+
+
+def copy_tensor_material(target, material, shapes, torch, device):
+    """Validate the entire incoming set before the first parameter copy."""
+    require(sys.byteorder == 'little' and set(target) == set(material) == set(shapes),
+            'RUNTIME_ARTIFACT_TENSOR_SET')
+    incoming = {}
+    for name, parameter in target.items():
+        require(parameter.dtype == torch.float32 and list(parameter.shape) == shapes[name] and
+                parameter.device.type == device.type, 'RUNTIME_ARTIFACT_PARAMETER_PROFILE')
+        require(type(material[name]) is bytes and len(material[name]) == 4 * math.prod(shapes[name]),
+                'RUNTIME_ARTIFACT_TENSOR_LENGTH')
+        # Own a mutable construction buffer, never expose the checked immutable
+        # material to a tensor API or let copy_ broadcast or cast its input.
+        tensor = torch.frombuffer(bytearray(material[name]), dtype=torch.float32).reshape(shapes[name])
+        require(bool(torch.isfinite(tensor).all().item()), 'RUNTIME_ARTIFACT_NONFINITE')
+        tensor = tensor.to(device)
+        require(tensor.dtype == parameter.dtype and tensor.shape == parameter.shape and
+                tensor.device == parameter.device, 'RUNTIME_ARTIFACT_TENSOR_PROFILE')
+        incoming[name] = tensor
+    with torch.no_grad():
+        for name, parameter in target.items():
+            parameter.copy_(incoming[name])
+
+
 def insert_lora(model, plan, role, torch):
     from peft import LoraConfig, get_peft_model
     recipe = plan['recipes'][role]
@@ -772,7 +873,7 @@ def child(args):
         observer.stage('declared-family-check', lambda: verify_family(read_json(FAMILY_PATH)))
         require(identity(manifest) == plan['snapshot'], 'RUNTIME_SNAPSHOT_CHANGED')
         imports = observer.stage('runtime-import', lambda: runtime_import(plan))
-        torch, device, _, _, _, save_file, load_file = imports
+        torch, device, _, _, _, save_file, _ = imports
         model, tokenizer, shapes, inventory = observer.stage('model-load', lambda: load_model(materials, plan, imports))
         contract, raw, cid = observer.stage('derived-material-check', lambda: make_contract(model, tokenizer, shapes, materials, manifest, plan))
         report.update(actual_backend=plan['backend'], actual_device=str(device),
@@ -820,27 +921,21 @@ def child(args):
                           lora_trainable_parameters=230400 if kind in ('lora','random-lora') else None)
         else:
             artifact_dir = Path(args.artifact)
-            admitted = read_json(artifact_dir/'artifact.json')
-            require(admitted['experiment'] == identity(plan) and admitted['contract'] == cid and admitted['role'] == args.role,
-                    'RUNTIME_ARTIFACT_CONTEXT')
+            admitted, material, tensor_shapes = checked_evaluation_artifact(
+                artifact_dir, plan, args.role, contract, cid, shapes)
             kind = admitted['kind']
             if kind in ('lora', 'random-lora'):
                 model = insert_lora(model, plan, args.role, torch)
-                require(file_sha(artifact_dir/'artifact.safetensors') == admitted['file_sha256'], 'RUNTIME_ARTIFACT_FILE')
-                tensors = load_file(str(artifact_dir/'artifact.safetensors'))
                 target = adapter_tensors(model, contract['targets'])
-                require(set(target) == set(tensors), 'RUNTIME_ADAPTER_SET')
-                with torch.no_grad():
-                    for name, parameter in target.items(): parameter.copy_(tensors[name].to(device))
+                copy_tensor_material(target, material, tensor_shapes, torch, device)
                 _, aid, _ = wrap_adapter(model, contract, cid)
                 require(aid == admitted['artifact'], 'RUNTIME_ADAPTER_RELOAD')
+                index = {n: tensor_descriptor(t) for n, t in backbone_tensors(model, shapes).items()}
+                require(contract_module().H('llm-tensor-index-v1', contract_module().canonical(index)).hex() ==
+                        admitted['resulting_backbone'], 'RUNTIME_BACKBONE_MUTATION')
             elif kind == 'full-tune':
-                require(file_sha(artifact_dir/'artifact.safetensors') == admitted['file_sha256'], 'RUNTIME_ARTIFACT_FILE')
-                tensors = load_file(str(artifact_dir/'artifact.safetensors'))
                 target = backbone_tensors(model, shapes)
-                require(set(target) == set(tensors), 'RUNTIME_FULL_TUNE_SET')
-                with torch.no_grad():
-                    for name, parameter in target.items(): parameter.copy_(tensors[name].to(device))
+                copy_tensor_material(target, material, tensor_shapes, torch, device)
                 index = {n: tensor_descriptor(t) for n, t in target.items()}
                 require(contract_module().H('llm-tensor-index-v1', contract_module().canonical(index)).hex() == admitted['artifact'], 'RUNTIME_FULL_TUNE_RELOAD')
             report['artifact'] = admitted['artifact']

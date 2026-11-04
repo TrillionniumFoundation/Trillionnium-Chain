@@ -304,6 +304,66 @@ pub fn reveal(evaluation: &mut Value, value: Reveal, height: u64) -> Result<()> 
     evaluation["reveals"][&sender] = json!({"score":value.score,"evidence":hex::encode(value.evidence),"salt":hex::encode(value.salt)});
     Ok(())
 }
+/// Revalidate retained commit/reveal bindings before evidence is restored or used.
+/// Live reveal admission already checks these invariants; canonical row bytes and
+/// storage chunk hashes alone do not establish that a retained reveal did so.
+fn validate_reveals(evaluation: &Value) -> Result<()> {
+    let round_id = round(evaluation)?;
+    let plan = &evaluation["plan"];
+    let candidate = digest(plan, "candidate")?;
+    let contract = digest(plan, "model_and_task_contract")?;
+    let roster = plan["roster"].as_array().ok_or("PUBLIC_EVAL_STATE")?;
+    let commits = evaluation["commits"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let reveals = evaluation["reveals"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    check(
+        commits.len() <= roster.len() && reveals.len() <= commits.len(),
+        "PUBLIC_EVAL_STATE",
+    )?;
+    for signer in commits.keys() {
+        identity("r", signer)?;
+        check(
+            roster.iter().any(|key| key.as_str() == Some(signer)),
+            "PUBLIC_EVAL_AUTHORITY",
+        )?;
+        check(
+            digest(&evaluation["commits"], signer)? != [0; 32],
+            "PUBLIC_EVAL_COMMITMENT",
+        )?;
+    }
+    for (signer, stored) in reveals {
+        identity("r", signer)?;
+        check(
+            stored.as_object().is_some_and(|value| value.len() == 3)
+                && commits.contains_key(signer),
+            "PUBLIC_EVAL_STATE",
+        )?;
+        let mut evaluator = [0; 32];
+        hex::decode_to_slice(signer, &mut evaluator).map_err(|_| "PUBLIC_EVAL_STATE")?;
+        let value = Reveal {
+            candidate,
+            round: round_id,
+            evaluator,
+            plan: contract,
+            evidence: digest(stored, "evidence")?,
+            score: n(stored, "score")?,
+            salt: digest(stored, "salt")?,
+        };
+        check(
+            value.evidence != [0; 32] && value.score <= n(plan, "max_score")?,
+            "PUBLIC_EVAL_REVEAL_CONTEXT",
+        )?;
+        check(
+            digest(&evaluation["commits"], signer)? == reveal_commitment_for(evaluation, &value)?,
+            "PUBLIC_EVAL_COMMITMENT_BINDING",
+        )?;
+    }
+    Ok(())
+}
+
 /// Closure is a mandatory block transition after the admitted chain height deadline.
 /// Legacy missing signatures abort. The explicit v2 profile counts real matching
 /// reveals against its frozen threshold, never synthetic votes or a reduced quorum.
@@ -321,6 +381,7 @@ pub fn close_with_disqualified(
     if is_quorum(evaluation)? {
         return quorum_v2::close(evaluation, height, current_disqualified);
     }
+    validate_reveals(evaluation)?;
     let roster = evaluation["plan"]["roster"]
         .as_array()
         .ok_or("PUBLIC_EVAL_STATE")?;
@@ -364,6 +425,7 @@ pub fn adoption_allowed_with_disqualified(
     if is_quorum(evaluation)? {
         return quorum_v2::adoption_allowed(evaluation, height, false, current_disqualified);
     }
+    validate_reveals(evaluation)?;
     check(
         height >= n(&evaluation["plan"], "adoption_start")?
             && evaluation["closed"]["status"] == "complete-scored"
@@ -625,6 +687,7 @@ pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>)
             "PUBLIC_EVAL_RECORD_COUNT",
         )?;
     }
+    validate_reveals(&value)?;
     Ok(value)
 }
 pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Result<Value> {

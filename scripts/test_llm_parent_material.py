@@ -142,6 +142,22 @@ class ParentMaterialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'TRAILING_BYTES'):
             parent.factor_bytes(self.encoded(self.header, self.payload + b'\0'), self.contract)
 
+    def test_shared_f32_parser_handles_complete_vector_matrix_material(self):
+        shapes = {'norm.weight': [3], 'projection.weight': [2, 3]}
+        header = {'norm.weight': dict(dtype='F32', shape=[3], data_offsets=[0, 12]),
+                  'projection.weight': dict(dtype='F32', shape=[2, 3], data_offsets=[12, 36])}
+        payload = struct.pack('<9f', *range(9))
+        self.assertEqual(parent.f32_tensor_bytes(self.encoded(header, payload), shapes),
+                         {'norm.weight': payload[:12], 'projection.weight': payload[12:]})
+        for mutate in (lambda h: h['norm.weight'].update(shape=[1, 3]),
+                       lambda h: h['projection.weight'].update(dtype='F64'),
+                       lambda h: h['projection.weight'].update(data_offsets=[0, 24]),
+                       lambda h: h['norm.weight'].update(data_offsets=[False, 12])):
+            changed = copy.deepcopy(header)
+            mutate(changed)
+            with self.subTest(mutate=mutate), self.assertRaises(ValueError):
+                parent.f32_tensor_bytes(self.encoded(changed, payload), shapes)
+
     def test_rehashed_nan_and_infinite_factors_still_refuse(self):
         first = next(iter(self.header))
         target = first.rsplit('.', 1)
