@@ -243,13 +243,8 @@ impl Node {
                 progress(count)?;
             }
             ensure(current != self.settings.genesis(), "CURSOR")?;
-            let (parent, checked) = self.history_page_ancestors(
-                current,
-                after,
-                &mut window,
-                limit,
-                &record_decoder,
-            )?;
+            let (parent, checked) =
+                self.history_page_ancestors(current, after, &mut window, limit, &record_decoder)?;
             count = count.checked_add(checked).ok_or("ANCESTRY_LIMIT")?;
             current = parent;
         }

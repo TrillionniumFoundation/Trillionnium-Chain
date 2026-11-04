@@ -48,9 +48,9 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 45c458780452e82c2e59ac34ae8a200a167a6647
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = cb07d1606590b1979a64f8b662c6a8349738226b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = c30d01e4b6cbb11434539b82229ccca41d11a051
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy

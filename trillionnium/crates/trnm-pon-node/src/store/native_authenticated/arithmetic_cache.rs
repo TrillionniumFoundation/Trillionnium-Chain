@@ -4,7 +4,9 @@
 #[cfg(test)]
 use super::complete;
 use super::StateCommitment;
-use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_roots;
+use crate::account_archive_execution::state_witness::{
+    commitment_from_complete_state_with_current_accounts, CurrentAccounts,
+};
 use crate::account_archive_prototype::native_store::LiftCache;
 use crate::{Result, Settings};
 use std::cell::RefCell;
@@ -49,6 +51,8 @@ pub(crate) struct ArithmeticCache {
     hits: std::cell::Cell<usize>,
     #[cfg(test)]
     root_hits: std::cell::Cell<usize>,
+    #[cfg(test)]
+    discard_current_accounts: std::cell::Cell<bool>,
 }
 
 impl ArithmeticCache {
@@ -187,6 +191,18 @@ impl ArithmeticCache {
     }
 
     pub(crate) fn complete(&self, settings: &Settings, state: &State) -> Result<StateCommitment> {
+        self.complete_with_current_accounts(settings, state)
+            .map(|(commitment, _)| commitment)
+    }
+
+    /// A cold complete calculation may lend its freshly parsed accounts to the
+    /// immediate graph verifier. Exact-input cache hits return no projection:
+    /// only the commitment is retained, and the graph parses actual State anew.
+    pub(super) fn complete_with_current_accounts<'a>(
+        &self,
+        settings: &Settings,
+        state: &'a State,
+    ) -> Result<(StateCommitment, Option<CurrentAccounts<'a>>)> {
         let _measurement = self
             .history
             .observe(super::HistoryStage::CompleteCommitment);
@@ -207,11 +223,11 @@ impl ArithmeticCache {
                 self.root_arithmetic.complete_hit();
                 #[cfg(test)]
                 self.hits.set(self.hits.get() + 1);
-                return Ok(entry.value.clone());
+                return Ok((entry.value.clone(), None));
             }
         }
         self.root_arithmetic.complete_computation();
-        let value = commitment_from_complete_state_with_roots(
+        let (value, current_accounts) = commitment_from_complete_state_with_current_accounts(
             settings,
             state,
             Some(&self.lifts),
@@ -234,7 +250,19 @@ impl ArithmeticCache {
                 value: value.clone(),
             });
         }
-        Ok(value)
+        // The independent control drops the projection just as the previous
+        // complete() result did. It is compiled only for regression/timing tests,
+        // with no profile, service flag or production selection surface.
+        #[cfg(test)]
+        if self.discard_current_accounts.get() {
+            return Ok((value, None));
+        }
+        Ok((value, Some(current_accounts)))
+    }
+
+    #[cfg(test)]
+    pub(super) fn discard_current_accounts_for_control(&self) {
+        self.discard_current_accounts.set(true);
     }
 }
 

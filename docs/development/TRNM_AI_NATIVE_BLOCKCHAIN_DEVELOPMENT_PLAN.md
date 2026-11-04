@@ -5442,3 +5442,31 @@ terminal measurements; no unexecuted check is recorded as successful. The origin
 four-second/F0/campaign failures remain. Operation-local account projection,
 committed-read ownership, resource fairness and complete client import still need
 separate evidence. Existing HOLD conditions and all activation flags remain.
+
+The [first throughput attempt and retained failures](../../evidence/pon-throughput-continuation-20261104/README.md)
+record ed7d45a9's exact-source guard and formatter stops before new native tests.
+Refresh the same literal blob comparisons and apply the actual rustfmt output;
+do not remove guards or inherit earlier native results. Continuous public scope
+also reuses the identical Packet bytes already encoded during the same immutable
+operation. The original CI wrapper retains all full logs and now exposes failure
+tails, native totals and component observations while preserving command exits.
+No original test/profile/deadline/Host/CPU limit or qualification field changes.
+
+The next composed source preserves concurrent bbcb380's W1 cache discriminator
+and fixed-account cohort context controls. Cold complete-commitment calculation
+can now lend its already parsed account map, bound to the exact immutable State
+borrow, to the same operation's full SQL graph verifier. Complete-cache hits lend
+no projection; readback-scoped paths retain the original parser. Actual parser
+counters, complete-call ABBA controls, different-State/malformed-account cases,
+current SQL corruption and every graph cancellation point are checked by new
+native tests, with no assumed result before execution.
+
+Public History keeps its entire indexed packet read and identity checks under
+the Node owner, then releases the mutex before encoding owned Packet material,
+hex and Page JSON. Its bounded copied profile/context preserves the requested
+fixed tip during concurrent reorganization. Original stop/deadline/CPU checks
+also guard formatting. This is not promotion of the test-only independent SQL
+snapshot path. Real concurrent writer, fixed-tip/different-tip, foreign-body
+corruption and formatting cancellation controls join the unchanged original
+public/PQ and snapshot controls. No complete state, W1, graph or final authority
+check is removed.
