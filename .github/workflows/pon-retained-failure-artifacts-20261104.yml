@@ -127,34 +127,94 @@ jobs:
           
           MATCH = re.compile(
               r"^test result:|^failures:|^thread .*panicked|^test .+ \.\.\. FAILED"
-              r"|^error(?:\[[^]]+\])?:|^Error:|^Caused by:|^---- .+ stdout ----$")
+              r"|^error(?:\[[^]]+\])?:|^Error:|^Caused by:")
           KEY = re.compile(
               r"confirm|denominator|planned|failure|criteria|criterion|lifetime|shutdown"
               r"|server_exit|returncode|exit_code|head_sha|tested_commit|tested_tree"
               r"|source_sha|physical|qualification|activation|passed|unobserved"
               r"|deadline|cancelled|pending|unknown|elapsed|duration|host_errors"
+              r"|observed|scheduled|within|before_original|slo|success|known_empty|^mode$|^number$|^code$|^kind$"
               r"|^schema$|^status$|^phase$|^name$|^label$|^reason$|^error$")
-          JSON_NAMES = {
-              "report.json", "manifest.json", "terminal.json", "result.json",
-              "readback.json", "node-lib.json", "source.json", "source-before.json",
-              "source-after.json", "server.json", "workflow-outcomes.json",
-              "finalization.json", "execution.json", "prepared.json"
-          }
-          
-          def selected(name):
-              basename = PurePosixPath(name).name
-              return (basename.endswith((".log", ".stdout", ".stderr"))
-                      or basename in JSON_NAMES
-                      or (basename.endswith(".json") and
-                          re.search(r"lifetime|shutdown|summary|terminal|outcome", basename)))
+          def selected(name, target):
+              # Read the original failed command and bounded terminal/derived
+              # reports first. Per-attacker and cost reports stay in the retained
+              # ZIP; walking those unrelated trees exhausted the v1 reader.
+              if target["id"] == 13284469302:
+                  return name in {
+                      "node-lib.log", "node-lib.json", "source.json",
+                      "source-before.json", "source-after.json", "clippy.json"
+                  }
+              if target["id"] in (13287122967, 13286673364):
+                  return (name in {
+                      "finalization/result.json", "execution/results.json",
+                      "prepared/prepared.json", "source-before.json",
+                      "source-after.json", "execution/source-before.json",
+                      "execution/source-after.json", "workflow-outcomes.json"
+                  } or ("/raw/" not in name and name.endswith((".log", ".stdout", ".stderr"))))
+              if target["id"] in (13283953563, 13288600275):
+                  return (name in {"results.json", "source-before.json", "source-after.json"}
+                          or re.fullmatch(r"run-[123]-phase-readback\.json", name) is not None
+                          or re.fullmatch(r"run-[123]\.(?:stdout|stderr)\.log", name) is not None)
+              return (name.endswith((".log", ".stdout", ".stderr"))
+                      or PurePosixPath(name).name in {"manifest.json", "summary.json", "source.json"}
+                      or re.search(r"(?:lifetime|shutdown|outcome).*\.json$", name) is not None)
           
           def priority(info):
-              basename = PurePosixPath(info.filename).name
-              if re.search(r"node-lib|native|campaign|run[-_]?[123]", basename):
-                  return (0, info.filename)
-              if basename in ("report.json", "terminal.json", "result.json", "manifest.json"):
-                  return (1, info.filename)
-              return (2, info.filename)
+              name = info.filename
+              if name in ("node-lib.log", "node-lib.json", "finalization/result.json",
+                          "execution/results.json", "results.json"):
+                  return (0, name)
+              if re.fullmatch(r"run-[123]-phase-readback\.json", name):
+                  return (1, name)
+              if re.fullmatch(r"run-[123]\.(?:stdout|stderr)\.log", name):
+                  return (2, name)
+              return (3, name)
+          
+          def console_json(target, name, fields):
+              # Console limits affect presentation only. Every selected field and
+              # the exact original member remain in the retained readback/archive.
+              shallow = [field for field in fields if field["pointer"].count("/") <= 6]
+              preferred = re.compile(r"confirm|planned|scheduled|criteria|failure|returncode|exit_code|tested_")
+              shallow.sort(key=lambda field: (0 if preferred.search(field["pointer"]) else 1,
+                                               field["pointer"].count("/"), field["pointer"]))
+              shown = []
+              for field in shallow:
+                  row = dict(field)
+                  if isinstance(row["value"], str) and len(row["value"]) > 512:
+                      row["value"] = row["value"][:512]
+                      row["value_truncated"] = True
+                  proposal = shown + [row]
+                  if len(json.dumps(proposal, sort_keys=True)) > 12000:
+                      break
+                  shown = proposal
+              return json.dumps({"artifact": target["id"], "member": name,
+                                 "fields": shown, "console_fields_omitted": len(fields) - len(shown),
+                                 "console_depth_limit": 6,
+                                 "original_member_retained": True}, sort_keys=True) + "\n"
+          
+          def bounded_console(excerpt, remaining, target, name):
+              parts = excerpt.splitlines(keepends=True)
+              def marker(count):
+                  return json.dumps({"artifact": target["id"], "member": name,
+                                     "console_lines_omitted": count,
+                                     "original_excerpt_and_member_retained": True},
+                                    sort_keys=True) + "\n"
+              allowance = max(0, remaining - len(marker(len(parts))))
+              kept = []
+              used = 0
+              for part in parts:
+                  if used + len(part) > allowance:
+                      break
+                  kept.append(part)
+                  used += len(part)
+              omitted = len(parts) - len(kept)
+              rendered = "".join(kept)
+              if omitted:
+                  suffix = marker(omitted)
+                  if len(rendered) + len(suffix) <= remaining:
+                      rendered += suffix
+              require(len(rendered) <= remaining, "CONSOLE_BOUND")
+              return rendered, len(kept), omitted
           
           def scalar_fields(value):
               found = []
@@ -223,7 +283,7 @@ jobs:
                                     "compressed_bytes": x.compress_size, "crc32": x.CRC}
                                    for x in infos]
                           index_sha = write_json(output / "members.json", index)
-                          chosen = sorted((x for x in infos if not x.is_dir() and selected(x.filename)),
+                          chosen = sorted((x for x in infos if not x.is_dir() and selected(x.filename, target)),
                                           key=priority)
                           for member_index, info in enumerate(chosen):
                               if info.file_size > MAX_MEMBER or selected_bytes + info.file_size > MAX_SELECTED:
@@ -246,6 +306,7 @@ jobs:
                                   record["scalar_fields"] = fields
                                   excerpt = json.dumps({"artifact": target["id"], "member": info.filename,
                                                         "fields": fields}, sort_keys=True) + "\n"
+                                  console_excerpt = console_json(target, info.filename, fields)
                               else:
                                   lines = content.splitlines()
                                   picked = set()
@@ -254,6 +315,7 @@ jobs:
                                       if MATCH.search(clean):
                                           picked.update(range(max(0, number - 2), min(len(lines), number + 12)))
                                   # Bound display only. The original ZIP remains intact.
+                                  picked.update(range(max(0, len(lines) - 40), len(lines)))
                                   positions = sorted(picked)
                                   shown = positions[-240:]
                                   record["matching_context_lines"] = len(positions)
@@ -262,19 +324,39 @@ jobs:
                                   excerpt = "\n".join(
                                       f"artifact={target['id']} member={info.filename} line={i + 1} {lines[i]}"
                                       for i in shown) + ("\n" if shown else "")
+                                  console_lines = []
+                                  truncated_lines = 0
+                                  essential = re.compile(
+                                      r"^thread .*panicked|^called .*Err|^test result: FAILED"
+                                      r"|^test .+ \.\.\. FAILED|^failures:|^error(?:\[[^]]+\])?:|^Error:")
+                                  ordered = sorted(shown, key=lambda i: (
+                                      0 if essential.search(re.sub(r"\x1b\[[0-9;]*m", "", lines[i])) else 1, i))
+                                  for i in ordered:
+                                      line = lines[i]
+                                      if len(line) > 2048:
+                                          line = line[:2048] + " [console line truncated; original retained]"
+                                          truncated_lines += 1
+                                      console_lines.append(
+                                          f"artifact={target['id']} member={info.filename} line={i + 1} {line}")
+                                  console_excerpt = "\n".join(console_lines) + ("\n" if console_lines else "")
+                                  record["console_truncated_lines"] = truncated_lines
                               record["read_status"] = "read"
                               with (output / f"excerpt-{member_index:04}.txt").open("x") as stream:
                                   stream.write(excerpt)
                               record["excerpt_file"] = f"excerpt-{member_index:04}.txt"
-                              record["stdout_emitted"] = printed + len(excerpt) <= MAX_STDOUT
-                              if record["stdout_emitted"]:
-                                  print(excerpt, end="", flush=True)
-                                  printed += len(excerpt)
+                              rendered, displayed_lines, omitted_lines = bounded_console(
+                                  console_excerpt, MAX_STDOUT - printed, target, info.filename)
+                              record["stdout_emitted"] = displayed_lines > 0
+                              record["stdout_lines_emitted"] = displayed_lines
+                              record["stdout_lines_omitted"] = omitted_lines
+                              if rendered:
+                                  print(rendered, end="", flush=True)
+                                  printed += len(rendered)
                               records.append(record)
                   finally:
                       print("::" + command_token + "::", flush=True)
                   result = {
-                      "schema": "trnm-retained-failure-artifact-readback-v1",
+                      "schema": "trnm-retained-failure-artifact-readback-v2",
                       "target": target, "downloaded_zip_bytes": received,
                       "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
                       "member_index_sha256": index_sha,
@@ -305,7 +387,7 @@ jobs:
                   results.append(result)
           
           write_json(ROOT / "readback.json", {
-              "schema": "trnm-retained-failure-readback-cohort-v1",
+              "schema": "trnm-retained-failure-readback-cohort-v2",
               "planned_artifacts": len(TARGETS), "results": results,
               "source_tests_executed": False, "acceptance_granted": False,
               "production_activation": False})
