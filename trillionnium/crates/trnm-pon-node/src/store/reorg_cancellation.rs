@@ -478,7 +478,9 @@ impl Node {
             cursor,
             2,
         )?;
-        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1
+            || self.native_legacy_reorg_observation_enabled())
+        .then(|| {
             self.authenticated_arithmetic
                 .history
                 .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)

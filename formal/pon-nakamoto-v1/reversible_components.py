@@ -294,6 +294,46 @@ class Circuit:
         }
 
 
+def _check_compute_copy_inverse(circuit):
+    """Check the emitted Bennett structure, not the function it computes.
+
+    Scratch-only computation, output-only copying and the exact inverse make
+    cleanup independent of the sampled basis inputs and initial output bits.
+    Function correctness still needs the separate arithmetic/hash checks.
+    """
+    count = circuit.compute_gates
+    total = len(circuit.gates)
+    if 2 * count > total:
+        raise ValueError("netlist compute denominator omits inverse")
+    if total - 2 * count > len(circuit.outputs):
+        raise ValueError("netlist copy span exceeds output register")
+    inputs = {wire for register in circuit.inputs for wire in register}
+    outputs = set(circuit.outputs)
+    for index in range(count):
+        gate = circuit.gates[index]
+        if circuit.gates[total - 1 - index] != gate:
+            raise ValueError("netlist inverse differs from reversed computation")
+        op, target = gate >> 60, gate & WIRE_MASK
+        controls = ((gate >> 40) & WIRE_MASK, (gate >> 20) & WIRE_MASK)[: op - 1]
+        if target in inputs:
+            raise ValueError("netlist compute writes input")
+        if target in outputs or any(wire in outputs for wire in controls):
+            raise ValueError("netlist compute touches output")
+    copied = set()
+    for index in range(count, total - count):
+        gate = circuit.gates[index]
+        op, target = gate >> 60, gate & WIRE_MASK
+        if op not in (1, 2):
+            raise ValueError("netlist copy gate must be X or CNOT")
+        if target not in outputs:
+            raise ValueError("netlist copy target outside output register")
+        if target in copied:
+            raise ValueError("netlist duplicate copy target")
+        if op == 2 and ((gate >> 40) & WIRE_MASK) in outputs:
+            raise ValueError("netlist copy reads output")
+        copied.add(target)
+
+
 def decode(raw):
     """Strictly reopen the exported gates; benchmark this reopened artifact."""
     magic = b"TRNM-QIR1\0"
@@ -328,7 +368,7 @@ def decode(raw):
         raise ValueError("netlist gate encoding")
     if type(meta["qubits"]) is not int or not 0 < meta["qubits"] <= WIRE_MASK:
         raise ValueError("netlist wire bound")
-    if type(meta["gate_count"]) is not int or not 0 < meta["gate_count"] <= 10_000_000:
+    if type(meta["gate_count"]) is not int or not 0 <= meta["gate_count"] <= 10_000_000:
         raise ValueError("netlist gate bound")
     if (
         type(meta["compute_gates"]) is not int
@@ -360,6 +400,7 @@ def decode(raw):
         if op not in (1, 2, 3) or op == 1 and (a or b) or op == 2 and b:
             raise ValueError("noncanonical or invalid netlist gate")
         circuit.emit(op, target, *[a, b][: op - 1])
+    _check_compute_copy_inverse(circuit)
     return circuit
 
 

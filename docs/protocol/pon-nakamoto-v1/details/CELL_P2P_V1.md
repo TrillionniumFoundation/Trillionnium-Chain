@@ -15,7 +15,10 @@ The manifest ID is SHA256 of `trnm.cell-manifest.v1\0` followed by its canonical
 bytes. A different parent or layout yields a different ID even if payload bytes
 are identical. No mutable URL or peer advertisement is an authority.
 
-The bytes remain opaque to M09. A successful download must still pass the normal
+TCM1/TCR1 bytes remain opaque to M09. The separately selected
+[TMT1/TMA1 model-storage contract](../../../development/specs/pon/CELL_MODEL_STORAGE_V1.md)
+adds strict declared dense tensor validation without changing those byte
+formats. A successful download must still pass the normal
 model loader's format, family, dimensions, artifact identity and publication
 checks. In particular a P2P cache hit cannot install a version, change CURRENT,
 accept a task, defeat withdrawal, or grant execution. The complete model's
@@ -87,7 +90,10 @@ protocol or a DHT. A request is `TCQ1`, a one-byte kind (`1` manifest or `2`
 chunk), and a 32-byte digest. A response is `TCS1`, a one-byte status (`0`
 present or `1` missing), a four-byte length, and that many bytes. Clients reject
 unknown status, excessive length and bad hashes before accepting content.
-Each connection handles one request.
+Each default V1 connection handles one request. Explicit TCQ2/TCS2 sequential
+reuse and TCI1/TIS1 rarest-observed-first scheduling are specified in the
+[model-storage continuation](../../../development/specs/pon/CELL_MODEL_STORAGE_V1.md).
+The profiles do not negotiate a silent fallback or refresh resource budgets.
 
 Serving remains serial by default. The explicit `serve_cells_bounded` API and
 `serve --bounded-workers 1..4 --max-served-bytes N` opt into a configured-peer
@@ -393,8 +399,11 @@ complete release, CURRENT installation, funded storage or the three-round loop.
 
 This is I09 of the
 [sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
-The TCM1 configured-peer pilot above is implemented; the release closure,
-ordinary loader integration and public storage duties below are target work.
+The TCM1 configured-peer pilot, TCD1 declared closure, TMR1 model root,
+TMT1/TMA1 dense tensor checks and TCA2 local release-retention catalog are
+implemented as [bounded local contracts](../../../development/specs/pon/CELL_MODEL_STORAGE_V1.md).
+The ordinary selected-model integration and public storage qualification below
+remain target work; component implementation does not close those gates.
 Reuse the existing chunk/store/fetch owner rather than add another weight store.
 P1 closure/loader integration is a required delivery for the P0 PN3 full-loop
 gate; completing only its P0 interface prerequisites cannot close that gate.
@@ -534,8 +543,10 @@ activation memory. Remote execution of missing layers is a separate compute,
 privacy and latency protocol, not implemented by P2P byte fetch.
 
 BitTorrent v2 wire compatibility, a DHT and persistent request multiplexing are
-**reviewable PN5 adapter options**, not selected replacements for TCQ1/TCS1 or
-the development rendezvous. Benchmark them against the current serial and
+**reviewable PN5 adapter options**. Explicit TCQ2/TCS2 currently implements
+bounded sequential reuse, not multiplexing, and TCI1/TIS1 implements bounded
+inventory hints. Neither replaces the default TCQ1/TCS1 profile or the
+development rendezvous. Benchmark these profiles against the current serial and
 four-worker configurations using the same release, cached prefix, hosts, network
 faults, concurrency and total budgets. Record setup cost, verified useful MB/s,
 time to complete the least-available mandatory object, CPU/RSS/disk cost and

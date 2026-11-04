@@ -1,0 +1,523 @@
+{
+  "schema": "pon-legacy-reorg-profiling-candidate-handoff-v2",
+  "created_at_utc": "2026-11-04 11:20:25 UTC",
+  "base": {
+    "head": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+    "actual_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e"
+  },
+  "authorization_scope": "Only immutable source/test blobs and readback. No tree, commit, ref, PR, workflow rerun or native execution.",
+  "AGENTS": {
+    "blob": "702727dcf00f032b16d593519b7b74894da40e17",
+    "read_in_full_before_candidate": true
+  },
+  "actual_parent_preflight": [
+    {
+      "job": {
+        "id": 126495360050,
+        "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:20:41Z",
+        "completed_at": "2026-11-04T09:46:12Z",
+        "runner_name": "GitHub Actions 1000340595",
+        "labels": [
+          "ubuntu-24.04"
+        ]
+      },
+      "source": {
+        "record": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "kind": "prospective-merge",
+          "prospective_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+          "tested_tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940655430,
+          "tracked_entries": 8761,
+          "tracked_worktree_verified": true
+        },
+        "literal": {
+          "label": "initial-source",
+          "first_line": 910,
+          "last_line": 922,
+          "utf8_bytes": 509,
+          "sha256": "007624ff26bbf803130925f3f53dd713d622a6e71351b051355e4a2813c0d9d1",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      },
+      "audit": {
+        "record": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal": {
+          "label": "actual-preflight-audit",
+          "first_line": 923,
+          "last_line": 923,
+          "utf8_bytes": 132,
+          "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe",
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      }
+    },
+    {
+      "job": {
+        "id": 126495360276,
+        "name": "PQ network and witness (ubuntu-24.04, head)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:20:42Z",
+        "completed_at": "2026-11-04T09:59:44Z",
+        "runner_name": "GitHub Actions 1000340594",
+        "labels": [
+          "ubuntu-24.04"
+        ]
+      },
+      "source": {
+        "record": {
+          "base": null,
+          "candidate": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "tested_tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940655430,
+          "tracked_entries": 8761,
+          "tracked_worktree_verified": true
+        },
+        "literal": {
+          "label": "initial-source",
+          "first_line": 926,
+          "last_line": 938,
+          "utf8_bytes": 420,
+          "sha256": "68883b2a1a4bebdf7e2f2c609c89c686471ff9d2d52f08ca96200a7c952ff718",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      },
+      "audit": {
+        "record": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal": {
+          "label": "actual-preflight-audit",
+          "first_line": 939,
+          "last_line": 939,
+          "utf8_bytes": 132,
+          "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe",
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      }
+    },
+    {
+      "job": {
+        "id": 126495360520,
+        "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:20:45Z",
+        "completed_at": "2026-11-04T09:57:59Z",
+        "runner_name": "GitHub Actions 1000340630",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ]
+      },
+      "source": {
+        "record": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "kind": "prospective-merge",
+          "prospective_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+          "tested_tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940655430,
+          "tracked_entries": 8761,
+          "tracked_worktree_verified": true
+        },
+        "literal": {
+          "label": "initial-source",
+          "first_line": 925,
+          "last_line": 937,
+          "utf8_bytes": 509,
+          "sha256": "007624ff26bbf803130925f3f53dd713d622a6e71351b051355e4a2813c0d9d1",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      },
+      "audit": {
+        "record": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal": {
+          "label": "actual-preflight-audit",
+          "first_line": 938,
+          "last_line": 938,
+          "utf8_bytes": 132,
+          "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe",
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      }
+    },
+    {
+      "job": {
+        "id": 126495360593,
+        "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:20:45Z",
+        "completed_at": "2026-11-04T09:58:07Z",
+        "runner_name": "GitHub Actions 1000340631",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ]
+      },
+      "source": {
+        "record": {
+          "base": null,
+          "candidate": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+          "tested_tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940655430,
+          "tracked_entries": 8761,
+          "tracked_worktree_verified": true
+        },
+        "literal": {
+          "label": "initial-source",
+          "first_line": 921,
+          "last_line": 933,
+          "utf8_bytes": 420,
+          "sha256": "68883b2a1a4bebdf7e2f2c609c89c686471ff9d2d52f08ca96200a7c952ff718",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      },
+      "audit": {
+        "record": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal": {
+          "label": "actual-preflight-audit",
+          "first_line": 934,
+          "last_line": 934,
+          "utf8_bytes": 132,
+          "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe",
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "mode": "100644",
+      "old_blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "new_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "old_bytes": 23653,
+      "new_bytes": 27602,
+      "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "full_content_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "full_readback_verified": true,
+      "unified_diff_hunks": 2,
+      "insertions": 72,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "mode": "100644",
+      "old_blob": "a7035222bc51cfe7f60e891398230c3179accc82",
+      "new_blob": "8c5d473a8310cf5e6d0ecb0afc58d5d51773d170",
+      "old_bytes": 334071,
+      "new_bytes": 336688,
+      "sha256": "e90b3db4cca7c77f792a7bc20386f0ad9581f1cee36f9b6c5e8915ee05aefc69",
+      "full_content_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/8c5d473a8310cf5e6d0ecb0afc58d5d51773d170",
+      "full_readback_verified": true,
+      "unified_diff_hunks": 7,
+      "insertions": 84,
+      "deletions": 21
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "mode": "100644",
+      "old_blob": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+      "new_blob": "4dd89831914b44a2f58c270c9726abd539620ec5",
+      "old_bytes": 19441,
+      "new_bytes": 19512,
+      "sha256": "8a0ef781a87fdfb7334ac9a3e75de46a5c4ef7915e42bf4e3167a851b2b95d9f",
+      "full_content_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/4dd89831914b44a2f58c270c9726abd539620ec5",
+      "full_readback_verified": true,
+      "unified_diff_hunks": 1,
+      "insertions": 3,
+      "deletions": 1
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "mode": "100644",
+      "old_blob": "e4c01b37441886f1359c016efb30f190eda98aa0",
+      "new_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+      "old_bytes": 19849,
+      "new_bytes": 21736,
+      "sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+      "full_content_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/e04a6c60dab06388aae7ee7c95c68424d90628f9",
+      "full_readback_verified": true,
+      "unified_diff_hunks": 2,
+      "insertions": 103,
+      "deletions": 82
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+      "mode": "100644",
+      "old_blob": null,
+      "new_blob": "e558451e6b0ffbfea77ad963577bbab3c08ba65a",
+      "old_bytes": 0,
+      "new_bytes": 14933,
+      "sha256": "03982ebd716b438519b71d88006653886102630479339f0812f5986228a3f26d",
+      "full_content_api": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/e558451e6b0ffbfea77ad963577bbab3c08ba65a",
+      "full_readback_verified": true,
+      "unified_diff_hunks": 1,
+      "insertions": 379,
+      "deletions": 0,
+      "created_by": "/root/current_runtime_review",
+      "independently_read_by": "/root/hosted_status_now"
+    }
+  ],
+  "full_unified_diff": "diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs\nindex ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b..6540d88dc33064ab504607bfa9b7340d42a3c585 100644\n--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs\n@@ -154,8 +154,74 @@\n     counters: Cell<Counters>,\n     stages: Arc<StageAccounting>,\n     sql_commits: Arc<SqlCommitAccounting>,\n+    legacy_reorg_observation: Cell<bool>,\n }\n impl HistoryArithmetic {\n+    pub(crate) fn enable_legacy_reorg_observation(&self) {\n+        self.legacy_reorg_observation.set(true);\n+    }\n+    pub(crate) fn legacy_reorg_observation_enabled(&self) -> bool {\n+        self.legacy_reorg_observation.get()\n+    }\n+    pub(crate) fn legacy_reorg_observation(&self) -> Value {\n+        let rows = match self.stages.rows.try_lock() {\n+            Ok(rows) => Some(*rows),\n+            Err(_) => {\n+                self.stages.failed.store(true, Ordering::Relaxed);\n+                None\n+            }\n+        };\n+        let failed = self.stages.failed.load(Ordering::Relaxed);\n+        let roles = rows.map(|rows| {\n+            [\n+                (HistoryStage::VerifyState, \"staging_validation\"),\n+                (HistoryStage::ReadActive, \"active_tail_validation\"),\n+            ]\n+            .into_iter()\n+            .map(|(stage, role)| {\n+                let totals = rows[stage as usize];\n+                let counter_saturated = [\n+                    totals.calls,\n+                    totals.wall_ns,\n+                    totals.cpu_known_calls,\n+                    totals.cpu_unknown_calls,\n+                    totals.cpu_ns,\n+                    totals.unwinding_calls,\n+                ]\n+                .contains(&u64::MAX);\n+                let entered = totals.calls > 0;\n+                let known = !failed && !counter_saturated;\n+                json!({\n+                    \"role\":role,\n+                    \"collector_stage\":STAGE_NAMES[stage as usize],\n+                    \"totals\":totals,\n+                    \"complete_wall_ns\":(known && entered).then_some(totals.wall_ns),\n+                    \"complete_cpu_ns\":(known && entered\n+                        && totals.cpu_unknown_calls == 0\n+                        && totals.cpu_known_calls == totals.calls).then_some(totals.cpu_ns),\n+                    \"known_cpu_ns_subtotal\":(known && totals.cpu_known_calls > 0)\n+                        .then_some(totals.cpu_ns),\n+                    \"counter_saturated\":counter_saturated,\n+                    \"per_outcome_counts\":null\n+                })\n+            })\n+            .collect::<Vec<_>>()\n+        });\n+        json!({\n+            \"schema\":\"pon-native-legacy-reorg-observation-v1\",\n+            \"backend\":\"legacy\",\n+            \"enabled\":self.legacy_reorg_observation.get(),\n+            \"scope\":\"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused\",\n+            \"roles\":roles,\n+            \"stage_observation_failed\":failed,\n+            \"stage_outcomes\":\"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters\",\n+            \"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\n+            \"counter_scope\":\"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset\",\n+            \"interval_scope\":\"component intervals are not complete importer time; nested observations are not generally additive\",\n+            \"sql_commit\":self.sql_commits.legacy_reorg_observation(),\n+            \"has_consensus_authority\":false\n+        })\n+    }\n     fn count(&self, action: impl FnOnce(&mut Counters)) {\n         let mut counters = self.counters.get();\n         action(&mut counters);\n@@ -424,6 +490,12 @@\n     failed: AtomicBool,\n }\n impl SqlCommitAccounting {\n+    fn legacy_reorg_observation(&self) -> Value {\n+        let mut value = self.observation();\n+        value[\"schema\"] = json!(\"pon-native-legacy-reorg-sql-commit-call-observation-v1\");\n+        value[\"scope\"] = json!(\"explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync\");\n+        value\n+    }\n     fn fail(&self) {\n         self.failed.store(true, Ordering::Relaxed);\n     }\ndiff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs\nindex a7035222bc51cfe7f60e891398230c3179accc82..8c5d473a8310cf5e6d0ecb0afc58d5d51773d170 100644\n--- a/trillionnium/crates/trnm-pon-node/src/store.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/store.rs\n@@ -13,6 +13,8 @@\n #[cfg(test)]\n mod historical_commitment_tests;\n mod history_page;\n+#[cfg(test)]\n+mod legacy_reorg_observation_tests;\n pub mod mempool;\n pub(crate) mod native_authenticated;\n pub mod native_budget;\n@@ -3126,10 +3128,41 @@\n     pub fn history_read_counters(&self) -> HistoryReadCounters {\n         self.history_read_counters.get()\n     }\n+    /// Explicit local diagnostics only; no validation, cache or budget is enabled.\n+    /// Repeated calls never reset counters. Other backends retain their profile.\n+    pub fn enable_native_legacy_reorg_observation(&self) -> bool {\n+        if self.state_backend != StateBackend::Legacy {\n+            return false;\n+        }\n+        self.authenticated_arithmetic\n+            .history\n+            .enable_legacy_reorg_observation();\n+        true\n+    }\n+    fn native_legacy_reorg_observation_enabled(&self) -> bool {\n+        self.state_backend == StateBackend::Legacy\n+            && self\n+                .authenticated_arithmetic\n+                .history\n+                .legacy_reorg_observation_enabled()\n+    }\n+    fn legacy_reorg_step_observation_enabled(\n+        &self,\n+        site: native_authenticated::SqlCommitSite,\n+    ) -> bool {\n+        self.native_legacy_reorg_observation_enabled()\n+            && matches!(site, native_authenticated::SqlCommitSite::ReorgStep)\n+    }\n     /// Local cumulative diagnostics only. No SQL, native validation, CPU credit,\n     /// clock verdict or durable fact is supplied by these nested observations.\n     pub fn native_history_arithmetic_observation(&self) -> Value {\n-        self.authenticated_arithmetic.observation()\n+        if self.native_legacy_reorg_observation_enabled() {\n+            self.authenticated_arithmetic\n+                .history\n+                .legacy_reorg_observation()\n+        } else {\n+            self.authenticated_arithmetic.observation()\n+        }\n     }\n \n     fn parent(&self, id: Hash) -> Result<Hash> {\n@@ -5087,7 +5120,14 @@\n             .transpose()?;\n         let transaction_result: Result<()> = (|| {\n             let mut readback = run(progress, original_owner.as_ref())?;\n-            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;\n+            {\n+                let _stage = self.legacy_reorg_step_observation_enabled(commit_site).then(|| {\n+                    self.authenticated_arithmetic\n+                        .history\n+                        .observe(native_authenticated::HistoryStage::ReadActive)\n+                });\n+                self.check_active_before_commit_with_readback(progress, readback.as_mut())?;\n+            }\n             self.continuous_scope_checkpoint()?;\n             self.mining_scope_checkpoint()?;\n             progress()?;\n@@ -5114,7 +5154,9 @@\n             }),\n         };\n         transaction_result?;\n-        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1\n+            || self.legacy_reorg_step_observation_enabled(commit_site))\n+        .then(|| {\n             self.authenticated_arithmetic\n                 .history\n                 .observe_sql_commit(commit_site)\n@@ -5341,12 +5383,19 @@\n             .map_err(Error::local_integrity)?;\n             self.check_reorg_row(old, target, next, 0, 0)?;\n             let mut readback = self.reorg_post_write_readback(old, original_owner)?;\n-            self.check_persisted_state_with_readback(\n-                old,\n-                &self.slot_state_with_progress(next, progress)?,\n-                progress,\n-                readback.as_mut(),\n-            )?;\n+            {\n+                let _stage = self.native_legacy_reorg_observation_enabled().then(|| {\n+                    self.authenticated_arithmetic\n+                        .history\n+                        .observe(native_authenticated::HistoryStage::VerifyState)\n+                });\n+                self.check_persisted_state_with_readback(\n+                    old,\n+                    &self.slot_state_with_progress(next, progress)?,\n+                    progress,\n+                    readback.as_mut(),\n+                )?;\n+            }\n             Ok(readback)\n         })?;\n         let outcome = (|| {\n@@ -5552,12 +5601,19 @@\n                 self.check_reorg_row(old, target, g, index + 1, 0)?;\n                 let resulting = if kind == 0 { self.parent(id)? } else { id };\n                 let mut readback = self.reorg_post_write_readback(resulting, original_owner)?;\n-                self.check_persisted_state_with_readback(\n-                    resulting,\n-                    &self.slot_state_with_progress(g, progress)?,\n-                    progress,\n-                    readback.as_mut(),\n-                )?;\n+                {\n+                    let _stage = self.native_legacy_reorg_observation_enabled().then(|| {\n+                        self.authenticated_arithmetic\n+                            .history\n+                            .observe(native_authenticated::HistoryStage::VerifyState)\n+                    });\n+                    self.check_persisted_state_with_readback(\n+                        resulting,\n+                        &self.slot_state_with_progress(g, progress)?,\n+                        progress,\n+                        readback.as_mut(),\n+                    )?;\n+                }\n                 Ok(readback)\n             })?;\n             cut(\n@@ -5626,12 +5682,19 @@\n             self.check_reorg_row(old, target, g, count, 1)?;\n             self.check_events_with_progress(g, &expected, progress)?;\n             let mut readback = self.reorg_post_write_readback(target, original_owner)?;\n-            self.check_persisted_state_with_readback(\n-                target,\n-                &self.slot_state_with_progress(g, progress)?,\n-                progress,\n-                readback.as_mut(),\n-            )?;\n+            {\n+                let _stage = self.native_legacy_reorg_observation_enabled().then(|| {\n+                    self.authenticated_arithmetic\n+                        .history\n+                        .observe(native_authenticated::HistoryStage::VerifyState)\n+                });\n+                self.check_persisted_state_with_readback(\n+                    target,\n+                    &self.slot_state_with_progress(g, progress)?,\n+                    progress,\n+                    readback.as_mut(),\n+                )?;\n+            }\n             Ok(readback)\n         })?;\n         cut(hook, \"published\")?;\ndiff --git a/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs b/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs\nindex 435d0b6a113b42660fc6a2365fbf12881a56e022..4dd89831914b44a2f58c270c9726abd539620ec5 100644\n--- a/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs\n@@ -478,7 +478,9 @@\n             cursor,\n             2,\n         )?;\n-        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1\n+            || self.native_legacy_reorg_observation_enabled())\n+        .then(|| {\n             self.authenticated_arithmetic\n                 .history\n                 .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)\ndiff --git a/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs b/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs\nindex e4c01b37441886f1359c016efb30f190eda98aa0..e04a6c60dab06388aae7ee7c95c68424d90628f9 100644\n--- a/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs\n+++ b/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs\n@@ -271,101 +271,113 @@\n     let mut head_rpc_elapsed_ns = None;\n     let mut history_rpc_elapsed_ns = None;\n     let mut import_call_elapsed_ns = None;\n+    let mut legacy_reorg_observation_enabled = None;\n+    let mut legacy_reorg_observation_before = None;\n+    let mut legacy_reorg_observation_after = None;\n     let sync_result = (|| -> Result<(u64, u64, u64)> {\n         let mut confirmer = Node::open(&directory.join(\"confirmer\"), settings.clone(), 2)?;\n-        let caller = identity(112);\n-        sync_stage = \"head-rpc\";\n-        let call_started = Instant::now();\n-        let head_result = public_v2::call_public_protected_v2(\n-            address,\n-            &Request::Head,\n-            &settings,\n-            &server_pin,\n-            &caller,\n-            policy,\n-        );\n-        head_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());\n-        let head = head_result?;\n-        sync_stage = \"head-response-check\";\n-        if !head.ok || head.value[\"tip\"] != hex::encode(tip) || head.value[\"height\"] != BLOCKS {\n-            return Err(\"PUBLIC_HEAD\".into());\n-        }\n-        let mut after = settings.genesis();\n-        last_successful_after = Some(after);\n-        let mut count = 0;\n-        let mut trials = 0;\n-        let mut solve_ns = 0;\n-        while after != tip {\n-            sync_stage = \"history-rpc\";\n-            last_requested_after = Some(after);\n-            advertised_page_complete = None;\n-            import_call_elapsed_ns = None;\n+        legacy_reorg_observation_enabled = Some(confirmer.enable_native_legacy_reorg_observation());\n+        legacy_reorg_observation_before = Some(confirmer.native_history_arithmetic_observation());\n+        let replay_result: Result<_> = (|| {\n+            let caller = identity(112);\n+            sync_stage = \"head-rpc\";\n             let call_started = Instant::now();\n-            let reply_result = public_v2::call_public_protected_v2(\n+            let head_result = public_v2::call_public_protected_v2(\n                 address,\n-                &Request::History {\n-                    tip: hex::encode(tip),\n-                    after: hex::encode(after),\n-                },\n+                &Request::Head,\n                 &settings,\n                 &server_pin,\n                 &caller,\n                 policy,\n             );\n-            history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());\n-            let reply = reply_result?;\n-            sync_stage = \"history-response-check\";\n-            if !reply.ok {\n-                return Err(format!(\"PUBLIC_HISTORY_REFUSED:{}\", reply.value).into());\n+            head_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());\n+            let head = head_result?;\n+            sync_stage = \"head-response-check\";\n+            if !head.ok || head.value[\"tip\"] != hex::encode(tip) || head.value[\"height\"] != BLOCKS {\n+                return Err(\"PUBLIC_HEAD\".into());\n             }\n-            trials += reply.solve_trials;\n-            solve_ns += reply.solve_elapsed_ns;\n-            sync_stage = \"decode-page\";\n-            let page: Page = serde_json::from_value(reply.value)?;\n-            advertised_page_complete = Some(page.complete);\n-            sync_stage = \"page-count-check\";\n-            if page.packets.len() != 1 {\n-                return Err(\"PAGE_COUNT\".into());\n-            }\n-            sync_stage = \"first-packet-check\";\n-            if count == 0\n-                && Packet::decode(&hex::decode(&page.packets[0]).map_err(codec)?)?.id()?\n-                    != first.ok_or(\"FIRST\")?\n-            {\n-                return Err(\"LONG_FIRST_PAGE\".into());\n-            }\n-            sync_stage = \"import-call-expression\";\n-            let call_started = Instant::now();\n-            let import_result = ingress::receive_public_page_from(\n-                &mut confirmer,\n-                address,\n-                page,\n-                tip,\n-                after,\n-                ingress::now()?,\n-            );\n-            import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());\n-            after = import_result?;\n-            count += 1;\n-            completed_import_calls = count;\n+            let mut after = settings.genesis();\n             last_successful_after = Some(after);\n-            sync_stage = \"partial-active-check\";\n-            if count < BLOCKS && confirmer.active()?.0 != settings.genesis() {\n-                return Err(\"PARTIAL_SYNC_ACTIVATED\".into());\n-            }\n-            if count.is_multiple_of(500) {\n-                println!(\n-                    \"{}\",\n-                    json!({\"kind\":\"independent-native-fullsync-progress\",\"height\":count,\"elapsed_ns\":started.elapsed().as_nanos()})\n+            let mut count = 0;\n+            let mut trials = 0;\n+            let mut solve_ns = 0;\n+            while after != tip {\n+                sync_stage = \"history-rpc\";\n+                last_requested_after = Some(after);\n+                advertised_page_complete = None;\n+                import_call_elapsed_ns = None;\n+                let call_started = Instant::now();\n+                let reply_result = public_v2::call_public_protected_v2(\n+                    address,\n+                    &Request::History {\n+                        tip: hex::encode(tip),\n+                        after: hex::encode(after),\n+                    },\n+                    &settings,\n+                    &server_pin,\n+                    &caller,\n+                    policy,\n                 );\n+                history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());\n+                let reply = reply_result?;\n+                sync_stage = \"history-response-check\";\n+                if !reply.ok {\n+                    return Err(format!(\"PUBLIC_HISTORY_REFUSED:{}\", reply.value).into());\n+                }\n+                trials += reply.solve_trials;\n+                solve_ns += reply.solve_elapsed_ns;\n+                sync_stage = \"decode-page\";\n+                let page: Page = serde_json::from_value(reply.value)?;\n+                advertised_page_complete = Some(page.complete);\n+                sync_stage = \"page-count-check\";\n+                if page.packets.len() != 1 {\n+                    return Err(\"PAGE_COUNT\".into());\n+                }\n+                sync_stage = \"first-packet-check\";\n+                if count == 0\n+                    && Packet::decode(&hex::decode(&page.packets[0]).map_err(codec)?)?.id()?\n+                        != first.ok_or(\"FIRST\")?\n+                {\n+                    return Err(\"LONG_FIRST_PAGE\".into());\n+                }\n+                sync_stage = \"import-call-expression\";\n+                let call_started = Instant::now();\n+                let import_result = ingress::receive_public_page_from(\n+                    &mut confirmer,\n+                    address,\n+                    page,\n+                    tip,\n+                    after,\n+                    ingress::now()?,\n+                );\n+                import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());\n+                after = import_result?;\n+                count += 1;\n+                completed_import_calls = count;\n+                last_successful_after = Some(after);\n+                sync_stage = \"partial-active-check\";\n+                if count < BLOCKS && confirmer.active()?.0 != settings.genesis() {\n+                    return Err(\"PARTIAL_SYNC_ACTIVATED\".into());\n+                }\n+                if count.is_multiple_of(500) {\n+                    println!(\n+                        \"{}\",\n+                        json!({\"kind\":\"independent-native-fullsync-progress\",\"height\":count,\"elapsed_ns\":started.elapsed().as_nanos()})\n+                    );\n+                }\n             }\n-        }\n-        sync_stage = \"final-active-read\";\n-        let confirmed = confirmer.read_active()?;\n-        sync_stage = \"final-state-check\";\n-        if count != BLOCKS || confirmed.0 != expected.0 || confirmed.2 != expected.2 {\n-            return Err(\"CONFIRMATION_STATE\".into());\n-        }\n+            sync_stage = \"final-active-read\";\n+            let confirmed = confirmer.read_active()?;\n+            sync_stage = \"final-state-check\";\n+            if count != BLOCKS || confirmed.0 != expected.0 || confirmed.2 != expected.2 {\n+                return Err(\"CONFIRMATION_STATE\".into());\n+            }\n+            Ok((count, trials, solve_ns, confirmed))\n+        })();\n+        // Preserve the original replay Result through diagnostic readback.\n+        // No reset, clock verdict or new error is introduced before propagation.\n+        legacy_reorg_observation_after = Some(confirmer.native_history_arithmetic_observation());\n+        let (count, trials, solve_ns, confirmed) = replay_result?;\n         drop(confirmer);\n         sync_stage = \"reopen-read-and-compare\";\n         if Node::open(&directory.join(\"confirmer\"), settings.clone(), 2)?.read_active()?\n@@ -383,6 +395,15 @@\n             \"schema\": \"native-ancestry-independent-sync-exit-evidence-v1\",\n             \"elapsed_ns\": started.elapsed().as_nanos(),\n             \"sync_error\": sync_result.as_ref().err().map(ToString::to_string),\n+            \"native_legacy_reorg_observation\": {\n+                \"schema\": \"native-ancestry-legacy-reorg-observation-pair-v1\",\n+                \"enabled\": legacy_reorg_observation_enabled,\n+                \"before\": legacy_reorg_observation_before,\n+                \"after\": legacy_reorg_observation_after,\n+                \"scope\": \"Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced.\",\n+                \"delta_computed\": false,\n+                \"production_activation\": false\n+            },\n             \"failure_location\": sync_result.as_ref().err().map(|_| json!({\n                 \"schema\": \"native-ancestry-independent-sync-failure-location-v1\",\n                 \"stage\": sync_stage,\ndiff --git a/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs\nnew file mode 100644\nindex 0000000000000000000000000000000000000000..e558451e6b0ffbfea77ad963577bbab3c08ba65a\n--- /dev/null\n+++ b/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs\n@@ -0,0 +1,379 @@\n+use super::*;\n+use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};\n+use trnm_protocol::pon_wire::Envelope;\n+\n+const ORIGINAL_SCHEMA: &str = \"pon-native-history-arithmetic-observation-v1\";\n+const LEGACY_SCHEMA: &str = \"pon-native-legacy-reorg-observation-v1\";\n+\n+fn role<'a>(snapshot: &'a Value, name: &str) -> &'a Value {\n+    snapshot[\"roles\"]\n+        .as_array()\n+        .unwrap()\n+        .iter()\n+        .find(|row| row[\"role\"] == name)\n+        .unwrap()\n+}\n+\n+fn sql_site<'a>(snapshot: &'a Value, name: &str) -> &'a Value {\n+    snapshot[\"sql_commit\"][\"sites\"]\n+        .as_array()\n+        .unwrap()\n+        .iter()\n+        .find(|row| row[\"site\"] == name)\n+        .unwrap()\n+}\n+\n+fn assert_unentered_site(snapshot: &Value, name: &str) {\n+    let site = sql_site(snapshot, name);\n+    assert_eq!(site[\"totals\"][\"calls_started\"], 0);\n+    assert_eq!(site[\"calls_in_flight\"], 0);\n+    assert!(site[\"totals\"][\"wall_ns\"].is_null());\n+    assert!(site[\"totals\"][\"cpu_ns\"].is_null());\n+}\n+\n+fn assert_empty(snapshot: &Value) {\n+    assert_eq!(snapshot[\"schema\"], LEGACY_SCHEMA);\n+    assert_eq!(snapshot[\"backend\"], \"legacy\");\n+    assert_eq!(snapshot[\"enabled\"], true);\n+    assert_eq!(snapshot[\"has_consensus_authority\"], false);\n+    assert_eq!(snapshot[\"stage_observation_failed\"], false);\n+    assert_eq!(snapshot[\"roles\"].as_array().unwrap().len(), 2);\n+    for name in [\"staging_validation\", \"active_tail_validation\"] {\n+        let row = role(snapshot, name);\n+        assert_eq!(row[\"totals\"][\"calls\"], 0);\n+        assert!(row[\"complete_wall_ns\"].is_null());\n+        assert!(row[\"complete_cpu_ns\"].is_null());\n+        assert!(row[\"known_cpu_ns_subtotal\"].is_null());\n+        assert!(row[\"per_outcome_counts\"].is_null());\n+    }\n+    assert_eq!(\n+        snapshot[\"sql_commit\"][\"schema\"],\n+        \"pon-native-legacy-reorg-sql-commit-call-observation-v1\"\n+    );\n+    for name in [\n+        \"admission_persistence\",\n+        \"atomic\",\n+        \"reorg_step\",\n+        \"reorg_termination\",\n+    ] {\n+        assert_unentered_site(snapshot, name);\n+    }\n+}\n+\n+fn assert_entered(snapshot: &Value) {\n+    assert_eq!(snapshot[\"schema\"], LEGACY_SCHEMA);\n+    assert_eq!(snapshot[\"stage_observation_failed\"], false);\n+    assert_eq!(snapshot[\"has_consensus_authority\"], false);\n+    for name in [\"staging_validation\", \"active_tail_validation\"] {\n+        let row = role(snapshot, name);\n+        assert!(row[\"totals\"][\"calls\"].as_u64().unwrap() > 0);\n+        assert!(row[\"complete_wall_ns\"].is_u64());\n+        assert_eq!(row[\"counter_saturated\"], false);\n+        assert!(row[\"per_outcome_counts\"].is_null());\n+        if row[\"totals\"][\"cpu_unknown_calls\"].as_u64().unwrap() > 0 {\n+            assert!(row[\"complete_cpu_ns\"].is_null());\n+        }\n+    }\n+    let site = sql_site(snapshot, \"reorg_step\");\n+    assert!(site[\"totals\"][\"calls_succeeded\"].as_u64().unwrap() > 0);\n+    assert_eq!(site[\"totals\"][\"calls_failed\"], 0);\n+    assert_eq!(site[\"calls_in_flight\"], 0);\n+    assert_eq!(snapshot[\"sql_commit\"][\"observation_failed\"], false);\n+    assert_unentered_site(snapshot, \"admission_persistence\");\n+    assert_unentered_site(snapshot, \"atomic\");\n+}\n+\n+fn transfer(node: &Node, nonce: u64, recipient: u64) -> Vec<u8> {\n+    let mut payload = development_public(recipient).unwrap().to_vec();\n+    payload.extend(1_u64.to_le_bytes());\n+    let mut transaction = Envelope {\n+        network: node.settings().network(),\n+        sender: development_public(0).unwrap(),\n+        nonce,\n+        expiry: 1000,\n+        fee_limit: 1_000_000,\n+        tag: 1,\n+        payload,\n+        signature: [0; 64],\n+    };\n+    let key =\n+        signing_key_from_hex(&hex::encode(hash(b\"DEV-ONLY-KEY\", &[&0_u64.to_le_bytes()])))\n+            .unwrap();\n+    transaction.signature = hex::decode(sign_hex(&key, &transaction.signing_digest().unwrap()))\n+        .unwrap()\n+        .try_into()\n+        .unwrap();\n+    transaction.encode().unwrap()\n+}\n+\n+fn fork_pair(control_path: &Path, observed_path: &Path) -> (Node, Node, Hash, u64) {\n+    let settings = Settings::development(Some(1)).unwrap();\n+    let builder_directory = tempfile::tempdir().unwrap();\n+    let mut builder = Node::open(builder_directory.path(), settings.clone(), 2).unwrap();\n+    let first_nonce = builder.next_nonce(development_public(0).unwrap()).unwrap();\n+    let left = builder\n+        .make(\n+            settings.genesis(),\n+            vec![transfer(&builder, first_nonce, 1)],\n+            development_public(0).unwrap(),\n+            11,\n+            4096,\n+        )\n+        .unwrap();\n+    let right = builder\n+        .make(\n+            settings.genesis(),\n+            vec![transfer(&builder, first_nonce, 2)],\n+            development_public(1).unwrap(),\n+            12,\n+            4096,\n+        )\n+        .unwrap();\n+    let right_id = builder.admit(&right, 1000).unwrap();\n+    let target = builder\n+        .make(\n+            right_id,\n+            vec![transfer(&builder, first_nonce + 1, 3)],\n+            development_public(1).unwrap(),\n+            22,\n+            4096,\n+        )\n+        .unwrap();\n+    let target_id = target.id().unwrap();\n+    drop(builder);\n+\n+    // Both measured owners receive the same packets and the same operation\n+    // sequence. Reopening after admission would activate the best pending tip.\n+    let mut control = Node::open(control_path, settings.clone(), 2).unwrap();\n+    let mut observed = Node::open(observed_path, settings, 2).unwrap();\n+    for node in [&mut control, &mut observed] {\n+        let left_id = node.admit(&left, 1000).unwrap();\n+        assert_eq!(node.activate(left_id).unwrap(), left_id);\n+        assert_eq!(node.admit(&right, 1000).unwrap(), right_id);\n+        assert_eq!(node.admit(&target, 1000).unwrap(), target_id);\n+        assert_eq!(\n+            node.next_nonce(development_public(0).unwrap()).unwrap(),\n+            first_nonce + 1\n+        );\n+    }\n+    assert_eq!(control.read_active().unwrap(), observed.read_active().unwrap());\n+    (control, observed, target_id, first_nonce)\n+}\n+\n+fn activate_with_trace(\n+    node: &mut Node,\n+    target: Hash,\n+    cancel: bool,\n+) -> (Result<Hash>, Vec<String>, u64) {\n+    let mut cuts = Vec::new();\n+    let mut checkpoints = 0_u64;\n+    let result = node.activate_with_fault_and_progress(\n+        target,\n+        Some(&mut |point| {\n+            cuts.push(point.to_owned());\n+            if cancel && point == \"attach:1\" {\n+                Err(Error::new(crate::ErrorCode::LegacyRequestDeadline))\n+            } else {\n+                Ok(())\n+            }\n+        }),\n+        &mut || {\n+            checkpoints += 1;\n+            Ok(())\n+        },\n+        None,\n+    );\n+    (result, cuts, checkpoints)\n+}\n+\n+fn lifecycle(node: &Node) -> (u64, u64, u64, Option<u64>, String) {\n+    node.db\n+        .query_row(\n+            \"SELECT reorg.done,reorg.cursor,reorg_lifecycle_v1.outcome,\n+                    reorg_lifecycle_v1.cancelled_cursor,reorg_lifecycle_v1.reason\n+             FROM reorg,reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 1\",\n+            [],\n+            |row| {\n+                Ok((\n+                    row.get(0)?,\n+                    row.get(1)?,\n+                    row.get(2)?,\n+                    row.get(3)?,\n+                    row.get(4)?,\n+                ))\n+            },\n+        )\n+        .unwrap()\n+}\n+\n+#[test]\n+fn legacy_observation_opt_in_is_local_and_keeps_unentered_unknown() {\n+    let directory = tempfile::tempdir().unwrap();\n+    let settings = Settings::development(Some(1)).unwrap();\n+    let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();\n+    let original = node.native_history_arithmetic_observation();\n+    assert_eq!(original[\"schema\"], ORIGINAL_SCHEMA);\n+    let active = node.read_active().unwrap();\n+    assert!(node.enable_native_legacy_reorg_observation());\n+    let empty = node.native_history_arithmetic_observation();\n+    assert_empty(&empty);\n+    assert!(node.enable_native_legacy_reorg_observation());\n+    assert_eq!(node.native_history_arithmetic_observation(), empty);\n+\n+    let error = node\n+        .activate_with_fault_and_progress(\n+            settings.genesis(),\n+            None,\n+            &mut || Err(Error::new(crate::ErrorCode::LegacyRequestDeadline)),\n+            None,\n+        )\n+        .unwrap_err();\n+    assert!(error.is(crate::ErrorCode::LegacyRequestDeadline));\n+    assert_eq!(node.native_history_arithmetic_observation(), empty);\n+    assert_eq!(node.read_active().unwrap(), active);\n+\n+    let authenticated_directory = tempfile::tempdir().unwrap();\n+    let authenticated =\n+        Node::open_with_authenticated_state(authenticated_directory.path(), settings, 2).unwrap();\n+    let original = authenticated.native_history_arithmetic_observation();\n+    assert_eq!(original[\"schema\"], ORIGINAL_SCHEMA);\n+    assert!(!authenticated.enable_native_legacy_reorg_observation());\n+    assert_eq!(authenticated.native_history_arithmetic_observation(), original);\n+}\n+\n+#[test]\n+fn legacy_observation_preserves_signed_reorg_state_and_progress() {\n+    let control_directory = tempfile::tempdir().unwrap();\n+    let observed_directory = tempfile::tempdir().unwrap();\n+    let (mut control, mut observed, target, first_nonce) =\n+        fork_pair(control_directory.path(), observed_directory.path());\n+    assert!(observed.enable_native_legacy_reorg_observation());\n+    let (control_result, control_cuts, control_progress) =\n+        activate_with_trace(&mut control, target, false);\n+    let (observed_result, observed_cuts, observed_progress) =\n+        activate_with_trace(&mut observed, target, false);\n+    let snapshot = observed.native_history_arithmetic_observation();\n+    assert_eq!(control_result.unwrap(), target);\n+    assert_eq!(observed_result.unwrap(), target);\n+    assert_eq!(observed_cuts, control_cuts);\n+    assert_eq!(observed_progress, control_progress);\n+    assert!(control_progress > 0);\n+    assert!(control_cuts.iter().any(|point| point == \"detach:0\"));\n+    assert!(control_cuts.iter().any(|point| point == \"attach:1\"));\n+    assert!(control_cuts.iter().any(|point| point == \"published\"));\n+    let active = control.read_active().unwrap();\n+    assert_eq!(observed.read_active().unwrap(), active);\n+    assert_eq!(active.0, target);\n+    assert_eq!(\n+        control.settings().state_root(&active.2).unwrap(),\n+        control.record(target).unwrap().root\n+    );\n+    for node in [&control, &observed] {\n+        assert_eq!(\n+            node.next_nonce(development_public(0).unwrap()).unwrap(),\n+            first_nonce + 2\n+        );\n+    }\n+    assert_entered(&snapshot);\n+    assert_unentered_site(&snapshot, \"reorg_termination\");\n+    assert!(observed.enable_native_legacy_reorg_observation());\n+    assert_eq!(observed.native_history_arithmetic_observation(), snapshot);\n+    let control_observation = control.native_history_arithmetic_observation();\n+    assert_eq!(control_observation[\"schema\"], ORIGINAL_SCHEMA);\n+\n+    let settings = observed.settings().clone();\n+    drop(observed);\n+    let reopened = Node::open(observed_directory.path(), settings, 2).unwrap();\n+    let cold_observation = reopened.native_history_arithmetic_observation();\n+    assert_eq!(cold_observation[\"schema\"], ORIGINAL_SCHEMA);\n+    assert_eq!(reopened.read_active().unwrap(), active);\n+    assert_eq!(\n+        reopened.next_nonce(development_public(0).unwrap()).unwrap(),\n+        first_nonce + 2\n+    );\n+}\n+\n+#[test]\n+fn legacy_observation_preserves_cancelled_and_failed_reorg_outcomes() {\n+    for cancel in [true, false] {\n+        let control_directory = tempfile::tempdir().unwrap();\n+        let observed_directory = tempfile::tempdir().unwrap();\n+        let (mut control, mut observed, target, first_nonce) =\n+            fork_pair(control_directory.path(), observed_directory.path());\n+        let before = control.read_active().unwrap();\n+        let original_root = control.record(target).unwrap().root;\n+        if !cancel {\n+            let mut wrong_root = original_root;\n+            wrong_root[0] ^= 1;\n+            for node in [&control, &observed] {\n+                assert_eq!(\n+                    node.db\n+                        .execute(\n+                            \"UPDATE blocks SET state_root=? WHERE id=?\",\n+                            params![wrong_root.as_slice(), target.as_slice()],\n+                        )\n+                        .unwrap(),\n+                    1\n+                );\n+            }\n+        }\n+        assert!(observed.enable_native_legacy_reorg_observation());\n+        let (control_result, control_cuts, control_progress) =\n+            activate_with_trace(&mut control, target, cancel);\n+        let (observed_result, observed_cuts, observed_progress) =\n+            activate_with_trace(&mut observed, target, cancel);\n+        let snapshot = observed.native_history_arithmetic_observation();\n+        let control_error = control_result.unwrap_err();\n+        let observed_error = observed_result.unwrap_err();\n+        assert_eq!(observed_error.kind(), control_error.kind());\n+        assert_eq!(observed_error.to_string(), control_error.to_string());\n+        assert_eq!(observed_cuts, control_cuts);\n+        assert_eq!(observed_progress, control_progress);\n+        assert!(control_progress > 0);\n+        assert_eq!(control.read_active().unwrap(), before);\n+        assert_eq!(observed.read_active().unwrap(), before);\n+        for node in [&control, &observed] {\n+            assert_eq!(\n+                node.next_nonce(development_public(0).unwrap()).unwrap(),\n+                first_nonce + 1\n+            );\n+        }\n+        let retained = lifecycle(&control);\n+        assert_eq!(lifecycle(&observed), retained);\n+        assert_entered(&snapshot);\n+        if cancel {\n+            assert!(observed_error.is(crate::ErrorCode::LegacyRequestDeadline));\n+            assert_eq!((retained.0, retained.2), (2, 2));\n+            assert!(retained.1 > 0);\n+            assert_eq!(retained.3, Some(retained.1));\n+            assert_eq!(retained.4, \"REQUEST_DEADLINE\");\n+            assert!(\n+                sql_site(&snapshot, \"reorg_termination\")[\"totals\"][\"calls_succeeded\"]\n+                    .as_u64()\n+                    .unwrap()\n+                    > 0\n+            );\n+        } else {\n+            assert_eq!(observed_error.to_string(), \"ROOT\");\n+            assert!(observed_error.requires_owner_stop());\n+            assert_eq!((retained.0, retained.2), (0, 0));\n+            assert!(retained.1 > 0);\n+            assert!(retained.3.is_none());\n+            assert!(retained.4.is_empty());\n+            assert_unentered_site(&snapshot, \"reorg_termination\");\n+            for node in [&control, &observed] {\n+                assert_eq!(\n+                    node.db\n+                        .execute(\n+                            \"UPDATE blocks SET state_root=? WHERE id=?\",\n+                            params![original_root.as_slice(), target.as_slice()],\n+                        )\n+                        .unwrap(),\n+                    1\n+                );\n+            }\n+        }\n+        assert!(observed.enable_native_legacy_reorg_observation());\n+        assert_eq!(observed.native_history_arithmetic_observation(), snapshot);\n+    }\n+}\n",
+  "mechanical_proof": {
+    "source": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "untouched_functions": [
+      {
+        "name": "HistoryArithmetic::observation",
+        "utf8_bytes": 1777,
+        "sha256": "62ad03791859c57fd41ce1b08f7a891da6990dbdd1c2e55181d2cd5f4afeaa4a",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "SqlCommitAccounting::observation",
+        "utf8_bytes": 1598,
+        "sha256": "06bcec6393d1269a0c82e6ee841c8605dfe705d6f4009f62e4587a61748db61f",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "StageObservation::drop",
+        "utf8_bytes": 1065,
+        "sha256": "300cf3b8fc329f0f2d11ec7b353d6f5702b38546d6fc9b4d1bcc44c1470c07b0",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "SqlCommitObservation::drop",
+        "utf8_bytes": 1732,
+        "sha256": "b24fcb5b94503519fce4c0097a21d8b0cce4a10e29728cb48ee7b032f5930f71",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "HistoryArithmetic::observe",
+        "utf8_bytes": 290,
+        "sha256": "b0126408e1704681dda392b7854a869f89f8af9fa92cd992d50314d9d0f724f1",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "HistoryArithmetic::observe_sql_commit",
+        "utf8_bytes": 164,
+        "sha256": "8fe0444b8fc7ee000a8cff8a00c12a2b0ac59bd96bec32cb8c295b3a124a0c98",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "check_persisted_state_with_readback",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "utf8_bytes": 1495,
+        "sha256": "4ad735d23e29f6abcfab4dd9ff17d2ca5dd9d01c5e95ff1bd4089630c7e1080f",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "slot_state_with_progress",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "utf8_bytes": 2953,
+        "sha256": "0f2a2c7f51c968881f3a8cd071b17e77bec8715b1cacd1720e1a7f3a641398cb",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "check_active_before_commit_with_readback",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "utf8_bytes": 1702,
+        "sha256": "a377d9ba1279c6fe266e7f42cc1f185b5252cd60f537a12c99f72f0e4cf4ada2",
+        "original_bytes_unchanged": true
+      },
+      {
+        "name": "apply_delta_with_progress",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "utf8_bytes": 1475,
+        "sha256": "8ee81bce29f46368daaf0c98f840a893c656b8098f42887ce62d8af7c02d32b0",
+        "original_bytes_unchanged": true
+      }
+    ],
+    "original_cleanup_tail": {
+      "text": "        drop(confirmer);\n        sync_stage = \"reopen-read-and-compare\";\n        if Node::open(&directory.join(\"confirmer\"), settings.clone(), 2)?.read_active()?\n            != confirmed\n        {\n            return Err(\"CONFIRMER_REOPEN\".into());\n        }\n        Ok((count, trials, solve_ns))\n",
+      "utf8_bytes": 296,
+      "sha256": "92056d3269f63d08bfcfdeef7b94062589be47a15c3cad7c7ef68e697ae60fff",
+      "unchanged": true
+    },
+    "original_expressions": [
+      {
+        "label": "head",
+        "original_text": "        let head_result = public_v2::call_public_protected_v2(\n            address,\n            &Request::Head,\n            &settings,\n            &server_pin,\n            &caller,\n            policy,\n        );\n        head_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "candidate_text": "            let head_result = public_v2::call_public_protected_v2(\n                address,\n                &Request::Head,\n                &settings,\n                &server_pin,\n                &caller,\n                policy,\n            );\n            head_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "change": "exactly four leading spaces per line for the single inner Result closure; all remaining UTF-8 bytes unchanged",
+        "original_sha256": "cffa3763164e31f5716955d13b9c3ab9da2dc9b37717d1a1074cafd131a4b76b",
+        "deindented_candidate_sha256": "cffa3763164e31f5716955d13b9c3ab9da2dc9b37717d1a1074cafd131a4b76b"
+      },
+      {
+        "label": "history",
+        "original_text": "            let reply_result = public_v2::call_public_protected_v2(\n                address,\n                &Request::History {\n                    tip: hex::encode(tip),\n                    after: hex::encode(after),\n                },\n                &settings,\n                &server_pin,\n                &caller,\n                policy,\n            );\n            history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "candidate_text": "                let reply_result = public_v2::call_public_protected_v2(\n                    address,\n                    &Request::History {\n                        tip: hex::encode(tip),\n                        after: hex::encode(after),\n                    },\n                    &settings,\n                    &server_pin,\n                    &caller,\n                    policy,\n                );\n                history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "change": "exactly four leading spaces per line for the single inner Result closure; all remaining UTF-8 bytes unchanged",
+        "original_sha256": "44d3b6017411ece157ff1813b9b833d37f2ee95e9c467bfdfe8816b07ad9f97a",
+        "deindented_candidate_sha256": "44d3b6017411ece157ff1813b9b833d37f2ee95e9c467bfdfe8816b07ad9f97a"
+      },
+      {
+        "label": "import",
+        "original_text": "            let import_result = ingress::receive_public_page_from(\n                &mut confirmer,\n                address,\n                page,\n                tip,\n                after,\n                ingress::now()?,\n            );\n            import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "candidate_text": "                let import_result = ingress::receive_public_page_from(\n                    &mut confirmer,\n                    address,\n                    page,\n                    tip,\n                    after,\n                    ingress::now()?,\n                );\n                import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());",
+        "change": "exactly four leading spaces per line for the single inner Result closure; all remaining UTF-8 bytes unchanged",
+        "original_sha256": "98b726ffed719e1e74d2f0bcaa8a56ca8d40951d8fc1e0cd5e7a49d32d3914b2",
+        "deindented_candidate_sha256": "98b726ffed719e1e74d2f0bcaa8a56ca8d40951d8fc1e0cd5e7a49d32d3914b2"
+      }
+    ],
+    "original_failure_location_nulls_preserved": true,
+    "test_cumulative_getters": 2,
+    "collector_fixed_stage_count": 16,
+    "collector_fixed_SQL_sites": 4,
+    "full_reverse_reconstruction": true,
+    "new_root_API": false,
+    "root_algorithm_edits": false,
+    "core_extra_failure_or_validation_checks": false,
+    "new_observer_scope_only": true,
+    "compile_rustfmt_clippy_native_executed": false
+  },
+  "behavior_boundary": {
+    "explicit_enable": "Node::enable_native_legacy_reorg_observation(&self) -> bool; only Legacy returns true; default false and idempotent, never resets counters.",
+    "fixed_existing_collector": {
+      "stages": 16,
+      "SQL_sites": 4,
+      "new_history_sized_storage": false,
+      "second_cache_pool": false,
+      "new_mode_scalar": true,
+      "RSS_or_exact_struct_size_delta": null
+    },
+    "default_Auth_JSON": "Original HistoryArithmetic::observation and SqlCommitAccounting::observation bodies are unchanged, and the default getter still calls the original ArithmeticCache::observation.",
+    "Legacy_scope": "Only three explicit staging call sites, the shared ReorgStep active-tail call, the actual ReorgStep COMMIT and cancellation ReorgTermination COMMIT. ReorgStep also includes intent and final publication.",
+    "sampling": "Ordinary Err/cancel/unwind contributes StageObservation calls and time but no per-role result classification is invented; failed, saturated, unentered or unknown complete measurements are null in the new derived fields.",
+    "test_pair": "Exactly two cumulative getter calls, after first confirmer open and after the original replay Result returns before first confirmer close. No per-page snapshots, reset, State clone, alternative importer, budget reset or added native error.",
+    "cleanup": "Original confirmer drop then cold reopen then original check order remains; cold reopen and Node drop costs are outside the pair.",
+    "old_failure_location_nulls": "durable_committed_blocks and activation_cursor remain null.",
+    "performance_claim": false
+  },
+  "source_pin_handoff": {
+    "verified_inline_workflow": {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "old_blob": "d915bcab943663e9283e1a57dd3a5ae3de226322",
+      "entries": [
+        {
+          "line": 69,
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "old_blob": "a7035222bc51cfe7f60e891398230c3179accc82",
+          "new_blob": "8c5d473a8310cf5e6d0ecb0afc58d5d51773d170"
+        },
+        {
+          "line": 82,
+          "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+          "old_blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+          "new_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585"
+        }
+      ]
+    },
+    "corpus": "Parent owns updating existing exact-source pins for the four changed files and the changed inline workflow; add the new test module only if required by the current source ownership corpus. No corpus file changed in this task.",
+    "partial_lookup_boundary": "A direct scripts/check_repository.py lookup at exact93e returned 404; no repository-wide absence or corpus-path assertion is made."
+  },
+  "validation": {
+    "mechanical_source_reverse_and_full_readbacks": true,
+    "actual_candidate_rustfmt": false,
+    "actual_candidate_compile": false,
+    "actual_candidate_Clippy": false,
+    "actual_candidate_behavior_controls": false,
+    "actual_candidate_4105_History": false,
+    "original_business_blocker_closed": false
+  },
+  "next_gate": "Parent will independently review, assemble exact source pins and the test module, and run the strict original native controls in an isolated candidate. Only then collect the original 4105 ARM History profile under original deadlines/resources.",
+  "supersedes_report": {
+    "blob": "bcc5690c83e01f9476be98d0094894b75172494c",
+    "scope": "v1 preserves original four-file candidate; v2 incorporates the one-line whitespace revision and independently reviewed three-test module."
+  },
+  "controls": {
+    "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+    "blob": "e558451e6b0ffbfea77ad963577bbab3c08ba65a",
+    "test_names": [
+      "store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress",
+      "store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes"
+    ],
+    "independent_static_peer": {
+      "source_blob": "e558451e6b0ffbfea77ad963577bbab3c08ba65a",
+      "reviewer": "/root/hosted_status_now",
+      "full_text_read": true,
+      "sha256": "03982ebd716b438519b71d88006653886102630479339f0812f5986228a3f26d",
+      "utf8_bytes": 14933,
+      "result": "No material static blocker found; compilation/format/runtime results unknown.",
+      "checks": [
+        "One independent builder creates shared signed packets; the two measured owners receive the same original admission/left-activation sequence. No pre-measurement reopen consumes the pending best reorg.",
+        "Success checks full actual active State/root/nonce and original deterministic cuts/progress rather than mirroring timer call totals.",
+        "The target-root mutation remains reachable after original intent/earlier step commits because the checked original record/step traversal uses typed fields and parent relations without an early target header-root comparison.",
+        "Typed LegacyRequestDeadline at the actual attach:1 cut invokes original durable cancellation; old active, cursor and lifecycle are compared against an unobserved control.",
+        "Unentered complete timings remain null; per-role outcomes are not invented; default false, Auth refusal and idempotent non-reset are checked.",
+        "Only success is followed by cold reopen to check that opt-in is volatile."
+      ],
+      "actual_native_run": false
+    },
+    "actual_candidate_rustfmt": false,
+    "actual_candidate_compile": false,
+    "actual_candidate_Clippy": false,
+    "actual_candidate_native": false
+  },
+  "ancestry_whitespace_revision": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+    "old_blob": "e4c01b37441886f1359c016efb30f190eda98aa0",
+    "blob_sha": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+    "utf8_bytes": 21736,
+    "sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "full_readback_verified": true,
+    "supersedes_candidate_blob": "714a24fa89a239c241afe167c517a4f919a7463e",
+    "change": "Only the opt-in assignment is joined to one exactly-100-character line; all call/elapsed/cleanup bytes otherwise unchanged. rustfmt execution remains pending."
+  },
+  "fmt_boundary": "The opt-in assignment is joined to one exactly-100-character line. A long helper.then chain and all remaining source still require the actual pinned rustfmt gate before any build; no static layout review is a formatter PASS.",
+  "lookup_limit": "Original VerifyState and ReadActive entry points in the inspected Node/import path were Auth-gated. A whole-source git grep was requested for the existing candidate controls preflight; it has not yet executed.",
+  "final_tree_or_ref_written": false
+}

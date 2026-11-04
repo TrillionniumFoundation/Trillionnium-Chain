@@ -4,14 +4,34 @@
 use std::{net::SocketAddr, path::Path, path::PathBuf, time::Duration};
 
 use trnm_data_availability::cell::{
-    digest_hex, fetch_closure_to_file, parse_digest, CellContextV1, CellErrorV1, CellFileRoleV1,
-    CellLoaderContextV1, CellPeerLimitsV1, CellReleaseClosureV1, CellReleaseFetchLimitsV1,
-    CellStoreV1, MAX_CELL_BYTES,
+    digest_hex, fetch_closure_with_options_to_file, fetch_model_release_with_options_to_file,
+    fetch_tensor_model_with_options_to_file, parse_digest, CellContextV1, CellErrorV1,
+    CellFileRoleV1, CellLoaderContextV1, CellPeerLimitsV1, CellReleaseClosureV1,
+    CellReleaseFetchLimitsV1, CellReleaseFetchOptionsV2, CellStoreV1, MAX_CELL_BYTES,
 };
 
 use super::{release_limits, Args, ReleaseAuthentication, Result};
 
 pub(super) fn fetch(args: &mut Args) -> Result<()> {
+    fetch_plan(args, Plan::Closure)
+}
+
+pub(super) fn fetch_model(args: &mut Args) -> Result<()> {
+    fetch_plan(args, Plan::Model)
+}
+
+pub(super) fn fetch_tensor_model(args: &mut Args) -> Result<()> {
+    fetch_plan(args, Plan::TensorModel)
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum Plan {
+    Closure,
+    Model,
+    TensorModel,
+}
+
+fn fetch_plan(args: &mut Args, plan: Plan) -> Result<()> {
     // A new caller must explicitly select its authentication policy. Unknown
     // or failed PQ admission never retries the content-address-only branch.
     if !args.0.contains_key("--authentication-profile") {
@@ -22,7 +42,20 @@ pub(super) fn fetch(args: &mut Args) -> Result<()> {
     let authentication = ReleaseAuthentication::parse(args)?;
     let store_path = PathBuf::from(args.take("--store")?);
     let cache_config = args.cache_config()?;
-    let root = PathBuf::from(args.take("--closure-file")?);
+    let root = PathBuf::from(args.take(match plan {
+        Plan::Closure => "--closure-file",
+        Plan::Model => "--model-root-file",
+        Plan::TensorModel => "--tensor-model-file",
+    })?);
+    let model_pin = if plan != Plan::Closure {
+        Some(parse_digest(&args.take(if plan == Plan::Model {
+            "--model-root"
+        } else {
+            "--tensor-model"
+        })?)?)
+    } else {
+        None
+    };
     let closure_id = parse_digest(&args.take("--closure")?)?;
     let selected_generation = args.take("--loader-generation")?.parse()?;
     let loader_profile = parse_digest(&args.take("--loader-profile")?)?;
@@ -47,6 +80,8 @@ pub(super) fn fetch(args: &mut Args) -> Result<()> {
     let parallelism = args.optional("--parallelism", "2").parse()?;
     let max_connections = args.optional("--max-connections", "32768").parse()?;
     let max_response_bytes = args.take("--max-response-bytes")?.parse()?;
+    let transport = super::fetch_transport(args)?;
+    let transport_name = super::transport_name(&transport);
     args.finish()?;
     let expected = CellLoaderContextV1 {
         closure_id,
@@ -57,37 +92,104 @@ pub(super) fn fetch(args: &mut Args) -> Result<()> {
         max_payload_bytes: release.max_payload_bytes,
         max_chunks: release.max_chunks,
     };
-    let closure = read_closure(&root)?;
+    let tensor_model = if plan == Plan::TensorModel {
+        let model = super::cell_model::read_tensor_manifest(&root)?;
+        if Some(model.id()) != model_pin {
+            return Err(CellErrorV1::Invalid("tensor model manifest pin").into());
+        }
+        Some(model)
+    } else {
+        None
+    };
+    let model_root = match plan {
+        Plan::Model => Some(super::cell_model::read(&root)?),
+        Plan::TensorModel => tensor_model.as_ref().map(|model| model.root().clone()),
+        Plan::Closure => None,
+    };
+    let closure = match &model_root {
+        Some(root) => {
+            root.verify_for_loader(
+                if plan == Plan::TensorModel {
+                    root.id()
+                } else {
+                    model_pin.ok_or(CellErrorV1::Invalid("model root pin"))?
+                },
+                &expected,
+            )?;
+            root.closure().clone()
+        }
+        None => read_closure(&root)?,
+    };
     closure.verify_for_loader(&expected)?;
     authentication.verify(closure.release(), &mut release)?;
     // Both independent pin admission and any required CPR2 authentication must
     // succeed before opening a writable cache or dialing a peer.
-    let store = CellStoreV1::open(&store_path, cache_config)?;
-    let report = fetch_closure_to_file(
-        &store,
-        &closure,
-        &expected,
-        &peers,
-        CellReleaseFetchLimitsV1 {
-            peer: CellPeerLimitsV1 {
-                request_timeout,
-                overall_timeout,
-                max_cell_bytes: release.max_payload_bytes.min(MAX_CELL_BYTES),
-                parallelism,
-                max_connections,
-                max_response_bytes,
-            },
-            release,
+    let limits = CellReleaseFetchLimitsV1 {
+        peer: CellPeerLimitsV1 {
+            request_timeout,
+            overall_timeout,
+            max_cell_bytes: release.max_payload_bytes.min(MAX_CELL_BYTES),
+            parallelism,
+            max_connections,
+            max_response_bytes,
         },
-        &output,
-    )?;
+        release,
+    };
+    let options = CellReleaseFetchOptionsV2 { limits, transport };
+    options.validate()?;
+    let store = CellStoreV1::open(&store_path, cache_config)?;
+    if let Some(model) = &tensor_model {
+        let observed = fetch_tensor_model_with_options_to_file(
+            &store,
+            model,
+            (
+                model_pin.ok_or(CellErrorV1::Invalid("tensor model pin"))?,
+                &expected,
+            ),
+            &peers,
+            options,
+            &output,
+        )?;
+        let report = observed.report;
+        let members = report.release;
+        println!("{{\"schema\":\"trnm.cell.tensor-model.fetch.v1\",\"tensor_model\":\"{}\",\"model_root\":\"{}\",\"tensor_contract\":\"{}\",\"tensor_files\":{},\"release\":\"{}\",\"payload_bytes\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"connection_attempts\":{},\"transport\":\"{}\",\"request_attempts\":{},\"selection_authority\":false,\"use_authority\":false}}",
+            digest_hex(report.manifest_id), digest_hex(report.model_root), digest_hex(report.tensor_contract),
+            report.tensor_files, digest_hex(members.release_id), members.payload_bytes,
+            members.downloaded_bytes, members.received_response_bytes, members.connection_attempts,
+            transport_name, observed.request_attempts);
+        return Ok(());
+    }
+    if let Some(root) = &model_root {
+        let observed = fetch_model_release_with_options_to_file(
+            &store,
+            root,
+            (
+                model_pin.ok_or(CellErrorV1::Invalid("model root pin"))?,
+                &expected,
+            ),
+            &peers,
+            options,
+            &output,
+        )?;
+        let report = observed.report;
+        let members = report.release;
+        println!("{{\"schema\":\"trnm.cell.model-release.fetch.v1\",\"model_root\":\"{}\",\"closure\":\"{}\",\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"connection_attempts\":{},\"transport\":\"{}\",\"request_attempts\":{},\"selection_authority\":false,\"use_authority\":false}}",
+            digest_hex(report.model_root), digest_hex(report.closure_id), digest_hex(members.release_id),
+            members.cells, members.payload_bytes, members.cached_chunks, members.downloaded_chunks,
+            members.downloaded_bytes, members.received_response_bytes, members.connection_attempts,
+            transport_name, observed.request_attempts);
+        return Ok(());
+    }
+    let observed =
+        fetch_closure_with_options_to_file(&store, &closure, &expected, &peers, options, &output)?;
+    let report = observed.report;
     let members = report.release;
-    println!("{{\"schema\":\"trnm.cell.closure.fetch.v1\",\"closure\":\"{}\",\"generation\":{},\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{},\"selection_authority\":false,\"use_authority\":false}}",
+    println!("{{\"schema\":\"trnm.cell.closure.fetch.v1\",\"closure\":\"{}\",\"generation\":{},\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{},\"transport\":\"{}\",\"request_attempts\":{},\"selection_authority\":false,\"use_authority\":false}}",
         digest_hex(report.closure_id), report.selected_generation, digest_hex(members.release_id),
         members.cells, members.payload_bytes, members.chunks, members.cached_chunks,
         members.downloaded_chunks, members.downloaded_bytes, members.received_response_bytes,
         max_response_bytes, members.connection_attempts, members.rejected_responses,
-        members.supplying_peers.len());
+        members.supplying_peers.len(), transport_name, observed.request_attempts);
     Ok(())
 }
 
@@ -108,7 +210,7 @@ fn roles(text: &str) -> Result<Vec<CellFileRoleV1>> {
         .collect()
 }
 
-fn read_closure(path: &Path) -> Result<CellReleaseClosureV1> {
+pub(super) fn read_closure(path: &Path) -> Result<CellReleaseClosureV1> {
     #[cfg(not(unix))]
     {
         let _ = path;

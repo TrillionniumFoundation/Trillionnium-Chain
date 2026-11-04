@@ -214,6 +214,8 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-research-protocol/tests/pq_unpinned.rs",
             "trillionnium/crates/trnm-service-settlement/src/pq_unpinned.rs",
             "trillionnium/crates/trnm-service-settlement/tests/pq_unpinned.rs",
+            "trillionnium/crates/trnm-release-bundle/src/pq_unpinned.rs",
+            "trillionnium/crates/trnm-release-bundle/tests/pq_unpinned.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -246,11 +248,27 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-data-availability/src/bin/cell_pq/hidden.rs",
             "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq/hidden.rs",
             "trillionnium/crates/trnm-service-settlement/src/pq_owner/retire.rs",
+            "trillionnium/crates/trnm-release-bundle/src/pq_release/rotate.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b"untracked nested source with innocent filename")
+                with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
+                    check(self.root)
+                path.unlink()
+
+    def test_unpinned_plain_named_recovery_and_release_helpers_refuse(self):
+        for name in (
+            "trillionnium/crates/trnm-checkpoint-store/src/recovery/proof.rs",
+            "trillionnium/crates/trnm-checkpoint-store/tests/replay.rs",
+            "trillionnium/crates/trnm-release-bundle/src/storage.rs",
+            "trillionnium/crates/trnm-release-bundle/tests/rotation.rs",
+        ):
+            with self.subTest(path=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"untracked security owner implementation")
                 with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
                     check(self.root)
                 path.unlink()
@@ -388,7 +406,10 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(check(self.root)['cryptographic_acceptance'])
 
     def test_convergence_owner_source_changes_cannot_reuse_prior_pins(self):
-        for name in (
+        # Exercise every convergence dependency, including the model codecs,
+        # tensor reader, transport, CLI, vector and specification. The separate
+        # omission test already deletes each required path and its pin together.
+        for name in sorted(CONVERGENCE_REQUIRED_PATHS | {
             'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
             'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs',
             'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
@@ -397,7 +418,7 @@ class CorpusGateTests(unittest.TestCase):
             'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
             'trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs',
             'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
-        ):
+        }):
             with self.subTest(path=name):
                 path = self.root / name
                 original = path.read_bytes()

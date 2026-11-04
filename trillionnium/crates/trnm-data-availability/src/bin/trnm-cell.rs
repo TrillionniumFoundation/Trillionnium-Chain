@@ -2,6 +2,7 @@
 //! Chain release, change CURRENT, or authorize model execution.
 
 mod cell_closure;
+mod cell_model;
 mod cell_pq;
 
 use std::{
@@ -15,10 +16,13 @@ use std::{
 };
 
 use trnm_data_availability::cell::{
-    digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
-    serve_cells, serve_cells_bounded, CellCacheConfigV4, CellContextV1, CellErrorV1,
-    CellPeerLimitsV1, CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1,
-    CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    digest_hex, fetch_cell_persistent_to_file, fetch_cell_rarest_first_to_file, fetch_cell_to_file,
+    fetch_release_to_file, fetch_release_with_options_to_file, parse_digest, read_pinned_release,
+    serve_cells, serve_cells_bounded, serve_cells_bounded_with_availability,
+    serve_cells_persistent, CellCacheConfigV4, CellContextV1, CellErrorV1, CellFetchTransportV2,
+    CellPeerLimitsV1, CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2,
+    CellReleaseFetchLimitsV1, CellReleaseFetchOptionsV2, CellReleaseLimitsV1,
+    CellReleaseManifestV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 use trnm_data_availability::cell::pq::{
@@ -32,8 +36,10 @@ type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
 Writers (pack,fetch,verify,prepare-release,fetch-release,fetch-closure,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
-serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
-fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
+serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N --availability true|false]
+  --transport single-request-v1 (default) or persistent-v2. Persistent requires bounded workers, --max-served-bytes N, --max-requests N and --max-requests-per-connection N; availability must be false.
+fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N] [--scheduling ordered|rarest-first-v1]
+  --transport single-request-v1 (default) or persistent-v2. Persistent requires explicit --max-requests N and --max-requests-per-connection N, with ordered scheduling. One fixed deadline applies to each connection; frames do not renew it.
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
 manifest --store DB --manifest HEX --output ABSENT_FILE
@@ -41,7 +47,15 @@ prepare-release --store DB --manifests HEX,HEX --output ABSENT_TCR1 --max-bytes 
   Verify all locally declared members and prepare their canonical TCR1 root; no selection authority.
 fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
   One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
+  All release/closure/model/tensor fetch commands accept the same explicit --transport and --scheduling profiles as fetch. Persistent frame, connection and byte budgets span every member, including manifest preflight.
 verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)
+prepare-model-root --closure-file OWNER_TCD1 --closure HEX --parent-root-files FILE,FILE --output ABSENT_TMR1
+  An empty --parent-root-files value explicitly declares an origin. Nonempty parents are decoded and checked for identity/family/older generation.
+fetch-model-root --model-root-file OWNER_TMR1 --model-root HEX (all fetch-closure options except --closure-file)
+  Root and original closure pins are independent owner inputs. Publishes exact TMR1 only after complete closure verification; no CURRENT or FinalUse authority.
+prepare-tensor-model --model-root-file OWNER_TMR1 --model-root HEX --tensor-contract-file OWNER_TMT1 --tensor-contract HEX --output ABSENT_TMA1
+fetch-tensor-model --tensor-model-file OWNER_TMA1 --tensor-model HEX (all fetch-closure options except --closure-file)
+  Publishes exact TMA1 only after full byte and strict dense safetensors metadata verification. All Base/Adapter members require an exact tensor roster. No CURRENT, FinalUse or expert ABI authority.
 fetch-closure --authentication-profile PROFILE --store DB --closure-file OWNER_TCD1 --closure HEX --loader-generation N --loader-profile HEX --required-roles base,tokenizer --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX --peers IP:PORT,IP:PORT --output ABSENT_TCD1 --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
   Explicit content-cache-v1 or cell-pq-v2; owner closure id/context/profile/generation are independent inputs. PQ authenticates the embedded TCR1 only. The TCD1 id must be pinned by the original owner separately. No Hepta install/use authority.
   PQ fetch-release/verify-release: --authentication-profile cell-pq-v2 --pq-authorization CPR2 --pq-signer-spki DER --pq-signer-key-id HEX --pq-generation N --pq-sequence N --pq-network HEX --pq-parameters HEX --pq-key-not-before UNIX --pq-key-expires UNIX [--pq-key-revoked-at UNIX]
@@ -81,6 +95,10 @@ fn run() -> Result<()> {
         "prepare-release" => prepare_release(&mut args),
         "fetch-release" => fetch_release(&mut args),
         "fetch-closure" => cell_closure::fetch(&mut args),
+        "prepare-model-root" => cell_model::prepare(&mut args),
+        "fetch-model-root" => cell_closure::fetch_model(&mut args),
+        "prepare-tensor-model" => cell_model::prepare_tensor(&mut args),
+        "fetch-tensor-model" => cell_closure::fetch_tensor_model(&mut args),
         "verify-release" => verify_release(&mut args),
         _ => Err(CellErrorV1::Invalid("unknown command; use --help").into()),
     }
@@ -115,8 +133,27 @@ fn serve(args: &mut Args) -> Result<()> {
     let max_connections = args.optional("--max-connections", "8192").parse()?;
     let explicit_workers = args.0.contains_key("--bounded-workers");
     let workers = args.optional("--bounded-workers", "0").parse::<usize>()?;
+    let availability = args.optional("--availability", "false").parse::<bool>()?;
+    let transport = args.optional("--transport", "single-request-v1");
+    let persistent_requests = match transport.as_str() {
+        "single-request-v1" => None,
+        "persistent-v2" => Some((
+            args.take("--max-requests")?.parse::<u64>()?,
+            args.take("--max-requests-per-connection")?.parse::<u64>()?,
+        )),
+        _ => return Err(CellErrorV1::Invalid("serving transport profile").into()),
+    };
     if explicit_workers && !(1..=4).contains(&workers) {
         return Err(CellErrorV1::Invalid("serving worker budget").into());
+    }
+    if availability && workers == 0 {
+        return Err(CellErrorV1::Invalid("availability requires bounded serving").into());
+    }
+    if persistent_requests.is_some() && (workers == 0 || availability) {
+        return Err(CellErrorV1::Invalid(
+            "persistent serving requires bounded workers without inventory",
+        )
+        .into());
     }
     let served_bytes = if workers == 0 {
         None
@@ -125,24 +162,46 @@ fn serve(args: &mut Args) -> Result<()> {
     };
     args.finish()?;
     if let Some(max_response_bytes) = served_bytes {
+        let serving = CellServeLimitsV1 {
+            request_timeout: Duration::from_millis(request_ms),
+            overall_timeout: Duration::from_secs(seconds),
+            max_workers: workers,
+            max_connections,
+            max_response_bytes,
+        };
+        if let Some((max_requests, max_requests_per_connection)) = persistent_requests {
+            let limits = CellPersistentServeLimitsV2 {
+                serving,
+                max_requests,
+                max_requests_per_connection,
+            };
+            limits.validate()?;
+            let listener = TcpListener::bind(bind)?;
+            println!(
+                "{{\"schema\":\"trnm.cell.listen.v1\",\"address\":\"{}\"}}",
+                listener.local_addr()?
+            );
+            std::io::stdout().flush()?;
+            let report =
+                serve_cells_persistent(&listener, &store, &AtomicBool::new(false), limits)?;
+            println!("{{\"schema\":\"trnm.cell.serve.persistent.v2\",\"request_attempts\":{},\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
+                report.request_attempts, report.serving.accepted_connections,
+                report.serving.overloaded_connections, report.serving.completed_requests,
+                report.serving.peak_active_workers, report.serving.sent_response_bytes);
+            return Ok(());
+        }
         let listener = TcpListener::bind(bind)?;
         println!(
             "{{\"schema\":\"trnm.cell.listen.v1\",\"address\":\"{}\"}}",
             listener.local_addr()?
         );
         std::io::stdout().flush()?;
-        let report = serve_cells_bounded(
-            &listener,
-            &store,
-            &AtomicBool::new(false),
-            CellServeLimitsV1 {
-                request_timeout: Duration::from_millis(request_ms),
-                overall_timeout: Duration::from_secs(seconds),
-                max_workers: workers,
-                max_connections,
-                max_response_bytes,
-            },
-        )?;
+        let serve = if availability {
+            serve_cells_bounded_with_availability
+        } else {
+            serve_cells_bounded
+        };
+        let report = serve(&listener, &store, &AtomicBool::new(false), serving)?;
         println!("{{\"schema\":\"trnm.cell.serve.bounded.v1\",\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
             report.accepted_connections, report.overloaded_connections, report.completed_requests, report.peak_active_workers, report.sent_response_bytes);
         return Ok(());
@@ -192,22 +251,54 @@ fn fetch(args: &mut Args) -> Result<()> {
     let max_response_bytes = args
         .optional("--max-response-bytes", &default_response_bytes.to_string())
         .parse()?;
+    let schedule = args.optional("--scheduling", "ordered");
+    let fetch = match schedule.as_str() {
+        "ordered" => fetch_cell_to_file,
+        "rarest-first-v1" => fetch_cell_rarest_first_to_file,
+        _ => return Err(CellErrorV1::Invalid("fetch scheduling profile").into()),
+    };
+    let transport = args.optional("--transport", "single-request-v1");
+    let persistent_requests = match transport.as_str() {
+        "single-request-v1" => None,
+        "persistent-v2" if schedule == "ordered" => Some((
+            args.take("--max-requests")?.parse::<u64>()?,
+            args.take("--max-requests-per-connection")?.parse::<u64>()?,
+        )),
+        "persistent-v2" => {
+            return Err(
+                CellErrorV1::Invalid("persistent transport requires ordered scheduling").into(),
+            )
+        }
+        _ => return Err(CellErrorV1::Invalid("fetch transport profile").into()),
+    };
     args.finish()?;
+    let peer = CellPeerLimitsV1 {
+        request_timeout: Duration::from_millis(request_ms),
+        overall_timeout,
+        max_cell_bytes,
+        parallelism,
+        max_connections,
+        max_response_bytes,
+    };
+    if let Some((max_requests, max_requests_per_connection)) = persistent_requests {
+        let limits = CellPersistentPeerLimitsV2 {
+            peer,
+            max_requests,
+            max_requests_per_connection,
+        };
+        limits.validate()?;
+        let store = CellStoreV1::open(&store, cache_config)?;
+        let (_, report) = fetch_cell_persistent_to_file(&store, pinned, &peers, limits, &output)?;
+        let fetch = report.fetch;
+        println!("{{\"schema\":\"trnm.cell.fetch.persistent.v2\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"request_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
+            digest_hex(pinned), digest_hex(fetch.payload_sha256), fetch.payload_bytes,
+            fetch.cached_chunks, fetch.downloaded_chunks, fetch.downloaded_bytes,
+            fetch.received_response_bytes, max_response_bytes, fetch.connection_attempts,
+            report.request_attempts, fetch.rejected_responses, fetch.supplying_peers.len());
+        return Ok(());
+    }
     let store = CellStoreV1::open(&store, cache_config)?;
-    let (_, report) = fetch_cell_to_file(
-        &store,
-        pinned,
-        &peers,
-        CellPeerLimitsV1 {
-            request_timeout: Duration::from_millis(request_ms),
-            overall_timeout,
-            max_cell_bytes,
-            parallelism,
-            max_connections,
-            max_response_bytes,
-        },
-        &output,
-    )?;
+    let (_, report) = fetch(&store, pinned, &peers, peer, &output)?;
     println!("{{\"schema\":\"trnm.cell.fetch.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
         digest_hex(pinned), digest_hex(report.payload_sha256), report.payload_bytes, report.cached_chunks,
         report.downloaded_chunks, report.downloaded_bytes, report.received_response_bytes,
@@ -337,16 +428,13 @@ fn fetch_release(args: &mut Args) -> Result<()> {
     let parallelism = args.optional("--parallelism", "2").parse()?;
     let max_connections = args.optional("--max-connections", "32768").parse()?;
     let max_response_bytes = args.take("--max-response-bytes")?.parse()?;
+    let transport = fetch_transport(args)?;
+    let transport_name = transport_name(&transport);
     args.finish()?;
     let release = read_pinned_release(&root, pinned)?;
     authentication.verify(&release, &mut release_limits)?;
-    let store = CellStoreV1::open(&store, cache_config)?;
-    let report = fetch_release_to_file(
-        &store,
-        &release,
-        pinned,
-        &peers,
-        CellReleaseFetchLimitsV1 {
+    let options = CellReleaseFetchOptionsV2 {
+        limits: CellReleaseFetchLimitsV1 {
             peer: CellPeerLimitsV1 {
                 request_timeout: Duration::from_millis(request_ms),
                 overall_timeout,
@@ -357,14 +445,44 @@ fn fetch_release(args: &mut Args) -> Result<()> {
             },
             release: release_limits,
         },
-        &output,
-    )?;
-    println!("{{\"schema\":\"trnm.cell.release.fetch.v1\",\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
+        transport,
+    };
+    options.validate()?;
+    let store = CellStoreV1::open(&store, cache_config)?;
+    let observed =
+        fetch_release_with_options_to_file(&store, &release, pinned, &peers, options, &output)?;
+    let report = observed.report;
+    println!("{{\"schema\":\"trnm.cell.release.fetch.v1\",\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{},\"transport\":\"{}\",\"request_attempts\":{}}}",
         digest_hex(report.release_id), report.cells, report.payload_bytes, report.chunks,
         report.cached_chunks, report.downloaded_chunks, report.downloaded_bytes,
         report.received_response_bytes, max_response_bytes, report.connection_attempts,
-        report.rejected_responses, report.supplying_peers.len());
+        report.rejected_responses, report.supplying_peers.len(), transport_name, observed.request_attempts);
     Ok(())
+}
+
+fn fetch_transport(args: &mut Args) -> Result<CellFetchTransportV2> {
+    let transport = args.optional("--transport", "single-request-v1");
+    let scheduling = args.optional("--scheduling", "ordered");
+    match (transport.as_str(), scheduling.as_str()) {
+        ("single-request-v1", "ordered") => Ok(CellFetchTransportV2::OrderedV1),
+        ("single-request-v1", "rarest-first-v1") => Ok(CellFetchTransportV2::RarestFirstV1),
+        ("persistent-v2", "ordered") => Ok(CellFetchTransportV2::PersistentV2 {
+            max_requests: args.take("--max-requests")?.parse()?,
+            max_requests_per_connection: args.take("--max-requests-per-connection")?.parse()?,
+        }),
+        ("persistent-v2", _) => {
+            Err(CellErrorV1::Invalid("persistent transport requires ordered scheduling").into())
+        }
+        _ => Err(CellErrorV1::Invalid("fetch transport/scheduling profile").into()),
+    }
+}
+
+fn transport_name(transport: &CellFetchTransportV2) -> &'static str {
+    match transport {
+        CellFetchTransportV2::OrderedV1 => "single-request-v1",
+        CellFetchTransportV2::RarestFirstV1 => "rarest-first-v1",
+        CellFetchTransportV2::PersistentV2 { .. } => "persistent-v2",
+    }
 }
 
 fn verify_release(args: &mut Args) -> Result<()> {
