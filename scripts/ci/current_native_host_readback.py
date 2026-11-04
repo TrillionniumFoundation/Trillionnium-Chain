@@ -490,7 +490,7 @@ def history_record(index, history):
         "response_packet_count": (len(history["response"]["value"]["packets"])
                                   if isinstance(history.get("response"), dict)
                                   and isinstance(history["response"].get("value"), dict)
-                                  and isinstance(history["response"]["value"].get("packets"), list) else None,
+                                  and isinstance(history["response"]["value"].get("packets"), list) else None),
         "request_binding": {key: history["request"].get(key) for key in ("op", "tip", "after")}
                            if isinstance(history.get("request"), dict) else None,
         "import_present": "client_import" in history,
