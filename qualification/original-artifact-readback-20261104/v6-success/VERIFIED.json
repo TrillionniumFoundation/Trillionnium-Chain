@@ -1,0 +1,389 @@
+{
+  "schema": "trnm-original-artifact-readback-v6-observation-v1",
+  "reader": {
+    "commit": "010731357d9352acd74535f5008cddbbcc73b2e9",
+    "tree": "5fe019485e2e3aad45cf918570894ff59c084d91",
+    "script_blob": "f81cf081b20cd0b652b4b09f4591aa05305c050e",
+    "run_id": 41769503755,
+    "job_id": 126375626552,
+    "conclusion": "success",
+    "source_before": {
+      "base": null,
+      "candidate": "010731357d9352acd74535f5008cddbbcc73b2e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "010731357d9352acd74535f5008cddbbcc73b2e9",
+      "tested_tree": "5fe019485e2e3aad45cf918570894ff59c084d91",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 881905745,
+      "tracked_entries": 7638,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "010731357d9352acd74535f5008cddbbcc73b2e9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "010731357d9352acd74535f5008cddbbcc73b2e9",
+      "tested_tree": "5fe019485e2e3aad45cf918570894ff59c084d91",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 881905745,
+      "tracked_entries": 7638,
+      "tracked_worktree_verified": true
+    },
+    "controls": {
+      "self_tests_passed": 40,
+      "prior_reader_negatives_reproduced": 9,
+      "native_tests_executed": 0,
+      "artifact_members_executed": 0
+    },
+    "decoded_log": {
+      "path": "job-126375626552.decoded.log",
+      "bytes": 247919,
+      "sha256": "3adc0dcefe84a7a8028ddfbd4d1e87b11ea9e73491f6fa988646f10eea00965b"
+    }
+  },
+  "readbacks": [
+    {
+      "archive_digest_and_size_verified": true,
+      "artifact": {
+        "artifact_id": 13290719390,
+        "artifact_name": "pon-native-campaign-x64-head-release-312c9abc0d5bfafb6aa5409f4596f85c2993241e-1",
+        "bytes": 56158559,
+        "kind": "campaign",
+        "project_json": [
+          "results.json",
+          "run-1-raw/report.json",
+          "run-2-raw/report.json",
+          "run-3-raw/report.json"
+        ],
+        "required_json": [
+          "source-before.json",
+          "source-after.json",
+          "results.json",
+          "run-1-raw/report.json",
+          "run-2-raw/report.json",
+          "run-3-raw/report.json"
+        ],
+        "run_id": 41761586787,
+        "sha256": "64dced6b2fc6c89e3be3361991a36925c5b730ea6e0080b6d24498a7f31eb57d",
+        "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "source_json": [
+          "source-before.json",
+          "source-after.json"
+        ],
+        "tree": "a53dc18d56df9d61179114aa16b341253a940acb"
+      },
+      "declared_decoded_bytes": 316169759,
+      "members_crc_and_sha256_verified": 1766,
+      "original_binary_verified": true,
+      "phase_summaries": {
+        "run-1-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ],
+        "run-2-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ],
+        "run-3-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ]
+      },
+      "qualification": {
+        "native_executed": false,
+        "performance_qualified": false,
+        "production_activation": false,
+        "readback_only": true
+      },
+      "reader_address_space_cap_bytes": 4294967296,
+      "source_receipts_verified": [
+        "source-before.json",
+        "source-after.json"
+      ]
+    },
+    {
+      "archive_digest_and_size_verified": true,
+      "artifact": {
+        "artifact_id": 13290304594,
+        "artifact_name": "w1-fresh-service-head-312c9abc0d5bfafb6aa5409f4596f85c2993241e-1",
+        "bytes": 5283581,
+        "kind": "fresh-manifest",
+        "project_json": [
+          "fresh-service/manifest.json"
+        ],
+        "required_json": [
+          "source.json",
+          "source-after.json",
+          "fresh-service/manifest.json"
+        ],
+        "run_id": 41761586824,
+        "sha256": "534ac7f99686f65d5c68c5a8b663f7d61cf94d407807a75fc786a28c7199ccf1",
+        "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "source_json": [
+          "source.json",
+          "source-after.json"
+        ],
+        "tree": "a53dc18d56df9d61179114aa16b341253a940acb"
+      },
+      "declared_decoded_bytes": 28614307,
+      "members_crc_and_sha256_verified": 57,
+      "original_binary_verified": false,
+      "phase_summaries": {},
+      "qualification": {
+        "native_executed": false,
+        "performance_qualified": false,
+        "production_activation": false,
+        "readback_only": true
+      },
+      "reader_address_space_cap_bytes": 4294967296,
+      "source_receipts_verified": [
+        "source.json",
+        "source-after.json"
+      ]
+    }
+  ],
+  "fresh_projection": {
+    "complete_projection_bytes": 7792,
+    "complete_projection_sha256": "3839498a408b4addd7f757012fcb6c2f791b466e48cd29850ed68ef15b0b0600",
+    "projection": {
+      "fresh-service/manifest.json": {
+        "all_named_tests_passed": false,
+        "attack_workers": 16,
+        "execution_finished": true,
+        "failures": [
+          {
+            "known_codes": [
+              "CONFIRMATION_TARGET"
+            ],
+            "literal_code": null,
+            "stdout_omitted_fields": 1,
+            "text_sha256": "47d1f02050101f49d36a427a9368dcdc39364b1511d8450670e7080c53686f16"
+          },
+          {
+            "known_codes": [
+              "FRESH_NATIVE_PROCESS_REQUIRED"
+            ],
+            "literal_code": null,
+            "stdout_omitted_fields": 1,
+            "text_sha256": "1dcf3b9286989df029a92d6ecc4a1017ed226e4171b4c1166dcc63e042ce3497"
+          }
+        ],
+        "independent_wan_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "requested_window_ns": 4000000000,
+        "runs": [
+          {
+            "failure": {
+              "known_codes": [
+                "CONFIRMATION_TARGET"
+              ],
+              "literal_code": "CONFIRMATION_TARGET",
+              "stdout_omitted_fields": 1,
+              "text_sha256": "9737be0c6a1a3eb1e98f9cde95aa3b1606b7fec6112e4dc810fdd054642e2345"
+            },
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "phase": "from-zero-pressure",
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "native_returncode": 0,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "passed": false,
+            "report_path": {
+              "stdout_omitted_fields": 2
+            },
+            "stdout_omitted_fields": 2
+          },
+          {
+            "failure": {
+              "known_codes": [
+                "FRESH_NATIVE_PROCESS_REQUIRED"
+              ],
+              "literal_code": "FRESH_NATIVE_PROCESS_REQUIRED",
+              "stdout_omitted_fields": 1,
+              "text_sha256": "d9d5e0764598d7a34d59caa88be45b9c41974a4a047fbf45a76fd90871db72be"
+            },
+            "failure_diagnostic": {
+              "acceptance_authority": false,
+              "finite_target_met": false,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "phase": "from-zero-pressure",
+                "replay_accepted": false,
+                "replay_error": {
+                  "known_codes": [
+                    "PUBLIC_REQUEST_DEADLINE"
+                  ],
+                  "literal_code": "PUBLIC_REQUEST_DEADLINE",
+                  "stdout_omitted_fields": 1,
+                  "text_sha256": "10fa610595d8fbb066920e53cdd19857710d102c0ab6181ea92b759d9dab957a"
+                }
+              },
+              "native_returncode": 101,
+              "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+            },
+            "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "passed": false,
+            "report_path": {
+              "stdout_omitted_fields": 2
+            },
+            "stdout_omitted_fields": 2
+          }
+        ],
+        "schema": "trnm-w1-fresh-service-execution-v1",
+        "source_after": {
+          "stdout_omitted_fields": 4
+        },
+        "source_before": {
+          "stdout_omitted_fields": 4
+        },
+        "source_recompiled": true,
+        "stdout_omitted_fields": 5,
+        "work_hardness_accepted": false
+      }
+    },
+    "scope": "limited view of the already-sanitized projection; opaque hash fields, deeper structure and middle array elements may be omitted; complete projected bytes remain in the output artifact",
+    "stdout_node_limit": 4096,
+    "stdout_projection_is_complete": false
+  },
+  "source_scope": {
+    "original_source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "not_current_1bac": true,
+    "original_native_tests_reexecuted": false,
+    "performance_qualified": false,
+    "host_qualified": false,
+    "production_activation": false
+  },
+  "outcome": "Original 312 campaign remains 3/27 total and 0/18 pressure. Original 312 fresh remains 4s/16 failure: original selector native exit0 but CONFIRMATION_TARGET; fresh selector native101 with last History PUBLIC_REQUEST_DEADLINE. A readback success is not original native acceptance."
+}

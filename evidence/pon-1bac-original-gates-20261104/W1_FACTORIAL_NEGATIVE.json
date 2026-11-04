@@ -1,0 +1,65 @@
+{
+  "schema": "trnm-w1-history-count-negative-v1",
+  "source": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "run_id": 41768503400,
+  "job_id": 126372439231,
+  "log": {
+    "path": "job-126372439231-w1-factorial-negative.decoded.log",
+    "bytes": 191239,
+    "sha256": "fe430363a2481d6aa32f9026916e2cbe04e5d18b43de171c8c47518569938a19"
+  },
+  "observed_summary": "test result: ok. 28 passed; 0 failed; 1 ignored; 0 measured; 955 filtered out; finished in 23.04s",
+  "actual_unique_history_cases": [
+    "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+    "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+    "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+    "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+    "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+    "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+    "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+    "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+    "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+    "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+    "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+    "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+    "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+    "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+    "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+    "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+    "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+    "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+    "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+    "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+    "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+    "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+    "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+    "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+    "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+    "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+    "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+    "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+  ],
+  "ignored_original_child": "ingress::history_import::tests::history_kill_cut_child",
+  "old_expected": {
+    "passed": 27,
+    "ignored": 1
+  },
+  "exact_failure": "history-import-tests: exact native controls did not execute",
+  "proposed_reuse_existing_owner_workflow": {
+    "parent": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+    "donor": "41dd661222285728720b97519da1f5a024c7716b",
+    "before_blob": "a2e0f3586abf676b03c12b26597261aac35438b9",
+    "after_blob": "aa9d7597904d2d0bec32a502160c46ae255381be",
+    "only_count_and_exact_codec_case": true,
+    "all_other_bytes_equal": true,
+    "added": "          codec_selector = ('ingress::history_import::tests::'\n              'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')\n          codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \\.\\.\\. ok$', history, re.M)\n          if len(codec_rows) != 1:\n              raise SystemExit(codec_selector + ': exact codec control did not execute once')\n"
+  },
+  "qualification": {
+    "new_native_execution": false,
+    "original_w1_full_job_passed": false,
+    "host": false,
+    "performance": false,
+    "production": false
+  }
+}

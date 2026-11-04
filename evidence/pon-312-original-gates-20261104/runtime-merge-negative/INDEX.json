@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-ordered-log-parts-v1",
+  "job_id": 126350991731,
+  "run_id": 41761586798,
+  "source": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+  "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+  "whole": {
+    "bytes": 907583,
+    "sha256": "89b98061cff38862053e3a7cfafe5212d84c19fea6a16af2f8ba85584f70d14c"
+  },
+  "reconstruction": "Concatenate exact UTF-8 part bytes in this array order; no inserted separators.",
+  "parts": [
+    {
+      "path": "job-126350991731.decoded.log.part1",
+      "bytes": 420358,
+      "sha256": "e9703f277e421aca98bb06b68bc3c4a0a17cbb258d815a8aa001ab6faa45a70c",
+      "git_blob": "e2f1c9fc3fe729981108ce64f7d1736640a42d3f"
+    },
+    {
+      "path": "job-126350991731.decoded.log.part2",
+      "bytes": 487225,
+      "sha256": "f1f5c81f7942477f42cd971e255c700242d4dd53313535bea8ce8548da4326d1",
+      "git_blob": "55f75844e58f4dc2f15fbd946a54b7aee0e8dc35"
+    }
+  ],
+  "observed": {
+    "da": {
+      "passed": 174,
+      "failed": 0,
+      "ignored": 0
+    },
+    "node": {
+      "passed": 968,
+      "failed": 0,
+      "ignored": 25
+    },
+    "later_python": {
+      "tests": 28,
+      "failures": 15,
+      "errors": 9,
+      "error": "NATIVE_STORAGE_TABLE_NAME"
+    }
+  },
+  "source_qualification_scope": "The later same-tree DA pass does not replace head job126350991887's original 173/174 failure. The parser fix is independently present in 1bac; no new-head pass inferred."
+}

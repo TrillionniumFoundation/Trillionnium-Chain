@@ -5244,3 +5244,12 @@ prospective merge d4611f02a5db5a992d0e000c1e728a82889fa771 has ordered parents
 [056,1bac] and that same tree. The complete 8,081-entry selection and four new
 text objects were read back exactly. This source has no inherited native verdict:
 its original workflows are pending/queued, while the 312 merge runtime continues.
+
+
+## 2026-11-04 — bind v6 readback and freeze original 1bac failures
+
+- Exact reader010731 run41769503755/job126375626552 passed 40 synthetic controls and reproduced 9 old reader negatives, with zero native/archive code executions. It verified the complete original312 campaign and fresh archives; original4s/16 fresh failures now retain both exact selector diagnostics. Campaign stays3/27 overall and0/18 under pressure; no current1bac inference.
+- Preserve complete same-tree312 merge runtime log in ordered hash-bound parts: DA174 passed, Node968 passed/25 original ignored, then28 Python oracle cases produced15 failures/9 errors with NATIVE_STORAGE_TABLE_NAME. The independent312 head DA173/174 failure remains.
+- Current1bac original campaign run41768503393/job126372438839 failed all3 complete predeclared runs under unchanged30-second phases/24 external attackers and fixed0.25CPU/2GiB service parent. Actual binary/source identities and full job log remain bound. No original acceptance is claimed.
+- Current1bac W1factorial head job126372439231 actually passed28 History cases plus1 original ignored child, then old27/1 exact-count validation rejected it. Donor41dd already supplies exact28/1 and the unique codec case. This research checkpoint records that real mismatch without changing the production/source branch or claiming a new W1 pass.
+- The unchanged v6 reader now selects the two exact1bac campaign/fresh archives under the same compressed/decoded/output bounds. New readback and new original native gates are independently pending. DRAFT/SHADOW_ONLY/DENY_ALL/HOLD_NO_GO remain.
