@@ -113,7 +113,7 @@ jobs:
           assert value['whole_chain_quantum_security_qualified'] is False
           tests = value['tests']
           assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
-          assert len(tests) == 47
+          assert len(tests) == 49
           assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & set(value['child_process_harnesses_not_counted'])
           Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))

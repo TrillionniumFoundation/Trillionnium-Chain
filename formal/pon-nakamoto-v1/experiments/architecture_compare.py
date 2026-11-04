@@ -16,10 +16,12 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'scripts/ci'))
+sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
+from contract_wire import H as h, sequence_root
 from check_required_native_test import validate as validate_test
 from replay_pinned_native import digest, json_load, require, run_child
 from verify_ci_source import verify as verify_source
-from run_from_zero_native import save_manifest
+from run_from_zero_native import ConfirmationReportChecks, save_manifest
 
 TARGET = 'architecture_delivery_compare'
 SELECTORS = (
@@ -28,6 +30,56 @@ SELECTORS = (
 )
 MODES = ('serial-signed-batches', 'concurrent-proposer-batches', 'signed-reference-dag')
 REPORT_LIMIT = 32 * 1024 * 1024
+hex_bytes = ConfirmationReportChecks.hexadecimal
+
+
+def workload_identity(workload, context):
+    """Bind observed identities to actual workload bytes, without verifying W1.
+
+    The existing experiment uses seven classical development packets. Its
+    signed bytes and report flags do not establish PQ or cross-protocol results.
+    Reuse the independent packet codec; do not invent a second packet grammar.
+    """
+    packets = workload.get('signed_packets')
+    cells = workload.get('cells')
+    require(isinstance(packets, list) and len(packets) == 7
+            and isinstance(cells, list) and len(cells) == 8,
+            'ARCHITECTURE_WORKLOAD_BYTES')
+    transactions = []
+    for index, cell in enumerate(cells):
+        require(isinstance(cell, dict) and type(cell.get('round')) is int
+                and type(cell.get('proposer')) is int
+                and (cell['round'], cell['proposer']) == (index // 4, index % 4)
+                and isinstance(cell.get('transactions'), list)
+                and len(cell['transactions']) == 4, 'ARCHITECTURE_WORKLOAD_BYTES')
+        transactions.extend(hex_bytes(raw) for raw in cell['transactions'])
+    transaction_ids = [h('tx-id', raw).hex() for raw in transactions]
+    require(len(set(transaction_ids)) == 32, 'ARCHITECTURE_TRANSACTION_IDENTITIES')
+    parent, block_ids, headers, attempts = context['genesis'], [], [], 0
+    for index, encoded in enumerate(packets):
+        header, body, identity = ConfirmationReportChecks.packet_metadata(encoded)
+        require(header['network'].hex() == context['network']
+                and header['parameters'].hex() == context['parameters']
+                and header['parent'].hex() == parent and header['height'] == index + 1,
+                'ARCHITECTURE_PACKET_CONTEXT')
+        require(body == (transactions if index == 0 else [])
+                and header['transactions'] == sequence_root('transactions', body),
+                'ARCHITECTURE_PACKET_TRANSACTIONS')
+        parent = identity.hex()
+        block_ids.append(parent)
+        headers.append(header)
+        attempts += header['nonce'] + 1
+    require(len(set(block_ids)) == 7
+            and type(workload.get('work_attempts_including_target_misses')) is int
+            and workload['work_attempts_including_target_misses'] == attempts,
+            'ARCHITECTURE_WORKLOAD_ATTEMPTS')
+    # Check the report's existing six-depth AND six-required-work observation.
+    # This arithmetic does not verify proof validity, target policy or ancestry
+    # against any independently trusted checkpoint.
+    work = [(1 << 256) // (int.from_bytes(row['target'], 'big') + 1) for row in headers]
+    return dict(transactions=transaction_ids, included=block_ids[0], tip=block_ids[-1],
+                required_work=(work[0] * 6).to_bytes(64, 'big').hex(),
+                observed_work=sum(work[1:]).to_bytes(64, 'big').hex())
 
 
 def identity():
@@ -55,6 +107,10 @@ def validate_report(path):
             'ARCHITECTURE_DENOMINATORS')
     workloads = {row['scenario']: row for row in report['workloads']}
     require(set(workloads) == {'disjoint-recipients', 'hot-recipient'}, 'ARCHITECTURE_WORKLOADS')
+    context = {key: hex_bytes(report.get(key), 32).hex()
+               for key in ('network', 'parameters', 'genesis')}
+    identities = {scenario: workload_identity(workload, context)
+                  for scenario, workload in workloads.items()}
 
     def number(value):
         require(type(value) is int and 0 <= value < 1 << 64, 'ARCHITECTURE_NUMBER')
@@ -104,7 +160,24 @@ def validate_report(path):
             number(request.get('wall_ns'))
         confirmations = row.get('independent_confirmations')
         require(isinstance(confirmations, list) and len(confirmations) == 32, 'ARCHITECTURE_CONFIRMATION')
+        expected = identities[scenario]
+        require([confirmation.get('transaction') for confirmation in confirmations]
+                == expected['transactions'], 'ARCHITECTURE_TRANSACTION_IDENTITIES')
+        view = None
         for confirmation in confirmations:
+            require(all(confirmation.get(key) == value for key, value in context.items())
+                    and confirmation.get('included_block') == expected['included']
+                    and confirmation.get('observed_tip') == expected['tip'],
+                    'ARCHITECTURE_CONFIRMATION_CONTEXT')
+            require(confirmation.get('policy') == 'installed-depth-and-required-work'
+                    and confirmation.get('required_work_delta') == expected['required_work']
+                    and confirmation.get('work_delta') == expected['observed_work']
+                    and int(expected['observed_work'], 16) >= int(expected['required_work'], 16),
+                    'ARCHITECTURE_CONFIRMATION_WORK')
+            observed = (number(confirmation.get('active_generation')),
+                        number(confirmation.get('observed_now')))
+            require(view is None or view == observed, 'ARCHITECTURE_CONFIRMATION_VIEW')
+            view = observed
             require(confirmation.get('confirmed') is True and confirmation.get('depth') == 6
                     and confirmation.get('included_height') == 1 and confirmation.get('observed_height') == 7
                     and confirmation.get('finalized') is False and confirmation.get('execution_authority') is False
@@ -133,6 +206,7 @@ def validate_report(path):
                 observed_cold_burst_completion_rate_per_second=32_000_000_000/statistics.median(latencies),
                 saturated_confirmed_tps=None, cross_protocol_risk_equivalence_qualified=False))
     return dict(sha256=digest(raw), schema=report['schema'], finite_target_met=True, summary=summaries,
+        workload_and_confirmation_identities_bound=True, pq_workload_measured=False,
         source_identity_qualified=False,
         scope='bounded native report consistency; clean source identity is established only by the complete execution owner, never --report alone; no GHAST/DAG-BFT implementation, saturated WAN TPS or security equivalence')
 

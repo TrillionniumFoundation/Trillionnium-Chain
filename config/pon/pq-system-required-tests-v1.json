@@ -1,13 +1,15 @@
 {
   "schema": "trnm-pq-system-required-tests-v1",
   "scope": "explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification",
-  "expected_meaningful_controls": 47,
+  "expected_meaningful_controls": 49,
   "tests": [
     "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
     "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
     "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
     "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
     "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+    "ingress::pq_network::tests::cold_pq_reopen_rejects_orphan_requests_outside_pinned_peer_roster",
+    "ingress::pq_network::tests::cold_pq_reopen_rejects_extra_resource_rows_outside_singleton",
     "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
     "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
     "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",

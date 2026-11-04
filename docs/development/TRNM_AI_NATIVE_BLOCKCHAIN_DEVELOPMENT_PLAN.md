@@ -52,6 +52,48 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Repair writer bounds and confirmation identity continuation — 2026-11-04
+
+Continue the existing PR #688 integration lineage from
+`40a5ba25e40fd5eda5b04fc1c3811320d438de11`. Three M09 repair writer
+transactions now cap SQLite acquisition and commit waits by the remaining
+original operation deadline and restore the owner's configured timeout.
+Preserve complete charge/readback checks and uncertain post-commit recovery.
+Four real writer-conflict counterexamples must fail on the old source and pass
+on the candidate, together with the complete M09 suite and strict Clippy.
+Local deadline enforcement does not establish independent provider availability
+or long-term storage obligations.
+
+The explicit W1 fact cache no longer waits for an unrelated in-flight key that
+maps to the same slot: it uses complete unretained verification under the
+existing caller's worker, CPU and deadline limits. Same-key single-flight is
+unchanged. The public V3 arithmetic cache is a separate completed-only,
+nonblocking implementation and its full controls pass without a runtime change.
+The fuzz lockfile is regenerated for the already-selected Linux SHA-2 backend;
+only the missing `sha2-asm 0.6.4` package and `sha2` dependency edge are added.
+Original locked checks remain required. The [small reproduction record](../../evidence/pon-full-closure-20261104/README.md)
+binds source bytes and preserves the base source's actual 16-attacker failure:
+baseline confirmation at 3.101 seconds, zero pressure confirmations by four
+seconds. Distinct 24-process/30-second campaigns remain distinct observations.
+
+PNQ2 cold reopen now audits all resource rows and the complete request/peer
+relationship, including orphan rows that re-enabled SQL constraints do not
+retroactively reject. Both new restored-database controls fail on the prior
+runtime and pass with the fix; the native PQ ingress group passes 17 controls.
+The related witness run retains 52 passes and three independent-child Unix
+socket permission failures. The original CI must execute those controls; no
+deadline, root coverage or production claim is changed by the local audit.
+
+The existing architecture report reader binds all 32 distinct confirmations to
+the actual eight-cell/seven-packet workload, current context, inclusion/tip,
+one batch view and both depth and required work. Its shared Host launcher stays
+standard-library-only. Keep source identity, native execution and cryptographic
+acceptance separate: a consistent synthetic report has neither native authority
+nor PQ qualification. Original 18-sample native runs, deadlines and publication
+flags are unchanged. The detailed acceptance document records the distinct
+Bitcoin-NG, Prism and Narwhal/Tusk mechanisms and the required equal-workload,
+PQ/state/fault comparison; the current transport DAG does not implement them.
+
 #### Full integration, explicit recovery and measured work costs — 2026-11-04
 
 Continue PR #688 from `6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029`, preserving

@@ -429,3 +429,174 @@ fn poisoned_local_slot_is_unavailable_not_invalid_work_or_fallback() {
     ));
     assert_eq!(cache.counters().full_replays, 0);
 }
+
+#[test]
+fn unrelated_slot_collision_finishes_before_held_leader_without_publication() {
+    let (first_challenge, task, first_proof) = fixture(91);
+    let (other_challenge, other_task, other_proof) = fixture(92);
+    assert_eq!(task, other_task);
+    let first_trace: Hash = first_proof[PROOF_BYTES - 32..].try_into().unwrap();
+    let cache = Arc::new(WorkFactCache::new(1).unwrap());
+    let (entered_tx, entered_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    let leader_cache = cache.clone();
+    let leader = thread::spawn(move || {
+        leader_cache.verify_with_progress(
+            first_challenge,
+            task,
+            [255; 32],
+            &first_proof,
+            &mut |point| {
+                if point
+                    == (VerificationProgress::Noise {
+                        label: 0,
+                        counter: 0,
+                    })
+                {
+                    entered_tx.send(()).unwrap();
+                    release_rx.recv().unwrap();
+                }
+                Ok::<_, ()>(())
+            },
+        )
+    });
+    entered_rx.recv_timeout(Duration::from_secs(10)).unwrap();
+    let second_cache = cache.clone();
+    let (finished_tx, finished_rx) = mpsc::channel();
+    let second = thread::spawn(move || {
+        let mut progress = Vec::new();
+        let result = second_cache.verify_with_progress(
+            other_challenge,
+            other_task,
+            [255; 32],
+            &other_proof,
+            &mut |point| {
+                progress.push(point);
+                Ok::<_, ()>(())
+            },
+        );
+        finished_tx.send(()).unwrap();
+        (result, progress, other_proof)
+    });
+    // The leader remains parked until this bounded observation completes. Always
+    // release/join it before asserting, so the unfixed cache fails without a leak.
+    let finished_while_held = finished_rx.recv_timeout(Duration::from_secs(3));
+    release_tx.send(()).unwrap();
+    let first = leader.join().unwrap().unwrap();
+    let (actual, progress, proof) = second.join().unwrap();
+    assert!(
+        finished_while_held.is_ok(),
+        "a different mathematical key waited for the colliding cache leader"
+    );
+    let mut reference_progress = Vec::new();
+    let expected = verify_reference_with_progress(
+        other_challenge,
+        other_task,
+        [255; 32],
+        &proof,
+        &mut |point| {
+            reference_progress.push(point);
+            Ok::<_, ()>(())
+        },
+    )
+    .unwrap();
+    let actual = actual.unwrap();
+    assert_eq!(actual.product(), expected.product());
+    assert_eq!(actual.ticket(), expected.ticket());
+    let mut expected_progress = vec![VerificationProgress::BeforeReplay];
+    expected_progress.extend(reference_progress);
+    assert_eq!(progress, expected_progress);
+    // The colliding complete replay must not evict or overwrite the held owner.
+    let first_key = Key {
+        challenge: first_challenge,
+        task,
+        trace: first_trace,
+    };
+    let state = cache.slots[0].state.lock().unwrap();
+    assert!(
+        matches!(&*state, State::Ready(saved, product) if *saved == first_key && product.as_slice() == first.product())
+    );
+    assert_eq!(
+        cache.counters(),
+        FactCounters {
+            full_replays: 2,
+            hits: 0,
+            wait_polls: 0,
+            evictions: 0
+        }
+    );
+}
+
+#[test]
+fn unrelated_slot_replay_preserves_native_refusal_and_cancellation_checkpoints() {
+    let (challenge, task, valid) = fixture(93);
+    let cache = WorkFactCache::new(1).unwrap();
+    let other_key = Key {
+        challenge: [94; 32],
+        task,
+        trace: [95; 32],
+    };
+    *cache.slots[0].state.lock().unwrap() = State::Computing(other_key);
+    let mut false_trace = valid.clone();
+    *false_trace.last_mut().unwrap() ^= 1;
+    let bad_product = changed_product(&valid, CELLS - 1);
+    for proof in [&false_trace, &bad_product] {
+        let expected = verify_reference(challenge, task, [255; 32], proof).unwrap_err();
+        let mut before_replay = 0;
+        let result = cache.verify_with_progress(challenge, task, [255; 32], proof, &mut |point| {
+            if point == VerificationProgress::BeforeReplay {
+                before_replay += 1;
+                if before_replay > 2 {
+                    return Err("unrelated-wait");
+                }
+            }
+            Ok(())
+        });
+        assert_eq!(result.unwrap_err(), FactError::Relation(expected));
+        assert_eq!(before_replay, 2);
+    }
+    for stop in [
+        VerificationProgress::Noise {
+            label: 0,
+            counter: 0,
+        },
+        VerificationProgress::BeforeProduct,
+        VerificationProgress::BeforeVerifiedWork,
+    ] {
+        let mut reference = Vec::new();
+        let expected =
+            verify_reference_with_progress(challenge, task, [255; 32], &valid, &mut |point| {
+                reference.push(point);
+                if point == stop {
+                    Err("cancelled")
+                } else {
+                    Ok(())
+                }
+            });
+        let mut actual = Vec::new();
+        let result = cache.verify_with_progress(challenge, task, [255; 32], &valid, &mut |point| {
+            actual.push(point);
+            if point == stop {
+                Err("cancelled")
+            } else {
+                Ok(())
+            }
+        });
+        assert_eq!(result.unwrap_err(), FactError::from(expected.unwrap_err()));
+        let mut expected = vec![VerificationProgress::BeforeReplay];
+        expected.extend(reference);
+        assert_eq!(actual, expected);
+    }
+    assert!(
+        matches!(&*cache.slots[0].state.lock().unwrap(), State::Computing(saved) if *saved == other_key)
+    );
+    assert_eq!(
+        cache.counters(),
+        FactCounters {
+            full_replays: 5,
+            hits: 0,
+            wait_polls: 0,
+            evictions: 0
+        }
+    );
+}

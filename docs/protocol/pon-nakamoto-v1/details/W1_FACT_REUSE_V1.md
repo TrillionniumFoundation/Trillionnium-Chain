@@ -32,9 +32,13 @@ verification, including work-valid statements that do not become admitted blocks
 The caller selects 1..256 direct-mapped slots. Each completed slot owns 4096 u32
 product words (16 KiB), plus bounded metadata. This is not a whole-process memory
 bound; request buffers, verification scratch and caller threads are separate.
-At most one computation owns each slot. Identical requests share that work; a
-colliding key waits, and a completed different key can be evicted. This policy
-bounds internal state but does not prove adversarial cache-hit rates or fairness.
+At most one retained computation owns each slot. Identical requests share that
+work. A different key colliding with a computing slot runs the original complete
+native verifier without retaining its result; it neither waits for nor overwrites
+the unrelated owner. A completed different key can be evicted. The caller's
+existing worker limit, deadline and CPU domain bound all full replays, including
+collisions. The slot count bounds retained cache storage, not active requests or
+CPU use, and does not prove adversarial cache-hit rates or fairness.
 
 Slot locks never cover W1 arithmetic or caller callbacks. A waiting call polls its
 original cancellation callback after a Condvar timeout of at most five milliseconds;
@@ -239,3 +243,24 @@ cannot pay from a fresh allowance, enter a W1 replay, start M06 workers
 or mutate native state. Native business result and CPU settlement remain
 separate. This does not activate the cache in default public V3 and does not
 establish host-wide enforcement across independent processes.
+
+
+## Distinct-key collision control — 2026-11-04
+
+A deterministic native regression parks one real verifier before its first noise
+expansion in a one-slot cache and starts a different challenge for the same task.
+The original cache fails the three-second observation: the second statement
+waits for unrelated work despite having no reusable mathematical fact. Both
+threads are released and joined before the assertion, including the red case.
+The corrected path completes its own full verifier while the first remains held,
+produces the same product/ticket and callback sequence as independent scalar
+replay, and leaves the first owner's publication intact. Native transcript/product
+refusals and cancellation at noise, product and final authority checkpoints also
+retain their exact results and do not modify the occupied slot. Identical-key
+single-flight behavior remains separately exercised by the original controls.
+
+This control covers the explicit `WorkFactCache` embedding. The public V3
+arithmetic-fact owner is a separate implementation. The three-second channel
+observation is a bounded test rendezvous, not a new service deadline or evidence
+that the original four-second hostile-W1 confirmation target is met. No public
+profile, CPU allowance, proof rule, qualification flag or activation is changed.

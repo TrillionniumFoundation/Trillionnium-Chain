@@ -763,6 +763,34 @@ transport DAG does not implement GHAST/GHOSTDAG/Prism ordering or inherit their
 security. Select a consensus successor only after a measured propagation/fork
 bottleneck and an explicit new ordering/state/reward/reorg contract justify it.
 
+The existing architecture report reader now derives the 32 distinct transaction
+identities from each workload's eight cells and checks them against the first of
+the seven actual packet bodies. It checks packet context, parent/height links,
+transaction roots and nonce-derived attempt counts. Every confirmation must
+name the corresponding transaction, inclusion block, tip, network, parameters
+and genesis, retain the installed depth-and-required-work policy, and belong to
+one observed generation/time for that batch. The six-block work difference and
+required-work threshold are recomputed from the recorded targets. Repeated,
+foreign or reordered observations cannot substitute for the complete batch.
+This is bounded report consistency, not proof/signature verification or a new
+trusted checkpoint. Native source and ELF checks remain separate. The current
+experiment uses classical development signatures; its output explicitly reports
+`pq_workload_measured=false` and cannot satisfy the requested PQ comparison.
+
+The named research alternatives have distinct mechanisms and assumptions:
+
+| Research candidate | Mechanism to implement and measure | Required comparison boundary |
+| --- | --- | --- |
+| [Bitcoin-NG](https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/eyal) | Key-block leader selection and signed microblock transaction serialization | Include PQ microblock authentication, leader failure/equivocation, fee rules, branch change and independent execution; delivery batching alone is insufficient. |
+| [Prism](https://arxiv.org/abs/1810.08092) | Separate proposer, transaction and voter-block functions | Specify the W1 allocation and chain-selection security model, then measure every voter/proposal verification, data dependency, execution and recovery cost. The paper's proof-of-work assumptions do not establish this W1 profile. |
+| [Narwhal/Tusk](https://arxiv.org/abs/2105.11827) | Reliable DAG dissemination/storage composed with quorum consensus | Account for committee membership, PQ quorum traffic, withheld data and asynchronous recovery. This changes the trust model and does not become permissionless PoN merely by reusing its transaction executor. |
+
+All arms must use the same transaction bytes, PQ checks, state/history size,
+host resources and fault schedule, with an explicit comparable confirmation-risk
+contract. Retain unconfirmed and unobserved transactions in the denominator.
+The current serial/concurrent/reference-DAG fixture implements none of these
+three successor consensus protocols; no architecture winner is declared.
+
 ### R13 replay/cancellation evidence is additional
 
 R13 limits same-complete-packet priority reacquisition only within one live CPU
