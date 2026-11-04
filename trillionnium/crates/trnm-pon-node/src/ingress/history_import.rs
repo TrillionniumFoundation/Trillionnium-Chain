@@ -33,6 +33,22 @@ impl Control<'_> {
     }
 }
 
+/// The public wrapper still owes its original final Host observation after
+/// native cleanup. That observation can itself cross the request deadline.
+/// Preserve its error priority and every existing native error; only an
+/// otherwise successful outward result receives the final time fence.
+pub(super) fn finish_with_resource<T>(
+    native: Result<T>,
+    deadline: Instant,
+    resource: impl FnOnce() -> Result<()>,
+) -> Result<T> {
+    resource()?;
+    native.and_then(|value| {
+        ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+        Ok(value)
+    })
+}
+
 pub(super) enum Owner<'a> {
     Exclusive(&'a mut Node),
     Shared(&'a Mutex<Node>),

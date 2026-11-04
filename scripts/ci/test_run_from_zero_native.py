@@ -493,7 +493,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  missing_report=False, report_edit=None, log_drift=False, report_drift=False,
                  missing_sustained=False, sustained_edit=None, sustained_drift=False,
                  missing_confirmation=False, confirmation_edit=None, confirmation_drift=False,
-                 missing_format_module=False):
+                 missing_format_module=False, missing_log=None):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -558,6 +558,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                         (out / driver.TESTS[0] / 'stdout').write_text('changed after validation')
                 (folder / 'stdout').write_text(text)
                 (folder / 'stderr').write_text('retained simulated stderr\n')
+                if name == missing_log:
+                    (folder / 'stdout').unlink()
                 # There are deliberately no invented CPU values in this fixture.
                 return {'exit_code': code, 'timed_out': timed_out, 'simulated_control': True}
             previous_cwd = Path.cwd()
@@ -586,6 +588,12 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 self.assertEqual(Path.cwd(), previous_cwd)
                 if 'build' in seen:
                     self.assertTrue((out / 'build/stderr').exists())
+                for stage in result.get('terminal', {}).get('acceptance_stages', {}).values():
+                    raw = stage['retained_report']
+                    if raw['state'] == 'present':
+                        path = out / stage['path']
+                        self.assertEqual(raw['sha256'], driver.digest(path.read_bytes()))
+                        self.assertEqual(raw['bytes'], path.stat().st_size)
                 return result, seen
             finally:
                 os.chdir(previous_cwd)
@@ -595,6 +603,14 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertTrue(result['passed'])
         self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
         self.assertTrue(all(r['process']['simulated_control'] for r in result['runs']))
+        self.assertEqual(result['schema'], 'trnm-from-zero-native-execution-v3')
+        self.assertTrue(result['execution_finished'])
+        self.assertTrue(result['terminal']['native_execution_completed'])
+        self.assertTrue(result['terminal']['acceptance_passed'])
+        self.assertTrue(all(stage['status'] == 'passed' and stage['retained_matches_before_validation']
+                            for stage in result['terminal']['acceptance_stages'].values()))
+        with patch.object(driver, 'run', return_value=result), redirect_stdout(io.StringIO()):
+            self.assertEqual(driver.main(['--out', '/unused-simulated-output']), 0)
 
     def test_missing_format_module_is_retained_failure_before_any_child_runs(self):
         result, seen = self.exercise(missing_format_module=True)
@@ -628,6 +644,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertEqual(len(result['runs']), 5)
         self.assertFalse(result['runs'][0]['passed'])
+        self.assertTrue(result['terminal']['native_execution_completed'])
+        self.assertEqual(result['terminal']['native_invocations'][0]['exit_code'], 101)
+        self.assertFalse(result['terminal']['acceptance_passed'])
 
     def test_timeout_cannot_be_overridden_by_success_text(self):
         result, _ = self.exercise(timeout=driver.TESTS[2])
@@ -656,6 +675,11 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertTrue(result['all_named_tests_passed'])
         self.assertFalse(result['passed'])
         self.assertIn('CONFIRMATION_REPORT_REQUIRED', result['failures'])
+        self.assertTrue(result['terminal']['native_execution_completed'])
+        stage = result['terminal']['acceptance_stages']['confirmation_report']
+        self.assertEqual(stage['status'], 'failed')
+        self.assertEqual(stage['retained_report']['state'], 'missing')
+        self.assertIsNone(stage['retained_report']['sha256'])
 
     def test_confirmation_report_is_required_even_when_component_exit_is_zero(self):
         result, _ = self.exercise(confirmation_edit=lambda doc: doc.update(finite_target_met=False))
@@ -665,6 +689,93 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertIsNotNone(result['confirmation_observation'])
         self.assertFalse(result['confirmation_observation']['original_gate_validated'])
         self.assertFalse(result['confirmation_observation']['network_capacity_qualified'])
+
+    def test_failed_confirmation_retains_native_completion_and_failure_exit(self):
+        result, _ = self.exercise(confirmation_edit=lambda doc: doc.update(finite_target_met=False))
+        terminal = result['terminal']
+        self.assertEqual(terminal['schema'], 'trnm-from-zero-native-terminal-v1')
+        self.assertEqual(result['schema'], 'trnm-from-zero-native-execution-v3')
+        self.assertTrue(terminal['finalization_completed'])
+        self.assertTrue(terminal['native_execution_completed'])
+        self.assertFalse(result['execution_finished'])  # The original acceptance sequence failed.
+        self.assertIn('report validation', terminal['legacy_execution_finished_scope'])
+        self.assertFalse(terminal['acceptance_passed'])
+        self.assertFalse(terminal['subsequent_ci_steps_observed'])
+        self.assertEqual(terminal['unexecuted_native_tests'], [])
+        self.assertEqual(terminal['unexecuted_acceptance_stages'], [])
+        self.assertTrue(all(row['status'] == 'returned' and row['exit_code'] == 0
+                            and row['timed_out'] is False for row in terminal['native_invocations']))
+        stage = terminal['acceptance_stages']['confirmation_report']
+        self.assertEqual(stage['status'], 'failed')
+        self.assertEqual(stage['error'], 'CONFIRMATION_TARGET')
+        self.assertEqual(stage['before_validation'], stage['retained_report'])
+        self.assertTrue(stage['retained_matches_before_validation'])
+        self.assertEqual(stage['retained_report']['sha256'], result['files']['confirmation/report.json'])
+        self.assertIsNone(result['confirmation_report'])
+        with patch.object(driver, 'run', return_value=result), redirect_stdout(io.StringIO()):
+            self.assertEqual(driver.main(['--out', '/unused-simulated-output']), 1)
+
+    def test_failed_earlier_report_leaves_later_acceptance_unexecuted_but_retains_bytes(self):
+        result, _ = self.exercise(report_edit=lambda doc: doc.update(finite_target_met=False))
+        terminal = result['terminal']
+        self.assertTrue(terminal['native_execution_completed'])
+        self.assertFalse(result['passed'])
+        self.assertIn('NATIVE_SERVICE_TARGET', result['failures'])
+        self.assertEqual(terminal['acceptance_stages']['service_report']['status'], 'failed')
+        self.assertEqual(terminal['unexecuted_acceptance_stages'],
+                         ['sustained_report', 'confirmation_report'])
+        for key in terminal['unexecuted_acceptance_stages']:
+            stage = terminal['acceptance_stages'][key]
+            self.assertEqual(stage['status'], 'not_executed')
+            self.assertIsNone(stage['before_validation'])
+            self.assertIsNone(stage['retained_matches_before_validation'])
+            self.assertIsNone(result[key])
+            self.assertEqual(stage['retained_report']['sha256'], result['files'][stage['path']])
+
+    def test_returned_native_status_survives_a_later_log_read_error(self):
+        result, seen = self.exercise(missing_log=driver.TESTS[0])
+        terminal = result['terminal']
+        self.assertFalse(result['passed'])
+        self.assertFalse(terminal['native_execution_completed'])
+        self.assertTrue(terminal['finalization_completed'])
+        first = terminal['native_invocations'][0]
+        self.assertEqual((first['status'], first['exit_code'], first['timed_out']),
+                         ('returned', 0, False))
+        self.assertEqual(terminal['unexecuted_native_tests'], list(driver.TESTS[1:]))
+        self.assertNotIn(driver.TESTS[1], seen)
+        self.assertTrue(any('stdout' in failure for failure in result['failures']))
+
+    def test_failed_raw_report_change_retains_both_input_and_final_identities(self):
+        result, _ = self.exercise(confirmation_edit=lambda doc: doc.update(finite_target_met=False),
+                                  confirmation_drift=True)
+        self.assertFalse(result['passed'])
+        self.assertIn('CONFIRMATION_TARGET', result['failures'])
+        self.assertIn('CONFIRMATION_OBSERVATION_CHANGED', result['failures'])
+        stage = result['terminal']['acceptance_stages']['confirmation_report']
+        self.assertEqual(stage['status'], 'failed')
+        self.assertEqual(stage['before_validation']['state'], 'present')
+        self.assertEqual(stage['retained_report']['state'], 'present')
+        self.assertNotEqual(stage['before_validation']['sha256'], stage['retained_report']['sha256'])
+        self.assertFalse(stage['retained_matches_before_validation'])
+
+    def test_report_identity_is_bounded_and_does_not_parse_or_accept_raw_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            raw = b'not JSON'
+            path.write_bytes(raw)
+            identity = driver.report_file_identity(path)
+            self.assertEqual(identity, {'state': 'present', 'bytes': len(raw),
+                                        'sha256': driver.digest(raw)})
+            with patch.object(driver, 'REPORT_LIMIT', 4):
+                identity = driver.report_file_identity(path)
+            self.assertEqual(identity['state'], 'over_limit')
+            self.assertEqual(identity['bytes_at_least'], 5)
+            self.assertIsNone(identity['sha256'])
+            self.assertIsNone(identity['bytes'])
+            self.assertEqual(path.read_bytes(), raw)
+            link = Path(directory) / 'linked-report.json'
+            link.symlink_to(path)
+            self.assertEqual(driver.report_file_identity(link)['state'], 'not_regular')
 
     def test_confirmation_report_mutation_after_validation_cannot_pass(self):
         result, _ = self.exercise(confirmation_drift=True)
@@ -684,6 +795,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertIn('CONFIRMATION_PHASES', result['failures'])
         self.assertIn('confirmation/report.json', result['files'])
+        stage = result['terminal']['acceptance_stages']['confirmation_report']
+        self.assertEqual(stage['status'], 'failed')
+        self.assertEqual(stage['retained_report']['sha256'], result['files']['confirmation/report.json'])
 
     def test_caller_environment_is_restored(self):
         name = 'TRNM_PUBLIC_V3_FROM_ZERO_DIR'
@@ -698,6 +812,15 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertEqual(len(result['runs']), 1)
         self.assertNotIn(driver.TESTS[1], seen)
         self.assertIn('NATIVE_TIMEOUT_STOPS_CAMPAIGN', result['failures'])
+        terminal = result['terminal']
+        self.assertFalse(terminal['native_execution_completed'])
+        self.assertEqual(terminal['native_invocations'][0]['status'], 'returned')
+        self.assertEqual(terminal['native_invocations'][0]['exit_code'],
+                         result['runs'][0]['process']['exit_code'])
+        self.assertTrue(terminal['native_invocations'][0]['timed_out'])
+        self.assertEqual(terminal['unexecuted_native_tests'], list(driver.TESTS[1:]))
+        self.assertEqual(terminal['unexecuted_acceptance_stages'],
+                         ['service_report', 'sustained_report', 'confirmation_report'])
 
     def test_formatter_timeout_prevents_compile(self):
         result, seen = self.exercise(timeout='format-check')

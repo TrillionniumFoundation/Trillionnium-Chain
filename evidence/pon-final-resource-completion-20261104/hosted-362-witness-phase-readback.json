@@ -1,0 +1,757 @@
+{
+  "schema": "pon-ci-single-test-phase-readback-v1",
+  "scope": "Read-only extraction of this one test stdout block; no selector, child binary or native workload executed; not a rerun or acceptance result.",
+  "expected_candidate_from_task": "362fbebe5027d731f16c88f710bfef7e922cd230",
+  "source_identity_limit": "The raw log path and task identify this candidate/job; this log alone is not an independent source or ELF identity receipt.",
+  "job_id": 126300605830,
+  "raw_log": {
+    "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-head-job-126300605830/node-lib.log",
+    "bytes": 7291639,
+    "sha256": "b8fc142d00b90638b6ad723d83b01208492972df250352d79f22bbcb6eeb210d",
+    "lines": 2399
+  },
+  "test": {
+    "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+    "status": "FAILED",
+    "harness_status": {
+      "first_line_1_based": 930,
+      "last_line_1_based": 930,
+      "byte_start_0_based": 109457,
+      "byte_end_exclusive": 109602,
+      "bytes": 145,
+      "sha256": "8f7641c82a514e03fd963aaed242933b53a671e2e7c731dc74285bfd65550c07",
+      "hash_scope": "exact raw bytes including original line endings"
+    },
+    "panic_location": "crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:332:10",
+    "panic_pointer": {
+      "first_line_1_based": 2388,
+      "last_line_1_based": 2389,
+      "byte_start_0_based": 7274393,
+      "byte_end_exclusive": 7274788,
+      "bytes": 395,
+      "sha256": "3f5528825014d3b51b747741cfe9bbdc7d6b071e2c6066dc580fb33df98f3015",
+      "hash_scope": "exact raw bytes including original line endings"
+    },
+    "panic_error_verbatim": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }"
+  },
+  "raw_pointers": {
+    "test_stdout_block": {
+      "first_line_1_based": 2386,
+      "last_line_1_based": 2393,
+      "byte_start_0_based": 7274246,
+      "byte_end_exclusive": 7291331,
+      "bytes": 17085,
+      "sha256": "3bdba9df210e91190bf5a2bd503e19f769635b889e36bf2457d0191ce2bee17e",
+      "hash_scope": "exact raw bytes including original line endings"
+    },
+    "child_marker": {
+      "first_line_1_based": 2390,
+      "last_line_1_based": 2390,
+      "byte_start_0_based": 7274788,
+      "byte_end_exclusive": 7274900,
+      "bytes": 112,
+      "sha256": "53a392e3e22f8de02f444a18fc81f40ea1e734661868ca1612ef34eb7f850879",
+      "hash_scope": "exact raw bytes including original line endings"
+    },
+    "parent_snapshot": {
+      "first_line_1_based": 2391,
+      "last_line_1_based": 2391,
+      "byte_start_0_based": 7274900,
+      "byte_end_exclusive": 7291329,
+      "bytes": 16429,
+      "sha256": "7448185a5222c8258ae3b67657721ed398a154181b54941f4cb90274b8ceda53",
+      "hash_scope": "exact raw bytes including original line endings"
+    },
+    "suite_terminal": {
+      "first_line_1_based": 2397,
+      "last_line_1_based": 2397,
+      "byte_start_0_based": 7291475,
+      "byte_end_exclusive": 7291579,
+      "bytes": 104,
+      "sha256": "115d5775e7872a233049b743788356ee94351a30a36227904562fcd3bb1a7bc9",
+      "hash_scope": "exact raw bytes including original line endings"
+    }
+  },
+  "suite_terminal_context": "test result: FAILED. 950 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1196.51s",
+  "child_snapshot": {
+    "marker": {
+      "schema": "pon-pq-test-phase-observation-v1",
+      "child_snapshot_missing_or_invalid": true
+    },
+    "valid_child_snapshot_in_this_test_block": false,
+    "missing_vs_invalid": null,
+    "child_process_id": null,
+    "child_stage_timings": null,
+    "child_exit_status": null,
+    "scope": "The marker reports missing OR invalid; it does not distinguish absence, parse failure or any child exit/root cause."
+  },
+  "parent_snapshot": {
+    "schema": "pon-pq-test-phase-observation-v1",
+    "process_id": 21551,
+    "budgets_unchanged": true,
+    "cpu_is_calling_thread_only": true,
+    "nested_intervals_are_not_additive": true,
+    "observation_has_authority": false,
+    "operation_ids_are_process_local": true,
+    "failure_checkpoint_saved": false,
+    "has_open_operations": false,
+    "has_open_records": false,
+    "measurement_failures": 0,
+    "record_capacity": 8,
+    "records_started": 41,
+    "records_closed": 41,
+    "records_completed": 41,
+    "records_overwritten": 33,
+    "scope_snapshot_is_final": true,
+    "snapshot_is_not_service_completion": true,
+    "last_failure": {
+      "id": 19,
+      "kind": "tcp_request",
+      "marks": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "phase": "tcp_handle",
+      "thread_cpu_ns": 120589787,
+      "wall_ns": 499338470,
+      "error_ref": "E1"
+    },
+    "last_tcp_failure_equals_last_failure": true,
+    "last_service_failure": null,
+    "error_catalog": [
+      {
+        "id": "E1",
+        "code": "PQ_WITNESS_DEADLINE",
+        "io_kind": null,
+        "origin": "exact_diagnostic_string_or_unknown",
+        "raw_os_error": null,
+        "sqlite_extended_code": null
+      }
+    ],
+    "mark_order": [
+      "transport_entered",
+      "cas_commit_attempted",
+      "cas_committed",
+      "local_commit_attempted",
+      "local_committed",
+      "matching_cas_receipt",
+      "fixture_delay_entered"
+    ],
+    "phase_totals_columns": [
+      "phase",
+      "started",
+      "completed",
+      "failed",
+      "unfinished",
+      "wall_ns",
+      "thread_cpu_ns",
+      "wall_unknown",
+      "cpu_unknown",
+      "last_error_ref"
+    ],
+    "phase_totals": [
+      [
+        "client_entry",
+        23,
+        23,
+        0,
+        0,
+        22466,
+        22526,
+        0,
+        0,
+        null
+      ],
+      [
+        "challenge_and_body",
+        16,
+        16,
+        0,
+        0,
+        240163,
+        241349,
+        0,
+        0,
+        null
+      ],
+      [
+        "request_sign_including_self_verify",
+        16,
+        16,
+        0,
+        0,
+        166732722,
+        166745932,
+        0,
+        0,
+        null
+      ],
+      [
+        "before_transport",
+        16,
+        16,
+        0,
+        0,
+        15902,
+        25382,
+        0,
+        0,
+        null
+      ],
+      [
+        "transport",
+        16,
+        16,
+        1,
+        0,
+        618427529,
+        4475156,
+        0,
+        0,
+        "E1"
+      ],
+      [
+        "reply_context",
+        15,
+        15,
+        0,
+        0,
+        15442,
+        15202,
+        0,
+        0,
+        null
+      ],
+      [
+        "client_reply_verify",
+        15,
+        15,
+        0,
+        0,
+        20114312,
+        20118649,
+        0,
+        0,
+        null
+      ],
+      [
+        "client_final",
+        15,
+        15,
+        0,
+        0,
+        16906,
+        16713,
+        0,
+        0,
+        null
+      ],
+      [
+        "mutation_begin",
+        18,
+        18,
+        0,
+        0,
+        79178,
+        80169,
+        0,
+        0,
+        null
+      ],
+      [
+        "local_checkpoint",
+        9,
+        9,
+        0,
+        0,
+        320933,
+        321458,
+        0,
+        0,
+        null
+      ],
+      [
+        "current",
+        9,
+        9,
+        0,
+        0,
+        278732549,
+        103738467,
+        0,
+        0,
+        null
+      ],
+      [
+        "protected_root",
+        16,
+        16,
+        0,
+        0,
+        3338691,
+        3342861,
+        0,
+        0,
+        null
+      ],
+      [
+        "advance_cas",
+        7,
+        7,
+        1,
+        0,
+        527115477,
+        88150677,
+        0,
+        0,
+        "E1"
+      ],
+      [
+        "local_commit",
+        6,
+        6,
+        0,
+        0,
+        2302934,
+        615071,
+        0,
+        0,
+        null
+      ],
+      [
+        "final_live_check",
+        20,
+        20,
+        0,
+        0,
+        21678,
+        20773,
+        0,
+        0,
+        null
+      ],
+      [
+        "tcp_read_request",
+        2,
+        2,
+        0,
+        0,
+        358930636,
+        79443946,
+        0,
+        0,
+        null
+      ],
+      [
+        "tcp_handle",
+        2,
+        2,
+        2,
+        0,
+        434079277,
+        110561920,
+        0,
+        0,
+        "E1"
+      ]
+    ],
+    "retained_records_columns": [
+      "id",
+      "kind",
+      "closed",
+      "accepted",
+      "last_phase",
+      "wall_ns",
+      "thread_cpu_ns",
+      "original_remaining_ns",
+      "effective_remaining_ns",
+      "error_ref",
+      "marks_in_mark_order",
+      "phase_names"
+    ],
+    "retained_records": [
+      [
+        34,
+        "client_cas",
+        true,
+        true,
+        "client_final",
+        22437937,
+        15063423,
+        9824092953,
+        249999930,
+        null,
+        [
+          true,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false
+        ],
+        [
+          "client_entry",
+          "challenge_and_body",
+          "request_sign_including_self_verify",
+          "before_transport",
+          "transport",
+          "reply_context",
+          "client_reply_verify",
+          "client_final"
+        ]
+      ],
+      [
+        35,
+        "mutation_begin",
+        true,
+        true,
+        "protected_root",
+        13859001,
+        7536880,
+        null,
+        null,
+        null,
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "mutation_begin",
+          "local_checkpoint",
+          "current",
+          "protected_root"
+        ]
+      ],
+      [
+        36,
+        "client_current",
+        true,
+        true,
+        "client_final",
+        13618025,
+        7296262,
+        9799049184,
+        249999909,
+        null,
+        [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "client_entry",
+          "challenge_and_body",
+          "request_sign_including_self_verify",
+          "before_transport",
+          "transport",
+          "reply_context",
+          "client_reply_verify",
+          "client_final"
+        ]
+      ],
+      [
+        37,
+        "mutation_begin",
+        true,
+        true,
+        "protected_root",
+        33824533,
+        9586090,
+        null,
+        null,
+        null,
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "mutation_begin",
+          "local_checkpoint",
+          "current",
+          "protected_root"
+        ]
+      ],
+      [
+        38,
+        "client_current",
+        true,
+        true,
+        "client_final",
+        33548116,
+        9309740,
+        9785166469,
+        249999930,
+        null,
+        [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "client_entry",
+          "challenge_and_body",
+          "request_sign_including_self_verify",
+          "before_transport",
+          "transport",
+          "reply_context",
+          "client_reply_verify",
+          "client_final"
+        ]
+      ],
+      [
+        39,
+        "mutation_commit",
+        true,
+        false,
+        "advance_cas",
+        250476165,
+        25489762,
+        9751212565,
+        9751212565,
+        "E1",
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "protected_root",
+          "advance_cas",
+          "final_live_check"
+        ]
+      ],
+      [
+        40,
+        "client_advance",
+        true,
+        false,
+        "client_entry",
+        250079931,
+        25093854,
+        null,
+        null,
+        "E1",
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "client_entry"
+        ]
+      ],
+      [
+        41,
+        "client_cas",
+        true,
+        false,
+        "transport",
+        250075454,
+        25089408,
+        9750815480,
+        249999810,
+        "E1",
+        [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "client_entry",
+          "challenge_and_body",
+          "request_sign_including_self_verify",
+          "before_transport",
+          "transport"
+        ]
+      ]
+    ],
+    "retained_failed_record_phases_columns": [
+      "record_id",
+      "phase",
+      "started",
+      "completed",
+      "failed",
+      "unfinished",
+      "wall_ns",
+      "thread_cpu_ns",
+      "wall_unknown",
+      "cpu_unknown",
+      "last_error_ref"
+    ],
+    "retained_failed_record_phases": [
+      [
+        39,
+        "protected_root",
+        1,
+        1,
+        0,
+        0,
+        368363,
+        368747,
+        0,
+        0,
+        null
+      ],
+      [
+        39,
+        "advance_cas",
+        1,
+        1,
+        1,
+        0,
+        250081784,
+        25095697,
+        0,
+        0,
+        "E1"
+      ],
+      [
+        39,
+        "final_live_check",
+        2,
+        2,
+        0,
+        0,
+        2244,
+        2154,
+        0,
+        0,
+        null
+      ],
+      [
+        40,
+        "client_entry",
+        1,
+        1,
+        0,
+        0,
+        791,
+        801,
+        0,
+        0,
+        null
+      ],
+      [
+        41,
+        "client_entry",
+        1,
+        1,
+        0,
+        0,
+        1012,
+        1012,
+        0,
+        0,
+        null
+      ],
+      [
+        41,
+        "challenge_and_body",
+        1,
+        1,
+        0,
+        0,
+        17075,
+        17135,
+        0,
+        0,
+        null
+      ],
+      [
+        41,
+        "request_sign_including_self_verify",
+        1,
+        1,
+        0,
+        0,
+        23483589,
+        23485106,
+        0,
+        0,
+        null
+      ],
+      [
+        41,
+        "before_transport",
+        1,
+        1,
+        0,
+        0,
+        1112,
+        1072,
+        0,
+        0,
+        null
+      ],
+      [
+        41,
+        "transport",
+        1,
+        1,
+        1,
+        0,
+        226558917,
+        1575088,
+        0,
+        0,
+        "E1"
+      ]
+    ]
+  },
+  "established": [
+    "The caller unwrap at line 332 failed with typed FrameEof / Transport; the raw error has no source and request_history_budget=false.",
+    "The same-process snapshot records PQ_WITNESS_DEADLINE for retained mutation_commit/advance_cas (id 39), client_advance/client_entry (id 40) and client_cas/transport (id 41), each around 250 ms wall time.",
+    "Record 41 entered transport with effective_remaining_ns=249999810 while original_remaining_ns=9750815480. These are parent-process client budget observations at the recorded boundary; they do not show that the outer original budget was exhausted.",
+    "The separate last tcp_request snapshot is id 19 at tcp_handle, wall_ns=499338470, with the same diagnostic error category. Its lower operation id does not imply it completed before ids 39-41.",
+    "All 41 parent records are closed/completed; only ids 34-41 remain in the 8-entry ring. Phase aggregates cover overwritten records; the individual earlier records are unavailable here.",
+    "The parent snapshot is final for its observation scope and explicitly does not certify service completion. It provides no valid child snapshot."
+  ],
+  "not_established": [
+    "Why the independent child failed to supply an acceptable response within the bounded call: the child stage, operating-system exit and service-side error are not present in this test block.",
+    "A request-level cross-process causal binding from parent operation ids to the child or from the parent deadline to the caller EOF; ids are process-local and the snapshots carry no shared request correlation.",
+    "Whether the child performed a remote CAS or durable commit; false parent-side marks and no matching receipt do not prove absence of an unobserved child effect.",
+    "The identity/cause of every overwritten failed operation. tcp_handle has two failed samples but only the last diagnostic error is retained; phase failures are not counts of independent test defects.",
+    "A global CPU bottleneck, aggregate service CPU, storage stall, network fault or changed resource limit. Calling-thread measurements and nested intervals cannot be added or promoted to those claims.",
+    "Whether the child snapshot file was absent or invalid; child_snapshot_missing_or_invalid=true intentionally leaves that distinction unknown."
+  ],
+  "safe_followup": [
+    "Use source-only review to map the parent advance_cas/client transport error propagation to the first valid Submit caller.",
+    "Inspect any already-retained child stderr, exit receipt or phase file before assigning a child-side cause; this log supplies none. Preserve the failed EOF and unknown effect/status as observed."
+  ]
+}

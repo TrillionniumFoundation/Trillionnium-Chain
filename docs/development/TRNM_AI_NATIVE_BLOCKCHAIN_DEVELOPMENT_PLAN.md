@@ -5470,3 +5470,42 @@ snapshot path. Real concurrent writer, fixed-tip/different-tip, foreign-body
 corruption and formatting cancellation controls join the unchanged original
 public/PQ and snapshot controls. No complete state, W1, graph or final authority
 check is removed.
+
+### 2026-11-04 final History resource completion and honest-path continuation
+
+The [final-resource continuation](../../evidence/pon-final-resource-completion-20261104/README.md)
+preserves the original gates while closing the outer completion boundary: all
+three page wrappers perform their original final Host observation, preserve its
+error priority and existing native errors, and fence only otherwise successful
+results against the same absolute deadline. Four complete sync exits also retain
+their own final Host observation before the time fence. Settled CPU, durable
+packet/activation facts, existing early errors and incomplete-page exits remain.
+Two ordinary local controls cover the new boundary without claiming fixed-Host
+or public-service execution.
+
+New-block header precheck uses the original encoder's exact grammar/checked
+length before the same id, network and SQL checks, avoiding an unused full wire
+copy. Exact duplicate comparison and persistence still encode all bytes. Legacy
+and PQ V6 valid-transfer controls retain real W1, M06 and stored identity. The
+duplicate path repeats its small grammar check; no timing or SLO gain is inferred.
+
+The CI execution v3 receipt remains compatible. New versioned terminal diagnostics
+separate returned children, failed report acceptance and unexecuted later stages,
+and retain raw report identities without granting acceptance. The original gate,
+commands, timeouts, failures and nonzero exit remain authoritative. Current-source
+F0 readback is 2/6 in the original window and 0/6 under the four-second SLO; prior
+C1/C2 1/6 records remain historical facts. A separate derived note corrects phase
+epoch end versus elapsed round time without rewriting hash-pinned observations.
+Original scientific, independent-operation, business and release gates remain HOLD.
+
+The same continuation preserves the five concurrent commits through `be0d5f97`,
+including their native controls, workflow denominators and all 384 source pins.
+New PQ fixture cleanup retains the original send error and observes actual worker
+join and independent Child exit under one unchanged ten-second cleanup deadline;
+late completion cannot override that deadline or erase observed durable facts.
+Owners retain their private directory until actual termination. Two new ordinary
+Submit controls compile, but their first local execution stops at Unix socket
+binding with executor EPERM before Submit, so neither is reported as passed.
+The original source-362 full Node failure (950/1/23, native exit 101) and witness
+250 ms failure remain separate blockers. This fixture diagnostic correction does
+not establish their root cause or original-service acceptance.

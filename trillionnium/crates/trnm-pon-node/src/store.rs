@@ -176,6 +176,8 @@ type ReplayRow = (
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
+#[cfg(test)]
+mod admission_wire_tests;
 mod authenticated_pending_activation;
 mod detached_admission;
 pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
@@ -3444,7 +3446,9 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode_for_settings(&self.settings)?;
+        // Keep the complete encoder grammar at its original boundary. New
+        // packets need no owned wire copy until the actual persistence step.
+        packet.checked_wire_length_for_settings(&self.settings)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3460,6 +3464,7 @@ impl Node {
             )
             .optional()?;
         if let Some(prior) = previous {
+            let bytes = packet.encode_for_settings(&self.settings)?;
             ensure(prior == bytes, "DUPLICATE_CONTENT")?;
             // Immutable work can be cached; a previous caller's clock cannot.
             ensure(
