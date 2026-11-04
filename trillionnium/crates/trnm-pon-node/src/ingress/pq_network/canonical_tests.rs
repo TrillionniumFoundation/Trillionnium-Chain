@@ -40,6 +40,269 @@ pub(crate) fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
     );
     (settings, policy)
 }
+
+#[test]
+fn shared_legacy_pnq2_contract_retains_exact_limits_domains_and_hash_vectors() {
+    use trnm_protocol::pq_legacy_profile::RESPONSE_BYTES_DOMAIN;
+
+    assert_eq!(PROFILE, "native-pq-network-owner-v2");
+    assert_eq!(RESPONSE_SCHEMA, "native-pq-network-response-v2");
+    assert_eq!(TRANSPORT_MODE, "loopback-signed-plaintext-dev-only");
+    assert_eq!(REQUEST_MAGIC, b"PNQ2");
+    assert_eq!(RESPONSE_MAGIC, b"PNP2");
+    assert_eq!(PEER_PURPOSE, 6);
+    assert_eq!(Direction::Request as u8, 1);
+    assert_eq!(Direction::Response as u8, 2);
+    assert_eq!(MAX_WIRE, 2_097_152);
+    assert_eq!(MAX_SIGNED_PAYLOAD_BYTES, 2_093_657);
+    assert_eq!(MAX_LEDGER_BYTES, 16_777_216);
+    assert_eq!(MAX_RECORDS, 4_096);
+    assert_eq!(MAX_PEERS, 64);
+    assert_eq!(MAX_INGRESS_CONNECTIONS, 64);
+    assert_eq!(MAX_INGRESS_BYTES, 33_554_432);
+    assert_eq!(MAX_INBOUND_VERIFICATIONS, 64);
+    assert_eq!(MAX_LIFETIME_SECONDS, 60);
+
+    // Golden outputs use the original domains and SHA-256 framing, derived
+    // independently with Python hashlib/struct, not the new profile serializer.
+    for (domain, expected) in [
+        (
+            POLICY_DOMAIN,
+            "2be54c0ca9570de71201bbdf0b6881516b62f4caa167840c50f5e9be8e488fd6",
+        ),
+        (
+            OPERATION_DOMAIN,
+            "f7c120f544c61a207330351768764ab4c29ff8b09a15920495f837ddb2191040",
+        ),
+        (
+            RESPONSE_BYTES_DOMAIN,
+            "5539f148208d3e95c6c6d755df8a548b751748332c9679283e208ea54a17b2e9",
+        ),
+    ] {
+        assert_eq!(hex::encode(hash(domain, &[b"legacy-vector-v1"])), expected);
+    }
+    for (direction, expected) in [
+        (
+            Direction::Request,
+            "bf536aa20bfe6fa08b5ec265f136fbeb2ae57801bec0500c931e9e2c5ae0df59",
+        ),
+        (
+            Direction::Response,
+            "63d605449dbb11db59c7e61bf5da0bc4d3c48bcfb24d01a724c106312f07cd98",
+        ),
+    ] {
+        assert_eq!(
+            hex::encode(hash(
+                PEER_CONTEXT_DOMAIN,
+                &[&[1; 32], &[2; 32], &[direction as u8]],
+            )),
+            expected
+        );
+    }
+}
+
+#[test]
+fn crypto_profile_claim_is_bound_to_the_original_peer_and_account_owners() {
+    let (settings, policy) = setup();
+    let binding = ProfileBinding {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        protocol_version: 2,
+        scope: ProfileScope::NativePeer,
+        activation_height: 0,
+        retirement_height: None,
+    };
+    let selected = CryptoProfile::LegacyMlDsa65V1.bind(binding).unwrap();
+    assert_eq!(policy.crypto_profile_id(), selected.id());
+    let original_record = policy.canonical().to_vec();
+    let original_policy_id = policy.id();
+    policy.require_profile_claim(selected.id()).unwrap();
+    for candidate in [
+        CryptoProfile::CandidateMlDsa65V1,
+        CryptoProfile::CandidateMlDsa87V1,
+    ] {
+        assert!(candidate.bind(binding).is_err());
+        let candidate_binding = ProfileBinding {
+            scope: ProfileScope::WholeSystemCandidate,
+            protocol_version: 1,
+            ..binding
+        };
+        let error = policy
+            .require_profile_claim(candidate.bind(candidate_binding).unwrap().id())
+            .unwrap_err();
+        assert_eq!(error.to_string(), "PQ_NETWORK_CRYPTO_PROFILE");
+    }
+    let mut other_network = binding;
+    other_network.network[0] ^= 1;
+    let mut other_genesis = binding;
+    other_genesis.genesis[0] ^= 1;
+    let mut other_parameters = binding;
+    other_parameters.parameters[0] ^= 1;
+    for changed in [other_network, other_genesis, other_parameters] {
+        assert!(policy
+            .require_profile_claim(CryptoProfile::LegacyMlDsa65V1.bind(changed).unwrap().id())
+            .is_err());
+    }
+    let mut other_version = binding;
+    other_version.protocol_version += 1;
+    assert!(CryptoProfile::LegacyMlDsa65V1.bind(other_version).is_err());
+    // A public declaration never changes the existing canonical policy or
+    // signed context, whether the declaration is accepted or rejected.
+    assert_eq!(policy.canonical(), original_record);
+    assert_eq!(policy.id(), original_policy_id);
+
+    let account_binding = ProfileBinding {
+        scope: ProfileScope::NativeAccounts,
+        protocol_version: 6,
+        ..binding
+    };
+    let accounts_id = accounts::crypto_profile_id(&settings.app).unwrap();
+    assert_eq!(
+        accounts_id,
+        CryptoProfile::LegacyMlDsa65V1
+            .bind(account_binding)
+            .unwrap()
+            .id()
+    );
+    assert_ne!(accounts_id, policy.crypto_profile_id());
+    assert!(policy.require_profile_claim(accounts_id).is_err());
+    // The account accessor must go through the original configuration owner,
+    // not trust a copied selector or derive an ID from altered caller fields.
+    let mut altered = settings.app.clone();
+    altered.parameters[0] ^= 1;
+    assert_eq!(
+        accounts::crypto_profile_id(&altered),
+        Err("PQ2_CONFIG_CHANGED")
+    );
+    let classical = Settings::development(Some(settings.genesis_time())).unwrap();
+    assert_eq!(
+        accounts::crypto_profile_id(&classical.app),
+        Err("PQ2_PROFILE_REQUIRED")
+    );
+}
+
+#[test]
+fn retained_expired_signature_cannot_authorize_current_ingress() {
+    let (settings, policy) = setup();
+    let now = super::super::now().unwrap();
+    let expiry = now - 1;
+    let peer = key(72);
+    let payload = serde_json::to_vec(&Request::Head).unwrap();
+    let expected = policy.expectation(
+        peer.public_key_id(),
+        Direction::Request,
+        1,
+        expiry,
+        expiry,
+        &payload,
+    );
+    // The complete original TPQ1 message has a real valid ML-DSA signature.
+    // No post-signing expiry mutation or unavailable-verifier stub is used.
+    let frame = peer
+        .sign_statement(&statement(&expected).unwrap(), &expected)
+        .unwrap();
+    let wire = encode_wire(REQUEST_MAGIC, &frame, &payload).unwrap();
+    let retained = policy.verify_retained_request(&wire).unwrap();
+    assert_eq!(retained.peer(), peer.public_key_id());
+    assert_eq!(retained.sequence(), 1);
+    assert_eq!(retained.expiry(), expiry);
+    let mut reserved = 0;
+    let refused = policy
+        .verify_request_metered(&wire, now, &mut || {
+            reserved += 1;
+            Ok(())
+        })
+        .err()
+        .expect("current verification must reject the real expired signature");
+    assert!(refused.to_string().contains("Expired"), "{refused}");
+    assert_eq!(
+        reserved, 1,
+        "verification refusal does not refund its attempt"
+    );
+    let response_body = serde_json::to_vec(&PqResponse {
+        schema: "native-pq-network-response-v2".into(),
+        operation: hex::encode(retained.operation()),
+        ok: true,
+        value: serde_json::json!({"historical": true}),
+    })
+    .unwrap();
+    let response_expectation = policy.expectation(
+        peer.public_key_id(),
+        Direction::Response,
+        1,
+        expiry,
+        expiry,
+        &response_body,
+    );
+    let response_frame = key(71)
+        .sign_statement(
+            &statement(&response_expectation).unwrap(),
+            &response_expectation,
+        )
+        .unwrap();
+    let response = encode_wire(RESPONSE_MAGIC, &response_frame, &response_body).unwrap();
+    policy
+        .verify_retained_response(&response, &retained)
+        .unwrap();
+
+    let mut invalid = wire.clone();
+    invalid[8 + TPQ1_UNSIGNED_BYTES + 2] ^= 1;
+    assert!(policy.verify_retained_request(&invalid).is_err());
+    let mut invalid_response = response;
+    invalid_response[8 + TPQ1_UNSIGNED_BYTES + 2] ^= 1;
+    assert!(policy
+        .verify_retained_response(&invalid_response, &retained)
+        .is_err());
+
+    // Submit the unchanged expired wire through the actual live owner. Its
+    // existing deadline gate refuses even before a durable attempt is reserved;
+    // no request is admitted and the original State/charging rules stay intact.
+    let dir = tempfile::tempdir().unwrap();
+    let node =
+        Mutex::new(Node::open_with_pq_network(dir.path(), settings.clone(), 1, &policy).unwrap());
+    let before = node.lock().unwrap().active().unwrap();
+    let initial = node.lock().unwrap().state_at(settings.genesis()).unwrap();
+    let server = PqServer::new(policy.clone(), key(71)).unwrap();
+    let error = server
+        .handle(&node, &wire, Instant::now() + Duration::from_secs(10))
+        .unwrap_err();
+    assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED");
+    let owner = node.into_inner().unwrap();
+    assert_eq!(owner.active().unwrap(), before);
+    assert_eq!(owner.state_at(settings.genesis()).unwrap(), initial);
+    let status = owner.pq_network_status(&policy).unwrap();
+    assert_eq!(status["records"], 0);
+    assert_eq!(status["inbound_signature_attempts"], 0);
+    drop(owner);
+    let reopened = Node::open_with_pq_network(dir.path(), settings, 1, &policy).unwrap();
+    assert_eq!(reopened.active().unwrap(), before);
+    assert_eq!(reopened.pq_network_status(&policy).unwrap(), status);
+}
+
+#[test]
+fn retained_request_has_no_live_request_conversion() {
+    // Compile-time negative controls. Adding an Into/From or Deref promotion,
+    // or making RetainedRequest a live-request type alias, makes inference
+    // ambiguous and this exact test source fail compilation. No external
+    // privacy error can falsely satisfy this internal type-boundary check.
+    trait AmbiguousIfIntoLive<A> {
+        fn check() {}
+    }
+    impl<T: ?Sized> AmbiguousIfIntoLive<()> for T {}
+    struct Converts;
+    impl<T: Into<VerifiedRequest>> AmbiguousIfIntoLive<Converts> for T {}
+    let _ = <RetainedRequest as AmbiguousIfIntoLive<_>>::check;
+
+    trait AmbiguousIfDerefLive<A> {
+        fn check() {}
+    }
+    impl<T: ?Sized> AmbiguousIfDerefLive<()> for T {}
+    struct Dereferences;
+    impl<T: std::ops::Deref<Target = VerifiedRequest>> AmbiguousIfDerefLive<Dereferences> for T {}
+    let _ = <RetainedRequest as AmbiguousIfDerefLive<_>>::check;
+}
+
 pub(crate) fn transfer(settings: &Settings) -> Vec<u8> {
     let payload = [
         key(2).public_key_id().as_slice(),

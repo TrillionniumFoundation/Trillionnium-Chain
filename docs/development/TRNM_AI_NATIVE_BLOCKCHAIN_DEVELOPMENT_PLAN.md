@@ -52,6 +52,32 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Bound crypto configuration and parameter candidates — 2026-11-04
+
+Continue existing PQ integration PR #698 from exact
+`5a5ddbd4577207af7f7771a4a50c76620f32940f`. The
+[versioned cryptographic configuration](../security/CRYPTO_PROFILE_V1_20261104.md)
+binds algorithm/mode/encoding, per-use hashes, network/genesis/parameters,
+namespace, protocol version, activation interval and deterministic budgets.
+Trusted state selects a configuration; a received ID only compares with it.
+Current and historical selection results are distinct types, and state-generation
+rechecks remain separate from cached signature facts.
+
+Existing PNQ2 and NPQ2–NPQ6 owners expose a fixed ML-DSA-65 descriptor mapping
+without changing their historical bytes or stored schema. PNQ2 retained audit
+facts no longer carry a live request or convert to the admission type. Candidate
+CPQ1 performs actual complete multi-signature verification using explicit
+ML-DSA-65/87 suites and profile-bound SHA-512 key identities. Both candidates
+are rejected for current effects; signature observations cannot activate them.
+
+Keep the original W1 configuration, full verifier, challenge/ticket, CPU limits,
+45 required PQ selectors, rollback obligations and all qualification negatives.
+The local fixed-input parameter observer is distinct from original-budget
+business/WAN acceptance. Governance/release/CURRENT/FinalUse migration,
+whole-effect monotonic recovery, independent full capacity and W1 quantum/work
+qualification remain open. Exact native and reproduction results belong to this
+new source only; prior #698 evidence is not relabeled as a new execution.
+
 #### PoN exact-fact decoding and honest-rate sensitivity — 2026-11-03
 
 Continue the composed PR #688 source `e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`.
