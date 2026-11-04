@@ -1,0 +1,896 @@
+{
+  "schema": "69d-format-lint-and-baseline-queue-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "scope_statement": "This document separates actual exact-source formatting/strict-lint execution from a workflow-concurrency queue observation. It does not qualify full-workspace linking, full native suites, business confirmation, SLOs, or another source.",
+  "source": {
+    "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "actual_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "parent": "b8116f65789a85148254f870c678a44f895316de",
+    "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+    "changed_path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+    "changed_blob": "e4c01b37441886f1359c016efb30f190eda98aa0"
+  },
+  "format_lint": {
+    "workflow": {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "kind": "branch-workflow",
+      "bytes": 14436,
+      "sha256": "168e0d6a4cae5ee35cf6fc372d52044d3257ef99b5bcc119fdc8f8ff3199ece5",
+      "git_blob_sha": "1d4022888c91e5153482eb10bd3185cd6675eb18",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/.github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    "run": 41799271300,
+    "run_attempt": 1,
+    "lanes": [
+      {
+        "job_id": 126470754924,
+        "job_name": "branch encoding (ubuntu-24.04, head)",
+        "run_id": 41799271300,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T08:24:40Z",
+        "completed_at": "2026-11-04T08:38:17Z",
+        "source_kind": "head",
+        "source_pair": [
+          {
+            "start_line": 872,
+            "end_line": 884,
+            "record": {
+              "base": null,
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          },
+          {
+            "start_line": 2348,
+            "end_line": 2360,
+            "record": {
+              "base": null,
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          }
+        ],
+        "source_pair_equal": true,
+        "audit": {
+          "line": 885,
+          "record": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        },
+        "format": {
+          "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"",
+          "command_line": 928,
+          "step": {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T08:26:50Z",
+            "completed_at": "2026-11-04T08:27:00Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "strict_node_clippy": {
+          "command": "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"",
+          "command_line": 2234,
+          "actual_finished_line": {
+            "line": 2318,
+            "text": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 34.45s"
+          },
+          "step": {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T08:37:36Z",
+            "completed_at": "2026-11-04T08:38:11Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "raw_log": {
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/job/126470754924",
+          "utf8_bytes": 267220,
+          "sha256": "3c3bd2c9be9ed8d65fb3e99a74c5057ea321be1302e80120fba2d667784e72e2",
+          "complete_response_retained_in_session": true,
+          "full_log_embedded": false
+        },
+        "literal_blocks": [
+          {
+            "name": "source_before_and_audit",
+            "start_line": 844,
+            "end_line": 885,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nout=\"$RUNNER_TEMP/branch-exact\"\nmkdir -p \"$out\"\necho \"OUT=$out\" >> \"$GITHUB_ENV\"\necho \"CARGO_TARGET_DIR=$RUNNER_TEMP/target-branch-exact\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)\" = 2bf225d0dbfbe82ab608bf05692937bbce5ea616\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)\" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)\" = 6bd1deafeedef4955202a3fb76e87225b6989a75\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)\" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)\" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4\nbash scripts/project-preflight.sh --audit\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n##[endgroup]\n{\n  \"base\": null,\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}\n{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+            "bytes": 2200,
+            "sha256": "0ec59bad8199835f61a25d2db41a0e31143c8d9a52fe2eb7856651f43d52d15c"
+          },
+          {
+            "name": "format_complete_step",
+            "start_line": 926,
+            "end_line": 948,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 4b98ff3c7bbae750e4a1f9cb8ece6943d3f70a839a0470608bca36bd823116d6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/lib/ossl-modules\n##[endgroup]",
+            "bytes": 1073,
+            "sha256": "d75aff59178f2e7859153e522852227d8c77fff7a5def8ae96228fefc72bd032"
+          },
+          {
+            "name": "strict_node_clippy_complete_step",
+            "start_line": 2232,
+            "end_line": 2318,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 4b98ff3c7bbae750e4a1f9cb8ece6943d3f70a839a0470608bca36bd823116d6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/lib/ossl-modules\n##[endgroup]\n Downloading crates ...\n  Downloaded foreign-types v0.3.2\n  Downloaded openssl-macros v0.1.1\n  Downloaded foreign-types-shared v0.1.1\n  Downloaded openssl-sys v0.9.117\n  Downloaded openssl v0.10.81\n    Checking zeroize v1.8.2\n    Checking bitflags v2.11.0\n    Checking hybrid-array v0.4.15\n    Checking libc v0.2.184\n   Compiling curve25519-dalek v4.1.3\n    Checking foldhash v0.2.0\n    Checking hashbrown v0.16.1\n   Compiling generic-array v0.14.7\n    Checking crypto-common v0.2.2\n   Compiling openssl-sys v0.9.117\n    Checking signature v2.2.0\n    Checking subtle v2.6.1\n    Checking digest v0.11.3\n    Checking ed25519 v2.2.3\n    Checking hashlink v0.11.1\n    Checking libsqlite3-sys v0.37.0\n    Checking fallible-iterator v0.3.0\n    Checking smallvec v1.15.1\n    Checking fallible-streaming-iterator v0.1.9\n    Checking ed25519-dalek v2.2.0\n    Checking rusqlite v0.39.0\n    Checking serde v1.0.228\n   Compiling block-buffer v0.10.4\n   Compiling crypto-common v0.1.7\n   Compiling openssl v0.10.81\n    Checking foreign-types-shared v0.1.1\n    Checking shake v0.1.0\n    Checking foreign-types v0.3.2\n    Checking thiserror v1.0.69\n   Compiling digest v0.10.7\n    Checking borsh v1.8.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n   Compiling openssl-macros v0.1.1\n   Compiling cpufeatures v0.2.17\n   Compiling cfg-if v1.0.4\n    Checking trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)\n   Compiling sha2 v0.10.9\n    Checking ml-dsa v0.1.1\n    Checking anyhow v1.0.103\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking rustix v1.1.4\n   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)\n    Checking getrandom v0.4.2\n    Checking trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)\n    Checking fs2 v0.4.3\n    Checking trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)\n    Checking fastrand v2.3.0\n    Checking once_cell v1.21.4\n    Checking tempfile v3.27.0\n    Checking trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)\n    Checking trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)\n    Checking trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)\n    Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)\n    Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)\n    Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 34.45s",
+            "bytes": 4332,
+            "sha256": "2bff3c554cecae96d6ea18b326ab15132bc3e4e2b4b3b759b76c36c4d14fffe9"
+          },
+          {
+            "name": "source_after",
+            "start_line": 2319,
+            "end_line": 2360,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$OUT/source-after.json\"\nsha256sum \"$OUT\"/*.log > \"$OUT/logs.sha256\"\nprintf 'Exact account-branch byte encoding and retained native checks only. Ignored original whole-capacity and long-cost experiments remain separate; original priority/full baseline still required. No work-proof qualification, whole-node speed, Sybil fairness, real model adoption, physical power loss, independent operators or WAN TPS claimed. Full ancestry/state traversal remains.\\n' > \"$OUT/SCOPE.txt\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 4b98ff3c7bbae750e4a1f9cb8ece6943d3f70a839a0470608bca36bd823116d6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.AYeoGek8/install/lib/ossl-modules\n##[endgroup]\n{\n  \"base\": null,\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}",
+            "bytes": 2119,
+            "sha256": "d7bbaeb3acc2dfec68204906f2e4e9d2baded1318e9e5dc9f4809d99901dffa0"
+          },
+          {
+            "name": "artifact_upload_finalization",
+            "start_line": 2396,
+            "end_line": 2402,
+            "text": "Uploaded bytes 869911\nFinished uploading artifact content to blob storage!\nSHA256 digest of uploaded artifact zip is 7bebff908d145352824d18da80a2ef9465338d8b45235547e81c4694bced9fc3\nFinalizing artifact upload\nArtifact branch-exact-ubuntu-24.04-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1.zip successfully finalized. Artifact ID 13307991143\nArtifact branch-exact-ubuntu-24.04-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1 has been successfully uploaded! Final size is 869911 bytes. Artifact ID is 13307991143\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307991143",
+            "bytes": 644,
+            "sha256": "c247cbc5cee6ea95ac5e9ec1432e62dc16ea44611ad2757be1498601e71abfe5"
+          }
+        ],
+        "artifact": {
+          "id": 13307991143,
+          "name": "branch-exact-ubuntu-24.04-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+          "size_in_bytes": 869911,
+          "digest": "sha256:7bebff908d145352824d18da80a2ef9465338d8b45235547e81c4694bced9fc3",
+          "expired": false,
+          "workflow_run": {
+            "id": 41799271300,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-six-axis-performance-20261103",
+            "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361"
+          },
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307991143",
+          "upload_stdout_matches_API": true,
+          "downloaded": false
+        },
+        "full_native_counts": null,
+        "full_native_qualification": false
+      },
+      {
+        "job_id": 126470755315,
+        "job_name": "branch encoding (ubuntu-24.04-arm, prospective-merge)",
+        "run_id": 41799271300,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T08:24:42Z",
+        "completed_at": "2026-11-04T08:41:30Z",
+        "source_kind": "prospective-merge",
+        "source_pair": [
+          {
+            "start_line": 874,
+            "end_line": 886,
+            "record": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "prospective-merge",
+              "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          },
+          {
+            "start_line": 2355,
+            "end_line": 2367,
+            "record": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "prospective-merge",
+              "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          }
+        ],
+        "source_pair_equal": true,
+        "audit": {
+          "line": 887,
+          "record": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        },
+        "format": {
+          "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"",
+          "command_line": 930,
+          "step": {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T08:26:50Z",
+            "completed_at": "2026-11-04T08:27:00Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "strict_node_clippy": {
+          "command": "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"",
+          "command_line": 2239,
+          "actual_finished_line": {
+            "line": 2325,
+            "text": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 38.60s"
+          },
+          "step": {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T08:40:46Z",
+            "completed_at": "2026-11-04T08:41:25Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "raw_log": {
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/job/126470755315",
+          "utf8_bytes": 268263,
+          "sha256": "376d996b178fdae9dd24ab75126303d49cb27678e08ce9f1dea6e2dab70bf67e",
+          "complete_response_retained_in_session": true,
+          "full_log_embedded": false
+        },
+        "literal_blocks": [
+          {
+            "name": "source_before_and_audit",
+            "start_line": 846,
+            "end_line": 887,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nout=\"$RUNNER_TEMP/branch-exact\"\nmkdir -p \"$out\"\necho \"OUT=$out\" >> \"$GITHUB_ENV\"\necho \"CARGO_TARGET_DIR=$RUNNER_TEMP/target-branch-exact\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)\" = 2bf225d0dbfbe82ab608bf05692937bbce5ea616\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)\" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)\" = 6bd1deafeedef4955202a3fb76e87225b6989a75\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)\" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)\" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4\nbash scripts/project-preflight.sh --audit\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n##[endgroup]\n{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}\n{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+            "bytes": 2302,
+            "sha256": "ff94b96166b6314c011cab18a71f477f2cf1ab8ef89c104272e96cc6a221690f"
+          },
+          {
+            "name": "format_complete_step",
+            "start_line": 928,
+            "end_line": 950,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 1b657cc5ed8d2dda520288505e7002463c992f12b258e7a132542e5079b81ae6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/lib/ossl-modules\n##[endgroup]",
+            "bytes": 1086,
+            "sha256": "bf2da3ec8a32c2ffd89a92a9651dac25f891a063c0592cfe0e35ff1f7d81701d"
+          },
+          {
+            "name": "strict_node_clippy_complete_step",
+            "start_line": 2237,
+            "end_line": 2325,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 1b657cc5ed8d2dda520288505e7002463c992f12b258e7a132542e5079b81ae6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/lib/ossl-modules\n##[endgroup]\n Downloading crates ...\n  Downloaded foreign-types-shared v0.1.1\n  Downloaded foreign-types v0.3.2\n  Downloaded openssl-macros v0.1.1\n  Downloaded openssl-sys v0.9.117\n  Downloaded openssl v0.10.81\n    Checking libc v0.2.184\n    Checking zeroize v1.8.2\n    Checking bitflags v2.11.0\n    Checking hybrid-array v0.4.15\n    Checking cpufeatures v0.2.17\n    Checking sha2 v0.10.9\n   Compiling curve25519-dalek v4.1.3\n    Checking foldhash v0.2.0\n   Compiling generic-array v0.14.7\n    Checking hashbrown v0.16.1\n    Checking crypto-common v0.2.2\n   Compiling openssl-sys v0.9.117\n    Checking signature v2.2.0\n    Checking subtle v2.6.1\n    Checking digest v0.11.3\n    Checking ed25519 v2.2.3\n    Checking hashlink v0.11.1\n    Checking libsqlite3-sys v0.37.0\n    Checking cpufeatures v0.3.1\n    Checking smallvec v1.15.1\n    Checking fallible-streaming-iterator v0.1.9\n    Checking fallible-iterator v0.3.0\n    Checking keccak v0.2.2\n    Checking serde v1.0.228\n    Checking rusqlite v0.39.0\n    Checking ed25519-dalek v2.2.0\n   Compiling block-buffer v0.10.4\n   Compiling crypto-common v0.1.7\n    Checking foreign-types-shared v0.1.1\n   Compiling openssl v0.10.81\n    Checking shake v0.1.0\n    Checking foreign-types v0.3.2\n    Checking thiserror v1.0.69\n   Compiling digest v0.10.7\n    Checking borsh v1.8.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n   Compiling openssl-macros v0.1.1\n   Compiling cfg-if v1.0.4\n    Checking trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)\n    Checking ml-dsa v0.1.1\n    Checking anyhow v1.0.103\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking rustix v1.1.4\n   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)\n    Checking getrandom v0.4.2\n    Checking trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)\n    Checking trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)\n    Checking fs2 v0.4.3\n    Checking fastrand v2.3.0\n    Checking once_cell v1.21.4\n    Checking trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)\n    Checking tempfile v3.27.0\n    Checking trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)\n    Checking trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)\n    Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)\n    Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)\n    Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 38.60s",
+            "bytes": 4404,
+            "sha256": "628909b43284dbeea965b19cfbaa9e9dffc5fccbf3dd817afe591134184f4636"
+          },
+          {
+            "name": "source_after",
+            "start_line": 2326,
+            "end_line": 2367,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$OUT/source-after.json\"\nsha256sum \"$OUT\"/*.log > \"$OUT/logs.sha256\"\nprintf 'Exact account-branch byte encoding and retained native checks only. Ignored original whole-capacity and long-cost experiments remain separate; original priority/full baseline still required. No work-proof qualification, whole-node speed, Sybil fairness, real model adoption, physical power loss, independent operators or WAN TPS claimed. Full ancestry/state traversal remains.\\n' > \"$OUT/SCOPE.txt\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 1b657cc5ed8d2dda520288505e7002463c992f12b258e7a132542e5079b81ae6\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.3LPuYeLI/install/lib/ossl-modules\n##[endgroup]\n{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}",
+            "bytes": 2221,
+            "sha256": "d45ba3f7e5033a357b41f709c4b793ff785c35a6383eb31f774dc956249bcbec"
+          },
+          {
+            "name": "artifact_upload_finalization",
+            "start_line": 2403,
+            "end_line": 2409,
+            "text": "Uploaded bytes 865659\nFinished uploading artifact content to blob storage!\nSHA256 digest of uploaded artifact zip is 0f00f6c26dd8ac73c77e39e43cfff670cd7562b3abae574c9e8b3307aa9d1637\nFinalizing artifact upload\nArtifact branch-exact-ubuntu-24.04-arm-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1.zip successfully finalized. Artifact ID 13307479031\nArtifact branch-exact-ubuntu-24.04-arm-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1 has been successfully uploaded! Final size is 865659 bytes. Artifact ID is 13307479031\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307479031",
+            "bytes": 678,
+            "sha256": "f7a26265f3f29835ea79fa9044c30a3557d23f128fb877ed61aca51c947c4c89"
+          }
+        ],
+        "artifact": {
+          "id": 13307479031,
+          "name": "branch-exact-ubuntu-24.04-arm-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+          "size_in_bytes": 865659,
+          "digest": "sha256:0f00f6c26dd8ac73c77e39e43cfff670cd7562b3abae574c9e8b3307aa9d1637",
+          "expired": false,
+          "workflow_run": {
+            "id": 41799271300,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-six-axis-performance-20261103",
+            "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361"
+          },
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307479031",
+          "upload_stdout_matches_API": true,
+          "downloaded": false
+        },
+        "full_native_counts": null,
+        "full_native_qualification": false
+      },
+      {
+        "job_id": 126470755319,
+        "job_name": "branch encoding (ubuntu-24.04, prospective-merge)",
+        "run_id": 41799271300,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T08:24:40Z",
+        "completed_at": "2026-11-04T08:41:20Z",
+        "source_kind": "prospective-merge",
+        "source_pair": [
+          {
+            "start_line": 879,
+            "end_line": 891,
+            "record": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "prospective-merge",
+              "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          },
+          {
+            "start_line": 2355,
+            "end_line": 2367,
+            "record": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "prospective-merge",
+              "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          }
+        ],
+        "source_pair_equal": true,
+        "audit": {
+          "line": 892,
+          "record": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        },
+        "format": {
+          "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"",
+          "command_line": 935,
+          "step": {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T08:27:02Z",
+            "completed_at": "2026-11-04T08:27:15Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "strict_node_clippy": {
+          "command": "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"",
+          "command_line": 2241,
+          "actual_finished_line": {
+            "line": 2325,
+            "text": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 45.64s"
+          },
+          "step": {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T08:40:29Z",
+            "completed_at": "2026-11-04T08:41:15Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "raw_log": {
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/job/126470755319",
+          "utf8_bytes": 268274,
+          "sha256": "f902d4d63992d51cdeeb253be6d024b1fe70ccbe4cbd6c9e11bd5989ee3fbdd7",
+          "complete_response_retained_in_session": true,
+          "full_log_embedded": false
+        },
+        "literal_blocks": [
+          {
+            "name": "source_before_and_audit",
+            "start_line": 851,
+            "end_line": 892,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nout=\"$RUNNER_TEMP/branch-exact\"\nmkdir -p \"$out\"\necho \"OUT=$out\" >> \"$GITHUB_ENV\"\necho \"CARGO_TARGET_DIR=$RUNNER_TEMP/target-branch-exact\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)\" = 2bf225d0dbfbe82ab608bf05692937bbce5ea616\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)\" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)\" = 6bd1deafeedef4955202a3fb76e87225b6989a75\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)\" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)\" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4\nbash scripts/project-preflight.sh --audit\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n##[endgroup]\n{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}\n{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+            "bytes": 2302,
+            "sha256": "ff94b96166b6314c011cab18a71f477f2cf1ab8ef89c104272e96cc6a221690f"
+          },
+          {
+            "name": "format_complete_step",
+            "start_line": 933,
+            "end_line": 955,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 65175ed1fef04a73d844b713d470fd217fcf8479909f73e3bdd93da9b011fc8d\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/lib/ossl-modules\n##[endgroup]",
+            "bytes": 1086,
+            "sha256": "481b798e145c8bc8bd034f68b94c5b4067bc41721760a63ef51c5926b1754689"
+          },
+          {
+            "name": "strict_node_clippy_complete_step",
+            "start_line": 2239,
+            "end_line": 2325,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 65175ed1fef04a73d844b713d470fd217fcf8479909f73e3bdd93da9b011fc8d\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/lib/ossl-modules\n##[endgroup]\n Downloading crates ...\n  Downloaded openssl-macros v0.1.1\n  Downloaded foreign-types v0.3.2\n  Downloaded foreign-types-shared v0.1.1\n  Downloaded openssl-sys v0.9.117\n  Downloaded openssl v0.10.81\n    Checking zeroize v1.8.2\n    Checking bitflags v2.11.0\n    Checking hybrid-array v0.4.15\n    Checking libc v0.2.184\n   Compiling curve25519-dalek v4.1.3\n    Checking foldhash v0.2.0\n   Compiling generic-array v0.14.7\n    Checking hashbrown v0.16.1\n    Checking crypto-common v0.2.2\n   Compiling openssl-sys v0.9.117\n    Checking signature v2.2.0\n    Checking subtle v2.6.1\n    Checking digest v0.11.3\n    Checking ed25519 v2.2.3\n    Checking hashlink v0.11.1\n    Checking libsqlite3-sys v0.37.0\n    Checking fallible-iterator v0.3.0\n    Checking fallible-streaming-iterator v0.1.9\n    Checking smallvec v1.15.1\n    Checking ed25519-dalek v2.2.0\n    Checking serde v1.0.228\n    Checking rusqlite v0.39.0\n   Compiling crypto-common v0.1.7\n   Compiling block-buffer v0.10.4\n    Checking foreign-types-shared v0.1.1\n   Compiling openssl v0.10.81\n    Checking shake v0.1.0\n    Checking foreign-types v0.3.2\n    Checking thiserror v1.0.69\n   Compiling digest v0.10.7\n    Checking borsh v1.8.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n   Compiling openssl-macros v0.1.1\n   Compiling cfg-if v1.0.4\n   Compiling cpufeatures v0.2.17\n    Checking trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)\n   Compiling sha2 v0.10.9\n    Checking ml-dsa v0.1.1\n    Checking anyhow v1.0.103\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking rustix v1.1.4\n   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)\n    Checking getrandom v0.4.2\n    Checking trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)\n    Checking trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)\n    Checking fs2 v0.4.3\n    Checking once_cell v1.21.4\n    Checking fastrand v2.3.0\n    Checking tempfile v3.27.0\n    Checking trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)\n    Checking trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)\n    Checking trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)\n    Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)\n    Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)\n    Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 45.64s",
+            "bytes": 4345,
+            "sha256": "dc4689b71dc38a31b05e0f442e89432192400d8e0c5e1ac55421a7edb2cd34d5"
+          },
+          {
+            "name": "source_after",
+            "start_line": 2326,
+            "end_line": 2367,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$OUT/source-after.json\"\nsha256sum \"$OUT\"/*.log > \"$OUT/logs.sha256\"\nprintf 'Exact account-branch byte encoding and retained native checks only. Ignored original whole-capacity and long-cost experiments remain separate; original priority/full baseline still required. No work-proof qualification, whole-node speed, Sybil fairness, real model adoption, physical power loss, independent operators or WAN TPS claimed. Full ancestry/state traversal remains.\\n' > \"$OUT/SCOPE.txt\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: prospective-merge\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: 65175ed1fef04a73d844b713d470fd217fcf8479909f73e3bdd93da9b011fc8d\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.wMNf0uKw/install/lib/ossl-modules\n##[endgroup]\n{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}",
+            "bytes": 2221,
+            "sha256": "d8e0fb8af038f15c865121f8f33c3133dd355cc2d191edc16a832931c8e044cc"
+          },
+          {
+            "name": "artifact_upload_finalization",
+            "start_line": 2403,
+            "end_line": 2409,
+            "text": "Uploaded bytes 871315\nFinished uploading artifact content to blob storage!\nSHA256 digest of uploaded artifact zip is 10672a7b81be10a90b8fa756c1869f4dc49894c795d031e99c5e941be55790a4\nFinalizing artifact upload\nArtifact branch-exact-ubuntu-24.04-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1.zip successfully finalized. Artifact ID 13306644345\nArtifact branch-exact-ubuntu-24.04-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1 has been successfully uploaded! Final size is 871315 bytes. Artifact ID is 13306644345\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13306644345",
+            "bytes": 670,
+            "sha256": "a09040b828237938c9064c7e077fafb8de0f4cbeb520f50716ad3ecf726878f3"
+          }
+        ],
+        "artifact": {
+          "id": 13306644345,
+          "name": "branch-exact-ubuntu-24.04-prospective-merge-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+          "size_in_bytes": 871315,
+          "digest": "sha256:10672a7b81be10a90b8fa756c1869f4dc49894c795d031e99c5e941be55790a4",
+          "expired": false,
+          "workflow_run": {
+            "id": 41799271300,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-six-axis-performance-20261103",
+            "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361"
+          },
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13306644345",
+          "upload_stdout_matches_API": true,
+          "downloaded": false
+        },
+        "full_native_counts": null,
+        "full_native_qualification": false
+      },
+      {
+        "job_id": 126470755461,
+        "job_name": "branch encoding (ubuntu-24.04-arm, head)",
+        "run_id": 41799271300,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T08:24:42Z",
+        "completed_at": "2026-11-04T08:41:31Z",
+        "source_kind": "head",
+        "source_pair": [
+          {
+            "start_line": 872,
+            "end_line": 884,
+            "record": {
+              "base": null,
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          },
+          {
+            "start_line": 2353,
+            "end_line": 2365,
+            "record": {
+              "base": null,
+              "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+              "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 933472602,
+              "tracked_entries": 8127,
+              "tracked_worktree_verified": true
+            }
+          }
+        ],
+        "source_pair_equal": true,
+        "audit": {
+          "line": 885,
+          "record": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        },
+        "format": {
+          "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"",
+          "command_line": 928,
+          "step": {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T08:26:57Z",
+            "completed_at": "2026-11-04T08:27:07Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "strict_node_clippy": {
+          "command": "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"",
+          "command_line": 2237,
+          "actual_finished_line": {
+            "line": 2323,
+            "text": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 39.38s"
+          },
+          "step": {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T08:40:47Z",
+            "completed_at": "2026-11-04T08:41:27Z"
+          },
+          "literal_numeric_exit": null
+        },
+        "raw_log": {
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/job/126470755461",
+          "utf8_bytes": 267521,
+          "sha256": "c3eeec1c3370965db23b1c4221de391436b8810050407add5abfd88bc6b4eb03",
+          "complete_response_retained_in_session": true,
+          "full_log_embedded": false
+        },
+        "literal_blocks": [
+          {
+            "name": "source_before_and_audit",
+            "start_line": 844,
+            "end_line": 885,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nout=\"$RUNNER_TEMP/branch-exact\"\nmkdir -p \"$out\"\necho \"OUT=$out\" >> \"$GITHUB_ENV\"\necho \"CARGO_TARGET_DIR=$RUNNER_TEMP/target-branch-exact\" >> \"$GITHUB_ENV\"\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)\" = 2bf225d0dbfbe82ab608bf05692937bbce5ea616\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)\" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)\" = 6bd1deafeedef4955202a3fb76e87225b6989a75\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)\" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1\ntest \"$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)\" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4\nbash scripts/project-preflight.sh --audit\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n##[endgroup]\n{\n  \"base\": null,\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}\n{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+            "bytes": 2200,
+            "sha256": "0ec59bad8199835f61a25d2db41a0e31143c8d9a52fe2eb7856651f43d52d15c"
+          },
+          {
+            "name": "format_complete_step",
+            "start_line": 926,
+            "end_line": 948,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: fdd60dcda928cceaaf04793e741b1df50a12b000f50f43efabc51e98e89ffb26\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/lib/ossl-modules\n##[endgroup]",
+            "bytes": 1073,
+            "sha256": "aef93d7976a69a7a78c693f4149a56685bce4c461443096cc41354c26e8a9be1"
+          },
+          {
+            "name": "strict_node_clippy_complete_step",
+            "start_line": 2235,
+            "end_line": 2323,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ncargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/clippy.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: fdd60dcda928cceaaf04793e741b1df50a12b000f50f43efabc51e98e89ffb26\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/lib/ossl-modules\n##[endgroup]\n Downloading crates ...\n  Downloaded foreign-types v0.3.2\n  Downloaded openssl-macros v0.1.1\n  Downloaded foreign-types-shared v0.1.1\n  Downloaded openssl-sys v0.9.117\n  Downloaded openssl v0.10.81\n    Checking libc v0.2.184\n    Checking zeroize v1.8.2\n    Checking bitflags v2.11.0\n    Checking hybrid-array v0.4.15\n    Checking cpufeatures v0.2.17\n    Checking sha2 v0.10.9\n   Compiling curve25519-dalek v4.1.3\n    Checking foldhash v0.2.0\n   Compiling generic-array v0.14.7\n    Checking hashbrown v0.16.1\n    Checking crypto-common v0.2.2\n   Compiling openssl-sys v0.9.117\n    Checking subtle v2.6.1\n    Checking signature v2.2.0\n    Checking digest v0.11.3\n    Checking ed25519 v2.2.3\n    Checking hashlink v0.11.1\n    Checking libsqlite3-sys v0.37.0\n    Checking cpufeatures v0.3.1\n    Checking smallvec v1.15.1\n    Checking fallible-streaming-iterator v0.1.9\n    Checking fallible-iterator v0.3.0\n    Checking ed25519-dalek v2.2.0\n    Checking serde v1.0.228\n    Checking rusqlite v0.39.0\n    Checking keccak v0.2.2\n   Compiling crypto-common v0.1.7\n   Compiling block-buffer v0.10.4\n   Compiling openssl v0.10.81\n    Checking foreign-types-shared v0.1.1\n    Checking foreign-types v0.3.2\n    Checking shake v0.1.0\n    Checking thiserror v1.0.69\n   Compiling digest v0.10.7\n    Checking borsh v1.8.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n   Compiling openssl-macros v0.1.1\n   Compiling cfg-if v1.0.4\n    Checking trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)\n    Checking ml-dsa v0.1.1\n    Checking anyhow v1.0.103\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking rustix v1.1.4\n   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)\n    Checking getrandom v0.4.2\n    Checking trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)\n    Checking trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)\n    Checking fs2 v0.4.3\n    Checking fastrand v2.3.0\n    Checking once_cell v1.21.4\n    Checking tempfile v3.27.0\n    Checking trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)\n    Checking trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)\n    Checking trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)\n    Checking trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)\n    Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)\n    Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 39.38s",
+            "bytes": 4391,
+            "sha256": "4573ebf0b6ca44c155911deda43c56ce32bb32b94504390f67e15ab02c0e7df1"
+          },
+          {
+            "name": "source_after",
+            "start_line": 2324,
+            "end_line": 2365,
+            "text": "##[group]Run set -euo pipefail\nset -euo pipefail\nargs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\nif test \"$SOURCE_KIND\" = prospective-merge; then\n  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\nfi\npython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$OUT/source-after.json\"\nsha256sum \"$OUT\"/*.log > \"$OUT/logs.sha256\"\nprintf 'Exact account-branch byte encoding and retained native checks only. Ignored original whole-capacity and long-cost experiments remain separate; original priority/full baseline still required. No work-proof qualification, whole-node speed, Sybil fairness, real model adoption, physical power loss, independent operators or WAN TPS claimed. Full ancestry/state traversal remains.\\n' > \"$OUT/SCOPE.txt\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 69d2e06c48bbbd1e22432f9b557727b140aba361\n  EXPECTED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  EXPECTED_MERGE: bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\n  SOURCE_KIND: head\n  OUT: /home/runner/work/_temp/branch-exact\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-branch-exact\n  OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install\n  OPENSSL_STATIC: 1\n  TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/bin/openssl\n  TRNM_PQ_OPENSSL_SHA256: fdd60dcda928cceaaf04793e741b1df50a12b000f50f43efabc51e98e89ffb26\n  TRNM_PQ_OPENSSL_VERSION: 3.5.9\n  OPENSSL_CONF: /dev/null\n  OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.sE7xm4sE/install/lib/ossl-modules\n##[endgroup]\n{\n  \"base\": null,\n  \"candidate\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"69d2e06c48bbbd1e22432f9b557727b140aba361\",\n  \"tested_tree\": \"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933472602,\n  \"tracked_entries\": 8127,\n  \"tracked_worktree_verified\": true\n}",
+            "bytes": 2119,
+            "sha256": "1f7b5971847b09f4fd1f7b9b6b7c99dd9c89a6b1a83ec2967e60201ae4efdccb"
+          },
+          {
+            "name": "artifact_upload_finalization",
+            "start_line": 2401,
+            "end_line": 2407,
+            "text": "Uploaded bytes 865258\nFinished uploading artifact content to blob storage!\nSHA256 digest of uploaded artifact zip is 5c1bc3b5fc5b155834812c3546bc17b926c0678636eb47380b267949cad41f6e\nFinalizing artifact upload\nArtifact branch-exact-ubuntu-24.04-arm-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1.zip successfully finalized. Artifact ID 13307303848\nArtifact branch-exact-ubuntu-24.04-arm-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1 has been successfully uploaded! Final size is 865258 bytes. Artifact ID is 13307303848\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307303848",
+            "bytes": 652,
+            "sha256": "3894d129f8f98e0cc3efec56ca07585c95b729eb26c081c544b90ff652226421"
+          }
+        ],
+        "artifact": {
+          "id": 13307303848,
+          "name": "branch-exact-ubuntu-24.04-arm-head-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+          "size_in_bytes": 865258,
+          "digest": "sha256:5c1bc3b5fc5b155834812c3546bc17b926c0678636eb47380b267949cad41f6e",
+          "expired": false,
+          "workflow_run": {
+            "id": 41799271300,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-six-axis-performance-20261103",
+            "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361"
+          },
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300/artifacts/13307303848",
+          "upload_stdout_matches_API": true,
+          "downloaded": false
+        },
+        "full_native_counts": null,
+        "full_native_qualification": false
+      }
+    ],
+    "remaining_lanes_at_last_metadata": [],
+    "metadata_observed_utc": "2026-11-04 08:44:25 UTC",
+    "artifact_metadata_observed_utc": "2026-11-04 08:44:25 UTC",
+    "actual_completed_lanes": 4,
+    "result": "All four exact-source head/actual-merge x64/ARM format and strict Node all-targets/all-features Clippy commands completed successfully."
+  },
+  "baseline_queue": {
+    "schema": "pending-baseline-queue-readback-v1",
+    "observed_utc": "2026-11-04 08:38:29 UTC",
+    "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "run": 41799271178,
+    "status": "pending",
+    "job_count": 0,
+    "concurrency": {
+      "literal_group": "portable-${{ github.workflow }}-${{ github.ref }}",
+      "literal_cancel_in_progress": false,
+      "expected_group": "portable-trnm-required-baseline-refs/pull/688/merge",
+      "same_literal_at_old_and_current": true,
+      "group_evaluation_inferred_from_same_PR_event": true
+    },
+    "older_same_PR_workflow": {
+      "run": 41785836318,
+      "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "status": "in_progress",
+      "workflow_id": 345677268,
+      "total_jobs": 19,
+      "terminal": {
+        "success": 9,
+        "failure": 8
+      },
+      "running_jobs": [
+        {
+          "id": 126429599608,
+          "name": "prospective Rust shard (runtime)",
+          "started_at": "2026-11-04T06:36:29Z",
+          "active_step": 9,
+          "step_started_at": "2026-11-04T06:41:12Z"
+        },
+        {
+          "id": 126429599819,
+          "name": "rust-baseline shard (runtime)",
+          "started_at": "2026-11-04T06:46:32Z",
+          "active_step": 9,
+          "step_started_at": "2026-11-04T06:51:17Z"
+        }
+      ]
+    },
+    "finding": "The configured workflow-level concurrency group and actual same-PR older running run are consistent with 69d waiting for that old run to release the group.",
+    "explicit_GitHub_blocker_run_field": null,
+    "logs_fetched": false,
+    "native_execution_result": null,
+    "mutations": false,
+    "workflow_source": {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "at_candidates": [
+        "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "40a5ba25e40fd5eda5b04fc1c3811320d438de11"
+      ],
+      "texts_equal": true,
+      "git_blob_sha": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "utf8_bytes": 34136,
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "group_literal_block": {
+        "start_line": 1,
+        "end_line": 12,
+        "text": "name: trnm-required-baseline\non:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:\npermissions:\n  contents: read\nconcurrency:\n  group: portable-${{ github.workflow }}-${{ github.ref }}\n  # Preserve running head/merge evidence when a successor enters the queue.\n  cancel-in-progress: false"
+      },
+      "head_timeout_literal_block": {
+        "start_line": 318,
+        "end_line": 326,
+        "text": "          retention-days: 30\n  rust-baseline-shards:\n    name: rust-baseline shard (${{ matrix.shard }})\n    runs-on: ubuntu-24.04\n    timeout-minutes: 180\n    strategy:\n      fail-fast: false\n      matrix:\n        shard: [runtime, quality]"
+      },
+      "merge_timeout_literal_block": {
+        "start_line": 416,
+        "end_line": 424,
+        "text": "  prospective-rust-shards:\n    name: prospective Rust shard (${{ matrix.shard }})\n    if: github.event_name == 'pull_request'\n    runs-on: ubuntu-24.04\n    timeout-minutes: 180\n    strategy:\n      fail-fast: false\n      matrix:\n        shard: [runtime, quality]"
+      }
+    },
+    "source_proofs": {
+      "pending_run": {
+        "snapshot_utc": "2026-11-04 08:37:25 UTC",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271178",
+        "raw_utf8_bytes": 15789,
+        "raw_sha256": "a3745add175695066c2d98ab3762e52d1336445119ddefa2ea02ccc0e8a35d06"
+      },
+      "pending_jobs": {
+        "snapshot_utc": "2026-11-04 08:37:43 UTC",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271178/jobs?per_page=100",
+        "raw_utf8_bytes": 27,
+        "raw_sha256": "b3dab5870ff3a8209160335de7c1077b89e461d875d9041ac9d8b8ed7c1666f6"
+      },
+      "old_run": {
+        "snapshot_utc": "2026-11-04 08:38:29 UTC",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318",
+        "raw_utf8_bytes": 16224,
+        "raw_sha256": "a3a20d426d13ed6baa2bf18441f272f6498046b1cab3dc34c08d1c41fbf74e98"
+      },
+      "old_jobs": {
+        "snapshot_utc": "2026-11-04 08:38:29 UTC",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318/jobs?per_page=100",
+        "raw_utf8_bytes": 64160,
+        "raw_sha256": "6adb28fd0173bfb60669deb3af50e7e9f8d96ca54b280256a3cc8a2e8ba2a23e"
+      }
+    },
+    "deadline_results": null,
+    "reason_assessment": {
+      "inferred": true,
+      "explicit_API_blocker_field": null,
+      "text": "The exact workflow uses one ref-specific concurrency group with cancel-in-progress false. The same-PR older 40a run is actually in progress while 69d is pending with zero jobs. This supports a group-occupancy explanation; GitHub's retrieved API objects do not directly name a blocking run."
+    }
+  },
+  "workspace_gate_snapshot": {
+    "observed_utc": "2026-11-04 08:44:25 UTC",
+    "workflow": {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "kind": "workspace-workflow",
+      "bytes": 29385,
+      "sha256": "5fc4762309966c7222eb85607d31a4f0addef2792516c6996a5bbc74a4300c1e",
+      "git_blob_sha": "490ec2b916657f0ce4af9f3e59222fdc45aad5f1",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/.github/workflows/pon-original-workspace-large-state-cpu.yml"
+    },
+    "run": 41799271299,
+    "original_command": "cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features --no-run --message-format=json",
+    "lanes": [
+      {
+        "job": 126470755118,
+        "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+        "status": "in_progress",
+        "conclusion": null,
+        "build_step": {
+          "name": "Build the original complete workspace in the unchanged test profile",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T08:26:54Z",
+          "completed_at": "2026-11-04T08:42:39Z"
+        },
+        "active_step": {
+          "name": "Observe fixed touched owners across actual account and history growth",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-04T08:43:45Z",
+          "completed_at": null
+        }
+      },
+      {
+        "job": 126470755317,
+        "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+        "status": "in_progress",
+        "conclusion": null,
+        "build_step": {
+          "name": "Build the original complete workspace in the unchanged test profile",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T08:26:53Z",
+          "completed_at": "2026-11-04T08:41:34Z"
+        },
+        "active_step": {
+          "name": "Observe fixed touched owners across actual account and history growth",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-04T08:42:37Z",
+          "completed_at": null
+        }
+      },
+      {
+        "job": 126470755368,
+        "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+        "status": "in_progress",
+        "conclusion": null,
+        "build_step": {
+          "name": "Build the original complete workspace in the unchanged test profile",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T08:27:04Z",
+          "completed_at": "2026-11-04T08:40:54Z"
+        },
+        "active_step": {
+          "name": "Observe fixed touched owners across actual account and history growth",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-04T08:41:53Z",
+          "completed_at": null
+        }
+      },
+      {
+        "job": 126470755703,
+        "name": "original workspace test CPU (ubuntu-24.04, head)",
+        "status": "in_progress",
+        "conclusion": null,
+        "build_step": {
+          "name": "Build the original complete workspace in the unchanged test profile",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T08:27:09Z",
+          "completed_at": "2026-11-04T08:41:00Z"
+        },
+        "active_step": {
+          "name": "Observe fixed touched owners across actual account and history growth",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 9,
+          "started_at": "2026-11-04T08:42:00Z",
+          "completed_at": null
+        }
+      }
+    ],
+    "compile_pass_claim": false,
+    "test_execution_claim": false,
+    "compile_step_metadata_success": 4,
+    "terminal_console_read": false,
+    "note": "All four original full-workspace --no-run build steps are metadata success at this snapshot. Jobs are still in progress at growth; no running job log was read. Terminal log/source receipts remain separate follow-up."
+  },
+  "safety_scope": {
+    "read_only_remote_collection": true,
+    "rerun_or_cancel": false,
+    "workflow_gate_or_budget_changes": false,
+    "ZIP_downloaded": false,
+    "local_native_or_benchmark_executed": false,
+    "refs_or_PR_modified": false
+  },
+  "limitations": [
+    "Whole job log bytes are referenced by URL and cryptographic hash; complete relevant literal source/audit/format/lint blocks are embedded.",
+    "No full native test count is derived from a green workflow or from --no-run.",
+    "The baseline queue snapshot is not an execution result. No estimated timeout is presented as an observed outcome."
+  ],
+  "collector_refusals": [
+    {
+      "error": "Error: missing execution marker",
+      "scope": "Local in-memory evidence projection; no native command",
+      "cause": "The initial extractor used a strict line-number upper bound and excluded Finished immediately preceding the next group.",
+      "resolution": "Use inclusive final output line before the next group; raw log unchanged."
+    }
+  ],
+  "generated_utc": "2026-11-04 08:46:11 UTC"
+}

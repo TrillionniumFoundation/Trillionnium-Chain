@@ -1,0 +1,410 @@
+{
+  "schema": "trnm-account-graph-cost-source-boundary-review-v1",
+  "scope": "Read-only source boundary review at 69d2, interpreted against frozen original 73ab cost observations. Evidence note only; no new roadmap, native execution or acceptance.",
+  "reviewed_source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+  "measured_source": {
+    "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+    "tracked_entries": 8120,
+    "tracked_bytes": 933034956,
+    "kind": "head",
+    "prospective_merge_measured_by_these_two_archives": false
+  },
+  "evidence": {
+    "path": "evidence/pon-retained-runtime-readback-20261104/original-73ab-native-cost-readback.json",
+    "git_blob_sha": "45d4b4f1e6b06983db139d97837d2b2d9d733cf0",
+    "reader_run": 41797728826,
+    "reader_job": 126465723652,
+    "baseline_client_examples": [
+      {
+        "artifact": 13303682624,
+        "member": "execution/raw/report.json",
+        "account_graph_calls": 62,
+        "wall_ns": 17648002309,
+        "complete_current_thread_cpu_ns": 3910179334
+      },
+      {
+        "artifact": 13304406013,
+        "member": "run-1-raw/report.json",
+        "account_graph_calls": 124,
+        "wall_ns": 16133378564,
+        "complete_current_thread_cpu_ns": 3844399840
+      },
+      {
+        "artifact": 13304406013,
+        "member": "run-2-raw/report.json",
+        "account_graph_calls": 124,
+        "wall_ns": 16189713331,
+        "complete_current_thread_cpu_ns": 3837764770
+      },
+      {
+        "artifact": 13304406013,
+        "member": "run-3-raw/report.json",
+        "account_graph_calls": 124,
+        "wall_ns": 16373165976,
+        "complete_current_thread_cpu_ns": 3841085166
+      }
+    ],
+    "scope": "Original phase cumulative before/after snapshots; setup and final read_active excluded. Examples identify the hotspot, not full-traversal counts or controlled gains."
+  },
+  "result": {
+    "safe_check_or_fresh_SQL_elimination_established": false,
+    "native_patch_created": false,
+    "benchmark_or_native_executed": false,
+    "current_69d2_performance_result": null,
+    "controlled_gain_established": false,
+    "acceptance_granted": false,
+    "conclusion": "AccountGraph includes stored-graph verification, catalog/scope work, allocation and original progress callbacks. Public exclusive History progress performs fresh Host checks and can include original CPU-refill waits. No safe check deletion or component cost attribution is established."
+  },
+  "source_diff": {
+    "base": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "ahead_by": 4,
+    "changed_files_total": 26,
+    "compare_complete": true,
+    "native_store": {
+      "old_blob": "d15fdedabce6bf247311d1f75bf4d8370a8d33c1",
+      "new_blob": "6bd1deafeedef4955202a3fb76e87225b6989a75",
+      "finding": "All 17 added lines are assertions in cfg(test); graph/load/cache code unchanged."
+    },
+    "primitives": {
+      "old_blob": "65093afcdf1a777b03447ff8db2aaa7d9e14ed83",
+      "new_blob": "2bf225d0dbfbe82ab608bf05692937bbce5ea616",
+      "finding": "The +11/-1 restores Node::lift as an independent spelling of the original reverse-depth branch-hash loop. Bounds, inputs and bit choices match the existing helper; no control was executed in this review. Digest-only cached lift still uses lift_digest."
+    },
+    "unchanged": "The complete 26-file compare does not change the other reviewed production paths below. Source equality is not new-source performance or native PASS."
+  },
+  "account_graph_includes": [
+    {
+      "source": "native_state:705-726; write_scope:45-80,179-198,256-278",
+      "work": "The span starts only after the prior whole-Root match fails. graph_access includes actual same-write/context/schema checks: writable_schema, database_list, temp-object count and catalog rows."
+    },
+    {
+      "source": "native_store:444-535; scoped_graph:193-204; primitives:1006-1032",
+      "work": "Original complete-State account parsing and account-map allocation when no exact CurrentAccounts loan exists; otherwise reuse that same-call parsed input. Empty-tree constants, root SQL load and root checks remain."
+    },
+    {
+      "source": "node_reader:29-58; primitives:30-31; node_decode:52-108",
+      "work": "Fresh bounded SELECT for each actual root/edge, typed borrowed Blob access, exact-ID-and-bytes decode lookup or original decoder. One lazy prepared statement per traversal; reset cursor before callback/next load."
+    },
+    {
+      "source": "native_store:485-568; scoped_graph:205-325",
+      "work": "Iterative DFS with stack, seen-set, retained-account map, every actual-node progress, node/duplicate limits, right-then-left fresh child loads, depth/prefix/side/lift checks, balance accumulation and final current-State/count/balance comparison."
+    },
+    {
+      "source": "history_import:303-307,343-377,409-419; public_import:2570-2576; cpu_checkpoint:685-716",
+      "work": "Original deadline/Host/CPU callbacks. Qualified exclusive continuation may wait for original refill inside this span; shared Node ownership cannot suspend while holding its mutex."
+    }
+  ],
+  "account_graph_excludes": [
+    {
+      "source": "native_state:684-702; commitment_cache:201-250; current_accounts:731-768",
+      "work": "Entry progress/current-scope check, record load/verification, full immutable State commitment and comparison, initial whole-Root scope match. Complete root/account-root/non-account/conservation calculations occur in that preceding commitment path, not this stored-graph DFS."
+    },
+    {
+      "source": "native_state:749-793",
+      "work": "Original final progress, post-callback fence and sealing/finish. Invalidation can invoke the original verifier again with new nested observations; the first graph span is not the whole outward call."
+    },
+    {
+      "source": "history_import:164-187; public_import:2553-2563,2582-2584",
+      "work": "Initial CPU-start wait and Resolve/Initial/Final Host phases. The graph contains only Checkpoint Host calls reached through its own progress, not all import checkpoints."
+    }
+  ],
+  "observation_limits": {
+    "calls": "Entered blocks mix full and scoped partial traversals, plus error/cancelled short traversals. A whole-Root scope hit does not enter AccountGraph. Calls cannot be labelled full walks.",
+    "stage_totals": "Drop records wall and same-thread CPU, including Err/cancellation/unwind; ordinary success/error/cancel are not separate counters. Unknown CPU and observation-lock failure stay explicit. Nested totals are not additive; wall minus CPU is not SQL/I/O time.",
+    "sql_commit": "The four-site SQL observer is commit-API time, not node SELECT time or physical fsync.",
+    "decoder": "Phase-wide counters are not graph-only. Missing/wrongly typed SQL rows never reach decoding, and exact hits still require current SQL bytes. Retained values are gauges, not saved reads.",
+    "cohort": "No 44d Host values are transferred to 73ab/69d2; this review extracted no new 73ab Host projection."
+  },
+  "original_Host_CPU_callback": {
+    "source": "history_import:22-33,303-307,409-419; public_import:2570-2576; cpu_checkpoint:685-810,1061-1068,1163-1170",
+    "order": [
+      "Control first checks the original absolute deadline, then fresh Host kernel.verify.",
+      "The original CPU sampler/owner/global locks then apply the paid budget.",
+      "Only qualified completion may request refill wait; shared Node ownership instead returns its original budget refusal.",
+      "Allowed exclusive wait rechecks resource and request deadline, sleeps at most 5 ms clipped to that deadline, then repeats."
+    ],
+    "meaning": "This proves reachable included work, not any measured Host/refill fraction. The checks straddle actual CPU sampling/waiting; they cannot be removed as an adjacent duplicate."
+  },
+  "repeated_work_review": [
+    {
+      "source": "node_reader:29-58",
+      "finding": "Preparation reuse and borrowed Blob decoding already remove repeated prepare/owned row-buffer work. Actual SQL execution remains required."
+    },
+    {
+      "source": "commitment_cache:201-250; current_accounts:716-768; native_store:459-473",
+      "finding": "Complete-commitment misses already lend parsed CurrentAccounts from the exact immutable State. On a complete-cache hit there was no parse to reuse; the graph's parse is the first one in that call."
+    },
+    {
+      "source": "node_decode:52-108; native_store:111-141; primitives:367-421",
+      "finding": "Exact decoder/lift mathematical caches already preserve current SQL and graph checks. Leaf decode already avoids its former extra encode/content hash. These existing optimizations are not new proposals."
+    },
+    {
+      "source": "native_store:485-568; scoped_graph:235-317",
+      "finding": "Removing collections, comparing leaves earlier or moving callbacks lacks an error-priority proof. The existing partial verifier falls back to real DFS when aggregate/node-limit arithmetic cannot retain original precedence."
+    },
+    {
+      "source": "write_scope:114-278",
+      "finding": "The original normalized no-write owner proof does not authorize carrying a parent graph across arbitrary writes/RESET/COMMIT. Cache keys or catalog text cannot replace actual table/epoch binding."
+    }
+  ],
+  "cost_gaps": [
+    {
+      "component": "SQL",
+      "gap": "No production per-graph SELECT count or SQL-only time. Existing graph diagnostic has real StatementStatus::Run deltas."
+    },
+    {
+      "component": "Decode/lift",
+      "gap": "Decode has counts but no timings; lift has no production hit/miss/depth-hash counts. Diagnostic original-decode counts and retained capacity do not isolate lift time."
+    },
+    {
+      "component": "Parsing/collections",
+      "gap": "Original State parse, DFS maps/stack and final reconciliation share one span; there is no individual allocation/time split."
+    },
+    {
+      "component": "Callbacks",
+      "gap": "Raw per-import host_checks retain actual Host time, but Checkpoint totals are not graph-only and exclude separate CPU-sampler/refill attribution. They cannot be subtracted as exclusive graph cost."
+    }
+  ],
+  "existing_graph_diagnostic": {
+    "source": "native_store:855-1015",
+    "exact_selector": "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation",
+    "ignored": true,
+    "output_env": "TRNM_NATIVE_LIFT_COST_OUTPUT",
+    "schema": "pon-native-lift-cache-full-graph-cost-v1",
+    "inputs": "Original in-memory SQLite; 1024/9216/32768 accounts and 1024/9216 with unrelated prefill; two independent caches, two cold plus 100 warm traversals per size.",
+    "controls": "Original uncached verifier first; each traversal asserts SQL runs == node count == progress count and retained entries <=8192.",
+    "scope": "Includes complete account parsing and real graph/SQL/arithmetic. Progress only counts visits, so Host, PQ authorization, complete State commitment, business confirmation and network are excluded.",
+    "limits": "Alternating instances run the same code, not old/new ABBA. Outputs whole-graph wall, SQL runs, original decodes and retained entries; no CPU/per-component split. Subtracting it from production Host-inclusive cost would be invalid.",
+    "executed_in_this_review": false
+  },
+  "minimum_evidence_gap": "Same-source raw Host observations can complement the existing cost readback without native re-execution; they still do not provide graph-only callback cost. The existing full-graph diagnostic is the bounded location for any later authorized component observations, retaining every original SQL read/callback/error and reporting instrumentation overhead. No new benchmark, budget or native change is requested here.",
+  "source_reference_format": "Every path below is relative to trillionnium/crates/trnm-pon-node/src/ at reviewed_source; ranges are inclusive and identify reviewed functions, not executed tests.",
+  "source_url_prefix": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/src/",
+  "sources": [
+    {
+      "id": "native_state",
+      "path": "store/native_authenticated.rs",
+      "git_blob_sha": "e99453b1abe6ce589f003be199b5553241cba398",
+      "functions": [
+        [
+          "verify_state_with_readback",
+          "674-793"
+        ]
+      ]
+    },
+    {
+      "id": "native_store",
+      "path": "account_archive_prototype/native_store.rs",
+      "git_blob_sha": "6bd1deafeedef4955202a3fb76e87225b6989a75",
+      "functions": [
+        [
+          "LiftCache::lift_parts",
+          "117-141"
+        ],
+        [
+          "empty_hashes",
+          "424-430"
+        ],
+        [
+          "verify_with_lifts / verify_with_current_accounts / verify_account_values",
+          "444-535"
+        ],
+        [
+          "child_with_lifts",
+          "538-568"
+        ],
+        [
+          "tests::native_lift_cache_complete_graph_cost_observation",
+          "855-1015"
+        ]
+      ]
+    },
+    {
+      "id": "node_reader",
+      "path": "account_archive_prototype/native_node_reader.rs",
+      "git_blob_sha": "b4e9974f6ef99cb7b8aa88a509d3afd56e1bd4a8",
+      "functions": [
+        [
+          "NodeReader::load",
+          "29-58"
+        ]
+      ]
+    },
+    {
+      "id": "node_decode",
+      "path": "account_archive_prototype/native_node_decode.rs",
+      "git_blob_sha": "2c86a7c89297df32b75526b0d1e3fe751d8c5d26",
+      "functions": [
+        [
+          "NodeDecodeArithmetic::decode",
+          "52-108"
+        ],
+        [
+          "NodeDecodeArithmetic::observation",
+          "110-140"
+        ]
+      ]
+    },
+    {
+      "id": "scoped_graph",
+      "path": "account_archive_prototype/native_scoped_readback.rs",
+      "git_blob_sha": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
+      "functions": [
+        [
+          "Frontier / Frontier::find",
+          "10-62"
+        ],
+        [
+          "verify",
+          "185-325"
+        ]
+      ]
+    },
+    {
+      "id": "write_scope",
+      "path": "store/native_authenticated/post_write_readback.rs",
+      "git_blob_sha": "ed9c2000d253d7421ec899287012f2602f6f7fc5",
+      "functions": [
+        [
+          "readback_schema",
+          "45-80"
+        ],
+        [
+          "PostWriteReadback::new",
+          "114-177"
+        ],
+        [
+          "current / matches / graph_access",
+          "179-278"
+        ]
+      ]
+    },
+    {
+      "id": "commitment_cache",
+      "path": "store/native_authenticated/arithmetic_cache.rs",
+      "git_blob_sha": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "functions": [
+        [
+          "observation / complete_root",
+          "69-97"
+        ],
+        [
+          "complete_with_current_accounts",
+          "201-255"
+        ]
+      ]
+    },
+    {
+      "id": "current_accounts",
+      "path": "account_archive_execution/state_witness.rs",
+      "git_blob_sha": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "functions": [
+        [
+          "CurrentAccounts / values_for",
+          "716-729"
+        ],
+        [
+          "commitment_from_complete_state_with_current_accounts",
+          "731-768"
+        ]
+      ]
+    },
+    {
+      "id": "primitives",
+      "path": "account_archive_prototype.rs",
+      "git_blob_sha": "2bf225d0dbfbe82ab608bf05692937bbce5ea616",
+      "functions": [
+        [
+          "MAX_NODE_BYTES / NODE_SELECT",
+          "30-31"
+        ],
+        [
+          "common / leaf / branch / lift_digest",
+          "213-257"
+        ],
+        [
+          "Node::lift / Node::encode / Node::decode",
+          "331-421"
+        ],
+        [
+          "accounts / ordered_accounts / account_root_with_lifts",
+          "1006-1062"
+        ]
+      ]
+    },
+    {
+      "id": "history_import",
+      "path": "ingress/history_import.rs",
+      "git_blob_sha": "742c236acf5c80fa694c1a6061b7cd4ead2576d3",
+      "functions": [
+        [
+          "Control::alive / check",
+          "22-33"
+        ],
+        [
+          "begin_cpu",
+          "164-187"
+        ],
+        [
+          "admit_packet callback wiring",
+          "295-384"
+        ],
+        [
+          "activate_packet",
+          "401-424"
+        ]
+      ]
+    },
+    {
+      "id": "public_import",
+      "path": "ingress.rs",
+      "git_blob_sha": "7c1ceca413da2f7004603b17cb19713b9bf681c6",
+      "functions": [
+        [
+          "receive_public_page_from_before_observed",
+          "2542-2585"
+        ]
+      ]
+    },
+    {
+      "id": "cpu_checkpoint",
+      "path": "ingress/public_v3/scalar_cpu.rs",
+      "git_blob_sha": "20d040f84c0d33f71a035f730265aea6722a5c82",
+      "functions": [
+        [
+          "LiveRequestCpu::observe_with_control",
+          "685-716"
+        ],
+        [
+          "LiveRequestCpu::observe_sample",
+          "718-810"
+        ],
+        [
+          "ServiceMutationCpuOperation::history_checkpoint",
+          "1061-1068"
+        ],
+        [
+          "ServiceMutationCpuCheckpoint::history_checkpoint",
+          "1163-1170"
+        ]
+      ]
+    },
+    {
+      "id": "stage_observer",
+      "path": "store/native_authenticated/history_arithmetic.rs",
+      "git_blob_sha": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "functions": [
+        [
+          "HistoryArithmetic::observe / observation",
+          "264-299"
+        ],
+        [
+          "HistoryStage / StageTotals / StageObservation::drop / cpu_ns",
+          "590-705"
+        ]
+      ]
+    }
+  ]
+}
