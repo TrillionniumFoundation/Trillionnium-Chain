@@ -55,6 +55,10 @@ EXPECTED_OUTCOMES = {'m00': {'pon_growth::tests::native_growth_v2_header_fixed_v
          'pq_transfer::tests::alleged_signature_is_not_parser_authority_or_transaction_identity': 'ok',
          'pq_transfer::tests::exact_bounds_and_canonical_body_reject_before_signature_work': 'ok',
          'qualified_work_task::pq_lifecycle_v4::tests::native_pq_lease_revocation_domains_lengths_and_exact_branch_identity_are_fresh': 'ok',
+         # Additional source-reviewed pinned-backend known answers. Their fixed
+         # identities are not inferred from the executing native transcript.
+         'sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams': 'ok',
+         'sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams': 'ok',
          'tests::identifiers_and_decimal_values_are_canonical': 'ok',
          'tests::object_namespaces_do_not_collide': 'ok',
          'tests::result_commitment_binds_every_field': 'ok'},

@@ -1,0 +1,363 @@
+{
+  "schema": "pq-sha2-roster-repair-review-v1",
+  "base_commit": "7d1aaa05f1fe1548e43840e79ff7df4ad865da92",
+  "base_tree": "fc889c5e9e4ad3696954a50f50f43bbe36bf9da7",
+  "checkout_scope": "50 exact selected blobs in sparse component checkout; no full native build or acceptance",
+  "source_manifest": {
+    "source": "7d1aaa05f1fe1548e43840e79ff7df4ad865da92",
+    "tree": "fc889c5e9e4ad3696954a50f50f43bbe36bf9da7",
+    "files": {
+      "AGENTS.md": {
+        "git_blob": "702727dcf00f032b16d593519b7b74894da40e17",
+        "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91",
+        "bytes": 1286
+      },
+      "PROJECT_ID": {
+        "git_blob": "ab1dfb68b8bd3859f43feb9a1899c23e8d7985f4",
+        "sha256": "67555b51a147a066d333e4290feac768b851affb9ba970973f1555061b8fc9c9",
+        "bytes": 19
+      },
+      "PROJECT_BOUNDARY.json": {
+        "git_blob": "bc783d4a37cfce22527c6e4f6c6ac9e3df461235",
+        "sha256": "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9",
+        "bytes": 2002
+      },
+      "config/portability-inventory-v1.json": {
+        "git_blob": "a8dfa67be9f376c606994142aed3a6c6491a4a81",
+        "sha256": "bbb522a98dbf0d07a31131325109cea33a2eb035135740cc36a9362db0b7ea63",
+        "bytes": 30558
+      },
+      "trillionnium/Cargo.toml": {
+        "git_blob": "279dce7e9871d58b2960aa11cbca8e6a19924f91",
+        "sha256": "e43fd642e2cc6670679e8726f82ef8eefb90284a359e3e1acd52d19a0f19864c",
+        "bytes": 2561
+      },
+      "scripts/project-preflight.sh": {
+        "git_blob": "cfd4f58405ca7620ad267f6aa42b240be038797c",
+        "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+        "bytes": 242
+      },
+      "scripts/ci/project_boundary.py": {
+        "git_blob": "3dbc60fd89e2e6417e04648fb433fbbcfaabf878",
+        "sha256": "5845b10022c1ce625e864c38a9c69ba1982a1d1efad1dc934cc06f3d8dafda47",
+        "bytes": 4485
+      },
+      "scripts/ci/ci_observation.py": {
+        "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+        "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+        "bytes": 8837
+      },
+      "scripts/ci/native_pq_tasks_v4_unit_contract.py": {
+        "git_blob": "9630cdc8f797c1c12d9c0fbb7947efc8fcc69468",
+        "sha256": "a8c3bf262c92f51d1816ad4f5de648e99ca43a7ced0eb009d71706db0f93d78d",
+        "bytes": 16556
+      },
+      "scripts/ci/run_native_pq_tasks_v4.py": {
+        "git_blob": "93696dbae21aca3cfaa4c1625b42bfb9e904d7f2",
+        "sha256": "f0c564ef825b2ad714564953473031f5614a44a1a121a84f20cf4d6f485ec6b9",
+        "bytes": 10907
+      },
+      "scripts/ci/test_native_pq_tasks_v4_research.py": {
+        "git_blob": "dbdf1436859c616a790ee940ca565a799aeb80ca",
+        "sha256": "c214e960f6e075dc1f3db9ed9d7897020a88faf3af70ead690d880902008fb02",
+        "bytes": 5118
+      },
+      "scripts/ci/run_native_pq_accounts_v2.py": {
+        "git_blob": "e1706c029d9c7ac19f7d7e4678671469b8bb84e1",
+        "sha256": "8ec005d488bc28770f61065b4e1dbb7bca9b1ffd212a2a8333da1d6a7a5ded60",
+        "bytes": 12787
+      },
+      "scripts/ci/run_native_pq_quota_v3.py": {
+        "git_blob": "f04e3e4f78dd5971c0cd56b5eb184849a98cf143",
+        "sha256": "ede64752778b9b66133bb0dfab62e656da53ca742d02898a5bb58dfb25db87b6",
+        "bytes": 8938
+      },
+      "scripts/ci/test_native_pq_accounts_v2_research.py": {
+        "git_blob": "0d7c600cb0893e51c31494146d8c18b0fbc72b59",
+        "sha256": "f97ee019a2ecd18e8219072953463f993d9ddae643efd4f33c0b11a387311332",
+        "bytes": 5986
+      },
+      "formal/pon-nakamoto-v1/bounded_process.py": {
+        "git_blob": "7d4701f9144eaeb3abc5d13d3da0412e899c3f53",
+        "sha256": "da175430a6b669d3e7d40fe7ec0e7bc00fe6e992cc2d4d443af07209b4013815",
+        "bytes": 9407
+      },
+      "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs": {
+        "git_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+        "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+        "bytes": 2844
+      },
+      "trillionnium/crates/trnm-protocol/src/lib.rs": {
+        "git_blob": "80e8b0d43e9e61981750980e1055ba8ff33fe959",
+        "sha256": "3e202bfa95f96cf00c4238bd834d062680cb55cd91712345a30932203eafd52c",
+        "bytes": 15692
+      },
+      "trillionnium/crates/trnm-mvcc-fee/tests/pq4_task_authority.rs": {
+        "git_blob": "e0eab660e99d1d2c23122670aeb3e480eeed26ed",
+        "sha256": "829abf6391ecf9f77cea9288f0be8f48bc0c4045bdcca12d1e2dfd74adb051a9",
+        "bytes": 20862
+      },
+      "trillionnium/crates/trnm-pon-node/tests/native_pq_v4.rs": {
+        "git_blob": "2c79f2cd2c620b41602acee4f6b9c3c4bbcde4d5",
+        "sha256": "7f2b7b7bb5aaaff93d044a5228eb817f0df482a56d40bb1278f7972795fd25b1",
+        "bytes": 22475
+      },
+      "trillionnium/crates/trnm-types/Cargo.toml": {
+        "git_blob": "f419a29de4c1b18e7dc5f6d1276983faa6556721",
+        "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814",
+        "bytes": 238
+      },
+      "trillionnium/crates/trnm-executor/Cargo.toml": {
+        "git_blob": "7a862a1eca334022c4c26b81fb153ec405a1e9a2",
+        "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899",
+        "bytes": 168
+      },
+      "trillionnium/crates/trnm-bench/Cargo.toml": {
+        "git_blob": "dbf24160e626814244efd95d77ebafc7f3d6f137",
+        "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a",
+        "bytes": 325
+      },
+      "trillionnium/crates/trnm-mempool/Cargo.toml": {
+        "git_blob": "720fbee664e961ec3d164f0d1983cf252e525b7a",
+        "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85",
+        "bytes": 141
+      },
+      "trillionnium/crates/trnm-worker-agent/Cargo.toml": {
+        "git_blob": "44b90fcf030f73fcca444b92feba676a1bb532bc",
+        "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554",
+        "bytes": 561
+      },
+      "trillionnium/crates/trnm-oracle/Cargo.toml": {
+        "git_blob": "eed23638b277c0c3085293c41f8797ea3c01271d",
+        "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759",
+        "bytes": 235
+      },
+      "trillionnium/crates/trnm-research-protocol/Cargo.toml": {
+        "git_blob": "2ae6c1350374c8884383d238fa64db0e819e0ac8",
+        "sha256": "c93aec7515bd0ecb8ef3fb7aca5e9a95a2d5517c9cb47ea22da21df9a7bb9b27",
+        "bytes": 257
+      },
+      "trillionnium/crates/trnm-protocol/Cargo.toml": {
+        "git_blob": "97f3888c8a3f6b9724617982f5901c443aac169a",
+        "sha256": "ee92172a79ecd873452523c96d4721e21d9d46f787ef75d394fdd3262edcc36c",
+        "bytes": 666
+      },
+      "trillionnium/crates/trnm-peer-lease/Cargo.toml": {
+        "git_blob": "29b8c2de17406b94f14ec2b7ca6e9433d4ccf98c",
+        "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658",
+        "bytes": 2011
+      },
+      "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+        "git_blob": "f44f2a31d960dfa1361eb2b434375e7dbeb20d6f",
+        "sha256": "bd4b80a8f42bd7c372aec81fd991ac20363ed8cb32a0d72c2d8a6b5f01116578",
+        "bytes": 830
+      },
+      "trillionnium/crates/trnm-task-kernel/Cargo.toml": {
+        "git_blob": "fb316959a00e1ee35572e2aed7d2f05636401f20",
+        "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063",
+        "bytes": 563
+      },
+      "trillionnium/crates/trnm-mvcc-fee/Cargo.toml": {
+        "git_blob": "ba80b59a1b7c18079a0a9e573f38d3155d55bc57",
+        "sha256": "43c16b1d5837612dc210c5a997373921598043caaee385674cc939381ccc1444",
+        "bytes": 1022
+      },
+      "trillionnium/crates/trnm-service-settlement/Cargo.toml": {
+        "git_blob": "80e68f532562b2a48afad5e754c9c26402bd2105",
+        "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d",
+        "bytes": 630
+      },
+      "trillionnium/crates/trnm-control-plane/Cargo.toml": {
+        "git_blob": "4b41ec5aa5901ba9fb330e0e6990af5e5fbafa47",
+        "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf",
+        "bytes": 333
+      },
+      "trillionnium/crates/trnm-state-import/Cargo.toml": {
+        "git_blob": "f620f73466f27a302f7e06f6d0a59efcff1443e3",
+        "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b",
+        "bytes": 408
+      },
+      "trillionnium/crates/trnm-release-bundle/Cargo.toml": {
+        "git_blob": "dc31859c23015b5c06de63201149e4deb28fdece",
+        "sha256": "74b2d0b2b8992b1ee53b9a86fc4438df565de4caef70e4010fff5d8d657a3cde",
+        "bytes": 334
+      },
+      "trillionnium/crates/trnm-checkpoint-store/Cargo.toml": {
+        "git_blob": "86bf7216ee32ad2c63c5925e8fa7ae5a2d35b5f9",
+        "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1",
+        "bytes": 1057
+      },
+      "trillionnium/crates/trnm-checkpoint-types/Cargo.toml": {
+        "git_blob": "957d104fd3bab32bfdd69c9dd54a67d025eea8bd",
+        "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15",
+        "bytes": 331
+      },
+      "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": {
+        "git_blob": "92e36335ff9abb7ea6c542f5224830b4793daae0",
+        "sha256": "33b36f119e3db96a77611bfda6c813a47afe6e73982ff58d4932b6b388e0a2a1",
+        "bytes": 1012
+      },
+      "trillionnium/crates/trnm-verification-profiles/Cargo.toml": {
+        "git_blob": "40c52b49b2bb599e5e4d3fc77281b98b8f0ea24b",
+        "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155",
+        "bytes": 336
+      },
+      "trillionnium/crates/trnm-transport/Cargo.toml": {
+        "git_blob": "d87b9de3738ddfce79506a82fc0bba42e960be8c",
+        "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7",
+        "bytes": 395
+      },
+      "trillionnium/crates/trnm-audit-events/Cargo.toml": {
+        "git_blob": "0252a6a570ac9ac64745697706d994a255602a5a",
+        "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81",
+        "bytes": 273
+      },
+      "trillionnium/crates/trnm-governance-guard/Cargo.toml": {
+        "git_blob": "c2196efdc03ccc339c50c98017e3925d2ef3bf98",
+        "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf",
+        "bytes": 351
+      },
+      "trillionnium/crates/trnm-escrow-vault/Cargo.toml": {
+        "git_blob": "6ff7598967a829c71b634264947e3871cd99c1bd",
+        "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e",
+        "bytes": 347
+      },
+      "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+        "git_blob": "840830e39e9d45ca9c3c447ad01de863d1788058",
+        "sha256": "6c9fea871128af2610096925e55e4b4fe6da935587d2aee2bfbff98f3a0d9bce",
+        "bytes": 1279
+      },
+      "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml": {
+        "git_blob": "36972e39413614a7bff8d8801cb7b2f729030f3e",
+        "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9",
+        "bytes": 594
+      },
+      ".gitattributes": {
+        "git_blob": "9842e35fe84bc944e6de87b1bb5344dc4186486b",
+        "sha256": "72527bedd53ecc5a67cb8d32ee7ba80e3c092f9b4913a4a27da6201a952af151",
+        "bytes": 1897
+      },
+      "evidence/pon-pure-cost-bootstrap-20261027/.gitattributes": {
+        "git_blob": "fbcfa4b6e52216ba74ad1bccfb7cc7aa42d76e45",
+        "sha256": "3b285e575ad8e4283d0de79590e2cd71f66f6c8be41e8a8e96d6f3fbf4885c09",
+        "bytes": 91
+      },
+      "evidence/pon-pure-rejection-tail-20261027/.gitattributes": {
+        "git_blob": "44eb46d7639a12ee5470bde9e41cf1dd2f024733",
+        "sha256": "d7587edd0cd64a13a025fa930e3f0838ef0fa2cebfbdce456bc4715ed5b3d977",
+        "bytes": 85
+      },
+      "evidence/pon-pure-security-20261030-rebuild/.gitattributes": {
+        "git_blob": "68ce628f5800c130d0159db837ae115f250e4b20",
+        "sha256": "b72f10458de143e3cd4dce4ae69e3775bdb804726c914763c7c1b5ed3ff67a16",
+        "bytes": 56
+      },
+      "evidence/pon-pure-security-20261030-rebuild/complete-w1/.gitattributes": {
+        "git_blob": "d603c37ec92eb4e3c91c912fb6fedbd3829e720c",
+        "sha256": "08618aa31aa865aa9a7826ee480a8128f11c0272d0ea02bc2ff85d96c7b0f7fb",
+        "bytes": 103
+      }
+    },
+    "scope": "exact selected blobs in sparse component checkout, not full native acceptance"
+  },
+  "changed_files": {
+    "scripts/ci/native_pq_tasks_v4_unit_contract.py": {
+      "before_git_blob": "9630cdc8f797c1c12d9c0fbb7947efc8fcc69468",
+      "after_git_blob": "2f9260bf06cdc2d86ff2598dc1fee1e2c551ee82",
+      "before_sha256": "a8c3bf262c92f51d1816ad4f5de648e99ca43a7ced0eb009d71706db0f93d78d",
+      "after_sha256": "c42c8cceea71c41859f9bb387f321d7581cf1b909a16203b3e33af158475f8bc",
+      "after_bytes": 16911
+    },
+    "scripts/ci/test_native_pq_tasks_v4_research.py": {
+      "before_git_blob": "dbdf1436859c616a790ee940ca565a799aeb80ca",
+      "after_git_blob": "a1022b2d69b33c21863e12867290d76e7ef27b39",
+      "before_sha256": "c214e960f6e075dc1f3db9ed9d7897020a88faf3af70ead690d880902008fb02",
+      "after_sha256": "576cdd28dba9a9350924c2f2107a3ebdfb2959cc0241d86d458960ca72e3dd3d",
+      "after_bytes": 8333
+    }
+  },
+  "added_m00_cases": [
+    "sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams",
+    "sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams"
+  ],
+  "all_prior_outcomes_preserved": true,
+  "m06_unchanged": true,
+  "prior_ignored_case_count": 8,
+  "original_test_methods_unchanged": 10,
+  "new_reader_control_methods": 3,
+  "original_artifact": {
+    "run_id": 41780166953,
+    "job_id": 126409643568,
+    "artifact_id": 13299071649,
+    "zip_sha256": "9a701f56bb4d18f6c6e36ba818250986c60e37a69335deb86e64ab946847c176",
+    "m00_log_sha256": "db0d473a020fe102911aba71c23effa5b75f37f5c295c58c10a666c6d8257edb",
+    "result_retained": "FAIL",
+    "manifest_error": "ValueError: complete retained unit roster and original ignores required"
+  },
+  "reader_replay": {
+    "same_original_native_log": true,
+    "old_reader": "REFUSED",
+    "repaired_reader": {
+      "passed": 49,
+      "failed": 0,
+      "ignored": 2,
+      "filtered_out": 0
+    },
+    "not_new_native_execution": true
+  },
+  "controls": {
+    "original": "10 passed",
+    "new_tests_before_repair": "13 tests; 2 failed subtests and 1 error",
+    "repaired": "13 passed",
+    "retained_pq2_parser": "13 passed",
+    "final_python_total": 26
+  },
+  "scope": {
+    "production_activation": false,
+    "whole_chain_post_quantum": false,
+    "native_acceptance_closed": false,
+    "deadline_changed": false,
+    "profile_changed": false,
+    "runner_changed": false
+  },
+  "commands": [
+    "bash scripts/project-preflight.sh",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_native_pq_tasks_v4_research.py -v",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_native_pq_accounts_v2_research.py -v",
+    "git diff --check"
+  ],
+  "patch_sha256": "580c186183e16a8fe8b7c130eeb19254e4948307ff4df3689061c32af315833e",
+  "head_rechecked": "7d1aaa05f1fe1548e43840e79ff7df4ad865da92",
+  "workflow_review": {
+    "pq4": "891912a93f357973fd3ea914936367ee23a9bb22",
+    "pq5": "4edc4fce04a347a196205fc9bb727efa4fc941e0",
+    "no_hardcoded_python_test_count": true,
+    "both_trigger_on_roster_change": true,
+    "no_workflow_changes_required": true,
+    "distributed_source_inventory_excludes_python_scripts": true
+  },
+  "interpreter": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "raw_observation_identities": {
+    "original-tests.log": {
+      "bytes": 1621,
+      "sha256": "5fd2f844e59fe7429d49af62cc1c651ded3aa7fe36c27498952d990865ea142c"
+    },
+    "new-tests-before-repair.log": {
+      "bytes": 4967,
+      "sha256": "ae9e47347bf6d62bd61d7e3c0271ee0c747e9ac6014638d7eb04c872aacd4ea2"
+    },
+    "repaired-tests.log": {
+      "bytes": 2091,
+      "sha256": "89b0a3d3e2d1ee3d37c77f4c4164076baba859a95bcb2d24099b6cd6194a593f"
+    },
+    "retained-pq2-reader-tests.log": {
+      "bytes": 2014,
+      "sha256": "509392c555352ce2f9ef17d9c71e39ec77373342894bc1d7793aa36cd4c86192"
+    },
+    "original-reader.json": {
+      "bytes": 214,
+      "sha256": "f67002373107275c706fbf5d758a475e11b1d47742521b3772f18590eab9cdae"
+    }
+  },
+  "large_raw_archives_committed": false
+}

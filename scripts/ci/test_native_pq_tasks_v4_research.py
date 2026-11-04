@@ -9,6 +9,11 @@ from run_native_pq_tasks_v4 import (TASK_CASES, NATIVE_TASK_CASES, EXPECTED_RAW_
 from run_native_pq_quota_v3 import QUOTA_CASES, NATIVE_QUOTA_CASES
 from test_native_pq_accounts_v2_research import log
 
+SHA2_BACKEND_CASES = {
+    'sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams',
+    'sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams',
+}
+
 class TaskReaderTests(unittest.TestCase):
     def test_retained_libraries_require_every_original_case_and_only_original_ignores(self):
         for target,expected in EXPECTED_OUTCOMES.items():
@@ -21,6 +26,56 @@ class TaskReaderTests(unittest.TestCase):
             replaced_ignore=rows.copy();replaced_ignore[ignored]=('forged_ignored_case','ignored')
             for bad in (lost,newly_ignored,replaced_ignore,rows+[('forged_extra_case','ok')]):
                 with self.assertRaises(ValueError): unit_result(log(bad,ignored=sum(v=='ignored' for _,v in bad)),target)
+
+    def test_sha2_known_answers_are_fixed_required_actual_m00_tests(self):
+        root = Path(__file__).resolve().parents[2]
+        source = (root / 'trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs').read_text()
+        actual = {'sha2_backend_tests::' + name for name in re.findall(
+            r'#\[test\]\s*fn\s+([a-z0-9_]+)\s*\(', source)}
+        self.assertEqual(actual, SHA2_BACKEND_CASES)
+        self.assertRegex((root / 'trillionnium/crates/trnm-protocol/src/lib.rs').read_text(),
+                         r'#\[cfg\(test\)\]\s*mod sha2_backend_tests;')
+        for name in sorted(SHA2_BACKEND_CASES):
+            with self.subTest(name=name):
+                self.assertEqual(EXPECTED_OUTCOMES['m00'].get(name), 'ok')
+
+    def test_sha2_omission_rename_and_duplicate_cannot_pass_a_complete_roster(self):
+        # Fixed source-reviewed additions are independent of the map being
+        # checked. In particular, the old roster missing both must refuse.
+        outcomes = dict(EXPECTED_OUTCOMES['m00'])
+        outcomes.update({name: 'ok' for name in SHA2_BACKEND_CASES})
+        rows = sorted(outcomes.items())
+        ignored = sum(value == 'ignored' for _, value in rows)
+        self.assertEqual(unit_result(log(rows, ignored=ignored), 'm00')['test_outcomes'],
+                         outcomes)
+        mutations = [[row for row in rows if row[0] not in SHA2_BACKEND_CASES]]
+        for name in sorted(SHA2_BACKEND_CASES):
+            mutations.extend([
+                [row for row in rows if row[0] != name],
+                [('renamed::' + key if key == name else key, value) for key, value in rows],
+                rows + [(name, 'ok')],
+            ])
+        for index, bad in enumerate(mutations):
+            with self.subTest(mutation=index), self.assertRaises(ValueError):
+                unit_result(log(bad, ignored=ignored), 'm00')
+
+    def test_sha2_failed_or_newly_ignored_cases_never_qualify(self):
+        outcomes = dict(EXPECTED_OUTCOMES['m00'])
+        outcomes.update({name: 'ok' for name in SHA2_BACKEND_CASES})
+        for name in sorted(SHA2_BACKEND_CASES):
+            for outcome in ('FAILED', 'ignored'):
+                bad = sorted((key, outcome if key == name else value)
+                             for key, value in outcomes.items())
+                text = log(bad, ignored=sum(value == 'ignored' for _, value in bad))
+                with self.subTest(name=name, outcome=outcome), self.assertRaises(ValueError):
+                    unit_result(text, 'm00')
+                if outcome == 'FAILED':
+                    # Preserve rejection of a genuine failed libtest summary,
+                    # in addition to the forged successful summary above.
+                    failed = text.replace('test result: ok.', 'test result: FAILED.').replace(
+                        '0 failed;', '1 failed;')
+                    with self.subTest(name=name, failed_summary=True), self.assertRaises(ValueError):
+                        unit_result(failed, 'm00')
 
     @staticmethod
     def phases():
