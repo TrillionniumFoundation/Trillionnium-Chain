@@ -6,6 +6,7 @@ use sha2::{Digest, Sha384};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use trnm_crypto_primitives::pq_auth::verify_tpq1;
+use trnm_protocol::crypto_profile::{CryptoProfile, CryptoProfileId, ProfileBinding, ProfileScope};
 use trnm_protocol::pon_wire::hash;
 use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, UnverifiedEnvelope};
@@ -80,6 +81,32 @@ fn policy(cfg: &Config) -> Result<&Profile> {
 /// Exact configured wire profile; callers never infer it from request bytes.
 pub fn account_profile(cfg: &Config) -> Result<wire::AccountProfile> {
     Ok(policy(cfg)?.wire_profile)
+}
+/// Read the fixed cryptographic configuration from the original trusted owner.
+/// The returned ID also binds this network, genesis, application version and
+/// fresh-genesis activation rule. No input bytes select or activate a profile,
+/// and the existing NPQ2--NPQ6 namespaces and stored bytes remain unchanged.
+pub fn crypto_profile_id(cfg: &Config) -> Result<CryptoProfileId> {
+    let selected = policy(cfg)?;
+    let protocol_version = match selected.wire_profile {
+        wire::AccountProfile::AccountsV2 => 2,
+        wire::AccountProfile::QuotaV3 => 3,
+        wire::AccountProfile::TasksV4 => 4,
+        wire::AccountProfile::TasksV5 => 5,
+        wire::AccountProfile::ApplicationV6 => 6,
+    };
+    CryptoProfile::LegacyMlDsa65V1
+        .bind(ProfileBinding {
+            network: selected.context.network,
+            parameters: selected.context.parameters,
+            genesis: selected.context.genesis,
+            protocol_version,
+            scope: ProfileScope::NativeAccounts,
+            activation_height: 0,
+            retirement_height: None,
+        })
+        .map(|profile| profile.id())
+        .map_err(|_| "PQ2_CRYPTO_PROFILE")
 }
 pub fn quota_v3_enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2

@@ -48,6 +48,15 @@ PQ_SOURCE_DIRS = (
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+    "docs/security/CRYPTO_PROFILE_V1_20261104.md",
+    "evidence/crypto-profile-20261104/recompute_benchmark.py",
+    "evidence/crypto-profile-20261104/recompute_profile_ids.py",
     ".github/workflows/pon-pq-system-continuation.yml",
     "config/pon/pq-system-required-tests-v1.json",
     "scripts/ci/record_pq_native_command.py",
