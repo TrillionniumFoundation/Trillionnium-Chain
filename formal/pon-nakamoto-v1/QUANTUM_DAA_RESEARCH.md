@@ -11,8 +11,11 @@ The continuation starts from integration PR #688 at
 `a4a0e2b561f057cfa3189979c5bf11f3a0eb2353`, with protected main at
 `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`. These are source observations,
 not an activation or a claim that unrelated native gates are complete. The
-native validation was also repeated after preserving the concurrent integration
-commit `d0737cf5434894ce47fad8082376fc417313c2cb`. The older deterministic
+native validation was repeated after preserving concurrent integration commits
+`d0737cf5434894ce47fad8082376fc417313c2cb` and
+`bd2777f9cc74df10ba07ae8202584ed0fb90a519`. Research tests and the 30-run campaign
+were repeated at checkpoint `9cecbf32ddbeb56c8556730d2d0102aff1e54310`, whose
+native/configuration input bytes match the latest native validation. The older deterministic
 model and its failed schedules below remain intact. The
 [reproduction manifest](../../evidence/pon-quantum-event-resources-20261104/README.md)
 records the tested source composition and the limits of each observation.
