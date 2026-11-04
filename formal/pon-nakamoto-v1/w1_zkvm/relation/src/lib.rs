@@ -140,6 +140,146 @@ mod tests {
     use super::*;
 
     #[test]
+    fn boundary_products_and_journals_agree_with_full_scalar_replay() {
+        let template = fixture(4);
+        let mut header = Header::decode(&template[..HEADER_BYTES]).unwrap();
+        let maximum = (pon_work::Q - 1) as u32;
+        // Exact field identities exercise both the largest canonical words
+        // and dot products exceeding u64, without reproducing the reduction.
+        for (name, left, right, expected) in [
+            ("both_zero", 0, 0, 0),
+            ("left_zero", 0, maximum, 0),
+            ("right_zero", maximum, 0, 0),
+            ("both_maximum", maximum, maximum, pon_work::N as u32),
+            (
+                "one_times_maximum",
+                1,
+                maximum,
+                (pon_work::Q - pon_work::N as u128) as u32,
+            ),
+            (
+                "maximum_times_one",
+                maximum,
+                1,
+                (pon_work::Q - pon_work::N as u128) as u32,
+            ),
+        ] {
+            let a = vec![left; pon_work::CELLS];
+            let b = vec![right; pon_work::CELLS];
+            header.work_task = pon_work::task_id(&a, &b).unwrap();
+            let proof = pon_work::prove(header.challenge(), &a, &b).unwrap();
+            let mut input = header.encode();
+            input.extend_from_slice(&proof);
+            let (decoded, native) = native_replay(&input).unwrap();
+            let scalar = pon_work::verify_reference(
+                header.challenge(),
+                header.work_task,
+                header.target,
+                &proof,
+            )
+            .unwrap();
+            assert_eq!(decoded, header, "{name}");
+            assert_eq!(native.product(), scalar.product(), "{name}");
+            assert!(
+                native.product().iter().all(|word| *word == expected),
+                "{name}"
+            );
+            assert_eq!(native.ticket(), scalar.ticket(), "{name}");
+
+            let journal = check_complete_relation(&input).unwrap();
+            let public_start = DOMAIN.len() + HEADER_BYTES;
+            assert_eq!(
+                &journal[public_start + 32..public_start + 64],
+                scalar.ticket().as_slice(),
+                "{name}"
+            );
+            let scalar_product: Vec<_> = scalar
+                .product()
+                .iter()
+                .flat_map(|word| word.to_le_bytes())
+                .collect();
+            assert_eq!(&journal[public_start + 96..], &scalar_product, "{name}");
+            let trace = proof[proof.len() - 32..].try_into().unwrap();
+            assert_eq!(
+                check_public_journal(&header.encode(), &journal).unwrap(),
+                header.block_id(trace),
+                "{name}"
+            );
+        }
+    }
+
+    #[test]
+    fn every_noncanonical_u32_is_rejected_in_all_three_matrices() {
+        let input = fixture(5);
+        let header = Header::decode(&input[..HEADER_BYTES]).unwrap();
+        for matrix in 0..3 {
+            for cell in [0, pon_work::CELLS - 1] {
+                for word in pon_work::Q as u32..=u32::MAX {
+                    let mut bad = input.clone();
+                    let offset = HEADER_BYTES + 4 + (matrix * pon_work::CELLS + cell) * 4;
+                    bad[offset..offset + 4].copy_from_slice(&word.to_le_bytes());
+                    assert_eq!(
+                        check_complete_relation(&bad),
+                        Err(RelationError::Work(pon_work::WorkError::Field)),
+                        "matrix={matrix}, cell={cell}, word={word}"
+                    );
+                    assert_eq!(
+                        pon_work::verify_reference(
+                            header.challenge(),
+                            header.work_task,
+                            header.target,
+                            &bad[HEADER_BYTES..],
+                        )
+                        .unwrap_err(),
+                        pon_work::WorkError::Field,
+                        "matrix={matrix}, cell={cell}, word={word}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn canonical_task_product_and_transcript_forgeries_match_scalar_rejection() {
+        let input = fixture(6);
+        let header = Header::decode(&input[..HEADER_BYTES]).unwrap();
+        let mut cases = Vec::new();
+        for (matrix, expected) in [
+            (0, pon_work::WorkError::Task),
+            (1, pon_work::WorkError::Task),
+            (2, pon_work::WorkError::Product),
+        ] {
+            let mut bad = input.clone();
+            let offset = HEADER_BYTES + 4 + matrix * pon_work::CELLS * 4;
+            let original = u32::from_le_bytes(bad[offset..offset + 4].try_into().unwrap());
+            // Keep the replacement canonical so range checks cannot mask a
+            // missing task or full-product check.
+            let replacement = u32::from(original == 0);
+            bad[offset..offset + 4].copy_from_slice(&replacement.to_le_bytes());
+            cases.push((bad, expected));
+        }
+        let mut bad_trace = input.clone();
+        *bad_trace.last_mut().unwrap() ^= 1;
+        cases.push((bad_trace, pon_work::WorkError::Transcript));
+        for (bad, expected) in cases {
+            assert_eq!(
+                check_complete_relation(&bad),
+                Err(RelationError::Work(expected))
+            );
+            assert_eq!(
+                pon_work::verify_reference(
+                    header.challenge(),
+                    header.work_task,
+                    header.target,
+                    &bad[HEADER_BYTES..],
+                )
+                .unwrap_err(),
+                expected
+            );
+        }
+    }
+
+    #[test]
     fn exact_native_product_ticket_trace_and_unique_identity_are_public() {
         for seed in [0, 1, u32::MAX] {
             let input = fixture(seed);
