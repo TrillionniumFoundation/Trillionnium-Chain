@@ -52,6 +52,78 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Full integration, explicit recovery and measured work costs — 2026-11-04
+
+Continue PR #688 from `6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029`, preserving
+its original Host resource owners, business deadlines and concurrent source.
+The fixed-pair audit found three different active source selections: ordinary
+Hepta public-model CLI V4, installed Cell V5, and the native pair's separate
+Chain #691. A successor closed V6 must bind all three entry paths to the same
+exact Chain source/tree and an actual ordered base/source merge. Historical
+profiles and their evidence stay historical. Normal, retry, conflict, recovery
+and effect paths still use the existing versioned current-authority rules;
+matching source bytes alone cannot authorize a changed commit or profile.
+
+This increment composes the Linux x86-64/AArch64 SHA-2 assembly backend with
+independent SHA-256/SHA-512 known-answer and boundary tests, retains the exact
+dependency graph apart from that explicit backend edge, and includes the PQ
+admission guard and witness recovery fixes below. A witness cold reopen now
+requires an independently retained authenticated checkpoint before reading its
+database; coherent old snapshots, equivocation and a database ahead of the
+selected checkpoint all refuse. Ordinary admission retains the same fresh
+IMMEDIATE witness guard; an actual expiry retirement commits and obtains a new
+guard. The mandatory PQ registry grows from 43 to 47 meaningful controls, with
+its child harness still excluded. The original 250-ms controls are unchanged.
+
+The account-graph lift cache now replaces within fixed eight-way buckets rather
+than clearing every entry at capacity. It retains at most 8,192 exact arithmetic
+inputs per Node, with a lazily allocated 983,080-byte software charge on the
+measured platform (compile-time ceiling 1 MiB). No row, root, graph or authority
+verdict is cached. Five real complete-graph cases preserve every SQL read and
+progress callback, compare each result with the uncached oracle, use two live
+caches and retain 100 warm observations per case. The original capacity control
+fails at overflow (one retained entry); the replacement retains its bounded
+capacity. The measured 9,216-account warm median falls from 422.658 to 245.135 ms;
+at 32,768 accounts it falls from 1,582.465 to 1,468.463 ms. These debug-profile
+graph observations exclude Host, PQ, the complete State commitment and client
+confirmation. Full traversal remains linear; this is not touched-state or
+original-business acceptance.
+
+Cell retention ACK and reconciliation use the original operation deadline
+through writer acquisition, payload validation/copy and durable write/readback.
+The write transaction rechecks schema and prior state, preserves monotonic
+retirement and repair counters, and exposes post-commit cancellation as an
+uncertain observation of an already durable ACK/debit. Three real writer-delay
+counterexamples fail before the fix; six new controls cover them, schema
+substitution, post-commit uncertainty and retirement races. This is not an
+independent failure-domain experiment or a hard real-time bound on every
+SQLite/filesystem wait.
+
+The [current integration evidence](../../evidence/pon-full-integration-20261104/README.md)
+preserves the original source's failed F0 and three-run business campaigns and
+the new intermediate source's complete 30-shard W1 strategy observation. The
+existing [work-cost security model](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md)
+now includes exact measured fixed-strategy ratios and conditional mean-work
+sensitivity. No per-sample fastest oracle, missing attempt or unseen round is
+substituted. Each newly composed source still needs its own execution evidence.
+
+The following conditions remain explicit acceptance work. The guarded witness
+root currently covers only the three PNQ2 resource/peer/request tables and its
+binding; it does not cover balances, settlement, task state, active History,
+CURRENT or FinalUse. An external checkpoint API is not an independently operated
+monotonic root, and whole-effect uncertain-CAS reconciliation remains open.
+Historical account migration cannot retroactively establish pre-quantum
+ownership or source finality. Public confirmation remains blocked until the
+independent client meets the unchanged original budget and deadline together
+with its no-attack baseline. Arithmetic caches cannot replace complete current
+state validation or establish touched-state complexity. Cell availability needs
+real independent provider failures and verified repair/collection obligations.
+Prospective model acceptance retains untouched held-out tasks, equal cumulative
+training budgets, regression/resource measurements and legitimate long
+`no-update`. Existing serial/concurrent/reference-DAG measurements use the same
+PoN consensus and must not be renamed NG/Prism/full-DAG consensus results. All
+qualification and production activation flags remain unchanged.
+
 #### Model-prefix and History codec continuation — 2026-11-03
 
 Continue the existing PR #688 integration lineage from `01627151f3ab50750eac2adeb46d8883a601265f`.
@@ -4688,6 +4760,17 @@ quantum W1/DAA/fork choice, original capacity and independent sustained joint
 acceptance remain required. Existing budgets and activation authority are
 unchanged. This is an entry in the sole plan, not a new release lane.
 
+The current cold-recovery refinement requires an explicitly supplied,
+independently retained checkpoint before the durable witness opens existing
+SQLite state. Exact-head mismatch, including coherent old database restore,
+equivocation and locally-ahead uncertainty, refuses without reseeding. The
+composed native process fixture carries an authenticated pre-stop checkpoint
+across restart. The #698 retained-admission transaction also joins this same
+candidate: ordinary admission keeps the fresh guard; actual expiry retirement
+still publishes its epoch before a new guard. These changes require new native
+evidence and do not supply a physical monotonic root, cover CURRENT/FinalUse or
+balances, or resolve all-effect uncertain commits. PN0–PN6 remain HOLD.
+
 The continuation also composes #678's later `64cb26b5` full-root arithmetic
 changes without dropping either constructor field or original workspace CPU
 controls. The initial `ed31b019` local build was terminated by SIGKILL; its
@@ -5132,90 +5215,6 @@ The existing Host-context mismatch in the signed-DAG integration also remains
 open. Original service windows, work-cost/security, independent evidence,
 whole-chain PQ, public-readiness and activation gates are not promoted.
 
-### 2026-11-03: retain complete architecture replay in its required Host
-
-Original head runtime run 41649603030 at 6ee97ee8 failed all eighteen signed
-delivery/replay samples with `PUBLIC_HOST_KERNEL_PARENT` after successful first
-History replies. The candidate at base 0443a5e2 keeps the public parent check and
-the Rust tests unchanged. A Cargo target runner places only the complete
-architecture test binary into the existing reviewed fixed Host; all other
-workspace targets retain their original arguments, environment and package cwd.
-The original workspace command, subsequent release tests and model oracles,
-2-second call, 15-second round, 180-minute job and Host resource limits remain.
-
-The adapter binds the Cargo-selected binary, exact source/job, original package
-cwd, runtime environment, both native tests and all eighteen native business
-samples. The outside shard requires the current Host result even after a zero
-child exit. Cargo-specific child environment is checked at execution and in the
-recorded before/after pair, rather than being mistaken for the parent process
-environment. Harmless controls passed 9 new binding, 9 shard and 35 original
-Host tests; no local synthetic control qualifies native business execution.
-The exact-source hosted head/merge CI remains pending at publication. This
-fixture repair does not close the original four-second/sixteen-hostile service
-budget, independent acceptance, architecture choice or production activation.
-
-
-## 2026-11-03 — Cell rendezvous fixture readiness with original budgets
-
-The isolated candidate composes owner `9f04640877078204d367f753eba684d94e705a74`
-and fixed-Host continuation `4204c4b0b1300cbb5d5325d9915a161173983491` while
-preserving both parents and all their plan additions. The original #697 runtime
-job executed 173 DA tests with 172 PASS / 1 FAIL (`cell absolute deadline` in
-TCP bootstrap), before reaching architecture delivery. That original failure
-is retained and is not declared closed by local results.
-
-The existing rendezvous test fixture now waits for the actual serving thread's
-limits/address validation and nonblocking listener initialization. The message
-consumes no probe connection or signed record. All 16 existing test bodies are
-byte-identical; the added delayed-start control passes and removing only the
-readiness receive produces a real native failure. Request 200 ms, server request
-250 ms, caller 10 s, lifetime 30 s, and connection limit 64 remain unchanged.
-Synchronous Drop/join is not represented as a hard cancellation deadline.
-
-Actual local Rust 1.95 locked/default-profile verification: DA 174/174 with
-zero ignored or filtered tests on the composed source (21.51 s); strict DA
-all-target Clippy `-D warnings` PASS; full locked metadata 174 packages and
-26 members, lock unchanged; 53 existing Host/shard/architecture controls,
-34 source-integrity negatives, and 16 boundary controls PASS. Original CI
-contract pins remain 20. Owner 9f046's two assertion wraps initially failed
-workspace formatting; only those whitespace wraps were changed and original
-`cargo fmt --all -- --check` then passed. They are outside DA dependencies;
-no native execution of that History regression is inferred.
-
-Full source/hash/command/output bindings, original failures, removed-handshake
-negative, retained test bodies and independent static-review limits are in
-[the readiness qualification](../../qualification/cell-rendezvous-readiness-20261103/README.md).
-The original selector passed locally before the change, so this controlled
-startup defect does not by itself establish the sole cause of the hosted
-historical timeout. Exact head/prospective original CI remains required.
-Fixed-Host native execution, original 4 s / 16-hostile pressure, ARM CPU,
-and 30 s campaign gates remain independently OPEN. No runtime/model/security
-acceptance or activation is promoted: DRAFT / SHADOW_ONLY / DENY_ALL /
-HOLD_NO_GO remains in force.
-
-
-### Fixed-Host/readiness source-pin correction (2026-11-03)
-
-The first composed `801bc063` retained two stale corpus blob pins: the fixed-Host
-baseline workflow and the formatting-only History deadline test. The actual
-corpus check failed and its output is retained in
-`qualification/cell-rendezvous-readiness-20261103/PIN_CORRECTION.json`.
-Only these two pin values are corrected; all other 374 pins and every remaining
-manifest field are unchanged. The original 376-blob check now exits zero with
-`HOLD_NO_GO`, and all 34 corpus plus 22 claim-guard controls pass. The correction
-changes no Rust/Cargo/workflow input and claims no new native execution; previous
-174-test DA and fixed-Host evidence keep their exact source scope. Original
-hosted runtime, 4-second/16-hostile and 30-second service gates remain required.
-
-The corrected Draft subsequently combines exact owner `8a74a9e4` with
-`368b39cd`. Preserve both complete plan appends and all owner PQ-test,
-architecture-diagnostic and proof-scope bytes. The merged corpus and original
-CI contract pass, as do 9 architecture, 9 shard, 34 source-integrity and 16
-project-boundary controls. Source composition and raw outputs are recorded in
-`qualification/cell-rendezvous-readiness-20261103/OWNER_8A74_MERGE.json`.
-The original hosted native gates must execute the new owner tests independently;
-previous DA results do not qualify them. No resource or service bound changes.
-
 ### 2026-11-03 Recovered History execution and bounded delivery readback
 
 Continue the published `9f046408...` candidate after execution became available
@@ -5234,27 +5233,6 @@ Console diagnostics do not establish the cause of an older failed run.
 Validate the recovered combination under the original profiles and retain
 source-bound raw results. Host fixture acceptance, original public-service
 windows, work/security qualification and public activation remain separate.
-
-### 2026-11-03 readiness composition adopts the complete owner Host framework
-
-The isolated readiness Draft preserves its complete `4a32fe34` history and
-adopts owner `12171edc890df1611bf68503038bfad3d66a5a88`. The owner's current-ELF
-framework already covers the signed-DAG fixture and eight other exact public
-selectors. Retire the now-overlapping architecture-only Cargo runner and its
-workflow/shard hooks; keep all historical source and negative receipts. The
-active controller, original required workflow, History helper, shard driver and
-376 source pins now match the owner exactly. Only the Cell readiness fixture
-differs among workspace Rust sources. Neither parent's new business assertions are removed.
-
-The [current composition record](../../qualification/cell-rendezvous-readiness-20261103/README.md)
-retains 78 Host, 104 native-driver, 8 shard, 34 source-integrity, 16 boundary,
-34 corpus and 22 claim controls, plus actual source pins, original CI contract,
-preflight and formatting checks. Two sparse-import failures and the exact Git
-input restoration remain recorded. These are local controls, not a provisioned
-public Host or a new native execution. The original hosted workspace and owner
-CAS/History regressions still require their exact combined source. No prior DA,
-CPU, service or failure receipt is relabeled; original resource/window/work
-requirements and HOLD conditions remain.
 
 ### 2026-11-03 committed-CAS and original public fixture continuation
 
@@ -5594,112 +5572,6 @@ corruption and formatting cancellation controls join the unchanged original
 public/PQ and snapshot controls. No complete state, W1, graph or final authority
 check is removed.
 
-
-### 2026-11-04 readiness Draft preserves the current complete owner
-
-The isolated readiness Draft retains its own published `8543bd9f` ancestry and
-combines exact owner `bbcb3804576b9eb0b908eb3054bedccc189fb7ef`. The owner now
-contains the paid evaluation/Submit fixture corrections, canonical W1 source
-receipt, 25/1 History registry, ordered delta walk, inline generic History
-records, bounded PQ key expansion and exact W1 probe prefilter. Preserve every
-owner source, workflow, lock and 381 exact source pin without rewriting its
-measurements or promoting its pending hosted checks.
-
-The owner still has the original Cell rendezvous fixture; retain the already
-published readiness implementation byte-for-byte as blob
-`6a9660b4cd43fcb480a6f6859b01f60eff766312`. It is the sole workspace Rust
-difference from the owner. Preserve all historical qualification records and
-both complete plan histories. The new composition record binds the complete
-owner tree and exact retained overlays, including all current production
-inputs; no earlier binary qualifies this combined source.
-
-Original `8543bd9f` hosted runtime independently passed all 174 DA tests before
-its later evaluation CPU-owner failure. The owner's subsequent C1 evaluation
-success belongs to its own C1 source. These separate observations explain the
-composition; they are not a new combined native run. The current local execution
-environment is unavailable. Shell preflight, formatting, strict Clippy and
-native gates therefore require the original Actions on this exact new head
-and actual merge; only remote source/blob/pin and mechanical merge checks have
-been performed here.
-
-Retain original 200/250 ms request limits, 10-second setup wait, 30-second
-rendezvous lifetime, all Host/source checks, CPU budgets and service selectors.
-The newer owner's three original campaigns and two fresh-service jobs remain
-failed at their own exact source. Original four-second/16-hostile, F0, complete
-workspace, independent security/PQ and activation conditions remain OPEN.
-
-
-### 2026-11-04 original inline guard failure and owner correction
-
-The first combined `e8bc6eff` original repository-truth and external-evidence
-jobs fail on the retained recent-batch workflow's stale `store.rs` inline blob
-comparison. Its 381 corpus pins had matched, but that narrower Git-tree check
-did not execute or replace the original CI contract. Preserve both complete
-decoded job logs and their source/hash bindings; neither failure is a native
-performance result.
-
-Combine published `e8bc6eff` with frozen exact owner
-`f35ee6dc61feaba7c68b16e1f9384b5c3794a976`, which preserves `29586a77`'s
-literal guard corrections and applies the three actual Rust 1.95 formatter
-hunks observed in original job `126319351908`. The owner delta changes only
-two test sources and their existing corpus pin; no test or assertion is removed. Preserve its new same-State
-account projection, original full graph checks, fixed-tip History formatting,
-and all concurrent work, together with the same sole DA readiness fixture.
-All 16 workflow byte streams and 20 literal source guards now bind to the
-owner's exact Git tree, as do all 384 corpus pins. This remote JavaScript
-readback is not execution of the original Python contract or shell preflight.
-The new complete head and actual merge still require all original hosted
-source, format, strict-lint, native and business gates. Earlier source-bound
-failures remain unchanged; performance and activation remain HOLD.
-
-The complete decoded formatter log is also retained with its actual source
-`29586a77`, actual merge `482e5164`, and original nonzero exit. Its earlier
-source identity and audit preflight succeeded, but formatting stopped before
-new native qualification. The frozen owner's correction requires fresh hosted
-verification; neither this log nor remote byte matching is a native PASS.
-
-
-### 2026-11-04 fixed owner snapshot for original prospective-merge qualification
-
-The original `7d5321a5` release CPU merge job `126330126759` received
-event base `f35ee6dc`, while the actual GitHub merge `ddf086e5` had
-ordered parents `be0d5f97` and `7d5321a5`. The unchanged source verifier
-correctly rejected this mismatch before native execution. Preserve that failed
-job and the actual Git commit parents. Do not accept a moving branch tip in
-place of the event base, relax parent order, or count these merge failures as
-completed native tests.
-
-Freeze the already-reviewed complete owner `be0d5f978dc86008115524a6be85c38e03982b33`
-under the separate qualification base
-`qualification/chain-owner-be0d5f97-20261104-gpt6`. Keep the concurrent owner
-branch and main untouched. The next readiness head retains both previous
-`7d5321a5` and this owner as parents, every owner file, the same sole DA test
-fixture, and all previous evidence and both plan histories. The snapshot ref is
-an owned fixed-input convention, not a claim of server-enforced immutability.
-
-The exact owner increment changes only the recent-batch workflow and its
-existing corpus pin. It accounts for the original History module's observed
-six passing and three intentionally ignored tests, requires both new test
-identities, and requires all 91 complete authenticated tests including five
-new same-State controls. The original commands, 23 post-write controls,
-selectors, timeouts, production code and performance criteria are unchanged.
-All 384 corpus pins and the 20 existing inline source bindings still match
-the complete owner tree; this mechanical Git readback does not execute the
-original Python checks.
-
-The previous head's release/workspace CPU head jobs succeeded, while the
-merge jobs failed source identity. Its campaign and fresh-service outcomes
-remain failed. An earlier exact `e8bc6eff` head also retained a 173/174 DA
-result: the slow-start fixture had completed readiness but its subsequent
-200 ms request timed out. Neither the old 174/174 result nor a successful
-component run qualifies this source or proves that later scheduling is bounded.
-
-No local executor is available for shell preflight, Rust, Python, formatting
-or strict Clippy. The new exact head and actual merge must run the original
-hosted gates with the same 4-second/16-hostile, 30-second campaign, fixed Host,
-resource, history, error and settlement requirements. DRAFT, SHADOW_ONLY,
-DENY_ALL and HOLD_NO_GO remain in force.
-
 ### 2026-11-04 final History resource completion and honest-path continuation
 
 The [final-resource continuation](../../evidence/pon-final-resource-completion-20261104/README.md)
@@ -5776,59 +5648,19 @@ source/driver/applicability controls and both applicability/maturity contracts
 pass. The initial generated-table drift errors remain recorded alongside the
 subsequent correction; full public and scientific acceptance remains open.
 
-### Frozen owner056 composition after exact 312 native observations — 2026-11-04
 
-Freeze owner 056303b5193809597d4b5ec1f075dfc5109fe888, tree
-5c4bdec9085555b82986a5892be8a44ac6a65669, without modifying its branch.
-The successor keeps every source/evidence entry of that tree and carries the
-existing DA readiness overlay and historical qualification files from 312.
-The merged commit records both parents. The fixed qualification base uses the
-exact 056 commit; a later owner tip cannot silently change this event denominator.
+## 2026-11-04 — Frozen 44d owner, retained readiness, and generated fuzz ASM lock
 
-This adopts the already-existing 39839288 schema identifier correction,
-c9 final-resource deadline completion fences and PQ fixture cleanup, atomic
-SIGKILL readiness publication, and 54594c0c prefix-range/codec-context changes.
-These are source adoption, not new performance qualification. Independent narrow
-reviews for c9 and 54594c0c are preserved with their exact inputs and zero-execution
-boundaries. Prefix snapshots, point/prefix conflicts, per-call codec validation,
-owner identity, every resource/deadline check and original test budgets remain.
+The #699 successor preserves the entire frozen owner `a10c39025cdc03d3265b031d6547b11e0350da2c` tree. Its production source is exactly `44d3def32f515b98fc41f074fe1b88e97f046191`; a10 only corrects the original branch-encoding module count and its corpus pin. The ordered parents are the previous #699 head `c806dd9ab640e87ca3fc507a8aeada53c2053990` and a10. The existing rendezvous readiness test overlay remains `6a9660b4cd43fcb480a6f6859b01f60eff766312`. No owner ref, main ref, production deadline, resource limit, or ignored diagnostic is changed.
 
-The original 312 release/workspace CPU matrix passed eight jobs, containing
-32 executions of four original selectors and 180 executions of 45 semantic
-controls. Its 24 parity records still deny Host/all-honest-service qualification.
-The original PQ workflow 41761586991 completed all four x64/ARM head/merge jobs
-successfully; at composition preparation this statement is job-status readback,
-not a newly counted independent full-artifact replay. The 312 head runtime
-remains DA 173/174: the newer-sequence TCP case validated one record instead of
-two. No assertion or 200 ms/250 ms/10 s/30 s limit is changed here. Its merge
-runtime remains in progress. The original baseline has cancel-in-progress:false,
-so publishing this successor does not request cancellation of that old job.
+The independent fuzz workspace still had the old lock after the owner enabled SHA-2 ASM on Linux x86_64/aarch64. The actual pinned `nightly-2026-10-01` command `cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml` failed with exit 101 on the old bytes. In source `2c5349cb785d83e007b06c7af4ab1262277ad870`, original run 41779987720 / job 126409090815 then ran ordinary Cargo generation, the identical locked command (exit 0), and offline locked metadata (exit 0). The actual generated lock is Git blob `3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08`, 33,605 bytes, SHA256 `8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d`. The 146-to-147 package transition contains only sha2-asm 0.6.4 and the sha2 dependency edge; all other 145 package records are unchanged. Eight graph controls passed. This experiment compiled no package tests and ran no sanitizer fuzz mutations.
 
-Original 312 campaign, fresh-challenge, protocol and from-zero gates remain
-failed. The full DA negative and exact CPU/source observations are durable at
-b263aa0773fdb0927dffeba9b4f360d82fa013b5; its bounded read-only bridge is collecting
-the exact 312 campaign and fresh manifests separately. Old f35 costs and counts
-are not transferred to this successor. Local execution is unavailable: no local
-preflight, Cargo, Clippy or formatter is claimed for this composition. The exact
-committed source must run the original hosted preflight, graph/lock, retained
-native, strict Clippy, formatting, source-integrity and Markdown gates. HOLD_NO_GO.
+Original 44d branch-encoding run 41778472916 produced six successful native-store tests and two ignored diagnostics on both x86_64 job 126404257659 and aarch64 job 126404257700, then failed its stale 5/1 grep. The owner a10 6/2 correction is adopted. The composition additionally requires exactly one successful line for the new collision/replacement test, while preserving the entire original module command, four-cell matrix, 25-minute deadline, and two ignored diagnostics. The corresponding workflow and generated fuzz lock corpus pins are updated to their exact new bytes; all 384 corpus pins and 20 original inline workflow pins were checked against the composed tree.
 
+The new independent `chain-published-fuzz-lock.yml` job first runs the original locked fetch on the exact published head with a fresh Cargo home, requires unchanged lock bytes, and checks offline metadata. It does not regenerate a lock or replace the original complete quality/fuzz gate. This published-source result is pending at commit time.
 
-## 2026-11-04 — reuse the existing codec control count and restore ordinary CodeQL coverage
+The DA ACK/deadline independent review is bound to the two exact 44d source files and finds no confirmed blocker in its narrow static scope. The composing agent also read the exact eight-way arithmetic cache, PQ cold-recovery, ASM selection, and new test inventory. The separate eight-way cache peer review is pending; the earlier identity-lift review is not reused for it. All owner evidence and original failures remain in history. No local preflight or native execution was possible in the composing environment; actual hosted preflight and original native gates remain required.
 
-- Original1bac W1factorial head job126372439231 executed all28 History controls plus1 original ignored SIGKILL child, then exact27/1 validation refused. Reuse the existing41dd owner workflow blobaa9d7597 without copying unreviewed owner source. Its only changes are27→28 and one exact successful codec-case name; the two deadline names, all original commands, matrix, error predicates and budgets remain byte-identical. The actual current corpus does not pin this W1 workflow, so the entire corpus remains unchanged.
-- The existing codec test atc75147a7 remains untouched. Full failed log and source/count evidence are durable atfa2fca6c; this patch is not a new native pass. Independent review23bfa894 is included. The frozen056 production tree plus original DA readiness overlay remains the integration basis; diagnostic e5adb is a separate branch.
-- Original CodeQL exporter126372439045 passed16 parser controls then exhausted its original1200-second window with no exact-source CodeQL checks. Current normal branch metadata confirms the auxiliary056 PR base is unprotected. Official default-setup rules cover PRs against default/protected bases. Current main dd6e1c3c is already an ancestor of1bac (ahead1085/behind0), and its empty README is retained.
-- Intended reversible review alignment: keep this owned PR Draft and all frozen source, retarget the review base to current main, then send the intended source synchronize event. No main/#688 ref, protection, permission, scanning configuration or exporter timeout changes. The actual new merge must independently match ordered[main,new-head] parents and source tree; old056 merge receipts never qualify it.
-- Local execution remains unavailable. All new original gates are pending, while older failed/running observations retain their own source. DRAFT/SHADOW_ONLY/DENY_ALL/HOLD_NO_GO and all native performance/Host/activation requirements remain unchanged.
+The previous c806 original artifacts were independently read back in run 41777955458 / job 126402598642 and durably checkpointed at `8b30c42f783a0d2c1d7148989ecd314a6a8ea532`. They retain 3/27 planned campaign confirmations, 0/18 pressure confirmations, and 0/6 original four-second root passes. Eight c806 CPU job statuses are successful, but they do not qualify this successor or the protocol/DA/performance gates. Nested Host costs and SQL observation samples are not added together or represented as a full business-cost proof.
 
-
-## 2026-11-04 — frozen scoped-account reuse and identity-lift batch
-
-Compose the complete frozen owner 6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029 / tree 76d3b416eccc6a810634062e036f646f22bffc76 with the existing exact DA rendezvous-readiness test and retained qualification evidence. Both current #699 1ba59caf7ebd471595761d70891cb71bfe35d3f9 and the frozen owner remain ordered commit parents; main dd6e1c3cbeacbdc532b0679297835b3a0aac78f0 remains the Draft review base. Do not modify owner #688, main, repository settings or any acceptance budget.
-
-The batch includes 41dd's same-call immutable State account projection in scoped readback, separately identified SQL commit API observation, and 6f's actual formatter correction plus exact-depth identity-lift cache bypass. The old 41dd branch job 126376194673 failed the original compiler-format check and its complete decoded log is retained. The 6f follow-up is a bounded known dependency of that batch, not permission to follow future owner tips.
-
-All 384 existing corpus blob pins and 20 existing branch/recent inline pins were checked against the complete frozen owner tree before composition. Workspace source is exactly that owner except the one existing DA test file; the diagnostic logging experiment is excluded. Existing same-state, foreign-state, graph, late-error and cancellation assertions remain; sealed verified frontiers are not described as universal full SQL traversal. New commit telemetry is observation only and cannot authorize transactions or turn unknown timing into zero.
-
-Prior #699 1ba59 has actual default CodeQL actions/python/rust success and exact-source exporter success, and the original x64/head W1 factorial now passed its 28 History controls (one original child ignored) and eleven CPU controls. These results belong to 1ba59 only. Original campaign and fresh-challenge failures remain open. All native, ARM, pressure, Host and protocol gates for this new composition must execute anew with original budgets. No local executable environment/preflight/native run is claimed.
+Exact source readbacks, the actual generator log, original branch-count failure logs, peer review, commands, hashes, and composition boundaries are in `qualification/frozen-44d-lock-composition-20261104/`. The new source remains **DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO** until its own original head and prospective-merge gates meet every original requirement.

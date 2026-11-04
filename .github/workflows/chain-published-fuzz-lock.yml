@@ -1,0 +1,99 @@
+name: Exact published fuzz ASM locked graph
+on:
+  push:
+    branches: [fix/chain-cell-rendezvous-readiness-20261103-gpt6]
+    paths:
+      - .github/workflows/chain-published-fuzz-lock.yml
+      - tests/fuzz/Cargo.lock
+      - tests/fuzz/Cargo.toml
+      - trillionnium/crates/trnm-protocol/Cargo.toml
+permissions:
+  contents: read
+concurrency:
+  group: exact-published-fuzz-lock-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  locked-graph:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      RUSTUP_TOOLCHAIN: nightly-2026-10-01
+    steps:
+      - name: Checkout the exact published candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Bind original source and preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/published-fuzz-lock"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/published-fuzz-lock/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          test "$(git hash-object tests/fuzz/Cargo.lock)" = 3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08
+          sha256sum tests/fuzz/Cargo.lock > "$RUNNER_TEMP/published-fuzz-lock/lock-before.sha256"
+      - name: Install the original exact fuzz toolchain
+        run: rustup toolchain install nightly-2026-10-01 --profile minimal
+      - name: Require first locked fetch and offline graph without lock mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export CARGO_HOME="$RUNNER_TEMP/published-fuzz-cargo-home"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/published-fuzz-query-target"
+          unset CARGO_NET_OFFLINE
+          rustc --version --verbose > "$RUNNER_TEMP/published-fuzz-lock/rustc.log"
+          cargo --version --verbose > "$RUNNER_TEMP/published-fuzz-lock/cargo.log"
+          cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml 2>&1 | tee "$RUNNER_TEMP/published-fuzz-lock/first-locked-fetch.log"
+          sha256sum -c "$RUNNER_TEMP/published-fuzz-lock/lock-before.sha256"
+          cargo metadata --offline --locked --format-version 1 --manifest-path tests/fuzz/Cargo.toml > "$RUNNER_TEMP/published-fuzz-lock/metadata.json" 2> "$RUNNER_TEMP/published-fuzz-lock/metadata.stderr"
+          sha256sum -c "$RUNNER_TEMP/published-fuzz-lock/lock-before.sha256"
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess, sys, tomllib
+          from pathlib import Path
+          if sys.flags.optimize:
+              raise RuntimeError("optimized Python cannot run evidence assertions")
+          out = Path(os.environ["RUNNER_TEMP"]) / "published-fuzz-lock"
+          raw = Path("tests/fuzz/Cargo.lock").read_bytes()
+          assert hashlib.sha256(raw).hexdigest() == "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d"
+          lock = tomllib.loads(raw.decode())
+          assert len(lock["package"]) == 147
+          asm = [row for row in lock["package"] if row["name"] == "sha2-asm"]
+          assert asm == [{"name": "sha2-asm", "version": "0.6.4", "source": "registry+https://github.com/rust-lang/crates.io-index", "checksum": "b845214d6175804686b2bd482bcffe96651bb2d1200742b712003504a2dac1ab", "dependencies": ["cc"]}]
+          metadata_raw = (out / "metadata.json").read_bytes()
+          graph = json.loads(metadata_raw)
+          asm_nodes = [row for row in graph["packages"] if row["name"] == "sha2-asm"]
+          sha_nodes = [row for row in graph["packages"] if row["name"] == "sha2" and row["version"] == "0.10.9"]
+          assert len(asm_nodes) == len(sha_nodes) == 1
+          assert asm_nodes[0]["version"] == "0.6.4"
+          nodes = {row["id"]: row for row in graph["resolve"]["nodes"]}
+          assert asm_nodes[0]["id"] in nodes[sha_nodes[0]["id"]]["dependencies"]
+          assert "asm" in nodes[sha_nodes[0]["id"]]["features"]
+          result = {"schema": "trnm-exact-published-fuzz-lock-v1",
+                    "source": os.environ["GITHUB_SHA"],
+                    "tree": subprocess.check_output(["git", "--no-replace-objects", "rev-parse", "HEAD^{tree}"], text=True).strip(),
+                    "toolchain": os.environ["RUSTUP_TOOLCHAIN"], "first_locked_fetch_exit": 0,
+                    "offline_locked_metadata_exit": 0, "lock_unchanged": True,
+                    "lock_bytes": len(raw), "lock_sha256": hashlib.sha256(raw).hexdigest(),
+                    "metadata_sha256": hashlib.sha256(metadata_raw).hexdigest(),
+                    "resolved_packages": len(graph["packages"]),
+                    "native_tests_executed": 0, "fuzz_mutations_executed": 0,
+                    "original_complete_fuzz_gate_qualified": False,
+                    "performance_qualified": False, "production_activation": False}
+          (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+          print(json.dumps(result, sort_keys=True))
+          PY
+      - name: Verify exact source remains unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/published-fuzz-lock/source-after.json"
+      - name: Retain original fetch and source evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: exact-published-fuzz-lock-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/published-fuzz-lock/
+          if-no-files-found: error
+          retention-days: 30

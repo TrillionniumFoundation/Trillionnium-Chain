@@ -26,11 +26,81 @@ pub(crate) mod scoped_readback;
 /// compressed-path hashes bind all their original inputs separately. No row,
 /// graph, state, ancestry or commit verdict survives a call.
 type LiftInput = (Hash, Hash, usize, usize);
+// Fixed eight-way buckets keep scans larger than the cache from discarding
+// every established input at once, while still admitting a new working set.
+// The index is only a bounded lookup hint. All fields of LiftInput must match.
+const LIFT_WAYS: usize = 8;
+type LiftEntry = (LiftInput, Hash);
 #[derive(Default)]
-pub(crate) struct LiftCache(
-    RefCell<BTreeMap<LiftInput, Hash>>,
-    node_decode::NodeDecodeArithmetic,
-);
+struct LiftEntries {
+    slots: Option<Box<[Option<LiftEntry>]>>,
+    retained: usize,
+    replacement: u64,
+}
+const LIFT_SOFTWARE_CHARGE: usize = LiftCache::MAX_ENTRIES
+    * std::mem::size_of::<Option<LiftEntry>>()
+    + std::mem::size_of::<RefCell<LiftEntries>>();
+const _: () = assert!(LIFT_SOFTWARE_CHARGE <= 1024 * 1024);
+const _: () = assert!(LiftCache::MAX_ENTRIES.is_multiple_of(LIFT_WAYS));
+
+impl LiftEntries {
+    fn bucket(key: &LiftInput) -> usize {
+        let lane = u16::from_le_bytes([key.0[0], key.0[1]])
+            ^ u16::from_le_bytes([key.1[0], key.1[1]])
+            ^ (key.2 as u16).rotate_left(3)
+            ^ (key.3 as u16).rotate_left(7);
+        (usize::from(lane) % (LiftCache::MAX_ENTRIES / LIFT_WAYS)) * LIFT_WAYS
+    }
+
+    fn get(&self, key: &LiftInput) -> Option<&Hash> {
+        let slots = self.slots.as_ref()?;
+        let start = Self::bucket(key);
+        slots[start..start + LIFT_WAYS]
+            .iter()
+            .flatten()
+            .find_map(|(input, value)| (input == key).then_some(value))
+    }
+
+    fn insert(&mut self, key: LiftInput, value: Hash) {
+        let start = Self::bucket(&key);
+        let slots = self
+            .slots
+            .get_or_insert_with(|| vec![None; LiftCache::MAX_ENTRIES].into_boxed_slice());
+        for entry in &mut slots[start..start + LIFT_WAYS] {
+            match entry {
+                Some((input, output)) if *input == key => {
+                    *output = value;
+                    return;
+                }
+                None => {
+                    *entry = Some((key, value));
+                    self.retained += 1;
+                    return;
+                }
+                _ => (),
+            }
+        }
+        // This deterministic sampler controls only which exact arithmetic is
+        // retained. It is not a security random source. A FIFO hand makes a
+        // cyclic scan of nine inputs miss forever in an eight-way bucket;
+        // sampling a slot avoids that systematic eviction order. A collision
+        // always falls back to the original lift, never to another key's value.
+        self.replacement = self
+            .replacement
+            .wrapping_mul(6_364_136_223_846_793_005)
+            .wrapping_add(1_442_695_040_888_963_407);
+        let victim = (self.replacement >> 32) as usize % LIFT_WAYS;
+        slots[start + victim] = Some((key, value));
+    }
+
+    #[cfg(test)]
+    fn len(&self) -> usize {
+        self.retained
+    }
+}
+
+#[derive(Default)]
+pub(crate) struct LiftCache(RefCell<LiftEntries>, node_decode::NodeDecodeArithmetic);
 impl LiftCache {
     const MAX_ENTRIES: usize = 8192;
 
@@ -54,9 +124,6 @@ impl LiftCache {
         // input supplied by a caller, database, record or selected block.
         let value = node.lift(depth, &empty_hashes());
         if let Ok(mut entries) = self.0.try_borrow_mut() {
-            if entries.len() == Self::MAX_ENTRIES {
-                entries.clear();
-            }
             entries.insert(key, value);
         }
         value
@@ -696,7 +763,226 @@ mod tests {
                 assert_eq!(capacity_cache.0.borrow().len(), LiftCache::MAX_ENTRIES);
             }
         }
-        assert_eq!(capacity_cache.0.borrow().len(), 1);
+        assert_eq!(capacity_cache.0.borrow().len(), LiftCache::MAX_ENTRIES);
+    }
+
+    #[test]
+    fn native_lift_cache_collisions_keep_exact_math_and_bounded_replacement() {
+        let cache = LiftCache::default();
+        let empty = empty_hashes();
+        let base = Node::account(
+            [0x51; 32],
+            Account {
+                balance: 19,
+                nonce: 3,
+            },
+        );
+        let key = |node: &Node| (node.path, node.digest, node.depth, 255);
+        let mut colliding = Vec::new();
+        for index in 0..=LIFT_WAYS {
+            let mut node = base.clone();
+            node.digest[24..].copy_from_slice(&(index as u64).to_le_bytes());
+            assert_eq!(
+                LiftEntries::bucket(&key(&node)),
+                LiftEntries::bucket(&key(&base))
+            );
+            assert_eq!(cache.lift(&node, 255), node.lift(255, &empty));
+            colliding.push(node);
+        }
+        assert_eq!(cache.0.borrow().len(), LIFT_WAYS);
+        let mut other = base.clone();
+        other.path[0] ^= 1;
+        let other_value = cache.lift(&other, 255);
+        assert_ne!(
+            LiftEntries::bucket(&key(&other)),
+            LiftEntries::bucket(&key(&base))
+        );
+        let mut exact_hits = 0;
+        for _ in 0..16 {
+            for node in &colliding {
+                if cache.0.borrow().get(&key(node)).is_some() {
+                    exact_hits += 1;
+                }
+                assert_eq!(cache.lift(node, 255), node.lift(255, &empty));
+                assert_eq!(cache.0.borrow().len(), LIFT_WAYS + 1);
+                assert_eq!(cache.0.borrow().get(&key(&other)), Some(&other_value));
+            }
+        }
+        assert!(
+            exact_hits > 0,
+            "a cyclic over-capacity bucket must not deterministically miss on every key"
+        );
+        let locked = cache.0.borrow_mut();
+        assert_eq!(cache.lift(&other, 255), other.lift(255, &empty));
+        assert_eq!(locked.len(), LIFT_WAYS + 1);
+        drop(locked);
+        let independent = LiftCache::default();
+        assert_eq!(independent.0.borrow().len(), 0);
+        assert!(independent.0.borrow().slots.is_none());
+        assert_eq!(independent.lift(&other, other.depth), other.digest);
+        assert!(independent.0.borrow().slots.is_none());
+    }
+
+    #[test]
+    #[ignore = "explicit bounded-cache complete-graph diagnostic; not a business SLO"]
+    fn native_lift_cache_complete_graph_cost_observation() {
+        use rusqlite::StatementStatus;
+        use sha2::{Digest, Sha256};
+        use std::io::Write;
+        use std::time::Instant;
+
+        let path = std::env::var("TRNM_NATIVE_LIFT_COST_OUTPUT")
+            .expect("fresh diagnostic output filename required");
+        let mut out = std::fs::File::create_new(path).unwrap();
+        let write = |out: &mut std::fs::File, value: serde_json::Value| {
+            serde_json::to_writer(&mut *out, &value).unwrap();
+            writeln!(out).unwrap();
+            out.flush().unwrap();
+        };
+        write(
+            &mut out,
+            json!({
+                "schema":"pon-native-lift-cache-full-graph-cost-v1",
+                "kind":"source",
+                "native_store_sha256":hex::encode(Sha256::digest(include_bytes!("native_store.rs"))),
+                "account_archive_sha256":hex::encode(Sha256::digest(include_bytes!("../account_archive_prototype.rs"))),
+                "debug_assertions":cfg!(debug_assertions),
+                "cache_limit_per_instance":LiftCache::MAX_ENTRIES,
+                "lift_software_charge_per_instance_bytes":LIFT_SOFTWARE_CHARGE,
+                "simultaneously_live_cache_instances":2,
+                "scope":"real native complete account graph including fresh SQL reads, actual account parsing and every original progress checkpoint; excludes Host checks, PQ authorization, complete State commitment, business confirmation and network",
+                "samples":"two independent cold caches and 100 warm traversals per size; p99 uses nearest rank and is descriptive only"
+            }),
+        );
+        for (count, prefilled) in [
+            (1024usize, false),
+            (9216, false),
+            (32768, false),
+            (1024, true),
+            (9216, true),
+        ] {
+            let db = Connection::open_in_memory().unwrap();
+            db.execute_batch(crate::store::native_authenticated::DDL)
+                .unwrap();
+            let state: State = (0..count as u64)
+                .map(|index| {
+                    let owner = hash(
+                        b"native-lift-cache-full-graph-cost-v1",
+                        &[&index.to_le_bytes()],
+                    );
+                    (
+                        format!("account:{}", hex::encode(owner)),
+                        json!({"balance":index * 7,"nonce":index}),
+                    )
+                })
+                .collect();
+            let root = seed(&db, &state, &mut || Ok(())).unwrap();
+            let nodes: usize = db
+                .query_row("SELECT count(*) FROM archive_nodes", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(nodes, count * 2 - 1);
+            let caches = [LiftCache::default(), LiftCache::default()];
+            if prefilled {
+                let mut unrelated = Node::account(
+                    [0xa9; 32],
+                    Account {
+                        balance: 17,
+                        nonce: 6,
+                    },
+                );
+                for cache in &caches {
+                    for index in 0..LiftCache::MAX_ENTRIES {
+                        unrelated.digest[..8].copy_from_slice(&(index as u64).to_le_bytes());
+                        assert_eq!(
+                            cache.lift(&unrelated, 255),
+                            unrelated.lift(255, &empty_hashes())
+                        );
+                    }
+                    assert_eq!(cache.0.borrow().len(), LiftCache::MAX_ENTRIES);
+                }
+            }
+            let mut oracle_visits = 0usize;
+            verify(&db, &root, &state, &mut || {
+                oracle_visits += 1;
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(oracle_visits, nodes);
+            let mut cold_ns = Vec::new();
+            let mut warm_ns = Vec::new();
+            db.flush_prepared_statement_cache();
+            for pass in 0..51 {
+                for instance in if pass % 2 == 0 { [0, 1] } else { [1, 0] } {
+                    let cache = &caches[instance];
+                    let selected_runs = || {
+                        db.prepare_cached(super::super::NODE_SELECT)
+                            .unwrap()
+                            .get_status(StatementStatus::Run)
+                    };
+                    let reads_before = selected_runs();
+                    let decodes_before = super::super::NODE_DECODE_CALLS.with(std::cell::Cell::get);
+                    let mut visits = 0usize;
+                    let start = Instant::now();
+                    verify_with_lifts(
+                        &db,
+                        &root,
+                        &state,
+                        &mut || {
+                            visits += 1;
+                            Ok(())
+                        },
+                        Some(cache),
+                    )
+                    .unwrap();
+                    let elapsed_ns = start.elapsed().as_nanos();
+                    let sql_reads = selected_runs() - reads_before;
+                    let original_decodes =
+                        super::super::NODE_DECODE_CALLS.with(std::cell::Cell::get) - decodes_before;
+                    assert_eq!(sql_reads as usize, nodes);
+                    assert_eq!(visits, nodes);
+                    let retained = cache.0.borrow().len();
+                    assert!(retained <= LiftCache::MAX_ENTRIES);
+                    if pass == 0 {
+                        cold_ns.push(elapsed_ns);
+                    } else {
+                        warm_ns.push(elapsed_ns);
+                    }
+                    write(
+                        &mut out,
+                        json!({
+                            "kind":"traversal", "accounts":count, "unrelated_prefill":prefilled,
+                            "root":hex::encode(root.digest), "instance":instance,
+                            "pass":pass, "temperature":if pass == 0 {"cold"} else {"warm"},
+                            "elapsed_ns":elapsed_ns, "sql_reads":sql_reads,
+                            "progress_checks":visits, "original_node_decodes":original_decodes,
+                            "retained_lift_entries":retained,
+                            "retained_lift_payload_bytes":retained * std::mem::size_of::<(LiftInput, Hash)>()
+                        }),
+                    );
+                }
+            }
+            warm_ns.sort_unstable();
+            assert_eq!(warm_ns.len(), 100);
+            let proc_memory = std::fs::read_to_string("/proc/self/status")
+                .ok()
+                .map(|text| {
+                    text.lines()
+                        .filter(|line| line.starts_with("VmRSS:") || line.starts_with("VmHWM:"))
+                        .map(str::to_owned)
+                        .collect::<Vec<_>>()
+                });
+            write(
+                &mut out,
+                json!({
+                    "kind":"summary", "accounts":count, "unrelated_prefill":prefilled, "cold_elapsed_ns":cold_ns,
+                    "warm_samples":warm_ns.len(), "warm_p50_ns":warm_ns[49],
+                    "warm_p99_ns":warm_ns[98], "warm_max_ns":warm_ns[99],
+                    "live_lift_entries_total":caches.iter().map(|cache| cache.0.borrow().len()).sum::<usize>(),
+                    "proc_memory":proc_memory,
+                    "memory_scope":"retained payload excludes unoccupied slots and allocator bookkeeping; VmRSS/VmHWM cover this whole test process, not a cache-only charge"
+                }),
+            );
+        }
     }
 
     #[test]

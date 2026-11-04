@@ -50,7 +50,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 45c458780452e82c2e59ac34ae8a200a167a6647
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = d137e38fc08738f4e6d6b81712f7c7423624a8c2
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = add62202c8038776d0db254c066c619dd8fe4620
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -117,7 +117,8 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-constants.log"
-          grep -E '^test result: ok\. 5 passed; 0 failed; 1 ignored;' "$OUT/native-constants.log"
+          grep -E '^test result: ok\. 6 passed; 0 failed; 2 ignored;' "$OUT/native-constants.log"
+          test "$(grep -Fxc 'test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok' "$OUT/native-constants.log")" = 1
           for name in native_empty_constants_match_wire_and_keep_owned_copy_isolation native_empty_constants_parallel_callers_keep_independent_values; do
             selector="account_archive_prototype::native_store::tests::$name"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"

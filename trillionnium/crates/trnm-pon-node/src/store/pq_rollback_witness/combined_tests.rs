@@ -32,6 +32,8 @@ use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{self as accounts, application_
 
 const FIXTURE_ENV: &str = "TRNM_PQ_WITNESS_PROCESS_FIXTURE";
 const TIME_ENV: &str = "TRNM_PQ_WITNESS_PROCESS_GENESIS";
+const SEQUENCE_ENV: &str = "TRNM_PQ_WITNESS_RECOVERY_SEQUENCE";
+const ROOT_ENV: &str = "TRNM_PQ_WITNESS_RECOVERY_ROOT";
 
 fn settings_and_policy(genesis: u64) -> (Settings, Arc<PqNetworkPolicy>) {
     let seeded: Vec<_> = [1, 2, 3]
@@ -99,7 +101,7 @@ fn captured_file(file: &mut fs::File) -> std::io::Result<Vec<u8>> {
 }
 
 impl Process {
-    fn start(directory: &Arc<tempfile::TempDir>, genesis: u64) -> Self {
+    fn start(directory: &Arc<tempfile::TempDir>, genesis: u64, expected: Checkpoint) -> Self {
         let path = directory.path();
         for name in [
             "witness.sock",
@@ -178,6 +180,8 @@ impl Process {
             ])
             .env(FIXTURE_ENV, path)
             .env(TIME_ENV, genesis.to_string())
+            .env(SEQUENCE_ENV, expected.sequence.to_string())
+            .env(ROOT_ENV, hex::encode(expected.root))
             .stdin(Stdio::null())
             .stdout(Stdio::from(child_stdout))
             .stderr(Stdio::from(child_stderr))
@@ -305,10 +309,24 @@ fn independent_witness_process_child() {
     let _diagnostics = test_observation::Scope::child(&directory);
     let genesis = std::env::var(TIME_ENV).unwrap().parse().unwrap();
     let (_, policy) = settings_and_policy(genesis);
-    // The service process only opens existing state; no enrollment fallback.
-    let mut owner =
-        DurableWitness::open_existing(&directory.join("witness.sqlite"), binding(&policy), key(91))
-            .unwrap();
+    // The parent retains an authenticated pre-stop checkpoint outside this
+    // child's restored database. Cold-open never discovers recovery authority
+    // by reading local SQLite state.
+    let expected = Checkpoint::new(
+        std::env::var(SEQUENCE_ENV).unwrap().parse().unwrap(),
+        hex::decode(std::env::var(ROOT_ENV).unwrap())
+            .unwrap()
+            .try_into()
+            .unwrap(),
+    )
+    .unwrap();
+    let mut owner = DurableWitness::open_existing(
+        &directory.join("witness.sqlite"),
+        binding(&policy),
+        expected,
+        key(91),
+    )
+    .unwrap();
     let listener = UnixListener::bind(directory.join("witness.sock")).unwrap();
     listener.set_nonblocking(true).unwrap();
     fs::write(
@@ -484,7 +502,7 @@ fn submit_replay_restart(control: SubmitControl) {
         )
         .unwrap(),
     );
-    let mut external = Process::start(&directory, genesis);
+    let mut external = Process::start(&directory, genesis, initial);
     let node_path = directory.path().join("node");
     let node = Node::create_with_pq_witness(
         &node_path,
@@ -618,8 +636,16 @@ fn submit_replay_restart(control: SubmitControl) {
     )
     .unwrap();
     assert_eq!(first, replay);
-    let (joined, stopped) = cleanup(&mut worker, &mut external);
+    // Stop the Node first so its Unix connection releases the single service
+    // connection owner, then retain a separately authenticated final checkpoint
+    // while the independent witness is still live. All cleanup steps share the
+    // same interval; collecting recovery evidence never renews business time.
+    let until = Instant::now() + Duration::from_secs(10);
+    let joined = worker.stop_until(until);
+    let retained = client(directory.path(), &policy).current_until(Some(until));
+    let stopped = external.stop_until(until);
     joined.unwrap();
+    let retained = retained.unwrap();
     let metrics = worker.metrics.as_ref().unwrap();
     assert_eq!(metrics.accepted, 2);
     if matches!(control, SubmitControl::AfterRejectedSignature) {
@@ -630,7 +656,7 @@ fn submit_replay_restart(control: SubmitControl) {
     // The TCP worker dropped its actual Node and Unix stream. Cold-restart the
     // independent process; it opens the retained external database, never seeds.
     stopped.unwrap();
-    let mut restarted = Process::start(&directory, genesis);
+    let mut restarted = Process::start(&directory, genesis, retained);
     let reopened = Node::open_with_pq_witness(
         &node_path,
         settings,

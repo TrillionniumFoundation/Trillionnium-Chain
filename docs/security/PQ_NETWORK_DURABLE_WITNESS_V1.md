@@ -72,9 +72,22 @@ requires sequence 1, a nonzero 64-byte root, the pinned service signer and a new
 file created exclusively. It is a distinct, explicitly privileged provisioning
 operation. It refuses an existing file.
 
-`DurableWitness::open_existing` requires existing state. Missing, malformed,
-wrong-binding or replaced state is an error, never a request to enroll or reseed.
-There is no network enrollment/reset operation.
+`DurableWitness::open_existing` requires existing state and an explicit expected
+`Checkpoint` independently retained by the caller. The service validates its
+shape before accessing storage and initializes its known head with that exact
+checkpoint before reading the database. Missing, malformed, wrong-binding,
+replaced, older, newer or same-sequence conflicting state is an error, never a
+request to enroll, reseed or auto-adopt the database head. There is no network
+enrollment/reset operation.
+
+The expected checkpoint must come from an authenticated live receipt retained
+outside the witness rollback domain or an independently durable monotonic
+authority. It must be the current checkpoint for the selected binding after
+writers have been quiesced. Reading the restored SQLite database or a sibling
+checkpoint file restored with it does not meet this requirement. This API
+requires the recovery authority explicitly; it does not provision or certify
+an external monotonic service. Missing independent recovery evidence leaves
+cold-open unavailable.
 
 `Node::create_with_pq_witness` requires a new Node database and an already
 provisioned external head. `Node::open_with_pq_witness` requires an existing Node
@@ -142,9 +155,12 @@ successor and the retained preceding checkpoint equals the original predecessor.
 Forks, skipped sequences and wraparound refuse. The service commits under
 `synchronous=FULL` before creating a signed success reply.
 
-The service cannot tell whether its own entire database was rolled back.
-Independent retention of this database is therefore a security premise, not
-something provided by its local previous-root field or SQLite checksum.
+A self-consistent full witness database rollback is rejected on cold-open when
+it disagrees with the independently retained expected checkpoint. If that
+checkpoint is rolled back with the same database, this comparison has no
+independent authority. Independent retention is therefore a security premise;
+local predecessor fields, SQLite checksums and a caller-supplied value alone do
+not establish physical rollback resistance.
 
 ## Node transaction and failure ordering
 
@@ -152,7 +168,11 @@ Every protected mutation begins a local IMMEDIATE transaction, obtains a fresh
 authenticated Current response, compares it to the local checkpoint, and
 recomputes the protected root. Permission reads for revocation, sequence,
 pending replay and cached responses use that same transaction. An earlier
-unlocked permission read is never retained as authority.
+unlocked permission read is never retained as authority. Ordinary admission
+retains that authenticated transaction instead of closing an unchanged expiry
+inspection and opening another one. An actual expired-pending retirement still
+commits, publishes its epoch and obtains a new authenticated transaction before
+admitting the next request.
 
 The root is SHA-512 over an explicit versioned domain, binding identifier,
 fixed ordered table names, ordered rows, row widths and typed canonical values.
@@ -176,6 +196,7 @@ authority after an uncertain transition.
 | Advance may have committed but response is missing, incomplete, invalid or unauthenticated | External outcome uncertain | Latch the client unavailable and refuse subsequent protected authority |
 | External Advance succeeded but local commit failed | External head is ahead of local state | Latch unavailable; a fresh cold open must detect mismatch; no implicit rewind or repair |
 | Complete old Node snapshot including its local checkpoint is restored | Retained external head differs | Refuse guarded open before ordinary recovery |
+| Complete witness database is restored or an uncertain commit is reopened | Database head differs from independently retained expected checkpoint | Refuse cold-open; require explicit external reconciliation, including when the database is ahead |
 
 An authenticated matching CAS receipt remains usable for local reconciliation
 when signature verification finishes after the original live deadline. A
@@ -207,7 +228,10 @@ An unavailable client requires explicit owner replacement and a new fresh open.
 If local and external state still agree, that open can resume service. If a CAS
 outcome left them mismatched, the implementation does not infer, auto-enroll,
 refund, reset a nonce, clear revocation, or repair from an older checkpoint.
-Operational reconciliation for that mismatch remains a separate design task.
+A witness restart additionally requires the exact independently retained
+checkpoint described above. A lost or uncertain CAS receipt is not evidence
+that either predecessor or successor is authoritative. Operational
+reconciliation for that mismatch remains a separate design task.
 
 `pq_network_status` is local observation. It does not attest that the witness is
 reachable or that the shown local head has just been externally confirmed.
@@ -221,13 +245,17 @@ generation/policy/identity substitution; exact CAS retry and conflicting
 successors; file replacement; fixed-width and metadata corruption; fresh
 pending/cached permission checks; before-send cancellation and same-owner
 recovery; authenticated late-success reconciliation; retirement epoch
-publication; and invalidation of already-admitted work after uncertain revoke.
+publication; invalidation of already-admitted work after uncertain revoke;
+self-consistent witness cold rollback, stale/ahead/equivocating recovery pins;
+invalid external checkpoint rejection before storage access; and exact retained
+admission exchange order with real signatures and SQLite transitions.
 
 Socket controls exercise partial-read slow-drip behavior on both endpoints.
 A composed control uses native PQ application v6, actual PNQ2 TCP Submit,
 invalid-signature refusal followed by a legitimate transfer of 42 units and
 cached replay, and a separate witness process that cold-reopens the retained
-service database. It checks the resulting account balance and retained network
+service database using an authenticated checkpoint retained by its parent
+before the service stops. It checks the resulting account balance and retained network
 usage on a cold Node reopen. The child test harness is excluded from meaningful
 control counts, and its libtest output is captured instead of being mixed into
 the parent's exact-test receipt.

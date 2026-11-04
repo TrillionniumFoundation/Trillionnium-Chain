@@ -1,0 +1,82 @@
+diff --git a/.github/workflows/pon-pq-system-continuation.yml b/.github/workflows/pon-pq-system-continuation.yml
+index e537c9b76a..5337bf1a66 100644
+--- a/.github/workflows/pon-pq-system-continuation.yml
++++ b/.github/workflows/pon-pq-system-continuation.yml
+@@ -113,7 +113,7 @@ jobs:
+           assert value['whole_chain_quantum_security_qualified'] is False
+           tests = value['tests']
+           assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
+-          assert len(tests) == 43
++          assert len(tests) == 47
+           assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+           assert not set(tests) & set(value['child_process_harnesses_not_counted'])
+           Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 570ca08015..0739857d81 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -628,7 +628,7 @@
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": "ed9c2000d253d7421ec899287012f2602f6f7fc5",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "15684ef0415b37a9829960ed6aa61ca2f9d5ae38",
+     "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs": "a4b5912d6c6b335c4e467a477fc1679dc00254ba",
+-    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "bea4200197a282f2c970dc22f0d0765e64dffa61",
++    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "da6f83549c726a82fd5bda91902093bf5ec8ba38",
+     "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+     "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": "48062d074584e8b49bcf06623207fdc92aef1e50",
+     "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": "e3024dd47ef79a829e9f7f8c7718746f75d191d1",
+@@ -671,9 +671,9 @@
+     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
+     "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
+     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "f0c66f589ce88e4548c64f92f7c9af8537b1e2b9",
+-    ".github/workflows/pon-pq-system-continuation.yml": "e537c9b76a2f08867ce7ed74526af724986cd5d1",
+-    "config/pon/pq-system-required-tests-v1.json": "2980d9848b78cb8ecdf879b61f69ecf1d4f6dba6",
+-    "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md": "75323e14a469d97e77088d1a911f3126545de38b",
++    ".github/workflows/pon-pq-system-continuation.yml": "5337bf1a663b0fb787c765e6dd1a0ef686a4556e",
++    "config/pon/pq-system-required-tests-v1.json": "e740e4bb6d91f9641138656357a88edd037a73fe",
++    "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md": "bf97028b49d258cf4342b8b9067e41a91e93be7f",
+     "docs/security/PQ_NETWORK_WITNESS_RECONSTRUCTED_REVIEW_20261101.md": "fa286a735bd4616cca4c10de4454d8c9a6995e4e",
+     "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md": "d200a232d4cc65f3066aba61a294f3ef1ed8a1e3",
+     "scripts/ci/record_pq_native_command.py": "e4bed61ed08424f663c15f4c58a421899dd56632",
+@@ -682,12 +682,12 @@
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs": "8d4ac1aa43721be11c50e6799064cb00b15cac1c",
+     "trillionnium/crates/trnm-pon-node/src/ancestry_index_cost_tests.rs": "18636da9725ab8d8b7abcf63f1724909ca875a9b",
+     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs": "9c6a0787a5c9e975fbba0d97cc52476508da3cb2",
+-    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "64f911e95b4b69705ef2d8f23593529b703a3da5",
+-    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": "facb3636e80a3974af91c57c991d438af7806ddf",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "e7c3a2f010ae5669501897bf87badbc6d043e488",
++    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": "f680b26569b39923f63eeb2ccb347e33ea46e03e",
+     "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+     "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs": "97f614be188d2acecef88e81da690c8121c7a595",
+-    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": "38b31363aba6ca68da1d0fa83387288dd3ea349c",
+-    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "9f91b32e1893e4909ca1aac2084d41a15876e416",
++    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": "13c61b99303639372f058de580f2da6de0f53f16",
++    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "60bf0d27e89dc676f5e0291875bcb88abad680fe",
+     "config/pon/performance-six-axis-v1.json": "bc246a75439d8db2522c41f53e868d24a09a9971",
+     "scripts/ci/check_growth_scale_observation.py": "52d4bf71d1ebd8e30c657246a93d5d7d5c927022",
+     "scripts/ci/test_growth_scale_observation.py": "2209a4ced6f0aed3a06b1f6530efcdfc24f7a86a",
+diff --git a/config/pon/pq-system-required-tests-v1.json b/config/pon/pq-system-required-tests-v1.json
+index 2980d9848b..e740e4bb6d 100644
+--- a/config/pon/pq-system-required-tests-v1.json
++++ b/config/pon/pq-system-required-tests-v1.json
+@@ -1,7 +1,7 @@
+ {
+   "schema": "trnm-pq-system-required-tests-v1",
+   "scope": "explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification",
+-  "expected_meaningful_controls": 43,
++  "expected_meaningful_controls": 47,
+   "tests": [
+     "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+     "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+@@ -45,7 +45,11 @@
+     "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+     "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+     "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+-    "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement"
++    "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement",
++    "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint",
++    "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage",
++    "store::pq_rollback_witness::tests::ordinary_admission_reuses_fresh_witness_guard_without_rechecking_unchanged_state",
++    "store::pq_rollback_witness::tests::expired_admission_commits_retirement_then_obtains_a_new_witness_guard"
+   ],
+   "child_process_harnesses_not_counted": [
+     "store::pq_rollback_witness::combined_tests::independent_witness_process_child"

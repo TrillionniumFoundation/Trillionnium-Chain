@@ -1,0 +1,116 @@
+{
+  "schema": "trnm-frozen-44d-composition-source-review-v1",
+  "reviewer": "chain_blockers",
+  "independent_peer_review": false,
+  "exact_owner": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "exact_parent": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "examined_inputs": [
+    {
+      "path": "trillionnium/Cargo.lock",
+      "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+      "bytes": 39976,
+      "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "git_blob": "02a4b76bca4de77f1fd45e914f7e84610f5315e8",
+      "bytes": 60429,
+      "sha256": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+      "git_blob": "e0a8163edbb451d68605bf26e8544ca1a42dc3fa",
+      "bytes": 55653,
+      "sha256": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "git_blob": "43f923aa22ca5c48505fac000eb7a594973a9d9c",
+      "bytes": 325141,
+      "sha256": "2027754beaff1ee868aedb67f230e4b42cd2b6384724f1c3f47cc47193672a01",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "git_blob": "add62202c8038776d0db254c066c619dd8fe4620",
+      "bytes": 44516,
+      "sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+      "bytes": 36217,
+      "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+      "git_blob": "f680b26569b39923f63eeb2ccb347e33ea46e03e",
+      "bytes": 27953,
+      "sha256": "57af491f886603245962c1ac26f6ff21edfa623a8437b957282852422fa254db",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "git_blob": "da6f83549c726a82fd5bda91902093bf5ec8ba38",
+      "bytes": 23380,
+      "sha256": "967dfdaa623f252debe1f8d1b680287f1940b275d17b85ddafa9394d3faa1454",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+      "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+      "bytes": 26042,
+      "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "git_blob": "60bf0d27e89dc676f5e0291875bcb88abad680fe",
+      "bytes": 34649,
+      "sha256": "2941acb3e8c1836f115b44b98f5e6b72aa87664beb19e92c8a4b9fdb2ae928ae",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "git_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "bytes": 684,
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "git_blob": "decb1202b55c77777954d2ef85a6f6887e39090e",
+      "bytes": 15663,
+      "sha256": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+      "git_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+      "bytes": 2844,
+      "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+      "readback": true
+    }
+  ],
+  "findings": [
+    "Lift-cache keys still include complete path, digest, original depth and requested depth. The eight-way bucket is only a lookup hint; hits compare all fields. Borrow contention retains the original uncached calculation. The fixed table changes replacement policy without storing an authorization, SQL, graph, ancestry, or commit verdict.",
+    "The 8192-entry slot array is lazy and bounded; the compile-time software charge is for this table and its RefCell, not process RSS or the separate node-decode cache. The deterministic replacement state is explicitly not a security random source.",
+    "The actual original 44d module executed six successful cases and left two diagnostics ignored on x86_64 and aarch64. These observations are not a new composed-head run or a Host/business performance qualification.",
+    "Cold witness open requires the caller's expected authenticated Checkpoint and then reads the actual durable head. The revised expiry path keeps the no-expiry IMMEDIATE transaction and performs the original fresh mutation guard after a real expiry commit. The cold-recovery tests and required selector inventory remain in the frozen owner tree.",
+    "Linux x86_64/aarch64 sha2 asm selection and known-answer tests are adopted intact. The separate fuzz lock is generated by actual Cargo and bound to that same owner manifest."
+  ],
+  "boundaries": [
+    "This is a source review by the composing agent, not an independent cache review.",
+    "The separate DA retention peer review covers only its two source files.",
+    "No local preflight, compilation, native execution, actionlint, or full repository source execution was available in this composing environment.",
+    "Original composed-head and prospective-merge CI, actual DA, PQ, CPU, fresh-challenge, campaign and fixed-host root gates remain required."
+  ],
+  "new_source_native_execution": false,
+  "performance_qualified": false,
+  "activation": "HOLD_NO_GO"
+}

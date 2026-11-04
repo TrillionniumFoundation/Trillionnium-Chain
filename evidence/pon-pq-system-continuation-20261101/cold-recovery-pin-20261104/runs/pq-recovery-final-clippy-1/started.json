@@ -1,0 +1,1 @@
+{"pid": 5, "command": ["cargo", "+1.95.0", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--all-targets", "--all-features", "--", "-D", "warnings"]}

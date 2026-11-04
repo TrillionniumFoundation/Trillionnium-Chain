@@ -108,6 +108,7 @@ measurements. Their reported paper throughput is not used as a measurement here.
 | Architecture | Participation and security premise | What must be implemented before fair native comparison |
 | --- | --- | --- |
 | Current PoN Nakamoto | Qualified effective-work share, work/lottery relation, delay and validation assumptions; confirmations are probabilistic and their public risk is unqualified | Complete unchanged work, branch selection, reorganization, depth/work confirmation, payload availability and actual application cost |
+| Bitcoin-NG family | Work-based key blocks elect an epoch leader; that leader signs transaction-carrying microblocks, with separate fork/incentive and confirmation assumptions | Key-block work and epoch transitions, current PQ leader signatures, microblock equivocation/censorship, complete payload replay, leader loss and reorganization; a signed microblock receipt is not the independent client's confirmation |
 | Conflux Tree-Graph / GHAST | Permissionless computational competition with its own delay/work assumptions; adaptive weighted pivot selection and probabilistic confirmation | Parent/reference graph validation, adaptive weights, pivot/epoch total order, conflict execution, deep recovery, complete graph custody and a PoN-compatible work argument |
 | Narwhal with Bullshark | A fixed authenticated committee with `n >= 3f+1`; reliable data dissemination plus a separately defined BFT ordering rule | Actual quorum-certified custody, author/round equivocation rules, leader support/commit/skip logic, synchrony model, membership/rotation, recovery and application execution |
 | Mysticeti | Authenticated Byzantine committee assumptions; signed uncertified DAG vertices interpreted by its specific commit rule | Exact equivocation handling and commit/skip/support relationships, custody, membership, persistent recovery and the application-specific fast-path rules |
@@ -120,6 +121,31 @@ families. If committee admission is controlled by one operator, it must be
 reported as such. Availability certificates are not model quality or Hepta
 FinalUse authority. Neither model voting nor an LLM recommendation activates
 new consensus rules.
+
+### Common full-business comparison requirements
+
+The current 32-transfer dissemination experiment does not satisfy the user's
+full successor comparison. An NG, Prism or DAG successor must run an explicit
+implementation of its own consensus and recovery rules against the following
+common inputs. This is the comparison contract, not a claim that those
+implementations or measurements already exist.
+
+| Dimension held common | Required observation and refusal condition |
+| --- | --- |
+| Transaction semantics | Identical canonical signed transactions, ordered nonce requirements, application/state commitments and initial balances; both disjoint recipients and actual conflicting writes. No missing or rejected transaction disappears from the denominator. |
+| PQ and current authority | The same selected current PQ ownership/trust rules and full verification, including rotation, revocation, retry, conflict and recovery. Signatures on microblocks, votes, certificates and custody add to each architecture's measured costs. |
+| Work and preparation | The same legal W1 relation/task/target accounting where applicable, with unsuccessful attempts, structured strategies, setup, cache lifetime and amortization recorded. A changed work/lottery relation needs a new security argument and cannot borrow PoN's assumption. |
+| State and durable execution | Identical declared state cardinalities and touched keys, complete applicable validation, durable writer commits, proof construction, cold reopen, rollback detection and all effect journals. Delivery-only or in-memory timings cannot replace this interval. |
+| Resources and faults | The original CPU/memory/network/storage budgets and deadline, with no-attack baseline, valid-work pressure, late-product/fabricated inputs, withheld payload, equivocation, leader/provider loss, partition and crash recovery under the same schedule. |
+| Business outcome | An independent client verifies the actual application result and that architecture's stated confirmation rule. Report the rule and its unqualified assumptions; do not label six Nakamoto successors and a committee certificate as equal risk without an argument. |
+| Complete costs | Producer, dissemination, PQ verification, consensus/vote/certificate, state execution/proof, persistence, client verification, recovery and repair costs; include all bytes and attributable resources, with unavailable observations marked unknown. |
+| Decision | Publish all planned successes, failures and unobserved rounds on each exact source/profile. No architectural winner or protocol activation follows from a faster delivery arm or from paper throughput. |
+
+The engineering expectation is conditional: separating leader election,
+transaction propagation or ordering could reduce one stage while increasing PQ
+signature traffic, stored history and recovery work. Which tradeoff improves
+this application requires the complete measurements above. The present native
+experiment remains labeled dissemination under the existing PoN consensus.
 
 The engineering inference motivating this experiment is limited: multiple
 proposers and reference-based dissemination may improve the delivery stage,
@@ -161,6 +187,7 @@ obligations above and independently administered measurements.
 
 ## Primary references
 
+- Eyal et al., [Bitcoin-NG: A Scalable Blockchain Protocol](https://arxiv.org/html/1510.02037v2), sections 4.1–4.5. Key blocks elect leaders and microblocks serialize transactions; their confirmation and fork rules require their own implementation rather than relabeling concurrent batch delivery.
 - Li et al., [Scaling Nakamoto Consensus to Thousands of Transactions per Second](https://arxiv.org/abs/1805.03870v4). Conflux derives a transaction order from concurrent block relationships; its native node processing can become the bottleneck.
 - Li, Long and Yang, [GHAST](https://arxiv.org/abs/2006.01072v1). Adaptive weights and a Tree-Graph supply the protocol's own liveness and confirmation argument; adding references alone does not implement it.
 - Danezis et al., [Narwhal and Tusk](https://arxiv.org/abs/2105.11827v4), sections 2–4. Reliable dissemination and causal storage are separated from ordering; a `2f+1` availability certificate relies on checked storage by honest committee members.
