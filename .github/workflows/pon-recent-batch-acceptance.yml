@@ -66,7 +66,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = a7035222bc51cfe7f60e891398230c3179accc82
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 4056ebb4146c711e8c62588bf8e0a7881900c02b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = aa6c50f60f631574b341632be63d6cf20f40a8d1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
@@ -79,7 +79,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = 3fcbc873fcc89de208922e6ffd74361442797bed
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 74af81e2e181f6639dd1719a65d91c0ba5323c9b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 0f611459c4c1c37488861ba36c82ba8302e40c4c
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 6540d88dc33064ab504607bfa9b7340d42a3c585
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 27b6342619ee051c57944de88b4bbab33ff4627c
           # Retain R10 and the subsequent bounded 30-second client-import
           # observation under the original budgets, with an exact whole-file pin.
