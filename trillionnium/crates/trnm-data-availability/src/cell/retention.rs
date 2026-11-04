@@ -6,7 +6,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
-    time::Instant,
+    time::{Duration, Instant},
 };
 
 use fs2::FileExt;
@@ -317,29 +317,43 @@ impl CellRetentionStoreV1 {
         cache: &CellStoreV1,
         deadline: Instant,
     ) -> CellResultV1<CellRetentionReadbackV1> {
+        let mut checkpoint = || Ok(());
+        let mut control = OperationControl {
+            deadline,
+            checkpoint: &mut checkpoint,
+            stopped: false,
+        };
+        control.check()?;
         let mut row = self.required_row(operation)?;
+        control.check()?;
         require(row.status != 2, "retention retired")?;
         if row.status == 1 {
-            self.verify_payload(&row, deadline)?;
-            return self.readback(&row);
-        }
-        // Payload might already be fsynced after a lost ACK. Read it first.
-        if self.verify_payload(&row, deadline).is_ok() {
+            self.verify_payload_controlled(&row, &mut control)?;
+        } else {
+            // Payload might already be fsynced after a lost ACK. Preserve a
+            // deadline refusal rather than treating it as permission to copy.
+            let copied = match self.verify_payload_controlled(&row, &mut control) {
+                Ok(()) => true,
+                Err(error) if control.stopped => return Err(error),
+                Err(_) => false,
+            };
+            if !copied {
+                control.check()?;
+                require(
+                    row.initial_bytes == 0,
+                    "retention initial copy requires reconciliation",
+                )?;
+                row.initial_bytes = row.contract.manifest.size();
+                self.write_row_controlled(&row, false, &mut control)?;
+                self.copy_payload_controlled(&row, cache, &mut control)?;
+            }
             row.status = 1;
-            self.write_row(&row, false)?;
-            return self.readback(&row);
+            self.write_row_controlled(&row, false, &mut control)?;
         }
-        check_deadline(deadline)?;
-        require(
-            row.initial_bytes == 0,
-            "retention initial copy requires reconciliation",
-        )?;
-        row.initial_bytes = row.contract.manifest.size();
-        self.write_row(&row, false)?;
-        self.copy_payload(&row, cache, deadline)?;
-        row.status = 1;
-        self.write_row(&row, false)?;
-        self.readback(&row)
+        control.check()?;
+        let readback = self.readback(&row)?;
+        control.check()?;
+        Ok(readback)
     }
 
     /// Uncontrolled local CPU interface; still obeys the wall deadline. Use
@@ -839,6 +853,7 @@ impl CellRetentionStoreV1 {
         result
     }
 
+    #[cfg(test)]
     fn copy_payload(
         &mut self,
         row: &Row,
@@ -1248,13 +1263,65 @@ impl CellRetentionStoreV1 {
         control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
     ) -> CellResultV1<()> {
         self.check_arena_controlled(control)?;
-        Self::write_row_on_connection_controlled(
-            &self.connection,
-            &self.config,
-            row,
-            insert,
-            control,
-        )
+        let original_busy_ms: u64 =
+            self.connection
+                .pragma_query_value(None, "busy_timeout", |value| value.get(0))?;
+        control.check()?;
+        let original_busy = Duration::from_millis(original_busy_ms);
+        self.connection.busy_timeout(
+            original_busy.min(control.deadline.saturating_duration_since(Instant::now())),
+        )?;
+        let result = (|| {
+            control.check()?;
+            // A previous read is not a write reservation. Bound the actual
+            // writer acquisition by this operation's original deadline, then
+            // validate the schema while another writer cannot change it.
+            let transaction = self
+                .connection
+                .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+            control.check()?;
+            validate_schema(&transaction)?;
+            if !insert {
+                let prior = Self::row_from(&transaction, &self.config, row.contract.operation)?
+                    .ok_or(CellErrorV1::Invalid("retention unknown obligation"))?;
+                control.check()?;
+                require(
+                    prior.contract == row.contract
+                        && prior.offset == row.offset
+                        && prior.reserved == row.reserved
+                        && prior.status <= row.status
+                        && prior.initial_bytes <= row.initial_bytes
+                        && prior.repair_bytes == row.repair_bytes,
+                    "retention acknowledgement prior",
+                )?;
+            }
+            Self::write_row_on_connection_controlled(
+                &transaction,
+                &self.config,
+                row,
+                insert,
+                control,
+            )?;
+            control.check()?;
+            transaction.busy_timeout(
+                original_busy.min(control.deadline.saturating_duration_since(Instant::now())),
+            )?;
+            control.check()?;
+            transaction.commit()?;
+            // After commit, cancellation is an uncertain observation. Keep
+            // the durable debit/ACK so exact retry can reconcile it.
+            control.check()?;
+            validate_schema(&self.connection)?;
+            let reread = self.required_row(row.contract.operation)?;
+            control.check()?;
+            require(
+                row_checksum(&reread) == row_checksum(row),
+                "retention commit readback",
+            )?;
+            control.check()
+        })();
+        self.connection.busy_timeout(original_busy)?;
+        result
     }
 
     fn write_row_on_connection_controlled(

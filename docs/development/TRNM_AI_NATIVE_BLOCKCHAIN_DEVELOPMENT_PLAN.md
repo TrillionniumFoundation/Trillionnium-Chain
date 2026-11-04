@@ -52,6 +52,78 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Full integration, explicit recovery and measured work costs — 2026-11-04
+
+Continue PR #688 from `6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029`, preserving
+its original Host resource owners, business deadlines and concurrent source.
+The fixed-pair audit found three different active source selections: ordinary
+Hepta public-model CLI V4, installed Cell V5, and the native pair's separate
+Chain #691. A successor closed V6 must bind all three entry paths to the same
+exact Chain source/tree and an actual ordered base/source merge. Historical
+profiles and their evidence stay historical. Normal, retry, conflict, recovery
+and effect paths still use the existing versioned current-authority rules;
+matching source bytes alone cannot authorize a changed commit or profile.
+
+This increment composes the Linux x86-64/AArch64 SHA-2 assembly backend with
+independent SHA-256/SHA-512 known-answer and boundary tests, retains the exact
+dependency graph apart from that explicit backend edge, and includes the PQ
+admission guard and witness recovery fixes below. A witness cold reopen now
+requires an independently retained authenticated checkpoint before reading its
+database; coherent old snapshots, equivocation and a database ahead of the
+selected checkpoint all refuse. Ordinary admission retains the same fresh
+IMMEDIATE witness guard; an actual expiry retirement commits and obtains a new
+guard. The mandatory PQ registry grows from 43 to 47 meaningful controls, with
+its child harness still excluded. The original 250-ms controls are unchanged.
+
+The account-graph lift cache now replaces within fixed eight-way buckets rather
+than clearing every entry at capacity. It retains at most 8,192 exact arithmetic
+inputs per Node, with a lazily allocated 983,080-byte software charge on the
+measured platform (compile-time ceiling 1 MiB). No row, root, graph or authority
+verdict is cached. Five real complete-graph cases preserve every SQL read and
+progress callback, compare each result with the uncached oracle, use two live
+caches and retain 100 warm observations per case. The original capacity control
+fails at overflow (one retained entry); the replacement retains its bounded
+capacity. The measured 9,216-account warm median falls from 422.658 to 245.135 ms;
+at 32,768 accounts it falls from 1,582.465 to 1,468.463 ms. These debug-profile
+graph observations exclude Host, PQ, the complete State commitment and client
+confirmation. Full traversal remains linear; this is not touched-state or
+original-business acceptance.
+
+Cell retention ACK and reconciliation use the original operation deadline
+through writer acquisition, payload validation/copy and durable write/readback.
+The write transaction rechecks schema and prior state, preserves monotonic
+retirement and repair counters, and exposes post-commit cancellation as an
+uncertain observation of an already durable ACK/debit. Three real writer-delay
+counterexamples fail before the fix; six new controls cover them, schema
+substitution, post-commit uncertainty and retirement races. This is not an
+independent failure-domain experiment or a hard real-time bound on every
+SQLite/filesystem wait.
+
+The [current integration evidence](../../evidence/pon-full-integration-20261104/README.md)
+preserves the original source's failed F0 and three-run business campaigns and
+the new intermediate source's complete 30-shard W1 strategy observation. The
+existing [work-cost security model](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md)
+now includes exact measured fixed-strategy ratios and conditional mean-work
+sensitivity. No per-sample fastest oracle, missing attempt or unseen round is
+substituted. Each newly composed source still needs its own execution evidence.
+
+The following conditions remain explicit acceptance work. The guarded witness
+root currently covers only the three PNQ2 resource/peer/request tables and its
+binding; it does not cover balances, settlement, task state, active History,
+CURRENT or FinalUse. An external checkpoint API is not an independently operated
+monotonic root, and whole-effect uncertain-CAS reconciliation remains open.
+Historical account migration cannot retroactively establish pre-quantum
+ownership or source finality. Public confirmation remains blocked until the
+independent client meets the unchanged original budget and deadline together
+with its no-attack baseline. Arithmetic caches cannot replace complete current
+state validation or establish touched-state complexity. Cell availability needs
+real independent provider failures and verified repair/collection obligations.
+Prospective model acceptance retains untouched held-out tasks, equal cumulative
+training budgets, regression/resource measurements and legitimate long
+`no-update`. Existing serial/concurrent/reference-DAG measurements use the same
+PoN consensus and must not be renamed NG/Prism/full-DAG consensus results. All
+qualification and production activation flags remain unchanged.
+
 #### Model-prefix and History codec continuation — 2026-11-03
 
 Continue the existing PR #688 integration lineage from `01627151f3ab50750eac2adeb46d8883a601265f`.
@@ -4687,6 +4759,17 @@ ObjectiveStart, migration of historic ownership/liabilities, proof security,
 quantum W1/DAA/fork choice, original capacity and independent sustained joint
 acceptance remain required. Existing budgets and activation authority are
 unchanged. This is an entry in the sole plan, not a new release lane.
+
+The current cold-recovery refinement requires an explicitly supplied,
+independently retained checkpoint before the durable witness opens existing
+SQLite state. Exact-head mismatch, including coherent old database restore,
+equivocation and locally-ahead uncertainty, refuses without reseeding. The
+composed native process fixture carries an authenticated pre-stop checkpoint
+across restart. The #698 retained-admission transaction also joins this same
+candidate: ordinary admission keeps the fresh guard; actual expiry retirement
+still publishes its epoch before a new guard. These changes require new native
+evidence and do not supply a physical monotonic root, cover CURRENT/FinalUse or
+balances, or resolve all-effect uncertain commits. PN0–PN6 remain HOLD.
 
 The continuation also composes #678's later `64cb26b5` full-root arithmetic
 changes without dropping either constructor field or original workspace CPU

@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
+#[cfg(test)]
+mod sha2_backend_tests;
+
 pub const CANONICAL_TX_SCHEMA_V1: &str = "trnm_canonical_tx_v1";
 pub const CANONICAL_TX_PAYLOAD_TYPE_V1: &str = "trnm.canonical.tx.v1";
 pub const ACCOUNT_OBJECT_TYPE_V1: &str = "trnm.account.v1";

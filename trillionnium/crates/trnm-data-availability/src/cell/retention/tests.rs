@@ -1214,3 +1214,193 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+fn acknowledgement_writer_deadline(copied_before_ack: bool, reconcile: bool) {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    if copied_before_ack {
+        // An actual durable initial charge and payload, with the final ACK lost.
+        let mut pending = store.required_row(duty.operation).unwrap();
+        pending.initial_bytes = manifest.size();
+        store.write_row(&pending, false).unwrap();
+        store.copy_payload(&pending, &cache, deadline()).unwrap();
+    }
+    let before = store.reserve(duty.clone()).unwrap();
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    let mut other_writer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let held = other_writer
+        .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
+    let (mut store, result, finished_while_locked) = thread::scope(|scope| {
+        let (done, complete) = std::sync::mpsc::channel();
+        let worker = scope.spawn(move || {
+            let start = Instant::now();
+            let end = start + Duration::from_millis(100);
+            let result = if reconcile {
+                store.reconcile_acknowledgement(duty.operation, end)
+            } else {
+                store.acknowledge(duty.operation, &cache, end)
+            };
+            eprintln!("CELL_ACK_DEADLINE copied={copied_before_ack} reconcile={reconcile} original_budget_ms=100 elapsed_ns={} result={result:?}", start.elapsed().as_nanos());
+            let _ = done.send(());
+            (store, result)
+        });
+        // Releasing the lock after this bound lets the old implementation
+        // demonstrate a late durable mutation instead of leaving a stuck child.
+        let finished = complete.recv_timeout(Duration::from_millis(600)).is_ok();
+        held.rollback().unwrap();
+        let (store, result) = worker.join().unwrap();
+        (store, result, finished)
+    });
+    let after = store.reserve(duty.clone()).unwrap();
+    assert!(finished_while_locked && result.is_err() && after == before,
+        "ACK renewed its original writer deadline: finished={finished_while_locked}, result={result:?}, before={before:?}, after={after:?}");
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(store.reserve(duty.clone()).unwrap(), before);
+    if copied_before_ack {
+        let acknowledged = store
+            .reconcile_acknowledgement(duty.operation, deadline())
+            .unwrap();
+        assert!(acknowledged.acknowledged);
+        assert_eq!(
+            acknowledged.initial_copy_bytes_committed,
+            before.initial_copy_bytes_committed
+        );
+    }
+}
+
+#[test]
+fn acknowledgement_initial_charge_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(false, false);
+}
+
+#[test]
+fn acknowledgement_lost_ack_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(true, false);
+}
+
+#[test]
+fn acknowledgement_reconciliation_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(true, true);
+}
+
+#[test]
+fn acknowledgement_schema_change_cannot_debit_or_copy_initial_payload() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let mut store =
+        CellRetentionStoreV1::create(&dir.path().join("retention"), config(1, 8192)).unwrap();
+    let duty = contract(1, &manifest);
+    let before = store.reserve(duty.clone()).unwrap();
+    let arena_before = fs::read(store.directory.join("payload.arena")).unwrap();
+    store
+        .connection
+        .execute_batch(
+            "CREATE TRIGGER extra_ack_hook AFTER UPDATE ON obligations BEGIN SELECT 1; END;",
+        )
+        .unwrap();
+    assert!(matches!(
+        store.acknowledge(duty.operation, &cache, deadline()),
+        Err(CellErrorV1::Invalid("retention schema"))
+    ));
+    assert_eq!(store.reserve(duty).unwrap(), before);
+    assert_eq!(
+        fs::read(store.directory.join("payload.arena")).unwrap(),
+        arena_before
+    );
+}
+
+#[test]
+fn acknowledgement_after_commit_cancellation_keeps_exact_durable_ack() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    let mut pending = store.required_row(duty.operation).unwrap();
+    pending.initial_bytes = manifest.size();
+    store.write_row(&pending, false).unwrap();
+    store.copy_payload(&pending, &cache, deadline()).unwrap();
+    let observer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let result =
+        store.reconcile_acknowledgement_controlled(duty.operation, deadline(), &mut || {
+            let status: u8 =
+                observer.query_row("SELECT status FROM obligations", [], |row| row.get(0))?;
+            if status == 1 {
+                Err(CellErrorV1::Invalid(
+                    "test acknowledgement completion observation cancelled",
+                ))
+            } else {
+                Ok(())
+            }
+        });
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid(
+            "test acknowledgement completion observation cancelled"
+        ))
+    ));
+    let persisted = store.reserve(duty.clone()).unwrap();
+    assert!(persisted.acknowledged);
+    assert_eq!(persisted.initial_copy_bytes_committed, manifest.size());
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(
+        store
+            .reconcile_acknowledgement(duty.operation, deadline())
+            .unwrap(),
+        persisted
+    );
+}
+
+#[test]
+fn acknowledgement_cannot_rewind_a_concurrent_retirement() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let mut store = CellRetentionStoreV1::create(&path, config(1, 8192)).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    let prior_ack = store.required_row(duty.operation).unwrap();
+    store
+        .retire(duty.operation, duty.retain_until_height, None, deadline())
+        .unwrap();
+    let retired = store.reserve(duty.clone()).unwrap();
+    // A delayed completion holding the old read cannot overwrite the newer
+    // irreversible retirement even though its payload and schema still match.
+    let result = store.write_row_controlled(
+        &prior_ack,
+        false,
+        &mut OperationControl {
+            deadline: deadline(),
+            checkpoint: &mut || Ok(()),
+            stopped: false,
+        },
+    );
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("retention acknowledgement prior"))
+    ));
+    assert_eq!(store.reserve(duty).unwrap(), retired);
+}

@@ -177,11 +177,12 @@ impl Fixture {
             .verify_request(prepared.wire(), ingress::now().unwrap())
             .unwrap()
     }
-    fn restart_service(&self) {
+    fn restart_service(&self, expected: Checkpoint) {
         *self.service.lock().unwrap() = None;
         let reopened = DurableWitness::open_existing(
             &self.witness_path(),
             Self::make_binding(&self.policy, 1),
+            expected,
             key(13),
         )
         .unwrap();
@@ -229,7 +230,7 @@ fn guarded_charge_pending_revocation_survive_service_cold_restart() {
         .unwrap();
     let head = f.head();
     drop(node);
-    f.restart_service();
+    f.restart_service(head);
     let mut reopened = f.reopen().unwrap();
     assert_eq!(input_bytes(&reopened), 17);
     assert_eq!(records(&reopened), 1);
@@ -370,6 +371,7 @@ fn missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive(
     assert!(DurableWitness::open_existing(
         &f.witness_path(),
         Fixture::make_binding(&f.policy, 1),
+        initial,
         key(13)
     )
     .is_err());
@@ -438,11 +440,13 @@ fn binding_generation_policy_and_distinct_identity_are_mandatory() {
         })
     )
     .is_err());
+    let retained = f.head();
     *f.service.lock().unwrap() = None;
     error(
         DurableWitness::open_existing(
             &f.witness_path(),
             Fixture::make_binding(&f.policy, 2),
+            retained,
             key(13),
         ),
         "PQ_WITNESS_BINDING",
@@ -458,11 +462,12 @@ fn binding_generation_policy_and_distinct_identity_are_mandatory() {
         DurableWitness::open_existing(
             &f.witness_path(),
             Fixture::make_binding(&changed, 1),
+            retained,
             key(13),
         ),
         "PQ_WITNESS_BINDING",
     );
-    f.restart_service();
+    f.restart_service(retained);
 }
 
 #[test]
@@ -506,7 +511,7 @@ fn replacing_external_database_path_is_rejected_while_old_descriptor_is_locked()
     // Restoration is an explicit operator action, never done by open.
     fs::remove_file(f.witness_path()).unwrap();
     fs::rename(old, f.witness_path()).unwrap();
-    f.restart_service();
+    f.restart_service(initial);
     assert_eq!(f.head(), initial);
 }
 
@@ -924,4 +929,112 @@ fn cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair() {
         assert_eq!(checkpoint(&reopened.db).unwrap(), retained);
         assert_eq!(f.head(), retained);
     }
+}
+
+struct CountedTransport {
+    inner: Transport,
+    operations: Arc<Mutex<Vec<u8>>>,
+}
+impl WitnessTransport for CountedTransport {
+    fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+        self.operations.lock().unwrap().push(request[4]);
+        self.inner.exchange(request, until)
+    }
+}
+fn counted_node(f: &Fixture) -> (Node, Arc<Mutex<Vec<u8>>>) {
+    let operations = Arc::new(Mutex::new(Vec::new()));
+    let witness = WitnessClient::new(
+        Fixture::make_binding(&f.policy, 1),
+        key(14),
+        Box::new(CountedTransport {
+            inner: Transport {
+                service: f.service.clone(),
+                mode: f.mode.clone(),
+                captured: f.captured.clone(),
+            },
+            operations: operations.clone(),
+        }),
+    )
+    .unwrap();
+    let node =
+        Node::create_with_pq_witness(&f.node_path(), f.settings.clone(), 1, &f.policy, witness)
+            .unwrap();
+    operations.lock().unwrap().clear();
+    (node, operations)
+}
+
+#[test]
+fn ordinary_admission_reuses_fresh_witness_guard_without_rechecking_unchanged_state() {
+    let f = Fixture::new();
+    let request = f.request(1);
+    let (mut node, operations) = counted_node(&f);
+    let before = checkpoint(&node.db).unwrap();
+    let super::super::pq_network::PqReplay::Execute(epoch, expected) =
+        node.begin_pq_network_request(&f.policy, &request).unwrap()
+    else {
+        panic!("fresh signed request must obtain Execute");
+    };
+    assert_eq!(*operations.lock().unwrap(), [1, 2]);
+    assert_eq!(records(&node), 1);
+    let pending = checkpoint(&node.db).unwrap();
+    assert_eq!(pending.sequence, before.sequence + 1);
+    assert_eq!(pending, f.head());
+
+    operations.lock().unwrap().clear();
+    let super::super::pq_network::PqReplay::Execute(replayed_epoch, replayed_expected) =
+        node.begin_pq_network_request(&f.policy, &request).unwrap()
+    else {
+        panic!("retained pending request must preserve ordinary recovery");
+    };
+    assert_eq!(*operations.lock().unwrap(), [1]);
+    assert_eq!(records(&node), 1);
+    assert_eq!(checkpoint(&node.db).unwrap(), pending);
+    assert_eq!(replayed_expected, expected);
+    assert!(Arc::ptr_eq(&replayed_epoch, &epoch));
+    drop(node);
+    let reopened = f.reopen().unwrap();
+    assert_eq!(records(&reopened), 1);
+    assert_eq!(checkpoint(&reopened.db).unwrap(), pending);
+}
+
+#[test]
+fn expired_admission_commits_retirement_then_obtains_a_new_witness_guard() {
+    let f = Fixture::new();
+    let expiry = ingress::now().unwrap() + 1;
+    let request = f.request_at(1, expiry);
+    let (mut node, operations) = counted_node(&f);
+    let super::super::pq_network::PqReplay::Execute(epoch, expected) =
+        node.begin_pq_network_request(&f.policy, &request).unwrap()
+    else {
+        panic!("fresh signed request must obtain Execute");
+    };
+    let before = checkpoint(&node.db).unwrap();
+    while ingress::now().unwrap() <= expiry {
+        thread::sleep(Duration::from_millis(10));
+    }
+    operations.lock().unwrap().clear();
+    let next = f.request(2);
+    assert!(matches!(
+        node.begin_pq_network_request(&f.policy, &next).unwrap(),
+        super::super::pq_network::PqReplay::Execute(_, _)
+    ));
+    assert_eq!(*operations.lock().unwrap(), [1, 2, 1, 2]);
+    assert!(epoch.load(Ordering::Acquire) > expected);
+    let (status, highest): (u64, u64) = node
+        .db
+        .query_row(
+            "SELECT r.status,p.highest_sequence FROM pq_network_request_v2 r JOIN pq_network_peer_v2 p ON r.peer=p.peer WHERE r.sequence=1",
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )
+        .unwrap();
+    assert_eq!((status, highest), (2, 1));
+    assert_eq!(records(&node), 2);
+    let after = checkpoint(&node.db).unwrap();
+    assert_eq!(after.sequence, before.sequence + 2);
+    assert_eq!(after, f.head());
+    drop(node);
+    let reopened = f.reopen().unwrap();
+    assert_eq!(records(&reopened), 2);
+    assert_eq!(checkpoint(&reopened.db).unwrap(), after);
 }
