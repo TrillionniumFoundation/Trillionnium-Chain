@@ -5492,11 +5492,15 @@ duplicate path repeats its small grammar check; no timing or SLO gain is inferre
 The CI execution v3 receipt remains compatible. New versioned terminal diagnostics
 separate returned children, failed report acceptance and unexecuted later stages,
 and retain raw report identities without granting acceptance. The original gate,
-commands, timeouts, failures and nonzero exit remain authoritative. Current-source
+commands, timeouts, failures and nonzero exit remain authoritative. The source-362
 F0 readback is 2/6 in the original window and 0/6 under the four-second SLO; prior
-C1/C2 1/6 records remain historical facts. A separate derived note corrects phase
-epoch end versus elapsed round time without rewriting hash-pinned observations.
-Original scientific, independent-operation, business and release gates remain HOLD.
+C1/C2 1/6 records remain historical facts. The later frozen-source `be0d5f97`
+[readback](../../evidence/pon-six-axis-continuation-20261104/README.md) retains
+1/6 inside the original window, 0/6 under the same SLO and 3/27 in the original
+three-run campaign. Neither measured source qualifies the later runtime. A separate
+derived note corrects phase epoch end versus elapsed round time without rewriting
+hash-pinned observations. Original scientific, independent-operation, business and
+release gates remain HOLD.
 
 The same continuation preserves the five concurrent commits through `be0d5f97`,
 including their native controls, workflow denominators and all 384 source pins.
