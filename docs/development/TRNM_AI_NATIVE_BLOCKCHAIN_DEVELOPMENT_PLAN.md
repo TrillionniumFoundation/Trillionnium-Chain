@@ -52,6 +52,28 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Bounded Cell prefetch and local byte residency — 2026-11-04
+
+Continue the existing PR #688 integration candidate from
+`93e207c8d2ccb8509f78566223abc371b9d8118b`. M09 reuses the complete
+TCD1/TCR1 fetch session without requiring a completion-marker file, and provides
+a bounded immutable byte pool for explicit route prefetch and cold loading.
+Every resident mapping binds the exact closure, context, generation and loader
+profile. Shared chunks have one physical allocation across compatible mappings;
+hot pins, the local selected mapping and Rust borrows prevent eviction while
+in use. An exact local lookup has no cache or transport capability and refuses
+a cold miss instead of selecting another version.
+
+The original download deadline covers transport, verification and RAM staging.
+A separate owner-supplied absolute deadline bounds the local byte-selection CAS;
+expired/cancelled/stale requests preserve its prior selection. This local hint
+does not write CURRENT, install tensors or grant FinalUse. Actual Hepta owner
+admission, safe tensor parsing, CPU/device loading, readback and the next model
+task retain their original contracts and require their own runtime evidence.
+P2P byte preparation supplies no activation/KV-cache transfer or distributed
+inference recovery. The [small reproduction record](../../evidence/cell-residency-20261104/README.md)
+keeps native component controls separate from those outstanding host gates.
+
 #### Repair writer bounds and confirmation identity continuation — 2026-11-04
 
 Continue the existing PR #688 integration lineage from

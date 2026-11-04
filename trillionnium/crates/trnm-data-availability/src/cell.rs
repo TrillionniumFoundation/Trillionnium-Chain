@@ -15,6 +15,7 @@ mod manifest;
 mod network;
 pub mod pq;
 mod release;
+mod residency;
 mod retention;
 mod store;
 
@@ -32,8 +33,12 @@ pub use network::{
     CellPeerLimitsV1, CellServeLimitsV1, CellServeReportV1,
 };
 pub use release::{
-    fetch_closure_to_file, fetch_release_to_file, read_pinned_release, CellClosureFetchReportV1,
-    CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
+    fetch_closure, fetch_closure_to_file, fetch_release_to_file, read_pinned_release,
+    CellClosureFetchReportV1, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
+};
+pub use residency::{
+    CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
+    CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentViewV1,
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,

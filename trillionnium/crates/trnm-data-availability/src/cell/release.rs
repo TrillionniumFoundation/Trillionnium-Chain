@@ -60,8 +60,36 @@ pub fn fetch_closure_to_file(
     closure: &CellReleaseClosureV1,
     expected: &CellLoaderContextV1,
     peers: &[SocketAddr],
-    mut limits: CellReleaseFetchLimitsV1,
+    limits: CellReleaseFetchLimitsV1,
     output: &Path,
+) -> CellResultV1<CellClosureFetchReportV1> {
+    fetch_closure_checked(store, closure, expected, peers, limits, Some(output))
+}
+
+/// Prefetch one owner-pinned closure into the disposable cache without creating
+/// a completion marker or changing a selected release. This uses the same full
+/// manifest, membership, payload and aggregate-budget checks as
+/// `fetch_closure_to_file`. A fully warm cache needs no peer connections.
+///
+/// The receipt is a byte-availability observation only. Residency, safe format
+/// parsing, CURRENT and fresh FinalUse checks remain with the loader owner.
+pub fn fetch_closure(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+) -> CellResultV1<CellClosureFetchReportV1> {
+    fetch_closure_checked(store, closure, expected, peers, limits, None)
+}
+
+fn fetch_closure_checked(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    mut limits: CellReleaseFetchLimitsV1,
+    output: Option<&Path>,
 ) -> CellResultV1<CellClosureFetchReportV1> {
     closure.verify_for_loader(expected)?;
     limits.release.max_payload_bytes = limits
@@ -130,7 +158,7 @@ pub fn fetch_release_to_file(
     limits: CellReleaseFetchLimitsV1,
     output: &Path,
 ) -> CellResultV1<CellReleaseFetchReportV1> {
-    fetch_release_checked(store, release, pinned, peers, limits, output, None)
+    fetch_release_checked(store, release, pinned, peers, limits, Some(output), None)
 }
 
 fn fetch_release_checked(
@@ -139,7 +167,7 @@ fn fetch_release_checked(
     pinned: CellDigestV1,
     peers: &[SocketAddr],
     limits: CellReleaseFetchLimitsV1,
-    output: &Path,
+    output: Option<&Path>,
     closure: Option<&CellReleaseClosureV1>,
 ) -> CellResultV1<CellReleaseFetchReportV1> {
     release.validate()?;
@@ -156,10 +184,12 @@ fn fetch_release_checked(
     )?;
     // Refuse an existing file, directory or dangling symlink before any peer
     // work. The final no-replace hard link also closes a later creation race.
-    match fs::symlink_metadata(output) {
-        Ok(_) => return Err(CellErrorV1::Invalid("release marker exists")),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
-        Err(error) => return Err(error.into()),
+    if let Some(output) = output {
+        match fs::symlink_metadata(output) {
+            Ok(_) => return Err(CellErrorV1::Invalid("release marker exists")),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+            Err(error) => return Err(error.into()),
+        }
     }
     let deadline = limits
         .release
@@ -238,8 +268,13 @@ fn fetch_release_checked(
     report.connection_attempts =
         limits.peer.max_connections - requests_left.load(Ordering::Relaxed);
     report.received_response_bytes = responses.received()?;
-    let marker = closure.map_or_else(|| release.encode(), CellReleaseClosureV1::encode);
-    publish_marker(&marker, output, deadline)?;
+    // The no-marker path must retain the same last deadline checkpoint as the
+    // publication path; a late cache verification is not a successful prefetch.
+    check_deadline(deadline)?;
+    if let Some(output) = output {
+        let marker = closure.map_or_else(|| release.encode(), CellReleaseClosureV1::encode);
+        publish_marker(&marker, output, deadline)?;
+    }
     Ok(report)
 }
 
