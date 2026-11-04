@@ -216,29 +216,32 @@ table-equality requirement remains in force for the corrected committed source.
 
 ## Validation and remaining gates
 
-### Exact committed source validation
+### Latest committed implementation validation
 
-The [final source manifest](final-source-validation.json) and its
-[raw command archive](final-source-validation.tar.gz) bind completed execution
-to `39839288cd112930f1f334b31c8fcb10ded43e28`, tree
-`c970fe682d3e46a1febe86e91b196061f9099f18`. Each phase has successful full tracked-
-worktree identity checks before and after execution. The earlier `c9f4e9af`
-build and static records retain their own identities in the same archive.
+The [latest source manifest](latest-source-validation.json) and its
+[raw command archive](latest-source-validation.tar.gz) bind completed execution
+to `0b2e98399fbb0c52fa03c3eee39d179b64729710`, tree
+`cf311688d30689663cb3c2ef92c287c1a09d27fb`. Each phase has successful full tracked-
+worktree identity checks before and after execution. Earlier `c9f4e9af` and
+`39839288` records retain their own identities in the
+[previous manifest](final-source-validation.json) and
+[previous raw archive](final-source-validation.tar.gz).
 
-| Check on source 39839288 | Actual result | Scope |
+| Check on source 0b2e9839 | Actual result | Scope |
 | --- | --- | --- |
 | Original-profile Node library build | exit 0 | Build only; Rust 1.95.0, original profiles, no compiler overrides |
 | Node test registry | 999 names; all original 974 retained | Listing only, no removed original name |
 | Selected ordinary native controls | 15 PASS, 0 FAILED, 0 ignored | History completion, full W1/M06 and stored identity, State merge, actual account graph verification |
 | Independent SQLite DDL control | 1 PASS | Both real DDL profiles; no Packet/work construction |
 | Original oracle method retention | 28 retained, 29 now registered | Original AST unchanged after removing only the added TestCase |
-| Source and driver controls | 34 + 34 + 63 PASS | Source integrity, PQ integration metadata, simulated process/report handling |
+| Source, driver and applicability controls | 34 + 34 + 63 + 3 PASS | Source integrity, PQ integration metadata, simulated process/report handling, exact selector bindings |
+| Applicability and maturity contracts | both pass | Includes complete generated-table equality; no qualification promotion |
 | Strict workspace Clippy | exit 0 | All targets, all features, `-D warnings` |
 | Locked Cargo graphs | all three pass | Workspace x64/ARM: 26 members/138 packages each; fuzz x64: 1/106, metadata only |
 | Format, pins, links, CI contract, inventory | pass | 384 corpus pins; both lockfiles unchanged |
 
 The Node ELF SHA256 before and after the selected controls is
-`d5d8ed30158e0652630fff7519805ce2557cf6811a00d6a5a0ffda7e39df1bb1`.
+`6b64330f5e7dddc1b2d26fb8608fdfc4daf9434d9d26dd4dd68a01606f09e658`.
 The full 999-name Node registry and the full 29-test Python oracle are not local
 execution claims. The two added network fixture controls retain their preceding
 startup EPERM failures and were not replaced by local stubs or counted as passed.

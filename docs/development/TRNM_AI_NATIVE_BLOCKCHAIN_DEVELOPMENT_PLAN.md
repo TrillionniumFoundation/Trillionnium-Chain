@@ -5535,3 +5535,10 @@ Register the new DDL control in both original applicability/M17 selector arrays
 and advance the exact Python method count to 29. Preserve every original selector,
 source-binding evidence class, null receipt and maturity/qualification state;
 this metadata repair is not execution or promotion of the complete oracle.
+
+The final implementation `0b2e9839` independently repeats the original-profile
+build, 15 ordinary native controls, one DDL control, strict workspace Clippy and
+three locked graphs with exact before/after source guards. All 134 selected
+source/driver/applicability controls and both applicability/maturity contracts
+pass. The initial generated-table drift errors remain recorded alongside the
+subsequent correction; full public and scientific acceptance remains open.
