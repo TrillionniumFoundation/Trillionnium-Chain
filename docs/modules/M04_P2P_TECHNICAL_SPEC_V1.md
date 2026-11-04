@@ -158,3 +158,9 @@ reserve. These controls are required alongside the unchanged native public
 service/hostile-business tests and complete baseline. A finite loopback pass
 is not independent WAN operation, minimum physical attack cost, general Sybil
 fairness or saturated confirmed TPS. No readiness flag is promoted.
+
+## History codec context
+
+M04.AuthenticatedReplay retains the original network, parameters, profile validation and exact packet bytes. A private immutable Config snapshot avoids cloning initial State and bootstrap material while the Node is unlocked; it grants no validation or completion authority.
+
+- `trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors`

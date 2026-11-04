@@ -590,18 +590,21 @@ impl WorkCheckedPacket {
     }
     /// The original History owner supplies its immutable ledger settings after
     /// checking the actual parent. Input bytes cannot select a weaker codec.
-    pub(crate) fn completion_identity_for_settings(&self, settings: &Settings) -> Result<Hash> {
+    pub(crate) fn completion_identity_for_context(
+        &self,
+        context: &crate::pq_application_v6::PacketCodecContext,
+    ) -> Result<Hash> {
         ensure(
-            self.packet.header.network == settings.network()
-                && self.packet.header.parameters == settings.parameters(),
+            self.packet.header.network == context.network()
+                && self.packet.header.parameters == context.parameters(),
             "CONTEXT",
         )?;
-        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+        if !context.is_pq() {
             return self.completion_identity();
         }
         Ok(hash(
             b"public-pq-history-complete-work-identity-v1",
-            &[&self.packet.encode_for_settings(settings)?],
+            &[&context.encode(&self.packet)?],
         ))
     }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {

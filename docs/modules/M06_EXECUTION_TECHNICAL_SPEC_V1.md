@@ -354,3 +354,13 @@ partial-State、数据可用性或独立验收，`independent_accepted=false`。
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.
 
 The explicitly selected [growth-reference policy](../development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md) uses a separate revision17 parameter/root domain and account/working capacities in the same executor. It retains complete State scans; bounded-witness execution and production acceptance remain open.
+
+## Prefix range equivalence
+
+M06.TwelveCommandEquivalence retains full prefix snapshots, ordered write overlays and key/value conflict checks while seeking matching rows directly in the ordered State. Empty and nested prefixes retain their complete observed sets.
+
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_overlays_writes_and_retains_the_original_snapshot`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets`

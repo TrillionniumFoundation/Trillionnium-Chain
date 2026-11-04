@@ -231,7 +231,12 @@
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_order_duplicates_rank_and_value_types_are_not_coerced",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds",
-        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
@@ -650,7 +655,10 @@
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary",
-        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in"
       ],
       "source": [
         "scripts/ci/check_pon_evidence.py",
@@ -715,7 +723,8 @@
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_pending_request_recovers_and_completed_response_replays",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_socket_replays_response_after_client_loses_first_ack",
-        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected"
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors"
       ],
       "source": [
         "trillionnium/crates/trnm-pon-node/src/ingress.rs",

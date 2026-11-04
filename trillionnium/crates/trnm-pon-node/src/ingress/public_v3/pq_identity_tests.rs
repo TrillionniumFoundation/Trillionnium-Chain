@@ -380,15 +380,62 @@ fn pq_history_native_application_account_packet_uses_the_same_paid_history_owner
     let completed = crate::store::WorkCheckedPacket::verify(packet.clone()).unwrap();
     assert!(completed.completion_identity().is_err());
     assert!(completed
-        .completion_identity_for_settings(&settings)
+        .completion_identity_for_context(&settings.packet_codec_context())
         .is_ok());
     assert!(completed
-        .completion_identity_for_settings(&Settings::development(Some(1)).unwrap())
+        .completion_identity_for_context(
+            &Settings::development(Some(1))
+                .unwrap()
+                .packet_codec_context(),
+        )
         .is_err());
     let block = node.admit(&packet, now).unwrap();
     node.activate(block).unwrap();
     let expected_packet = packet.encode_for_settings(&settings).unwrap();
     assert!(expected_packet.starts_with(b"PQP6"));
+    let codec = settings.packet_codec_context();
+    assert_eq!(
+        completed.completion_identity_for_context(&codec).unwrap(),
+        trnm_protocol::pon_wire::hash(
+            b"public-pq-history-complete-work-identity-v1",
+            &[&expected_packet],
+        )
+    );
+    assert_eq!(
+        crate::ingress::hex_packet_for_context(&hex::encode(&expected_packet), &codec)
+            .unwrap()
+            .encode_for_settings(&settings)
+            .unwrap(),
+        expected_packet
+    );
+    let mut changed = settings.clone();
+    changed.app.params["native_pq_v2_anchor"] = serde_json::json!("changed");
+    let changed_codec = changed.packet_codec_context();
+    assert_eq!(
+        crate::ingress::hex_packet_for_context("x", &changed_codec)
+            .unwrap_err()
+            .to_string(),
+        "PACKET_HEX"
+    );
+    let changed_error = crate::Packet::decode_for_settings(&expected_packet, &changed)
+        .unwrap_err()
+        .to_string();
+    assert_eq!(changed_error, "PQ2_CONFIG_CHANGED");
+    for _ in 0..2 {
+        assert_eq!(
+            crate::ingress::hex_packet_for_context(&hex::encode(&expected_packet), &changed_codec)
+                .unwrap_err()
+                .to_string(),
+            changed_error
+        );
+        assert_eq!(
+            completed
+                .completion_identity_for_context(&changed_codec)
+                .unwrap_err()
+                .to_string(),
+            changed_error
+        );
+    }
     let owner = Arc::new(Mutex::new(node));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();

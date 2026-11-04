@@ -52,6 +52,24 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Model-prefix and History codec continuation — 2026-11-03
+
+Continue the existing PR #688 integration lineage from `01627151f3ab50750eac2adeb46d8883a601265f`.
+M06 seeks each model/state prefix directly in its ordered map, preserving the full
+base snapshot, current write overlay and complete key/value conflict comparison.
+M04 copies only immutable packet Config across unlocked History work, keeping
+profile validation, error order, exact wire bytes, complete W1/M06 verification,
+original completion identities and every request/CPU/Host deadline unchanged.
+M17 preserves the underlying V2 cost reader's semantic failure exit status while
+retaining the full report and the priority of explicitly requested acceptance gates.
+
+Use the original Rust profiles and pinned PQ provider for normal model, MVCC and
+History regression checks. Preserve failures and bind new observations to this
+candidate; historical F0/pressure results are not transferred. These changes do
+not establish a fastest-legal-producer lower bound, public confirmation SLO,
+prospective model improvement or independently administered evaluation. Existing
+qualification and activation decisions remain unchanged.
+
 #### PoN exact-fact decoding and honest-rate sensitivity — 2026-11-03
 
 Continue the composed PR #688 source `e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`.

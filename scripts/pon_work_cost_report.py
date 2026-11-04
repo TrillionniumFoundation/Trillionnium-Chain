@@ -458,3 +458,7 @@ if __name__ == '__main__':
 
     if args.require_cost_gates and value['local_cost_gate'] != 'pass':
         sys.exit(2)
+
+    # Keep the matrix reader's semantic-failure status after explicit gate failures.
+    if args.matrix_v2 is not None and value['semantic_alerts']:
+        sys.exit(1)
