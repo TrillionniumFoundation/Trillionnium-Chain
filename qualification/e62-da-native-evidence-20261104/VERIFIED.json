@@ -1,0 +1,523 @@
+{
+  "schema": "trnm-e62-da-hosted-native-verification-v1",
+  "recipe": "53b9e7c6b2ba678a4c9c564657a3581c045faae4",
+  "recipe_tree": "d09e1048f1b60a8c91b0bddb6045438539d35c33",
+  "run_id": 41786578200,
+  "job_id": 126429980163,
+  "job_conclusion": "success",
+  "receipt": {
+    "binary_after": {
+      "bytes": 59965224,
+      "sha256": "b7f5417b429f0020a4db36735b92fc92d68dfc15b023b19ff5b483a6de733787"
+    },
+    "binary_before": {
+      "bytes": 59965224,
+      "sha256": "b7f5417b429f0020a4db36735b92fc92d68dfc15b023b19ff5b483a6de733787"
+    },
+    "binary_unchanged": true,
+    "commands": [
+      {
+        "argv": [
+          "rustc",
+          "+1.95.0",
+          "-Vv"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate",
+        "elapsed_ns": 15685421,
+        "exit_code": 0,
+        "log": "rustc.log",
+        "log_digest": {
+          "bytes": 196,
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "-V"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate",
+        "elapsed_ns": 15706160,
+        "exit_code": 0,
+        "log": "cargo.log",
+        "log_digest": {
+          "bytes": 36,
+          "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--all-features",
+          "--lib",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate",
+        "elapsed_ns": 39369144676,
+        "exit_code": 0,
+        "log": "build.log",
+        "log_digest": {
+          "bytes": 97766,
+          "sha256": "3b1d6a15f136829ac5b1a940838fd55bde9d7a21b76d42b447efc6f5add6270b"
+        },
+        "outer_timeout_seconds": 600,
+        "timed_out": false
+      },
+      {
+        "argv": [
+          "/home/runner/work/_temp/exact-e62-da-target/debug/deps/trnm_data_availability-4afa79d63a34aeeb",
+          "--list",
+          "--format",
+          "terse"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 3699211,
+        "exit_code": 0,
+        "log": "registry.log",
+        "log_digest": {
+          "bytes": 17485,
+          "sha256": "62f09cbb139281124bb800627f3522326c582c1ae051f4cdfa5308c56a920e1a"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate",
+        "elapsed_ns": 12045072242,
+        "exit_code": 0,
+        "log": "clippy.log",
+        "log_digest": {
+          "bytes": 2154,
+          "sha256": "b4461c09faf3696bdbe8496c4c4c33d6937704dc051545e9c86f9bed8311c9c8"
+        },
+        "outer_timeout_seconds": 600,
+        "timed_out": false
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate",
+        "elapsed_ns": 12892490957,
+        "exit_code": 0,
+        "log": "format.log",
+        "log_digest": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "outer_timeout_seconds": 120,
+        "timed_out": false
+      }
+    ],
+    "complete": true,
+    "failure": null,
+    "format_passed": true,
+    "host_qualified": false,
+    "inputs_after": [
+      {
+        "bytes": 45766,
+        "git_blob": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+        "sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+      },
+      {
+        "bytes": 14878,
+        "git_blob": "c19e1a7ab2f92d7731e97f9c8ea97b7c3afc2893",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+        "sha256": "5a733be38135477a303c9ca118f99b93796b2798ee630ca5dca43ae98265b32d"
+      },
+      {
+        "bytes": 36622,
+        "git_blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+        "sha256": "5b7137e9931e746e5827e5cc563138e2a958d495203a444ba8a4816ea6f30a06"
+      },
+      {
+        "bytes": 60429,
+        "git_blob": "02a4b76bca4de77f1fd45e914f7e84610f5315e8",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+        "sha256": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629"
+      },
+      {
+        "bytes": 55653,
+        "git_blob": "e0a8163edbb451d68605bf26e8544ca1a42dc3fa",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+        "sha256": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03"
+      },
+      {
+        "bytes": 39976,
+        "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+      },
+      {
+        "bytes": 7722,
+        "git_blob": "5d2c5857a78738c30f30c2b89839a9696e6a2fdc",
+        "path": "scripts/ci/verify_ci_source.py",
+        "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6"
+      }
+    ],
+    "inputs_before": [
+      {
+        "bytes": 45766,
+        "git_blob": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+        "sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+      },
+      {
+        "bytes": 14878,
+        "git_blob": "c19e1a7ab2f92d7731e97f9c8ea97b7c3afc2893",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+        "sha256": "5a733be38135477a303c9ca118f99b93796b2798ee630ca5dca43ae98265b32d"
+      },
+      {
+        "bytes": 36622,
+        "git_blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+        "sha256": "5b7137e9931e746e5827e5cc563138e2a958d495203a444ba8a4816ea6f30a06"
+      },
+      {
+        "bytes": 60429,
+        "git_blob": "02a4b76bca4de77f1fd45e914f7e84610f5315e8",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+        "sha256": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629"
+      },
+      {
+        "bytes": 55653,
+        "git_blob": "e0a8163edbb451d68605bf26e8544ca1a42dc3fa",
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+        "sha256": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03"
+      },
+      {
+        "bytes": 39976,
+        "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+      },
+      {
+        "bytes": 7722,
+        "git_blob": "5d2c5857a78738c30f30c2b89839a9696e6a2fdc",
+        "path": "scripts/ci/verify_ci_source.py",
+        "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6"
+      }
+    ],
+    "inputs_unchanged": true,
+    "native_module": {
+      "completed_plain_success_rows": 180,
+      "exchange_diagnostic_lines": [],
+      "execution": {
+        "argv": [
+          "/home/runner/work/_temp/exact-e62-da-target/debug/deps/trnm_data_availability-4afa79d63a34aeeb",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/candidate/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 17801002876,
+        "exit_code": 0,
+        "log": "all-library.log",
+        "log_digest": {
+          "bytes": 18756,
+          "sha256": "a2123b7e6fa7594626ea707a26ee8adab66a7f782a8d4d870225fa5916c0d7c7"
+        },
+        "outer_timeout_seconds": 300,
+        "timed_out": false
+      },
+      "native_summaries": [
+        [
+          180,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "passed": true,
+      "raw_plain_success_rows": 180,
+      "retention_child_prefix_blocks": 1,
+      "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.",
+      "selected_case_present": true
+    },
+    "original_full_workspace_qualified": false,
+    "passed": true,
+    "performance_qualified": false,
+    "production_activation": false,
+    "reader_controls": [
+      {
+        "native_tests_executed": 0,
+        "synthetic_parser_cases_passed": 16
+      },
+      {
+        "native_tests_executed": 0,
+        "synthetic_parser_cases_passed": 3
+      }
+    ],
+    "recipe_head": "53b9e7c6b2ba678a4c9c564657a3581c045faae4",
+    "registered_tests": [
+      "cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs",
+      "cell::closure_tests::closure_checks_independent_owner_context_and_required_roles",
+      "cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership",
+      "cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker",
+      "cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker",
+      "cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities",
+      "cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases",
+      "cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies",
+      "cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts",
+      "cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload",
+      "cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker",
+      "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+      "cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire",
+      "cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound",
+      "cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart",
+      "cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication",
+      "cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes",
+      "cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget",
+      "cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget",
+      "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+      "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+      "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate",
+      "cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply",
+      "cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding",
+      "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+      "cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed",
+      "cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports",
+      "cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts",
+      "cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys",
+      "cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals",
+      "cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack",
+      "cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns",
+      "cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts",
+      "cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps",
+      "cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget",
+      "cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes",
+      "cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit",
+      "cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater",
+      "cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector",
+      "cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget",
+      "cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock",
+      "cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff",
+      "cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest",
+      "cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits",
+      "cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes",
+      "cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline",
+      "cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes",
+      "cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin",
+      "cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged",
+      "cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff",
+      "cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error",
+      "cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap",
+      "cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch",
+      "cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store",
+      "cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval",
+      "cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers",
+      "cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline",
+      "cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path",
+      "cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry",
+      "cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry",
+      "cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge",
+      "cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation",
+      "cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates",
+      "cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures",
+      "cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound",
+      "cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback",
+      "cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores",
+      "cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections",
+      "cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker",
+      "cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path",
+      "cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed",
+      "cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks",
+      "cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download",
+      "cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download",
+      "cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache",
+      "cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing",
+      "cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff",
+      "cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack",
+      "cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement",
+      "cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline",
+      "cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline",
+      "cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline",
+      "cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload",
+      "cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen",
+      "cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id",
+      "cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term",
+      "cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge",
+      "cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost",
+      "cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor",
+      "cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration",
+      "cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation",
+      "cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair",
+      "cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge",
+      "cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse",
+      "cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id",
+      "cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled",
+      "cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation",
+      "cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity",
+      "cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent",
+      "cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge",
+      "cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload",
+      "cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss",
+      "cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention",
+      "cell::retention::tests::retention_process_child",
+      "cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation",
+      "cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty",
+      "cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen",
+      "cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage",
+      "cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early",
+      "cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open",
+      "cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal",
+      "cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic",
+      "cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes",
+      "cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen",
+      "cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery",
+      "cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it",
+      "cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds",
+      "cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close",
+      "cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks",
+      "cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache",
+      "cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row",
+      "cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance",
+      "cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance",
+      "cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset",
+      "cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once",
+      "cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite",
+      "cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance",
+      "cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge",
+      "cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup",
+      "cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup",
+      "cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten",
+      "cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null",
+      "cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed",
+      "cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes",
+      "cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation",
+      "cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated",
+      "cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap",
+      "cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible",
+      "cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset",
+      "cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite",
+      "cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes",
+      "cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap",
+      "cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin",
+      "cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers",
+      "cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites",
+      "cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry",
+      "cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works",
+      "cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline",
+      "cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output",
+      "cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication",
+      "cell::tests::foreign_database_is_not_repurposed",
+      "cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication",
+      "cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+      "cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+      "cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes",
+      "cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation",
+      "cell::tests::release_manifest_requires_complete_context_bound_closure",
+      "cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads",
+      "cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin",
+      "cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback",
+      "cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+      "tests::admission_is_atomic_replay_safe_and_bounded",
+      "tests::attestation_and_certificate_reject_foreign_committed_context",
+      "tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse",
+      "tests::attestation_manifest_is_stable_across_certificate_retention_and_repair",
+      "tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot",
+      "tests::durable_before_attest_survives_reopen_and_rejects_bad_signature",
+      "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "tests::row_tamper_is_rejected_on_reopen",
+      "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+      "tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens",
+      "tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed",
+      "tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder",
+      "tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy",
+      "tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed",
+      "tests::tamper_latches_unavailable_and_exact_repair_recovers",
+      "tests::typed_namespace_and_batch_derivation_are_deterministic",
+      "tests::under_quorum_and_signed_equivocation_are_distinct",
+      "tests::weighted_certificate_retrieval_retention_and_gc_close"
+    ],
+    "schema": "trnm-exact-e62-da-native-v1",
+    "scope": "All 180 registered DA library tests in the package-selected all-feature test profile, original 300-second module ceiling, plus strict package Clippy. No diagnostic Rust overlay or changed fixture deadline.",
+    "source_after": {
+      "base": null,
+      "candidate": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "tested_tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 936047121,
+      "tracked_entries": 8170,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "tested_tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 936047121,
+      "tracked_entries": 8170,
+      "tracked_worktree_verified": true
+    },
+    "source_unchanged": true,
+    "strict_clippy_passed": true
+  },
+  "decoded_job_log": {
+    "bytes": 73393,
+    "sha256": "8004f9254c1a6074e579674641c518e39c8e140e2a7f70345531df25d535427b"
+  },
+  "artifact": [
+    {
+      "id": 13300858963,
+      "name": "exact-e62-da-native-53b9e7c6b2ba678a4c9c564657a3581c045faae4-1",
+      "bytes": 30459,
+      "sha256": "72fdc83e7a29a86c28bddfeacbdeb8026d78df425b5f91dc08bd78fd59586fbe"
+    }
+  ],
+  "qualification": {
+    "package_library": true,
+    "package_all_targets_clippy": true,
+    "workspace_formatting": true,
+    "full_workspace_native": false,
+    "host": false,
+    "performance": false
+  },
+  "log_reader_boundary": "Verified source-bound runner output and original job conclusion; full module transcript is in the frozen artifact with its recorded SHA, not reconstructed from the job output."
+}

@@ -1,0 +1,736 @@
+{
+  "schema": "trnm-e62-original-observed-outcomes-v1",
+  "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+  "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+  "campaign": {
+    "planned": 27,
+    "confirmed": 3,
+    "recorded": 12,
+    "pressure_planned": 18,
+    "pressure_confirmed": 0,
+    "every_pressure_phase_all_24_actors_ready": true,
+    "phases": {
+      "run-1-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ],
+      "run-2-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ],
+      "run-3-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ]
+    }
+  },
+  "f0": {
+    "denominator_bound_by_original_reader": true,
+    "planned": 6,
+    "original_four_second_successes": 0,
+    "planned_packet_identities": 42,
+    "all_planned_rounds": [
+      {
+        "actual_ended_ns": 27905476323,
+        "actual_started_ns": 1001883063,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 26905476323,
+        "end_lateness_from_four_second_deadline_ns": 22905476323,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 1883063
+      },
+      {
+        "actual_ended_ns": 30008235312,
+        "actual_started_ns": 27905490700,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25008235312,
+        "end_lateness_from_four_second_deadline_ns": 21008235312,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 22905490700
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": 30060192805,
+        "actual_started_ns": 1000146389,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29060192805,
+        "end_lateness_from_four_second_deadline_ns": 25060192805,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 146389
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ],
+    "controller_resources_complete": true,
+    "all_services_known_empty": true,
+    "first_baseline_elapsed_from_scheduled_ns": 26905476323,
+    "complete_success": false
+  },
+  "observed_costs": [
+    {
+      "kind": "campaign",
+      "rows": [
+        {
+          "path": "run-1-raw/report.json",
+          "mode": "baseline",
+          "imports": 7,
+          "cpu": {
+            "known_samples": 7,
+            "max": 2034047125,
+            "min": 559311293,
+            "sum": 5450127231,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 7,
+            "max": 9088548720,
+            "min": 2417234864,
+            "sum": 24552936648,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 7,
+                "max": 29928,
+                "min": 8739,
+                "sum": 82936,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 7,
+                "max": 1650916250,
+                "min": 474971361,
+                "sum": 4554907318,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 7,
+                "max": 2813891067,
+                "min": 478353163,
+                "sum": 6649431263,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-1-raw/report.json",
+          "mode": "from-zero",
+          "imports": 3,
+          "cpu": {
+            "known_samples": 3,
+            "max": 734479852,
+            "min": 695116003,
+            "sum": 2136249755,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 3,
+            "max": 8496570820,
+            "min": 7402408188,
+            "sum": 23388699706,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 3,
+                "max": 9119,
+                "min": 8715,
+                "sum": 26573,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 3,
+                "max": 613085607,
+                "min": 586794157,
+                "sum": 1792510275,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 3,
+                "max": 1608204130,
+                "min": 1237190362,
+                "sum": 4085059910,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-1-raw/report.json",
+          "mode": "late-product",
+          "imports": 3,
+          "cpu": {
+            "known_samples": 3,
+            "max": 726722371,
+            "min": 673792108,
+            "sum": 2096094803,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 3,
+            "max": 8297548921,
+            "min": 7497510405,
+            "sum": 23294299533,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 3,
+                "max": 9112,
+                "min": 8510,
+                "sum": 26361,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 3,
+                "max": 604077629,
+                "min": 568235190,
+                "sum": 1755719814,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 3,
+                "max": 1978828077,
+                "min": 1325597539,
+                "sum": 4887894475,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-2-raw/report.json",
+          "mode": "baseline",
+          "imports": 7,
+          "cpu": {
+            "known_samples": 7,
+            "max": 2055115216,
+            "min": 563518201,
+            "sum": 5503720120,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 7,
+            "max": 9108447035,
+            "min": 2492536805,
+            "sum": 24821522906,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 7,
+                "max": 29928,
+                "min": 8739,
+                "sum": 82936,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 7,
+                "max": 1656537588,
+                "min": 479978119,
+                "sum": 4578081548,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 7,
+                "max": 2418434229,
+                "min": 560117370,
+                "sum": 6345178747,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-2-raw/report.json",
+          "mode": "from-zero",
+          "imports": 4,
+          "cpu": {
+            "known_samples": 4,
+            "max": 729900349,
+            "min": 7634307,
+            "sum": 2135862099,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 4,
+            "max": 8184281183,
+            "min": 12554357,
+            "sum": 23094331029,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 4,
+                "max": 9106,
+                "min": 67,
+                "sum": 26656,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 4,
+                "max": 607656450,
+                "min": 4859594,
+                "sum": 1785119125,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 4,
+                "max": 1886000813,
+                "min": 5536993,
+                "sum": 5171536948,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-2-raw/report.json",
+          "mode": "late-product",
+          "imports": 3,
+          "cpu": {
+            "known_samples": 3,
+            "max": 742005528,
+            "min": 632591518,
+            "sum": 2080093676,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 3,
+            "max": 8206476345,
+            "min": 6701724651,
+            "sum": 23002012408,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 3,
+                "max": 9113,
+                "min": 8362,
+                "sum": 26214,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 3,
+                "max": 616178454,
+                "min": 546935686,
+                "sum": 1749018526,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 3,
+                "max": 1472541101,
+                "min": 1163265904,
+                "sum": 3991180697,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-3-raw/report.json",
+          "mode": "baseline",
+          "imports": 7,
+          "cpu": {
+            "known_samples": 7,
+            "max": 2108793530,
+            "min": 571744051,
+            "sum": 5618621214,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 7,
+            "max": 9398447084,
+            "min": 2580237526,
+            "sum": 25421591206,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 7,
+                "max": 29928,
+                "min": 8739,
+                "sum": 82935,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 7,
+                "max": 1677272721,
+                "min": 482231162,
+                "sum": 4618989634,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 7,
+                "max": 2220963887,
+                "min": 486609078,
+                "sum": 5781687619,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-3-raw/report.json",
+          "mode": "from-zero",
+          "imports": 3,
+          "cpu": {
+            "known_samples": 3,
+            "max": 735589383,
+            "min": 690736881,
+            "sum": 2117923651,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 3,
+            "max": 8501419421,
+            "min": 7499769515,
+            "sum": 23503240023,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 3,
+                "max": 9111,
+                "min": 8739,
+                "sum": 26593,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 3,
+                "max": 611814229,
+                "min": 576545903,
+                "sum": 1767388013,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 3,
+                "max": 2232239551,
+                "min": 1410990094,
+                "sum": 5321895038,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "run-3-raw/report.json",
+          "mode": "late-product",
+          "imports": 3,
+          "cpu": {
+            "known_samples": 3,
+            "max": 725984074,
+            "min": 687285634,
+            "sum": 2120828235,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 3,
+            "max": 8389591881,
+            "min": 7192484135,
+            "sum": 23180334999,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 3,
+                "max": 9106,
+                "min": 8697,
+                "sum": 26542,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 3,
+                "max": 605419083,
+                "min": 580621451,
+                "sum": 1779338447,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 3,
+                "max": 1495521830,
+                "min": 968211353,
+                "sum": 3724574346,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fixed-root-f0",
+      "rows": [
+        {
+          "path": "execution/raw/report.json",
+          "mode": "baseline",
+          "imports": 7,
+          "cpu": {
+            "known_samples": 7,
+            "max": 2014003762,
+            "min": 555433128,
+            "sum": 5421500469,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 7,
+            "max": 8983320627,
+            "min": 2484991943,
+            "sum": 24350412820,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 7,
+                "max": 29928,
+                "min": 8739,
+                "sum": 82936,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 7,
+                "max": 1649341038,
+                "min": 477745500,
+                "sum": 4570067420,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 7,
+                "max": 2192991268,
+                "min": 479553188,
+                "sum": 5963234067,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": "execution/raw/report.json",
+          "mode": "valid-work-root",
+          "imports": 0,
+          "cpu": {
+            "known_samples": 0,
+            "max": null,
+            "min": null,
+            "sum": null,
+            "unknown_samples": 0
+          },
+          "wall": {
+            "known_samples": 0,
+            "max": null,
+            "min": null,
+            "sum": null,
+            "unknown_samples": 0
+          },
+          "host": [
+            {
+              "calls": {
+                "known_samples": 0,
+                "max": null,
+                "min": null,
+                "sum": null,
+                "unknown_samples": 0
+              },
+              "cpu": {
+                "known_samples": 0,
+                "max": null,
+                "min": null,
+                "sum": null,
+                "unknown_samples": 0
+              },
+              "wall": {
+                "known_samples": 0,
+                "max": null,
+                "min": null,
+                "sum": null,
+                "unknown_samples": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "native_execution_in_readback": false,
+  "performance_qualified": false,
+  "note": "History and Host CPU are nested. Partial/unknown observations retain their flags. These source-specific observations are not a controlled causal comparison with 44d or c806. Complete sanitized projections are retained in the derived artifact; stdout projections explicitly omit some fields."
+}

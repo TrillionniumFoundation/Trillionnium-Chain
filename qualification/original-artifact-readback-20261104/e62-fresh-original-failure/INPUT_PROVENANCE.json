@@ -1,0 +1,53 @@
+{
+  "schema": "trnm-frozen-e62-fresh-input-v1",
+  "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+  "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+  "original_run": 41782247028,
+  "original_job": 126416239837,
+  "original_run_conclusion": "failure",
+  "original_job_conclusion": "failure",
+  "artifact": {
+    "kind": "fresh-service",
+    "artifact_id": 13300570348,
+    "run_id": 41782247028,
+    "artifact_name": "w1-fresh-service-head-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
+    "bytes": 5366180,
+    "sha256": "07cddab4ec030bdfcc85a576090769c1553ce40fa0e23ac90871d9462ccbc93f",
+    "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+    "required_json": [
+      "source.json",
+      "source-after.json",
+      "fresh-service/manifest.json"
+    ],
+    "source_json": [
+      "source.json",
+      "source-after.json"
+    ],
+    "project_json": [
+      "fresh-service/manifest.json",
+      "fresh-service/original/report.json",
+      "fresh-service/fresh/report.json"
+    ]
+  },
+  "producer": {
+    "path": "scripts/ci/run_w1_fresh_service_v1.py",
+    "git_blob": "68a3c2307159e17773c6a33c2636c62ddca56507",
+    "bytes": 21503,
+    "sha256": "dbc50b7fd7d23e2df5a158791c67b8935418d95f84beef1fdabb9bc9566961ef"
+  },
+  "original_job_log": {
+    "bytes": 156266,
+    "sha256": "33b9dd8a7bfb92d88e5e733b6a5870be61520fbe8ea8429e7b2684d3d76b78f0"
+  },
+  "reader_change": "Inputs only; existing reader code d5e9513b0bedbdf356cdd22bbcdecfc558ae03ca unchanged.",
+  "claims": {
+    "request_window_ns": 4000000000,
+    "hostile_workers": 16,
+    "archive_readback_pending": true,
+    "native_error_code_from_new_artifact": null,
+    "independently_rebound_binary": false,
+    "performance_qualified": false
+  },
+  "scope": "The fresh input gets fixed artifact metadata, complete member CRC/SHA256 and exact source receipt checks, then the established closed projection. Unlike campaign/F0-specific validators, this generic fresh readback does not independently revalidate the producer's full native acceptance or binary binding. Missing optional reports remain absent."
+}

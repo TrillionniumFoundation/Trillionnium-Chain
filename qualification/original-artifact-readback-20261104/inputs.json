@@ -1,30 +1,26 @@
 [
   {
-    "kind": "campaign",
-    "artifact_id": 13300411373,
-    "run_id": 41782247117,
-    "artifact_name": "pon-native-campaign-x64-head-release-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
-    "bytes": 56043903,
-    "sha256": "0633a88b2e76142687ad208ef0e0201ab6035dbe59074d1cac002d50de66842c",
+    "kind": "fresh-service",
+    "artifact_id": 13300570348,
+    "run_id": 41782247028,
+    "artifact_name": "w1-fresh-service-head-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
+    "bytes": 5366180,
+    "sha256": "07cddab4ec030bdfcc85a576090769c1553ce40fa0e23ac90871d9462ccbc93f",
     "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
     "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
     "required_json": [
-      "source-before.json",
+      "source.json",
       "source-after.json",
-      "results.json",
-      "run-1-raw/report.json",
-      "run-2-raw/report.json",
-      "run-3-raw/report.json"
+      "fresh-service/manifest.json"
     ],
     "source_json": [
-      "source-before.json",
+      "source.json",
       "source-after.json"
     ],
     "project_json": [
-      "results.json",
-      "run-1-raw/report.json",
-      "run-2-raw/report.json",
-      "run-3-raw/report.json"
+      "fresh-service/manifest.json",
+      "fresh-service/original/report.json",
+      "fresh-service/fresh/report.json"
     ]
   },
   {
