@@ -1,0 +1,40 @@
+{
+  "schema": "independent-static-artifact-reader-followup-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "reviewer": "hepta_blockers",
+  "input": {
+    "git_blob_sha": "f8ea44c88224d07c0796e086f5d29163f93a0ffa",
+    "sha256": "e28fd68a3756221d31f0e67f485a7d311b6459c16d093da6c7a98d857b6fcac6",
+    "bytes": 39316
+  },
+  "prior_review": {
+    "git_blob_sha": "39db7889434085eb6f619321fbba0cfc9e455935",
+    "sha256": "e254af3bc33ee288a1d5011b0e08b83076ab2911190b52f1427f14835c30a5b2",
+    "bytes": 3524
+  },
+  "scope": "Narrow read of corrected projection, phase summary, member-name projection, output budgeting and known large-report processing. No artifact download, Python execution or native qualification by this reviewer.",
+  "resolved_in_source": [
+    {
+      "id": "OUTPUT-RAW-PHASE",
+      "status": "resolved in reviewed source",
+      "evidence": "phase modes, optional actual booleans and bounded integer values are checked; unknown confirmation flags remain explicit. Unknown fields/entire values, strings and member paths are hashed or omitted; public literal strings and error codes use closed sets."
+    },
+    {
+      "id": "OUTPUT-FILE-BUDGET",
+      "status": "resolved in reviewed source",
+      "evidence": "The complete per-artifact derived payload and both printable projection lines are serialized and checked before writes. write_outputs also charges a cumulative 8 MiB derived budget, including the final SUMMARY; projection stdout retains its separate 2 MiB budget."
+    }
+  ],
+  "other_observations": [
+    "Large JSON processing is restricted to six explicitly named original report paths at 128 MiB each; each is parsed/projected/dropped before the next. The small-JSON retained budget stays 64 MiB and the total returned decoded-byte cap stays 512 MiB.",
+    "A 4 GiB RLIMIT_AS cap is set on the actual reader path; this is an address-space cap, not an RSS estimate or an independently measured memory result.",
+    "Unknown labels are hashed before output and the aggregate visits only the closed public field set. Metrics outside the projection may be omitted; this does not prove a complete performance summary.",
+    "Original source-receipt fields remain checked against fixed commit/tree metadata. This review does not independently replay all original tracked source bytes."
+  ],
+  "blocking_findings_in_reviewed_followup_scope": [],
+  "synthetic_controls_executed_by_reviewer": 0,
+  "native_tests_executed_by_reviewer": 0,
+  "original_archived_code_executed": false,
+  "observed_success_of_pending_hosted_controls": false,
+  "qualification_boundary": "Source changes address the two static findings. Actual followup hosted self-tests and complete artifact readback remain separate evidence."
+}
