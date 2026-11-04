@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One exact native confirmation test in the original, run-owned Host parent.
+"""Exact native confirmation and long-History tests in the original Host parent.
 
 The runner owns the same unprivileged PID/process group and wait4 observation as
 before. A gated child holds the actual ELF; the privileged helper only attaches
@@ -34,6 +34,11 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = Path(__file__).resolve()
 PARENT = CGROUP_ROOT / FIXED_UNIT
 HOST_TEST = 'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline'
+HISTORY_TEST = 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal'
+# A new finite bound for the previously job-bounded 4105-block experiment.
+# This is inside its unchanged 180-minute CI job; the confirmation profile
+# retains its original 90 seconds and its inner four-second pressure window.
+HISTORY_TIMEOUT_SECONDS = 3600
 LIMITS = {'cpu.max': '25000 100000', 'cpu.max.burst': '0',
           'memory.max': '2147483648', 'memory.swap.max': '0', 'pids.max': '256'}
 
@@ -88,9 +93,16 @@ def validate_child(child, parent, uid, gid, pid, parent_pid, start_ticks):
             and child['cgroup'] == parent['cgroup'], 'HOST_ADMISSION_OUTSIDE_PARENT')
 
 
+def native_budget(command):
+    if len(command) == 5 and command[1:] == [HOST_TEST, '--exact', '--nocapture', '--test-threads=1']:
+        return 90
+    if len(command) == 6 and command[1:] == [HISTORY_TEST, '--exact', '--ignored', '--show-output', '--test-threads=1']:
+        return HISTORY_TIMEOUT_SECONDS
+    raise ValueError('HOST_EXACT_NATIVE_COMMAND')
+
+
 def native_command(command, timeout):
-    require(type(timeout) in (int, float) and timeout == 90
-            and len(command) == 5 and command[1:] == [HOST_TEST, '--exact', '--nocapture', '--test-threads=1'],
+    require(type(timeout) in (int, float) and timeout == native_budget(command),
             'HOST_EXACT_NATIVE_COMMAND')
     binary = Path(command[0])
     require(binary.is_absolute() and not binary.is_symlink()
@@ -99,7 +111,7 @@ def native_command(command, timeout):
 
 
 def validate_gate_arguments(command, args, leaf):
-    require(len(command) == 20
+    require(len(command) in (20, 21)
             and command[:5] == ['/usr/bin/python3', '-I', '-B', str(SCRIPT), 'exec-native']
             and command[5:15:2] == ['--gate-fd', '--elf-fd', '--sha256', '--membership', '--deadline-ns']
             and command[6].isdigit() and int(command[6]) >= 3
@@ -107,7 +119,13 @@ def validate_gate_arguments(command, args, leaf):
             and command[10] == args.sha256
             and command[12] == '/' + FIXED_UNIT + '/' + leaf
             and command[14] == str(args.deadline_ns), 'HOST_EXACT_GATE_COMMAND')
-    return native_command(command[15:], 90)
+    return native_command(command[15:], native_budget(command[15:]))
+
+
+def validate_native_deadline(deadline_ns, command):
+    now = time.monotonic_ns()
+    require(now < deadline_ns <= now + native_budget(command) * 1_000_000_000,
+            'HOST_ABSOLUTE_DEADLINE')
 
 
 def read_at(fd, name, limit=4096):
@@ -196,7 +214,7 @@ def attach(args):
     leaf, record_name = names(args.owner, args.nonce)
     require(re.fullmatch('[0-9a-f]{64}', args.sha256) is not None
             and re.fullmatch('[0-9a-f]{40}', args.source) is not None, 'HOST_EXACT_SOURCE')
-    require(time.monotonic_ns() < args.deadline_ns <= time.monotonic_ns() + 90_000_000_000, 'HOST_ABSOLUTE_DEADLINE')
+    require(time.monotonic_ns() < args.deadline_ns, 'HOST_ABSOLUTE_DEADLINE')
     with authority(args) as (manager, lease, directory, parent_fd, uid, gid):
         child, parent = process_identity(args.pid), process_identity(args.parent_pid)
         validate_child(child, parent, uid, gid, args.pid, args.parent_pid, args.start_ticks)
@@ -211,7 +229,9 @@ def attach(args):
             info = os.fstat(binary_fd)
             command_raw = Path(f'/proc/{args.pid}/cmdline').read_bytes()
             require(len(command_raw) <= 8192 and command_raw.endswith(b'\0'), 'HOST_GATE_COMMAND_BOUND')
-            binary = validate_gate_arguments(command_raw[:-1].decode().split('\0'), args, leaf)
+            command = command_raw[:-1].decode().split('\0')
+            binary = validate_gate_arguments(command, args, leaf)
+            validate_native_deadline(args.deadline_ns, command[15:])
             named = binary.stat(follow_symlinks=False)
             require(stat.S_ISREG(info.st_mode) and info.st_uid == uid
                     and info.st_mode & 0o111 and os.pread(binary_fd, 4, 0) == b'\x7fELF'
@@ -344,14 +364,14 @@ def root_call(action, run_owner, nonce, extra, remaining, *, log_directory):
 
 
 def run_host_child(command, folder, timeout, *, run_owner, source, binary_sha256):
-    """The original 90 seconds include gate creation, sudo attachment and exec.
+    """The exact profile budget includes gate creation, sudo attachment and exec.
 
     Cleanup may finish after a timeout, as original kill/wait4 cleanup did; it
     never renews the native deadline or converts unknown cleanup to a pass.
     """
     started = time.monotonic_ns()
-    deadline = started + 90_000_000_000
     binary = native_command(command, timeout)
+    deadline = started + native_budget(command) * 1_000_000_000
     owner(run_owner)
     nonce = secrets.token_hex(12)
     leaf, _ = names(run_owner, nonce)
@@ -440,10 +460,12 @@ def run_host_child(command, folder, timeout, *, run_owner, source, binary_sha256
               'rss_scope': 'whole waited child including pre-exec image; no Rust-only attribution',
               'host_scope': {'owner': run_owner, 'attachment': attached, 'closure': closed,
                              'error': error, 'cleanup_error': cleanup_error,
-                             'native_deadline_ns': deadline, 'native_budget_seconds': 90,
+                             'native_deadline_ns': deadline, 'native_budget_seconds': native_budget(command),
                              'complete': attached is not None and error is None and cleanup_error is None
                                          and not timed_out and process is not None and process.returncode == 0,
-                             'scope': 'entire same-process finite confirmation fixture; not independent receiver fairness'},
+                             'scope': ('entire same-process finite confirmation fixture; not independent receiver fairness'
+                                       if command[1] == HOST_TEST else
+                                       'entire 4105-block construction and paid full-sync test; not WAN or independent operators')},
               'stdout_sha256': sha((folder / 'stdout').read_bytes()),
               'stderr_sha256': sha((folder / 'stderr').read_bytes())}
     (folder / 'process.json').write_text(json.dumps(result, indent=2) + '\n')
@@ -470,7 +492,7 @@ def main():
     p.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if args.action == 'exec-native':
-        native_command(args.command, 90)
+        native_command(args.command, native_budget(args.command))
         ready, _, _ = select.select([args.gate_fd], [], [], max(0, (args.deadline_ns - time.monotonic_ns()) / 1e9))
         require(ready and os.read(args.gate_fd, 2) == b'1', 'HOST_EXEC_GATE')
         os.close(args.gate_fd)

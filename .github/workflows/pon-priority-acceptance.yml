@@ -302,8 +302,15 @@ jobs:
           assert len(paths) == 1 and Path(paths[0]).is_absolute() and Path(paths[0]).is_file()
           (root / 'history-executable.txt').write_text(paths[0] + '\n')
           PYBUILD
-      - name: Execute 4105 real work blocks and paid public full sync
+      - name: Check owned native Host command and lifetime boundaries
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && matrix.campaign == 'history' }}
+        run: python3 -B -m unittest discover -s scripts/ci -p 'test_from_zero_native_host.py' -v
+      - name: Provision original fixed Host for long-history native import
+        id: history_host
         if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
+        run: sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision --owner "$TRNM_FROM_ZERO_HOST_OWNER" --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" > "$TRNM_CI_RECEIPT_DIR/history-host-provision.json"
+      - name: Execute 4105 real work blocks and paid public full sync
+        if: ${{ !cancelled() && steps.history_host.outcome == 'success' && matrix.campaign == 'history' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -312,7 +319,7 @@ jobs:
           sha256sum "$binary" > "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
           selector=actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal
           set +e
-          /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" "$binary" "$selector" --exact --ignored --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
+          /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" python3 -B scripts/ci/run_long_history_native.py --binary "$binary" --out "$TRNM_CI_RECEIPT_DIR/history-host-execution" --host-owner "$TRNM_FROM_ZERO_HOST_OWNER" 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
           codes=("${PIPESTATUS[@]}")
           set -e
           printf 'native_exit=%s\nlog_exit=%s\n' "${codes[0]}" "${codes[1]}" > "$TRNM_CI_RECEIPT_DIR/history-exit.txt"
@@ -330,10 +337,15 @@ jobs:
           for key in ('public_network_ready', 'hardness_accepted', 'independent_accepted', 'production_activation'):
               assert report[key] is False
           assert (root / 'history-resources.txt').stat().st_size > 0
-          print(json.dumps({'scope': 'native logical-time loopback history; compilation excluded from process time/RSS',
+          process = json.loads((root / 'history-host-execution/summary.json').read_text())
+          assert process['complete'] is True and process['source_unchanged'] is True and process['binary_unchanged'] is True
+          print(json.dumps({'scope': 'native logical-time loopback history; native wait4 includes gate, construction and full sync; outer time also includes observer/helpers; compilation excluded',
                             'summary': report, 'wan_tps': None, 'confirmation_latency_slo': None,
                             'physical_power_loss_accepted': False, 'independent_operators_accepted': False}))
           PYHISTORY
+      - name: Close only this run owned long-history Host
+        if: always() && matrix.campaign == 'history' && steps.source.outcome == 'success'
+        run: sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup --owner "$TRNM_FROM_ZERO_HOST_OWNER" > "$TRNM_CI_RECEIPT_DIR/history-host-cleanup.json"
       - name: Reverify exact unchanged source
         if: always()
         shell: bash
