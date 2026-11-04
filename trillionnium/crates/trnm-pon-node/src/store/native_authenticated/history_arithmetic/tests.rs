@@ -659,11 +659,8 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
              DEFERRABLE INITIALLY DEFERRED);",
     )
     .unwrap();
-    let tx = rusqlite::Transaction::new_unchecked(
-        &db,
-        rusqlite::TransactionBehavior::Immediate,
-    )
-    .unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
     tx.execute("INSERT INTO commit_parent VALUES(1)", [])
         .unwrap();
     let guard = cache.observe_sql_commit(SqlCommitSite::Atomic);
@@ -672,16 +669,14 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
     result.unwrap();
     assert!(db.is_autocommit());
     assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row.get::<_, u64>(0))
+        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row
+            .get::<_, u64>(0))
             .unwrap(),
         1
     );
 
-    let tx = rusqlite::Transaction::new_unchecked(
-        &db,
-        rusqlite::TransactionBehavior::Immediate,
-    )
-    .unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
     tx.execute("INSERT INTO commit_child VALUES(99)", [])
         .unwrap();
     let guard = cache.observe_sql_commit(SqlCommitSite::AdmissionPersistence);
@@ -693,17 +688,15 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
     );
     assert!(db.is_autocommit());
     assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM commit_child", [], |row| row.get::<_, u64>(0))
+        db.query_row("SELECT COUNT(*) FROM commit_child", [], |row| row
+            .get::<_, u64>(0))
             .unwrap(),
         0
     );
 
     // A missing CPU stamp stays unknown even when the actual COMMIT succeeds.
-    let tx = rusqlite::Transaction::new_unchecked(
-        &db,
-        rusqlite::TransactionBehavior::Immediate,
-    )
-    .unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
     let mut guard = cache.observe_sql_commit(SqlCommitSite::ReorgStep);
     guard.cpu = None;
     let result = tx.commit();
@@ -728,22 +721,34 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
             1
         );
     }
-    assert_eq!(sites[SqlCommitSite::Atomic as usize]["totals"]["calls_succeeded"], 1);
-    assert_eq!(sites[SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_failed"], 1);
-    assert_eq!(sites[SqlCommitSite::ReorgStep as usize]["totals"]["cpu_unknown_calls"], 1);
+    assert_eq!(
+        sites[SqlCommitSite::Atomic as usize]["totals"]["calls_succeeded"],
+        1
+    );
+    assert_eq!(
+        sites[SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_failed"],
+        1
+    );
+    assert_eq!(
+        sites[SqlCommitSite::ReorgStep as usize]["totals"]["cpu_unknown_calls"],
+        1
+    );
     assert!(sites[SqlCommitSite::ReorgStep as usize]["totals"]["cpu_ns"].is_null());
-    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_abandoned"], 1);
-    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_unwinding"], 1);
+    assert_eq!(
+        sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_abandoned"],
+        1
+    );
+    assert_eq!(
+        sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_unwinding"],
+        1
+    );
     assert_eq!(measured["sql_commit"]["observation_failed"], false);
 
     // Observation contention cannot block, retry, or replace the real SQL result.
     let contended = HistoryArithmetic::default();
     let held = contended.sql_commits.rows.lock().unwrap();
-    let tx = rusqlite::Transaction::new_unchecked(
-        &db,
-        rusqlite::TransactionBehavior::Immediate,
-    )
-    .unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
     tx.execute("INSERT INTO commit_parent VALUES(2)", [])
         .unwrap();
     let guard = contended.observe_sql_commit(SqlCommitSite::Atomic);
@@ -752,9 +757,13 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
     result.unwrap();
     drop(held);
     assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row.get::<_, u64>(0))
+        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row
+            .get::<_, u64>(0))
             .unwrap(),
         2
     );
-    assert_eq!(contended.observation()["sql_commit"]["observation_failed"], true);
+    assert_eq!(
+        contended.observation()["sql_commit"]["observation_failed"],
+        true
+    );
 }
