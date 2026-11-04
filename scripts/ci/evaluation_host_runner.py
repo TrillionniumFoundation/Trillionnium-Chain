@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exact original sync-observation Cargo target in the existing fixed Host parent.
 
-The original two Rust tests, nineteen real CLI calls and twelve network phases
+The original two Rust tests, nineteen real CLI calls and twelve listener phases
 remain authoritative. This runner only provides the required kernel parent and
 retains their unfiltered output, actual child receipts and source identities.
 """
@@ -25,6 +25,10 @@ TESTS = (
 PHASES = ('full-sync', 'default-query', 'unknown', 'window', 'partial',
           'wrong-context', 'reorganization', 'lighter-branch',
           'retirement-pages-1', 'retirement-pages-2', 'retirement-pages-3', 'retirement')
+# The unchanged Rust fixture passes --after equal to --tip in these four
+# commands, so they finish locally while their owned listeners accept no client.
+LOCAL_PHASES = ('default-query', 'unknown', 'window', 'lighter-branch')
+NETWORK_PHASES = tuple(phase for phase in PHASES if phase not in LOCAL_PHASES)
 
 
 def require(value, message):
@@ -109,18 +113,25 @@ def validate_observation(stdout, rows, phases, cli_binary):
             require(type(json.loads(row['stdout'])) is dict, 'EVALUATION_ACTUAL_CLI_PRODUCT')
         else:
             require(row['stdout'] == '' and row['stderr'] != '', 'EVALUATION_ACTUAL_REFUSAL')
-    require([row['phase'] for row in phases] == list(PHASES), 'EVALUATION_ALL_TWELVE_NETWORK_PHASES')
+    require([row['phase'] for row in phases] == list(PHASES), 'EVALUATION_ALL_TWELVE_LISTENER_PHASES')
     for index, phase in enumerate(phases):
         require(phase['command'].startswith(json.dumps(str(cli_binary)) + ' "sync" ')
                 and phase['server_join_succeeded'] is True
                 and type(phase['accepted_connections']) is int
-                and phase['accepted_connections'] > 0
                 and phase['actual_cli_returncode'] == rows[index]['receipt']['actual_returncode'],
-                'EVALUATION_ACTUAL_NETWORK_AND_CHILD')
+                'EVALUATION_ACTUAL_LISTENER_AND_CHILD')
+        if phase['phase'] in LOCAL_PHASES:
+            require(phase['accepted_connections'] == 0, 'EVALUATION_ACTUAL_LOCAL_PHASE')
+        else:
+            require(phase['accepted_connections'] > 0, 'EVALUATION_ACTUAL_NETWORK_PHASE')
     return {'named_tests': list(TESTS), 'passed': 2, 'failed': 0, 'ignored': 0, 'filtered_out': 0,
             'actual_cli_calls': len(rows), 'actual_cli_exit_counts': dict(Counter(
                 row['receipt']['actual_returncode'] for row in rows)),
-            'actual_network_phases': len(phases),
+            'actual_listener_phases': len(phases),
+            'actual_network_phases': len(NETWORK_PHASES),
+            'actual_local_phases': len(LOCAL_PHASES),
+            'network_phase_names': list(NETWORK_PHASES),
+            'local_phase_names': list(LOCAL_PHASES),
             'accepted_connections': sum(row['accepted_connections'] for row in phases),
             'original_state_and_refusal_assertions_executed': True,
             'public_readiness': False}
@@ -156,7 +167,7 @@ def run_selected(command):
         require(source == expected, 'EVALUATION_COMPILE_AND_RUN_SOURCE')
         return verify('head', source, root=ROOT)
 
-    record = {'schema': 'native-evaluation-host-process-v1', 'original_cargo_command': command,
+    record = {'schema': 'native-evaluation-host-process-v2', 'original_cargo_command': command,
               'original_cargo_cwd': str(original_cwd), 'native_cwd': str(ROOT),
               'original_test_execution_mapping': {name: 'native/stdout' for name in TESTS},
               'target_selection_changed': False, 'source_before': None, 'source_after': None,
