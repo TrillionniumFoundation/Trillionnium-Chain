@@ -1,0 +1,105 @@
+{
+  "schema": "trnm-frozen056-published-source-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 699,
+  "head": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "ordered_parents": [
+    "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "056303b5193809597d4b5ec1f075dfc5109fe888"
+  ],
+  "actual_merge": "d4611f02a5db5a992d0e000c1e728a82889fa771",
+  "actual_merge_parents": [
+    "056303b5193809597d4b5ec1f075dfc5109fe888",
+    "1bac21f81fc8be67a566dddfed4da6b2fd87ad30"
+  ],
+  "actual_merge_tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "author_noreply": true,
+  "committer_noreply": true,
+  "complete_non_tree_entries_verified": 8081,
+  "new_objects_actual_full_bytes": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "a319c0ffba39906a16e1db58ebce72465b772aae",
+      "bytes": 453197,
+      "sha256": "74010de44c4f3dc9b52ca83fee4fe5d119bbffaf9d64bf62b523fa8e49c03692"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FROZEN_056_COMPOSITION.json",
+      "sha": "01d3509c2dda1212db59541fd00b620ec5bd0515",
+      "bytes": 110865,
+      "sha256": "ffb6102b85df43ed76a3fcffcc9d009bbe5c33d68e4df6d46423303b8c812eef"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_056_PREFIX_CODEC_INDEPENDENT_REVIEW.json",
+      "sha": "c4c69d5d279e1d0efa22cea6d5632d263618c1cb",
+      "bytes": 3841,
+      "sha256": "1f832c7bd578b5e30e560d44aa52f40903942af094b2663160ed4fe99715f917"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_C9_DEADLINE_INDEPENDENT_REVIEW.json",
+      "sha": "154b499d7a84a165ad5588d91039fc3d3a9f5e0f",
+      "bytes": 2117,
+      "sha256": "1c8014b57fa327bf61a2eb3cef4f75e2f0b6d5e8c9b99c293e0780cf282c643a"
+    }
+  ],
+  "current_native_verdict": false,
+  "local_preflight": false,
+  "original_runs": [
+    {
+      "id": 41768503443,
+      "name": "PoN original large-state CPU acceptance",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503409,
+      "name": "PoN PQ network and rollback witness",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503393,
+      "name": "PoN original native campaign",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503417,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503440,
+      "name": "PoN baseline diagnostic readback",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503413,
+      "name": "CodeQL exact-source analysis export",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503400,
+      "name": "PoN W1 work security observations",
+      "observed_status": "queued",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503442,
+      "name": "trnm-required-baseline",
+      "observed_status": "pending",
+      "observed_conclusion": null
+    },
+    {
+      "id": 41768503451,
+      "name": "PoN priority acceptance",
+      "observed_status": "pending",
+      "observed_conclusion": null
+    }
+  ],
+  "scope": "Git object composition/readback, not native or performance qualification. Original 312 failures retained; old running baseline not cancelled."
+}

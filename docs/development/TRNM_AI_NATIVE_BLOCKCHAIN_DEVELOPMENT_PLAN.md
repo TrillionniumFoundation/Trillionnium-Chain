@@ -5217,3 +5217,30 @@ and reads the fresh manifest without executing its binary or claiming fresh
 binary verification. All 39 controls and the complete new two-artifact readback
 are pending their actual hosted run. Original performance, Host and production
 gates remain HOLD_NO_GO.
+
+### Exact 312 original campaign/fresh ZIP readback — 2026-11-04
+
+Read-only run 41768013836/job 126370865285 on b263aa0773fdb0927dffeba9b4f360d82fa013b5
+completed with 39 controls and nine reproduced prior negatives. The exact 312
+campaign ZIP matched 56,158,559 compressed bytes and its recorded SHA256; all
+1,766 members and 316,169,759 decoded bytes reached complete CRC/SHA verification.
+The source receipts, original native binary and three report hashes matched.
+This source actually confirmed 3/27 planned rounds and 0/18 pressure rounds,
+with every finite campaign criterion false. No old f35 count was substituted.
+
+The fresh ZIP matched 5,283,581 compressed bytes, all 57 members and 28,614,307
+decoded bytes. Its manifest retains the original 4,000,000,000 ns window and
+16 workers, finished both executions, and reports passed/all_named_tests_passed
+false. This manifest-only readback does not separately bind the fresh executable.
+The outer runs field remained an opaque hash under the v5 projection; therefore
+the individual native replay errors were not visible and are not inferred from
+the aggregate wrapper failure. The follow-up adds only that fixed producer label
+and one full nested-manifest projection control. All prior 39 controls, unknown
+string/error redaction, original data, deadlines and output caps remain.
+
+The owner056 candidate is now durable as 1bac21f81fc8be67a566dddfed4da6b2fd87ad30,
+tree 5dd3781b0d74c91d3bd66872cbaccf8e520b206a, ordered parents [312,056]. The actual
+prospective merge d4611f02a5db5a992d0e000c1e728a82889fa771 has ordered parents
+[056,1bac] and that same tree. The complete 8,081-entry selection and four new
+text objects were read back exactly. This source has no inherited native verdict:
+its original workflows are pending/queued, while the 312 merge runtime continues.

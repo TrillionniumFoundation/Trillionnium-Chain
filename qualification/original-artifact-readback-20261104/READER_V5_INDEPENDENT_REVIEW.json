@@ -1,0 +1,36 @@
+{
+  "schema": "narrow-static-reader-delta-review-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "reviewed_git_blob": {
+    "git_blob_sha": "ef4e309d2230ee8f47eb501a5751af7ee380a250",
+    "sha256": "f59c1df66eb77bb30d3c1361435465f36585eb3996c99db787a7ddbfa1d9e7a0",
+    "bytes": 54554
+  },
+  "prior_git_blob": {
+    "git_blob_sha": "ed8ab930d979884068d68aa15f302b5a161faf8f",
+    "sha256": "f25b57fdaecda5f9a225a8615b6c37c747db7828309e4006379d68e3d1ea3a65",
+    "bytes": 51988
+  },
+  "scope": "Complete bytes were fetched and hashed, with a focused static comparison of the 45 additive lines against the previously reviewed reader. No archived source or native program was executed.",
+  "comparison": {
+    "added_lines": 45,
+    "removed_lines": 0,
+    "changed_regions": 3,
+    "downloads_zip_member_limits_decoder_limits_output_limits_native_acceptance_unchanged": true
+  },
+  "findings": [
+    "The new field names are a fixed 16-label set for the original fresh-service manifest. Unknown keys continue to be hashed.",
+    "Only fixed source SHAs, schemas, test selectors and phase literals were added to SAFE_STRINGS; arbitrary string values still become hashes, and error literal output still requires exact KNOWN_CODES membership.",
+    "The two additive synthetic controls check the known failure projection and nested unreviewed string/key omission; they remain pending actual hosted execution in this review.",
+    "The manifest projection is explicitly diagnostic, not validation of business booleans or acceptance authority. Existing archive integrity acceptance must not be relabeled as source execution, fresh binary verification or pressure-window success.",
+    "No confirmed blocker was found in the reviewed additive scope."
+  ],
+  "limitations": {
+    "new_inputs_manifest_independently_read": false,
+    "original_artifacts_downloaded_by_this_review": false,
+    "new_synthetic_controls_executed_by_this_review": 0,
+    "native_tests_executed_by_this_review": 0,
+    "fresh_phase_or_binary_qualification_inferred": false,
+    "full_scientific_or_production_qualification": false
+  }
+}

@@ -373,7 +373,7 @@ SAFE_FIELDS.update({"Ok", "Err", "Invalid", "Io", "BudgetExhausted",
 # Fixed labels from the exact 312 fresh-service manifest producer. Values
 # still pass through the same closed scalar/error projection and output caps.
 SAFE_FIELDS.update("""
-all_named_tests_passed execution_finished source_recompiled requested_window_ns
+runs all_named_tests_passed execution_finished source_recompiled requested_window_ns
 attack_workers independent_wan_accepted work_hardness_accepted failure_diagnostic
 native_returncode finite_target_met last_history_replay replay_error replay_accepted
 history_call_index acceptance_authority
@@ -979,6 +979,23 @@ def self_test():
     require("SYNTHETIC_UNREVIEWED_SENTINEL" not in json.dumps(injected)
             and injected["failure_diagnostic"]["last_history_replay"]["replay_error"]["literal_code"]
                 is None, "FRESH_UNKNOWN_STRINGS_AND_KEYS_REMAIN_OMITTED")
+    count += 1
+
+    # Exercise the actual outer manifest path, not only an inner diagnostic.
+    # The enclosing runs list was previously opaque to the safe projection.
+    nested_fresh = projection({"runs": [
+        {"name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+         "passed": False, "failure_diagnostic": {"native_returncode": 101,
+             "last_history_replay": {"replay_error": "PUBLIC_REQUEST_DEADLINE"}}},
+        {"name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+         "passed": False, "failure_diagnostic": {"native_returncode": 101,
+             "last_history_replay": {"replay_error": "SYNTHETIC_UNREVIEWED_SENTINEL"}}}]})
+    require(len(nested_fresh["runs"]) == 2
+            and all(row["passed"] is False for row in nested_fresh["runs"])
+            and nested_fresh["runs"][0]["failure_diagnostic"]["last_history_replay"]["replay_error"]["literal_code"]
+                == "PUBLIC_REQUEST_DEADLINE"
+            and "SYNTHETIC_UNREVIEWED_SENTINEL" not in json.dumps(nested_fresh),
+            "FIXED_FRESH_OUTER_RUNS_PROJECTION")
     count += 1
 
     print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
