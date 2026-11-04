@@ -1,0 +1,1154 @@
+{
+  "schema": "pon-six-axis-growth-readback-copies-v1",
+  "performance_acceptance": "HOLD",
+  "lanes": [
+    {
+      "lane": "x64-head",
+      "run": 41753071687,
+      "job": 126326882195,
+      "source": "be0d5f978dc86008115524a6be85c38e03982b33",
+      "tree": "0042b3212d0960d10e31fdbe8a92a57c50dedd90",
+      "scope": "Normalized unchanged bounded JSON from the completed job log; source receipts verified separately; no tests executed by this copy.",
+      "value": {
+        "cancelled_admissions": 9,
+        "cohorts": [
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              9540093,
+              10061066
+            ],
+            "cold_reopen_wall_ns": 57341580,
+            "copied_nodes_min_max": [
+              13,
+              13
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              16647160,
+              17008522
+            ],
+            "cold_reopen_wall_ns": 189416764,
+            "copied_nodes_min_max": [
+              13,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              17248997,
+              17280567
+            ],
+            "cold_reopen_wall_ns": 1269785184,
+            "copied_nodes_min_max": [
+              16,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              9721162,
+              10675480
+            ],
+            "cold_reopen_wall_ns": 148286912,
+            "copied_nodes_min_max": [
+              23,
+              23
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              17213730,
+              17799363
+            ],
+            "cold_reopen_wall_ns": 280420474,
+            "copied_nodes_min_max": [
+              23,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              17855657,
+              18474302
+            ],
+            "cold_reopen_wall_ns": 1353979417,
+            "copied_nodes_min_max": [
+              30,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              9816801,
+              10349964
+            ],
+            "cold_reopen_wall_ns": 1568447768,
+            "copied_nodes_min_max": [
+              27,
+              27
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              17088294,
+              17738017
+            ],
+            "cold_reopen_wall_ns": 1708985424,
+            "copied_nodes_min_max": [
+              27,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              18641448,
+              18714160
+            ],
+            "cold_reopen_wall_ns": 2789330853,
+            "copied_nodes_min_max": [
+              37,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          }
+        ],
+        "cold_reopens": 9,
+        "completed_cohorts": 9,
+        "files": [
+          {
+            "bytes": 1397,
+            "file": "run.jsonl",
+            "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+          },
+          {
+            "bytes": 25720,
+            "file": "cohort-a64-h0.jsonl",
+            "sha256": "8445a245aa17c3bdf60c5dc3391d35efd547348d34daacc3365d54225b84516c"
+          },
+          {
+            "bytes": 27837,
+            "file": "cohort-a64-h16.jsonl",
+            "sha256": "457f6d8a29e872e35b55849bf133a2c7531e01201b190c92ac9f91a431f52542"
+          },
+          {
+            "bytes": 40770,
+            "file": "cohort-a64-h128.jsonl",
+            "sha256": "16f45eb37f7930c466bf5bfe2f793d6a471633e11073c28e8425066a1de443c3"
+          },
+          {
+            "bytes": 25794,
+            "file": "cohort-a1024-h0.jsonl",
+            "sha256": "abefb7414eafa4cafa248dab047a9e3cc15e0a9d66ea3af9ff0a01f7da19b0ee"
+          },
+          {
+            "bytes": 27904,
+            "file": "cohort-a1024-h16.jsonl",
+            "sha256": "f74009ce2f62c1675b76080b81b4487cbf562cf4afa27c2519e51e1e342d9dff"
+          },
+          {
+            "bytes": 40840,
+            "file": "cohort-a1024-h128.jsonl",
+            "sha256": "5c56a9972c8dfc35f8968fd9430d262c0b867ecc295d5e00c8c14ad776672d15"
+          },
+          {
+            "bytes": 25860,
+            "file": "cohort-a16384-h0.jsonl",
+            "sha256": "236c9f12d97736af42079102a6d1970e17c298dee8ebac9880aab3d36f662187"
+          },
+          {
+            "bytes": 27973,
+            "file": "cohort-a16384-h16.jsonl",
+            "sha256": "3bcfb0d735014ba5a0bb15bc58a0fb37569591f17b631ab21429613c6a48eb98"
+          },
+          {
+            "bytes": 40888,
+            "file": "cohort-a16384-h128.jsonl",
+            "sha256": "0d90416b563b1ed6dfaabc23820f201b1d7ea0004aa1701f2d54c16719677fa9"
+          }
+        ],
+        "fixed_witness_owners": [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ],
+        "measured_native_blocks": 72,
+        "p99_ns": null,
+        "production_activation": false,
+        "public_network_ready": false,
+        "requires_separate_source_binary_and_native_exit_verification": true,
+        "result": "COMPLETE_LOCAL_OBSERVATION",
+        "schema": "native-growth-fixed-owner-scale-readback-v1",
+        "throughput_qualified": false
+      }
+    },
+    {
+      "lane": "x64-actual-merge",
+      "run": 41753071687,
+      "job": 126326882231,
+      "source": "d8c95604f6c73f0df5b8dfb23dc4061efa62f94b",
+      "tree": "0042b3212d0960d10e31fdbe8a92a57c50dedd90",
+      "scope": "Normalized unchanged bounded JSON from the completed job log; source receipts verified separately; no tests executed by this copy.",
+      "value": {
+        "cancelled_admissions": 9,
+        "cohorts": [
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              6939398,
+              7514399
+            ],
+            "cold_reopen_wall_ns": 43278332,
+            "copied_nodes_min_max": [
+              13,
+              13
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              12063967,
+              12319553
+            ],
+            "cold_reopen_wall_ns": 134856964,
+            "copied_nodes_min_max": [
+              13,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              12881047,
+              12911852
+            ],
+            "cold_reopen_wall_ns": 914289771,
+            "copied_nodes_min_max": [
+              16,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              8409011,
+              8577938
+            ],
+            "cold_reopen_wall_ns": 108346748,
+            "copied_nodes_min_max": [
+              23,
+              23
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              13330826,
+              13394941
+            ],
+            "cold_reopen_wall_ns": 202418578,
+            "copied_nodes_min_max": [
+              23,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              13571581,
+              13774874
+            ],
+            "cold_reopen_wall_ns": 964210281,
+            "copied_nodes_min_max": [
+              30,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              8191501,
+              8525009
+            ],
+            "cold_reopen_wall_ns": 1163955841,
+            "copied_nodes_min_max": [
+              27,
+              27
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              12772602,
+              13115980
+            ],
+            "cold_reopen_wall_ns": 1280561004,
+            "copied_nodes_min_max": [
+              27,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              14398173,
+              14434229
+            ],
+            "cold_reopen_wall_ns": 2032175014,
+            "copied_nodes_min_max": [
+              37,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          }
+        ],
+        "cold_reopens": 9,
+        "completed_cohorts": 9,
+        "files": [
+          {
+            "bytes": 1397,
+            "file": "run.jsonl",
+            "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+          },
+          {
+            "bytes": 25711,
+            "file": "cohort-a64-h0.jsonl",
+            "sha256": "1de6022ef6dc0d2774de9414c71e86521a3e5d64c0262c0c879d81fb50b3ae02"
+          },
+          {
+            "bytes": 27823,
+            "file": "cohort-a64-h16.jsonl",
+            "sha256": "f0006e69b728f7934bff30a3c321c2e8c53f41098c4745e1fb477831e594c265"
+          },
+          {
+            "bytes": 40760,
+            "file": "cohort-a64-h128.jsonl",
+            "sha256": "9a83cac1ad31e5f3a18dae2f1052820cfba9a0f7f9ea71884f5ec5aa5aa2eb00"
+          },
+          {
+            "bytes": 25788,
+            "file": "cohort-a1024-h0.jsonl",
+            "sha256": "459a987777f2ead235973fe92383cf6ef78b7e079e50c62414267d02889b2fa6"
+          },
+          {
+            "bytes": 27896,
+            "file": "cohort-a1024-h16.jsonl",
+            "sha256": "e6335e34c0715e1f25fed6921e96c66507156354f2033ce3c44b78eebd495339"
+          },
+          {
+            "bytes": 40828,
+            "file": "cohort-a1024-h128.jsonl",
+            "sha256": "77116af9356267b63ef868f633b9ca803ecab29a7c1b95d54ae2724f806d5641"
+          },
+          {
+            "bytes": 25857,
+            "file": "cohort-a16384-h0.jsonl",
+            "sha256": "36311768c5a1655eeaac74f1d9cda7677ec2b45a4b5b9bee0a64c3a56a088262"
+          },
+          {
+            "bytes": 27963,
+            "file": "cohort-a16384-h16.jsonl",
+            "sha256": "d8dc8256e17e16505f015286457ef0daf4188912c142fee1eb0a718d34b663da"
+          },
+          {
+            "bytes": 40879,
+            "file": "cohort-a16384-h128.jsonl",
+            "sha256": "5d890f346a0a82e1d8eae71cec4d1a151170cfa53cf53abfd0e96fdbc4ef7399"
+          }
+        ],
+        "fixed_witness_owners": [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ],
+        "measured_native_blocks": 72,
+        "p99_ns": null,
+        "production_activation": false,
+        "public_network_ready": false,
+        "requires_separate_source_binary_and_native_exit_verification": true,
+        "result": "COMPLETE_LOCAL_OBSERVATION",
+        "schema": "native-growth-fixed-owner-scale-readback-v1",
+        "throughput_qualified": false
+      }
+    },
+    {
+      "lane": "arm64-head",
+      "run": 41753071687,
+      "job": 126326881741,
+      "source": "be0d5f978dc86008115524a6be85c38e03982b33",
+      "tree": "0042b3212d0960d10e31fdbe8a92a57c50dedd90",
+      "scope": "Normalized unchanged bounded JSON from the completed job log; source receipts verified separately; no tests executed by this copy.",
+      "value": {
+        "cancelled_admissions": 9,
+        "cohorts": [
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              14521164,
+              15186394
+            ],
+            "cold_reopen_wall_ns": 94231481,
+            "copied_nodes_min_max": [
+              13,
+              13
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              25755692,
+              26572783
+            ],
+            "cold_reopen_wall_ns": 313482597,
+            "copied_nodes_min_max": [
+              13,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              26755767,
+              26831905
+            ],
+            "cold_reopen_wall_ns": 2143561745,
+            "copied_nodes_min_max": [
+              16,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              15117608,
+              15596384
+            ],
+            "cold_reopen_wall_ns": 273755242,
+            "copied_nodes_min_max": [
+              23,
+              23
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              25826290,
+              26790642
+            ],
+            "cold_reopen_wall_ns": 493065559,
+            "copied_nodes_min_max": [
+              23,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              27701007,
+              27802490
+            ],
+            "cold_reopen_wall_ns": 2353526862,
+            "copied_nodes_min_max": [
+              30,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              15697535,
+              16332533
+            ],
+            "cold_reopen_wall_ns": 3140766459,
+            "copied_nodes_min_max": [
+              27,
+              27
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              26417786,
+              27666446
+            ],
+            "cold_reopen_wall_ns": 3357928204,
+            "copied_nodes_min_max": [
+              27,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              29401484,
+              29410036
+            ],
+            "cold_reopen_wall_ns": 5240036389,
+            "copied_nodes_min_max": [
+              37,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          }
+        ],
+        "cold_reopens": 9,
+        "completed_cohorts": 9,
+        "files": [
+          {
+            "bytes": 1397,
+            "file": "run.jsonl",
+            "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+          },
+          {
+            "bytes": 25746,
+            "file": "cohort-a64-h0.jsonl",
+            "sha256": "af4ec360b11a8f34ffb016386b9bcaa8e269d275be6bc2e0948190d2d32a21c1"
+          },
+          {
+            "bytes": 27850,
+            "file": "cohort-a64-h16.jsonl",
+            "sha256": "33a90875ccbd8d23040a2066c6506d69b133b7ef95bd50e578a64d31389d6f07"
+          },
+          {
+            "bytes": 40784,
+            "file": "cohort-a64-h128.jsonl",
+            "sha256": "9d1676a57c83a58d341d79020001f42186d671e1c058a3ce5011ad1dd5b14e01"
+          },
+          {
+            "bytes": 25816,
+            "file": "cohort-a1024-h0.jsonl",
+            "sha256": "b0669f219e6ab9d725ba765c4678f3ad8e9ce244def3a39b8ecd41e31d1abd11"
+          },
+          {
+            "bytes": 27911,
+            "file": "cohort-a1024-h16.jsonl",
+            "sha256": "e6783d50c9e7d49dd4a3ac71c4c1951b2208d8ed5192132a2e9c168c8736197a"
+          },
+          {
+            "bytes": 40846,
+            "file": "cohort-a1024-h128.jsonl",
+            "sha256": "5396bbf29c4b11206f7c6747bc6a0ef3da0a4b32373c7b948da28ed15e4dea07"
+          },
+          {
+            "bytes": 25888,
+            "file": "cohort-a16384-h0.jsonl",
+            "sha256": "9262994df6c35accaf699e504300abec58f54dc1ec73ef4c37b7b52e46811fe3"
+          },
+          {
+            "bytes": 27982,
+            "file": "cohort-a16384-h16.jsonl",
+            "sha256": "ee5150ea9c14e2de4b717277d13c9b664cd3f3d1a50a78bf3e5ace2f86ac8660"
+          },
+          {
+            "bytes": 40897,
+            "file": "cohort-a16384-h128.jsonl",
+            "sha256": "664222be26aa0fb26030b577a16835c2753648f69aa22e36e84aa21c11039378"
+          }
+        ],
+        "fixed_witness_owners": [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ],
+        "measured_native_blocks": 72,
+        "p99_ns": null,
+        "production_activation": false,
+        "public_network_ready": false,
+        "requires_separate_source_binary_and_native_exit_verification": true,
+        "result": "COMPLETE_LOCAL_OBSERVATION",
+        "schema": "native-growth-fixed-owner-scale-readback-v1",
+        "throughput_qualified": false
+      }
+    },
+    {
+      "lane": "arm64-actual-merge",
+      "run": 41753071687,
+      "job": 126326882365,
+      "source": "d8c95604f6c73f0df5b8dfb23dc4061efa62f94b",
+      "tree": "0042b3212d0960d10e31fdbe8a92a57c50dedd90",
+      "scope": "Normalized unchanged bounded JSON from the completed job log; source receipts verified separately; no tests executed by this copy.",
+      "value": {
+        "cancelled_admissions": 9,
+        "cohorts": [
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              14291782,
+              14950639
+            ],
+            "cold_reopen_wall_ns": 93264377,
+            "copied_nodes_min_max": [
+              13,
+              13
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              25403515,
+              26304837
+            ],
+            "cold_reopen_wall_ns": 313013257,
+            "copied_nodes_min_max": [
+              13,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              26399613,
+              26433107
+            ],
+            "cold_reopen_wall_ns": 2138890699,
+            "copied_nodes_min_max": [
+              16,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              14741109,
+              15687123
+            ],
+            "cold_reopen_wall_ns": 273630150,
+            "copied_nodes_min_max": [
+              23,
+              23
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              25598376,
+              26771217
+            ],
+            "cold_reopen_wall_ns": 494533234,
+            "copied_nodes_min_max": [
+              23,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              27607547,
+              27628018
+            ],
+            "cold_reopen_wall_ns": 2322907720,
+            "copied_nodes_min_max": [
+              30,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              16113573,
+              16705452
+            ],
+            "cold_reopen_wall_ns": 3142982671,
+            "copied_nodes_min_max": [
+              27,
+              27
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              26332155,
+              27575154
+            ],
+            "cold_reopen_wall_ns": 3357356324,
+            "copied_nodes_min_max": [
+              27,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              28596172,
+              29338555
+            ],
+            "cold_reopen_wall_ns": 5185587118,
+            "copied_nodes_min_max": [
+              37,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          }
+        ],
+        "cold_reopens": 9,
+        "completed_cohorts": 9,
+        "files": [
+          {
+            "bytes": 1397,
+            "file": "run.jsonl",
+            "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+          },
+          {
+            "bytes": 25739,
+            "file": "cohort-a64-h0.jsonl",
+            "sha256": "aa5e14a7b66d4af8bee0e16843bdba1e6f9c6ae962b210a6f33eaf6da1fc7009"
+          },
+          {
+            "bytes": 27848,
+            "file": "cohort-a64-h16.jsonl",
+            "sha256": "e00a5ae0ac9279d17cefad47b216bb3d704a4ced735ef98fa481d37fa9d23282"
+          },
+          {
+            "bytes": 40776,
+            "file": "cohort-a64-h128.jsonl",
+            "sha256": "e000a087ca6ea3a3a82ea982bf961b41f3efc1ef7a6b371681d12492e2f18432"
+          },
+          {
+            "bytes": 25815,
+            "file": "cohort-a1024-h0.jsonl",
+            "sha256": "2c8d4bfe9fc43093f72805532b1fd11ccf94f34471891f63c544a212cbb05e79"
+          },
+          {
+            "bytes": 27911,
+            "file": "cohort-a1024-h16.jsonl",
+            "sha256": "27d8c0111f91b762cc03797a400ff7ae49fbf7b7fc51856bb33b3c281da6e863"
+          },
+          {
+            "bytes": 40846,
+            "file": "cohort-a1024-h128.jsonl",
+            "sha256": "897f6bf1b57137475f9f3f9a811c9d4e26ffb916ffe2a7e806936070df536fc2"
+          },
+          {
+            "bytes": 25885,
+            "file": "cohort-a16384-h0.jsonl",
+            "sha256": "76ba13f9957fa5fa5a9d6905fbb8fc659bf124d4a5b2ab17d9fc2a6469818278"
+          },
+          {
+            "bytes": 27982,
+            "file": "cohort-a16384-h16.jsonl",
+            "sha256": "93893b1c359df3da6d68dfbce3546ceecb26e8c0c65cd627faf75f1e2c29376f"
+          },
+          {
+            "bytes": 40896,
+            "file": "cohort-a16384-h128.jsonl",
+            "sha256": "bc57534bc1b369ed5c2a3f52d78753a521ae53536d1808c938ce8ce191eea950"
+          }
+        ],
+        "fixed_witness_owners": [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ],
+        "measured_native_blocks": 72,
+        "p99_ns": null,
+        "production_activation": false,
+        "public_network_ready": false,
+        "requires_separate_source_binary_and_native_exit_verification": true,
+        "result": "COMPLETE_LOCAL_OBSERVATION",
+        "schema": "native-growth-fixed-owner-scale-readback-v1",
+        "throughput_qualified": false
+      }
+    }
+  ]
+}
