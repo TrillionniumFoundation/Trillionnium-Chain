@@ -1,0 +1,69 @@
+[
+  {
+    "kind": "campaign",
+    "artifact_id": 13287158757,
+    "run_id": 41752900360,
+    "artifact_name": "pon-native-campaign-x64-head-release-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+    "bytes": 60599441,
+    "sha256": "d66801acae25f6ec7d8a8e40cc6ebbbc7c895c5a694b51f433f4cc6b279757bd",
+    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+    "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+    "required_json": [
+      "source-before.json",
+      "source-after.json",
+      "results.json",
+      "run-1-raw/report.json",
+      "run-2-raw/report.json",
+      "run-3-raw/report.json"
+    ],
+    "source_json": [
+      "source-before.json",
+      "source-after.json"
+    ],
+    "project_json": [
+      "results.json",
+      "run-1-raw/report.json",
+      "run-2-raw/report.json",
+      "run-3-raw/report.json"
+    ]
+  },
+  {
+    "kind": "f0",
+    "artifact_id": 13287122967,
+    "run_id": 41752900351,
+    "artifact_name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+    "bytes": 19665544,
+    "sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+    "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+    "required_json": [
+      "source-before.json",
+      "source-after.json",
+      "execution/results.json",
+      "execution/raw/report.json",
+      "execution/raw/baseline.json",
+      "execution/raw/valid-work-root.json",
+      "finalization/result.json"
+    ],
+    "source_json": [
+      "source-before.json",
+      "source-after.json"
+    ],
+    "project_json": [
+      "execution/results.json",
+      "execution/raw/report.json",
+      "execution/raw/baseline.json",
+      "execution/raw/valid-work-root.json",
+      "finalization/result.json",
+      "execution/raw/baseline-fixed-root-host-control/phase-result.json",
+      "execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
+      "execution/raw/baseline-fixed-root-host-control/host/child-result.json",
+      "finalization/baseline/result.json",
+      "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+      "execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
+      "execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
+      "finalization/valid-work-root/result.json",
+      "finalization/controller/result.json"
+    ]
+  }
+]

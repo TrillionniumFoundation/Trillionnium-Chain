@@ -1,0 +1,67 @@
+{
+  "schema": "trnm-research-source-bindings-v1",
+  "files": [
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/job-126318926226-e8-runtime-head.decoded.log",
+      "git_blob": "0cc198fbf5bb6305f9ec954724d61c759007fabf",
+      "sha256": "ad494157b2d5696e0510592fa2e6986d84d60b7419b0b349fc6a100696deba61",
+      "bytes": 231828
+    },
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/job-126322603645-f35-campaign.decoded.log",
+      "git_blob": "daeaadfe7016c2d96fac5fece550d7a7b05cecf6",
+      "sha256": "1682984ae5edab7130d8101c910ecfe198e60ec4321882765761df8ff4c892d6",
+      "bytes": 174808
+    },
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/job-126322034412-f35-recent-head-x64.decoded.log",
+      "git_blob": "07d9fec99a469ee5fb8732f67238dab65e73011a",
+      "sha256": "83a1ee79ec39d7419f03cb0d554377e04ed341b8d8dea3a4dc59118f2d65db71",
+      "bytes": 169168
+    },
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/job-126322033940-f35-f0.decoded.log",
+      "git_blob": "52d09eeb77ca2390d41160c41d5a226caaef5f22",
+      "sha256": "cee5c21569630a4d0a322b5758b4d7933d4c7df795086ca6abe5b598561be3c3",
+      "bytes": 220243
+    },
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/READBACK.json",
+      "git_blob": "ca4e70881b2ec5b6fc7262ac0120e96bed519ee5",
+      "sha256": "6adcda7f526afe1512aba7d0c2169d82f0ad47eeb9bb39912ae5f86ca0d42a94",
+      "bytes": 16737
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/readback.py",
+      "git_blob": "568312d56114fac69255a2d740324e91d9c23ad1",
+      "sha256": "d66f06561c3057247a71c567b9391a03faed461673d43ebf5a8f3e5f6ee48ce8",
+      "bytes": 24106
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/inputs.json",
+      "git_blob": "4e8e25723a6236d2875090045bfebd8c63f48e57",
+      "sha256": "95af8c86375648116e6a67b8ef975afa2fb6436a2a313cbde878f28a5d600d37",
+      "bytes": 2435
+    },
+    {
+      "path": ".github/workflows/chain-original-artifact-readback.yml",
+      "git_blob": "747a637f4476ac30ffd0d8eb2eef19b889021818",
+      "sha256": "a2e0a9db06699e2d6e8b9960bc44bc3be14b6cf337e4964a746925309be7b85b",
+      "bytes": 2322
+    },
+    {
+      "path": "evidence/pon-e8-f35-original-failures-20261104/README.md",
+      "git_blob": "ebe2e268c621a1bd91513fe923253927e8cc99fa",
+      "sha256": "b005b9865a3cc62d4f0b7705ab78774f3acf069ea8328dc5b9c4e376772efc7c",
+      "bytes": 4548
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "git_blob": "fe763c00814121404b95a8cbde04cef919a2676d",
+      "sha256": "d7ac35eb7e7c7706cc301877f593a6adcc1106b1afa70bf5c28710d064dd963b",
+      "bytes": 406970
+    }
+  ],
+  "self_excluded": true,
+  "local_execution_available": false
+}

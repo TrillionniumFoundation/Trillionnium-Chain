@@ -1,0 +1,54 @@
+name: Frozen original campaign artifact readback
+on:
+  push:
+    branches: [research/chain-original-cpu-readback-20261103-gpt6]
+    paths:
+      - .github/workflows/chain-original-artifact-readback.yml
+      - qualification/original-artifact-readback-20261104/**
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: frozen-original-artifact-readback-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact research source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Verify research source and audit preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/frozen-readback-source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Exercise archive and JSON rejection controls
+        run: python3 qualification/original-artifact-readback-20261104/readback.py --self-test
+      - name: Read only the two frozen original artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 qualification/original-artifact-readback-20261104/readback.py --out "$RUNNER_TEMP/frozen-original-readback"
+      - name: Verify research source remains unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/frozen-readback-source-after.json"
+      - name: Retain bounded derived readback and source receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frozen-original-readback-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/frozen-original-readback/
+            ${{ runner.temp }}/frozen-readback-source-before.json
+            ${{ runner.temp }}/frozen-readback-source-after.json
+          if-no-files-found: error
+          retention-days: 30

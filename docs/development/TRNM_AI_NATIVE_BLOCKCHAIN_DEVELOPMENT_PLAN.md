@@ -5094,3 +5094,17 @@ retains all 32 cost observations. Neither this correction nor the prior source's
 success replaces composition, ARM, release or original public-service evidence.
 The later successful CodeQL check-run remains bound to old `bebb`, without
 dismissing existing warnings or granting whole-chain security acceptance.
+
+
+### 2026-11-04 original e8/f35 failure readback
+
+Preserve exact original e8 DA post-readiness deadline failure and f35 History
+registry/campaign/F0 failures in the independent research branch. Frozen #699
+7d5321a5 requires its own original head/merge Actions; no older result transfers.
+Use a separate research-only push workflow to inspect the two exact original
+f35 artifacts under declared ZIP/JSON/output limits and read-only permissions.
+No artifact source or binary is executed and no production/native gate changes.
+Record archive integrity/source binding separately from business failure and
+preserve unobserved inner causes as unknown until actual bounded readback.
+Local execution is unavailable; source preflight and reader controls await the
+hosted research workflow. Performance, full PQ and activation remain HOLD.
