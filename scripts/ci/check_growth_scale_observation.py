@@ -189,6 +189,7 @@ def check(directory):
     require(number(last["completed_cohorts"]) == 9
             and number(last["completed_measurements"]) == 72, "planned denominator")
     source_files, cohorts, owner_sets = [identity], [], set()
+    contexts_by_accounts = {}
     for accounts in ACCOUNTS:
         for history in HISTORY:
             rows, identity = read_rows(directory / f"cohort-a{accounts}-h{history}.jsonl")
@@ -212,8 +213,9 @@ def check(directory):
                 require(number(warmup_start["index"]) == index, "warmup denominator")
                 hash_id(warmup_start["parent"])
             warmup = take("warmup_completed")
-            for key in ("network", "parameters", "genesis"):
-                hash_id(warmup[key])
+            context = tuple(hash_id(warmup[key]) for key in ("network", "parameters", "genesis"))
+            require(contexts_by_accounts.setdefault(accounts, context) == context,
+                    "fixed-account context changed across history cohorts")
             for key in ("setup_wall_ns", "native_warmup_wall_ns", "full_reference_warmup_wall_ns"):
                 number(warmup[key])
             previous_rows = sql_rows(warmup["sql_rows"], history)

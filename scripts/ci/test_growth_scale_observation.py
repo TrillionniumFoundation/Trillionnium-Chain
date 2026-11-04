@@ -216,6 +216,28 @@ class GrowthObservationReaderTests(unittest.TestCase):
         self.assertFalse(result["throughput_qualified"])
         self.assertFalse(result["production_activation"])
 
+    def test_fixed_account_histories_cannot_change_native_context(self):
+        for key in ("network", "parameters", "genesis"):
+            for history in HISTORY[1:]:
+                with self.subTest(key=key, history=history):
+                    self.files = fixture()
+                    self.event("warmup_completed", accounts=1024, history=history)[key] = digest(
+                        f"changed-{key}-{history}")
+                    self.refused()
+
+    def test_distinct_account_counts_may_have_distinct_native_contexts(self):
+        for accounts in ACCOUNTS:
+            for history in HISTORY:
+                warmup = self.event("warmup_completed", accounts=accounts, history=history)
+                warmup["network"] = digest(f"network-{accounts}")
+                warmup["parameters"] = digest(f"parameters-{accounts}")
+                # The fixture already derives the same genesis per account count.
+                self.assertEqual(warmup["genesis"], block(accounts, history, 0))
+        self.write()
+        result = check(self.root)
+        self.assertEqual(result["completed_cohorts"], 9)
+        self.assertEqual(result["measured_native_blocks"], 72)
+
     def test_missing_cohort_file_is_refused(self):
         (self.root / "cohort-a16384-h128.jsonl").unlink()
         with self.assertRaises(ValueError):

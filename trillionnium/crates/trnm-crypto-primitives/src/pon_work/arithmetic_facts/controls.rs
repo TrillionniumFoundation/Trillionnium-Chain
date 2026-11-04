@@ -1,3 +1,4 @@
+use super::super::verify_reference;
 use super::tests::{changed_product, fixture, native_arithmetic, reset_native_arithmetic};
 use super::*;
 use std::convert::Infallible;
@@ -117,6 +118,88 @@ fn exact_challenge_and_all_current_matrix_bytes_are_required_for_a_hit() {
     assert!(result.is_ok());
     assert!(observation.trace_reused && observation.product_reused);
     assert!(!observation.transcript_entered);
+}
+
+#[test]
+fn task_discriminator_alias_keeps_full_inputs_at_lookup_and_publication() {
+    let (challenge, task, proof) = fixture(118);
+    let original = verify_reference(challenge, task, [255; 32], &proof).unwrap();
+    for operand in 0..2 {
+        let mut matrices: Vec<u32> = proof[4..4 + INPUT_BYTES]
+            .chunks_exact(4)
+            .map(|part| u32::from_le_bytes(part.try_into().unwrap()))
+            .collect();
+        // The last word of either operand preserves the longest input prefix.
+        matrices[operand * CELLS + CELLS - 1] += 1;
+        let (a, b) = matrices.split_at(CELLS);
+        let current_task = task_id(a, b).unwrap();
+        let current_proof = prove(challenge, a, b).unwrap();
+        let expected =
+            verify_reference(challenge, current_task, [255; 32], &current_proof).unwrap();
+        assert_ne!(current_task, task);
+
+        for before_lookup in [true, false] {
+            let cache = ArithmeticFactCache::new(2).unwrap();
+            cache.verify(challenge, task, [255; 32], &proof).unwrap();
+            let charge = cache.software_bytes();
+            let mut aliased = false;
+            if before_lookup {
+                let mut state = cache.state.lock().unwrap();
+                state.entries[0].as_mut().unwrap().input_task = current_task;
+                aliased = true;
+            }
+            let mut observation = ArithmeticObservation::default();
+            let result = cache.verify_with_observation(
+                challenge,
+                current_task,
+                [255; 32],
+                &current_proof,
+                &mut |point| {
+                    // Also inject the false discriminator after lookup and real
+                    // arithmetic, immediately before publication. A racing
+                    // candidate cannot replace the complete byte comparison.
+                    if !before_lookup && point == VerificationProgress::BeforeVerifiedWork {
+                        let mut state = cache.state.try_lock().unwrap();
+                        state.entries[0].as_mut().unwrap().input_task = current_task;
+                        aliased = true;
+                    }
+                    Ok::<(), ()>(())
+                },
+                &mut observation,
+            );
+            assert!(aliased);
+            assert_exact(&result.unwrap(), &expected);
+            assert!(!observation.exact_fact_found);
+            assert!(observation.transcript_entered && observation.transcript_completed);
+            assert!(observation.product_entered && observation.product_completed);
+            assert_eq!(observation.publication, ArithmeticPublication::Product);
+            assert_eq!(cache.software_bytes(), charge);
+            assert!(charge <= MAX_ARITHMETIC_FACT_SOFTWARE_BYTES);
+            {
+                let state = cache.state.lock().unwrap();
+                assert_eq!(state.entries.iter().flatten().count(), 2);
+                let saved = state.entries[0].as_ref().unwrap();
+                assert_eq!(saved.input_task, current_task);
+                assert_eq!(saved.inputs.as_slice(), &proof[4..4 + INPUT_BYTES]);
+                assert_eq!(
+                    saved.arithmetic.product.as_ref().map(|value| value.as_slice()),
+                    Some(original.product())
+                );
+                let inserted = state.entries[1].as_ref().unwrap();
+                assert_eq!(inserted.input_task, current_task);
+                assert_eq!(inserted.inputs.as_slice(), &current_proof[4..4 + INPUT_BYTES]);
+            }
+            let (warm, hit) = observed(&cache, challenge, current_task, [255; 32], &current_proof);
+            assert_exact(&warm.unwrap(), &expected);
+            assert!(hit.exact_fact_found && hit.trace_reused && hit.product_reused);
+            assert!(!hit.transcript_entered && !hit.product_entered);
+            // A damaged discriminator may cause a miss, never a wrong result.
+            assert_exact(
+                &cache.verify(challenge, task, [255; 32], &proof).unwrap(),
+                &original,
+            );
+        }
+    }
 }
 
 #[test]
@@ -384,6 +467,11 @@ fn capacity_eviction_reopen_and_caller_owned_product_keep_exact_verification() {
     assert!(ArithmeticFactCache::new(MAX_ARITHMETIC_FACT_SLOTS + 1).is_err());
     let largest = ArithmeticFactCache::new(MAX_ARITHMETIC_FACT_SLOTS).unwrap();
     assert!(largest.software_bytes() <= MAX_ARITHMETIC_FACT_SOFTWARE_BYTES);
+    assert_eq!(
+        largest.software_bytes(),
+        largest.state.lock().unwrap().entries.capacity() * size_of::<Option<Fact>>()
+            + size_of::<ArithmeticFactCache>()
+    );
     assert!(largest.software_bytes() >= MAX_ARITHMETIC_FACT_SLOTS * (INPUT_BYTES + CELLS * 4));
     drop(largest);
     let (challenge, task, proof) = fixture(102);
