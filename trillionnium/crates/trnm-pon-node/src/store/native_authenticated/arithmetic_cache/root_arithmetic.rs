@@ -4,15 +4,17 @@
 //! digest is an answer: derive_snapshot re-encodes every current State value,
 //! compares the complete key set and applies every real addition/change/removal.
 //! When canonical payloads do not fit, an alternate entry stores only original
-//! leaf hashes and partition-root arithmetic. Every actual row is still encoded,
-//! bounded and hashed before any reuse. The entry and byte limits are unchanged.
-//! SQL reads, typed decoding, account graphs, metadata and validity stay outside.
+//! leaf hashes and partition-root arithmetic. Every complete input is encoded,
+//! bounded and hashed; a one-operation subset projection additionally requires
+//! complete current-partition canonical-byte comparison before reduction. The
+//! retained entry and byte limits are unchanged. SQL reads, typed decoding,
+//! account graphs, metadata and validity stay outside.
 use crate::Settings;
 use serde::Serialize;
 use serde_json::{json, Value};
 use std::cell::{Cell, RefCell};
 use trnm_mvcc_fee::pon_commitment::{self, CacheLimits, CheckedCommitment, CommitmentMethod};
-use trnm_mvcc_fee::pon_executor::{self, State};
+use trnm_mvcc_fee::pon_executor::{self, NonAccountRootProjection, State};
 use trnm_protocol::pon_wire::{Hash, StateRootArithmetic};
 
 const MAX_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
@@ -51,6 +53,8 @@ struct Counters {
     complete_hits: u64,
     complete_computations: u64,
     exact_root_hits: u64,
+    operation_full_root_reuses: u64,
+    operation_initial_root_reuses: u64,
     calculations: u64,
     material_uses: u64,
     context_misses: u64,
@@ -61,6 +65,8 @@ struct Counters {
     actual_changed_keys: u64,
     original_error_fallbacks: u64,
     partition_inputs_hashed: u64,
+    partition_projection_uses: u64,
+    partition_projection_compared_keys: u64,
     partition_roots_reused: u64,
     partition_roots_computed: u64,
     partition_retention_refusals: u64,
@@ -85,6 +91,17 @@ impl RootArithmetic {
     }
     pub(super) fn exact_root_hit(&self) {
         self.count(|c| c.exact_root_hits = c.exact_root_hits.saturating_add(1));
+    }
+    pub(super) fn operation_full_root_reuse(&self) {
+        self.count(|c| {
+            c.operation_full_root_reuses = c.operation_full_root_reuses.saturating_add(1)
+        });
+    }
+
+    pub(super) fn operation_initial_root_reuse(&self) {
+        self.count(|c| {
+            c.operation_initial_root_reuses = c.operation_initial_root_reuses.saturating_add(1)
+        });
     }
 
     /// Bound a clone of opaque mathematical material, not an admission permit.
@@ -138,6 +155,32 @@ impl RootArithmetic {
         settings: &Settings,
         actual: &State,
     ) -> pon_executor::Result<Hash> {
+        self.calculate_with(settings, actual, |arithmetic| {
+            pon_executor::root_with_arithmetic(actual, arithmetic).map(|root| (root, false))
+        })
+    }
+
+    pub(super) fn calculate_with_projection<'a>(
+        &self,
+        settings: &Settings,
+        actual: &'a State,
+        projection: &mut Option<NonAccountRootProjection<'a>>,
+    ) -> pon_executor::Result<Hash> {
+        *projection = None;
+        self.calculate_with(settings, actual, |arithmetic| {
+            let (root, current) =
+                pon_executor::root_with_non_account_projection(actual, arithmetic)?;
+            *projection = current;
+            Ok((root, false))
+        })
+    }
+
+    fn calculate_with(
+        &self,
+        settings: &Settings,
+        actual: &State,
+        calculate: impl FnOnce(&mut StateRootArithmetic) -> pon_executor::Result<(Hash, bool)>,
+    ) -> pon_executor::Result<Hash> {
         self.count(|c| c.calculations = c.calculations.saturating_add(1));
         let context = [
             settings.network(),
@@ -179,7 +222,7 @@ impl RootArithmetic {
         let prior = match source {
             MaterialSource::Canonical(prior) => prior,
             MaterialSource::Partitions(arithmetic) => {
-                return self.calculate_partitions(settings, actual, arithmetic);
+                return self.calculate_partitions(settings, actual, arithmetic, calculate);
             }
         };
         // The existing M06 algorithm keeps canonical error order, actual row
@@ -246,6 +289,7 @@ impl RootArithmetic {
         &self,
         settings: &Settings,
         actual: &State,
+        projection: Option<NonAccountRootProjection<'_>>,
     ) -> pon_executor::Result<Hash> {
         let use_partitions = self.material.try_borrow().is_ok_and(|material| {
             material.as_ref().is_some_and(|material| {
@@ -259,7 +303,13 @@ impl RootArithmetic {
             })
         });
         if use_partitions {
-            self.calculate(settings, actual)
+            if let Some(projection) = projection {
+                self.calculate_with(settings, actual, |arithmetic| {
+                    projection.root(actual, arithmetic)
+                })
+            } else {
+                self.calculate(settings, actual)
+            }
         } else {
             pon_executor::root(actual)
         }
@@ -270,14 +320,25 @@ impl RootArithmetic {
         settings: &Settings,
         actual: &State,
         mut arithmetic: StateRootArithmetic,
+        calculate: impl FnOnce(&mut StateRootArithmetic) -> pon_executor::Result<(Hash, bool)>,
     ) -> pon_executor::Result<Hash> {
-        let result = pon_executor::root_with_arithmetic(actual, &mut arithmetic);
+        let (result, projected) = match calculate(&mut arithmetic) {
+            Ok((root, projected)) => (Ok(root), projected),
+            Err(error) => (Err(error), false),
+        };
         if result.is_ok() {
             let observation = arithmetic.observation();
             self.count(|c| {
-                c.partition_inputs_hashed = c
-                    .partition_inputs_hashed
-                    .saturating_add(observation.input_keys as u64);
+                if projected {
+                    c.partition_projection_uses = c.partition_projection_uses.saturating_add(1);
+                    c.partition_projection_compared_keys = c
+                        .partition_projection_compared_keys
+                        .saturating_add(observation.input_keys as u64);
+                } else {
+                    c.partition_inputs_hashed = c
+                        .partition_inputs_hashed
+                        .saturating_add(observation.input_keys as u64);
+                }
                 c.partition_roots_reused = c
                     .partition_roots_reused
                     .saturating_add(observation.reused_partitions as u64);
@@ -340,6 +401,9 @@ impl RootArithmetic {
             "retained_software_charge_limit_bytes":MAX_RETAINED_CHARGE_BYTES,
             "charge_is_process_rss_bound":false,
             "temporary_workspace_is_separate":true,
+            "operation_projection_payload_limit_bytes":MAX_PAYLOAD_BYTES,
+            "operation_projection_scope":"one immutable complete State; every actual partition key and canonical value is compared again before one-use reduction; no retained SQL verdict",
+            "operation_full_root_scope":"one-use successful root of the same immutably borrowed State and Settings, consumed only at the original complete-state full-root callback; no SQL observation or verdict",
             "has_consensus_authority":false,"counters":self.counters.get()})
     }
 }

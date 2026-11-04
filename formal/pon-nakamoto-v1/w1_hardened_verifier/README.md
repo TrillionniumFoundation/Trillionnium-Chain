@@ -25,9 +25,9 @@ The [verification code](src/main.rs) requires all of the following:
 - At most 16 MiB of fixed-integer bincode with no trailing bytes. The outer
   Succinct tag is checked before deserialization, excluding recursive
   Composite wire objects, Fake receipts and Groth16 receipts.
-- A real recursive STARK accepted by the pinned verifier's default parameters
-  for the exact image and a successful `Halted(0)` execution, including the
-  original complete output commitment and empty assumptions.
+- A real recursive STARK accepted by the explicit frozen Poseidon2 profile
+  below for the exact image and a successful `Halted(0)` execution, including
+  the original complete output commitment and empty assumptions.
 - The original 16,818-byte journal with its domain, exact canonical 318-byte
   public header, trace, valid target/ticket, unique `header + trace` work
   identity, and all 4,096 canonical product field elements.
@@ -39,6 +39,35 @@ The full W1 computation is checked inside the fixed guest, whose source
 calls the original complete native W1 relation. The public journal checker
 alone has no authority. Changing proof bytes or proof randomness creates
 zero additional work tickets.
+
+## Frozen verifier parameter profile
+
+Both full verification and the recursion-only diagnostic use one explicit
+context: `poseidon2`, no development mode, and succinct verifier-parameter
+digest `ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013`.
+The digest is independently present in the
+[retained complete-proof readback](../../../evidence/pon-w1-complete-succinct-20261028/measurements/fresh-hardened-full-gate/stdout.log)
+and the upstream
+[3.0.6 parameter stability test](https://github.com/risc0/risc0/blob/v3.0.6/risc0/zkvm/src/receipt/succinct.rs).
+The SDK still verifies the actual seal, control inclusion, claim and full image;
+matching untrusted metadata alone never accepts a proof.
+
+The context retains the existing allowed control root and explicitly removes
+other hash suites and unused segment/Groth16 verifier entries. It checks the
+trusted parameter digest before each verification, so an SDK upgrade cannot
+silently select another profile. A changed profile needs a separate declared
+candidate and real receipt validation. There is no retry under another suite.
+
+The original execution segment limit was 18; the pinned SDK control root's
+allowed maximum is 22. This change preserves that existing root and its receipt
+compatibility. It does not reinterpret a prover setting as a verifier bound,
+shrink the allowed control set, alter the frozen guest or generate a new proof.
+
+This is a reproducibility and acceptance-boundary improvement. It does not
+establish post-quantum Fiat–Shamir soundness, a 128-bit security argument,
+production admission, or practical benefit over native W1. Historic
+measurements continue to identify their historic verifier source; they are not
+new-source validation.
 
 ## Commands
 

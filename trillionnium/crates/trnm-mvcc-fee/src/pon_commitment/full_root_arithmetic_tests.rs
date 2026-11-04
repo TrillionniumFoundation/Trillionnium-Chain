@@ -519,3 +519,120 @@ fn arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback()
     assert_eq!(reference.len(), 2);
     assert_eq!(pon_executor::root(&state).unwrap(), parent_root);
 }
+
+#[test]
+fn configured_root_rechecks_original_grammar_context_and_current_values() {
+    let cfg = Config::installed().unwrap();
+    let arithmetic = FullRootArithmetic::default();
+    let mut state = fixture(32, 64);
+    for _ in 0..2 {
+        assert_eq!(
+            arithmetic.root_for_config(&state, &cfg),
+            pon_executor::root_for_config(&state, &cfg)
+        );
+    }
+    let original = pon_executor::root_for_config(&state, &cfg).unwrap();
+    state.insert("root-fallback:00031".into(), json!("y".repeat(64)));
+    assert_ne!(arithmetic.root_for_config(&state, &cfg).unwrap(), original);
+    assert_eq!(
+        arithmetic.root_for_config(&state, &cfg),
+        pon_executor::root_for_config(&state, &cfg)
+    );
+    state.remove("root-fallback:00000");
+    state.insert("absent-versus-null".into(), json!(null));
+    assert_eq!(
+        arithmetic.root_for_config(&state, &cfg),
+        pon_executor::root_for_config(&state, &cfg)
+    );
+    for invalid in [json!("λ"), json!(-0.0), json!({"λ":0}), json!([1, 0.5])] {
+        let actual = State::from([
+            ("a".repeat(161), json!("x".repeat(4095))),
+            ("z".into(), invalid),
+        ]);
+        let expected = pon_executor::root_for_config(&actual, &cfg);
+        assert!(expected.is_err());
+        assert_ne!(expected, Err("LIMIT"));
+        assert_eq!(arithmetic.root_for_config(&actual, &cfg), expected);
+        let mut changed = cfg.clone();
+        changed.params["native_pq_accounts_profile"] = json!("unbound-context");
+        assert_eq!(
+            pon_executor::root_for_config(&actual, &changed),
+            Err("PQ2_PROFILE_REQUIRED")
+        );
+        assert_eq!(
+            arithmetic.root_for_config(&actual, &changed),
+            Err("PQ2_PROFILE_REQUIRED")
+        );
+    }
+}
+
+#[test]
+fn configured_root_preserves_real_pq_and_growth_validation_on_warm_arithmetic() {
+    use pon_executor::pq_accounts_v2::{self, GenesisAccount};
+    let arithmetic = FullRootArithmetic::default();
+    let account = GenesisAccount {
+        spki: include_bytes!("../../../trnm-protocol/tests/fixtures/pq_transfer/public.der")
+            .to_vec(),
+        balance: 10_000_000,
+    };
+    let (cfg, state, _) = pq_accounts_v2::genesis(&[account], 1000).unwrap();
+    for _ in 0..2 {
+        assert_eq!(
+            arithmetic.root_for_config(&state, &cfg),
+            pon_executor::root_for_config(&state, &cfg)
+        );
+    }
+    let mut invalid = state.clone();
+    let key = invalid
+        .keys()
+        .find(|k| k.starts_with("account:"))
+        .unwrap()
+        .clone();
+    invalid.get_mut(&key).unwrap()["nonce"] = json!(-1);
+    let expected = pon_executor::root_for_config(&invalid, &cfg);
+    assert!(expected.is_err());
+    assert_eq!(arithmetic.root_for_config(&invalid, &cfg), expected);
+    let mut changed = cfg.clone();
+    changed.network[0] ^= 1;
+    assert_eq!(
+        pon_executor::root_for_config(&state, &changed),
+        Err("PQ2_CONFIG_CHANGED")
+    );
+    assert_eq!(
+        arithmetic.root_for_config(&state, &changed),
+        Err("PQ2_CONFIG_CHANGED")
+    );
+    let growth = Config::installed_with_profiles(
+        "native-public-evaluation-dev-v1",
+        crate::growth_profile_v2::PROFILE,
+    )
+    .unwrap();
+    let state = State::from([
+        (
+            format!("account:{}", hex::encode([9; 32])),
+            json!({"balance":7,"nonce":3}),
+        ),
+        ("meta:issued".into(), json!(7)),
+    ]);
+    for _ in 0..2 {
+        let expected = pon_executor::root_for_config(&state, &growth);
+        assert!(expected.is_ok());
+        assert_ne!(expected, pon_executor::root(&state));
+        assert_eq!(arithmetic.root_for_config(&state, &growth), expected);
+    }
+    let mut invalid = state.clone();
+    invalid.insert("meta:issued".into(), json!(8));
+    assert_eq!(
+        pon_executor::root_for_config(&invalid, &growth),
+        Err("CONSERVATION")
+    );
+    assert_eq!(
+        arithmetic.root_for_config(&invalid, &growth),
+        Err("CONSERVATION")
+    );
+    let mut changed = growth.clone();
+    changed.params["growth_reference_policy_hash"] = json!(hex::encode([0; 32]));
+    let expected = pon_executor::root_for_config(&state, &changed);
+    assert_eq!(expected, Err("GROWTH_PROFILE"));
+    assert_eq!(arithmetic.root_for_config(&state, &changed), expected);
+}

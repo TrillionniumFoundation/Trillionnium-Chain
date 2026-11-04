@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - trillionnium/**
+      - formal/pon-nakamoto-v1/w1_hardened_verifier/**
+      - evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin
+      - evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin
+      - evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin
       - config/pon/pq-cross-branch-corpus-v1.json
       - config/pon/pq-system-required-tests-v1.json
       - scripts/ci/record_pq_native_command.py
@@ -101,7 +105,7 @@ jobs:
           assert value['whole_chain_quantum_security_qualified'] is False
           tests = value['tests']
           assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
-          assert len(tests) == 37
+          assert len(tests) == 45
           assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & set(value['child_process_harnesses_not_counted'])
           Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
@@ -141,5 +145,153 @@ jobs:
         with:
           name: pq-system-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pq-system-records/
+          if-no-files-found: error
+          retention-days: 14
+
+  frozen-w1-verifier:
+    name: Frozen W1 research verifier (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      W1_MANIFEST: formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml
+      W1_HEADER: evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin
+      W1_RECEIPT: evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin
+      W1_LIFT: evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind research records to the actual source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pq-w1-verifier-records"
+          mkdir "$out"
+          echo "PQ_OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/pq-w1-verifier-target" >> "$GITHUB_ENV"
+          cat > "$out/run-command.sh" <<'SH'
+          set -euo pipefail
+          label="$1"
+          shift
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$label" --output "$PQ_OUT" -- "$@"
+          SH
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install the pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Check frozen artifact bytes, locked graph and format
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$PQ_OUT/verify-frozen-inputs.py" <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          expected = {
+              'W1_HEADER': '7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f',
+              'W1_RECEIPT': 'ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b',
+              'W1_LIFT': 'd2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3',
+          }
+          observed = {key: hashlib.sha256(Path(os.environ[key]).read_bytes()).hexdigest() for key in expected}
+          print(observed)
+          assert observed == expected
+          PY
+          bash "$PQ_OUT/run-command.sh" frozen-inputs python3 "$PQ_OUT/verify-frozen-inputs.py"
+          bash "$PQ_OUT/run-command.sh" compiler rustc +1.95.0 -Vv
+          bash "$PQ_OUT/run-command.sh" locked-graph cargo +1.95.0 metadata --locked --manifest-path "$W1_MANIFEST" --format-version 1
+          bash "$PQ_OUT/run-command.sh" format cargo +1.95.0 fmt --manifest-path "$W1_MANIFEST" -- --check
+      - name: Build and test the explicit verifier profile
+        id: w1_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$PQ_OUT/run-command.sh" profile-tests cargo +1.95.0 test --locked --release --manifest-path "$W1_MANIFEST"
+          bash "$PQ_OUT/run-command.sh" build cargo +1.95.0 build --locked --release --manifest-path "$W1_MANIFEST"
+      - name: Verify the real full receipt and every retained control
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier="$CARGO_TARGET_DIR/release/trnm-w1-hardened-verifier"
+          bash "$PQ_OUT/run-command.sh" full-proof "$verifier" verify "$W1_HEADER" "$W1_RECEIPT"
+          bash "$PQ_OUT/run-command.sh" full-controls "$verifier" controls "$W1_HEADER" "$W1_RECEIPT" "$PQ_OUT/full-controls"
+          cat > "$PQ_OUT/require-controls.py" <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads((Path(os.environ['PQ_OUT']) / 'full-controls/result.json').read_text())
+          rows = report['cases']
+          assert report['schema'] == 'TRNM-W1-HARDENED-VERIFIER-CONTROLS1'
+          expected_names = {
+              'valid', 'trailing', 'truncated', 'declared_seal_length_overflow',
+              'composite_tag', 'groth16_tag', 'fake_tag', 'wrong_header',
+              'journal_byte_0', 'journal_byte_20', 'journal_byte_338',
+              'journal_byte_370', 'journal_byte_402', 'journal_byte_16817',
+              'control_id', 'verifier_parameters', 'hash_function',
+              'hash_function_sha256', 'hash_function_blake2b', 'claim_digest',
+              'seal_first', 'seal_body', 'seal_last', 'seal_empty',
+              'seal_short', 'seal_invalid_field',
+          }
+          assert len(rows) == len(expected_names) == 26
+          assert {row['name'] for row in rows} == expected_names
+          assert report['all_passed'] is True and all(row['passed'] is True for row in rows)
+          assert all(row['observed']['outcome'] == ('ACCEPT' if row['name'] == 'valid' else 'REJECT') for row in rows)
+          assert report['fake_proofs_used'] is False and report['consensus_admission'] is False
+          print('26 actual receipt controls passed; consensus admission remains false')
+          PY
+          bash "$PQ_OUT/run-command.sh" require-controls python3 "$PQ_OUT/require-controls.py"
+      - name: Retain recursion-only and strict Clippy results separately
+        if: ${{ !cancelled() && steps.w1_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          bash "$PQ_OUT/run-command.sh" recursion-only "$CARGO_TARGET_DIR/release/trnm-w1-hardened-verifier" verify-recursion "$W1_LIFT" || failed=1
+          cat > "$PQ_OUT/require-recursion.py" <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads((Path(os.environ['PQ_OUT']) / 'recursion-only.log').read_text())
+          expected = {
+              'schema': 'TRNM-W1-RECURSION-ONLY-VERIFY2',
+              'sdk': '3.0.6',
+              'hash_function': 'poseidon2',
+              'verifier_parameters_digest': 'ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013',
+              'receipt_sha256': 'd2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3',
+              'receipt_bytes': 223154,
+              'control_id': 'e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35',
+          }
+          assert {key: report[key] for key in expected} == expected
+          assert report['result']['outcome'] == 'ACCEPT'
+          assert report['complete_w1_claim'] is False and report['consensus_admission'] is False
+          print('Pinned real lift verified; complete W1 claim and consensus admission remain false')
+          PY
+          bash "$PQ_OUT/run-command.sh" require-recursion python3 "$PQ_OUT/require-recursion.py" || failed=1
+          bash "$PQ_OUT/run-command.sh" clippy cargo +1.95.0 clippy --locked --release --manifest-path "$W1_MANIFEST" --all-targets -- -D warnings || failed=1
+          test "$failed" = 0
+      - name: Preserve research results including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pq-w1-verifier-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pq-w1-verifier-records/
           if-no-files-found: error
           retention-days: 14

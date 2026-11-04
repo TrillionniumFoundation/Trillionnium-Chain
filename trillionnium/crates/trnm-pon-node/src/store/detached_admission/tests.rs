@@ -509,6 +509,10 @@ fn large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints(
                 > MAX_SNAPSHOT_PAYLOAD
         );
         assert_eq!(node.read_active().unwrap(), original);
+        // Exercise the actual pre-COMMIT SQL readback, whose Legacy root now
+        // shares only the existing complete-input partition arithmetic.
+        node.check_active_before_commit().unwrap();
+        node.check_active_before_commit().unwrap();
         let slot = node.slot().unwrap();
 
         // A current same-length canonical cell must still change the calculated
@@ -523,6 +527,9 @@ fn large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints(
             )
             .unwrap();
         let error = node.read_active().unwrap_err();
+        assert_eq!(error.to_string(), "ROOT");
+        assert!(error.requires_owner_stop());
+        let error = node.check_active_before_commit().unwrap_err();
         assert_eq!(error.to_string(), "ROOT");
         assert!(error.requires_owner_stop());
         node.db
@@ -542,10 +549,15 @@ fn large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints(
             )
             .unwrap();
         assert!(node.read_active().unwrap_err().requires_owner_stop());
+        assert!(node
+            .check_active_before_commit()
+            .unwrap_err()
+            .requires_owner_stop());
         node.db
             .execute_batch("ROLLBACK TO malformed_actual_cell; RELEASE malformed_actual_cell")
             .unwrap();
         assert_eq!(node.read_active().unwrap(), original);
+        node.check_active_before_commit().unwrap();
 
         let mut checkpoints = 0usize;
         assert_eq!(

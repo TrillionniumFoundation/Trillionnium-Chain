@@ -1,0 +1,222 @@
+{
+  "schema": "trnm-dag-parent-refusal-payload-v1",
+  "artifact": {
+    "id": 13229776793,
+    "name": "rust-observations-head-12fe5f2c1f19704fe7eb635dede6839ed8b1e91e-1-runtime",
+    "size_in_bytes": 2584782,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13229776793",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13229776793/zip",
+    "expired": false,
+    "created_at": "2026-11-03T12:15:08Z",
+    "expires_at": "2026-12-03T12:15:06Z",
+    "updated_at": "2026-11-03T12:15:08Z",
+    "digest": "sha256:305ee106b95d8e07b1e976e53862ce215da60862c80502800b0111bd77f6b8d5",
+    "workflow_run": {
+      "id": 41628135442,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-pq-retain-dag-failure-receipt-20261102",
+      "head_sha": "12fe5f2c1f19704fe7eb635dede6839ed8b1e91e"
+    }
+  },
+  "payload_file": "13229776793.payload.tar.xz",
+  "payload_bytes": 90208,
+  "payload_sha256": "3915f074fa3277d28c77acb0d7b0052414c6bf4d7399c748dfe3c2ffdaf592d5",
+  "members": [
+    {
+      "path": "architecture-delivery-comparison.json",
+      "bytes": 3971123,
+      "sha256": "88b333e7ff9341d44c5b35a5fdf57ab1f0b8b68b1c14d4b2d52eb072e261753c"
+    },
+    {
+      "path": "pq-provider/provider.json",
+      "bytes": 2700,
+      "sha256": "8e1b9491c66edfa1d2d64b7af77391bafd80c42a6c06feb209fc5197bcc761b3"
+    },
+    {
+      "path": "rust-shard.json",
+      "bytes": 1195,
+      "sha256": "0768e746e13fa42290f84b86bc56631dd9969a7549f24a4dd4bfb14670425c8d"
+    },
+    {
+      "path": "rust-shard.sh",
+      "bytes": 9325,
+      "sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea"
+    },
+    {
+      "path": "source.json",
+      "bytes": 421,
+      "sha256": "60cc492a5ad9779bf09d18907c733d1d9d3710a60ef820414a6acbe7c3b617a0"
+    },
+    {
+      "path": "workspace-tests.log",
+      "bytes": 346716,
+      "sha256": "98d1f84c9d3c0025ed13a45bd7d809147ae07ff570a121c550f8086bd3195be6"
+    }
+  ],
+  "omitted_members": [
+    {
+      "path": "account-multiproof/native.json",
+      "bytes": 804068,
+      "sha256": "c30b6175463956c803eb88dced7b39ad43f706ad42921770306500615bf680a8",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "authenticated-migration/native.json",
+      "bytes": 44618,
+      "sha256": "d25af6248cd18f69f697e781f8a3cf7c591a5dfe9a6c99619eee222cfd9b5897",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "authenticated-migration/native.sqlite",
+      "bytes": 512000,
+      "sha256": "2d6abc8790d087bbde246439a184a6bd552c7ee69b937939d7ef8b29fe933f86",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "authenticated-migration/source.sqlite",
+      "bytes": 458752,
+      "sha256": "083eab5b5ec56ef8d7865ab7fb22a989367aec39a350858ff1b650b1ed8f0a7c",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "authenticated-state/native.json",
+      "bytes": 393553,
+      "sha256": "54a5aa7a4e1c84e6f65d455f01fc410d881b59d315a6a9d7e24d920e67d523ad",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "authenticated-state/native.sqlite",
+      "bytes": 61440,
+      "sha256": "33fe579190097591cc13d694fc1026b9f599f666fc91d9cbc36c4a4a12c29025",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "model-composition/arithmetic-production.json",
+      "bytes": 1341077,
+      "sha256": "b44b3671ff6e1a4012fa856debea4f0da4ad28133427253649871ab0bf7478e3",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "native-authenticated-state/native.json",
+      "bytes": 348126,
+      "sha256": "229a2e411a55ecd61f837f84163db83c0a7dd194f4df53c78a73ca09b417de32",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "native-authenticated-state/native.sqlite",
+      "bytes": 2502656,
+      "sha256": "2e0ec3b5d66653cecb063423f9c0226a50409110da08b5ce5107be1c5355a784",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "obligation-range/native.json",
+      "bytes": 4130583,
+      "sha256": "fcece7ec9c60bae96b063a18835defaac29e15c7436a4acf0f5d864dfa11757c",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "pq-provider/build-and-smoke.log",
+      "bytes": 1176188,
+      "sha256": "a05c6a8e6a25f5cba58aa8d61fd892f21875666823d45b3d46c4c81ce39d4470",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-0/native-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "a259d0fe6f40e217bd6d2d53da562d2d5a255c34fbd2c6b383baa3d2b7ae04a7",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-0/noise-input.bin",
+      "bytes": 8192,
+      "sha256": "8f0addae3fe00dbcc96f5023abccfcf86c1075f1efbb0ba996d28f6b58adc2cd",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-0/receipt.json",
+      "bytes": 416,
+      "sha256": "7bc2dba16f5b8bb29ed1a5cf6929310f9b0712118102918f08f52afc93c47ba1",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-0/scalar-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "a259d0fe6f40e217bd6d2d53da562d2d5a255c34fbd2c6b383baa3d2b7ae04a7",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-1/native-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "bae563829111e733becf25e6bda441606207040fcbf06108f70246dcdb407dc5",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-1/noise-input.bin",
+      "bytes": 8192,
+      "sha256": "250d9a2d0777455c29553a50a711a774fc76fc41155acf17a99715889951609f",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-1/receipt.json",
+      "bytes": 416,
+      "sha256": "d220127472ee5214d9bd4c3c7fbae0986af0b9db4ecadf5c47efa5180e9ed5d7",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-1/scalar-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "bae563829111e733becf25e6bda441606207040fcbf06108f70246dcdb407dc5",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-2/native-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-2/noise-input.bin",
+      "bytes": 8192,
+      "sha256": "2787e54f9338a7f75fb7458881696586410178d4dd70c06b06c650145a3302a5",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-2/receipt.json",
+      "bytes": 416,
+      "sha256": "822d24d0d5dbb17f8533031612ef5a638b0e37cb4725bd7bf81f0fd539494c40",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-2/scalar-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-3/native-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "b7b0192c9593467485e7da87f5f81ef1d1fcf436e3ecc53cafdfdddeb2097bb4",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-3/noise-input.bin",
+      "bytes": 8192,
+      "sha256": "9c53294c3b72f01b81c53f31df0bda0b8826989cf3b86e72d1d3be430313d1c3",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-3/receipt.json",
+      "bytes": 416,
+      "sha256": "5f955aa02a228674faadd535af9fa4599ba0dd63379e8cd5ba58f903294f5aec",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    },
+    {
+      "path": "zero-paired-prefix/case-3/scalar-prefixes.bin",
+      "bytes": 131072,
+      "sha256": "b7b0192c9593467485e7da87f5f81ef1d1fcf436e3ecc53cafdfdddeb2097bb4",
+      "reason": "outside the retained DAG failure and runtime-source record"
+    }
+  ],
+  "complete_original_zip_archived": false
+}

@@ -2,7 +2,9 @@
 //! No guest build, prover client, remote backend, dev mode, or admission path.
 use anyhow::{ensure, Context, Result};
 use bincode::Options;
-use risc0_zkvm::{InnerReceipt, Receipt, ReceiptClaim, SuccinctReceipt};
+use risc0_zkvm::{
+    sha::Digestible, InnerReceipt, Receipt, ReceiptClaim, SuccinctReceipt, VerifierContext,
+};
 use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::{
@@ -15,6 +17,11 @@ use std::{
 };
 
 const SDK_VERSION: &str = "3.0.6";
+// The frozen full receipt and the upstream 3.0.6 parameter stability test agree
+// on this research profile. It is not a PQ-128 security attestation.
+const PROOF_HASH_SUITE: &str = "poseidon2";
+const VERIFIER_PARAMETERS_DIGEST: &str =
+    "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013";
 const IMAGE_ID: [u32; 8] = [
     4203990569, 1706128024, 889896351, 2751765305, 3434005897, 1411617246, 870515685, 3215144349,
 ];
@@ -119,13 +126,55 @@ fn journal(header: &[u8], bytes: &[u8]) -> Result<[u8; 32]> {
     Ok(work_id)
 }
 
+/// Freeze the already measured research configuration instead of accepting
+/// every hash suite in the SDK default registry. The parameter digest commits
+/// the existing control root, inner root, proof-system and circuit identities.
+/// Its allowed segment set is unchanged; the prover's execution limit of 18
+/// must not be mistaken for a verifier restriction to that limit.
+fn frozen_verifier_context() -> Result<VerifierContext> {
+    let mut context = VerifierContext::default();
+    ensure!(!context.dev_mode(), "development proof context refused");
+    let parameters = context
+        .succinct_verifier_parameters
+        .as_ref()
+        .context("succinct verifier parameters required")?;
+    ensure!(
+        parameters.digest().to_string() == VERIFIER_PARAMETERS_DIGEST,
+        "frozen verifier parameters changed"
+    );
+    ensure!(
+        context.suites.contains_key(PROOF_HASH_SUITE),
+        "frozen hash suite unavailable"
+    );
+    context.suites.retain(|name, _| name == PROOF_HASH_SUITE);
+    context.segment_verifier_parameters = None;
+    context.groth16_verifier_parameters = None;
+    Ok(context)
+}
+
+/// These metadata checks only select the frozen profile. Successful
+/// cryptographic verification under the trusted context must still follow.
+fn require_proof_profile(hash_function: &str, parameters: &risc0_zkvm::sha::Digest) -> Result<()> {
+    ensure!(
+        hash_function == PROOF_HASH_SUITE,
+        "frozen proof hash suite required"
+    );
+    ensure!(
+        parameters.to_string() == VERIFIER_PARAMETERS_DIGEST,
+        "frozen proof verifier parameters required"
+    );
+    Ok(())
+}
+
 fn verify(header: &[u8], receipt: &Receipt) -> Result<[u8; 32]> {
-    receipt
+    let succinct = receipt
         .inner
         .succinct()
         .context("recursive STARK required")?;
+    require_proof_profile(&succinct.hashfn, &succinct.verifier_parameters)?;
+    let context = frozen_verifier_context()?;
     receipt
-        .verify(IMAGE_ID)
+        .verify_with_context(&context, IMAGE_ID)
         .context("full frozen image proof")?;
     journal(header, &receipt.journal.bytes)
 }
@@ -191,6 +240,8 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
         "control_id",
         "verifier_parameters",
         "hash_function",
+        "hash_function_sha256",
+        "hash_function_blake2b",
         "claim_digest",
         "seal_first",
         "seal_body",
@@ -211,6 +262,8 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
             }
             "verifier_parameters" => inner.verifier_parameters = [0u32; 8].into(),
             "hash_function" => inner.hashfn = "invalid-hash-suite".into(),
+            "hash_function_sha256" => inner.hashfn = "sha-256".into(),
+            "hash_function_blake2b" => inner.hashfn = "blake2b".into(),
             "claim_digest" => inner.claim = risc0_zkvm::MaybePruned::Pruned([0u32; 8].into()),
             "seal_first" => inner.seal[0] ^= 1,
             "seal_body" => {
@@ -284,14 +337,17 @@ fn main() -> Result<()> {
         let started = Instant::now();
         let receipt = decode_recursion(&bytes)?;
         let result = classify(|| {
-            receipt.verify_integrity()?;
+            require_proof_profile(&receipt.hashfn, &receipt.verifier_parameters)?;
+            receipt.verify_integrity_with_context(&frozen_verifier_context()?)?;
             Ok(())
         });
         println!(
             "{}",
-            json!({"schema":"TRNM-W1-RECURSION-ONLY-VERIFY1", "sdk":SDK_VERSION,
+            json!({"schema":"TRNM-W1-RECURSION-ONLY-VERIFY2", "sdk":SDK_VERSION,
             "receipt_sha256":sha(&bytes), "receipt_bytes":bytes.len(), "result":result,
             "elapsed_ns":started.elapsed().as_nanos(), "control_id":receipt.control_id.to_string(),
+            "hash_function":receipt.hashfn,
+            "verifier_parameters_digest":receipt.verifier_parameters.to_string(),
             "complete_w1_claim":false,"consensus_admission":false})
         );
         ensure!(
@@ -356,6 +412,38 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn frozen_context_contains_only_the_measured_succinct_profile() {
+        let context = frozen_verifier_context().unwrap();
+        assert!(!context.dev_mode());
+        assert_eq!(context.suites.len(), 1);
+        assert!(context.suites.contains_key(PROOF_HASH_SUITE));
+        assert!(context.segment_verifier_parameters.is_none());
+        assert!(context.groth16_verifier_parameters.is_none());
+        assert_eq!(
+            context
+                .succinct_verifier_parameters
+                .unwrap()
+                .digest()
+                .to_string(),
+            VERIFIER_PARAMETERS_DIGEST
+        );
+    }
+
+    #[test]
+    fn profile_selection_refuses_other_suites_and_parameter_sets() {
+        let context = frozen_verifier_context().unwrap();
+        let parameters = context.succinct_verifier_parameters.unwrap().digest();
+        require_proof_profile(PROOF_HASH_SUITE, &parameters).unwrap();
+        for suite in ["sha-256", "blake2b", "", "Poseidon2"] {
+            assert!(require_proof_profile(suite, &parameters).is_err());
+        }
+        let mut changed: [u32; 8] = parameters.into();
+        changed[0] ^= 1;
+        assert!(require_proof_profile(PROOF_HASH_SUITE, &changed.into()).is_err());
+    }
+
     #[test]
     fn rejects_non_succinct_tags_before_deserialization() {
         for tag in [0u32, 2, 3, u32::MAX] {

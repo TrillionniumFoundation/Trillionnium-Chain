@@ -356,8 +356,7 @@ impl Node {
         self.ready()?;
         self.check_pq_network_policy(policy)?;
         ensure(request.policy == policy.id(), "PQ_NETWORK_CONTEXT")?;
-        self.retire_expired_pq_pending(policy, request.peer, deadline, check)?;
-        let tx = Mutation::begin_until(self, Some(deadline))?;
+        let tx = self.pq_admission_transaction(policy, request.peer, deadline, check)?;
         check()?;
         let (highest, revoked): (u64, bool) = tx.query_row(
             "SELECT highest_sequence,revoked FROM pq_network_peer_v2 WHERE peer=?",
@@ -455,13 +454,17 @@ impl Node {
         Ok(())
     }
 
-    fn retire_expired_pq_pending(
-        &mut self,
+    // Keep the authenticated predecessor and all permission reads under the
+    // same IMMEDIATE transaction when no expiry transition is needed. A real
+    // retirement still commits and publishes its epoch before a fresh guard
+    // can authorize the next request.
+    fn pq_admission_transaction(
+        &self,
         policy: &PqNetworkPolicy,
         peer: Hash,
         deadline: Instant,
         check: &mut impl FnMut() -> Result<()>,
-    ) -> Result<bool> {
+    ) -> Result<Mutation<'_>> {
         check()?;
         let tx = Mutation::begin_until(self, Some(deadline))?;
         check()?;
@@ -479,7 +482,7 @@ impl Node {
             )
             .optional()?;
         let Some(wire) = pending else {
-            return Ok(false);
+            return Ok(tx);
         };
         let old = policy.verify_retained_request(&wire)?;
         ensure(
@@ -488,7 +491,7 @@ impl Node {
         )?;
         check()?;
         if crate::ingress::now()? <= old.expiry {
-            return Ok(false);
+            return Ok(tx);
         }
         let next_epoch = self
             .pq_network_epoch
@@ -511,7 +514,7 @@ impl Node {
                     (current != 0).then_some(next_epoch)
                 });
         committed?;
-        Ok(true)
+        Mutation::begin_until(self, Some(deadline))
     }
 
     /// Local operator revocation only. There is no remote request or un-revoke
