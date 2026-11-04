@@ -1270,6 +1270,73 @@ impl Drop for Connection {
         self.cancelled.store(true, Ordering::Release);
     }
 }
+/// A queued completion cannot renew an expired work-stage deadline. The
+/// reactor drains completions before scanning deadlines, so this check belongs
+/// to the same transition that installs Output. Native dispatch and its CPU
+/// settlement have already completed; discarding late output changes neither.
+fn apply_finished_connection(
+    connections: &mut BTreeMap<u64, Connection>,
+    done: Finished,
+    metrics: &Mutex<PublicMetrics>,
+    now: Instant,
+) -> Result<()> {
+    let Some(conn) = connections.get_mut(&done.id) else {
+        return Ok(());
+    };
+    ensure(
+        matches!(conn.stage, Stage::Await),
+        "PUBLIC_COMPLETION_STATE",
+    )?;
+    let expired = now >= conn.deadline;
+    if expired {
+        // Signal the original task before diagnostic locks. Its remaining
+        // owners still retain their own reservations until they actually exit.
+        conn.cancelled.store(true, Ordering::Release);
+        let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+        m.expired_connections += 1;
+        *m.expired_phase_counts.entry("work".into()).or_default() += 1;
+    }
+    let bytes = match done.bytes {
+        Ok(bytes) => bytes,
+        Err(error) => {
+            // Preserve the original serialization failure and its diagnostic
+            // priority, including when this completion also missed its work
+            // deadline. Counters describe overlapping events, not new requests.
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            m.output_serialization_failures += 1;
+            *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+            drop(m);
+            if let Some(record) = &conn.observation {
+                record.terminal_error("serialization", &error);
+            }
+            connections.remove(&done.id);
+            return Ok(());
+        }
+    };
+    if expired {
+        if let Some(record) = &conn.observation {
+            record.terminal_error("work", &"PUBLIC_REQUEST_DEADLINE".into());
+        }
+        // Drop the socket and connection-owned reservations now. A worker's
+        // body/lane references remain charged until that worker releases them.
+        // The Finished output reservation drops on return.
+        connections.remove(&done.id);
+        return Ok(());
+    }
+    if let Some(record) = &conn.observation {
+        record.response_started();
+    }
+    conn.stage = Stage::Output {
+        bytes,
+        cursor: 0,
+        _permit: done.permit,
+    };
+    conn.deadline = conn
+        .total_deadline
+        .min(now + Duration::from_millis(OUTPUT_MS));
+    Ok(())
+}
+
 fn task_alive(deadline: Instant, stop: &AtomicBool, cancelled: &AtomicBool) -> Result<()> {
     ensure(
         !cancelled.load(Ordering::Acquire),
@@ -2281,39 +2348,12 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match finished_rx.try_recv() {
                         Ok(done) => {
-                            if let Some(conn) = connections.get_mut(&done.id) {
-                                ensure(
-                                    matches!(conn.stage, Stage::Await),
-                                    "PUBLIC_COMPLETION_STATE",
-                                )?;
-                                let bytes = match done.bytes {
-                                    Ok(bytes) => bytes,
-                                    Err(error) => {
-                                        let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                                        m.output_serialization_failures += 1;
-                                        *m.retained_phase_errors
-                                            .entry("output".into())
-                                            .or_default() += 1;
-                                        drop(m);
-                                        if let Some(record) = &conn.observation {
-                                            record.terminal_error("serialization", &error);
-                                        }
-                                        connections.remove(&done.id);
-                                        continue;
-                                    }
-                                };
-                                if let Some(record) = &conn.observation {
-                                    record.response_started();
-                                }
-                                conn.stage = Stage::Output {
-                                    bytes,
-                                    cursor: 0,
-                                    _permit: done.permit,
-                                };
-                                conn.deadline = conn
-                                    .total_deadline
-                                    .min(Instant::now() + Duration::from_millis(OUTPUT_MS));
-                            }
+                            apply_finished_connection(
+                                &mut connections,
+                                done,
+                                &metrics,
+                                Instant::now(),
+                            )?;
                         }
                         Err(TryRecvError::Empty) => break,
                         Err(TryRecvError::Disconnected) => return Err("PUBLIC_WORKERS_GONE".into()),
@@ -7624,3 +7664,210 @@ mod intake_domain_tests;
 #[cfg(test)]
 #[path = "public_v3/unpaid_pressure_tests.rs"]
 mod unpaid_pressure_tests;
+
+#[cfg(test)]
+mod completion_deadline_tests {
+    use super::*;
+
+    struct Fixture {
+        connections: BTreeMap<u64, Connection>,
+        peer: TcpStream,
+        cancelled: Arc<AtomicBool>,
+        intake: ListenerIntake,
+        observer: PublicRequestObserver,
+        metrics: Mutex<PublicMetrics>,
+    }
+    impl Fixture {
+        fn new(deadline: Instant, total_deadline: Instant) -> Self {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let peer = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+            peer.set_read_timeout(Some(Duration::from_secs(1))).unwrap();
+            let (socket, address) = listener.accept().unwrap();
+            let intake = ListenerIntake::new();
+            let connection_permit =
+                BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
+            let cancelled = Arc::new(AtomicBool::new(false));
+            let lease = intake
+                .connection_lease(&connection_permit, cancelled.clone(), Instant::now())
+                .unwrap();
+            lease.protect().unwrap();
+            let observer = PublicRequestObserver::new(1).unwrap();
+            let observation = observer.connection().unwrap();
+            observation.identity(7);
+            observation.request(1, [0x55; 32]);
+            // The completion transition owns no native execution or CPU credit.
+            // Preserve a completed native success even if its response is late.
+            let task = observation.task();
+            task.dispatch_started();
+            task.dispatch_finished(Some(123), true);
+            drop(task);
+            let connection = Connection {
+                observation: Some(observation),
+                id: 7,
+                socket,
+                peer: address,
+                deadline,
+                stage: Stage::Await,
+                total_deadline,
+                permit: Some(
+                    BufferPermit::acquire(intake.body_pool.clone(), 64, MAX_PAID_BODY_BYTES)
+                        .unwrap(),
+                ),
+                lane_permit: Some(Arc::new(
+                    BufferPermit::acquire(intake.mutating_grants.clone(), 1, MAX_MUTATING_GRANTS)
+                        .unwrap(),
+                )),
+                cancelled: cancelled.clone(),
+                intake_lease: Some(lease),
+                _connection_permit: Some(connection_permit),
+            };
+            Self {
+                connections: BTreeMap::from([(7, connection)]),
+                peer,
+                cancelled,
+                intake,
+                observer,
+                metrics: Mutex::new(PublicMetrics::default()),
+            }
+        }
+        fn finished(&self, bytes: Result<Vec<u8>>) -> Finished {
+            Finished {
+                id: 7,
+                permit: Some(
+                    BufferPermit::acquire(self.intake.output_pool.clone(), 128, MAX_OUTPUT_BYTES)
+                        .unwrap(),
+                ),
+                bytes,
+            }
+        }
+        fn assert_released(&mut self) {
+            assert!(self.cancelled.load(Ordering::Acquire));
+            assert_eq!(*self.intake.connections.lock().unwrap(), 0);
+            assert_eq!(*self.intake.body_pool.lock().unwrap(), 0);
+            assert_eq!(*self.intake.mutating_grants.lock().unwrap(), 0);
+            assert_eq!(*self.intake.output_pool.lock().unwrap(), 0);
+            assert_eq!(self.peer.read(&mut [0; 1]).unwrap(), 0);
+        }
+    }
+
+    #[test]
+    fn late_completion_cannot_revive_work_deadline_or_lose_native_outcome() {
+        let deadline = Instant::now();
+        for (now, bytes) in [
+            (deadline, Ok(vec![1, 2, 3])),
+            (deadline + Duration::from_nanos(1), Ok(vec![1, 2, 3])),
+            (deadline, Err("PUBLIC_OUTPUT_LIMIT".into())),
+        ] {
+            let mut fixture = Fixture::new(deadline, deadline + Duration::from_secs(30));
+            let serialization_failed = bytes.is_err();
+            let done = fixture.finished(bytes);
+            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
+                .unwrap();
+            assert!(fixture.connections.is_empty());
+            fixture.assert_released();
+            let metrics = fixture.metrics.lock().unwrap();
+            assert_eq!(metrics.expired_connections, 1);
+            assert_eq!(metrics.expired_phase_counts.get("work"), Some(&1));
+            assert_eq!(
+                metrics.output_serialization_failures,
+                u64::from(serialization_failed)
+            );
+            assert_eq!(metrics.executor_refusals, 0);
+            let snapshot = fixture.observer.snapshot();
+            assert!(snapshot.coverage_complete());
+            let record = &snapshot.records[0];
+            assert_eq!(record.dispatch_accepted, Some(true));
+            assert_eq!(record.dispatch_thread_cpu_ns, Some(123));
+            if serialization_failed {
+                assert_eq!(record.terminal_phase, Some("serialization"));
+                let diagnostic = serde_json::to_value(record.error_diagnostics.terminal).unwrap();
+                assert_eq!(diagnostic["message_prefix"], "PUBLIC_OUTPUT_LIMIT");
+                assert_eq!(metrics.retained_phase_errors.get("output"), Some(&1));
+            } else {
+                assert_eq!(record.terminal_phase, Some("work"));
+                assert_eq!(record.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+            }
+            assert!(!record.response_frame_complete);
+        }
+    }
+
+    #[test]
+    fn timely_completion_keeps_output_bytes_and_original_total_deadline() {
+        let deadline = Instant::now() + Duration::from_secs(10);
+        for total_deadline in [
+            deadline + Duration::from_secs(1),
+            deadline + Duration::from_secs(30),
+        ] {
+            let now = deadline - Duration::from_nanos(1);
+            let mut fixture = Fixture::new(deadline, total_deadline);
+            let done = fixture.finished(Ok(vec![1, 2, 3]));
+            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
+                .unwrap();
+            let connection = &fixture.connections[&7];
+            assert_eq!(
+                connection.deadline,
+                total_deadline.min(now + Duration::from_millis(OUTPUT_MS))
+            );
+            assert_eq!(connection.total_deadline, total_deadline);
+            assert!(matches!(&connection.stage,
+                Stage::Output { bytes, cursor: 0, .. } if bytes == &[1, 2, 3]));
+            assert!(!fixture.cancelled.load(Ordering::Acquire));
+            assert_eq!(*fixture.intake.connections.lock().unwrap(), 1);
+            assert_eq!(*fixture.intake.output_pool.lock().unwrap(), 128);
+            assert_eq!(fixture.metrics.lock().unwrap().expired_connections, 0);
+            fixture.connections.clear();
+            fixture.assert_released();
+        }
+    }
+
+    #[test]
+    fn queued_completion_expiry_keeps_worker_reservations_until_actual_release() {
+        let now = Instant::now();
+        let mut fixture = Fixture::new(now, now + Duration::from_secs(30));
+        let connection = fixture.connections.get_mut(&7).unwrap();
+        // This is the real ownership transfer at Body -> Enqueue. The worker
+        // can still hold these fields briefly after sending its Finished value.
+        let body = connection.permit.take().unwrap();
+        let lane = connection.lane_permit.as_ref().unwrap().clone();
+        let done = fixture.finished(Ok(vec![1, 2, 3]));
+        let (finished_tx, finished_rx) = mpsc::sync_channel(8);
+        let (sent_tx, sent_rx) = mpsc::channel();
+        let (release_tx, release_rx) = mpsc::channel();
+        thread::scope(|scope| {
+            let release_worker = release_tx;
+            let worker = scope.spawn(move || {
+                finished_tx.send(done).unwrap();
+                sent_tx.send(()).unwrap();
+                // Sender drop also releases this test worker on assertion panic.
+                let _ = release_rx.recv();
+                drop((body, lane));
+            });
+            sent_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+            let done = finished_rx.try_recv().unwrap();
+            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
+                .unwrap();
+            assert!(fixture.connections.is_empty());
+            assert!(fixture.cancelled.load(Ordering::Acquire));
+            assert_eq!(*fixture.intake.connections.lock().unwrap(), 0);
+            assert_eq!(*fixture.intake.output_pool.lock().unwrap(), 0);
+            assert_eq!(*fixture.intake.body_pool.lock().unwrap(), 64);
+            assert_eq!(*fixture.intake.mutating_grants.lock().unwrap(), 1);
+            assert_eq!(fixture.peer.read(&mut [0; 1]).unwrap(), 0);
+            release_worker.send(()).unwrap();
+            worker.join().unwrap();
+        });
+        fixture.assert_released();
+        assert_eq!(fixture.metrics.lock().unwrap().expired_connections, 1);
+    }
+
+    #[test]
+    fn completion_for_closed_connection_releases_only_its_output_reservation() {
+        let now = Instant::now();
+        let mut fixture = Fixture::new(now, now + Duration::from_secs(30));
+        let done = fixture.finished(Ok(vec![1, 2, 3]));
+        fixture.connections.clear();
+        apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now).unwrap();
+        fixture.assert_released();
+        assert_eq!(fixture.metrics.lock().unwrap().expired_connections, 0);
+    }
+}

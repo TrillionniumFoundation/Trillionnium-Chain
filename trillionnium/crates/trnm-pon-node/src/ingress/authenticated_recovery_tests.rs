@@ -222,6 +222,231 @@ impl Drop for Running {
 }
 
 #[test]
+fn authenticated_dispatch_retry_is_confined_to_local_queue_and_cancellation() {
+    for code in [
+        ErrorCode::LegacyRequestCancelled,
+        ErrorCode::LegacyRequestDeadline,
+        ErrorCode::PublicRequestCancelled,
+        ErrorCode::PublicRequestDeadline,
+        ErrorCode::PublicQueueBusy,
+    ] {
+        assert!(authenticated_dispatch_needs_retry(&Error::new(code)));
+    }
+    for error in [
+        Error::new(ErrorCode::StateCapacity),
+        Error::new(ErrorCode::GrowthCapacity),
+        Error::new(ErrorCode::PublicExecutionSnapshotCapacity),
+        Error::new(ErrorCode::PublicMutationCpuUnavailable),
+        Error::new(ErrorCode::PublicQueueBusy).local_integrity(),
+        Error::remote("PUBLIC_QUEUE_BUSY"),
+        Error::from("WORK:Transcript"),
+        Error::from("WORK:Product"),
+    ] {
+        assert!(!authenticated_dispatch_needs_retry(&error), "{error}");
+    }
+}
+
+#[test]
+fn signed_socket_local_queue_busy_keeps_exact_nonce_for_retry_and_invalid_work_terminal() {
+    struct StopOnDrop(Arc<AtomicBool>);
+    impl Drop for StopOnDrop {
+        fn drop(&mut self) {
+            self.0.store(true, Ordering::Release);
+        }
+    }
+
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+    let (authentication, client) = authentication_fixture(&settings);
+    let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let packet = node
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let id = packet.id().unwrap();
+    let mut invalid = node
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(1).unwrap(),
+            settings.genesis_time() + 11,
+            4096,
+        )
+        .unwrap();
+    // Keep a real target-hitting transcript; change only one bounded product
+    // word so the invalid control reaches the original full W1 Product check.
+    let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(invalid.proof[offset..offset + 4].try_into().unwrap());
+    let changed = ((u128::from(word) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
+    invalid.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+    let wire = authenticated_request_bytes(
+        &settings,
+        &client,
+        1,
+        Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        },
+    )
+    .unwrap();
+    let envelope: AuthenticatedRequest = serde_json::from_slice(&wire).unwrap();
+    let session = digest(&envelope.session.session).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    // This is the real shared execution-capacity slot. Keep it owned until
+    // the actual signed request exhausts the original two-second queue wait;
+    // no error injection, shortened budget or fake verifier is involved.
+    let held = node.reserve_detached_execution().unwrap();
+    let call = |bytes: &[u8]| {
+        let envelope: AuthenticatedRequest = serde_json::from_slice(bytes).unwrap();
+        let digest =
+            request_authority_digest(&envelope.session, envelope.replay_nonce, &envelope.request)
+                .unwrap();
+        let mut stream = TcpStream::connect(address).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(15)))
+            .unwrap();
+        stream
+            .set_write_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        write_frame(&mut stream, bytes).unwrap();
+        // Only the observer waits this long. The server keeps its original
+        // request deadline and the original two-second shared queue limit.
+        let reply = read_frame_budget(&mut stream, Duration::from_secs(15)).unwrap();
+        let (terminal, ok, value) =
+            verify_authenticated_response(&reply, &envelope.session, envelope.replay_nonce, digest)
+                .unwrap();
+        (reply, terminal, ok, value)
+    };
+    let durable = |nonce: u64| {
+        let db = rusqlite::Connection::open_with_flags(
+            directory.path().join("native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let (ack, pending): (u64, Option<u64>) = db
+            .query_row(
+                "SELECT highest_ack,pending_nonce FROM peer_replay WHERE session_id=?",
+                [session.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        let (status, payload, response): (u64, Option<Vec<u8>>, Option<Vec<u8>>) = db
+            .query_row(
+                "SELECT status,payload,response FROM peer_request_audit WHERE session_id=? AND nonce=?",
+                rusqlite::params![session.as_slice(), nonce],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .unwrap();
+        let blocks: u64 = db
+            .query_row("SELECT COUNT(*) FROM blocks", [], |row| row.get(0))
+            .unwrap();
+        let tip: Vec<u8> = db
+            .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        json!({"highest_ack":ack,"pending_nonce":pending,"audit_status":status,
+            "payload":payload.map(hex::encode),"response":response.map(hex::encode),
+            "stored_blocks":blocks,"active":hex::encode(tip)})
+    };
+    thread::scope(|scope| {
+        let worker_stop = stop.clone();
+        let worker = scope.spawn(move || {
+            serve_authenticated(
+                listener,
+                node,
+                Duration::from_secs(20),
+                worker_stop,
+                authentication,
+            )
+        });
+        // This guard also stops the scoped service if a regression panics.
+        let _shutdown = StopOnDrop(stop.clone());
+        let started = Instant::now();
+        let (_, terminal, ok, value) = call(&wire);
+        assert!(
+            !terminal && !ok,
+            "local Busy cannot finish this operation: {value}"
+        );
+        assert_eq!(value["error"], "PUBLIC_QUEUE_BUSY");
+        assert!(started.elapsed() >= Duration::from_secs(2));
+        let pending = durable(1);
+        assert_eq!(pending["highest_ack"], 0);
+        assert_eq!(pending["pending_nonce"], 1);
+        assert_eq!(pending["audit_status"], 0);
+        assert!(pending["payload"].is_string() && pending["response"].is_null());
+        assert_eq!(pending["stored_blocks"], 1);
+        assert_eq!(pending["active"], hex::encode(settings.genesis()));
+
+        let changed = authenticated_request_bytes(&settings, &client, 1, Request::Head).unwrap();
+        let (_, terminal, ok, value) = call(&changed);
+        assert!(!terminal && !ok);
+        assert!(value["error"]
+            .as_str()
+            .unwrap()
+            .contains("changed its payload"));
+        assert_eq!(durable(1), pending);
+        drop(held);
+
+        let (completed, terminal, ok, value) = call(&wire);
+        assert!(
+            terminal && ok,
+            "exact retry after releasing the slot: {value}"
+        );
+        assert_eq!(value["block"], hex::encode(id));
+        assert_eq!(value["active"], value["block"]);
+        let finished = durable(1);
+        assert_eq!(finished["highest_ack"], 1);
+        assert!(finished["pending_nonce"].is_null() && finished["payload"].is_null());
+        assert_eq!(finished["audit_status"], 1);
+        assert_eq!(finished["stored_blocks"], 2);
+        let (cached, terminal, ok, _) = call(&wire);
+        assert!(terminal && ok);
+        assert_eq!(cached, completed);
+        assert_eq!(durable(1), finished);
+
+        let invalid_wire = authenticated_request_bytes(
+            &settings,
+            &client,
+            2,
+            Request::Submit {
+                packet: hex::encode(invalid.encode().unwrap()),
+            },
+        )
+        .unwrap();
+        let (invalid_reply, terminal, ok, value) = call(&invalid_wire);
+        assert!(terminal && !ok);
+        assert_eq!(value["error"], "WORK:Product");
+        let invalid_finished = durable(2);
+        assert_eq!(invalid_finished["highest_ack"], 2);
+        assert!(invalid_finished["pending_nonce"].is_null());
+        assert_eq!(invalid_finished["audit_status"], 1);
+        assert_eq!(invalid_finished["stored_blocks"], 2);
+        let (cached, terminal, ok, _) = call(&invalid_wire);
+        assert!(terminal && !ok);
+        assert_eq!(cached, invalid_reply);
+        assert_eq!(durable(2), invalid_finished);
+
+        stop.store(true, Ordering::Release);
+        let metrics = worker.join().unwrap().unwrap();
+        assert_eq!(metrics.work_verifications, 3);
+        assert_eq!(metrics.replayed_responses, 2);
+        println!("AUTH_LOCAL_QUEUE_RETRY actual_capacity_refusal=true same_signed_bytes=true same_session_nonce=true changed_payload_refused=true complete_invalid_work_terminal=true work_verifications=3 cached_responses=2 original_queue_seconds=2 budget_changed=false");
+    });
+    let reopened = Node::open(directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap().0, id);
+    assert_eq!(reopened.stats().unwrap()["authenticated_pending"], 0);
+    assert_eq!(reopened.stats().unwrap()["authenticated_audit_rows"], 2);
+    assert_eq!(durable(2)["highest_ack"], 2);
+}
+
+#[test]
 fn signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent() {
     let mut running = Running::new();
     running.interrupted();

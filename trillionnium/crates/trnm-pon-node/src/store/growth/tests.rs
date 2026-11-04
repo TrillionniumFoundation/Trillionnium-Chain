@@ -377,6 +377,206 @@ fn assert_reference(node: &Node, id: Hash, expected: &State) {
 }
 
 #[test]
+fn native_growth_v2_nonce_batch_preserves_order_limits_absence_and_overflow() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut source = base_settings();
+    for (owner, nonce) in [(900, u64::MAX - 1), (901, 9), (903, u64::MAX)] {
+        source.initial.insert(
+            format!("account:{}", hex::encode(public(owner))),
+            json!({"balance": 0, "nonce": nonce}),
+        );
+    }
+    let settings = source
+        .with_permanent_account_growth_v2("native-growth-nonce-batch-test")
+        .unwrap();
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let senders = [public(900), public(902), public(901)];
+    let expected = vec![u64::MAX, 1, 10];
+    let before = rows(&node.db);
+    assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+    assert_eq!(
+        node.next_nonces(&[senders[2], senders[0], senders[1]])
+            .unwrap(),
+        vec![10, u64::MAX, 1]
+    );
+    let absent: Vec<_> = (1000..1256).map(public).collect();
+    assert_eq!(node.next_nonces(&absent).unwrap(), vec![1; 256]);
+    for request in [[senders[0], public(903)], [public(903), senders[0]]] {
+        assert_eq!(
+            node.next_nonces(&request).unwrap_err().to_string(),
+            "NONCE_OVERFLOW"
+        );
+        assert!(node.db.is_autocommit());
+    }
+    assert_eq!(
+        node.next_nonce(public(903)).unwrap_err().to_string(),
+        "NONCE_OVERFLOW"
+    );
+
+    // Dimension errors must precede a nested read or any unavailable commitment.
+    node.db
+        .execute_batch("BEGIN IMMEDIATE; DELETE FROM growth_states;")
+        .unwrap();
+    for (request, expected_error) in [
+        (vec![], "NONCE_QUERY_LIMIT"),
+        (vec![[0; 32]; 257], "NONCE_QUERY_LIMIT"),
+        (vec![senders[0]; 2], "DUPLICATE_NONCE_QUERY"),
+    ] {
+        assert_eq!(
+            node.next_nonces(&request).unwrap_err().to_string(),
+            expected_error
+        );
+    }
+    node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+    assert_eq!(rows(&node.db), before);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_nonce_batch_uses_one_snapshot_without_complete_state_reads() {
+    use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
+    use std::sync::Arc;
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    let before = rows(&node.db);
+    let trace = Arc::new(Mutex::new(Vec::new()));
+    let calls = trace.clone();
+    node.db
+        .authorizer(Some(move |context: AuthContext<'_>| {
+            let event = match context.action {
+                AuthAction::Transaction { operation } => Some(format!("transaction:{operation:?}")),
+                AuthAction::Read { table_name, .. }
+                    if matches!(
+                        table_name,
+                        "active"
+                            | "blocks"
+                            | "growth_states"
+                            | "archive_nodes"
+                            | "kv"
+                            | "snapshots"
+                            | "deltas"
+                    ) =>
+                {
+                    Some(table_name.to_owned())
+                }
+                _ => None,
+            };
+            if let Some(event) = event {
+                calls.lock().unwrap().push(event);
+            }
+            Authorization::Allow
+        }))
+        .unwrap();
+    assert_eq!(
+        node.next_nonces(&[public(7), public(0), public(777)])
+            .unwrap(),
+        vec![1, 1, 1]
+    );
+    node.db
+        .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
+        .unwrap();
+    let trace = trace.lock().unwrap();
+    assert_eq!(trace.first().map(String::as_str), Some("transaction:Begin"));
+    assert_eq!(
+        trace.last().map(String::as_str),
+        Some("transaction:Rollback")
+    );
+    assert_eq!(
+        trace
+            .iter()
+            .filter(|event| event.starts_with("transaction:"))
+            .count(),
+        2
+    );
+    for table in ["active", "blocks", "growth_states", "archive_nodes"] {
+        assert!(trace.iter().any(|event| event == table), "{trace:?}");
+    }
+    for table in ["kv", "snapshots", "deltas"] {
+        assert!(!trace.iter().any(|event| event == table), "{trace:?}");
+    }
+    assert!(node.db.is_autocommit());
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_nonce_batch_rechecks_proof_paths_and_refuses_foreign_epoch() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let senders = [public(0), public(7), public(777)];
+    let expected = node.next_nonces(&senders).unwrap();
+    let before = rows(&node.db);
+    let root = node
+        .growth_parent(settings.genesis())
+        .unwrap()
+        .source
+        .stored
+        .accounts
+        .node
+        .unwrap();
+    let children: Vec<(Vec<u8>, Vec<u8>)> = node
+        .db
+        .prepare("SELECT id,data FROM archive_nodes WHERE id<>?")
+        .unwrap()
+        .query_map([root.as_slice()], |row| Ok((row.get(0)?, row.get(1)?)))
+        .unwrap()
+        .map(|row| row.unwrap())
+        .collect();
+    assert!(!children.is_empty());
+    node.db
+        .execute(
+            "UPDATE archive_nodes SET data=X'00' WHERE id<>?",
+            [root.as_slice()],
+        )
+        .unwrap();
+    // The bound root is still intact: only a fresh traversal of requested paths
+    // discovers these same-connection changes after an earlier successful call.
+    node.growth_parent(settings.genesis()).unwrap();
+    assert_eq!(
+        node.next_nonces(&senders).unwrap_err().to_string(),
+        "GROWTH_ARCHIVE:CorruptRecord"
+    );
+    assert!(node.db.is_autocommit());
+    for (id, data) in children {
+        node.db
+            .execute(
+                "UPDATE archive_nodes SET data=? WHERE id=?",
+                params![data, id],
+            )
+            .unwrap();
+    }
+    assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+    assert_eq!(rows(&node.db), before);
+
+    let foreign = Connection::open(dir.path().join("native.sqlite")).unwrap();
+    foreign
+        .execute("UPDATE active SET generation=generation+1", [])
+        .unwrap();
+    let error = node.next_nonces(&senders).unwrap_err();
+    assert_eq!(error.to_string(), "GROWTH_STORAGE_EPOCH_CHANGED");
+    assert!(error.requires_owner_stop());
+    assert!(node.db.is_autocommit());
+    foreign
+        .execute("UPDATE active SET generation=generation-1", [])
+        .unwrap();
+    assert_eq!(
+        node.next_nonces(&senders).unwrap_err().to_string(),
+        "GROWTH_STORAGE_EPOCH_CHANGED"
+    );
+    drop(foreign);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
 fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     let dir = tempfile::tempdir().unwrap();
     let settings = settings();
@@ -385,6 +585,8 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     let genesis = settings.genesis();
     assert!(node.read_active().is_err());
     assert!(node.state_at(genesis).is_err());
+    let nonce_senders = [public(10), public(0), public(999)];
+    assert_eq!(node.next_nonces(&nonce_senders).unwrap(), vec![1, 1, 1]);
     let initial = settings.initial.clone();
     let first = make(
         &node,
@@ -394,6 +596,7 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     assert!(Packet::decode(&first.encode().unwrap()).is_err());
     let first_state = reference(&settings, &initial, &first);
     let first_id = admit(&mut node, &first);
+    assert_eq!(node.next_nonces(&nonce_senders).unwrap(), vec![1, 2, 1]);
     assert_reference(&node, first_id, &first_state);
     let second = make(
         &node,
@@ -402,6 +605,7 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     );
     let second_state = reference(&settings, &first_state, &second);
     let second_id = admit(&mut node, &second);
+    assert_eq!(node.next_nonces(&nonce_senders).unwrap(), vec![1, 3, 1]);
     let generation = node.active().unwrap().1;
     let mut fork = genesis;
     let mut full = initial;
@@ -420,6 +624,7 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     assert_reference(&node, second_id, &second_state);
     assert_eq!(node.growth_account(fork, public(10)).unwrap(), None);
     assert_eq!(node.next_nonce(public(0)).unwrap(), 4);
+    assert_eq!(node.next_nonces(&nonce_senders).unwrap(), vec![1, 4, 1]);
     // Actual reward maturity is part of the same native witness path.
     for _ in 4..=21 {
         let packet = make(&node, fork, vec![]);
@@ -443,6 +648,7 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
     let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
     assert_eq!(node.active().unwrap(), active);
     assert_eq!(rows(&node.db), before);
+    assert_eq!(node.next_nonces(&nonce_senders).unwrap(), vec![1, 4, 1]);
     assert_reference(&node, fork, &full);
     assert_reference(&node, second_id, &second_state);
 }

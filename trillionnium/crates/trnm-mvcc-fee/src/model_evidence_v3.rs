@@ -4,7 +4,7 @@
 use crate::integer_factor_candidate_v2::{self as factor, FactorState, IntegerModelV2};
 use crate::model_composition_v4 as composition;
 use crate::model_evolution_v5 as evolution;
-use crate::pon_executor::{canonical, Config, Result, State};
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use crate::public_evaluation;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -604,8 +604,9 @@ pub(crate) fn cleanup(state: &mut State, cfg: &Config, height: u64) -> Result<()
     } else {
         ("model-source-v3:", "model-evidence-v3:")
     };
-    let removed: Vec<_> = state
-        .iter()
+    let removed: Vec<_> = [evidence_prefix, source_prefix]
+        .into_iter()
+        .flat_map(|prefix| prefix_rows(state, prefix))
         .filter_map(|(key, value)| {
             if key.starts_with(source_prefix) {
                 (value["round"] != round).then(|| key.clone())
