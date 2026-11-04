@@ -27,6 +27,7 @@ mod reorg_readback_tests;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
+mod state_merge;
 pub mod storage_service;
 mod task_observation;
 use crate::{
@@ -175,6 +176,8 @@ type ReplayRow = (
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
+#[cfg(test)]
+mod admission_wire_tests;
 mod authenticated_pending_activation;
 mod detached_admission;
 pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
@@ -3443,7 +3446,9 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode_for_settings(&self.settings)?;
+        // Keep the complete encoder grammar at its original boundary. New
+        // packets need no owned wire copy until the actual persistence step.
+        packet.checked_wire_length_for_settings(&self.settings)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3459,6 +3464,7 @@ impl Node {
             )
             .optional()?;
         if let Some(prior) = previous {
+            let bytes = packet.encode_for_settings(&self.settings)?;
             ensure(prior == bytes, "DUPLICATE_CONTENT")?;
             // Immutable work can be cached; a previous caller's clock cannot.
             ensure(
@@ -4273,8 +4279,6 @@ impl Node {
         let work = parent
             .work
             .checked_add(consensus::required_work(h.target)?)?;
-        let mut keys: std::collections::BTreeSet<_> = prior.keys().collect();
-        keys.extend(output.state.keys());
         let index_context = self.ancestry_context()?;
         progress(ExecutionProgress::BeforePersistence)?;
         let tx = rusqlite::Transaction::new_unchecked(
@@ -4317,10 +4321,13 @@ impl Node {
             let mut expected_deltas = Vec::new();
             {
                 let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
-                for (index, key) in keys.into_iter().enumerate() {
+                for (index, entry) in state_merge::entries(&prior, &output.state).enumerate() {
                     progress(ExecutionProgress::PersistenceDelta { index })?;
-                    let before_value = prior.get(key);
-                    let after_value = output.state.get(key);
+                    let state_merge::Entry {
+                        key,
+                        before: before_value,
+                        after: after_value,
+                    } = entry;
                     // Both complete States have already passed the original
                     // canonical root/execution checks. Equal JSON values have
                     // identical canonical bytes, so unchanged cells need no

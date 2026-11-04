@@ -33,6 +33,10 @@ MODES = ('baseline', 'from-zero', 'late-product')
 ROUNDS = 3
 MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
+ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
+ERROR_DIAGNOSTIC_KINDS = {'protocol_invalid', 'capacity', 'cancelled', 'stale_context',
+    'identity_conflict', 'policy_refusal', 'local_structure', 'dependency_unavailable',
+    'transport', 'serialization', 'remote_refusal', 'unclassified'}
 
 
 def require(value, message):
@@ -206,8 +210,82 @@ def validate_history_import_observation(value: dict) -> None:
         require(host[0]['last_ended_ns'] <= host[1]['first_started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
 
 
+def validate_request_error_diagnostics(row):
+    """Optional additive v4 diagnostic data; never infer a typed code from text."""
+    if 'error_diagnostics' not in row:
+        return
+    value = row['error_diagnostics']
+    require(type(value) is dict and set(value) == {'schema', 'has_control_authority',
+            'messages_are_untrusted', 'message_capacity_bytes', 'dispatch', 'terminal'},
+            'error diagnostic exact shape required')
+    require(value['schema'] == ERROR_DIAGNOSTIC_SCHEMA
+            and value['has_control_authority'] is False
+            and value['messages_are_untrusted'] is True
+            and type(value['message_capacity_bytes']) is int
+            and value['message_capacity_bytes'] == 96, 'error diagnostic scope required')
+    for name in ('dispatch', 'terminal'):
+        require(f'{name}_error_code' in row, 'error diagnostic typed slot required')
+        detail = value[name]
+        if detail is None:
+            require(row[f'{name}_error_code'] is None, 'error diagnostic missing known typed cause')
+            continue
+        require(type(detail) is dict and set(detail) == {'kind', 'message_prefix', 'message_truncated'},
+                'error diagnostic detail shape required')
+        require(type(detail['kind']) is str and detail['kind'] in ERROR_DIAGNOSTIC_KINDS,
+                'error diagnostic kind required')
+        require(type(detail['message_prefix']) is str
+                and type(detail['message_truncated']) is bool, 'error diagnostic text required')
+        size = len(detail['message_prefix'].encode('utf-8'))
+        require(size <= 96 and (not detail['message_truncated'] or size >= 93),
+                'error diagnostic bounded UTF-8 prefix required')
+        code = row[f'{name}_error_code']
+        require(code is None or (isinstance(code, str) and re.fullmatch('[A-Z][A-Z0-9_]*', code)),
+                'error diagnostic typed slot must remain typed or unknown')
+        # Reject impossible combinations without granting the text any typed
+        # identity. local_integrity may upgrade any existing kind; Display is
+        # independent, and kind alone cannot expose private History-budget origin.
+        kind = detail['kind']
+        require(code != 'ROOT' and not (code is not None and kind == 'unclassified'),
+                'legacy diagnostic cannot become a typed code')
+        remote_codes = ('REMOTE_TERMINAL', 'REMOTE_RETRYABLE')
+        require(kind != 'remote_refusal' or code is None or code in remote_codes,
+                'uncontrolled remote text cannot supply a local typed code')
+        if code in remote_codes:
+            require(kind in ('remote_refusal', 'local_structure'),
+                    'controlled remote typed code kind mismatch')
+        if code == 'PUBLIC_EOF':
+            require(kind in ('transport', 'local_structure'), 'typed EOF kind mismatch')
+        if name == 'dispatch':
+            require(row.get('dispatch_accepted') is not True, 'accepted dispatch cannot have an Err diagnostic')
+        else:
+            require(type(row.get('terminal_phase')) is str, 'terminal Err phase required')
+
+
+def request_error_diagnostic_summary(rows):
+    observed = [row for row in rows if 'error_diagnostics' in row]
+    if not observed:
+        return None
+    for row in observed:
+        validate_request_error_diagnostics(row)
+    def counts(name):
+        known = [row for row in observed if row['error_diagnostics'][name] is not None]
+        values = Counter((row[f'{name}_error_code'], detail['kind'], detail['message_prefix'],
+                          detail['message_truncated']) for row in known
+                         for detail in [row['error_diagnostics'][name]])
+        return {'diagnostics_present': len(known),
+                'no_diagnostic_captured': len(observed) - len(known),
+                'counts': [dict(typed_error_code=key[0], kind=key[1], message_prefix=key[2],
+                               message_truncated=key[3], count=count) for key, count in values.items()]}
+    return {'observed_records': len(observed),
+            'historical_records_without_extension': len(rows) - len(observed),
+            'dispatch': counts('dispatch'), 'terminal': counts('terminal'),
+            'scope': 'bounded actual Err text and existing kind only; untrusted text is not a typed '
+                     'code, authorization or outcome; missing historical diagnostics remain unknown'}
+
+
 def validate_v4_record(row):
     require(type(row) is dict, 'v4 request record required')
+    validate_request_error_diagnostics(row)
     validate_v4_phases(row.get('submit_phases'))
     for key in WAIT_FIELDS_V4:
         validate_v4_interval(row.get(key))
@@ -315,6 +393,10 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
         'submit_phase_measurements_available': instrumented,
         'submit_phases': None,
     }
+    diagnostics = request_error_diagnostic_summary(rows)
+    if diagnostics is not None:
+        require(observer_v4, 'request error diagnostic extension requires v4 observer scope')
+        result['error_diagnostics'] = diagnostics
     if arithmetic_profile:
         known = [arithmetic_observation(row['work_arithmetic']) for row in rows
                  if 'work_arithmetic' in row]

@@ -415,6 +415,9 @@ jobs:
         binary_reader=$?
         set -e
         printf 'native_exit=%s\nexecution_reader=%s\nobservation_reader=%s\nbinary_reader=%s\n' "$native_exit" "$execution_reader" "$observation_reader" "$binary_reader" > "$TRNM_CI_RECEIPT_DIR/growth-scale.exits.txt"
+        # Emit the bounded reader result for direct readback; retain all raw files
+        # and the four original exit checks, including refused observations.
+        cat "$TRNM_CI_RECEIPT_DIR/growth-scale.readback.json"
         test "$native_exit" -eq 0 && test "$execution_reader" -eq 0 && test "$observation_reader" -eq 0 && test "$binary_reader" -eq 0
     - name: Recheck the same test ELF after success or failure
       if: ${{ always() && steps.build.outcome == 'success' }}

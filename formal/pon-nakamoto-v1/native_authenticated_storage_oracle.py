@@ -263,7 +263,8 @@ def table_rows(db):
         "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]
     result, row_count, byte_count = {}, 0, 0
     for name in names:
-        require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+        # Native DDL includes versioned identifiers such as reorg_lifecycle_v1.
+        require(re.fullmatch('[a-z_][a-z0-9_]*', name) is not None, 'TABLE_NAME')
         count = db.execute(f'SELECT count(*) FROM {name}').fetchone()[0]
         row_count += uint(count, MAX_ROWS)
         require(row_count <= MAX_ROWS, 'ROW_BUDGET')

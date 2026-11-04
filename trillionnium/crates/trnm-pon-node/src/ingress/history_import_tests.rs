@@ -27,7 +27,11 @@ pub(super) fn cut(stage: &str) {
     });
     if std::env::var("TRNM_HISTORY_KILL_STAGE").ok().as_deref() == Some(stage) {
         let root = std::env::var("TRNM_HISTORY_KILL_DIRECTORY").unwrap();
-        fs::write(std::path::Path::new(&root).join("ready"), stage).unwrap();
+        // A created file is visible before fs::write finishes its payload.
+        // Publish the closed marker atomically before the parent's exact check.
+        let marker = std::path::Path::new(&root).join("ready.pending");
+        fs::write(&marker, stage).unwrap();
+        fs::rename(marker, std::path::Path::new(&root).join("ready")).unwrap();
         // Only this isolated test child pauses. The parent issues SIGKILL;
         // no destructor, normal error return or clean epoch close can run.
         loop {

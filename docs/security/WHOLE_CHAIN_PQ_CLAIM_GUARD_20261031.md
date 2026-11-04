@@ -17,7 +17,7 @@ The guard checks actual negative authority and activation assertions in the sour
 
 | Gate | Current boundary | Evidence needed to close |
 | --- | --- | --- |
-| Authorization | NPQ6 account/task and PNQ2 transport are separate. [Hepta #4497 at f28af9b](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/f28af9b7700a61fbbcdcc121521cb879297d5e31) routes explicitly configured `ml_dsa65_v2` ordinary Cell/initial FinalUse consumers and Codex turn/start through canonical PQ authority. Untagged compatibility remains classical; remaining Agentd RunStart V1 and production grant/recovery call sites use classical authority. Complete governance, release, recovery and composed deployment are unqualified. The earlier [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) has separate historical scope; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
+| Authorization | NPQ6 account/task and PNQ2 transport are separate. [Hepta #4497 at f28af9b](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/f28af9b7700a61fbbcdcc121521cb879297d5e31) routes explicitly configured `ml_dsa65_v2` ordinary Cell/initial FinalUse consumers and Codex turn/start through canonical PQ authority. Untagged compatibility remains classical; current Objective/RunStart V1 and inspected HTTP automation constructors retain classical authentication; generic production grant consumers accept injected authority and need separate composition qualification. Complete governance, release, recovery and composed deployment are unqualified. The earlier [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) has separate historical scope; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
 | Proof PQ-128 | Current Node acceptance uses the complete [native PNW1 verifier](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs); the [isolated succinct-proof experiment](../../formal/pon-nakamoto-v1/w1_zkvm/README.md) is not a Node backend. Neither establishes whole-chain PQ-128 qualification. | For the native path, fix the complete relation, actual verifier and per-purpose hash assumptions, assess worst-invalid-input cost and obtain independent cryptographic review. Before accepting any succinct-proof backend, additionally pin guest/compiler hashes, commitment/FRI/Fiat–Shamir parameters, recursion, final verifier and a quantum-soundness argument. Groth16/fake receipts cannot satisfy PQ-128. |
 | Quantum mining and fork choice | Current cumulative-work/DAA incentives have no full adversarial quantum lower bound. | Test cheapest valid complete W1, data loads, reversible oracle/uncompute, challenge amortization, Grover advantage, retarget/timestamp manipulation, reorganization and propagation on equal attack budgets. |
 | Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [research reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) and the explicit [native PNQ2 witness component](PQ_NETWORK_DURABLE_WITNESS_V1.md) have separate evidence. The native component covers three PNQ2 tables under an independent-witness-state assumption; it does not cover all Node/Hepta state or provide a trusted deployed remote service. | Bind early PQ ownership, historic liabilities, old nonce floors, all effect-bearing state, cross-reorg recovery, an independently administered monotonic anchor and independent cold-restart adversarial tests. |
@@ -90,3 +90,32 @@ The remaining proof, quantum-work, complete migration/rollback, network
 capacity and independently deployed end-to-end gates remain UNQUALIFIED.
 The original witness, CPU and business budgets and all activation negatives
 are unchanged.
+
+
+## 2026-11-03 current authority composition readback
+
+The follow-up reads Hepta #4497 at
+[`a6d8ce20bf8f5b6991d2dc5ef7313812944db060`](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/a6d8ce20bf8f5b6991d2dc5ef7313812944db060).
+Its [Objective ingress](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/a6d8ce20bf8f5b6991d2dc5ef7313812944db060/codex-rs/hepta-agentd/src/objective_runtime.rs)
+requires RunStart V1, decodes a 64-byte signature and persists
+RunStartAuthenticationV1. The explicit PQ trust profile refuses this route;
+this is an unsupported PQ product path, not demonstrated silent downgrade.
+Its [HTTP automation constructor](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/a6d8ce20bf8f5b6991d2dc5ef7313812944db060/codex-rs/hepta-agentd/src/automation_effect_host.rs)
+still constructs classical provider-contract and FinalUse authorities.
+
+The shared SignedFinalUseGrant/FinalUseAuthority types also support explicit
+MlDsa65V2 via
+[the fresh PQ owner namespace](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/a6d8ce20bf8f5b6991d2dc5ef7313812944db060/codex-rs/hepta-contracts/src/final_use_pq.rs).
+Accepting those generic types does not prove a production host is classical-only.
+Every concrete host must bind its selected profile, independent issuer keys,
+protected time, consumed-use identities and current external revocation frontier.
+RunStart migration needs a versioned authenticated journal and restart/replay
+validation; changing a signature array does not migrate its owner protocol.
+
+The paired FinalUse frontier correction
+[#4729 at 5fa90c21](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4729)
+has separate source and native qualification. Its source review cannot supply
+the missing original contracts-package or composed-deployment acceptance.
+Local Chain governance role strings and host-injected release-verifier contracts
+are not deployed PQ trust roots. The three-table witness scope above remains
+unchanged. All six original qualification gates remain open.

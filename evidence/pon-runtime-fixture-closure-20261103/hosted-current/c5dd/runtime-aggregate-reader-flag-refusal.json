@@ -1,0 +1,170 @@
+{
+  "schema": "local-runtime-reader-refusal-v1",
+  "reason": "Initial aggregate reader asserted native_execution_authenticated=True, but original records preserve literal false. No source/native/artifact changes. Producer and validator semantics require inspection before correcting reader expectations.",
+  "reader_file": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/build-runtime-final-readback.py",
+  "reader_sha256": "5d4ee1820f18bb07f29993495520c5090e6fcce61409695648299c65122d08bf",
+  "rows": [
+    {
+      "lane": "head",
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "public_intake_v2",
+      "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "public_intake_v2",
+      "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "public_cli",
+      "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "public_pool_cli",
+      "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "public_pool_cli",
+      "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "mining_service_budget",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "head",
+      "target": "native_node",
+      "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "public_intake_v2",
+      "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "public_intake_v2",
+      "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "public_cli",
+      "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "public_pool_cli",
+      "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "public_pool_cli",
+      "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "mining_service_budget",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    },
+    {
+      "lane": "actual-merge",
+      "target": "native_node",
+      "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "literal_flag": false,
+      "manifest_passed": true,
+      "controller_passed": true,
+      "binding_present": true
+    }
+  ]
+}

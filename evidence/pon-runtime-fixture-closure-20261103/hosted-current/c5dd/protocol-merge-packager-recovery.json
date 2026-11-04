@@ -1,0 +1,74 @@
+{
+  "schema": "collector-recoverable-local-error-v1",
+  "observed_utc": "2026-11-03T22:49:33.312147+00:00",
+  "operation": "package selected protocol merge original text records",
+  "failure": "Selected list included non-UTF8 records; generic text packager refused without writing output",
+  "native_verdict_unchanged": true,
+  "artifact_untouched": true,
+  "recovery": "Preserve excluded record hashes here and original artifact bytes; write new explicit text-only member list without modifying original selected list",
+  "nontext_members": [
+    {
+      "member": "from-zero-native/confirmation/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/confirmation/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/independent-client/native.sqlite",
+      "bytes": 196608,
+      "sha256": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/confirmation/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/confirmation/producer/native.sqlite",
+      "bytes": 499712,
+      "sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/native/producer/native.sqlite",
+      "bytes": 245760,
+      "sha256": "905b4925cdff21975309e4e624bcbf664fee2f5f6768c049aec4f9cc794a97b4",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/native/receiver/native.sqlite",
+      "bytes": 245760,
+      "sha256": "ef4f7c273b5eb1ccbe0cd645acd189ae973a2682c32a7a8adbf68b7f3a0f9ca8",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/native/sustained/producer/native.sqlite",
+      "bytes": 245760,
+      "sha256": "6014d4da91f1606f11071237372516420ace59dbc2f185471cc9b32b0c59f250",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    },
+    {
+      "member": "from-zero-native/native/sustained/receiver/native.sqlite",
+      "bytes": 245760,
+      "sha256": "5b246c26d3e66de7576ba5dd7839c52df52fee00d04cd52619f7839242975b49",
+      "magic_hex": "53514c69746520666f726d61",
+      "error": "'utf-8' codec can't decode byte 0x8d in position 98: invalid start byte"
+    }
+  ]
+}

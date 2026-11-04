@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/read_observability.py"
+  ],
+  "native_execution": false,
+  "reader_sha256": "2b501278966246ed924d661eab752706076752750e287efa7a5642af67c2b242",
+  "exit_code": 0,
+  "wall_ns": 3400660681,
+  "completed_utc": "2026-11-03T23:00:53.426500+00:00",
+  "stdout_sha256": "e8e257359d043cb20e54b9b8fa495048e2b88caf3d5eab583587eccea420efa1",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reason": "Clarify that two diagnostic slots do not establish causal/temporal order; expose pre-dispatch cancellations and unchanged phase typed-code slots. Existing artifacts only; this is not a new native sample."
+}

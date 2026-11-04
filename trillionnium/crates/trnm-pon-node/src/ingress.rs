@@ -2486,10 +2486,7 @@ fn receive_page_from_before(
     );
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    native
+    history_import::finish_with_resource(native, deadline, resource)
 }
 /// Public History import is untrusted even when a local TCP proxy carries
 /// remote packets through a loopback address. No external caller can select
@@ -2573,8 +2570,9 @@ pub fn receive_public_page_from_before_observed(
     );
     // Do not convert an already committed block into an invalid work proof
     // when the last local Host owner observation fails.
-    observe_host(observation, HistoryHostPhase::Final, || kernel.verify())?;
-    native
+    history_import::finish_with_resource(native, deadline, || {
+        observe_host(observation, HistoryHostPhase::Final, || kernel.verify())
+    })
 }
 
 /// Shared public History import: refill and full W1 never hold the Node mutex.
@@ -2606,8 +2604,7 @@ pub fn receive_public_page_from_shared(
             resource: &|| kernel.verify(),
         },
     );
-    kernel.verify()?;
-    result
+    history_import::finish_with_resource(result, deadline, || kernel.verify())
 }
 
 pub fn sync_from(
@@ -2658,6 +2655,7 @@ pub fn sync_from(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2711,6 +2709,7 @@ pub fn sync_from_authenticated(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2761,6 +2760,7 @@ pub fn sync_from_authenticated_durable(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2820,6 +2820,7 @@ pub fn sync_from_public_history_pq_v4(
         after = receive_public_page_from_before(node, address, page, tip, after, now()?, deadline)?;
         kernel.verify()?;
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }

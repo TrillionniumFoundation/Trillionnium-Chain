@@ -1,4 +1,7 @@
 //! Actual guest CLI -> durable pool -> shared wall-clock miner -> full native sync.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
+
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -158,6 +161,14 @@ fn successful_while_serving(
 
 #[test]
 fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver() {
+    if current_elf_host::execute_in_fixed_host(
+        "public_pool_cli",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
+
     // These are finite test phase budgets, not network latency or capacity SLAs.
     // The old twelve-second service raced eight paced blocks plus two independent
     // full-native sync processes on the debug CI runner. Reserve both sync phases
@@ -577,6 +588,15 @@ fn reading_service(
 #[test]
 fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     use trnm_pon_node::peer_polling::{PeerPollingConfig, PinnedPeer, PEER_POLLING_SCHEMA};
+
+    if current_elf_host::execute_in_fixed_host(
+        "public_pool_cli",
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
+
     let dir = tempfile::tempdir().unwrap();
     let genesis = ingress::now().unwrap() - 100;
     let settings = Settings::development_with_profiles(
@@ -714,9 +734,10 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     // Two independent, simultaneously live signed-business CLI processes
     // inherit ONE genuine kernel resource group, even when their Node
     // directories, application signing keys and TCP service sockets differ.
-    // Only read the existing cgroup; do not create, change or stop a slice.
-    // This is an inherited developer-service cgroup, NOT the unprovisioned
-    // fixed trnmponpublic.slice, nor a proof of its 25% CPU quota.
+    // These reads observe the existing cgroup without changing its lifecycle.
+    // They validate shared membership and continuous usage; the current-ELF
+    // Host fixture separately verifies the fixed parent and its quota. These
+    // local observations are not standalone fixed-parent qualification evidence.
     #[cfg(target_os = "linux")]
     let inherited_kernel_group = {
         use std::os::unix::fs::MetadataExt;

@@ -1,0 +1,204 @@
+{
+  "schema": "trnm-full-node-terminal-reader-static-review-v1",
+  "reviewer": "/root/cache_scope_review",
+  "reviewed_at_utc": "2026-11-03T20:18:44.081049+00:00",
+  "target_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "driver_path": "/workspace/scratch/b5a148b09b11/next-validation/final-full-node-b280-j1.py",
+  "method": {
+    "static_only": true,
+    "driver_executed_by_reviewer": false,
+    "native_tests_run_by_reviewer": 0,
+    "synthetic_controls_run_by_reviewer": 0,
+    "driver_or_repository_modified_by_reviewer": false,
+    "github_mutations": false,
+    "parent_applied_hardening_before_native_start": true
+  },
+  "before": {
+    "sha256": "97c76b7b06bd9ee58e1bf0f8bece46eafcd200fe119cd156e0ed7cf1c8547693",
+    "lines": 44,
+    "core_behavior": "The tail fullmatch, full name-set coverage, pairwise disjointness, observed-list duplicate checks, count comparison and real subprocess exit prevented an ordinary partial or mixed child run from becoming complete.",
+    "strictness_findings": [
+      {
+        "id": "REGISTRY_AND_ORIGINAL_IGNORE_IDENTITY",
+        "lines": [
+          12,
+          39,
+          41
+        ],
+        "detail": "Only list lengths 971/23 were asserted before the run; registered/ignored input uniqueness, ignored subset and exact original-name identity were not explicitly checked.",
+        "status_after": "CLOSED_BY_PARENT_HARDENING"
+      },
+      {
+        "id": "ONE_CONSISTENT_FINAL_SUMMARY",
+        "lines": [
+          22,
+          34,
+          40,
+          41
+        ],
+        "detail": "The selected tail ok/FAILED label was parsed but unused, while counts came from a second whole-log regex. strip() on the chosen tail and anchored whole-line matching could disagree on malformed whitespace.",
+        "status_after": "CLOSED_BY_PARENT_HARDENING"
+      }
+    ],
+    "additional_identity_note": "ELF/source qualification was separate: build-artifact SHA, actual pre-run SHA and binary_unchanged were recorded, but terminal accounting did not assert post-run binary stability.",
+    "no_runtime_failure_or_false_pass_was_observed": true
+  },
+  "after": {
+    "sha256": "d56025dd28d1c374423b961e783b9769783a9e297e886a9cfc56b274ef37eef4",
+    "lines": 50,
+    "verdict": "SATISFIES_REQUESTED_TERMINAL_ACCOUNTING_REQUIREMENTS_STATICALLY",
+    "new_open_terminal_accounting_findings": [],
+    "requirements": [
+      {
+        "id": "COMPLETE_971_ORIGINAL_REGISTRY",
+        "status": "SATISFIED_STATIC",
+        "lines": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          46
+        ],
+        "detail": "The same selected binary provides --list. Exactly 971 unique registered names must equal the frozen original registry. The final outcome union must equal this exact set."
+      },
+      {
+        "id": "EXACT_ORIGINAL_23_IGNORED",
+        "status": "SATISFIED_STATIC",
+        "lines": [
+          12,
+          15,
+          16,
+          17,
+          42,
+          44,
+          46,
+          47
+        ],
+        "detail": "Exactly 23 unique ignored names must be a subset of registered and equal the frozen original ignored-name set. Actual ignored announcements must be unique and equal that set; a declared count alone cannot replace missing identities."
+      },
+      {
+        "id": "THREE_DISJOINT_OUTCOME_SETS",
+        "status": "SATISFIED_STATIC",
+        "lines": [
+          43,
+          44,
+          45,
+          46
+        ],
+        "detail": "Passed, failed and observed-ignored names require the expected selector spelling, no within-list duplicates, pairwise disjointness and complete exact registry coverage."
+      },
+      {
+        "id": "ACTUAL_NATIVE_EXIT_CONSISTENCY",
+        "status": "SATISFIED_STATIC",
+        "lines": [
+          22,
+          23,
+          24,
+          27,
+          41,
+          47
+        ],
+        "detail": "The real subprocess returncode must be 101 if failures exist and 0 otherwise. Timeout is explicitly refused. The selected final summary must say FAILED or ok consistently and carry the same three observed counts."
+      },
+      {
+        "id": "PARTIAL_LOG_CANNOT_QUALIFY",
+        "status": "SATISFIED_STATIC_FOR_ORDINARY_MIXED_STDOUT",
+        "lines": [
+          27,
+          28,
+          29,
+          30,
+          31,
+          36,
+          41,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49
+        ],
+        "detail": "The final suffix must fullmatch one libtest summary. Missing/truncated suffix, a nested child summary lacking the full registry, missing/duplicate identities, timeout, abnormal exit or inconsistent status/counts produces reader_error before complete_original_registry can be set."
+      },
+      {
+        "id": "SINGLE_FINAL_SUMMARY_SOURCE",
+        "status": "SATISFIED_STATIC",
+        "lines": [
+          29,
+          35,
+          47
+        ],
+        "detail": "Only the selected tail final_summary.groups() supplies final status and counts. The second whole-log summary scan has been removed."
+      },
+      {
+        "id": "EXECUTABLE_AND_READER_RECEIPTS",
+        "status": "STRENGTHENED_STATIC",
+        "lines": [
+          18,
+          20,
+          25,
+          27
+        ],
+        "detail": "The pre-run executable digest must match the recorded build artifact. The run plan retains hashes of the frozen registry plan and driver. Post-run binary_unchanged is required before terminal accounting is accepted. Final source/build qualification remains a separate main-thread responsibility."
+      }
+    ]
+  },
+  "frozen_reference_verification": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/final-composed/full-node/plan.json",
+    "sha256": "a735a2ba81243f738e9566090a6c28ebffb09f591c0e4e97fb3de6bcc51881ca",
+    "registered_count": 971,
+    "registered_unique_count": 971,
+    "ignored_count": 23,
+    "ignored_unique_count": 23,
+    "ignored_subset_registered": true,
+    "registry_and_ignored_match_published_reference": true,
+    "published_reference_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/evidence/pon-runtime-fixture-closure-20261103/full-node-terminal-readback.json",
+    "published_reference_sha256": "385cf6312b1c96ddd990c4994deca3a9e677d8a2bbe52ec94e06bc3311a954d3",
+    "reference_use": "Selector identity only. Historical native outcomes do not qualify the b280 executable.",
+    "original_ignored": [
+      "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+      "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+      "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+      "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+      "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+      "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+      "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+      "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+      "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+      "store::history_page::tests::history_page_complete_call_cost",
+      "store::history_page::tests::packet_reservation_history_complete_call_cost",
+      "store::mempool::binding_tests::normal_256_signed_raw_binding_component_timing",
+      "store::mempool::incremental_prefix_tests::normal_m05_signature_reuse_component_timing",
+      "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "store::native_budget::tests::native_budget_abrupt_exit_worker",
+      "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+      "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "store::reorg_cancellation::tests::reorg_cancellation_kill_child"
+    ]
+  },
+  "current_run_plan_observation": {
+    "exists": false,
+    "native_run_qualified_by_review": false
+  },
+  "interpretation_and_limits": [
+    "complete_original_registry=True certifies accounting completeness, not success. A 947/1/23 run with real exit 101 remains a failed run.",
+    "A successful native suite requires complete coverage, no reader_error, not timed_out, exit 0, 948 passed, zero failed and the exact 23 original ignored names, plus the independent source/ELF gates.",
+    "If child stdout interrupts an ignored announcement so the identity cannot be reconstructed, this reader fails closed rather than filling it from the declared count.",
+    "Python assertions must remain enabled; this review does not qualify a -O or PYTHONOPTIMIZE invocation that removes assert checks.",
+    "Libtest stdout and file receipts are observations, not an independent cryptographic execution oracle against a malicious process forging an entire registry and successful process exit.",
+    "No current long native run outcome is inferred: plan.json did not exist when the initial and hardened static reviews began."
+  ],
+  "static_review_complete": true,
+  "native_run_qualified": false,
+  "all_blockers_closed": false,
+  "additional_tests_requested": []
+}

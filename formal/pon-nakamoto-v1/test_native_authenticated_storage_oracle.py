@@ -20,6 +20,25 @@ import native_authenticated_storage_oracle as oracle
 import state_witness_oracle as state_witness
 
 
+class NativeSchemaIdentifierControls(unittest.TestCase):
+    def test_real_legacy_and_native_ddl_tables_are_all_read(self):
+        contract = oracle.schema_contract()
+        for profile in ('legacy', 'native'):
+            with self.subTest(profile=profile), sqlite3.connect(':memory:') as db:
+                self.addCleanup(db.close)
+                ddl = contract[profile]
+                db.executescript(ddl)
+                expected = {row[1] for row in oracle.expected_catalog(ddl)
+                            if row[0] == 'table'}
+                before = db.total_changes
+                tables = oracle.table_rows(db)
+                self.assertEqual(set(tables), expected)
+                self.assertIn('reorg_lifecycle_v1', tables)
+                self.assertIn('sqlite_sequence', tables)
+                self.assertTrue(all(rows == [] for rows in tables.values()))
+                self.assertEqual(db.total_changes, before)
+
+
 class StorageFixture(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

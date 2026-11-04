@@ -1,0 +1,641 @@
+{
+  "schema": "trnm-published-commit-independent-semantic-review-v1",
+  "reviewer": "/root/cache_scope_review",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+  "incoming_contract_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+  "review_started_utc": "2026-11-03T20:04:03Z",
+  "review_completed_utc": "2026-11-03T20:10:35.764709+00:00",
+  "scope": [
+    "successful committed-CAS receipt versus live-use and socket deadlines",
+    "incoming observed-client and real-owner CAS refusal distinction",
+    "History mandatory settlement, epoch closure and final deadline fences",
+    "current-ELF fixture process ownership, root-sealed parent lease and global nonblocking lock"
+  ],
+  "method": {
+    "kind": "independent static call-path and exact-source comparison",
+    "read_from_local_git_object_and_matching_clean_worktree": true,
+    "new_native_tests_executed": 0,
+    "new_python_test_suites_executed": 0,
+    "new_controls_requested": [],
+    "reason_no_additional_control": "No concrete newly reachable vulnerability was identified; existing final-source validation remains with the main thread.",
+    "repository_source_modified": false,
+    "github_mutations_performed": false,
+    "artifact_only_write": "/workspace/scratch/b5a148b09b11/next-validation/b280-independent-review.json"
+  },
+  "verdict": {
+    "result": "NO_NEW_REACHABLE_VULNERABILITY_IDENTIFIED_IN_REVIEWED_SCOPE",
+    "qualification": "Static review only; this does not certify a full native run, actual fixed-Host positives, performance acceptance or independent security.",
+    "new_blocking_findings": [],
+    "all_blockers_closed": false,
+    "final_commit_native_qualified_by_this_review": false,
+    "actual_fixed_host_qualified_by_this_review": false,
+    "whole_chain_or_activation_qualified": false
+  },
+  "exact_source_checks": {
+    "published_head_is_actual_worktree_head": true,
+    "tracked_worktree_clean": true,
+    "pq_production_delta_from_incoming": "One ServiceFinal hunk only: 16 inserted lines and one replaced line; incoming guard error categories are unchanged.",
+    "incoming_8a_original_selector_body_byte_identical": true,
+    "incoming_history_production_byte_identical": true,
+    "legacy_controller_functions_ast_identical": {
+      "validate_unprovisioned_parent": true,
+      "service_command": true,
+      "prepare_native_build": true,
+      "bind_prepared_execution": true,
+      "bind_prepared_fresh_execution": true,
+      "inside": true,
+      "exit_status": true
+    }
+  },
+  "semantic_checks": [
+    {
+      "id": "CAS_REAL_COMMIT_BEFORE_RECEIPT",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "Only a valid op=2 reaches the deadline exception, after pinned request verification, IMMEDIATE transaction, exact CAS or durable-predecessor retry, original pre-COMMIT deadline, successful real COMMIT, storage recheck and real signature/self-verification. Failed or uncertain COMMIT cannot produce this success; commit_uncertain remains a fence.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "lines": [
+            632,
+            639,
+            648,
+            658,
+            670,
+            680,
+            684,
+            690,
+            693,
+            697,
+            702,
+            707,
+            715,
+            720,
+            738
+          ],
+          "detail": "Validated owner path before ServiceFinal"
+        }
+      ]
+    },
+    {
+      "id": "CURRENT_AND_AUTHENTICATION",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "Current retains service-final and client-final deadline checks. Complete reply context, fresh challenge, pinned signature and observed-checkpoint antirollback precede the only client exception, next == Some(observed). Binding includes generation, canonical policy and distinct witness/writer identities; no current-generation authorization cache is introduced.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "lines": [
+            114,
+            127,
+            291,
+            341,
+            355,
+            363,
+            383,
+            391,
+            400,
+            742
+          ],
+          "detail": "Identity, deadline and reply validation"
+        }
+      ]
+    },
+    {
+      "id": "ORIGINAL_SOCKET_DEADLINE",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "serve_one still passes its original absolute until to write_until; sends remain per-call nonblocking with deadline checks before and after each send. A late real owner COMMIT can therefore still end in transport deadline/fail-closed instead of receipt delivery. The new handle behavior grants no extra I/O interval.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "lines": [
+            166,
+            174,
+            198,
+            203,
+            204,
+            213,
+            230,
+            749,
+            765
+          ],
+          "detail": "Original transport boundary"
+        }
+      ]
+    },
+    {
+      "id": "LOCAL_ALIGNMENT_BEFORE_LIVE_REFUSAL",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "A matching authenticated CAS is locally committed before the original final live callback. Local commit failure poisons the client; uncertain exchange invalidates the execution epoch. New PqReplay::Execute is after commit_with_check, cached responses still check live context, and retirement conservatively publishes cancellation after a committed late refusal.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "lines": [
+            157,
+            189,
+            213,
+            215,
+            259,
+            279,
+            283,
+            292,
+            302,
+            324
+          ],
+          "detail": "Witness-backed mutation and epoch fences"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+          "lines": [
+            243,
+            246,
+            253,
+            355,
+            367,
+            389,
+            390,
+            424,
+            426,
+            439,
+            501,
+            509
+          ],
+          "detail": "Live operation and retirement gates"
+        }
+      ]
+    },
+    {
+      "id": "OBSERVED_CLIENT_VERSUS_REAL_OWNER_CAS",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "Incoming local contradictions remain PQ_WITNESS_OBSERVATION_ROLLBACK before signing/transport without poisoning a usable client. The original 8a selector retains exact retries, skip/wrap refusal, same observed client Current success and unchanged head, plus a fresh unobserved client that reaches the same real DurableWitness owner and gets PQ_WITNESS_CAS. The added pre-CAS control preserves zero hook/transport calls and later valid progress.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "lines": [
+            429,
+            442,
+            449,
+            453,
+            459,
+            690
+          ],
+          "detail": "Distinct client and owner refusal paths"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "lines": [
+            57,
+            60,
+            114,
+            136,
+            167,
+            469,
+            483,
+            487,
+            491,
+            492,
+            493
+          ],
+          "detail": "Real shared owner and preserved incoming test"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "lines": [
+            627,
+            650,
+            652,
+            655,
+            657
+          ],
+          "detail": "New local guard control"
+        }
+      ]
+    },
+    {
+      "id": "HISTORY_SETTLEMENT_AND_CLOSE",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "Both new final alive checks operate only on successful native results, after mandatory cleanup. Settlement/close errors keep their previous precedence. Successful epoch close is marked before late-success refusal, avoiding false abandon. Paid CPU/completion release is settled on the same account; unsuccessful close fences that account and preserves the durable epoch marker. Host resource checks are not replaced by the cheap final alive fence.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "lines": [
+            27,
+            30,
+            63,
+            75,
+            79,
+            98,
+            131,
+            133,
+            136,
+            138,
+            143,
+            192,
+            196,
+            201,
+            206
+          ],
+          "detail": "Mandatory cleanup followed by success-only time fence"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+          "lines": [
+            1097,
+            1099,
+            1108,
+            1112,
+            1129,
+            1305
+          ],
+          "detail": "Paid accounting, completion release and abandonment"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "lines": [
+            479,
+            485,
+            495,
+            503,
+            519,
+            523,
+            524
+          ],
+          "detail": "Same-domain epoch closure and retained continuous-mode denial"
+        }
+      ]
+    },
+    {
+      "id": "GLOBAL_NONBLOCKING_OWNER_LOCK",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "All outer controller modes hold one fixed /run/trnmponpublic-ci-owner.lock before fresh/reuse decisions and through cleanup/final lease validation. Root creation uses O_CREAT|O_EXCL|O_NOFOLLOW and never truncates/replaces an existing inode. Opened FD must be a root/root 0444 empty regular file; LOCK_EX|LOCK_NB does not wait; post-flock lstat must match the held inode. Receipt-root-specific concurrent ownership is no longer possible through these entrypoints.",
+      "anchors": [
+        {
+          "path": "scripts/ci/public_fixture_host_lease.py",
+          "lines": [
+            41,
+            43,
+            44,
+            47,
+            50,
+            54,
+            56,
+            60,
+            61,
+            65,
+            67
+          ],
+          "detail": "Single stable root lock"
+        },
+        {
+          "path": "scripts/ci/run_from_zero_host.py",
+          "lines": [
+            282,
+            288,
+            292,
+            408,
+            436,
+            443,
+            445
+          ],
+          "detail": "Lock lifetime includes final verification"
+        }
+      ]
+    },
+    {
+      "id": "ROOT_SEALED_PARENT_REUSE",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "Reuse requires the root-owned create-once seal and matching current mirror plus current source/tree/job/attempt/caller/receipt-root context, root directory/file metadata, original absence/provision receipt identities, boot/cgroup inode/unit identity, every original cgroup limit, unchanged systemd configuration and zero remaining parent processes. Marker/existence alone cannot authorize reuse. The creator and current service remain distinct; final cleanup repeats the same binding. No existing parent is deleted, widened or reconfigured.",
+      "anchors": [
+        {
+          "path": "scripts/ci/public_fixture_host_lease.py",
+          "lines": [
+            30,
+            70,
+            86,
+            95,
+            110,
+            117,
+            125,
+            148,
+            152,
+            157,
+            163,
+            170,
+            173,
+            179,
+            187,
+            189,
+            194,
+            196,
+            198,
+            202,
+            206
+          ],
+          "detail": "Create-once origin and current-context revalidation"
+        },
+        {
+          "path": "scripts/ci/run_from_zero_host.py",
+          "lines": [
+            294,
+            299,
+            304,
+            316,
+            329,
+            376,
+            411,
+            413,
+            425,
+            433,
+            436,
+            438
+          ],
+          "detail": "Fresh/reuse distinction, unique child and final empty-parent verification"
+        }
+      ]
+    },
+    {
+      "id": "CURRENT_ELF_AND_OWNER_LIFECYCLE",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "The exact nine-entry registry binds current parent libtest ELF/inode/hash, original working directory, source/job/build inputs, optional compiled CLI and two actual owner identities. Owner pidfds are opened around identity rechecks; exit/timeout kills and reaps the owned process group and cannot become success. Controller cleanup checks the real cgroup before pass. Rust child marker is subordinate to real KernelBudget verification; original native assertions still run. The architecture 120-second bound and 18-sample native predicate remain separate from business acceptance.",
+      "anchors": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+          "lines": [
+            7,
+            8,
+            12,
+            14,
+            20,
+            24,
+            30,
+            47,
+            48,
+            69
+          ],
+          "detail": "Original kernel checks and current executable delegation"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+          "lines": [
+            336,
+            345,
+            354,
+            357,
+            363,
+            418,
+            422,
+            445
+          ],
+          "detail": "Fresh boot/inode/thread membership/limit reads"
+        },
+        {
+          "path": "scripts/ci/run_public_fixture_native.py",
+          "lines": [
+            43,
+            56,
+            148,
+            155,
+            168,
+            171,
+            193,
+            213,
+            215,
+            219,
+            239,
+            255,
+            258,
+            263,
+            266,
+            275,
+            279,
+            281,
+            285,
+            288,
+            292,
+            298,
+            313,
+            322,
+            342,
+            353,
+            382,
+            397,
+            401,
+            409,
+            424,
+            465,
+            475,
+            479
+          ],
+          "detail": "Exact preparation, owner liveness, execution and result binding"
+        }
+      ]
+    },
+    {
+      "id": "ORIGINAL_CONTROLLER_MODES",
+      "status": "STATIC_BOUNDARY_PRESERVED",
+      "conclusion": "from-zero, fresh-service and History still refuse preexisting parents before preparation/reuse/setup. Their original build/binding/inside/service functions are AST-identical to incoming source; only exact public-fixture mode receives sealed-parent reuse. Cleanup stops only the unique child service and leaves the shared parent intact.",
+      "anchors": [
+        {
+          "path": "scripts/ci/run_from_zero_host.py",
+          "lines": [
+            78,
+            95,
+            109,
+            153,
+            181,
+            230,
+            248,
+            292,
+            296,
+            299,
+            313,
+            413,
+            420
+          ],
+          "detail": "Original controller contract"
+        }
+      ]
+    }
+  ],
+  "closure_candidates": [
+    {
+      "id": "late_real_commit_receipt_loss",
+      "source_resolution": "Corrected without renewing Current/live/socket deadlines.",
+      "qualification_remaining": "Exact b280 compiled native boundary controls and original regressions belong to the main-thread final validation."
+    },
+    {
+      "id": "original_selector_local_owner_refusal_distinction",
+      "source_resolution": "Incoming 8a original selector and both semantic branches are fully retained; temporary CAS-category compatibility candidate is not the published contract.",
+      "qualification_remaining": "Do not transfer earlier CAS-category-candidate runtime results to this final executable."
+    },
+    {
+      "id": "history_late_success_after_cleanup",
+      "source_resolution": "Final success-only deadline fences retain paid CPU, cleanup precedence and durable epoch behavior.",
+      "qualification_remaining": "Final-source History validation; the existing tests do not isolate cleanup-only deadline crossing."
+    },
+    {
+      "id": "public_fixture_current_elf_and_parent_ownership",
+      "source_resolution": "Actual kernel authority, exact current-ELF delegation, global nonblocking ownership and root-sealed reuse are enforced in source.",
+      "qualification_remaining": "All nine positive selectors under the actual hosted fixed parent; mocked metadata and local lifecycle controls do not provide this qualification."
+    }
+  ],
+  "residual_risks_and_limits": [
+    {
+      "id": "LATE_RECEIPT_MAY_STILL_BE_UNDELIVERABLE",
+      "kind": "retained fail-closed availability boundary",
+      "detail": "A real COMMIT followed by socket expiry, lost reply, storage failure or signing failure may still leave local and external checkpoints unequal and the client fenced. This fix only reconciles a complete authenticated matching receipt that is actually returned; it is not recovery of every uncertain CAS.",
+      "new_vulnerability": false
+    },
+    {
+      "id": "DEADLINES_ARE_COOPERATIVE",
+      "kind": "retained timing limitation",
+      "detail": "SQLite COMMIT, signing and mandatory History cleanup are not preempted at the instant a clock deadline passes. The existing nonblocking socket checks and final live fences reject late outward success; they are not hard real-time scheduling guarantees.",
+      "new_vulnerability": false
+    },
+    {
+      "id": "HOSTED_POSITIVES_NOT_ESTABLISHED",
+      "kind": "open execution qualification",
+      "detail": "Actual sudo/systemd/cgroup/root-seal operation and all nine positive fixtures still need exact-source hosted execution. The 78 local Python controls include mocked root/systemd observations; marker-refusal and pidfd lifecycle controls cannot upgrade this to a real Host pass.",
+      "new_vulnerability": false
+    },
+    {
+      "id": "FINAL_EXECUTABLE_VALIDATION_PENDING",
+      "kind": "open final-source qualification",
+      "detail": "Main thread is rebuilding/testing the published final source with its original profile and single build job. Earlier 947/1/23, old CAS-category-candidate results and interrupted runs are historical evidence, not b280 qualification.",
+      "new_vulnerability": false
+    },
+    {
+      "id": "HISTORY_SCOPE_LIMITS_REMAIN",
+      "kind": "retained feature and evidence boundary",
+      "detail": "Generic continuous History remains explicitly denied until its durable operation owner exists. Retained completion identities are scoped to a live CPU owner, not restart-persistent authorization. The late-admission cold reopen follows exact retry/activation and does not prove the pre-retry durable activation state.",
+      "new_vulnerability": false
+    }
+  ],
+  "coverage_limits": [
+    "The new witness controls force real pre-COMMIT expiry and real COMMIT crossing; they do not separately force a signing-only deadline crossing.",
+    "The late Current control proves client refusal of an authentic response delivered after the original deadline; service-final Current refusal is additionally established by the unchanged source branch.",
+    "The three History deadline controls expire inside the native closure, not exclusively during cleanup after an on-time native success; cleanup error precedence is verified statically.",
+    "A process-local retained completion identity or cold reopen after retry is not a durable live-authorization cache.",
+    "CI file/process receipts and libtest stdout remain execution observations, not an independent cryptographic execution oracle."
+  ],
+  "source_files": [
+    {
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "bytes": 11040,
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+      "git_blob": "69ecbe1183ef9e6123d3014376f9c50a3f43a063",
+      "matches_worktree": true
+    },
+    {
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "bytes": 29037,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+      "git_blob": "253fbc7806b6631f5a29220ea42b0711f853f278",
+      "matches_worktree": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "bytes": 24743,
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "git_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "matches_worktree": true
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "bytes": 5452,
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "matches_worktree": true
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "bytes": 21380,
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "bytes": 2996,
+      "sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e",
+      "git_blob": "243f28fca0fb179927a0fabedc8f480bebfeffb8",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "bytes": 53670,
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "bytes": 35751,
+      "sha256": "5080edad563360644f81226d5d8f1d2b107132a046a0629fd6c518b043a902ef",
+      "git_blob": "64f911e95b4b69705ef2d8f23593529b703a3da5",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+      "bytes": 24820,
+      "sha256": "9c0bda88adda6ad051adcd4f0975bd7258da2e7c70ba0e9e7da2b2d94138ac86",
+      "git_blob": "facb3636e80a3974af91c57c991d438af7806ddf",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+      "bytes": 16488,
+      "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d",
+      "git_blob": "97f614be188d2acecef88e81da690c8121c7a595",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "bytes": 30447,
+      "sha256": "9bc5aa3cf2b394b0a48b1d1e6aa4b1622473491307107cdcde3af2bf0de62114",
+      "git_blob": "9f91b32e1893e4909ca1aac2084d41a15876e416",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "bytes": 23132,
+      "sha256": "036a2b1d78e60c565f565d404905cc7d3dfb477522ea755ae7be495b86c5f932",
+      "git_blob": "bea4200197a282f2c970dc22f0d0765e64dffa61",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22160,
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "git_blob": "57616573bfeddd872c9e167332ad5882d2bd5ccc",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+      "bytes": 7756,
+      "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f",
+      "git_blob": "73e5d3d02611833848409254fc1b37452542e463",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "bytes": 119523,
+      "sha256": "d88ff6cc5c56c73460f69c7c7d9a5ce96831be4571739d223049eaeba80d605f",
+      "git_blob": "b2a63be7408eef9f61b4c3c7b6018518d5987acc",
+      "matches_worktree": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "bytes": 76934,
+      "sha256": "d1990f3312f2bd3b17aac1cc668c70bf513825314e3ec2a7fcb004ac0097c4aa",
+      "git_blob": "91a84c500bb8891837aaa251ebf0e371ff2ecbf2",
+      "matches_worktree": true
+    }
+  ],
+  "remaining_validation_scope": [
+    "existing final-source native validation owned by main thread",
+    "actual fixed-Host positive fixtures",
+    "original public-service/performance/security/independent-operator gates remain outside this static closure"
+  ],
+  "source_changes_or_extra_test_runs_requested_by_this_review": []
+}

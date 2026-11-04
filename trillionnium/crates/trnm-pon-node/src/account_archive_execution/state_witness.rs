@@ -703,8 +703,44 @@ pub(crate) fn commitment_from_complete_state_with_roots(
     calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
     calculate_non_account_root: impl FnOnce(&State) -> pon_executor::Result<Hash>,
 ) -> Result<StateCommitment> {
+    commitment_from_complete_state_with_current_accounts(
+        settings,
+        state,
+        lifts,
+        calculate_root,
+        calculate_non_account_root,
+    )
+    .map(|(commitment, _)| commitment)
+}
+
+/// Parsed mathematical input from this complete immutable State. The private
+/// fields bind every account, including nonce and zero-balance existence, to the
+/// exact source borrow. This carries no SQL graph, record or admission verdict
+/// and is never installed in a retained arithmetic cache.
+pub(crate) struct CurrentAccounts<'a> {
+    state: &'a State,
+    values: BTreeMap<Hash, Account>,
+}
+
+impl CurrentAccounts<'_> {
+    pub(crate) fn values_for(&self, state: &State) -> Option<&BTreeMap<Hash, Account>> {
+        std::ptr::eq(self.state, state).then_some(&self.values)
+    }
+}
+
+/// Return the account projection already needed by this complete calculation.
+/// All original parsing, roots, aggregates, conservation and error order run
+/// before it is returned. An immediate graph verifier can borrow these values
+/// instead of parsing this unchanged State a second time.
+pub(crate) fn commitment_from_complete_state_with_current_accounts<'a>(
+    settings: &Settings,
+    state: &'a State,
+    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
+    calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
+    calculate_non_account_root: impl FnOnce(&State) -> pon_executor::Result<Hash>,
+) -> Result<(StateCommitment, CurrentAccounts<'a>)> {
     let account_values = accounts(state)?;
-    commitment_with_non_account_root(
+    let commitment = commitment_with_non_account_root(
         Context {
             network: settings.network(),
             parameters: settings.parameters(),
@@ -721,7 +757,14 @@ pub(crate) fn commitment_from_complete_state_with_roots(
         total(account_values.values().map(|value| value.balance))?,
         &non_accounts(state),
         calculate_non_account_root,
-    )
+    )?;
+    Ok((
+        commitment,
+        CurrentAccounts {
+            state,
+            values: account_values,
+        },
+    ))
 }
 
 /// Experimental borrowed-partition parity controls only. The default native

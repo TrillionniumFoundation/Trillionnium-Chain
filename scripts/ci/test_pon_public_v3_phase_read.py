@@ -128,7 +128,116 @@ def arithmetic_report():
         preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
 
 
+def diagnostic_record():
+    row = record_v4()
+    row.update(dispatch_error_code=None, terminal_phase='response',
+        error_diagnostics=dict(schema=reader.ERROR_DIAGNOSTIC_SCHEMA,
+            has_control_authority=False, messages_are_untrusted=True, message_capacity_bytes=96,
+            dispatch=dict(kind='unclassified', message_prefix='ROOT', message_truncated=False),
+            terminal=None))
+    return row
+
+
 class ReaderTests(unittest.TestCase):
+    def test_request_error_diagnostic_extension_retains_legacy_unknown_and_typed_separation(self):
+        measured = diagnostic_record()
+        remote = diagnostic_record()
+        remote['error_diagnostics']['dispatch']['kind'] = 'remote_refusal'
+        cancelled = diagnostic_record()
+        cancelled['dispatch_error_code'] = 'PUBLIC_REQUEST_CANCELLED'
+        cancelled['error_diagnostics']['dispatch'].update(
+            kind='cancelled', message_prefix='receiver diagnostic text changed')
+        abandoned = diagnostic_record()
+        abandoned.update(dispatch_started=False, dispatch_accepted=None)
+        abandoned['error_diagnostics']['dispatch'] = None
+        rows = [record_v4(), measured, remote, cancelled, abandoned]
+        before = copy.deepcopy(rows)
+        result = reader.execution_summary(rows, True, observer_v4=True)
+        self.assertEqual(rows, before)
+        detail = result['error_diagnostics']
+        self.assertEqual(detail['observed_records'], 4)
+        self.assertEqual(detail['historical_records_without_extension'], 1)
+        self.assertEqual(detail['dispatch']['diagnostics_present'], 3)
+        self.assertEqual(detail['dispatch']['no_diagnostic_captured'], 1)
+        kinds = {row['kind']: row for row in detail['dispatch']['counts']}
+        self.assertIsNone(kinds['unclassified']['typed_error_code'])
+        self.assertIsNone(kinds['remote_refusal']['typed_error_code'])
+        self.assertEqual(kinds['cancelled']['typed_error_code'], 'PUBLIC_REQUEST_CANCELLED')
+        self.assertEqual(result['dispatch_outcomes'], {'rejected': 4, 'unknown': 1})
+        self.assertNotIn('error_diagnostics', reader.execution_summary([record_v4()], True, observer_v4=True))
+        with self.assertRaisesRegex(ValueError, 'v4 observer scope'):
+            reader.execution_summary([measured], True)
+
+    def test_request_error_diagnostic_keeps_distinct_terminal_cause_and_truncation(self):
+        row = diagnostic_record()
+        row.update(terminal_phase='work', terminal_error_code='PUBLIC_EOF')
+        row['error_diagnostics']['terminal'] = dict(kind='transport',
+            message_prefix='PUBLIC_EOF', message_truncated=False)
+        value = reader.execution_summary([row], True, observer_v4=True)['error_diagnostics']
+        self.assertEqual(value['dispatch']['counts'][0]['message_prefix'], 'ROOT')
+        self.assertIsNone(value['dispatch']['counts'][0]['typed_error_code'])
+        self.assertEqual(value['terminal']['counts'][0]['typed_error_code'], 'PUBLIC_EOF')
+        for text in ('x' * 96, 'x' * 95, '界' * 31):
+            row['error_diagnostics']['dispatch'].update(message_prefix=text, message_truncated=True)
+            reader.execution_summary([row], True, observer_v4=True)
+
+    def test_request_error_diagnostic_keeps_predispatch_errors_and_legal_kind_overrides(self):
+        for code, kind in (
+            ('PUBLIC_MUTATION_CPU_BUDGET', 'capacity'),
+            ('PUBLIC_EOF', 'transport'),
+            ('PUBLIC_EOF', 'local_structure'),
+            ('REMOTE_TERMINAL', 'remote_refusal'),
+            ('REMOTE_RETRYABLE', 'remote_refusal'),
+            ('REMOTE_TERMINAL', 'local_structure'),
+            ('ANCESTRY_INDEX_BUDGET', 'capacity'),
+        ):
+            row = diagnostic_record()
+            row.update(dispatch_started=False, dispatch_accepted=None, dispatch_error_code=code)
+            # Display text is deliberately independent of code and kind. This
+            # synthetic record does not authenticate a remote or local origin.
+            row['error_diagnostics']['dispatch'].update(kind=kind, message_prefix='ROOT')
+            before = copy.deepcopy(row)
+            with self.subTest(code=code, kind=kind):
+                value = reader.execution_summary([row], True, observer_v4=True)
+                self.assertEqual(row, before)
+                self.assertEqual(value['dispatch_outcomes'], {'unknown': 1})
+                item = value['error_diagnostics']['dispatch']['counts'][0]
+                self.assertEqual((item['typed_error_code'], item['kind'], item['message_prefix']),
+                                 (code, kind, 'ROOT'))
+
+    def test_request_error_diagnostic_rejects_bad_scope_unbounded_or_reclassified_data(self):
+        mutations = [
+            lambda r: r['error_diagnostics'].update(schema='unknown'),
+            lambda r: r['error_diagnostics'].update(has_control_authority=True),
+            lambda r: r['error_diagnostics'].update(messages_are_untrusted=False),
+            lambda r: r['error_diagnostics'].update(message_capacity_bytes=97),
+            lambda r: r['error_diagnostics'].update(extra=True),
+            lambda r: r['error_diagnostics']['dispatch'].update(kind='root-authority'),
+            lambda r: r['error_diagnostics']['dispatch'].update(message_prefix='x' * 97),
+            lambda r: r['error_diagnostics']['dispatch'].update(message_prefix='界' * 33),
+            lambda r: r['error_diagnostics']['dispatch'].update(message_truncated=1),
+            lambda r: r['error_diagnostics']['dispatch'].update(message_truncated=True),
+            lambda r: r['error_diagnostics']['dispatch'].update(typed_code='ROOT'),
+            lambda r: r.update(dispatch_accepted=True),
+            lambda r: r.pop('dispatch_error_code'),
+            lambda r: r.update(dispatch_error_code='WORK:Transcript'),
+            lambda r: r.update(terminal_error_code='PUBLIC_EOF'),
+            lambda r: r.update(dispatch_error_code='ROOT'),
+            lambda r: (r.update(dispatch_error_code='ROOT'),
+                       r['error_diagnostics']['dispatch'].update(kind='protocol_invalid')),
+            lambda r: (r.update(dispatch_error_code='PUBLIC_EOF'),
+                       r['error_diagnostics']['dispatch'].update(kind='cancelled')),
+            lambda r: (r.update(dispatch_error_code='REMOTE_TERMINAL'),
+                       r['error_diagnostics']['dispatch'].update(kind='transport')),
+            lambda r: (r.update(dispatch_error_code='PUBLIC_REQUEST_CANCELLED'),
+                       r['error_diagnostics']['dispatch'].update(kind='remote_refusal')),
+        ]
+        for index, mutate in enumerate(mutations):
+            row = diagnostic_record()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.execution_summary([row], True, observer_v4=True)
+
     def test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators(self):
         row = observed_history_call()
         row['client_import'].update(thread_cpu_ns=None, thread_cpu_observation_available=False)

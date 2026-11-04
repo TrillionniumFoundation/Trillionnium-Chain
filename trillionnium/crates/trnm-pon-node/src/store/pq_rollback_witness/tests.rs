@@ -479,10 +479,17 @@ fn exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse() {
         .is_err());
     client.current().unwrap();
     assert!(Checkpoint::new(u64::MAX, [4; 64]).is_err());
+    let fork = Checkpoint::new(2, [3; 64]).unwrap();
     error(
-        client.advance(initial, Checkpoint::new(2, [3; 64]).unwrap()),
-        "PQ_WITNESS_CAS",
+        client.advance(initial, fork),
+        "PQ_WITNESS_OBSERVATION_ROLLBACK",
     );
+    assert_eq!(client.current().unwrap(), next);
+    assert_eq!(f.head(), next);
+
+    // An unobserved client must still reach the owner CAS check.
+    let mut unobserved = f.client();
+    error(unobserved.advance(initial, fork), "PQ_WITNESS_CAS");
     assert_eq!(f.head(), next);
 }
 
@@ -692,6 +699,47 @@ fn authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit()
         "LIVE_DEADLINE",
     );
     f.mode.store(0, Ordering::Release);
+    assert_eq!(input_bytes(&node), 61);
+    assert_eq!(checkpoint(&node.db).unwrap(), f.head());
+    node.charge_pq_ingress(&f.policy, false, 1, false).unwrap();
+    drop(node);
+    assert_eq!(input_bytes(&f.reopen().unwrap()), 62);
+}
+
+#[test]
+fn witness_commit_crossing_original_deadline_still_aligns_local_commit() {
+    let f = Fixture::new();
+    let mut node = f.node();
+    let reached_commit = Arc::new(AtomicBool::new(false));
+    let observed_commit = reached_commit.clone();
+    let until = Instant::now() + Duration::from_millis(200);
+    f.service
+        .lock()
+        .unwrap()
+        .as_ref()
+        .unwrap()
+        .fixture_commit_hook(Some(move || {
+            // Delay the real witness COMMIT after its original deadline check.
+            // Returning false lets SQLite complete the actual durable write.
+            observed_commit.store(true, Ordering::Release);
+            thread::sleep(
+                until.saturating_duration_since(Instant::now()) + Duration::from_millis(2),
+            );
+            false
+        }));
+    error(
+        node.charge_pq_ingress_with_check(&f.policy, true, 61, true, until, &mut || {
+            ensure(Instant::now() < until, "LIVE_DEADLINE")
+        }),
+        "LIVE_DEADLINE",
+    );
+    assert!(reached_commit.load(Ordering::Acquire));
+    f.service
+        .lock()
+        .unwrap()
+        .as_ref()
+        .unwrap()
+        .fixture_commit_hook(None::<fn() -> bool>);
     assert_eq!(input_bytes(&node), 61);
     assert_eq!(checkpoint(&node.db).unwrap(), f.head());
     node.charge_pq_ingress(&f.policy, false, 1, false).unwrap();

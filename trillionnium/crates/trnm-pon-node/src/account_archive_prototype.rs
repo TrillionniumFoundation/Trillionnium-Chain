@@ -954,9 +954,44 @@ impl AccountArchive {
     }
 }
 
+#[cfg(test)]
+std::thread_local! {
+    static ACCOUNT_PARSE_COUNTS: std::cell::Cell<(usize, usize)> =
+        const { std::cell::Cell::new((0, 0)) };
+}
+
+#[cfg(test)]
+#[derive(Default)]
+struct AccountParseObservation {
+    rows: usize,
+}
+
+#[cfg(test)]
+impl Drop for AccountParseObservation {
+    fn drop(&mut self) {
+        ACCOUNT_PARSE_COUNTS.with(|counts| {
+            let (calls, rows) = counts.get();
+            counts.set((calls.saturating_add(1), rows.saturating_add(self.rows)));
+        });
+    }
+}
+
+/// Test-only actual parser invocations and visited State rows, including failed
+/// parses. Thread-local counters keep independent fixture threads separate.
+#[cfg(test)]
+pub(crate) fn take_account_parse_observation() -> (usize, usize) {
+    ACCOUNT_PARSE_COUNTS.with(|counts| counts.replace((0, 0)))
+}
+
 pub(crate) fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
+    #[cfg(test)]
+    let mut observation = AccountParseObservation::default();
     let mut out = BTreeMap::new();
     for (key, value) in state {
+        #[cfg(test)]
+        {
+            observation.rows += 1;
+        }
         let Some(owner) = key.strip_prefix("account:") else {
             continue;
         };

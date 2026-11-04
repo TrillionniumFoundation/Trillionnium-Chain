@@ -1,6 +1,7 @@
 //! Optional bounded local measurements. Never ledger or transport authority.
 use super::work_arithmetic::PublicArithmeticWorkObservation;
-use serde::Serialize;
+use serde::{ser::SerializeStruct, Serialize};
+use std::fmt::{self, Write};
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex, OnceLock,
@@ -10,6 +11,98 @@ use std::time::Instant;
 use trnm_protocol::pon_wire::Hash;
 
 pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 16_384;
+
+const ERROR_DIAGNOSTIC_MESSAGE_BYTES: usize = 96;
+
+/// A bounded copy of the actual Err's Display text and existing kind. The text
+/// can be peer-controlled and has no typed-error or local-control authority.
+/// Capture uses no heap allocation and never changes Error classification.
+#[derive(Clone, Copy, Debug)]
+pub struct ObservedErrorDiagnostic {
+    kind: &'static str,
+    bytes: [u8; ERROR_DIAGNOSTIC_MESSAGE_BYTES],
+    len: usize,
+    truncated: bool,
+}
+impl ObservedErrorDiagnostic {
+    fn capture(error: &crate::Error) -> Self {
+        use crate::ErrorKind;
+        let kind = match error.kind() {
+            ErrorKind::ProtocolInvalid => "protocol_invalid",
+            ErrorKind::Capacity => "capacity",
+            ErrorKind::Cancelled => "cancelled",
+            ErrorKind::StaleContext => "stale_context",
+            ErrorKind::IdentityConflict => "identity_conflict",
+            ErrorKind::PolicyRefusal => "policy_refusal",
+            ErrorKind::LocalStructure => "local_structure",
+            ErrorKind::DependencyUnavailable => "dependency_unavailable",
+            ErrorKind::Transport => "transport",
+            ErrorKind::Serialization => "serialization",
+            ErrorKind::RemoteRefusal => "remote_refusal",
+            ErrorKind::Unclassified => "unclassified",
+        };
+        let mut value = Self {
+            kind,
+            bytes: [0; ERROR_DIAGNOSTIC_MESSAGE_BYTES],
+            len: 0,
+            truncated: false,
+        };
+        // This writer always succeeds, including after truncation. Formatting
+        // is diagnostic-only; no parse, retry, cancellation or error conversion.
+        let _ = write!(value, "{error}");
+        value
+    }
+}
+impl fmt::Write for ObservedErrorDiagnostic {
+    fn write_str(&mut self, text: &str) -> fmt::Result {
+        if self.truncated {
+            return Ok(());
+        }
+        let mut take = text.len().min(ERROR_DIAGNOSTIC_MESSAGE_BYTES - self.len);
+        while !text.is_char_boundary(take) {
+            take -= 1;
+        }
+        self.bytes[self.len..self.len + take].copy_from_slice(&text.as_bytes()[..take]);
+        self.len += take;
+        self.truncated = take != text.len();
+        Ok(())
+    }
+}
+impl Serialize for ObservedErrorDiagnostic {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let message =
+            std::str::from_utf8(&self.bytes[..self.len]).map_err(serde::ser::Error::custom)?;
+        let mut value = serializer.serialize_struct("ObservedErrorDiagnostic", 3)?;
+        value.serialize_field("kind", self.kind)?;
+        value.serialize_field("message_prefix", message)?;
+        value.serialize_field("message_truncated", &self.truncated)?;
+        value.end()
+    }
+}
+
+/// Versioned additive diagnostic extension. Existing v4 typed codes and phase
+/// shapes remain unchanged; old records without this extension remain unknown.
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct RequestErrorDiagnostics {
+    schema: &'static str,
+    has_control_authority: bool,
+    messages_are_untrusted: bool,
+    message_capacity_bytes: usize,
+    pub dispatch: Option<ObservedErrorDiagnostic>,
+    pub terminal: Option<ObservedErrorDiagnostic>,
+}
+impl Default for RequestErrorDiagnostics {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-request-error-diagnostics-v1",
+            has_control_authority: false,
+            messages_are_untrusted: true,
+            message_capacity_bytes: ERROR_DIAGNOSTIC_MESSAGE_BYTES,
+            dispatch: None,
+            terminal: None,
+        }
+    }
+}
 
 /// Fixed local phases. Native/response phases are nested within dispatch; the
 /// initial CPU reservation wait precedes dispatch. None is CPU credit.
@@ -187,6 +280,7 @@ pub struct PublicRequestObservation {
     pub dispatch_started: bool,
     pub dispatch_accepted: Option<bool>,
     pub dispatch_error_code: Option<&'static str>,
+    pub error_diagnostics: RequestErrorDiagnostics,
     pub dispatch_thread_cpu_ns: Option<u64>,
     pub submit_phases: [SubmitPhaseObservation; 19],
     pub challenge_wait: RequestWaitObservation,
@@ -233,6 +327,7 @@ impl PublicRequestObservation {
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_error_code: None,
+            error_diagnostics: RequestErrorDiagnostics::default(),
             dispatch_thread_cpu_ns: None,
             submit_phases: submit_phases(),
             challenge_wait: RequestWaitObservation::default(),
@@ -263,6 +358,7 @@ struct TaskProgress {
     dispatch_started: bool,
     dispatch_accepted: Option<bool>,
     dispatch_error_code: Option<&'static str>,
+    dispatch_error_diagnostic: Option<ObservedErrorDiagnostic>,
     dispatch_thread_cpu_ns: Option<u64>,
     paid_task_queue_wait: RequestWaitObservation,
 }
@@ -375,6 +471,7 @@ impl PublicRequestObserver {
                         value.dispatch_started = task.dispatch_started;
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_error_code = task.dispatch_error_code;
+                        value.error_diagnostics.dispatch = task.dispatch_error_diagnostic;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
                         value.paid_task_queue_wait = task.paid_task_queue_wait;
                     }
@@ -562,6 +659,7 @@ impl ConnectionObservation {
         self.handle().update(|r| {
             r.terminal_phase = Some(phase);
             r.terminal_error_code = code;
+            r.error_diagnostics.terminal = Some(ObservedErrorDiagnostic::capture(error));
             r.challenge_wait
                 .finish(self.inner.epoch, Some((false, code)));
             r.grant_wait.finish(self.inner.epoch, Some((false, code)));
@@ -687,7 +785,10 @@ impl TaskObservation {
         });
     }
     pub(super) fn dispatch_error(&self, error: &crate::Error) {
-        self.update_task(|r| r.dispatch_error_code = error.code().map(crate::ErrorCode::as_str));
+        self.update_task(|r| {
+            r.dispatch_error_code = error.code().map(crate::ErrorCode::as_str);
+            r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
+        });
     }
     pub(super) fn work_started(&self) {
         self.update_task(|r| {
@@ -894,6 +995,97 @@ mod tests {
     use std::sync::Barrier;
 
     #[test]
+    fn error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8() {
+        for (error, expected_kind) in [
+            (crate::Error::from("ROOT"), "unclassified"),
+            (crate::Error::from("WORK:Transcript"), "unclassified"),
+            (crate::Error::from("PUBLIC_REQUEST_CANCELLED"), "cancelled"),
+            (crate::Error::remote("ROOT"), "remote_refusal"),
+            (
+                crate::Error::from("ROOT").local_integrity(),
+                "local_structure",
+            ),
+            (
+                crate::Error::from(std::io::Error::other("ROOT")),
+                "transport",
+            ),
+        ] {
+            let before = (
+                error.code(),
+                error.kind(),
+                error.requires_owner_stop(),
+                error.to_string(),
+            );
+            let observed = serde_json::to_value(ObservedErrorDiagnostic::capture(&error)).unwrap();
+            assert_eq!(observed["kind"], expected_kind);
+            assert_eq!(observed["message_prefix"], before.3);
+            assert_eq!(observed["message_truncated"], false);
+            assert_eq!(
+                (
+                    error.code(),
+                    error.kind(),
+                    error.requires_owner_stop(),
+                    error.to_string()
+                ),
+                before
+            );
+            if error.kind() == crate::ErrorKind::RemoteRefusal {
+                assert_eq!(observed["kind"], "remote_refusal");
+                assert_eq!(error.code(), None);
+                assert!(!error.requires_owner_stop());
+            }
+        }
+        for (message, expected, truncated) in [
+            ("x".repeat(96), "x".repeat(96), false),
+            ("x".repeat(97), "x".repeat(96), true),
+            (format!("{}界tail", "x".repeat(95)), "x".repeat(95), true),
+        ] {
+            let observed =
+                serde_json::to_value(ObservedErrorDiagnostic::capture(&message.into())).unwrap();
+            assert_eq!(observed["message_prefix"], expected);
+            assert_eq!(observed["message_truncated"], truncated);
+            assert!(
+                observed["message_prefix"].as_str().unwrap().len()
+                    <= ERROR_DIAGNOSTIC_MESSAGE_BYTES
+            );
+        }
+    }
+
+    #[test]
+    fn dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        task.dispatch_started();
+        let error = crate::Error::from("ROOT");
+        task.dispatch_error(&error);
+        task.dispatch_finished(Some(1), false);
+        connection.terminal_error("work", &crate::Error::from("PUBLIC_EOF"));
+        drop(task);
+        drop(connection);
+        let abandoned = observer.connection().unwrap();
+        drop(abandoned.task());
+        drop(abandoned);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        let row = &snapshot.records[0];
+        assert_eq!(row.dispatch_accepted, Some(false));
+        assert_eq!(row.dispatch_error_code, None);
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_EOF"));
+        let diagnostics = serde_json::to_value(row.error_diagnostics).unwrap();
+        assert_eq!(diagnostics["dispatch"]["kind"], "unclassified");
+        assert_eq!(diagnostics["dispatch"]["message_prefix"], "ROOT");
+        assert_eq!(diagnostics["dispatch"]["message_truncated"], false);
+        assert_eq!(diagnostics["terminal"]["message_prefix"], "PUBLIC_EOF");
+        assert!(!error.requires_owner_stop());
+        let unknown = &snapshot.records[1];
+        assert!(unknown.error_diagnostics.dispatch.is_none());
+        assert!(unknown.error_diagnostics.terminal.is_none());
+        assert_eq!(unknown.dispatch_accepted, None);
+        assert_eq!(unknown.terminal_error_code, None);
+    }
+
+    #[test]
     fn queue_cancellation_keeps_original_identity_and_dropped_wait_interval() {
         let observer = PublicRequestObserver::new(1).unwrap();
         let connection = observer.connection().unwrap();
@@ -920,6 +1112,27 @@ mod tests {
         assert_eq!(row.grant_wait.started_ns, None);
         assert_eq!(row.grant_wait.wall_ns, None);
         assert!(row.submit_phases.iter().all(|phase| !phase.started));
+    }
+
+    #[test]
+    fn error_diagnostic_contention_does_not_block_or_reclassify_rejection() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let held = connection.cell.task.lock().unwrap();
+        let error = crate::Error::from("ROOT");
+        task.dispatch_error(&error);
+        assert_eq!(error.to_string(), "ROOT");
+        assert_eq!(error.code(), None);
+        assert!(!error.requires_owner_stop());
+        drop(held);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 1);
+        assert!(snapshot.records[0].observation_failed);
+        assert!(!snapshot.records[0].complete);
+        assert!(snapshot.records[0].error_diagnostics.dispatch.is_none());
     }
 
     #[test]

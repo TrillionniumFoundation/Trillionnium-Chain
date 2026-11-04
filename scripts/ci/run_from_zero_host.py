@@ -24,6 +24,8 @@ from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
                                         capture, validate, write_new)
 import run_from_zero_native as native
 import run_history_native as history
+import run_public_fixture_native as architecture
+import public_fixture_host_lease as lease
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,6 +44,8 @@ ENVIRONMENT = (
     'GITHUB_JOB', 'GITHUB_SHA', 'GITHUB_EVENT_NAME', 'GITHUB_EVENT_PATH',
     'TRNM_CI_RECEIPT_DIR', 'TRNM_EXPECTED_SOURCE_SHA', 'TRNM_EXPECTED_CANDIDATE_SHA',
     'TRNM_EXPECTED_BASE_SHA', 'TRNM_COST_RUNNER_LABEL',
+    'TRNM_ARCHITECTURE_COMPARE_DIR',
+    'EVALUATION_SYNC_OBSERVATION_EVIDENCE_DIR',
 )
 
 
@@ -75,7 +79,8 @@ def validate_command(command: list[str]) -> Path:
     require(len(command) == 4 and command[:3] in ([
         'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
         'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
-        'python3', history.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
+        'python3', history.SCRIPT, '--out'], [
+        'python3', architecture.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -223,12 +228,16 @@ def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
 
 
 def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
+    if command[1] == architecture.SCRIPT:
+        return architecture.validate_preparation(output)
     if command[1] == history.SCRIPT:
         return history.validate_preparation(output)
     return prepare_native_build(receipts)
 
 
 def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
+    if command[1] == architecture.SCRIPT:
+        return architecture.bind_execution(prepared, output)
     if command[1] == history.SCRIPT:
         return history.bind_execution(prepared, output)
     binder = (bind_prepared_fresh_execution if command[1]
@@ -271,6 +280,58 @@ def exit_status(result: dict) -> int:
 
 
 def outer(command: list[str]) -> int:
+    validate_command(command)
+    require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true',
+            'HOSTED_CI_ONLY_NO_LOCAL_PROVISION')
+    require(Path.cwd().resolve() == ROOT and os.getuid() != 0,
+            'ORIGINAL_UNPRIVILEGED_RUNNER_REQUIRED')
+    with lease.parent_lock():
+        return outer_owned(command)
+
+
+def prepare_parent(command: list[str], output: Path, receipts: Path, result: dict,
+                   service: str, run_setup) -> dict:
+    fresh = (not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
+             and not PARENT.exists() and not PARENT.is_symlink())
+    if not fresh:
+        # This exception is confined to the exact current-ELF fixture registry.
+        # The original from-zero, fresh-service and history modes still refuse.
+        require(command[1] == architecture.SCRIPT, 'PARENT_ALREADY_PROVISIONED')
+        result['preparation'] = prepare_command(command, output, receipts)
+        run_setup(['systemctl', 'show', UNIT,
+                   '--property=' + ','.join(lease.SYSTEMD_PROPERTIES)], 'actual-systemd-parent')
+        current = capture('outside-before-reused-parent-service', service)
+        result['parent_lease'] = lease.validate_for_reuse(current, receipts / 'actual-systemd-parent.log')
+        result['parent_reused'] = True
+        write_new(receipts / 'before-service.json', current)
+        return current
+    lease.require_no_seal()
+    run_setup(['systemctl', 'show', '--all',
+               '--property=' + ','.join(PARENT_PROPERTIES), UNIT], 'parent-properties')
+    properties = validate_unprovisioned_parent((receipts / 'parent-properties.log').read_text())
+    write_new(receipts / 'unprovisioned-parent.json', properties)
+    # Original build-only preparation stays outside service measurement. The
+    # current-ELF mode only binds the already running workspace binary.
+    result['preparation'] = prepare_command(command, output, receipts)
+    require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
+            and not PARENT.exists() and not PARENT.is_symlink(), 'PARENT_CHANGED_BEFORE_INSTALL')
+    unit_source = ROOT / 'config/systemd' / UNIT
+    run_setup(['sudo', '-n', 'install', '-o', 'root', '-g', 'root', '-m', '0644',
+               str(unit_source), str(RUNTIME_UNIT)], 'install-reviewed-unit')
+    run_setup(['sudo', '-n', 'systemctl', 'daemon-reload'], 'systemd-reload')
+    run_setup(['sudo', '-n', 'systemctl', 'start', UNIT], 'start-fixed-parent')
+    run_setup(['systemctl', 'show', UNIT,
+               '--property=' + ','.join(lease.SYSTEMD_PROPERTIES)], 'actual-systemd-parent')
+    current = capture('outside-after-provision', service)
+    write_new(receipts / 'after-provision.json', current)
+    require(not validate(current, inside=False, uid=os.getuid(), gid=os.getgid(), cwd=str(ROOT)),
+            'ACTUAL_PARENT_VALIDATION_FAILED')
+    result['parent_lease'] = lease.seal_after_provision(current, receipts, command, run_setup)
+    result['parent_reused'] = False
+    return current
+
+
+def outer_owned(command: list[str]) -> int:
     output = validate_command(command)
     require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true',
             'HOSTED_CI_ONLY_NO_LOCAL_PROVISION')
@@ -311,33 +372,7 @@ def outer(command: list[str]) -> int:
         unit_source = ROOT / 'config/systemd' / UNIT
         require(hashlib.sha256(unit_source.read_bytes()).hexdigest() == UNIT_SHA256,
                 'REVIEWED_UNIT_BYTES')
-        # Do not overwrite or reconfigure any already provisioned Host parent.
-        require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
-                and not PARENT.exists() and not PARENT.is_symlink(), 'PARENT_ALREADY_PROVISIONED')
-        run_setup(['systemctl', 'show', '--all',
-                   '--property=' + ','.join(PARENT_PROPERTIES), UNIT], 'parent-properties')
-        properties = validate_unprovisioned_parent(
-            (receipts / 'parent-properties.log').read_text())
-        write_new(receipts / 'unprovisioned-parent.json', properties)
-        # Compilation is setup, not public service. Keep its entire cost and
-        # failure outside the service denominator, in this same invocation.
-        # History binds its existing separate build; the two original modes
-        # retain their original build command and every native gate.
-        result['preparation'] = prepare_command(command, output, receipts)
-        require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
-                and not PARENT.exists() and not PARENT.is_symlink(),
-                'PARENT_CHANGED_BEFORE_INSTALL')
-        run_setup(['sudo', '-n', 'install', '-o', 'root', '-g', 'root', '-m', '0644',
-                   str(unit_source), str(RUNTIME_UNIT)], 'install-reviewed-unit')
-        run_setup(['sudo', '-n', 'systemctl', 'daemon-reload'], 'systemd-reload')
-        run_setup(['sudo', '-n', 'systemctl', 'start', UNIT], 'start-fixed-parent')
-        run_setup(['systemctl', 'show', UNIT, '--property=FragmentPath,DropInPaths,ControlGroup,'
-                   'CPUQuotaPerSecUSec,CPUQuotaPeriodUSec,MemoryMax,MemorySwapMax,TasksMax'],
-                  'actual-systemd-parent')
-        provisioned = capture('outside-after-provision', service)
-        write_new(receipts / 'after-provision.json', provisioned)
-        require(not validate(provisioned, inside=False, uid=uid, gid=gid, cwd=str(ROOT)),
-                'ACTUAL_PARENT_VALIDATION_FAILED')
+        provisioned = prepare_parent(command, output, receipts, result, service, run_setup)
         run_setup(['systemctl', 'show', '--property=LoadState', '--value', service],
                   'child-load-state', must_succeed=False)
         require((receipts / 'child-load-state.log').read_text().strip() == 'not-found',
@@ -393,6 +428,17 @@ def outer(command: list[str]) -> int:
             result['final_host_errors'] = validate(after, inside=False, uid=uid, gid=gid,
                                                  cwd=str(ROOT), reference=provisioned)
             if result['final_host_errors']:
+                result['passed'] = False
+            try:
+                run_setup(['systemctl', 'show', UNIT,
+                           '--property=' + ','.join(lease.SYSTEMD_PROPERTIES)],
+                          'actual-systemd-parent-after')
+                result['final_parent_lease'] = lease.validate_for_reuse(
+                    after, receipts / 'actual-systemd-parent-after.log')
+                require(result['final_parent_lease'] == result['parent_lease'],
+                        'FIXTURE_PARENT_SEAL_CHANGED_DURING_SERVICE')
+            except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
+                result['final_parent_lease_error'] = str(error)
                 result['passed'] = False
         write_new(receipts / 'controller-result.json', result)
     print(json.dumps(result, sort_keys=True))

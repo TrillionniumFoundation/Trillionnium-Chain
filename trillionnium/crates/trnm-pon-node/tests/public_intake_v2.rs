@@ -1,4 +1,6 @@
 //! Real unknown-caller transport; task and ledger authority remain native checks.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
 use std::{
     net::TcpListener,
     sync::{
@@ -60,6 +62,13 @@ fn actual_work_with_false_state(packet: &Packet) -> Packet {
 }
 #[test]
 fn unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work() {
+    if current_elf_host::execute_in_fixed_host(
+        "public_intake_v2",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+        None,
+    ) {
+        return;
+    }
     let validator_dir = tempfile::tempdir().unwrap();
     let producer_dir = tempfile::tempdir().unwrap();
     let confirmer_dir = tempfile::tempdir().unwrap();
@@ -239,6 +248,13 @@ fn unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_ac
 
 #[test]
 fn one_packet_history_preserves_partial_progress_and_independent_validation() {
+    if current_elf_host::execute_in_fixed_host(
+        "public_intake_v2",
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        None,
+    ) {
+        return;
+    }
     let server_dir = tempfile::tempdir().unwrap();
     let confirmer_dir = tempfile::tempdir().unwrap();
     let clock = ingress::now().unwrap();

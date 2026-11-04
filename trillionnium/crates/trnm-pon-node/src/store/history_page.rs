@@ -1,7 +1,9 @@
 //! Ordinary native history pages: complete actual ancestry checks with a bounded
 //! operation-local page window. This does not use the derived ancestry index,
 //! cache a validity result, read active State, or change any durable boundary.
-use super::{bytes32, bytes64, fixed_blob, optional_fixed_blob, Node, Record};
+#[cfg(test)]
+use super::bytes64;
+use super::{bytes32, fixed_blob, optional_fixed_blob, Node, Record};
 use crate::{consensus::Work, ensure, Error, Packet, Result};
 use rusqlite::params;
 use std::collections::VecDeque;
@@ -22,8 +24,54 @@ pub struct HistoryPageReadCounters {
     pub retained_ids_high_water: u64,
 }
 
+// Keep fixed-field SQL values inline. This removes the per-field Rust Vec
+// buffers, not SQLite's own row/BLOB materialization. Every column is still
+// read and converted before the original parent/work/root width checks.
+struct InlineSqlBlob<const WIDTH: usize> {
+    bytes: [u8; WIDTH],
+    exact: bool,
+}
+impl<const WIDTH: usize> rusqlite::types::FromSql for InlineSqlBlob<WIDTH> {
+    fn column_result(value: rusqlite::types::ValueRef<'_>) -> rusqlite::types::FromSqlResult<Self> {
+        let source = value.as_blob()?;
+        let mut bytes = [0; WIDTH];
+        let copied = source.len().min(WIDTH);
+        bytes[..copied].copy_from_slice(&source[..copied]);
+        Ok(Self {
+            bytes,
+            exact: source.len() == WIDTH,
+        })
+    }
+}
+impl<const WIDTH: usize> InlineSqlBlob<WIDTH> {
+    fn checked(self, error: &'static str) -> Result<[u8; WIDTH]> {
+        ensure(self.exact, error)?;
+        Ok(self.bytes)
+    }
+}
+
+fn inline_record(row: &rusqlite::Row<'_>, first: usize) -> Result<Record> {
+    let parent: Option<InlineSqlBlob<32>> = row.get(first)?;
+    let height = row.get(first + 1)?;
+    let work: InlineSqlBlob<64> = row.get(first + 2)?;
+    let root: InlineSqlBlob<32> = row.get(first + 3)?;
+    // Preserve record()'s SQL-conversion-before-shape error precedence, including
+    // a bad SQL type after an earlier malformed BLOB. No successful read survives
+    // this row, statement or request, and no ancestor check is omitted.
+    Ok(Record {
+        parent: parent
+            .map(|value| value.checked("STORAGE_HASH"))
+            .transpose()?,
+        height,
+        work: Work::from_bytes(work.checked("STORAGE_WORK")?),
+        root: root.checked("STORAGE_HASH")?,
+    })
+}
+
+#[cfg(test)]
 type RawRecord = (Option<Vec<u8>>, u64, Vec<u8>, Vec<u8>);
 
+#[cfg(test)]
 fn raw_record(row: &rusqlite::Row<'_>, first: usize) -> rusqlite::Result<RawRecord> {
     Ok((
         optional_fixed_blob::<32>(row, first)?,
@@ -33,6 +81,7 @@ fn raw_record(row: &rusqlite::Row<'_>, first: usize) -> rusqlite::Result<RawReco
     ))
 }
 
+#[cfg(test)]
 fn decode_record(raw: RawRecord) -> Result<Record> {
     // Match record(): SQL value conversions precede parent/work/root shapes.
     Ok(Record {
@@ -57,6 +106,7 @@ impl Node {
         after: Hash,
         window: &mut VecDeque<Hash>,
         limit: usize,
+        record_decoder: &impl Fn(&rusqlite::Row<'_>, usize) -> Result<Record>,
     ) -> Result<(Hash, u64)> {
         let mut statement = self.db.prepare_cached(
             "WITH RECURSIVE ancestry(id,parent,ordinal) AS (
@@ -92,14 +142,14 @@ impl Node {
             .map_err(Error::local_integrity)?;
             // The old parent() reads the complete child first, then the complete
             // parent under local-integrity provenance. Keep that error order.
-            let child = decode_record(raw_record(row, 0)?)?;
+            let child = record_decoder(row, 0)?;
             let parent = child
                 .parent
                 .ok_or_else(|| Error::from("UNKNOWN_PARENT").local_integrity())?;
             let actual_parent = (|| {
                 let present: Option<Vec<u8>> = optional_fixed_blob::<32>(row, 10)?;
                 ensure(present.is_some(), "UNKNOWN_PARENT")?;
-                decode_record(raw_record(row, 4)?)
+                record_decoder(row, 4)
             })()
             .map_err(Error::local_integrity)?;
             ensure(
@@ -163,6 +213,21 @@ impl Node {
         progress: &mut dyn FnMut(u64) -> Result<()>,
         packet_length: impl Fn(&Packet) -> Result<usize>,
     ) -> Result<Vec<Packet>> {
+        self.history_with_decoders(tip, after, limit, progress, packet_length, inline_record)
+    }
+
+    // Production always selects inline_record. Tests compare the previous
+    // Vec-backed conversion over this exact traversal, body, cutoff and callback
+    // path; this is not a runtime option or a cached storage verdict.
+    fn history_with_decoders(
+        &self,
+        tip: Hash,
+        after: Hash,
+        limit: usize,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+        packet_length: impl Fn(&Packet) -> Result<usize>,
+        record_decoder: impl Fn(&rusqlite::Row<'_>, usize) -> Result<Record>,
+    ) -> Result<Vec<Packet>> {
         progress(0)?;
         self.ready()?;
         ensure((1..=16).contains(&limit), "PAGE_LIMIT")?;
@@ -179,7 +244,7 @@ impl Node {
             }
             ensure(current != self.settings.genesis(), "CURSOR")?;
             let (parent, checked) =
-                self.history_page_ancestors(current, after, &mut window, limit)?;
+                self.history_page_ancestors(current, after, &mut window, limit, &record_decoder)?;
             count = count.checked_add(checked).ok_or("ANCESTRY_LIMIT")?;
             current = parent;
         }
@@ -216,6 +281,10 @@ mod tests {
 
     mod compiled_source {
         include!("../../examples/support/distributed_source_inventory.rs");
+    }
+
+    mod inline_record_tests {
+        include!("history_page_inline_tests.rs");
     }
 
     const CLOCK: u64 = 1_000_000;

@@ -1,0 +1,391 @@
+{
+  "schema": "b280-nine-host-selector-owner-api-readback-v1",
+  "observed_utc": "2026-11-03T21:28:00.283554+00:00",
+  "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "source_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+  "source_read_method": "git show exact immutable b280:path; no current target or candidate source identity assumed",
+  "native_tests_executed": false,
+  "source_or_repository_modified": false,
+  "new_acceptance_conditions": false,
+  "declared_selector_count": 9,
+  "reviewed_selector_count": 9,
+  "selectors": [
+    {
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "cli_required": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "function_start_line": 654,
+      "scanned_until_line": 794,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [],
+      "status": "ACTUAL_HOSTED_POSITIVE_WITH_18_SAMPLE_BUSINESS_READER",
+      "findings": [
+        "Trial helper uses receive_public_page_from at line588, not a post-bind direct activation.",
+        "Real fixed-Host execution passes the named test and original18-sample reader; performance_acceptance remains false."
+      ]
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "cli_required": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "function_start_line": 64,
+      "scanned_until_line": 249,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 194,
+          "text": "let tip = ingress::receive_public_page_from("
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "cli_required": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "function_start_line": 250,
+      "scanned_until_line": 344,
+      "direct_activations": [
+        {
+          "line": 276,
+          "text": "server.activate(tip).unwrap();"
+        }
+      ],
+      "public_import_or_cli_sites": [
+        {
+          "line": 315,
+          "text": "after = ingress::receive_public_page_from(&mut confirmer, address, page, tip, after, clock)"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "The three server.activate calls at line276 occur before PublicServer service start at lines285-294 on a fresh non-continuous Node.",
+        "The confirmer receives all three pages through the full public importer at line315; it has no explicit unmetered post-import activation."
+      ]
+    },
+    {
+      "target": "public_cli",
+      "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+      "function_start_line": 69,
+      "scanned_until_line": 222,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 173,
+          "text": "let synced = successful(client(\"sync\", &confirmer).args([\"--tip\", tip, \"--pages\", \"2\"]));"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+      "function_start_line": 163,
+      "scanned_until_line": 533,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 411,
+          "text": "client(\"sync\").args([\"--tip\", tip, \"--pages\", \"16\"]),"
+        },
+        {
+          "line": 485,
+          "text": "client(\"sync\").args([\"--tip\", final_tip, \"--after\", tip, \"--pages\", \"16\"]),"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+      "function_start_line": 589,
+      "scanned_until_line": 842,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 714,
+          "text": ".arg(\"--peers\")"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    },
+    {
+      "target": "mining_service_budget",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+      "function_start_line": 113,
+      "scanned_until_line": 377,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 270,
+          "text": "client(\"sync\").args([\"--tip\", tip, \"--pages\", \"32\"]),"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    },
+    {
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "function_start_line": 370,
+      "scanned_until_line": 690,
+      "direct_activations": [
+        {
+          "line": 404,
+          "text": "node.activate_observed(tip, now).unwrap();"
+        },
+        {
+          "line": 551,
+          "text": "owner.activate_observed(parent, now).unwrap();"
+        },
+        {
+          "line": 601,
+          "text": "owner.activate_observed(retired, now).unwrap();"
+        }
+      ],
+      "public_import_or_cli_sites": [],
+      "status": "ACTUAL_HOSTED_FAILURE_PLUS_SAME_LATER_FIXTURE_DEFECT",
+      "findings": [
+        "Initial64 block activations at line404 precede the first service-domain binding.",
+        "Actual native line551 failure is the post-bind fork activation with no termination CPU checkpoint.",
+        "Retirement activation at line601 uses the same bound Node and same unmetered API; reaching this path satisfies the identical missing-checkpoint guard. It has not executed successfully in the observed runtime run."
+      ]
+    },
+    {
+      "target": "native_node",
+      "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "cli_required": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+      "function_start_line": 1462,
+      "scanned_until_line": 1615,
+      "direct_activations": [],
+      "public_import_or_cli_sites": [
+        {
+          "line": 1580,
+          "text": ".args([\"sync\", \"--development\", \"--store\"])"
+        }
+      ],
+      "status": "NO_SAME_DIRECT_POST_BIND_CALL_FOUND",
+      "findings": [
+        "No direct Node.activate/activate_observed call in the exact selector body.",
+        "Native import/activation is reached through the existing public History API or the original CLI sync/pinned-peer implementation. Static review does not establish a native result."
+      ]
+    }
+  ],
+  "actual_runtime_failure_readback": "../next-hosted/b280-review/runtime-head-terminal-failure-compact.json",
+  "frozen_evidence_handoff": "b280-evidence-stage/HANDOFF.json",
+  "production_boundary": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 5618,
+      "end_line": 5649,
+      "text": "    pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {\n        self.activate_observed_with_progress(tip, observed_now, &mut || Ok(()))\n    }\n    /// Cooperative existing-packet recovery keeps all original time, owner,\n    /// State and journal validation. SQL/root primitives remain indivisible;\n    /// cancellation before a commit rolls back only that uncommitted step.\n    pub(crate) fn activate_observed_with_progress(\n        &mut self,\n        tip: Hash,\n        observed_now: u64,\n        progress: &mut dyn FnMut() -> Result<()>,\n    ) -> Result<Hash> {\n        self.activate_observed_with_termination(tip, observed_now, progress, None)\n    }\n\n    pub(crate) fn activate_observed_with_termination(\n        &mut self,\n        tip: Hash,\n        observed_now: u64,\n        progress: &mut dyn FnMut() -> Result<()>,\n        termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,\n    ) -> Result<Hash> {\n        progress()?;\n        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe(native_authenticated::HistoryStage::Activation)\n        });\n        self.continuous_activation_gate(tip)?;\n        self.mining_activation_gate(tip)?;\n        self.check_observed_history_with_progress(tip, observed_now, progress)?;\n        self.activate_with_fault_and_progress(tip, None, progress, termination_cpu)"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 151,
+      "end_line": 201,
+      "text": "    pub(super) fn reserve_reorg_cancellation(\n        &self,\n        old: Hash,\n        target: Hash,\n        generation: u64,\n        cpu: Option<&ServiceMutationCpuCheckpoint>,\n    ) -> Result<Reservation> {\n        self.namespace()?;\n        self.storage_context()?;\n        let continuous_cpu = self.continuous_reorg_original_cpu()?;\n        let mining_cpu = self.mining_reorg_original_cpu()?;\n        ensure(\n            continuous_cpu.is_none() || mining_cpu.is_none(),\n            \"OWNER_REORG_TERMINATION_CPU_REQUIRED\",\n        )?;\n        let original_cpu = continuous_cpu\n            .as_ref()\n            .or_else(|| mining_cpu.as_ref().map(|(_, cpu)| cpu));\n        let cpu = if let Some(original) = original_cpu {\n            ensure(\n                cpu.is_none_or(|provided| provided.shares_operation_with(original)),\n                \"OWNER_PUBLIC_SERVICE_CPU_DOMAIN\",\n            )?;\n            Some(original)\n        } else {\n            cpu\n        };\n        let domain = mining_cpu\n            .as_ref()\n            .map(|(domain, _)| Ok(domain.clone()))\n            .unwrap_or_else(|| self.public_service_cpu_domain());\n        let reserved = match (domain, cpu) {\n            (Ok(domain), Some(cpu)) => {\n                ensure(\n                    cpu.shares_domain_with(&domain),\n                    \"OWNER_PUBLIC_SERVICE_CPU_DOMAIN\",\n                )?;\n                Some(cpu.reserve_reorg_termination()?)\n            }\n            (Ok(_), None) => return Err(\"OWNER_REORG_TERMINATION_CPU_REQUIRED\".into()),\n            (Err(error), None) if error.is(crate::ErrorCode::OwnerPublicServiceDomainUnbound) => {\n                // Existing unmetered local APIs remain explicitly unmetered.\n                // This branch creates no CPU account or paid-service claim.\n                ensure(\n                    self.continuous_owner.is_none() && self.mining_owner.is_none(),\n                    \"OWNER_REORG_TERMINATION_CPU_REQUIRED\",\n                )?;\n                None\n            }\n            (Err(error), _) => return Err(error),\n        };"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 416,
+      "end_line": 468,
+      "text": "    /// The existing durable/volatile Node owner is the sole right to assign a\n    /// public service budget. A fresh non-continuous Node may bind its first\n    /// trusted service once; new listeners, restarts of a listener and local W1\n    /// helpers must reuse the EXACT domain for the remainder of this Node's\n    /// lifetime. Continuous mode additionally enforces its existing owner.\n    /// This does not create an account, disk journal or cross-host entitlement.\n    pub(crate) fn bind_public_service_cpu_domain(\n        &mut self,\n        cpu: &ServiceMutationCpuDomain,\n    ) -> Result<()> {\n        ensure(\n            !self.public_service_epoch_unknown,\n            \"OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH\",\n        )?;\n        // Cold Node::open has no live epoch reference. Its volatile unknown\n        // flag alone cannot authenticate a clean prior process: the original\n        // persisted active marker must fence every binder, including trusted\n        // local metered helpers which do not start a public listener.\n        // A current listener owns its existing reference; continuous mode\n        // still has to match its original authenticated durable owner below.\n        if !self.is_continuous() && self.public_service_epoch_listeners == 0 {\n            let prior_epoch: bool = self.db.query_row(\n                \"SELECT EXISTS(SELECT 1 FROM metadata WHERE key=?1)\",\n                [ORDINARY_PUBLIC_EPOCH_KEY],\n                |row| row.get(0),\n            )?;\n            ensure(!prior_epoch, \"OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH\")?;\n        }\n        ensure(\n            self.continuous_owner\n                .as_ref()\n                .is_none_or(|owner| owner.cpu.shares_domain_with(cpu)),\n            \"OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN\",\n        )?;\n        match &self.public_service_cpu {\n            Some(existing) => ensure(\n                existing.shares_domain_with(cpu),\n                \"OWNER_PUBLIC_SERVICE_CPU_DOMAIN\",\n            ),\n            None => {\n                self.public_service_cpu = Some(cpu.clone());\n                Ok(())\n            }\n        }\n    }\n    /// An existing trusted local supervisor may reconstruct a listener from the\n    /// Node's already bound budget; it cannot request another fresh burst.\n    pub fn public_service_cpu_domain(&self) -> Result<ServiceMutationCpuDomain> {\n        self.public_service_cpu\n            .as_ref()\n            .or_else(|| self.continuous_owner.as_ref().map(|owner| &owner.cpu))\n            .cloned()\n            .ok_or_else(|| \"OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND\".into())"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 385,
+      "end_line": 405,
+      "text": "fn activate_packet(\n    owner: &mut Owner<'_>,\n    tip: Hash,\n    clock: u64,\n    control: &Control<'_>,\n    operation: &public_v3::ServiceMutationCpuOperation,\n) -> Result<Hash> {\n    let owns_node_mutex = matches!(owner, Owner::Shared(_));\n    let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());\n    checkpoint()?;\n    let active = owner.with(control, |node| {\n        node.activate_observed_with_termination(\n            tip,\n            clock,\n            &mut || {\n                cut(\"activation_progress\");\n                checkpoint()\n            },\n            Some(&operation.checkpoint_handle()),\n        )\n    })?;"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 78,
+      "end_line": 114,
+      "text": "pub fn dispatch_shared_with_metered_w1(\n    node: &Mutex<Node>,\n    request: Request,\n    domain: &ServiceMutationCpuDomain,\n    checkpoint: &(impl Fn() -> Result<()> + Sync),\n) -> Result<MeteredWorkFactOutcome> {\n    ensure(\n        matches!(&request, Request::Submit { .. }),\n        \"METERED_W1_SUBMIT_ONLY\",\n    )?;\n    checkpoint()?;\n    let operation = {\n        let mut owner = super::lock_owner(node, &mut |_| checkpoint())?;\n        owner.bind_public_service_cpu_domain(domain)?;\n        domain.begin()?\n    };\n    let live = operation.checkpoint_handle();\n    let checked = || {\n        checkpoint()?;\n        live.checkpoint()\n    };\n    let native = dispatch_shared_with_execution_observation(\n        node,\n        request,\n        &mut |_| checked(),\n        |packet| super::WorkCheckedPacket::verify_with_progress(packet, &mut |_| checked()),\n        &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),\n        SubmitDispatchContext {\n            public_proof_before_unowned_task: true,\n            termination_cpu: Some(&live),\n            ..SubmitDispatchContext::default()\n        },\n    );\n    // A local refusal is separate from arithmetic invalidity. Never invent\n    // a successful WorkCheckedPacket after an unmetered cancellation or panic.\n    let cpu = operation.finish();\n    Ok(MeteredWorkFactOutcome { native, cpu })"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 2161,
+      "end_line": 2225,
+      "text": "        \"sync\" => {\n            // One business deadline for every page's transport and native\n            // import. Per-packet CPU refill/W1 never renew this allowance.\n            let sync_deadline = Instant::now() + Duration::from_secs(300);\n            let address = need(&args, \"--peer\")?\n                .parse()\n                .map_err(|_| Error::from(\"PEER_ADDRESS\"))?;\n            // Public V3 History and authenticated legacy History both carry\n            // arbitrary remote W1 proofs into this existing Node. A WAN sync\n            // must join the SAME fixed kernel parent as the public receiver.\n            // Loopback-only developer sync retains its original behavior.\n            let host_kernel = sync_host_kernel_owner(address, priced_sync_context(&args))?;\n            if let Some(kernel) = &host_kernel {\n                kernel.verify()?;\n            }\n            let tip = digest(need(&args, \"--tip\")?)?;\n            let after = args\n                .get(\"--after\")\n                .map(|s| digest(s))\n                .transpose()?\n                .unwrap_or(node.settings().genesis());\n            if public_profile(&args) {\n                let pages = number(&args, \"--pages\", 256)?;\n                if !(1..=4096).contains(&pages) {\n                    return Err(\"SYNC_BUDGET\".into());\n                }\n                let mut cursor = after;\n                let mut complete = cursor == tip;\n                let mut trials = 0u64;\n                for _ in 0..pages {\n                    if complete {\n                        break;\n                    }\n                    if let Some(kernel) = &host_kernel {\n                        kernel.verify()?;\n                    }\n                    let reply = public_call_before(\n                        &args,\n                        &ingress::Request::History {\n                            tip: hex::encode(tip),\n                            after: hex::encode(cursor),\n                        },\n                        node.settings(),\n                        Some(sync_deadline),\n                    )?;\n                    trials = trials\n                        .checked_add(reply.solve_trials)\n                        .ok_or(\"PUBLIC_TRIALS\")?;\n                    if !reply.ok {\n                        return Err(format!(\"PUBLIC_REMOTE_REFUSED:{}\", reply.value).into());\n                    }\n                    let page: ingress::Page = serde_json::from_value(reply.value)?;\n                    complete = page.complete;\n                    cursor = ingress::receive_public_page_from_before(\n                        &mut node,\n                        address,\n                        page,\n                        tip,\n                        cursor,\n                        ingress::now()?,\n                        sync_deadline,\n                    )?;\n                    if let Some(kernel) = &host_kernel {\n                        kernel.verify()?;\n                    }"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 344,
+      "end_line": 363,
+      "text": ") -> Result<(bool, Option<Hash>)> {\n    {\n        let owner = lock(node, end, stop)?;\n        ensure(\n            !owner.is_continuous(),\n            \"OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED\",\n        )?;\n        // Pinned transport identity does not fund a new account. The serving\n        // owner must already have bound this original CPU domain.\n        owner.public_service_cpu_domain()?;\n    }\n    ingress::history_import::admit_shared_packet(\n        node,\n        packet,\n        end,\n        &|| progress(end, stop),\n        activate,\n    )\n}\n"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 675,
+      "end_line": 695,
+      "text": "    ) -> Result<()>\n    where\n        F: FnMut(&PeerPollingEvent) -> Result<()>,\n    {\n        let target = self.states[index].target.ok_or(\"PEER_TARGET\")?;\n        // A final nonempty page already activated inside its original paid W1\n        // operation. Known locators and empty completion pages retain the same\n        // existing CPU domain and durable History epoch, without new proof work.\n        let activated = match already_activated {\n            Some(active) => Ok(active),\n            None => {\n                ingress::history_import::complete_shared(node, target, end, &|| progress(end, stop))\n            }\n        };\n        let active = match activated {\n            Ok(active) => active,\n            Err(error) => {\n                self.reject(index, \"activation\", error, 0, None, observe)?;\n                return Ok(());\n            }\n        };"
+    }
+  ],
+  "fixture_context": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 158,
+      "end_line": 188,
+      "text": "    fn start(node: Arc<Mutex<Node>>) -> Self {\n        let listener = TcpListener::bind(\"127.0.0.1:0\").unwrap();\n        let address = listener.local_addr().unwrap();\n        let identity = DevelopmentIdentity::from_secret_hex(&hex::encode([91; 32])).unwrap();\n        let public = identity.public_key().to_owned();\n        let policy = public_v3::PublicPolicy::new(8, Duration::from_secs(2)).unwrap();\n        // Subsequent listeners belong to the SAME Node owner: reuse its already\n        // bound CPU epoch, never mint a fresh public mutation budget per query.\n        // The first service alone binds the new domain on its original start.\n        let native_server = match node.lock().unwrap().public_service_cpu_domain() {\n            Ok(bound) => {\n                let server =\n                    public_v3::PublicServer::with_continuous_domain(identity, policy, &bound)\n                        .unwrap();\n                assert!(server.mutation_cpu_domain().shares_domain_with(&bound));\n                server\n            }\n            Err(error) if error.to_string() == \"OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND\" => {\n                public_v3::PublicServer::new(identity, policy).unwrap()\n            }\n            Err(error) => panic!(\"unexpected existing CPU owner state: {error}\"),\n        };\n        let stop = Arc::new(AtomicBool::new(false));\n        let signal = stop.clone();\n        let worker = thread::spawn(move || {\n            public_v3::serve_public_protected_v3(\n                listener,\n                node,\n                Duration::from_secs(120),\n                signal,\n                native_server,"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 545,
+      "end_line": 552,
+      "text": "    let mut parent = root;\n    {\n        let mut owner = shared.lock().unwrap();\n        for height in 1..=65 {\n            parent = append(&mut owner, parent, height, genesis, now, vec![]);\n        }\n        owner.activate_observed(parent, now).unwrap();\n    }"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 588,
+      "end_line": 602,
+      "text": "    // No listener survives a CLI command, so offline native construction cannot\n    // consume the next command's finite service lease (including the fork above).\n    // Extend the original candidate branch past actual native archive retention,\n    // then select its heavier tip. No archive KV is fabricated or deleted here.\n    let mut retired = tip;\n    let mut retirement_branch = Vec::new();\n    {\n        let mut owner = shared.lock().unwrap();\n        for height in 65..=305 {\n            let previous = retired;\n            retired = append(&mut owner, previous, height, genesis, now, vec![]);\n            retirement_branch.push((retired, previous));\n        }\n        owner.activate_observed(retired, now).unwrap();\n    }"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "start_line": 258,
+      "end_line": 295,
+      "text": "    let server_dir = tempfile::tempdir().unwrap();\n    let confirmer_dir = tempfile::tempdir().unwrap();\n    let clock = ingress::now().unwrap();\n    let settings = Settings::development(Some(clock - 100)).unwrap();\n    let mut server = Node::open(server_dir.path(), settings.clone(), 2).unwrap();\n    let mut tip = settings.genesis();\n    let mut ids = Vec::new();\n    for height in 1..=3 {\n        let packet = server\n            .make(\n                tip,\n                vec![],\n                development_public(0).unwrap(),\n                clock - 100 + height * 10,\n                4096,\n            )\n            .unwrap();\n        tip = server.admit(&packet, clock).unwrap();\n        server.activate(tip).unwrap();\n        ids.push(tip);\n    }\n    let listener = TcpListener::bind(\"127.0.0.1:0\").unwrap();\n    let address = listener.local_addr().unwrap();\n    let stop = Arc::new(AtomicBool::new(false));\n    let signal = stop.clone();\n    let server_key = identity(71).public_key().to_owned();\n    let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();\n    let worker = thread::spawn(move || {\n        public_v2::serve_public_protected_v2(\n            listener,\n            server,\n            Duration::from_secs(10),\n            signal,\n            PublicServer::new(identity(71), policy).unwrap(),\n        )\n        .unwrap()\n    });\n    let mut confirmer = Node::open(confirmer_dir.path(), settings.clone(), 2).unwrap();"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22160,
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "git_blob": "57616573bfeddd872c9e167332ad5882d2bd5ccc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "bytes": 5106,
+      "sha256": "d0ade11bcbc3a83e9500e2d92b4d7c0c70061ea89f57516b8cf4a32b3306d020",
+      "git_blob": "e50508731d30f2b2bb33f6dafac1a90d1176d5a3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "bytes": 124545,
+      "sha256": "59c3e28fc50d4b56bfde63fd1b01439d92d7b368e14bdec5f0f93cc6fc841e34",
+      "git_blob": "4f733257881b10fad247f87b85cfa3d1f713dce2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+      "bytes": 62532,
+      "sha256": "55322ff3517be8a58fd64f9f0a16abeb30975e1bb7c79009d9b97579505cc0a8",
+      "git_blob": "cb8ee16131be79e01a8c053235c8c145abfae27a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 331511,
+      "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+      "git_blob": "c7669f3107ec806ecc680ab5a56fc0883dedc999"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "bytes": 119523,
+      "sha256": "d88ff6cc5c56c73460f69c7c7d9a5ce96831be4571739d223049eaeba80d605f",
+      "git_blob": "b2a63be7408eef9f61b4c3c7b6018518d5987acc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "bytes": 19006,
+      "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+      "git_blob": "69318e0ffec2bd649fc9837d0662c4835417b485"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "bytes": 32581,
+      "sha256": "101c3e33f9378f959a9aace7c80f910f8f28654967b0ee2f54117f60d520d72d",
+      "git_blob": "fcdd98fa49e7530d8148ce9f9f494c956286e065"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "bytes": 24303,
+      "sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21",
+      "git_blob": "3f737d2d534b9c6478d5f4fdf3049aaca2815618"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+      "bytes": 15899,
+      "sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+      "git_blob": "b0086daa3bd8b6259757cfa95f6f751107361002"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+      "bytes": 59539,
+      "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+      "git_blob": "4aa654ca5f664bb46acc1731a4063b2bdd19e49f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+      "bytes": 10378,
+      "sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+      "git_blob": "5a315c61cb823d10b1eb87ae7136ac0fa7eb11a5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+      "bytes": 11112,
+      "sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+      "git_blob": "2803b1fe2a4c641e0bdd1a450c7ac5d524ee024a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+      "bytes": 37556,
+      "sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+      "git_blob": "fa7fd17d719ccf9dcef74b555a53f58c247fce91"
+    }
+  ],
+  "conclusion": {
+    "actual_post_bind_fixture_failure": "evaluation_sync_observation line551",
+    "second_same_defect_before_a_future_success_claim": "same selector line601 retirement activation",
+    "other_seven_declared_selectors_same_direct_call_defect_found": false,
+    "remaining_seven_native_outcomes": "UNEXECUTED_IN_OBSERVED_RUNTIME_HEAD",
+    "minimal_fixture_repair_candidate": "Use the existing bound public_service_cpu_domain and existing metered Submit dispatch to activate each retained final fork/retirement packet. Preserve the same Node, original domain, deadlines, offline construction and assertions. Verify both actual native and separate business observations on the resulting source; no owner or production guard relaxation.",
+    "scope_limit": "Read-only review of the declared nine selectors and relevant direct helpers/API boundary; not an exhaustive production call graph, all workspace tests, performance proof or claim of seven native passes."
+  }
+}

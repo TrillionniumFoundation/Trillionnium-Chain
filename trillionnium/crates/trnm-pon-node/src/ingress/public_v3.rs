@@ -13,6 +13,7 @@ use intake::{ConnectionLease, ListenerIntake};
 pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
 use pq_identity::{Caller, ServerPin, SigningIdentity};
 mod growth;
+mod history_response;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
 mod work_arithmetic;
@@ -1646,60 +1647,7 @@ fn public_dispatch(
             let owner = lock_owner(node, &mut progress)?;
             owner.public_head_metadata()
         }
-        Request::History { tip, after } => {
-            let owner = lock_owner(node, &mut progress)?;
-            let tip_id = digest(&tip)?;
-            let after_id = digest(&after)?;
-            // The slower two-phase reader is an explicit per-owner research
-            // control only. Production keeps the prior complete held-owner path.
-            #[cfg(test)]
-            if owner.public_history_test_snapshot && tip_id != after_id {
-                let snapshot = owner.prepare_public_history_snapshot(
-                    tip_id,
-                    after_id,
-                    MAX_HISTORY_STEPS,
-                    &mut progress,
-                )?;
-                drop(owner);
-                let read = snapshot.read(&mut progress)?;
-                let owner = lock_owner(node, &mut progress)?;
-                return owner.finish_public_history_snapshot(read, &mut progress);
-            }
-            let packets =
-                owner.public_history_packet(tip_id, after_id, MAX_HISTORY_STEPS, &mut progress)?;
-            let next = packets
-                .last()
-                .map(|p| p.id().map(hex::encode))
-                .transpose()?
-                .unwrap_or_else(|| after.clone());
-            let mut encoded = Vec::new();
-            for packet in packets {
-                let raw = packet.encode_for_settings(owner.settings())?;
-                ensure(
-                    raw.len()
-                        .checked_mul(2)
-                        .is_some_and(|n| n <= 2 * MAX_PACKET),
-                    "PUBLIC_HISTORY_BYTES",
-                )?;
-                encoded.push(hex::encode(raw));
-            }
-            Ok(serde_json::to_value(super::Page {
-                schema: if owner.settings().is_native_pq_application_v6() {
-                    "pon-native-pq-history-v6"
-                } else {
-                    "pon-native-history-v1"
-                }
-                .into(),
-                network: hex::encode(owner.settings().network()),
-                parameters: hex::encode(owner.settings().parameters()),
-                genesis: hex::encode(owner.settings().genesis()),
-                tip,
-                after,
-                complete: next == hex::encode(tip_id),
-                next,
-                packets: encoded,
-            })?)
-        }
+        Request::History { tip, after } => history_response::read(node, tip, after, &mut progress),
         Request::PoolSubmitBundle {
             pool_context,
             transactions,

@@ -1,0 +1,318 @@
+{
+  "schema": "hosted-diagnostic-observability-summary-v1",
+  "completed_utc": "2026-11-03T23:02:17.707839+00:00",
+  "conclusion": "Actual hosted receiver observations contain usable bounded diagnostic text and existing error kinds while legacy typed-code slots remain unchanged. This closes the missing-text evidence gap only for the retained new-source records read here; it does not close original business/performance gates.",
+  "distinct_artifact_source_scopes": 4,
+  "original_primary_reports": 8,
+  "groups": [
+    {
+      "scope": "c5dd-f0",
+      "report_member": "execution/raw/report.json",
+      "source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "snapshots": 2,
+      "retained_records": 430,
+      "root_untyped_dispatch": 315,
+      "transcript_untyped_dispatch": 0,
+      "product_untyped_dispatch": 0,
+      "typed_dispatch_cancel": 64,
+      "dispatch_outcome_false": 377,
+      "dispatch_diagnostic_with_outcome_unknown": 2,
+      "typed_terminal_eof": 85,
+      "typed_terminal_cancel": 0,
+      "untyped_terminal_io": 5,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "c5dd-three-campaigns",
+      "report_member": "run-1-raw/report.json",
+      "source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "snapshots": 3,
+      "retained_records": 2932,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 1493,
+      "product_untyped_dispatch": 1346,
+      "typed_dispatch_cancel": 3,
+      "dispatch_outcome_false": 2842,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 47,
+      "typed_terminal_cancel": 0,
+      "untyped_terminal_io": 0,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "c5dd-three-campaigns",
+      "report_member": "run-2-raw/report.json",
+      "source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "snapshots": 3,
+      "retained_records": 2911,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 1477,
+      "product_untyped_dispatch": 1344,
+      "typed_dispatch_cancel": 3,
+      "dispatch_outcome_false": 2824,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 36,
+      "typed_terminal_cancel": 0,
+      "untyped_terminal_io": 7,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "c5dd-three-campaigns",
+      "report_member": "run-3-raw/report.json",
+      "source": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "snapshots": 3,
+      "retained_records": 2937,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 1510,
+      "product_untyped_dispatch": 1336,
+      "typed_dispatch_cancel": 5,
+      "dispatch_outcome_false": 2851,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 40,
+      "typed_terminal_cancel": 0,
+      "untyped_terminal_io": 4,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "b4b-w1-head",
+      "report_member": "fresh-service/original/report.json",
+      "source": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+      "snapshots": 2,
+      "retained_records": 300,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 191,
+      "product_untyped_dispatch": 0,
+      "typed_dispatch_cancel": 0,
+      "dispatch_outcome_false": 191,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 4,
+      "typed_terminal_cancel": 4,
+      "untyped_terminal_io": 5,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "b4b-w1-head",
+      "report_member": "fresh-service/fresh/report.json",
+      "source": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+      "snapshots": 2,
+      "retained_records": 281,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 173,
+      "product_untyped_dispatch": 0,
+      "typed_dispatch_cancel": 0,
+      "dispatch_outcome_false": 173,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 8,
+      "typed_terminal_cancel": 3,
+      "untyped_terminal_io": 2,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "b4b-w1-merge",
+      "report_member": "fresh-service/original/report.json",
+      "source": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+      "snapshots": 2,
+      "retained_records": 306,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 197,
+      "product_untyped_dispatch": 0,
+      "typed_dispatch_cancel": 2,
+      "dispatch_outcome_false": 199,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 12,
+      "typed_terminal_cancel": 2,
+      "untyped_terminal_io": 1,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    },
+    {
+      "scope": "b4b-w1-merge",
+      "report_member": "fresh-service/fresh/report.json",
+      "source": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+      "snapshots": 2,
+      "retained_records": 275,
+      "root_untyped_dispatch": 0,
+      "transcript_untyped_dispatch": 168,
+      "product_untyped_dispatch": 0,
+      "typed_dispatch_cancel": 1,
+      "dispatch_outcome_false": 169,
+      "dispatch_diagnostic_with_outcome_unknown": 0,
+      "typed_terminal_eof": 9,
+      "typed_terminal_cancel": 5,
+      "untyped_terminal_io": 0,
+      "records_not_retained": 0,
+      "measurement_failures": 0,
+      "all_retained_coverage_complete": true
+    }
+  ],
+  "totals": {
+    "snapshots": 19,
+    "retained_records": 10372,
+    "root_untyped_dispatch": 315,
+    "transcript_untyped_dispatch": 5209,
+    "product_untyped_dispatch": 4026,
+    "typed_dispatch_cancel": 78,
+    "dispatch_outcome_false": 9626,
+    "dispatch_diagnostic_with_outcome_unknown": 2,
+    "typed_terminal_eof": 241,
+    "typed_terminal_cancel": 14,
+    "untyped_terminal_io": 24,
+    "records_not_retained": 0,
+    "measurement_failures": 0
+  },
+  "total_scope": "Occurrence counts across separate named executions, not globally unique requests or additional native tests. Dispatch and terminal populations overlap.",
+  "message_and_capture_bounds": {
+    "capacity_per_snapshot": 16384,
+    "retention": "first-N, no eviction; not an overwriting ring",
+    "all_19_snapshots_complete": true,
+    "maximum_actual_message_utf8_bytes": 43,
+    "actual_truncated_messages": 0,
+    "actual_non_ascii_messages": 0,
+    "scope": "The observed messages satisfy the 96-byte UTF8 bound. These traffic samples do not exercise non-ASCII truncation, capacity overflow or capture-contention failures; those scenarios are not labeled measured PASS."
+  },
+  "f0_root_evidence": {
+    "records": 315,
+    "typed_code": null,
+    "existing_kind": "unclassified",
+    "bounded_message_prefix": "ROOT",
+    "same_rows_full_work_accepted": 315,
+    "same_rows_execution_rejected": 315,
+    "same_rows_root_commitment_completed_and_accepted": 315,
+    "actual_full_work_thread_cpu_ns": 457066530,
+    "actual_dispatch_thread_cpu_ns": 5789755834,
+    "actual_admission_thread_cpu_ns": 4885071036,
+    "actual_execution_thread_cpu_ns": 483623853,
+    "actual_root_commitment_thread_cpu_ns": 128686684,
+    "scope": "Original per-row cost fields retained for actual refusals. These nested caller-thread sums must not be added or treated as whole-worker cost. ROOT text does not turn phase null codes into typed ROOT."
+  },
+  "f0_cancel_and_eof": {
+    "dispatch_cancel": 64,
+    "completed_dispatch_false": 62,
+    "diagnostic_before_dispatch_started_and_outcome_unknown": 2,
+    "same_record_cancel_and_terminal_eof": 64,
+    "same_record_root_and_terminal_eof": 3,
+    "terminal_eof_without_dispatch_diagnostic": 18,
+    "scope": "Two slots preserve distinct actual errors. They alone do not prove temporal order or causation. Complete observer retention does not mean every request entered dispatch."
+  },
+  "f0_existing_identity_correlation": {
+    "honest": {
+      "client_calls": 15,
+      "existing_public_body_digests": 5,
+      "match_counts": {
+        "ambiguous_multiple_receiver_records": 15
+      },
+      "unique_match_examples": [],
+      "exclusive_body_group_receiver_records": 15,
+      "exclusive_body_group_dispatch_diagnostics": [
+        {
+          "typed_error_code": "PUBLIC_REQUEST_CANCELLED",
+          "kind": "cancelled",
+          "message_prefix": "PUBLIC_REQUEST_CANCELLED",
+          "message_truncated": false,
+          "count": 9
+        }
+      ]
+    },
+    "attack": {
+      "client_calls": 392,
+      "existing_public_body_digests": 24,
+      "match_counts": {
+        "ambiguous_multiple_receiver_records": 392
+      },
+      "unique_match_examples": [],
+      "exclusive_body_group_receiver_records": 392,
+      "exclusive_body_group_dispatch_diagnostics": [
+        {
+          "typed_error_code": "PUBLIC_REQUEST_CANCELLED",
+          "kind": "cancelled",
+          "message_prefix": "PUBLIC_REQUEST_CANCELLED",
+          "message_truncated": false,
+          "count": 55
+        },
+        {
+          "typed_error_code": null,
+          "kind": "unclassified",
+          "message_prefix": "ROOT",
+          "message_truncated": false,
+          "count": 315
+        }
+      ]
+    },
+    "overlapping_honest_and_attack_body_digests": 0,
+    "scope": "Body-population membership is not a one-to-one attempt match. Only exactly one retained receiver row is labeled a unique match. No identity is inferred from recorded_request_digest, error strings or observer-local timestamps; missing identities remain unknown."
+  },
+  "unchanged_classification_and_reactor_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "observations": [
+        {
+          "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+          "bytes": 33545
+        },
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+          "bytes": 33545
+        }
+      ],
+      "unchanged_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "observations": [
+        {
+          "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+          "sha256": "2f695c8b6a28315c52ab1a198399b4f1fdf235fc1881621023cec62ddcb3c41e",
+          "bytes": 318291
+        },
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "sha256": "2f695c8b6a28315c52ab1a198399b4f1fdf235fc1881621023cec62ddcb3c41e",
+          "bytes": 318291
+        }
+      ],
+      "unchanged_bytes": true
+    }
+  ],
+  "source_semantics": [
+    "request_observation.rs:28-53 copies existing ErrorKind and Display into diagnostic-only storage; it does not parse message text into an ErrorCode.",
+    "request_observation.rs:56-79 keeps a maximum 96-byte prefix on a UTF8 boundary; untrusted text and no-control-authority flags are emitted explicitly.",
+    "request_observation.rs:657-673 and787-791 retain error.code() in the original terminal/dispatch slots while capturing the additive diagnostic; actual terminal wait timing can include capture cost.",
+    "Snapshot capture remains bounded and non-authoritative. Scope/counter failures are reported; original observation failures are never silently promoted to complete.",
+    "The exact c5dd v4 reader validated all10372 records, including all19 phase slots, all wait intervals, typed code/diagnostic shape and the additive-extension constraints."
+  ],
+  "limits": [
+    "Rows are counted once from the primary report for each actual execution, never again from its raw per-phase duplicate or a derived summary.",
+    "Retained coverage concerns accepted connections in these snapshots only. It does not account for unaccepted network attempts or any unobserved population.",
+    "Null typed codes remain null. ROOT/WORK text is bounded untrusted diagnostic evidence, not a typed error, owner-stop origin, authorization, or retry instruction.",
+    "Dispatch and terminal diagnostics are independent slots on the same connection. Terminal EOF does not overwrite or reclassify a separately captured dispatch cause; the two slots alone do not establish temporal or causal order.",
+    "Phase and full-W1 CPU/wall fields are retained, including rejection/cancellation samples. Nested intervals are not additive; caller-only CPU is not whole-worker CPU.",
+    "No timing values are asserted unchanged by capture overhead. No qualification, speedup, business confirmation or original-budget acceptance is inferred.",
+    "No historical116 records are modified, labeled or counted. No missing message, typed code, phase outcome or caller identity is backfilled.",
+    "Actual retained samples do not test dropped-ring behavior or non-ASCII truncation unless such samples are explicitly counted. Source bounds and existing tests are separate evidence."
+  ],
+  "outputs": {
+    "readback_sha256": "72deb9444572e8d48f73d657ec1ee263d48fa3c0a9d79471596dfb44095f201d",
+    "selected_original_rows_compressed_sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19",
+    "selected_original_rows_uncompressed_bytes": 937211,
+    "selected_original_rows_uncompressed_sha256": "ef1a013e4d75b71bc4c6522445159c2e84e8ec56f14a60dc5237d0f2c7dd4c5a",
+    "selected_original_rows_independently_relocated_and_equal": 89
+  },
+  "native_executions_by_this_task": 0,
+  "repository_or_target_changes": false,
+  "reader_attempt_scope": "Two successful read-only parser runs of the same original bytes; no duplicated native denominator. First derived draft is retained after a wording clarification."
+}

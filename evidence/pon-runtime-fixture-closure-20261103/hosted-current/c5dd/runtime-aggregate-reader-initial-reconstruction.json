@@ -1,0 +1,10 @@
+{
+  "schema": "original-local-reader-source-reconstruction-v1",
+  "source": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/build-runtime-final-readback.py",
+  "original_refusal": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-aggregate-reader-flag-refusal.json",
+  "restored_file": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-aggregate-reader-initial.py",
+  "bytes": 13961,
+  "sha256": "5d4ee1820f18bb07f29993495520c5090e6fcce61409695648299c65122d08bf",
+  "matches_preexisting_refusal_reader_sha256": true,
+  "method": "Inverse of the four recorded local reader correction hunks; reconstructed bytes must match the preexisting immutable refusal SHA256 exactly. No artifact or native source changed; restored code not executed."
+}

@@ -1,4 +1,7 @@
 //! Finite mining runtime must leave the actual public service available for catch-up.
+#[path = "support/current_elf_host.rs"]
+mod current_elf_host;
+
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -108,6 +111,14 @@ fn while_serving(c: &mut Command, service: &mut Running, deadline: Instant) -> V
 
 #[test]
 fn mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain() {
+    if current_elf_host::execute_in_fixed_host(
+        "mining_service_budget",
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+        Some(env!("CARGO_BIN_EXE_trnm-pon-node")),
+    ) {
+        return;
+    }
+
     // These finite test budgets leave time for readiness, a paced runtime-ended
     // miner, full native catch-up and natural service exit. They are not SLAs.
     let mining_seconds = 12;

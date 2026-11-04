@@ -53,7 +53,19 @@ jobs:
           if test "$SOURCE_KIND" = prospective-merge; then
             source_args+=(--base "$EXPECTED_BASE")
           fi
-          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$label" --output "$PQ_OUT" -- "$@"
+          command_status=0
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$label" --output "$PQ_OUT" -- "$@" || command_status=$?
+          if test -f "$PQ_OUT/$label.log"; then
+            if test "$command_status" -ne 0; then
+              tail -n 200 "$PQ_OUT/$label.log"
+            else
+              case "$label" in
+                node-lib) sed -n '/test result:/p; /trnm-state-delta-walk-observation-v1/p; /trnm-current-account-.*observation-v1/p' "$PQ_OUT/$label.log" ;;
+                cost-*) cat "$PQ_OUT/$label.log" ;;
+              esac
+            fi
+          fi
+          exit "$command_status"
           SH
           args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
           if test "$SOURCE_KIND" = prospective-merge; then
@@ -135,6 +147,24 @@ jobs:
         run: |
           set -euo pipefail
           bash "$PQ_OUT/run-command.sh" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings
+      - name: Observe complete component costs with unchanged native budgets
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_PQ_AUTH_COST_DIRECTORY="$PQ_OUT/pq-authentication-cost"
+          failed=0
+          for selector in \
+            store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost \
+            ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost; do
+            label="cost-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --ignored --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          test "$failed" = 0
       - name: Preserve complete records including failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
