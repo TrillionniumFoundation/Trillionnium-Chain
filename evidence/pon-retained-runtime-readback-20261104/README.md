@@ -1,5 +1,51 @@
 # Retained runtime failures, native follow-up and complete cost readback
 
+## Current source and newly completed readbacks — 2026-11-04 12:44 UTC
+
+**Overall HOLD remains.** The original finite-service, campaign, W1 and long-History failures below remain failures. Diagnostic extraction, compiler/behavior controls and source bookkeeping do not grant public-service, PQ/security, economic, WAN, governance or whole-chain acceptance.
+
+### Current integration is bd2777, with its own original gates running
+
+The existing PR #688 integration branch advanced by an ordinary expected-head, non-force fast-forward from d0737cf5434894ce47fad8082376fc417313c2cb to [bd2777f9cc74df10ba07ae8202584ed0fb90a519](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/bd2777f9cc74df10ba07ae8202584ed0fb90a519). Its exact tree is 2cba5b274d0d09074a5716c802bc58e5c3735678, with 8,771 blobs and 940,952,351 tracked bytes. The actual PR merge 3e8506031b3e48a1abafd7151d98cafa624f9f47 has ordered parents [dd6e1c3cbeacbdc532b0679297835b3a0aac78f0, bd2777f9cc74df10ba07ae8202584ed0fb90a519] and the same tree. All thirteen concurrent d073 leaf changes and the earlier three Cell additions are preserved.
+
+The [complete integration preparation and original failed preflight](d073-legacy-observation-integration-candidate.json) retains the full ten-leaf diff, source inventory derivation and source pin union. The five Rust blobs are byte-for-byte the isolated 1b observation implementation. The generated inventory contains 1,176 paths; all 398 corpus pins match and all 310 required paths exist. This integrates default-off Legacy staging/active validation, root and SQL-commit observations, including failure/cancellation boundaries. It changes neither the original acceptance thresholds nor the original History workload and deadlines.
+
+The exact d073 preflight [41829964152 / 126574287933](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41829964152/job/126574287933) actually failed at the first stale M06 source pin after all five Python suites passed (34 + 4 + 34 + 22 + 11 = 105). Both d073 source receipts and audits were read directly; the auxiliary workflow source is separately identified. The remaining source checks and formatter were not reached. The integration updates those four existing pin values, retains every other current corpus field, and adds the five required observation entries. The historical preflight failure is not relabeled PASS.
+
+The original isolated 1b controls remain [their own successful result](legacy-profile-1b-controls-terminal-readback.json): source controls, original pinned formatting and exact Cargo graph, complete workspace/all-targets/all-features test-profile no-run build, strict Node Clippy, and seven exact behavior controls. The original 1b long-History job 126557488235 in [run 41821540586](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41821540586) was still running at the latest 12:37:38 observation; no complete Legacy cost or performance improvement is claimed. These 1b results do not qualify the new combination.
+
+At 12:43:39 the actual API listed 17 bd2777 runs: 16 original pull-request workflows plus dynamic CodeQL, all pending or in progress in that snapshot. The current required baseline is [41831666340](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41831666340), priority [41831666222](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41831666222), W1 [41831666378](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41831666378), and exact-source CodeQL export [41831666375](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41831666375). New-source results must be read from those actual runs.
+
+### The two original 93e runtime shards completed; the whole baseline still failed
+
+[The complete terminal readback](93e-baseline-runtime-terminal-readback.json) links the unchanged [head original log](93e-runtime-head-original.log) and [actual-merge original log](93e-runtime-prospective-merge-original.log). Original run 41806693078 is terminal: 21 jobs, 17 success and four failure. The two runtime shards succeeded, including the retained workspace/all-targets/all-features test recipe. Each Node outer terminal reports 992 passed / 0 failed / 27 ignored, separately from its two nested child terminals.
+
+All 377 libtest terminal segments per lane are retained under their 373 Cargo contexts. These are not summed into a new independent-test denominator. Each of the four long release selectors separately passed 1 / 0 / 0 with 1,000 filtered out. Seven original Python suites are preserved, including the distinct 29-case native storage oracle and 28-case account multiproof oracle. Both source pairs bind only 93e/5afe and tree1066. Neither runtime console prints a project audit; no audit from another job is borrowed. Four artifact API/upload identities are matched, but unread ZIP internals, compiler records and executable hashes remain unknown. The four original from-zero-related job failures are still failures.
+
+### All four original W1 report predicates are now directly visible
+
+The [first report reader evidence](original-93e-w1-first-report-readback-console-omission.json) preserves its successful extraction with only three of four report projections printed. The fourth report's predicates were unknown in that first console readback. The [final four-report evidence](original-93e-w1-four-report-predicates.json) preserves the complete subsequent readback, the original member hashes, all predicates and denominators, full job log, actual source pair, audits and output artifact.
+
+The final read-only run [41829964029 / 126574287449](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41829964029/job/126574287449) succeeded with 28 reader controls. All four report projections printed, with zero console omissions. Application JSON used 56,449 bytes of the unchanged 70,000-byte budget; 13,551 bytes remained and each report respected the unchanged 12,000-byte reserve. Full raw reports, complete projection files, archive identities, parsers and original size limits were retained. This closes a diagnostic display omission, not a business gate.
+
+| Original measured report | Baseline signed business | Pressure signed business | Original native/driver outcome |
+| --- | --- | --- | --- |
+| 93e head / original | 1/1 confirmed | 0/1 confirmed | Both invariant predicates true; native exit 0; driver CONFIRMATION_TARGET |
+| 93e head / fresh | 1/1 confirmed | 0/1 confirmed | Five construction predicates true; pressure finite-business predicate false; native exit 101 |
+| 5afe actual merge / original | 1/1 confirmed | 0/1 confirmed | Both invariant predicates true; native exit 0; driver CONFIRMATION_TARGET |
+| 5afe actual merge / fresh | 1/1 confirmed | 0/1 confirmed | Five construction predicates true; pressure finite-business predicate false; native exit 101 |
+
+These are four separate original experiments, not a new combined acceptance threshold. All pressure reports retain full_native_state_equal=false and receiver_matches_valid_honest_prefix=true; the producer's reported invariant predicate accepts that legal prefix condition and must not be described as complete final-state equality. The newly visible merge/fresh construction values are 277 constructed, 261 full-transcript rejections and 38,007 ns shared setup CPU. Its three original replay attempts were two accepted and one rejected, with index 2 ending in PUBLIC_REQUEST_DEADLINE. Fresh reports lack the top-level invariant field; original manifest named_execution and report remain null. No original native test was rerun by the reader.
+
+### The older a4 CodeQL source-boundary rejection is retained
+
+[The complete original CodeQL/source-drift evidence](original-a4-codeql-export-source-drift.json) retains the 128,442-byte a4 log, its exact before/after source receipts, actual audit, 16 passing offline controls and all thirteen original waits. At 12:17:53 the exporter exited 1 because the open same-repository PR head/base boundary had moved. The source guard and original 1,200s / 30s waiting parameters remain unchanged. The later old-a4 dynamic success is metadata only; security findings and unread target details remain unknown.
+
+The same record preserves the dated d073 snapshot (12:29:17: one dynamic run, no pull-request runs), full thirteen-file diff and four then-stale pin values. That historical absence does not describe bd2777, whose original PR gates have now started. No old CodeQL result is transferred to the new head.
+
+The sections below preserve earlier dated observations and superseded intermediate failures without changing their original source or qualification.
+
+
 > **Dated source/status observation, 2026-11-04 10:44:39 UTC:** integration results below remain bound to 93e207c8. Its four original Node/PQ lanes each pass 992/0/27. Original F0, campaign, W1 and priority workflows fail; the required-baseline run remains in progress. [Complete Node/PQ scope](93e-pq-four-lane-terminal-readback.json), [current business outer failures](original-93e-business-outer-terminal-readback.json), [complete current History failures](original-93e-four-lane-history-failures.json), [the original generic-bound DB refusal](original-69d-arm-retained-database-readback.json) and [the separate successful fixed-DB query](original-69d-arm-fixed-database-snapshot.json) preserve their own source/time boundaries. Overall HOLD remains.
 
 
