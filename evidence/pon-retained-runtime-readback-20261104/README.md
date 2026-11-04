@@ -4,12 +4,13 @@ This directory records already executed work on exact frozen sources. It is evid
 
 ## Latest retained results and current diagnostic source
 
-Current integration [69d2e06c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361), actual merge bfdfc2bf and tree d9327a58, now has its own four-lane format/strict-Clippy and complete-workspace no-run build results, with 60 distinct selected tests passed per lane. Its original 4,105-block History execution still requires a terminal result. The completed 73ab6e9a / actual merge 88f89924 native costs, failures and Host observations below retain their own source; no older performance or business outcome is assigned to 69d2.
+Current integration [69d2e06c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361), actual merge bfdfc2bf and tree d9327a58, now has its own four-lane format/strict-Clippy and complete-workspace no-run build results, with 60 distinct selected tests passed per lane. All four original 4,105-block History jobs have now returned failure; their new inner failure-location records are being read from the unchanged original archives. The completed 73ab6e9a / actual merge 88f89924 native costs, failures and Host observations below retain their own source; no older performance or business outcome is assigned to 69d2.
 
 | Frozen measured scope | Actual result | Evidence |
 | --- | --- | --- |
 | 69d original formatting and strict Node Clippy, x64/ARM head/actual merge | All four original lanes succeed | [Current format/lint and queue evidence](69d-format-lint-and-baseline-queue-readback.json) |
 | 69d original workspace test profile, four lanes | Full workspace/all-targets/all-features no-run build succeeds; each lane executes 60 distinct selected tests, all PASS | [Current workspace terminal evidence](69d-original-workspace-four-lane-terminal-readback.json) |
+| 69d complete original Node library, four lanes | Each 987 PASS / 0 FAIL / 27 ignored; 49 explicit controls and four separate cost selectors succeed per lane | [Current Node/PQ component terminal evidence](69d-pq-four-lane-terminal-readback.json) |
 | 73ab original release, x64/ARM head/actual merge | All four lanes pass original four selectors and three pipelines | [Release terminal record](73ab-release-finality-four-lane-terminal.json) |
 | 73ab original stable/nightly locked-fetch contexts | Four actual executions, exit 0, no timeout | [Fetch terminal record](73ab-locked-fetch-four-context-terminal-readback.json) |
 | 73ab complete Node library, four lanes | Each 985 PASS / 0 FAIL / 27 ignored; original 49 explicit controls and strict Clippy pass | [PQ/native terminal record](73ab-pq-four-lane-terminal-readback.json) |
@@ -404,7 +405,7 @@ The change fills the specific gap demonstrated by the frozen History failures: a
 
 Each measured call retains its original arguments, then records elapsed time before the original Result is propagated. The import expression includes the existing clock argument preparation; if that argument exits early, its duration stays null. Each new page clears fields that could otherwise be inherited from the previous page. Call durations are captured before confirmer cleanup; no extra Node, SQL, file, network or per-page output operation is added.
 
-The original exact selector, 4,105 blocks, 1,800-second server lifetime, separate original RPC/import deadlines, complete verification, assertion texts, reopened-state checks and shutdown/join/error precedence remain. No observed-import API, retry, larger budget or weaker acceptance rule is introduced. Successful import returns do not prove a final durable commit count after an error; durable_committed_blocks and activation_cursor remain null. Two independent static reviews found no semantic/formatting/type issue in this scope. The current source now passes its original four-lane formatting/strict Clippy, full workspace all-targets/all-features no-run compilation, and 60 distinct selected tests per lane. The original 4,105-block History execution still requires its own terminal result and failure-location record; no deadline repair or acceptance is claimed from this observation-only change.
+The original exact selector, 4,105 blocks, 1,800-second server lifetime, separate original RPC/import deadlines, complete verification, assertion texts, reopened-state checks and shutdown/join/error precedence remain. No observed-import API, retry, larger budget or weaker acceptance rule is introduced. Successful import returns do not prove a final durable commit count after an error; durable_committed_blocks and activation_cursor remain null. Two independent static reviews found no semantic/formatting/type issue in this scope. The current source now passes its original four-lane formatting/strict Clippy, full workspace all-targets/all-features no-run compilation, and 60 distinct selected tests per lane. The original 4,105-block History jobs have now returned four failure terminals, with successful original builds and matching source-after checks; their inner failure-location records still require archived-log readback. No deadline repair or acceptance is claimed from this observation-only change.
 
 ## Current 69d build and selected-control terminal evidence
 
@@ -451,3 +452,24 @@ Across observed records the known checkpoint subtotal is 914,503 calls. All reco
 [The queue evidence](69d-format-lint-and-baseline-queue-readback.json) preserves the 08:38:29 snapshot: current baseline pending with zero jobs, while older 40a run 41785836318 remains active. Both exact workflows share the same PR concurrency group and cancel-in-progress=false. This supports queue blocking as an inference from configuration and concurrent metadata; the API does not name an explicit blocking_run. No cancellation, concurrency change or budget change was performed. [Both b811 baseline and priority cancellations](b811-prejob-cancelled-baseline-priority.json) instead have actual cancelled terminal states and total_count=0/jobs=[]; no native outcome or cancellation initiator is invented.
 
 All still-failing public confirmation, fresh-service, original long-History and independent PQ/W1/economics/recovery/WAN/model/governed-acceptance boundaries remain open. The records above close only their named engineering, build or evidence subgates.
+
+## Current 69d complete Node-library and PQ-component terminal scope
+
+[The original four-lane terminal record](69d-pq-four-lane-terminal-readback.json) binds run 41799271168 to the current head 69d2e06c / actual merge bfdfc2bf and common tree d9327a58. The outer full Node-library terminal in every lane is 987 PASS / 0 FAIL / 27 ignored, with zero filtered tests. The inferred registered scope is 1,014; two printed filtered one-test child summaries are retained separately and are not added to 987.
+
+| Original current-source lane | Job | Full Node elapsed, seconds | Outer result |
+| --- | --- | ---: | --- |
+| ARM actual merge | 126470754088 | 1,328.15 | 987 / 0 / 27 |
+| ARM head | 126470754395 | 1,328.38 | 987 / 0 / 27 |
+| x64 actual merge | 126470754526 | 1,363.67 | 987 / 0 / 27 |
+| x64 head | 126470754671 | 1,390.54 | 987 / 0 / 27 |
+
+All 49 distinct original native-00 through native-48 controls execute and the unchanged named-test checker loop succeeds. Each lane has 68 distinct successful command receipts, including the original locked graph, format, build, strict Node Clippy and four separate original cost selectors. Each cost selector has its own 1 PASS / 0 FAIL / 0 ignored result; these are not added to the full Node denominator. Root independently matched 104 hash-bound log ranges, all 272 distinct command receipts, all outer Node and 16 cost terminals, all four exact source files and all eight artifact upload/API identities.
+
+Each console directly prints its initial source receipt and actual audit PASS. Per-command complete-source equality follows from the exact included recorder and actual command_succeeded records; the raw before/after receipt bodies are retained in unread ZIPs and remain null here. Individual native/checker logs, redirected compiler-artifact records, complete Node ELF identity and ignored individual names were not read. The authentication-cost executable digest applies only to that printed cost scope. No source qualification is inherited from 73ab; whole-chain PQ security, original public confirmation, original long-History, WAN readiness and activation remain unqualified.
+
+## Current 69d original History outer terminals
+
+At 09:31:41 UTC, root read all four completed original History jobs in [run 41799271270](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271270). Jobs 126471217600, 126471217634, 126471217803 and 126471218057 each retain successful original release builds, failed original execution, successful source-after verification and successful artifact upload. All four complete before/after source pairs match the current 69d/bfdf tree; each actual audit passes. The outer Host controller reports systemd_run_exit=1 and passed=false, with failure=null and final_host_errors=[].
+
+The outer console does not print history-native/history.log, the libtest terminal or the new failure_location object, so internal failure cause and counts remain unknown at this boundary. A reader using the already successful fixed 12-member History projection is rebound only to these four actual source/artifact identities. It reads the archived originals without executing their contents; all native selectors, budgets, deadlines and complete failure denominators remain unchanged.
