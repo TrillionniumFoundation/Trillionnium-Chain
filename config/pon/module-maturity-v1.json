@@ -2643,7 +2643,21 @@
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_spawn_failure_retains_empty_create_new_logs",
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_checked_capture_keeps_failed_observation_and_refuses",
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_capture_preserves_source_cwd_without_changing_parent",
-            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory"
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_twelve_arm_position_counts_preserve_nine_samples_without_inventing_balance",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_and_retained_ratios_name_different_actual_denominators",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_three_kernel_output_requires_explicit_historical_readback",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_labels_cannot_relabel_current_four_kernel_measurements",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_labels_cannot_upgrade_old_three_kernel_observations",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_full_limb_measurements_cannot_be_omitted",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_kernel_identity_cannot_reduce_declared_work",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_reordered_kernel_identities_cannot_relabel_the_native_schedule",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_wrong_current_kernel_progress_rejects",
+            "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_pairwise_only_rotation_does_not_replace_twelve_arm_order",
+            "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_historical_kernel_labels_cannot_disagree_with_pinned_producer_source",
+            "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_legacy_native_source_has_only_explicit_historical_applicability",
+            "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_duplicate_native_kernel_declaration_cannot_select_a_convenient_one",
+            "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_declared_native_kernel_count_cannot_disagree_with_its_labels"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

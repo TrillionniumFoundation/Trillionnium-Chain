@@ -928,12 +928,29 @@ complete `construction_total_ns` denominator also retains exhausted searches.
 
 ### Timed calls and actual rejection boundaries
 
-Each available proof case is timed with all three kernels. Within a complete
-class/target group, a cyclic nine-arm schedule places every case/kernel pair in
-each invocation position exactly once. The **648 possible timed verifications**
-share the 72 producer flows; they are not 648 independent generation samples.
-Search exhaustion leaves explicit missing verification arms, so such a group does
-not receive the complete-balanced-group label.
+The retained three-kernel diagnostic used `production-transposed`,
+`scalar-reference` and `limb-transcript`. Its cyclic nine-arm schedule placed every
+case/kernel pair in each invocation position exactly once across nine samples.
+Its 648 possible timed verifications shared 72 producer flows.
+
+The current native diagnostic explicitly retains that transposed implementation
+as `retained-transposed` and separately measures `production-full-limb`, alongside
+`scalar-reference` and `limb-transcript`. The three proof cases and four kernels
+give **twelve arms and 864 possible timed verifications**, still sharing the same
+72 producer flows and unchanged nine samples per class/target. Each ready arm is
+measured nine times, occupying nine of the twelve invocation positions. This is
+not a fully balanced twelve-position experiment. The v2 summary retains all
+twelve position counts for every arm, including its three unobserved positions,
+and separates `complete_cohort_group` from `complete_balanced_group`.
+
+Both schedules require the exact native cyclic invocation order and complete
+ready arms. Honest or fake search exhaustion remains explicit and retains its
+cost; the reader does not invent missing verification observations. The v2
+`kernel_to_production_total_ratio` denominator is the named
+`production-full-limb` measurement. A separate
+`kernel_to_retained_transposed_total_ratio` preserves comparison with the retained
+transposed implementation. Neither ratio implies a causal speedup without
+addressing the observed position imbalance and full-path costs.
 
 Every timed call finishes before the diagnostic maps its actual returned enum to
 a label. Only after all timed arms finish does it run separate progress probes on
@@ -970,6 +987,15 @@ ELF machine. Source bytes before/after, complete measured inputs, original binar
 hashes, CPU description, runner context and every command/stdout/stderr remain
 in the receipt. A launch failure, timeout, output-cap refusal or source/binary
 change produces a retained failure, never a successful measurement.
+
+New collection and default verification require the exact four-kernel inventory.
+Explicit `--verify ... --historical` can still verify retained three-kernel v1
+receipts, preserving their original summary bytes and recorded source identity.
+The verifier also binds the kernel inventory to the literal declaration in the
+authenticated original native source. Renaming an old output or deleting the
+fourth kernel cannot make it evidence for a new source. `--input` is a raw-data
+readback only: successfully checking retained output from a failed collector does
+not repair that original failure manifest or certify new native execution.
 
 The collector captures three identity commands, one build and one native process.
 Their limits are respectively 30, 30, 30, 900 and 180 seconds, with a five-second

@@ -1,0 +1,209 @@
+{
+  "schema": "pq5-retained-sha2-aggregate-repair-reproduction-v1",
+  "base_commit": "99bbcc9d40c692689b147a37ddf77c1347d6f7d2",
+  "base_tree": "544d018133e22fc9013cafd69bebbba1ab7abbb3",
+  "scope": "Reader repair in sparse exact-blob component checkout; synthetic parser controls only. No local native qualification or performance claim.",
+  "observed_failure": {
+    "run_id": 41784584896,
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41784584896",
+    "job_id": 126423686882,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41784584896/job/126423686882",
+    "run_conclusion": "failure",
+    "source_commit": "99bbcc9d40c692689b147a37ddf77c1347d6f7d2",
+    "step_number": 5,
+    "step_name": "Refuse compiled-only, missing, ignored and filtered success claims",
+    "failing_selector": "MigrationReaderTests.test_complete_original_205_same_source_artifacts_and_eight_ignores_are_read",
+    "error": "ValueError: original 205/68/eight-ignore contract",
+    "old_reader_line": 134,
+    "regular_reader_tests": {
+      "run": 12,
+      "passed": 12
+    },
+    "migration_reader_tests": {
+      "run": 9,
+      "passed": 8,
+      "errors": 1
+    },
+    "native_v5_and_anchored_migration_steps": "skipped after reader failure",
+    "decoded_job_log": {
+      "bytes": 128894,
+      "sha256": "5c1437904d7facccd0d2aef8f35570a298bfcf84181f3619e110cfb44ce57d8a",
+      "capture": "UTF-8 decoded job log returned by GitHub job-logs connector; raw log kept outside repository"
+    }
+  },
+  "fixed_contract": {
+    "passed": 207,
+    "original_passed": 205,
+    "delta": 2,
+    "integration_passed": 68,
+    "original_ignored": 8,
+    "executed_commands": 18,
+    "command_budget_seconds": 2400,
+    "m00": {
+      "passed": 49,
+      "ignored": 2
+    },
+    "m06": {
+      "passed": 90,
+      "ignored": 6
+    },
+    "added_required_ok_names": [
+      "sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams",
+      "sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams"
+    ],
+    "aggregate_is_fixed_not_input_derived": true,
+    "preserved": "Exact unit outcomes and integration rosters; source, artifact and retained executable byte checks; command execution/time budget; authority and production flags.",
+    "legacy_caller_field": "Unchanged runner retains historical retained_205 field name; reader summary now reports passed=207."
+  },
+  "changed_inputs": {
+    "scripts/ci/read_native_pq_tasks_v5_migration_v1.py": {
+      "before": {
+        "bytes": 17741,
+        "sha256": "0a6cdbadea6769dba5f4e934310dad884912efc8e371cf2605d78f3041fb5171",
+        "git_blob": "8aa0713b8e5d0275058974fbd6df15aa923c6599"
+      },
+      "after": {
+        "bytes": 18060,
+        "sha256": "e90fc42ef5dd8dfb71ca7fea34a3806468fd5023b49913a72ceed2b50db6ed91",
+        "git_blob": "e889a34ef06f17a42626b2f4316d907297c31e0f"
+      }
+    },
+    "scripts/ci/test_native_pq_tasks_v5_migration_v1.py": {
+      "before": {
+        "bytes": 18262,
+        "sha256": "32f99457066c77e0de9631208ed8e6d04fea69f51ae30a9140f09a74cee1d6c1",
+        "git_blob": "22cfed37e985858debd184822a8156359a7cb7b4"
+      },
+      "after": {
+        "bytes": 23951,
+        "sha256": "a356a31f527507de5a01ed7ca3a6f9a029c1a10b1a31619f51830b98a034b309",
+        "git_blob": "9a9b16bc91f3f2427e4849258e378c532d4d1232"
+      }
+    }
+  },
+  "unchanged_contract_inputs": {
+    "scripts/ci/native_pq_tasks_v4_unit_contract.py": {
+      "bytes": 16911,
+      "sha256": "c42c8cceea71c41859f9bb387f321d7581cf1b909a16203b3e33af158475f8bc",
+      "git_blob": "2f9260bf06cdc2d86ff2598dc1fee1e2c551ee82"
+    },
+    "scripts/ci/run_native_pq_tasks_v5.py": {
+      "bytes": 13780,
+      "sha256": "fa8b3a89982fc91cce3be1853db7fba7ce07a86309028b08d6d320d473f2fc46",
+      "git_blob": "0bc5700a7b577d60a96d71fd47f9f2f5ee1a5204"
+    },
+    "scripts/ci/test_native_pq_tasks_v5_research.py": {
+      "bytes": 6139,
+      "sha256": "48049db760f633a716aa08b8f325b22b5b1c0ad99e7b6c95079375fb0e421974",
+      "git_blob": "887d69d26cafe5c271578efde1cb70b4783e36af"
+    },
+    "scripts/ci/run_native_pq_tasks_v5_migration_v1.py": {
+      "bytes": 5543,
+      "sha256": "1b20330a79c4c6c6ff7929aba375516d22bc615c66d3e23c7900233a937d1b13",
+      "git_blob": "b3a3a8d415ca6dc7ccf7d7d404f688a311157f61"
+    }
+  },
+  "validation": {
+    "environment": {
+      "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "red_before": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_native_pq_tasks_v5_migration_v1.py"
+      ],
+      "cwd": "/workspace/scratch/850bfac2502c/pq-roster-review",
+      "exit_code": 1,
+      "log_bytes": 6609,
+      "log_sha256": "dd83d47766e02d253f7fd8b493f3877e71db7abe14fc4bc6c7089813997136dd",
+      "reader_sha256": "0a6cdbadea6769dba5f4e934310dad884912efc8e371cf2605d78f3041fb5171",
+      "test_sha256": "a356a31f527507de5a01ed7ca3a6f9a029c1a10b1a31619f51830b98a034b309",
+      "tests_run": 12,
+      "passed": 8,
+      "errors": 4,
+      "failures": 0,
+      "meaning": "All four positive fixtures refuse at the old 205 aggregate; negative families cannot pass vacuously."
+    },
+    "green_after": [
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "scripts/ci/test_native_pq_tasks_v5_research.py"
+        ],
+        "cwd": "/workspace/scratch/850bfac2502c/pq-roster-review",
+        "exit_code": 0,
+        "tests_run": 12,
+        "log_bytes": 111,
+        "log_sha256": "20b00ee89cc42206207666463d20decc63c54742e688b700fc7017d081f3603d",
+        "reader_sha256": "e90fc42ef5dd8dfb71ca7fea34a3806468fd5023b49913a72ceed2b50db6ed91",
+        "test_sha256": "48049db760f633a716aa08b8f325b22b5b1c0ad99e7b6c95079375fb0e421974",
+        "passed": 12,
+        "errors": 0,
+        "failures": 0
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "scripts/ci/test_native_pq_tasks_v5_migration_v1.py"
+        ],
+        "cwd": "/workspace/scratch/850bfac2502c/pq-roster-review",
+        "exit_code": 0,
+        "tests_run": 12,
+        "log_bytes": 2057,
+        "log_sha256": "60691b84cabd0ee1a5c4edfdb9b1cebcebb16be724a7f0b8ff33fef279d97d66",
+        "reader_sha256": "e90fc42ef5dd8dfb71ca7fea34a3806468fd5023b49913a72ceed2b50db6ed91",
+        "test_sha256": "a356a31f527507de5a01ed7ca3a6f9a029c1a10b1a31619f51830b98a034b309",
+        "passed": 12,
+        "errors": 0,
+        "failures": 0
+      }
+    ],
+    "preflight": {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "scope": "component development boundary, 26 declared packages; not full-source native qualification"
+    },
+    "diff_check": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    "prior_controls": {
+      "selectors_retained": 9,
+      "negative_method_bodies_unchanged": 8,
+      "positive_method_expected_passed": 207
+    },
+    "new_negative_controls": {
+      "test_sha2_omissions_and_same_count_substitutions_refuse": {
+        "cases": 6,
+        "covers": "Remove SHA256, SHA512 or both; repeat with count-preserving forged names. Hashes and raw/report counts remain internally consistent."
+      },
+      "test_forged_205_report_and_raw_summary_refuse": {
+        "cases": 2,
+        "covers": "Forge manifest count 205 alone, then forge both count and hash-bound raw summary while retaining all names."
+      },
+      "test_newly_ignored_sha2_and_replaced_original_ignores_refuse": {
+        "cases": 4,
+        "covers": "Ignore either new SHA2 case; repeat after promoting one original ignore, preserving 207/8 totals."
+      }
+    }
+  },
+  "replay": {
+    "red": "At base_commit, apply only the candidate test-file change and run the recorded migration command; reader must retain before SHA256.",
+    "green": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_native_pq_tasks_v5_research.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_native_pq_tasks_v5_migration_v1.py"
+    ],
+    "native_rerun": "Required after publication; local synthetic fixtures do not prove native task renewal, migration, whole-chain PQ, or business acceptance."
+  },
+  "repository_raw_logs_added": false,
+  "github_mutated_by_this_repair": false
+}

@@ -1,0 +1,121 @@
+{
+  "changed_source": {
+    "base_commit": "0d1fc3c4cd9035da4a71b228a6e4634d2f15bc67",
+    "changes": [
+      {
+        "git_blob": "2ab6554132027c57c8f2167c2807e4a43d4feb3b",
+        "path": "config/pon/invariants-v2.json",
+        "sha256": "9ecb9dcf7e93247d0527bdb75ec78f88f54bba2f5fb1c067d39186df3f9d5627"
+      },
+      {
+        "git_blob": "29f98764470f7adb238cefca6f7b86200b57af0a",
+        "path": "config/pon/module-maturity-v1.json",
+        "sha256": "c41d888da302662044397535de02d8600aaa5a24aa8d8a8aea0d90258ce117d5"
+      },
+      {
+        "git_blob": "7537b8ea8c8e07dfd5963be6eb7f8f5db5127e93",
+        "path": "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md",
+        "sha256": "4b535e9a8696bac63cf9a003a230a03defec7393dee31c8b2782b708df88b5e3"
+      },
+      {
+        "git_blob": "6de00c3300feaeff1c38fb3eb64600c55e77b6b7",
+        "path": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+        "sha256": "d9b1d9d747108857f1af76d4ea55fe5cc5e5ea40661a412afc831c3c1eab0124"
+      },
+      {
+        "git_blob": "1ce991a6214ce21a1eb6c7a4e4a9ac0746bcda18",
+        "path": "scripts/ci/test_applicability.py",
+        "sha256": "87d6a968db2fac69772aef0511522fd9f5f8d103f9bda26970ab8e2765b885bd"
+      },
+      {
+        "git_blob": "341436e31a361714399a2a1b1d3f945e7f56ca65",
+        "path": "scripts/ci/test_work_rejection_report.py",
+        "sha256": "2a09133efb1e0e563387a181f138a1ae5a63a8a6555d1f4867d5becbb4935d7e"
+      },
+      {
+        "git_blob": "5c5e4130ef8cf212903c66fab3f440b378e9dba7",
+        "path": "scripts/pon_work_rejection_report.py",
+        "sha256": "a20f3f1d2ab38f5f8990514548bf18550fb84143792d510c16ca639c7735d753"
+      }
+    ]
+  },
+  "fastest_adversary_qualified": false,
+  "nonobject_receipt_refusal_control": "RejectionReceiptTests.test_historical_kernel_labels_cannot_disagree_with_pinned_producer_source; arrays/null/bool rejected as ValueError",
+  "observations": [
+    {
+      "arch": "x64",
+      "artifact_id": 13297476005,
+      "cohorts": 72,
+      "complete_balanced_groups": 0,
+      "complete_cohort_groups": 8,
+      "failed_manifest_verification_refusal": "W1 rejection diagnostic: successful execution receipt exact fields",
+      "independent_winning_transcript_replays": 72,
+      "manifest_sha256": "c9bd5889ae5f69878780dbc4de1e1d84fb3108021bb3ce7e9f7dbcfffafb912a",
+      "native_binary_sha256": "0b61b2049cff4be47828e2cdc8363d7eab032ef8c2a0a3384f375a88d7ad978c",
+      "native_child_exit_code": 0,
+      "native_elf_machine": 62,
+      "native_machine": "x86_64",
+      "native_reexecuted": false,
+      "native_stdout_sha256": "7602538090b4bd74414281dc586df7067084cf3126f511c12dc9845d41e6d130",
+      "original_manifest_result": "FAIL",
+      "original_source_verified_input_files": 1286,
+      "original_zip_sha256": "c92255fec04dd34997ae4b8dc6983c497f4f8420ddabae9e7a0d0a4f86dc2d72",
+      "projection_sha256": "93914faa1e6137545e6a9c28f3b9a63e99ea96098233ca76fca0b4ade9eb2123",
+      "reader_sha256": "a20f3f1d2ab38f5f8990514548bf18550fb84143792d510c16ca639c7735d753",
+      "reader_unchanged": true,
+      "source_commit": "0d1fc3c4cd9035da4a71b228a6e4634d2f15bc67",
+      "summary_sha256": "56af0ae75a107e1564d3f6bef3fbf47b82ea8d5955c657eb31a56e7d12b862bb",
+      "timed_verifications": 864
+    },
+    {
+      "arch": "arm64",
+      "artifact_id": 13296014672,
+      "cohorts": 72,
+      "complete_balanced_groups": 0,
+      "complete_cohort_groups": 8,
+      "failed_manifest_verification_refusal": "W1 rejection diagnostic: successful execution receipt exact fields",
+      "independent_winning_transcript_replays": 72,
+      "manifest_sha256": "83237291824c9f81ab747f6980bdaed5ae78ee845c854fa2a0511835ffac8e9b",
+      "native_binary_sha256": "120913dbbb4f6596cc049bd6d6d6a4d28fc2bc41021e4807e4436091088c6e56",
+      "native_child_exit_code": 0,
+      "native_elf_machine": 183,
+      "native_machine": "aarch64",
+      "native_reexecuted": false,
+      "native_stdout_sha256": "1cf141ae9a5ee590c8424f1a0ef5815ef4db81698601e9490a9d6ba745d56d84",
+      "original_manifest_result": "FAIL",
+      "original_source_verified_input_files": 1286,
+      "original_zip_sha256": "ae434d0766f57146821e05ca85e8cc38140d3d0680d8b04f033951fb2202f559",
+      "projection_sha256": "93914faa1e6137545e6a9c28f3b9a63e99ea96098233ca76fca0b4ade9eb2123",
+      "reader_sha256": "a20f3f1d2ab38f5f8990514548bf18550fb84143792d510c16ca639c7735d753",
+      "reader_unchanged": true,
+      "source_commit": "0d1fc3c4cd9035da4a71b228a6e4634d2f15bc67",
+      "summary_sha256": "937557e3dd13c113845219c5e6e5eaea64b8b0ef8f2c77a83f4545f86ae8eabd",
+      "timed_verifications": 864
+    }
+  ],
+  "production_activation": false,
+  "public_service_measured": false,
+  "reproduction": {
+    "archival_verification": "Obtain the exact named artifacts, verify archive/member/source hashes, and pass original native.stdout to the current raw reader. Never edit the original failed manifest. The command is a readback, not a native rerun.",
+    "commands": [
+      "python3 scripts/ci/test_work_rejection_report.py",
+      "python3 scripts/ci/test_invariants_registry.py",
+      "python3 scripts/ci/test_responsibility_evidence.py",
+      "python3 scripts/ci/test_applicability.py",
+      "python3 scripts/pon_work_rejection_report.py --input <authenticated-artifact-directory>/native.stdout"
+    ],
+    "controls": {
+      "applicability": 37,
+      "invariants_registry": 19,
+      "reader": 101,
+      "responsibility_evidence": 46
+    },
+    "fresh_collection": "python3 scripts/pon_work_rejection_report.py --run --local --out <new-output-directory>",
+    "fresh_collection_scope": "Not executed by this change. Use the unchanged original runner and time/resource limits; no inherited acceptance.",
+    "source_base": "0d1fc3c4cd9035da4a71b228a6e4634d2f15bc67"
+  },
+  "schema": "w1-four-kernel-authenticated-readback-v1",
+  "scope": "Python raw readback on exact retained #706 outputs; failed native collection manifests remain FAIL; no native rerun",
+  "work_hardness_accepted": false,
+  "worst_case_rejection_qualified": false
+}

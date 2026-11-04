@@ -40,9 +40,11 @@ from work_oracle import evaluate as scalar_evaluate
 SCHEMA = 'pon-work-rejection-cost-v1'
 PROFILE = 'pon-matmul-transcript-64-v1'
 EXAMPLE = 'pon_rejection_cost'
+EXAMPLE_SOURCE = 'trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs'
 CLASSES = ('dense', 'zero', 'rank-one', 'sparse')
 TARGETS = ('7f' + 'ff' * 31, '07' + 'ff' * 31)
-KERNELS = ('production-transposed', 'scalar-reference', 'limb-transcript')
+KERNELS = ('retained-transposed', 'scalar-reference', 'limb-transcript', 'production-full-limb')
+LEGACY_KERNELS = ('production-transposed', 'scalar-reference', 'limb-transcript')
 VARIANTS = ('legal', 'transcript', 'product-last-cell')
 RESULTS = ('Accepted', 'Transcript', 'Product')
 LIMIT, SAMPLES, N, R, Q = 4096, 9, 64, 8, 4294967291
@@ -50,6 +52,7 @@ CELLS, PROOF_BYTES = N * N, 49188
 FALSE_FLAGS = ('fastest_adversary_qualified', 'work_hardness_accepted',
                'worst_case_rejection_qualified', 'public_service_measured', 'production_activation')
 SOURCE_PATHS = {
+    EXAMPLE_SOURCE,
     'scripts/pon_work_rejection_report.py', 'scripts/ci/test_work_rejection_report.py',
     'scripts/ci/ci_observation.py', 'scripts/ci/verify_ci_source.py',
     'scripts/ci/check_cross_arch_cost.py', 'scripts/ci/check_invariant_evidence.py',
@@ -205,6 +208,30 @@ def projection_sha256(raw: dict) -> str:
     return digest(encoded(deterministic_projection(raw)))
 
 
+def kernel_contract(value: Any, *, historical: bool = False) -> tuple[str, ...]:
+    if value == list(KERNELS):
+        return KERNELS
+    require(historical and value == list(LEGACY_KERNELS),
+            'producer/kernel identities; legacy kernels require explicit historical verification')
+    return LEGACY_KERNELS
+
+
+def source_kernels(raw: bytes) -> tuple[str, ...]:
+    """Bind retained output labels to the authenticated original native source."""
+    matches = re.findall(rb'^const\s+KERNELS\s*:\s*\[\s*&str\s*;\s*(\d+)\s*\]\s*=\s*\[([^\]]*)\]\s*;',
+                         raw, re.MULTILINE)
+    require(len(matches) == 1, 'one literal native kernel declaration in measured source')
+    count, body = matches[0]
+    items = body.strip().split(b',')
+    if items[-1] == b'':
+        items.pop()
+    require(bool(items) and all(re.fullmatch(rb'"[a-z-]+"', item.strip()) for item in items),
+            'literal measured native kernel identities')
+    kernels = tuple(item.strip()[1:-1].decode('ascii') for item in items)
+    require(int(count) == len(kernels), 'native kernel declaration length')
+    return kernel_contract(list(kernels), historical=True)
+
+
 def validate_search(row: dict, prefix: bytes) -> tuple[dict | None, int]:
     searched = row['honest_search']
     exact(searched, {'outcome', 'attempt_limit', 'wall_ns', 'challenge_ns', 'proof_construction_ns',
@@ -310,14 +337,17 @@ def validate_mutation(mutation: dict, proof: bytes, challenge: bytes, target: st
     return bytes(changed)
 
 
-def summarize(raw: dict) -> dict:
+def summarize(raw: dict, *, historical: bool = False) -> dict:
     exact(raw, {'schema', 'profile', 'attempt_limit', 'samples_per_group', 'producer', 'kernels', 'samples', *FALSE_FLAGS}, 'raw diagnostic')
     require(raw['schema'] == SCHEMA and raw['profile'] == PROFILE, 'explicit new raw schema/profile')
     require(type(raw['attempt_limit']) is int and raw['attempt_limit'] == LIMIT and
             type(raw['samples_per_group']) is int and raw['samples_per_group'] == SAMPLES,
             'fixed native attempt and sample bounds')
-    require(raw['producer'] == 'prepared-task-full-transcript' and raw['kernels'] == list(KERNELS),
-            'producer/kernel identities')
+    require(raw['producer'] == 'prepared-task-full-transcript', 'producer identity')
+    kernels = kernel_contract(raw['kernels'], historical=historical)
+    legacy = kernels == LEGACY_KERNELS
+    arm_count = len(VARIANTS) * len(kernels)
+    production_kernel = 'production-transposed' if legacy else 'production-full-limb'
     for flag in FALSE_FLAGS: require(raw[flag] is False, 'unsupported acceptance ' + flag)
     expected_keys = [(c, t, s) for c in CLASSES for t in TARGETS for s in range(SAMPLES)]
     require(type(raw['samples']) is list and len(raw['samples']) == len(expected_keys), 'complete fixed cohort inventory')
@@ -371,9 +401,9 @@ def summarize(raw: dict) -> dict:
             group['fake_ticket_trials'] += len(mutation['ticket_attempts'])
             if proofs[mutation['id']] is None: group['fake_exhausted'] += 1
         expected_arms = []
-        for position in range(9):
-            arm = (position + row['sample']) % 9
-            variant, kernel = VARIANTS[arm // 3], KERNELS[arm % 3]
+        for position in range(arm_count):
+            arm = (position + row['sample']) % arm_count
+            variant, kernel = VARIANTS[arm // len(kernels)], kernels[arm % len(kernels)]
             if proofs[variant] is not None: expected_arms.append((position, variant, kernel))
         require(len(row['measurements']) == len(expected_arms), 'actual ready verification arms cannot be omitted/duplicated')
         for expected_arm, observed in zip(expected_arms, row['measurements']):
@@ -381,7 +411,7 @@ def summarize(raw: dict) -> dict:
                              'returned_product_sha256', 'probe'}, 'timed verification')
             require(type(observed['position']) is int and
                     (observed['position'], observed['variant'], observed['kernel']) == expected_arm,
-                    'nine-arm exact cyclic invocation order')
+                    'exact cyclic invocation order for every declared kernel and proof case')
             variant, kernel = observed['variant'], observed['kernel']
             require(observed['proof_sha256'] == digest(proofs[variant]), 'timed/probed complete proof identity')
             require(observed['actual_result'] == RESULTS[VARIANTS.index(variant)], 'record actual WorkError, not is_err or inference')
@@ -404,9 +434,25 @@ def summarize(raw: dict) -> dict:
     for (class_name, target), group in groups.items():
         complete = group['honest_winners'] == SAMPLES and group['fake_exhausted'] == 0
         if complete:
-            require(all(group['positions'][(v, k, p)] == 1 for v in VARIANTS for k in KERNELS for p in range(9)),
-                    'every ready arm occupies every position exactly once per complete group')
-        group.pop('positions')
+            expected_positions = Counter()
+            for sample in range(SAMPLES):
+                for position in range(arm_count):
+                    arm = (position + sample) % arm_count
+                    expected_positions[(VARIANTS[arm // len(kernels)], kernels[arm % len(kernels)], position)] += 1
+            require(group['positions'] == expected_positions,
+                    'complete group preserves the exact native cyclic position distribution')
+        positions = group.pop('positions')
+        balanced = complete and SAMPLES % arm_count == 0 and all(
+            positions[(v, k, p)] == SAMPLES // arm_count
+            for v in VARIANTS for k in kernels for p in range(arm_count))
+        if not legacy:
+            # Nine retained samples rotate twelve arms through nine of twelve
+            # positions each. Keep the three unobserved positions as actual zeros;
+            # complete input coverage is not complete position balance.
+            group['complete_cohort_group'] = complete
+            group['invocation_position_counts'] = {
+                v + '/' + k: [positions[(v, k, p)] for p in range(arm_count)]
+                for v in VARIANTS for k in kernels}
         for key, entry in group['variants'].items():
             duration_median = median(entry.pop('durations_ns'))
             entry['median_verification_ns'] = ratio(duration_median, 1)
@@ -422,25 +468,37 @@ def summarize(raw: dict) -> dict:
                     entry['first_construction_including_honest_acquisition_ns'])
                 entry['rejection_to_existing_proof_mutation_ratio'] = ratio(entry['verification_total_ns'], entry['construction_total_ns'])
         for variant in VARIANTS:
-            baseline = group['variants'].get(variant + '/production-transposed')
+            baseline = group['variants'].get(variant + '/' + production_kernel)
             if baseline:
-                for kernel in KERNELS:
+                for kernel in kernels:
                     entry = group['variants'].get(variant + '/' + kernel)
                     if entry:
                         entry['kernel_to_production_total_ratio'] = ratio(entry['verification_total_ns'], baseline['verification_total_ns'])
-        output_groups.append({'class': class_name, 'target': target, 'complete_balanced_group': complete, **group})
-    return {'schema': 'pon-work-rejection-summary-v1', 'raw_schema': SCHEMA,
+            retained = group['variants'].get(variant + '/retained-transposed')
+            if not legacy and retained:
+                for kernel in kernels:
+                    entry = group['variants'].get(variant + '/' + kernel)
+                    if entry:
+                        entry['kernel_to_retained_transposed_total_ratio'] = ratio(entry['verification_total_ns'], retained['verification_total_ns'])
+        output_groups.append({'class': class_name, 'target': target, 'complete_balanced_group': balanced, **group})
+    summary = {'schema': 'pon-work-rejection-summary-v1' if legacy else 'pon-work-rejection-summary-v2', 'raw_schema': SCHEMA,
         'cohorts': len(expected_keys), 'timed_verifications': measured,
         'independent_winning_transcript_replays': independent_replays,
         'projection_sha256': projection_sha256(raw), 'groups': output_groups,
         'clock': 'monotonic wall nanoseconds, not CPU or energy accounting',
         'honest_cost_scope': 'one actual material/task/prepared setup per flow; all proof/ticket attempts and recording overhead charged in search wall',
         'mutation_cost_scope': 'clone and mutation of an already acquired complete honest winner; first-construction denominator includes that acquisition',
-        'repeated_proof_scope': 'three kernel timings share each exact proof; same-winner repeated network submission and cross-challenge reuse are not measured',
+        'repeated_proof_scope': ('three' if legacy else 'four') + ' kernel timings share each exact proof; same-winner repeated network submission and cross-challenge reuse are not measured',
         'probe_scope': 'all timed arms complete before separate actual-result/progress probes; probes are not timed verification observations',
         'independent_scope': 'full scalar transcript replay for every honest winner; all failed proof bytes/tickets checked, failed transcripts are not independently replayed',
         'ratio_definition': 'sum of actual within-class/target costs; kernels are compared on identical complete proof cases; no missing failures or synthetic amortization',
         **{flag: False for flag in FALSE_FLAGS}}
+    if not legacy:
+        summary.update(kernels=list(kernels), production_kernel=production_kernel,
+            retained_baseline_kernel='retained-transposed', arms_per_ready_cohort=arm_count,
+            samples_per_group=SAMPLES,
+            invocation_position_scope='exact twelve-arm native rotation over nine samples; position coverage is not fully balanced')
+    return summary
 
 
 def git(*args: str) -> str:
@@ -541,6 +599,8 @@ def collect(output: Path, *, local: bool = False) -> dict:
         report['source_before'] = source()
         require(report['source_before']['source_state'] == 'committed-clean', 'measurement requires complete clean committed source')
         report['input_sha256'] = current_inputs()
+        require(source_kernels((ROOT / EXAMPLE_SOURCE).read_bytes()) == KERNELS,
+                'current collection requires the four-kernel native source contract')
         machine = report['uname']['machine']
         candidates = [name for name, spec in ARCHITECTURES.items() if spec['machine'] == machine]
         require(report['uname']['system'] == 'Linux' and len(candidates) == 1, 'observed native Linux architecture')
@@ -687,7 +747,12 @@ def verify(output: Path, *, require_current: bool = True) -> dict:
         for name in ('GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT'):
             require(type(context[name]) is str and re.fullmatch('[1-9][0-9]*', context[name]) is not None,
                     'actual hosted workflow identity')
-    summary = summarize(load(output / 'native.stdout'))
+    raw = load(output / 'native.stdout')
+    require(type(raw) is dict, 'raw diagnostic must be an object')
+    kernels = kernel_contract(raw.get('kernels'), historical=not require_current)
+    require(source_kernels(original[EXAMPLE_SOURCE]) == kernels,
+            'retained native kernel identities differ from the measured source')
+    summary = summarize(raw, historical=not require_current)
     require(encoded(summary) == (output / 'summary.json').read_bytes(), 'summary must derive exactly from retained raw samples')
     matches = current_inputs() == record['input_sha256']
     if require_current: require(matches, 'measured inputs changed; historical result is retained, not relabeled current')

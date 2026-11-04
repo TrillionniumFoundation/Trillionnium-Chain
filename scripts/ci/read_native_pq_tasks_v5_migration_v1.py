@@ -131,10 +131,14 @@ def baseline_result(directory: Path, expected_head: str, expected_tree: str, roo
         text = artifact(directory, name + '.log').read_text()
         parsed[name] = retained.unit_result(text, name) if required is None else retained.test_result(text, required, exact=True)
     require(report.get('tests') == parsed, 'retained report/raw test mismatch')
-    require(sum(row['passed'] for row in parsed.values()) == 205
+    # Original 205 passes plus the two fixed M00 SHA-2 known answers:
+    # sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams
+    # sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams
+    # unit_result above still binds every exact name and original outcome.
+    require(sum(row['passed'] for row in parsed.values()) == 207
             and sum(row['ignored'] for row in parsed.values()) == 8
             and sum(parsed[name]['passed'] for name, _, _, required in BASE_TESTS if required is not None) == 68,
-            'original 205/68/eight-ignore contract')
+            'retained 207/68/eight-ignore contract')
     phase_files = {
         'native-task-phases.json': retained.task_phases(artifact(directory, 'native-task.log').read_text()),
         'retained-task-phases.json': retained.v4_task_phases(artifact(directory, 'retained-native-task.log').read_text()),
@@ -153,7 +157,7 @@ def baseline_result(directory: Path, expected_head: str, expected_tree: str, roo
         raw = stream.read(binary['bytes'] + 1)
     require(len(raw) == binary['bytes'] and raw.startswith(b'\x7fELF')
             and hashlib.sha256(raw).hexdigest() == binary['sha256'], 'retained executable bytes')
-    return {'source_commit': expected_head, 'source_tree': expected_tree, 'passed': 205,
+    return {'source_commit': expected_head, 'source_tree': expected_tree, 'passed': 207,
             'integration_passed': 68, 'original_ignored': 8, 'executed_commands': 18,
             'native_task_phases': 37, 'manifest_sha256': digest(report_path),
             'native_binary_sha256': binary['sha256'],

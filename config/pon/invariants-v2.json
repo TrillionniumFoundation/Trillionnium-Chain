@@ -630,7 +630,10 @@
         "Forged independent or future acceptance",
         "Historical three-strategy source relabelled as current five-strategy zero comparison",
         "Equal migration cells contain the same structural ancestry corruption",
-        "Self-consistent monetary membership omits a future obligation while preserving its root"
+        "Self-consistent monetary membership omits a future obligation while preserving its root",
+        "Historical three-kernel output relabelled as the current four-kernel native producer",
+        "Missing full-limb arms or altered twelve-arm invocation order",
+        "Nine samples misrepresented as complete twelve-position balance"
       ],
       "tests": [
         "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_source_digest_cannot_be_stale",
@@ -650,7 +653,21 @@
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary",
-        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_twelve_arm_position_counts_preserve_nine_samples_without_inventing_balance",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_and_retained_ratios_name_different_actual_denominators",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_three_kernel_output_requires_explicit_historical_readback",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_labels_cannot_relabel_current_four_kernel_measurements",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_labels_cannot_upgrade_old_three_kernel_observations",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_full_limb_measurements_cannot_be_omitted",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_kernel_identity_cannot_reduce_declared_work",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_reordered_kernel_identities_cannot_relabel_the_native_schedule",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_wrong_current_kernel_progress_rejects",
+        "scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_pairwise_only_rotation_does_not_replace_twelve_arm_order",
+        "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_historical_kernel_labels_cannot_disagree_with_pinned_producer_source",
+        "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_legacy_native_source_has_only_explicit_historical_applicability",
+        "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_duplicate_native_kernel_declaration_cannot_select_a_convenient_one",
+        "scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_declared_native_kernel_count_cannot_disagree_with_its_labels"
       ],
       "source": [
         "scripts/ci/check_pon_evidence.py",
@@ -664,7 +681,10 @@
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
-        "scripts/ci/ci_job.sh"
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/test_work_rejection_report.py",
+        "scripts/pon_work_rejection_report.py",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs"
       ],
       "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
       "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",
