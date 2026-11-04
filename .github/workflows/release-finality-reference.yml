@@ -71,14 +71,19 @@ jobs:
           "$py" formal/pon-nakamoto-v1/test_model_generation_sequence_parent.py -v
           "$py" formal/release-finality-v2/check_existing_learning_owner.py
       - name: Build original native pipeline without changing runtime
+        env:
+          RUSTUP_HOME: ${{ runner.temp }}/release-finality-rustup-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.runner }}-${{ matrix.lane }}
         run: |
           set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal
+          mkdir "$RUSTUP_HOME"
+          rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt
           cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline
           sha256sum trillionnium/target/release/examples/continuous_pipeline > "$RUNNER_TEMP/release-finality/native-binary.sha256"
           rustc +1.95.0 --version > "$RUNNER_TEMP/release-finality/compiler.txt"
           uname -a > "$RUNNER_TEMP/release-finality/environment.txt"
       - name: Require each native certificate and separate-reference selector to execute
+        env:
+          RUSTUP_HOME: ${{ runner.temp }}/release-finality-rustup-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.runner }}-${{ matrix.lane }}
         run: |
           set -euo pipefail
           export TRNM_FINALITY_REFERENCE_PYTHON="$RUNNER_TEMP/finality-env/bin/python"
