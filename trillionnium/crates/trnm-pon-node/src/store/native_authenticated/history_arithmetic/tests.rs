@@ -569,8 +569,17 @@ fn old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it() 
         .unwrap();
     let id = packet.id().unwrap();
     let previous = node.read_active().unwrap();
+    let sql_commits_before = node.authenticated_arithmetic.history.observation()["sql_commit"]
+        ["sites"][SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_started"]
+        .as_u64()
+        .unwrap();
     node.db.execute_batch(&format!("CREATE TEMP TRIGGER damage_history AFTER INSERT ON native_state_commitments BEGIN DELETE FROM deltas WHERE block=X'{}'; END;",hex::encode(ids[1]))).unwrap();
     assert!(node.admit(&packet, 100_000).is_err());
+    assert_eq!(
+        node.authenticated_arithmetic.history.observation()["sql_commit"]["sites"]
+            [SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_started"],
+        sql_commits_before
+    );
     assert_eq!(
         node.db
             .query_row(
@@ -594,6 +603,11 @@ fn old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it() 
         .execute_batch("DROP TRIGGER damage_history")
         .unwrap();
     assert_eq!(node.admit(&packet, 100_000).unwrap(), id);
+    assert_eq!(
+        node.authenticated_arithmetic.history.observation()["sql_commit"]["sites"]
+            [SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_succeeded"],
+        sql_commits_before + 1
+    );
     history(&node, id, true, &mut || Ok(())).unwrap();
     drop(node);
     let reopened = Node::open_with_authenticated_state(directory.path(), settings(), 1).unwrap();
@@ -623,4 +637,124 @@ fn nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors(
             1
         );
     }
+
+    let empty = cache.observation();
+    let sql = &empty["sql_commit"];
+    assert_eq!(sql["has_consensus_authority"], false);
+    assert_eq!(sql["observation_failed"], false);
+    assert_eq!(sql["sites"].as_array().unwrap().len(), 4);
+    for site in sql["sites"].as_array().unwrap() {
+        assert_eq!(site["totals"]["calls_started"], 0);
+        assert!(site["totals"]["wall_ns"].is_null());
+        assert!(site["totals"]["cpu_ns"].is_null());
+    }
+
+    // The actual API returns success or the original deferred-constraint error.
+    // Its error path also retains the original rollback-on-drop behavior.
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch(
+        "PRAGMA foreign_keys=ON;
+         CREATE TABLE commit_parent(id INTEGER PRIMARY KEY);
+         CREATE TABLE commit_child(parent_id INTEGER REFERENCES commit_parent(id)
+             DEFERRABLE INITIALLY DEFERRED);",
+    )
+    .unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(
+        &db,
+        rusqlite::TransactionBehavior::Immediate,
+    )
+    .unwrap();
+    tx.execute("INSERT INTO commit_parent VALUES(1)", [])
+        .unwrap();
+    let guard = cache.observe_sql_commit(SqlCommitSite::Atomic);
+    let result = tx.commit();
+    guard.finish_sql_result(&result);
+    result.unwrap();
+    assert!(db.is_autocommit());
+    assert_eq!(
+        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row.get::<_, u64>(0))
+            .unwrap(),
+        1
+    );
+
+    let tx = rusqlite::Transaction::new_unchecked(
+        &db,
+        rusqlite::TransactionBehavior::Immediate,
+    )
+    .unwrap();
+    tx.execute("INSERT INTO commit_child VALUES(99)", [])
+        .unwrap();
+    let guard = cache.observe_sql_commit(SqlCommitSite::AdmissionPersistence);
+    let result = tx.commit();
+    guard.finish_sql_result(&result);
+    assert_eq!(
+        result.unwrap_err().sqlite_error_code(),
+        Some(rusqlite::ErrorCode::ConstraintViolation)
+    );
+    assert!(db.is_autocommit());
+    assert_eq!(
+        db.query_row("SELECT COUNT(*) FROM commit_child", [], |row| row.get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+
+    // A missing CPU stamp stays unknown even when the actual COMMIT succeeds.
+    let tx = rusqlite::Transaction::new_unchecked(
+        &db,
+        rusqlite::TransactionBehavior::Immediate,
+    )
+    .unwrap();
+    let mut guard = cache.observe_sql_commit(SqlCommitSite::ReorgStep);
+    guard.cpu = None;
+    let result = tx.commit();
+    guard.finish_sql_result(&result);
+    result.unwrap();
+    let unwound = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let _guard = cache.observe_sql_commit(SqlCommitSite::ReorgTermination);
+        panic!("retain unfinished SQL observation");
+    }));
+    assert!(unwound.is_err());
+
+    let measured = cache.observation();
+    let sites = measured["sql_commit"]["sites"].as_array().unwrap();
+    for site in sites {
+        let totals = &site["totals"];
+        assert_eq!(totals["calls_started"], 1);
+        assert_eq!(site["calls_in_flight"], 0);
+        assert!(totals["wall_ns"].is_u64());
+        assert_eq!(
+            totals["cpu_known_calls"].as_u64().unwrap()
+                + totals["cpu_unknown_calls"].as_u64().unwrap(),
+            1
+        );
+    }
+    assert_eq!(sites[SqlCommitSite::Atomic as usize]["totals"]["calls_succeeded"], 1);
+    assert_eq!(sites[SqlCommitSite::AdmissionPersistence as usize]["totals"]["calls_failed"], 1);
+    assert_eq!(sites[SqlCommitSite::ReorgStep as usize]["totals"]["cpu_unknown_calls"], 1);
+    assert!(sites[SqlCommitSite::ReorgStep as usize]["totals"]["cpu_ns"].is_null());
+    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_abandoned"], 1);
+    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize]["totals"]["calls_unwinding"], 1);
+    assert_eq!(measured["sql_commit"]["observation_failed"], false);
+
+    // Observation contention cannot block, retry, or replace the real SQL result.
+    let contended = HistoryArithmetic::default();
+    let held = contended.sql_commits.rows.lock().unwrap();
+    let tx = rusqlite::Transaction::new_unchecked(
+        &db,
+        rusqlite::TransactionBehavior::Immediate,
+    )
+    .unwrap();
+    tx.execute("INSERT INTO commit_parent VALUES(2)", [])
+        .unwrap();
+    let guard = contended.observe_sql_commit(SqlCommitSite::Atomic);
+    let result = tx.commit();
+    guard.finish_sql_result(&result);
+    result.unwrap();
+    drop(held);
+    assert_eq!(
+        db.query_row("SELECT COUNT(*) FROM commit_parent", [], |row| row.get::<_, u64>(0))
+            .unwrap(),
+        2
+    );
+    assert_eq!(contended.observation()["sql_commit"]["observation_failed"], true);
 }

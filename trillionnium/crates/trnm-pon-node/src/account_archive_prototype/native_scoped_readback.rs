@@ -1,6 +1,7 @@
 //! Bounded graph results inside the original Node WRITE transaction only.
 //! The ordinary no-scope verifier remains independent and unchanged.
 use super::{child_with_lifts, empty_hashes, storage, Kind, LiftCache, Node, NodeReader, Root};
+use crate::account_archive_execution::state_witness::CurrentAccounts;
 use crate::store::native_authenticated::GraphAccess;
 use crate::{ensure, Error, Result};
 use std::collections::{BTreeMap, BTreeSet};
@@ -185,11 +186,22 @@ pub(crate) fn verify(
     access: GraphAccess<'_, '_>,
     progress: &mut dyn FnMut() -> Result<()>,
     lifts: Option<&LiftCache>,
+    current_accounts: Option<&CurrentAccounts<'_>>,
 ) -> Result<VerifiedGraph> {
     let db = access.connection();
     let root = access.root();
     let empty = empty_hashes();
-    let actual = super::super::accounts(access.state()).map_err(storage)?;
+    // Reuse only parsing from this exact immutable State. Foreign or absent
+    // projections take the original parser; current SQL/graph checks follow.
+    let projected = current_accounts.and_then(|current| current.values_for(access.state()));
+    let parsed;
+    let actual = match projected {
+        Some(values) => values,
+        None => {
+            parsed = super::super::accounts(access.state()).map_err(storage)?;
+            &parsed
+        }
+    };
     let mut reader = NodeReader::new(db);
     // Preserve the original load BEFORE root count/empty/digest checks. A
     // missing or wrongly typed root row retains its original error priority.
@@ -283,7 +295,7 @@ pub(crate) fn verify(
     let same_accounts = if source_used.is_none() {
         // The first graph and every no-hit traversal retain the original full
         // map comparison. No partial result is promoted to a source frontier.
-        retained == actual && retained.len() as u64 == root.count
+        retained == *actual && retained.len() as u64 == root.count
     } else {
         // Each exposed leaf still equals the actual State. Hidden leaves are
         // covered by successful exact-ID subtrees in this unchanged writer.
