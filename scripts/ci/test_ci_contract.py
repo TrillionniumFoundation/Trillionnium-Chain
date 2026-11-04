@@ -567,7 +567,18 @@ class CiContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(prefix='trnm-ci-contract-')
         cls.root = Path(cls.temporary.name) / 'source'
-        shutil.copytree(ROOT, cls.root, ignore=shutil.ignore_patterns('.git', 'target', '__pycache__', 'artifacts'))
+        ignored = shutil.ignore_patterns('.git', 'target', '__pycache__', 'artifacts')
+
+        def ignore(directory, names):
+            excluded = ignored(directory, names)
+            if Path(directory) == ROOT:
+                # These validators consume source and literal workflow pins,
+                # not retained execution archives. Positive fixture validation
+                # still rejects any future pin whose input is missing.
+                excluded.add('evidence')
+            return excluded
+
+        shutil.copytree(ROOT, cls.root, ignore=ignore)
 
     @classmethod
     def tearDownClass(cls):

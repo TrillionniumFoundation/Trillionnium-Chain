@@ -575,7 +575,7 @@
     "scripts/ci/run_cross_arch_cost.py": "8d2fb7d1624d82138ca1d54efbad9107c175e048",
     "scripts/ci/run_llm_cell_installed_host_controls.sh": "57aef64537d71ed6f835ef717a2e7625a2834941",
     "scripts/ci/run_w1_reused_cost_v3.py": "7171e55ac36ec717c7f3cb66331978df5ec8c1e1",
-    "scripts/ci/test_ci_contract.py": "359be6893f6036123d04fec33c4ecd927a9fc44c",
+    "scripts/ci/test_ci_contract.py": "3d170c8d52c17666c5a130a1f7c567711d83d6d7",
     "scripts/ci/test_growth_scale_observation.py": "15f2a67962d04aba63c71e63778d8ef75b7834e6",
     "scripts/ci/test_llm_cell_host_handoff.py": "f5bf2502e2d5918f2c550df88730de0d8835641a",
     "scripts/ci/test_llm_cell_installed_host.py": "ab3f17f500f0006e0801f8fd0b4674332323686d",
