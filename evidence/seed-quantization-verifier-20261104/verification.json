@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "rows": 1005,
+  "files": 150,
+  "folds": 5,
+  "arms": 4,
+  "all_fold_measurements_checked": true,
+  "disagreements": {
+    "seed_before_final": 1,
+    "seed_after_final": 1,
+    "final_from_float_seed": 0,
+    "final_from_quantized_seed": 0
+  },
+  "training_run": false,
+  "held_out_task_data_read": false,
+  "l2_relative_tolerance": 1e-13,
+  "l2_absolute_tolerance": 1e-15
+}

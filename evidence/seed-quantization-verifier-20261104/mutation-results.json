@@ -1,0 +1,1338 @@
+{
+  "result": "PASS",
+  "negative_cases": 266,
+  "all_rejected": true,
+  "original_package_reverified": true,
+  "cases": [
+    {
+      "case": "empty weights",
+      "rejected": true,
+      "reason": "weight fold count"
+    },
+    {
+      "case": "missing weight fold",
+      "rejected": true,
+      "reason": "weight fold count"
+    },
+    {
+      "case": "duplicate weight fold",
+      "rejected": true,
+      "reason": "weight fold IDs"
+    },
+    {
+      "case": "empty fold reports",
+      "rejected": true,
+      "reason": "report fold count"
+    },
+    {
+      "case": "missing OOF row",
+      "rejected": true,
+      "reason": "OOF coverage"
+    },
+    {
+      "case": "duplicate OOF row",
+      "rejected": true,
+      "reason": "OOF ordered IDs"
+    },
+    {
+      "case": "weight shape",
+      "rejected": true,
+      "reason": "weight shape/finite: seed_float"
+    },
+    {
+      "case": "nonfinite weight",
+      "rejected": true,
+      "reason": "weight shape/finite: seed_float"
+    },
+    {
+      "case": "fractional integer weight",
+      "rejected": true,
+      "reason": "integer range: seed_quantized_integer"
+    },
+    {
+      "case": "int64 minimum integer weight",
+      "rejected": true,
+      "reason": "integer range: seed_quantized_integer"
+    },
+    {
+      "case": "out of range integer weight",
+      "rejected": true,
+      "reason": "integer range: seed_quantized_integer"
+    },
+    {
+      "case": "fold 0 fold",
+      "rejected": true,
+      "reason": "report fold IDs"
+    },
+    {
+      "case": "fold 0 fit_rows",
+      "rejected": true,
+      "reason": "fit_rows"
+    },
+    {
+      "case": "fold 0 test_rows",
+      "rejected": true,
+      "reason": "test_rows"
+    },
+    {
+      "case": "fold 0 fit_files",
+      "rejected": true,
+      "reason": "fit_files"
+    },
+    {
+      "case": "fold 0 test_files",
+      "rejected": true,
+      "reason": "test_files"
+    },
+    {
+      "case": "fold 0 logit_interaction_max_abs",
+      "rejected": true,
+      "reason": "interaction"
+    },
+    {
+      "case": "fold 0 both_old_controls_exact_match",
+      "rejected": true,
+      "reason": "fold control flag"
+    },
+    {
+      "case": "fold 0 seed identity",
+      "rejected": true,
+      "reason": "seed identities"
+    },
+    {
+      "case": "fold 0 seed_weight_change.max_abs",
+      "rejected": true,
+      "reason": "seed weights max_abs"
+    },
+    {
+      "case": "fold 0 seed_weight_change.l2",
+      "rejected": true,
+      "reason": "seed weights l2"
+    },
+    {
+      "case": "fold 0 seed_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "seed weights nonzero"
+    },
+    {
+      "case": "fold 0 pooled_weight_change.max_abs",
+      "rejected": true,
+      "reason": "pooled weights max_abs"
+    },
+    {
+      "case": "fold 0 pooled_weight_change.l2",
+      "rejected": true,
+      "reason": "pooled weights l2"
+    },
+    {
+      "case": "fold 0 pooled_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "pooled weights nonzero"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_before_final.max_abs",
+      "rejected": true,
+      "reason": "logits before max_abs"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_before_final.l2",
+      "rejected": true,
+      "reason": "logits before l2"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_before_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits before nonzero"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_after_final.max_abs",
+      "rejected": true,
+      "reason": "logits after max_abs"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_after_final.l2",
+      "rejected": true,
+      "reason": "logits after l2"
+    },
+    {
+      "case": "fold 0 seed_logit_shift_after_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits after nonzero"
+    },
+    {
+      "case": "fold 0 clipped_weights.seed",
+      "rejected": true,
+      "reason": "clipping: seed"
+    },
+    {
+      "case": "fold 0 clipped_weights.float_seed_final",
+      "rejected": true,
+      "reason": "clipping: float_seed_final"
+    },
+    {
+      "case": "fold 0 clipped_weights.quantized_seed_final",
+      "rejected": true,
+      "reason": "clipping: quantized_seed_final"
+    },
+    {
+      "case": "fold 0 prediction_disagreements.seed_before_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_before_final"
+    },
+    {
+      "case": "fold 0 prediction_disagreements.seed_after_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_after_final"
+    },
+    {
+      "case": "fold 0 prediction_disagreements.final_from_float_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_float_seed"
+    },
+    {
+      "case": "fold 0 prediction_disagreements.final_from_quantized_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_quantized_seed"
+    },
+    {
+      "case": "fold 0 margin FF.minimum",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 0 margin FF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 0 margin FQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 0 margin FQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 0 margin QF.minimum",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 0 margin QF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 0 margin QQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 0 margin QQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 0 weight seed_float",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 0 weight seed_quantized_integer",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 0 weight pooled_float_seed",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 0 weight pooled_quantized_seed",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 0 weight final_float_seed_integer",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 0 weight final_quantized_seed_integer",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 1 fold",
+      "rejected": true,
+      "reason": "report fold IDs"
+    },
+    {
+      "case": "fold 1 fit_rows",
+      "rejected": true,
+      "reason": "fit_rows"
+    },
+    {
+      "case": "fold 1 test_rows",
+      "rejected": true,
+      "reason": "test_rows"
+    },
+    {
+      "case": "fold 1 fit_files",
+      "rejected": true,
+      "reason": "fit_files"
+    },
+    {
+      "case": "fold 1 test_files",
+      "rejected": true,
+      "reason": "test_files"
+    },
+    {
+      "case": "fold 1 logit_interaction_max_abs",
+      "rejected": true,
+      "reason": "interaction"
+    },
+    {
+      "case": "fold 1 both_old_controls_exact_match",
+      "rejected": true,
+      "reason": "fold control flag"
+    },
+    {
+      "case": "fold 1 seed identity",
+      "rejected": true,
+      "reason": "seed identities"
+    },
+    {
+      "case": "fold 1 seed_weight_change.max_abs",
+      "rejected": true,
+      "reason": "seed weights max_abs"
+    },
+    {
+      "case": "fold 1 seed_weight_change.l2",
+      "rejected": true,
+      "reason": "seed weights l2"
+    },
+    {
+      "case": "fold 1 seed_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "seed weights nonzero"
+    },
+    {
+      "case": "fold 1 pooled_weight_change.max_abs",
+      "rejected": true,
+      "reason": "pooled weights max_abs"
+    },
+    {
+      "case": "fold 1 pooled_weight_change.l2",
+      "rejected": true,
+      "reason": "pooled weights l2"
+    },
+    {
+      "case": "fold 1 pooled_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "pooled weights nonzero"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_before_final.max_abs",
+      "rejected": true,
+      "reason": "logits before max_abs"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_before_final.l2",
+      "rejected": true,
+      "reason": "logits before l2"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_before_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits before nonzero"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_after_final.max_abs",
+      "rejected": true,
+      "reason": "logits after max_abs"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_after_final.l2",
+      "rejected": true,
+      "reason": "logits after l2"
+    },
+    {
+      "case": "fold 1 seed_logit_shift_after_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits after nonzero"
+    },
+    {
+      "case": "fold 1 clipped_weights.seed",
+      "rejected": true,
+      "reason": "clipping: seed"
+    },
+    {
+      "case": "fold 1 clipped_weights.float_seed_final",
+      "rejected": true,
+      "reason": "clipping: float_seed_final"
+    },
+    {
+      "case": "fold 1 clipped_weights.quantized_seed_final",
+      "rejected": true,
+      "reason": "clipping: quantized_seed_final"
+    },
+    {
+      "case": "fold 1 prediction_disagreements.seed_before_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_before_final"
+    },
+    {
+      "case": "fold 1 prediction_disagreements.seed_after_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_after_final"
+    },
+    {
+      "case": "fold 1 prediction_disagreements.final_from_float_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_float_seed"
+    },
+    {
+      "case": "fold 1 prediction_disagreements.final_from_quantized_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_quantized_seed"
+    },
+    {
+      "case": "fold 1 margin FF.minimum",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 1 margin FF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 1 margin FQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 1 margin FQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 1 margin QF.minimum",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 1 margin QF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 1 margin QQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 1 margin QQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 1 weight seed_float",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 1 weight seed_quantized_integer",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 1 weight pooled_float_seed",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 1 weight pooled_quantized_seed",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 1 weight final_float_seed_integer",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 1 weight final_quantized_seed_integer",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 2 fold",
+      "rejected": true,
+      "reason": "report fold IDs"
+    },
+    {
+      "case": "fold 2 fit_rows",
+      "rejected": true,
+      "reason": "fit_rows"
+    },
+    {
+      "case": "fold 2 test_rows",
+      "rejected": true,
+      "reason": "test_rows"
+    },
+    {
+      "case": "fold 2 fit_files",
+      "rejected": true,
+      "reason": "fit_files"
+    },
+    {
+      "case": "fold 2 test_files",
+      "rejected": true,
+      "reason": "test_files"
+    },
+    {
+      "case": "fold 2 logit_interaction_max_abs",
+      "rejected": true,
+      "reason": "interaction"
+    },
+    {
+      "case": "fold 2 both_old_controls_exact_match",
+      "rejected": true,
+      "reason": "fold control flag"
+    },
+    {
+      "case": "fold 2 seed identity",
+      "rejected": true,
+      "reason": "seed identities"
+    },
+    {
+      "case": "fold 2 seed_weight_change.max_abs",
+      "rejected": true,
+      "reason": "seed weights max_abs"
+    },
+    {
+      "case": "fold 2 seed_weight_change.l2",
+      "rejected": true,
+      "reason": "seed weights l2"
+    },
+    {
+      "case": "fold 2 seed_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "seed weights nonzero"
+    },
+    {
+      "case": "fold 2 pooled_weight_change.max_abs",
+      "rejected": true,
+      "reason": "pooled weights max_abs"
+    },
+    {
+      "case": "fold 2 pooled_weight_change.l2",
+      "rejected": true,
+      "reason": "pooled weights l2"
+    },
+    {
+      "case": "fold 2 pooled_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "pooled weights nonzero"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_before_final.max_abs",
+      "rejected": true,
+      "reason": "logits before max_abs"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_before_final.l2",
+      "rejected": true,
+      "reason": "logits before l2"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_before_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits before nonzero"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_after_final.max_abs",
+      "rejected": true,
+      "reason": "logits after max_abs"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_after_final.l2",
+      "rejected": true,
+      "reason": "logits after l2"
+    },
+    {
+      "case": "fold 2 seed_logit_shift_after_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits after nonzero"
+    },
+    {
+      "case": "fold 2 clipped_weights.seed",
+      "rejected": true,
+      "reason": "clipping: seed"
+    },
+    {
+      "case": "fold 2 clipped_weights.float_seed_final",
+      "rejected": true,
+      "reason": "clipping: float_seed_final"
+    },
+    {
+      "case": "fold 2 clipped_weights.quantized_seed_final",
+      "rejected": true,
+      "reason": "clipping: quantized_seed_final"
+    },
+    {
+      "case": "fold 2 prediction_disagreements.seed_before_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_before_final"
+    },
+    {
+      "case": "fold 2 prediction_disagreements.seed_after_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_after_final"
+    },
+    {
+      "case": "fold 2 prediction_disagreements.final_from_float_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_float_seed"
+    },
+    {
+      "case": "fold 2 prediction_disagreements.final_from_quantized_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_quantized_seed"
+    },
+    {
+      "case": "fold 2 margin FF.minimum",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 2 margin FF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 2 margin FQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 2 margin FQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 2 margin QF.minimum",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 2 margin QF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 2 margin QQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 2 margin QQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 2 weight seed_float",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 2 weight seed_quantized_integer",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 2 weight pooled_float_seed",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 2 weight pooled_quantized_seed",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 2 weight final_float_seed_integer",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 2 weight final_quantized_seed_integer",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 3 fold",
+      "rejected": true,
+      "reason": "report fold IDs"
+    },
+    {
+      "case": "fold 3 fit_rows",
+      "rejected": true,
+      "reason": "fit_rows"
+    },
+    {
+      "case": "fold 3 test_rows",
+      "rejected": true,
+      "reason": "test_rows"
+    },
+    {
+      "case": "fold 3 fit_files",
+      "rejected": true,
+      "reason": "fit_files"
+    },
+    {
+      "case": "fold 3 test_files",
+      "rejected": true,
+      "reason": "test_files"
+    },
+    {
+      "case": "fold 3 logit_interaction_max_abs",
+      "rejected": true,
+      "reason": "interaction"
+    },
+    {
+      "case": "fold 3 both_old_controls_exact_match",
+      "rejected": true,
+      "reason": "fold control flag"
+    },
+    {
+      "case": "fold 3 seed identity",
+      "rejected": true,
+      "reason": "seed identities"
+    },
+    {
+      "case": "fold 3 seed_weight_change.max_abs",
+      "rejected": true,
+      "reason": "seed weights max_abs"
+    },
+    {
+      "case": "fold 3 seed_weight_change.l2",
+      "rejected": true,
+      "reason": "seed weights l2"
+    },
+    {
+      "case": "fold 3 seed_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "seed weights nonzero"
+    },
+    {
+      "case": "fold 3 pooled_weight_change.max_abs",
+      "rejected": true,
+      "reason": "pooled weights max_abs"
+    },
+    {
+      "case": "fold 3 pooled_weight_change.l2",
+      "rejected": true,
+      "reason": "pooled weights l2"
+    },
+    {
+      "case": "fold 3 pooled_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "pooled weights nonzero"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_before_final.max_abs",
+      "rejected": true,
+      "reason": "logits before max_abs"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_before_final.l2",
+      "rejected": true,
+      "reason": "logits before l2"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_before_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits before nonzero"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_after_final.max_abs",
+      "rejected": true,
+      "reason": "logits after max_abs"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_after_final.l2",
+      "rejected": true,
+      "reason": "logits after l2"
+    },
+    {
+      "case": "fold 3 seed_logit_shift_after_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits after nonzero"
+    },
+    {
+      "case": "fold 3 clipped_weights.seed",
+      "rejected": true,
+      "reason": "clipping: seed"
+    },
+    {
+      "case": "fold 3 clipped_weights.float_seed_final",
+      "rejected": true,
+      "reason": "clipping: float_seed_final"
+    },
+    {
+      "case": "fold 3 clipped_weights.quantized_seed_final",
+      "rejected": true,
+      "reason": "clipping: quantized_seed_final"
+    },
+    {
+      "case": "fold 3 prediction_disagreements.seed_before_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_before_final"
+    },
+    {
+      "case": "fold 3 prediction_disagreements.seed_after_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_after_final"
+    },
+    {
+      "case": "fold 3 prediction_disagreements.final_from_float_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_float_seed"
+    },
+    {
+      "case": "fold 3 prediction_disagreements.final_from_quantized_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_quantized_seed"
+    },
+    {
+      "case": "fold 3 margin FF.minimum",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 3 margin FF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 3 margin FQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 3 margin FQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 3 margin QF.minimum",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 3 margin QF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 3 margin QQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 3 margin QQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 3 weight seed_float",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 3 weight seed_quantized_integer",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 3 weight pooled_float_seed",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 3 weight pooled_quantized_seed",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 3 weight final_float_seed_integer",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 3 weight final_quantized_seed_integer",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 4 fold",
+      "rejected": true,
+      "reason": "report fold IDs"
+    },
+    {
+      "case": "fold 4 fit_rows",
+      "rejected": true,
+      "reason": "fit_rows"
+    },
+    {
+      "case": "fold 4 test_rows",
+      "rejected": true,
+      "reason": "test_rows"
+    },
+    {
+      "case": "fold 4 fit_files",
+      "rejected": true,
+      "reason": "fit_files"
+    },
+    {
+      "case": "fold 4 test_files",
+      "rejected": true,
+      "reason": "test_files"
+    },
+    {
+      "case": "fold 4 logit_interaction_max_abs",
+      "rejected": true,
+      "reason": "interaction"
+    },
+    {
+      "case": "fold 4 both_old_controls_exact_match",
+      "rejected": true,
+      "reason": "fold control flag"
+    },
+    {
+      "case": "fold 4 seed identity",
+      "rejected": true,
+      "reason": "seed identities"
+    },
+    {
+      "case": "fold 4 seed_weight_change.max_abs",
+      "rejected": true,
+      "reason": "seed weights max_abs"
+    },
+    {
+      "case": "fold 4 seed_weight_change.l2",
+      "rejected": true,
+      "reason": "seed weights l2"
+    },
+    {
+      "case": "fold 4 seed_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "seed weights nonzero"
+    },
+    {
+      "case": "fold 4 pooled_weight_change.max_abs",
+      "rejected": true,
+      "reason": "pooled weights max_abs"
+    },
+    {
+      "case": "fold 4 pooled_weight_change.l2",
+      "rejected": true,
+      "reason": "pooled weights l2"
+    },
+    {
+      "case": "fold 4 pooled_weight_change.nonzero_entries",
+      "rejected": true,
+      "reason": "pooled weights nonzero"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_before_final.max_abs",
+      "rejected": true,
+      "reason": "logits before max_abs"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_before_final.l2",
+      "rejected": true,
+      "reason": "logits before l2"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_before_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits before nonzero"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_after_final.max_abs",
+      "rejected": true,
+      "reason": "logits after max_abs"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_after_final.l2",
+      "rejected": true,
+      "reason": "logits after l2"
+    },
+    {
+      "case": "fold 4 seed_logit_shift_after_final.nonzero_entries",
+      "rejected": true,
+      "reason": "logits after nonzero"
+    },
+    {
+      "case": "fold 4 clipped_weights.seed",
+      "rejected": true,
+      "reason": "clipping: seed"
+    },
+    {
+      "case": "fold 4 clipped_weights.float_seed_final",
+      "rejected": true,
+      "reason": "clipping: float_seed_final"
+    },
+    {
+      "case": "fold 4 clipped_weights.quantized_seed_final",
+      "rejected": true,
+      "reason": "clipping: quantized_seed_final"
+    },
+    {
+      "case": "fold 4 prediction_disagreements.seed_before_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_before_final"
+    },
+    {
+      "case": "fold 4 prediction_disagreements.seed_after_final",
+      "rejected": true,
+      "reason": "fold disagreement: seed_after_final"
+    },
+    {
+      "case": "fold 4 prediction_disagreements.final_from_float_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_float_seed"
+    },
+    {
+      "case": "fold 4 prediction_disagreements.final_from_quantized_seed",
+      "rejected": true,
+      "reason": "fold disagreement: final_from_quantized_seed"
+    },
+    {
+      "case": "fold 4 margin FF.minimum",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 4 margin FF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FF"
+    },
+    {
+      "case": "fold 4 margin FQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 4 margin FQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: FQ"
+    },
+    {
+      "case": "fold 4 margin QF.minimum",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 4 margin QF.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QF"
+    },
+    {
+      "case": "fold 4 margin QQ.minimum",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 4 margin QQ.exact_top_ties",
+      "rejected": true,
+      "reason": "fold margin: QQ"
+    },
+    {
+      "case": "fold 4 weight seed_float",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 4 weight seed_quantized_integer",
+      "rejected": true,
+      "reason": "quantization: seed"
+    },
+    {
+      "case": "fold 4 weight pooled_float_seed",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 4 weight pooled_quantized_seed",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "fold 4 weight final_float_seed_integer",
+      "rejected": true,
+      "reason": "quantization: float_seed_final"
+    },
+    {
+      "case": "fold 4 weight final_quantized_seed_integer",
+      "rejected": true,
+      "reason": "quantization: quantized_seed_final"
+    },
+    {
+      "case": "OOF prediction FF",
+      "rejected": true,
+      "reason": "prediction: FF"
+    },
+    {
+      "case": "OOF logit FF",
+      "rejected": true,
+      "reason": "logits: FF"
+    },
+    {
+      "case": "OOF margin FF",
+      "rejected": true,
+      "reason": "margin: FF"
+    },
+    {
+      "case": "aggregate FFcorrect",
+      "rejected": true,
+      "reason": "metrics: FF"
+    },
+    {
+      "case": "aggregate FFfile_macro",
+      "rejected": true,
+      "reason": "metrics: FF"
+    },
+    {
+      "case": "confusion FF",
+      "rejected": true,
+      "reason": "metrics: FF"
+    },
+    {
+      "case": "OOF prediction FQ",
+      "rejected": true,
+      "reason": "prediction: FQ"
+    },
+    {
+      "case": "OOF logit FQ",
+      "rejected": true,
+      "reason": "logits: FQ"
+    },
+    {
+      "case": "OOF margin FQ",
+      "rejected": true,
+      "reason": "margin: FQ"
+    },
+    {
+      "case": "aggregate FQcorrect",
+      "rejected": true,
+      "reason": "metrics: FQ"
+    },
+    {
+      "case": "aggregate FQfile_macro",
+      "rejected": true,
+      "reason": "metrics: FQ"
+    },
+    {
+      "case": "confusion FQ",
+      "rejected": true,
+      "reason": "metrics: FQ"
+    },
+    {
+      "case": "OOF prediction QF",
+      "rejected": true,
+      "reason": "prediction: QF"
+    },
+    {
+      "case": "OOF logit QF",
+      "rejected": true,
+      "reason": "logits: QF"
+    },
+    {
+      "case": "OOF margin QF",
+      "rejected": true,
+      "reason": "margin: QF"
+    },
+    {
+      "case": "aggregate QFcorrect",
+      "rejected": true,
+      "reason": "metrics: QF"
+    },
+    {
+      "case": "aggregate QFfile_macro",
+      "rejected": true,
+      "reason": "metrics: QF"
+    },
+    {
+      "case": "confusion QF",
+      "rejected": true,
+      "reason": "metrics: QF"
+    },
+    {
+      "case": "OOF prediction QQ",
+      "rejected": true,
+      "reason": "prediction: QQ"
+    },
+    {
+      "case": "OOF logit QQ",
+      "rejected": true,
+      "reason": "logits: QQ"
+    },
+    {
+      "case": "OOF margin QQ",
+      "rejected": true,
+      "reason": "margin: QQ"
+    },
+    {
+      "case": "aggregate QQcorrect",
+      "rejected": true,
+      "reason": "metrics: QQ"
+    },
+    {
+      "case": "aggregate QQfile_macro",
+      "rejected": true,
+      "reason": "metrics: QQ"
+    },
+    {
+      "case": "confusion QQ",
+      "rejected": true,
+      "reason": "metrics: QQ"
+    },
+    {
+      "case": "OOF fold",
+      "rejected": true,
+      "reason": "OOF fold"
+    },
+    {
+      "case": "OOF true",
+      "rejected": true,
+      "reason": "OOF truth"
+    },
+    {
+      "case": "OOF id",
+      "rejected": true,
+      "reason": "OOF ordered IDs"
+    },
+    {
+      "case": "aggregate disagreement seed_before_final",
+      "rejected": true,
+      "reason": "aggregate disagreements"
+    },
+    {
+      "case": "aggregate disagreement seed_after_final",
+      "rejected": true,
+      "reason": "aggregate disagreements"
+    },
+    {
+      "case": "aggregate disagreement final_from_float_seed",
+      "rejected": true,
+      "reason": "aggregate disagreements"
+    },
+    {
+      "case": "aggregate disagreement final_from_quantized_seed",
+      "rejected": true,
+      "reason": "aggregate disagreements"
+    },
+    {
+      "case": "rows",
+      "rejected": true,
+      "reason": "rows"
+    },
+    {
+      "case": "files",
+      "rejected": true,
+      "reason": "files"
+    },
+    {
+      "case": "primary_seed_before_final_prediction_disagreements",
+      "rejected": true,
+      "reason": "primary"
+    },
+    {
+      "case": "all_original_rows_scored",
+      "rejected": true,
+      "reason": "all_original_rows_scored"
+    },
+    {
+      "case": "controls_exact_match",
+      "rejected": true,
+      "reason": "controls_exact_match"
+    },
+    {
+      "case": "new_independent_data",
+      "rejected": true,
+      "reason": "new_independent_data"
+    },
+    {
+      "case": "model_adopted",
+      "rejected": true,
+      "reason": "model_adopted"
+    },
+    {
+      "case": "public_reward",
+      "rejected": true,
+      "reason": "public_reward"
+    },
+    {
+      "case": "TRAIN split",
+      "rejected": true,
+      "reason": "TRAIN only"
+    },
+    {
+      "case": "TRAIN feature bound",
+      "rejected": true,
+      "reason": "features"
+    },
+    {
+      "case": "control prediction",
+      "rejected": true,
+      "reason": "old control: QF"
+    },
+    {
+      "case": "package report.json",
+      "rejected": true,
+      "reason": "uncompressed shadow: report.json"
+    },
+    {
+      "case": "package weights.json",
+      "rejected": true,
+      "reason": "uncompressed shadow: weights.json"
+    },
+    {
+      "case": "package report.json.gz",
+      "rejected": true,
+      "reason": "package hash: report.json.gz"
+    },
+    {
+      "case": "package weights.json.gz",
+      "rejected": true,
+      "reason": "package hash: weights.json.gz"
+    },
+    {
+      "case": "package PLAN.json",
+      "rejected": true,
+      "reason": "package hash: PLAN.json"
+    },
+    {
+      "case": "package empty manifest",
+      "rejected": true,
+      "reason": "frozen manifest hash"
+    },
+    {
+      "case": "package missing manifest entry",
+      "rejected": true,
+      "reason": "frozen manifest hash"
+    },
+    {
+      "case": "package duplicate manifest entry",
+      "rejected": true,
+      "reason": "frozen manifest hash"
+    }
+  ]
+}

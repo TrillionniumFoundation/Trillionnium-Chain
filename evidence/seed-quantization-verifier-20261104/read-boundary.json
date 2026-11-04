@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "scope": "Python open events after verifier imports; not an OS syscall sandbox",
+  "opened_files": [
+    "evidence/pon-evaluation-bundle-v1/model/train.json",
+    "evidence/seed-final-quantization-20261103/PLAN.json",
+    "evidence/seed-final-quantization-20261103/README.md",
+    "evidence/seed-final-quantization-20261103/SHA256SUMS",
+    "evidence/seed-final-quantization-20261103/decoded-hashes.json",
+    "evidence/seed-final-quantization-20261103/report.json.gz",
+    "evidence/seed-final-quantization-20261103/reproduce.py",
+    "evidence/seed-final-quantization-20261103/run.py",
+    "evidence/seed-final-quantization-20261103/run.stderr",
+    "evidence/seed-final-quantization-20261103/verification.json",
+    "evidence/seed-final-quantization-20261103/verify.py",
+    "evidence/seed-final-quantization-20261103/verify.stderr",
+    "evidence/seed-final-quantization-20261103/weights.json.gz",
+    "evidence/train-only-quantization-20261103/report.json"
+  ],
+  "training_modules_imported": false,
+  "held_out_task_reads": 0
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "chain-source-availability-v1",
+  "scanned_remote_heads": 630,
+  "inventory_versions": 24,
+  "missing_inventory_branches": [
+    "ops/recover-qian-qi-20260925"
+  ],
+  "comparison": "current source blobs minus frozen 161 projected candidates and original baseline tree; not a temporal new-data claim",
+  "uncovered_source_blobs": 38,
+  "declared_inventory_owners": {
+    "M00": 20,
+    "M10": 18
+  },
+  "eligible_by_original_path_filter": 5,
+  "eligible_owners": [
+    "M00"
+  ],
+  "uncovered_M04_source_blobs": 0,
+  "M04_probe_gap_resolved": false,
+  "new_training_run": false,
+  "manifest_reaudit_performed": false,
+  "decoded_sha256": {
+    "heads.json": "4db08e8dbb071261b60b819a8e4c00bcb5aba5aaa20942a7046e2a735faece0a",
+    "source-delta.json": "1f43f1f6d05f992ded5b1f91f91de838b5dfd03da2d85a0482cc888d345ac26b"
+  }
+}

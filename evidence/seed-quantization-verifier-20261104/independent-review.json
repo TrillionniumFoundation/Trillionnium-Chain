@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "negative_case_count": 266,
+  "independent_second_run_exact": true,
+  "original_empty_weight_false_pass_reproduced": true,
+  "original_frozen_packages_unchanged": true,
+  "review_corrections": [
+    "Pin complete unique original manifest to its SHA256",
+    "Avoid int64-min absolute-value overflow by explicit integer bounds"
+  ],
+  "intermediate_repository_check": "Concurrent mutation-results.json rewrite caused JSON parse failure; intermediate-repository-check.log retained. Final repository-truth.log passed after writer completion.",
+  "no_new_training": true
+}
