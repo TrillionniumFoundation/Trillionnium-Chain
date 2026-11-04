@@ -1,0 +1,345 @@
+{
+  "schema": "trnm-312-original-negative-gates-v1",
+  "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+  "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+  "log_evidence": [
+    {
+      "name": "campaign",
+      "job": 126350268779,
+      "bytes": 176045,
+      "sha256": "29af6e6be666930efd50a4537df404258d1f78fe3faefabcfa97348fd8f7d973",
+      "run": 41761586787,
+      "observed_exit": 1,
+      "inner_artifact_readback_completed": false
+    },
+    {
+      "name": "fresh-head",
+      "job": 126350268999,
+      "bytes": 154297,
+      "sha256": "8af9967cad705cc9597baacc7c202811514ccaab8d399649752a24c52692d5b5",
+      "run": 41761586824,
+      "observed_exit": 1,
+      "original_host_controllers": [
+        {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "systemd_run_exit": 1,
+          "failure": null,
+          "final_host_errors": []
+        }
+      ],
+      "inner_artifact_readback_completed": false
+    },
+    {
+      "name": "protocol",
+      "job": 126350991702,
+      "bytes": 137110,
+      "sha256": "2d23732da3eff9a0f20a72b7a823d687a5d7bdad1ab12fa79a6bd30dd26d7e75",
+      "run": 41761586798,
+      "observed_exit": 1,
+      "original_host_controllers": [
+        {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "systemd_run_exit": 1,
+          "failure": null,
+          "final_host_errors": []
+        }
+      ],
+      "inner_artifact_readback_completed": false
+    },
+    {
+      "name": "from-zero-arm",
+      "job": 126350991471,
+      "bytes": 138640,
+      "sha256": "1c7390a3001f44bef564dfbd0a025a28c0e3a32a1d88567a633e763291901493",
+      "run": 41761586798,
+      "observed_exit": 1,
+      "original_host_controllers": [
+        {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "systemd_run_exit": 1,
+          "failure": null,
+          "final_host_errors": []
+        }
+      ],
+      "inner_artifact_readback_completed": false
+    },
+    {
+      "name": "from-zero-x64",
+      "job": 126350991772,
+      "bytes": 138848,
+      "sha256": "98f58bca1f9e21c7ae62c326881fcc06877a3fcc0050fe1bef7cddf43044819e",
+      "run": 41761586798,
+      "observed_exit": 1,
+      "original_host_controllers": [
+        {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "systemd_run_exit": 1,
+          "failure": null,
+          "final_host_errors": []
+        }
+      ],
+      "inner_artifact_readback_completed": false
+    }
+  ],
+  "campaign_controller": {
+    "attempts": [
+      {
+        "complete_success": false,
+        "number": 1,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-1-raw",
+        "report_sha256": "a6d31c20750a1becb759a1dd3fda1e44454eb9581d0c22de77b85166818ade94",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 112472361243,
+          "elapsed_seconds": 112.472361243,
+          "error": null,
+          "name": "run-1",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-1.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "0c9dfede1822ab1ad84826ffb627a45a5ec55e8a7d446ec4db948de88aad30d2",
+          "stderr_truncated": false,
+          "stdout": "run-1.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "5a452336694d83b0b30e0ec8cc1f76ce7df825def1a6e8461aeceae237bcce34",
+          "stdout_truncated": false
+        }
+      },
+      {
+        "complete_success": false,
+        "number": 2,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-2-raw",
+        "report_sha256": "80c2182f228c2010d8087930eee343df88e17a56d228aac0e4565ec192b25ba2",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 112385429557,
+          "elapsed_seconds": 112.385429557,
+          "error": null,
+          "name": "run-2",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-2.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "f5446a14338bed40482c9ab880f809069d46fd1d0db263b6a61589047a896049",
+          "stderr_truncated": false,
+          "stdout": "run-2.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "32a187c40494ab6f0ebba87292db76ef3903720f6668cbb9e4694c97258714e4",
+          "stdout_truncated": false
+        }
+      },
+      {
+        "complete_success": false,
+        "number": 3,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-3-raw",
+        "report_sha256": "e30b6195fbc5c55b22ab5ca2c4e25c8e9a431ece1a4ffb54e1164371c0a272dd",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 112022498425,
+          "elapsed_seconds": 112.022498425,
+          "error": null,
+          "name": "run-3",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-3.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "03c717b5ee8146925613c98e0863623080d6afa6a6a62bb271805fa50d56a135",
+          "stderr_truncated": false,
+          "stdout": "run-3.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "be12d9c33e1edcbfbf086d9837f0a254495dcb7e6b2854021b2b1205487ebdfa",
+          "stdout_truncated": false
+        }
+      }
+    ],
+    "binary": {
+      "actual_compiler_artifact_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+      "build_separate_from_measured_campaign": true,
+      "bytes": 11568024,
+      "execution": "original cargo test command using the checked build artifact",
+      "retained": "public_v3_multiprocess.bin",
+      "sha256_after": "347aaf20b650d6005ffb499aa390c92e7e5aa63c662202da8832ddf0de3abfa6",
+      "sha256_before": "347aaf20b650d6005ffb499aa390c92e7e5aa63c662202da8832ddf0de3abfa6"
+    },
+    "build": {
+      "command": [
+        "/home/runner/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "complete_success": true,
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 179512837991,
+      "elapsed_seconds": 179.512837991,
+      "error": null,
+      "name": "build",
+      "outer_stage_timeout_seconds": 1800,
+      "returncode": 0,
+      "stderr": "build.stderr.log",
+      "stderr_bytes": 3992,
+      "stderr_sha256": "73913ea2d7cfaa0b9f0921010a6c83a9275f11f2982d97909b57d6e491d0c459",
+      "stderr_truncated": false,
+      "stdout": "build.stdout.log",
+      "stdout_bytes": 109360,
+      "stdout_sha256": "dd6eb0167b24d2781ab37b972f16b24b2862cdf0b874d2fa1e81e9e10c4b4892",
+      "stdout_truncated": false
+    },
+    "build_timeout_seconds": 1800,
+    "complete_success": false,
+    "completed_utc": "2026-11-04T02:50:44.899418+00:00",
+    "expected_head": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "expected_public_policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "expected_resources": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "expected_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "finalization_failures": [],
+    "original_campaign_outer_timeout_seconds": 600,
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "planned_complete_runs": 3,
+    "profile": "release",
+    "public_phase_placement": {
+      "attacker_processes_remain_in_original_controller_domain": true,
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+      "original_3x3_workload_and_depletion_predicates_changed": false,
+      "profile": "fixed-public-phase-external-actors-v1",
+      "receiver_and_verifier_cpu_max": "25000 100000",
+      "receiver_and_verifier_memory_max": "2147483648"
+    },
+    "runner_sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+    "schema": "pon-original-native-campaign-ci-v1",
+    "scope": "same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification",
+    "source_after": {
+      "base": null,
+      "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+      "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 928835188,
+      "tracked_entries": 8009,
+      "tracked_worktree_verified": true
+    },
+    "source_kind": "head",
+    "started_utc": "2026-11-04T02:41:59.645108+00:00",
+    "state_backend": "authenticated-v1",
+    "toolchain": "1.95.0"
+  },
+  "scope": "Actual original job failures remain failures. Null host-controller failure with child exit 1 is not business success. These fresh/protocol/from-zero inner artifact causes have not yet been read back; no older PUBLIC_REQUEST_DEADLINE or f35 confirmation count is silently substituted.",
+  "performance_qualified": false
+}

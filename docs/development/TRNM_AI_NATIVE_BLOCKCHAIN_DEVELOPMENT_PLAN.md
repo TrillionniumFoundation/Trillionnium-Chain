@@ -5148,3 +5148,32 @@ only the printed already-sanitized view is reduced, with explicit omissions
 and an exact digest/length binding to the unchanged complete projection file.
 Original archive code and native binaries are never executed by the reader.
 Its new controls and complete readback remain pending until actual Actions.
+
+
+### 2026-11-04 frozen readback succeeds; preserve new 312 original failures
+
+The unchanged-bounds v3 reader at `32af94bf` actually completed run
+`41762546479`, job `126353342150`: 30 controls passed, including all nine
+reproduced original output-boundary negatives. Before/after source identity
+and the 26-package audit passed. Both fixed f35 ZIPs reached full member CRC
+and SHA256 verification. The F0 original report records baseline 2/3 and
+valid-work-root 0/3 with 24/24 attackers ready; the campaign remains 3/27,
+0/18 pressure. These original f35 failures remain HOLD and are not results
+for newer source 312.
+
+The 312 release matrix independently completed four original jobs, each
+executing the same four exact selectors: 16 executions, four distinct tests.
+Before/after receipts bind head 312 or actual merge 84c, frozen base be0,
+and tree a53. Every large-parent parity record keeps Host and all-honest
+qualification false. New 312 campaign, fresh, protocol and two from-zero
+failures are preserved with complete returned job bytes. Their inner report
+readback remains separate; no historical confirmation count is substituted.
+
+The next read-only reader adds fixed, typed client import/confirmation and
+native/Host timing summaries from the exact original Rust producers. Missing
+rows and clocks stay unknown; known partial sums are not complete totals;
+nested phase costs are never added. Its intended 37 controls are pending
+actual hosted execution. All artifact, output, address-space and deadline
+bounds, original native selectors and production budgets remain unchanged.
+No local executor/preflight or new native run is claimed by this research
+commit. DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO remain in force.

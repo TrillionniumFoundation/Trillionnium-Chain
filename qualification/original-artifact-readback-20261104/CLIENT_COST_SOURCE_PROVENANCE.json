@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-original-client-cost-projection-v1",
+  "original_source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+  "original_tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+  "producer_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "bytes": 111313,
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+      "git_blob": "a1283b8dbea41cdb707bfa56aa42a352e87cda32",
+      "bytes": 16523,
+      "sha256": "7b222125f809b371afb830fe3cfe727dbbaafb725bb6eabedd50539df55a5b6c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214",
+      "bytes": 64625,
+      "sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808"
+    }
+  ],
+  "reader": {
+    "git_blob": "ed8ab930d979884068d68aa15f302b5a161faf8f",
+    "bytes": 51988,
+    "sha256": "f25b57fdaecda5f9a225a8615b6c37c747db7828309e4006379d68e3d1ea3a65"
+  },
+  "candidate_controls": 37,
+  "candidate_controls_executed_before_this_commit": false,
+  "original_artifacts_unchanged": true,
+  "original_budgets_unchanged": true,
+  "known_sample_sums": "Known sample subtotal when unknown_samples > 0; no samples yields null, never a measured zero.",
+  "completion_flags": "A phase with zero CPU and started/completed false is not a completed measurement.",
+  "phase_accounting": "Native importer phases exclude scoped-worker CPU; native and Host phases are nested and must not be added to the parent or each other.",
+  "missing_history": "Absent/null history yields unknown counts and costs; wrong types and arrays longer than 64 reject.",
+  "qualification": {
+    "readback_only": true,
+    "performance": false,
+    "host": false,
+    "production_activation": false
+  },
+  "execution_boundary": "No usable local executor. Hosted control and readback execution is pending on the exact new source; no local preflight, Python, Rust, or native claim."
+}

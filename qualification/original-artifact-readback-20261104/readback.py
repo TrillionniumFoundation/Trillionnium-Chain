@@ -209,7 +209,7 @@ def large_original_report(name, spec):
 
 
 def inspect_zip(path, spec, budget):
-    files, documents, projected, summaries = {}, {}, {}, {}
+    files, documents, projected, summaries, client_costs = {}, {}, {}, {}, {}
     seen_documents = set()
     retained = 0
     with zipfile.ZipFile(path) as archive:
@@ -263,6 +263,7 @@ def inspect_zip(path, spec, budget):
                     projected[info.filename] = projection(value)
                     if isinstance(value, dict) and "phases" in value:
                         summaries[info.filename] = phase_summary(value)
+                        client_costs[info.filename] = client_cost_summary(value)
                 if not large_original_report(info.filename, spec):
                     documents[info.filename] = value
                 del value
@@ -302,7 +303,7 @@ def inspect_zip(path, spec, budget):
             require(attempt["number"] == ordinal
                     and attempt["report_sha256"] == files[report_name]["sha256"],
                     "ORIGINAL_REPORT_HASH")
-    return files, documents, declared, projected, summaries
+    return files, documents, declared, projected, summaries, client_costs
 
 
 BLOCKED = re.compile(
@@ -596,6 +597,124 @@ def write_outputs(out, payloads, budget):
 
 
 
+
+CLIENT_NATIVE_PHASES = (
+    "decode", "context_owner_wait", "context", "work", "admission_owner_wait",
+    "admission", "submit_result", "admission_prepare", "execution",
+    "commit_owner_wait", "commit", "cpu_wait", "body_decode",
+    "response_encoding", "history_epoch_open", "history_epoch_close",
+    "history_import", "cpu_settle", "root_commitment",
+)
+CLIENT_HOST_PHASES = ("resolve", "initial", "checkpoint", "final")
+
+
+def metric_stats(values):
+    require(all(value is None or (type(value) is int and 0 <= value < (1 << 128))
+                for value in values), "CLIENT_METRIC_INTEGER")
+    known = [value for value in values if value is not None]
+    return {"known_samples": len(known), "unknown_samples": len(values) - len(known),
+            "sum": sum(known) if known else None,
+            "min": min(known) if known else None,
+            "max": max(known) if known else None}
+
+
+def metric_flags(values):
+    require(all(value is None or type(value) is bool for value in values),
+            "CLIENT_METRIC_BOOL")
+    return {"true": sum(value is True for value in values),
+            "false": sum(value is False for value in values),
+            "unknown": sum(value is None for value in values)}
+
+
+def client_cost_summary(report):
+    """Fixed public timing fields only; no packet/state/path/string readback."""
+    phases = report.get("phases")
+    require(isinstance(phases, list), "CLIENT_PHASE_ARRAY")
+    output = []
+    for phase in phases:
+        require(isinstance(phase, dict), "CLIENT_PHASE_OBJECT")
+        mode = phase.get("mode")
+        require(mode in ("baseline", "from-zero", "late-product", "valid-work-root"),
+                "CLIENT_PHASE_MODE")
+        history = phase.get("history")
+        require(history is None or (isinstance(history, list) and len(history) <= 64
+                and all(isinstance(row, dict) for row in history)), "CLIENT_HISTORY_ROWS")
+        if history is None:
+            # A retained failed phase may never reach client observations.
+            # Absence is not an observed empty set or zero CPU.
+            output.append({
+                "mode": mode, "recorded_history_calls": None,
+                "client_import": None, "client_confirmation": None,
+                "native_snapshots_present": None, "native_phases": None,
+                "host_checks": None,
+                "scope": "original phase has no client History observations; costs and counts are unknown; no acceptance",
+            })
+            continue
+        imports, confirmations, snapshots = [], [], []
+        for row in history:
+            for key, target in (("client_import", imports),
+                                ("client_confirmation", confirmations)):
+                stamp = row.get(key)
+                require(stamp is None or isinstance(stamp, dict), "CLIENT_STAMP_OBJECT")
+                if stamp is not None:
+                    target.append(stamp)
+            stamp = row.get("client_import")
+            snapshot = stamp.get("native_import_observation") if stamp is not None else None
+            require(snapshot is None or isinstance(snapshot, dict), "CLIENT_SNAPSHOT_OBJECT")
+            if snapshot is not None:
+                snapshots.append(snapshot)
+        native_groups = {name: [] for name in CLIENT_NATIVE_PHASES}
+        host_groups = {name: [] for name in CLIENT_HOST_PHASES}
+        for snapshot in snapshots:
+            for key, allowed, groups in (
+                    ("phases", CLIENT_NATIVE_PHASES, native_groups),
+                    ("host_checks", CLIENT_HOST_PHASES, host_groups)):
+                rows = snapshot.get(key)
+                require(isinstance(rows, list) and len(rows) == len(allowed)
+                        and all(isinstance(row, dict) for row in rows),
+                        "CLIENT_OBSERVATION_ROWS")
+                identities = [row.get("phase") for row in rows]
+                require(all(isinstance(name, str) and name in allowed for name in identities)
+                        and len(set(identities)) == len(allowed), "CLIENT_PHASE_IDENTITIES")
+                for row in rows:
+                    groups[row["phase"]].append(row)
+        def stamp_summary(rows):
+            return {
+                "observed_stamps": len(rows),
+                "succeeded": metric_flags([row.get("succeeded") for row in rows]),
+                "wall_ns": metric_stats([row.get("wall_ns") for row in rows]),
+                "thread_cpu_ns": metric_stats([row.get("thread_cpu_ns") for row in rows]),
+                "thread_cpu_observation_available": metric_flags(
+                    [row.get("thread_cpu_observation_available") for row in rows]),
+            }
+        output.append({
+            "mode": mode, "recorded_history_calls": len(history),
+            "client_import": stamp_summary(imports),
+            "client_confirmation": stamp_summary(confirmations),
+            "native_snapshots_present": len(snapshots),
+            "native_measurement_failures": metric_stats(
+                [row.get("measurement_failures") for row in snapshots]),
+            "native_phases": [
+                {"phase": name, "observed_slots": len(rows),
+                 "started": metric_flags([row.get("started") for row in rows]),
+                 "completed": metric_flags([row.get("completed") for row in rows]),
+                 "accepted": metric_flags([row.get("accepted") for row in rows]),
+                 "wall_ns": metric_stats([row.get("wall_ns") for row in rows]),
+                 "thread_cpu_ns": metric_stats([row.get("thread_cpu_ns") for row in rows])}
+                for name, rows in native_groups.items()],
+            "host_checks": [
+                {"phase": name, "observed_slots": len(rows),
+                 **{field: metric_stats([row.get(field) for row in rows])
+                    for field in ("calls_started", "calls_completed", "calls_accepted",
+                                  "calls_rejected", "calls_unfinished", "wall_ns",
+                                  "thread_cpu_ns", "wall_clock_unknown_calls",
+                                  "cpu_clock_unknown_calls")}}
+                for name, rows in host_groups.items()],
+            "scope": "all recorded client History rows in this original report, at most 64; importer phase CPU excludes scoped workers; Host and child phases are nested and must not be added to the parent or each other; missing clocks stay unknown; no business or native acceptance",
+        })
+    return output
+
+
 def stdout_projection(projected, encoded):
     """A deliberately incomplete view; full safe projection stays in its file."""
     remaining = [4096]
@@ -778,6 +897,45 @@ def self_test():
     require(limited_flags["projection"] == flags, "STDOUT_FALSE_AND_UNKNOWN")
     count += 1
 
+    require(metric_stats([None, None]) == {
+        "known_samples": 0, "unknown_samples": 2,
+        "sum": None, "min": None, "max": None}, "UNKNOWN_CLOCK_NOT_ZERO")
+    require(metric_stats([None, 0, 7])["sum"] == 7
+            and metric_flags([True, False, None]) == {
+                "true": 1, "false": 1, "unknown": 1}, "TYPED_CLIENT_METRICS")
+    count += 1
+    absent = client_cost_summary({"phases": [{"mode": "baseline"}]})[0]
+    require(absent["recorded_history_calls"] is None
+            and absent["client_import"] is None
+            and absent["native_phases"] is None, "ABSENT_CLIENT_ROWS_UNKNOWN")
+    count += 1
+    rejects(lambda: metric_stats([True]), "CLIENT_METRIC_INTEGER")
+    rejects(lambda: metric_flags([1]), "CLIENT_METRIC_BOOL")
+    rejects(lambda: client_cost_summary({"phases": [
+        {"mode": "baseline", "history": [{}] * 65}]}), "CLIENT_HISTORY_ROWS")
+    phase_rows = [{"phase": name, "started": False, "completed": False,
+                   "accepted": None, "thread_cpu_ns": None, "wall_ns": None}
+                  for name in CLIENT_NATIVE_PHASES]
+    host_rows = [{"phase": name} for name in CLIENT_HOST_PHASES]
+    snapshot = {"phases": phase_rows, "host_checks": host_rows,
+                "measurement_failures": 0}
+    stamp = {"succeeded": False, "wall_ns": 9, "thread_cpu_ns": None,
+             "thread_cpu_observation_available": False,
+             "native_import_observation": snapshot}
+    original = {"phases": [{"mode": "baseline",
+        "history": [{"client_import": stamp}, {}]}]}
+    costs = client_cost_summary(original)[0]
+    require(costs["recorded_history_calls"] == 2
+            and costs["client_import"]["observed_stamps"] == 1
+            and costs["client_import"]["succeeded"]["false"] == 1
+            and costs["client_import"]["thread_cpu_ns"]["sum"] is None
+            and costs["native_phases"][0]["accepted"]["unknown"] == 1
+            and costs["client_confirmation"]["observed_stamps"] == 0,
+            "CLIENT_COST_FAILED_AND_ABSENT")
+    count += 1
+    phase_rows[-1] = dict(phase_rows[0])
+    rejects(lambda: client_cost_summary(original), "CLIENT_PHASE_IDENTITIES")
+
     print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
                       "native_tests_executed": 0, "artifact_members_executed": 0}))
 
@@ -817,7 +975,7 @@ def main():
             check_metadata(spec, artifact, run, commit)
             path = Path(scratch) / f"{spec['artifact_id']}.zip"
             download(spec, token, path, budget)
-            files, documents, declared, projected, summaries = inspect_zip(path, spec, budget)
+            files, documents, declared, projected, summaries, client_costs = inspect_zip(path, spec, budget)
             snapshot = {
                 "artifact": spec, "archive_digest_and_size_verified": True,
                 "members_crc_and_sha256_verified": len(files),
@@ -825,6 +983,7 @@ def main():
                 "source_receipts_verified": spec["source_json"],
                 "original_binary_verified": spec["kind"] == "campaign",
                 "phase_summaries": summaries,
+                "client_cost_summaries": client_costs,
                 "reader_address_space_cap_bytes": address_cap,
                 "qualification": {"readback_only": True, "native_executed": False,
                                   "performance_qualified": False,

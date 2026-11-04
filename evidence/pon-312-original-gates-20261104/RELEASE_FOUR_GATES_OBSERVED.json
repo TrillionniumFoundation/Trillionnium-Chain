@@ -1,0 +1,439 @@
+{
+  "schema": "trnm-312-release-original-logs-v1",
+  "run": 41761586795,
+  "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+  "merge": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+  "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+  "jobs": [
+    {
+      "job": 126350269390,
+      "name": "release-x64-merge",
+      "full_returned_log_bytes": 216893,
+      "full_returned_log_sha256": "12e9b011ba9d542cc6ad4448b964763bd5e2dd315069ff5ca42f37120b2182bc",
+      "full_log_persisted_in_this_commit": false,
+      "log_retrieval_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126350269390/logs",
+      "source_before": {
+        "base": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "prospective-merge",
+        "prospective_merge": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "prospective-merge",
+        "prospective_merge": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "selectors": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      ],
+      "summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 6.46s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 3.94s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.04s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.02s"
+      ],
+      "parity_records": [
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 338624374,
+            "live_refused": false,
+            "owner_cpu_ns": 338314004,
+            "residual_cpu_ns": 4617,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 314987,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 338628991
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 354866706,
+            "live_refused": false,
+            "owner_cpu_ns": 354569204,
+            "residual_cpu_ns": 4346,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 301848,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 354871052
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 341243660,
+            "live_refused": false,
+            "owner_cpu_ns": 340923494,
+            "residual_cpu_ns": 4056,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 324222,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 341247716
+          }
+        }
+      ]
+    },
+    {
+      "job": 126350269472,
+      "name": "release-x64-head",
+      "full_returned_log_bytes": 216301,
+      "full_returned_log_sha256": "5cb87ad4cb00b8f48621f8ebe2fd605cbfeb8933e092d1c928e4d5d40ed03d7b",
+      "full_log_persisted_in_this_commit": false,
+      "log_retrieval_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126350269472/logs",
+      "source_before": {
+        "base": null,
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "selectors": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      ],
+      "summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 6.88s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 4.22s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.04s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.02s"
+      ],
+      "parity_records": [
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 305156044,
+            "live_refused": false,
+            "owner_cpu_ns": 304860025,
+            "residual_cpu_ns": 3301,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 299320,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 305159345
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 329581720,
+            "live_refused": false,
+            "owner_cpu_ns": 329283999,
+            "residual_cpu_ns": 2848,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 300569,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 329584568
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 311242986,
+            "live_refused": false,
+            "owner_cpu_ns": 310901449,
+            "residual_cpu_ns": 2715,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 344252,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 311245701
+          }
+        }
+      ]
+    },
+    {
+      "job": 126350269558,
+      "name": "release-arm-head",
+      "full_returned_log_bytes": 215995,
+      "full_returned_log_sha256": "3cb421ff61ffe0e1366573d12eff98d0aa9a0e12adb3e1fa3ceefb9d71d77d75",
+      "full_log_persisted_in_this_commit": false,
+      "log_retrieval_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126350269558/logs",
+      "source_before": {
+        "base": null,
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "selectors": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      ],
+      "summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 10.43s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 6.30s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.04s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.02s"
+      ],
+      "parity_records": [
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 547334584,
+            "live_refused": false,
+            "owner_cpu_ns": 547037272,
+            "residual_cpu_ns": 2608,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 299920,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 547337192
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 343048656,
+            "live_refused": false,
+            "owner_cpu_ns": 342763608,
+            "residual_cpu_ns": 2768,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 287816,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 343051424
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 331670184,
+            "live_refused": false,
+            "owner_cpu_ns": 331369440,
+            "residual_cpu_ns": 2120,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 302864,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 331672304
+          }
+        }
+      ]
+    },
+    {
+      "job": 126350269659,
+      "name": "release-arm-merge",
+      "full_returned_log_bytes": 216581,
+      "full_returned_log_sha256": "1aa3e2e3039cf27be48fbbc034c2840b96c9aeb2dc08d339350adf2c4ab60fa6",
+      "full_log_persisted_in_this_commit": false,
+      "log_retrieval_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126350269659/logs",
+      "source_before": {
+        "base": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "prospective-merge",
+        "prospective_merge": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "candidate": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+        "kind": "prospective-merge",
+        "prospective_merge": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+        "tested_tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 928835188,
+        "tracked_entries": 8009,
+        "tracked_worktree_verified": true
+      },
+      "selectors": [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read"
+      ],
+      "summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 10.46s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 6.35s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.04s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 976 filtered out; finished in 0.02s"
+      ],
+      "parity_records": [
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 542203288,
+            "live_refused": false,
+            "owner_cpu_ns": 541892784,
+            "residual_cpu_ns": 3216,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 313720,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 542206504
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 330062408,
+            "live_refused": false,
+            "owner_cpu_ns": 329790224,
+            "residual_cpu_ns": 2320,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 274504,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 330064728
+          }
+        },
+        {
+          "bytes": 8625548,
+          "host_qualified": false,
+          "all_honest_service_qualified": false,
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 326977528,
+            "live_refused": false,
+            "owner_cpu_ns": 326644872,
+            "residual_cpu_ns": 2432,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 335088,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 326979960
+          }
+        }
+      ]
+    }
+  ],
+  "distinct_original_native_selectors": 4,
+  "original_native_selector_executions_passed": 16,
+  "full_artifact_binary_readback": false,
+  "workspace_profile_not_in_this_receipt": true,
+  "old_32_execution_180_control_evidence_transferred": false,
+  "qualification": {
+    "host": false,
+    "all_honest_service": false,
+    "production": false
+  }
+}

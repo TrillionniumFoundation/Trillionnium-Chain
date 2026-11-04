@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-independent-static-review-transcript-v1",
+  "reviewer": "/root/hepta_blockers",
+  "source": {
+    "git_blob": "ed8ab930d979884068d68aa15f302b5a161faf8f",
+    "bytes": 51988,
+    "sha256": "f25b57fdaecda5f9a225a8615b6c37c747db7828309e4006379d68e3d1ea3a65"
+  },
+  "provenance": "Faithful English transcription of the two exact-source agent review messages, not an independently executed test receipt.",
+  "findings": [
+    "Closed 19 native-phase and four Host-phase identities; each observed snapshot must contain exactly one of each.",
+    "Integer metrics reject booleans and require 0 <= value < 2^128; boolean metrics preserve true/false/unknown.",
+    "History rows are bounded at 64. Final source explicitly treats missing/null History observations as unknown, and retains wrong-type/overlong rejection.",
+    "No arbitrary packet, state, path, or error text is newly emitted. Original serialized 2 MiB stdout and 8 MiB derived-file budgets remain checked before writing.",
+    "Known sums with unknown samples are partial subtotals; incomplete/unstarted phase zeroes are not completed measurements.",
+    "The 4096 stdout limit counts visited input nodes; generated omission markers are not included in that count. Serialized byte budgets remain authoritative."
+  ],
+  "confirmed_new_blockers": [],
+  "actual_local_execution": 0,
+  "candidate_controls_pending": 37,
+  "original_producer_files_independently_rechecked_by_reviewer": false,
+  "native_or_host_qualification": false
+}

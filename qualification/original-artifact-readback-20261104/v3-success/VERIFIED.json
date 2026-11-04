@@ -1,0 +1,321 @@
+{
+  "schema": "trnm-frozen-reader-v3-observed-v1",
+  "run": 41762546479,
+  "job": 126353342150,
+  "source": "32af94bf434df1c44890663ce6a32a2c1002ed5b",
+  "tree": "0bbeb3de59d66f7239dee61ff9843286d99b6586",
+  "actual_job_conclusion": "success",
+  "source_receipts": [
+    {
+      "base": null,
+      "candidate": "32af94bf434df1c44890663ce6a32a2c1002ed5b",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "32af94bf434df1c44890663ce6a32a2c1002ed5b",
+      "tested_tree": "0bbeb3de59d66f7239dee61ff9843286d99b6586",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 879072082,
+      "tracked_entries": 7613,
+      "tracked_worktree_verified": true
+    },
+    {
+      "base": null,
+      "candidate": "32af94bf434df1c44890663ce6a32a2c1002ed5b",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "32af94bf434df1c44890663ce6a32a2c1002ed5b",
+      "tested_tree": "0bbeb3de59d66f7239dee61ff9843286d99b6586",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 879072082,
+      "tracked_entries": 7613,
+      "tracked_worktree_verified": true
+    }
+  ],
+  "controls": [
+    {
+      "self_tests_passed": 30,
+      "prior_reader_negatives_reproduced": 9,
+      "native_tests_executed": 0,
+      "artifact_members_executed": 0
+    }
+  ],
+  "full_returned_job_log": {
+    "path": "job-126353342150.decoded.log",
+    "bytes": 233220,
+    "sha256": "2c94c19af5d4a76be47dcdb3c3877f8609c7803c9746a28d6f3468c46bf5a68e"
+  },
+  "readbacks": [
+    {
+      "archive_digest_and_size_verified": true,
+      "artifact": {
+        "artifact_id": 13287158757,
+        "artifact_name": "pon-native-campaign-x64-head-release-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+        "bytes": 60599441,
+        "kind": "campaign",
+        "project_json": [
+          "results.json",
+          "run-1-raw/report.json",
+          "run-2-raw/report.json",
+          "run-3-raw/report.json"
+        ],
+        "required_json": [
+          "source-before.json",
+          "source-after.json",
+          "results.json",
+          "run-1-raw/report.json",
+          "run-2-raw/report.json",
+          "run-3-raw/report.json"
+        ],
+        "run_id": 41752900360,
+        "sha256": "d66801acae25f6ec7d8a8e40cc6ebbbc7c895c5a694b51f433f4cc6b279757bd",
+        "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+        "source_json": [
+          "source-before.json",
+          "source-after.json"
+        ],
+        "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777"
+      },
+      "declared_decoded_bytes": 361333009,
+      "members_crc_and_sha256_verified": 1766,
+      "original_binary_verified": true,
+      "phase_summaries": {
+        "run-1-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ],
+        "run-2-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ],
+        "run-3-raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 1,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 2,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "from-zero",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "late-product",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          }
+        ]
+      },
+      "qualification": {
+        "native_executed": false,
+        "performance_qualified": false,
+        "production_activation": false,
+        "readback_only": true
+      },
+      "reader_address_space_cap_bytes": 4294967296,
+      "source_receipts_verified": [
+        "source-before.json",
+        "source-after.json"
+      ]
+    },
+    {
+      "archive_digest_and_size_verified": true,
+      "artifact": {
+        "artifact_id": 13287122967,
+        "artifact_name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+        "bytes": 19665544,
+        "kind": "f0",
+        "project_json": [
+          "execution/results.json",
+          "execution/raw/report.json",
+          "execution/raw/baseline.json",
+          "execution/raw/valid-work-root.json",
+          "finalization/result.json",
+          "execution/raw/baseline-fixed-root-host-control/phase-result.json",
+          "execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
+          "execution/raw/baseline-fixed-root-host-control/host/child-result.json",
+          "finalization/baseline/result.json",
+          "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+          "execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
+          "execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
+          "finalization/valid-work-root/result.json",
+          "finalization/controller/result.json"
+        ],
+        "required_json": [
+          "source-before.json",
+          "source-after.json",
+          "execution/results.json",
+          "execution/raw/report.json",
+          "execution/raw/baseline.json",
+          "execution/raw/valid-work-root.json",
+          "finalization/result.json"
+        ],
+        "run_id": 41752900351,
+        "sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+        "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+        "source_json": [
+          "source-before.json",
+          "source-after.json"
+        ],
+        "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777"
+      },
+      "declared_decoded_bytes": 78725507,
+      "members_crc_and_sha256_verified": 444,
+      "original_binary_verified": false,
+      "phase_summaries": {
+        "execution/raw/report.json": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 2,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "baseline",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 3,
+            "root_criteria": null,
+            "startup_or_campaign_error": null
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "confirmation_flag_unknowns": 0,
+            "confirmed_rounds": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "mode": "valid-work-root",
+            "planned_signed_rounds": 3,
+            "recorded_rounds": 1,
+            "root_criteria": false,
+            "startup_or_campaign_error": null
+          }
+        ]
+      },
+      "qualification": {
+        "native_executed": false,
+        "performance_qualified": false,
+        "production_activation": false,
+        "readback_only": true
+      },
+      "reader_address_space_cap_bytes": 4294967296,
+      "source_receipts_verified": [
+        "source-before.json",
+        "source-after.json"
+      ]
+    }
+  ],
+  "reader_v2_failure_retained": true,
+  "native_tests_executed_by_this_reader": 0,
+  "qualification_unchanged": "DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO"
+}
