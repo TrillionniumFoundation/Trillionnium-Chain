@@ -127,6 +127,52 @@ class HostBoundaryTests(unittest.TestCase):
             with self.subTest(nonce=nonce), self.assertRaises(ValueError):
                 host.names('123.2', nonce)
 
+    def test_long_history_exact_profile_cannot_widen_confirmation_or_select_other_work(self):
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / 'actual'; binary.write_bytes(b'parser fixture only')
+            history = [str(binary), host.HISTORY_TEST, '--exact', '--ignored', '--show-output', '--test-threads=1']
+            self.assertEqual(host.native_command(history, 3600), binary)
+            for changed in (history[:-1], [*history, '--nocapture'],
+                            [history[0], host.HOST_TEST, *history[2:]],
+                            [history[0], 'other_history', *history[2:]],
+                            [history[0], *history[1:-1], '--test-threads=2']):
+                with self.subTest(command=changed), self.assertRaisesRegex(ValueError, 'EXACT_NATIVE'):
+                    host.native_command(changed, 3600)
+            for seconds in (True, 90, 3599, 3601):
+                with self.subTest(seconds=seconds), self.assertRaises(ValueError):
+                    host.native_command(history, seconds)
+            with self.assertRaises(ValueError):
+                host.native_command(self.command(binary), 3600)
+
+    def test_root_deadline_comes_from_the_observed_exact_child_profile(self):
+        history = ['/fixture', host.HISTORY_TEST, '--exact', '--ignored', '--show-output', '--test-threads=1']
+        pressure = self.command(Path('/fixture'))
+        with patch.object(host.time, 'monotonic_ns', return_value=10):
+            host.validate_native_deadline(10 + 90_000_000_000, pressure)
+            host.validate_native_deadline(10 + 3_600_000_000_000, history)
+            for command, deadline in ((pressure, 10), (pressure, 11 + 90_000_000_000),
+                                      (pressure, 10 + 3_600_000_000_000),
+                                      (history, 11 + 3_600_000_000_000)):
+                with self.subTest(command=command, deadline=deadline), self.assertRaisesRegex(ValueError, 'ABSOLUTE_DEADLINE'):
+                    host.validate_native_deadline(deadline, command)
+
+    def test_real_long_history_gate_binds_ignored_selector_and_original_arguments(self):
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / 'actual'; binary.write_bytes(b'fixture')
+            args = SimpleNamespace(elf_fd=7, sha256='a' * 64, deadline_ns=123456)
+            leaf, _ = host.names('123.1', 'b' * 24)
+            command = ['/usr/bin/python3', '-I', '-B', str(host.SCRIPT), 'exec-native',
+                       '--gate-fd', '6', '--elf-fd', '7', '--sha256', args.sha256,
+                       '--membership', '/' + host.FIXED_UNIT + '/' + leaf,
+                       '--deadline-ns', str(args.deadline_ns), str(binary), host.HISTORY_TEST,
+                       '--exact', '--ignored', '--show-output', '--test-threads=1']
+            self.assertEqual(host.validate_gate_arguments(command, args, leaf), binary)
+            for index, value in ((16, host.HOST_TEST), (18, '--include-ignored'),
+                                 (19, '--nocapture'), (20, '--test-threads=2')):
+                changed = command.copy(); changed[index] = value
+                with self.subTest(index=index), self.assertRaises(ValueError):
+                    host.validate_gate_arguments(changed, args, leaf)
+
     def test_birth_parent_credentials_cwd_and_own_process_group_are_all_bound(self):
         parent = dict(pid=100, parent=50, group=100, start_ticks=1000,
                       uids=[1001] * 4, gids=[1002] * 4, cgroup='/outside', cwd=str(host.ROOT))
