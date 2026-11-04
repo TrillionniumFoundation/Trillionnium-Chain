@@ -5268,3 +5268,7 @@ No local executable environment was available for this publication. Original pro
 ### Reader follow-up: keep first failed readback and validate output schema
 
 The first reader at 531aa49f6fc0bd07cf457b12e21c2e0b616f6556 failed in run 41774593974 / job 126391889966 with ValueError after unchanged-source verification and audit passed; the exact guard was not printed and is not guessed here. Its complete job log is preserved. A narrow follow-up validates the three outcome flags as true booleans and the original Linux exit code as a non-boolean integer in [-255,255]. Only closed, source-defined error codes may be printed. Nine synthetic checks include invalid string flags, boolean/string/out-of-range exit values, and arbitrary exception-message redaction. The original artifact bytes, limits and native scope are unchanged; no local execution is claimed.
+
+### Selected-log follow-up without increasing decode budgets
+
+Run 41774865598 / job 126392763333 at 5234a60b48543015fcb04091bf5f8fdc0e8d0b1d executed all nine schema controls, then rejected an archive member with MEMBER_BYTE_LIMIT. That failure is preserved. The follow-up retains the original 1 MiB member/4 MiB total/128 KiB output budgets, and only decompresses the five explicit registry/module/receipt/source files. Other members are recorded by hashed path and declared size and explicitly remain CRC/SHA unverified. This selected-log scope is sufficient to bind the original registry and success rows; it makes no all-member decoded-content claim and runs no original archived or native code.

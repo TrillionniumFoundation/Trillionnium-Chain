@@ -1,7 +1,7 @@
 {
-  "schema": "trnm-da-original-log-reader-source-v2",
-  "base": "531aa49f6fc0bd07cf457b12e21c2e0b616f6556",
-  "base_tree": "ac000cfe85c1ea1e3f6875977ad6d996529ab6fc",
+  "schema": "trnm-da-original-log-reader-source-v3",
+  "base": "5234a60b48543015fcb04091bf5f8fdc0e8d0b1d",
+  "base_tree": "c6cbfe43ee100e3c64ec853b555543cf9b08ebbf",
   "branch": "research/chain-da-sequence-readback-20261104-gpt6",
   "helper": {
     "path": "qualification/original-artifact-readback-20261104/readback.py",
@@ -15,12 +15,6 @@
       "bytes": 1812,
       "git_blob": "dd357037ee60aaf4e470ceafcf1970f337d45d59",
       "sha256": "6a3a01756bf5fb8dc4f32b2fbd23ff9a7045843201d1eb66175f587147958262"
-    },
-    {
-      "path": "qualification/da-sequence-log-readback-20261104/README.md",
-      "bytes": 1916,
-      "git_blob": "3dcde28430ad9ceb7122085391ec51577d76531c",
-      "sha256": "35c9b2b164cd43b401b2c1142baf3cb12bacc8efbf061ef5163cdd52413fd327"
     },
     {
       "path": "qualification/da-sequence-log-readback-20261104/original-diagnostic-job-126381158783.decoded.log",
@@ -53,22 +47,40 @@
       "sha256": "b1b6b085ad69d98036891ccef099e1f9a7301a56b511e50abbb62aa62c558f4e"
     },
     {
-      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
-      "bytes": 11978,
-      "git_blob": "9d814000e3df2879cda8289e608eae407cee39f1",
-      "sha256": "adc7cef28939c916ae7f685ec633975b4f2c36bc7cb73cc27c5ba34fe87f6b27"
-    },
-    {
       "path": "qualification/da-sequence-log-readback-20261104/v1-failure/job-126391889966.decoded.log",
       "bytes": 25349,
       "git_blob": "4342660ab072029fa90bb4446e8c76cf6484d7bf",
       "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
     },
     {
+      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
+      "bytes": 12918,
+      "git_blob": "46d2d459a89354437e682c33daff7e04009cd020",
+      "sha256": "642a6411cb16379f14a981ce9414d2193944965a5bbd00fd3b8683bac915ddae"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/README.md",
+      "bytes": 2398,
+      "git_blob": "1d5818e02fda510922e5092aa63768d04d7ce46c",
+      "sha256": "af04601d9f86f49173e5f045ef5ab54acb52754f750215f1ed3f6f3889f10c7a"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/INDEPENDENT_REVIEW_V2.json",
+      "bytes": 1936,
+      "git_blob": "c438798fab1f2241f1ad1891ed46700454417e3a",
+      "sha256": "3f2a140209d12c5a48e03e0062253bb10211c70641677a30704d590f6e6a6253"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/v2-failure/job-126392763333.decoded.log",
+      "bytes": 25449,
+      "git_blob": "810cdd4acc28f9db65d37887995568dfc8e212e2",
+      "sha256": "6c7797f98f3f80351f38ca43c7c5a74086083f944cb430a060e49621eae72da6"
+    },
+    {
       "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
-      "bytes": 420071,
-      "git_blob": "4996e18d7dce1e1c323b445e4c831dee9688e62a",
-      "sha256": "3d259bbacd60a99a034313a17d5d385eeb9b07e3ebef1cd04a068b61ee09a4b4"
+      "bytes": 420772,
+      "git_blob": "bf9d60a139fd9975569485165e5c8a2e95b84aab",
+      "sha256": "c0f97d89f879266abb70992951ce51261ce2e32538eb703aa75b490fe4230c96"
     }
   ],
   "original_artifact": {
@@ -106,5 +118,16 @@
       "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
     }
   },
-  "revision": "Strict boolean/outcome and bounded integer exit fields; closed failure-code projection; nine synthetic schema controls execute on the hosted reader. Original archive and acceptance checks unchanged."
+  "revision": "Keep all decode/output/time limits; decompress and CRC/hash only the five explicit required logs. Unselected members remain declared metadata only, not CRC or decoded-SHA verified.",
+  "v2_failure": {
+    "source": "5234a60b48543015fcb04091bf5f8fdc0e8d0b1d",
+    "run": 41774865598,
+    "job": 126392763333,
+    "reader_controls_passed": 9,
+    "error": "MEMBER_BYTE_LIMIT",
+    "log": {
+      "bytes": 25449,
+      "sha256": "6c7797f98f3f80351f38ca43c7c5a74086083f944cb430a060e49621eae72da6"
+    }
+  }
 }

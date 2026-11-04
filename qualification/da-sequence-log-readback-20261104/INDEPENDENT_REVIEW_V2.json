@@ -1,0 +1,36 @@
+{
+  "schema": "chain.da-original-log-reader.static-review.v1",
+  "reviewer": "hepta_blockers",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "original_reader": {
+    "git_blob_sha": "e220d5ca3f4c5e47addc6345794a258777448496",
+    "sha256": "87ebf9822c8273625114fa5fec7bd8ef078dd1f2c4244fd1af289a51e2a96497",
+    "bytes": 8942
+  },
+  "updated_reader": {
+    "git_blob_sha": "9d814000e3df2879cda8289e608eae407cee39f1",
+    "sha256": "adc7cef28939c916ae7f685ec633975b4f2c36bc7cb73cc27c5ba34fe87f6b27",
+    "bytes": 11978
+  },
+  "review_scope": [
+    "Fixed original artifact metadata/digest, required five-member identity and raw-log digest binding",
+    "Chunk-accounted 4MiB returned decoded bytes, 1MiB declared member cap, 64 member cap and 128KiB serialized report",
+    "ASCII libtest identifier projection, no archive extraction or product execution",
+    "Follow-up exact bool/int outcomes and closed error-code projection"
+  ],
+  "finding": {
+    "original": "Four raw outcome values could be copied into stdout without scalar type validation.",
+    "updated": "checked_outcomes requires exactly bool for all three outcome flags and exactly int (excluding bool) in [-255,255] for exit status; unknown error values map to a fixed UNCLASSIFIED literal.",
+    "status": "resolved_in_reviewed_source"
+  },
+  "conclusion": "No confirmed remaining blocker within this bounded static review.",
+  "limits": {
+    "executed_reader": false,
+    "executed_controls": false,
+    "downloaded_original_zip": false,
+    "executed_native": false,
+    "source_scope": "The reader verifies source receipts agree with metadata commit/tree. This review does not claim independent per-path Git byte comparison by this new reader.",
+    "budget_scope": "Returned decompressed byte budget includes a possible one-byte over-limit probe; this is not a codec internal-buffer cap.",
+    "full_product_or_performance_qualified": false
+  }
+}

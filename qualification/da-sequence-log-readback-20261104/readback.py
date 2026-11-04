@@ -167,8 +167,23 @@ def main():
             infos = zf.infolist()
             require(0 < len(infos) <= 64, "MEMBER_COUNT")
             declared = helper.validate_members(infos, DECODED_LIMIT)
+            selected_declared = 0
             for info in infos:
+                names = [name for name in WANTED
+                         if info.filename in (name, "da-sequence-diagnostic/" + name)]
+                member = {"name_sha256": hashlib.sha256(info.filename.encode()).hexdigest(),
+                          "declared_bytes": info.file_size, "decoded": bool(names)}
+                if not names:
+                    # The immutable ZIP digest is verified, but do not decode
+                    # unrelated provider/source metadata. This is a five-log
+                    # readback, not an all-member CRC/decoded-SHA qualification.
+                    all_members.append(member)
+                    continue
+                require(len(names) == 1, "AMBIGUOUS_REQUIRED_MEMBER")
+                name = names[0]
+                require(name not in retained, "AMBIGUOUS_REQUIRED_MEMBER")
                 require(info.file_size <= MEMBER_LIMIT, "MEMBER_BYTE_LIMIT")
+                selected_declared += info.file_size
                 data = bytearray()
                 sha = hashlib.sha256()
                 with zf.open(info) as stream:
@@ -179,16 +194,13 @@ def main():
                         returned += len(block)
                         require(returned <= DECODED_LIMIT, "RETURNED_DECODED_LIMIT")
                         sha.update(block)
-                        if any(info.filename in (name, "da-sequence-diagnostic/" + name)
-                               for name in WANTED):
-                            data.extend(block)
-                all_members.append({"name_sha256": hashlib.sha256(info.filename.encode()).hexdigest(),
-                                    "bytes": info.file_size, "sha256": sha.hexdigest()})
-                for name in WANTED:
-                    if info.filename in (name, "da-sequence-diagnostic/" + name):
-                        require(name not in retained, "AMBIGUOUS_REQUIRED_MEMBER")
-                        retained[name] = bytes(data)
-        require(returned == declared, "DECODED_SIZE")
+                        data.extend(block)
+                require(len(data) == info.file_size, "DECODED_SIZE")
+                member.update({"decoded_bytes": len(data), "sha256": sha.hexdigest(),
+                               "crc_verified": True})
+                all_members.append(member)
+                retained[name] = bytes(data)
+        require(returned == selected_declared, "DECODED_SIZE")
     require(set(retained) == set(WANTED), "REQUIRED_LOGS")
     before = helper.parse_json(retained["source-before.json"])
     after = helper.parse_json(retained["source-after.json"])
@@ -218,8 +230,12 @@ def main():
         "schema": "trnm-da-diagnostic-original-log-readback-v1",
         "reader_source": os.environ["GITHUB_SHA"],
         "original": SPEC,
-        "archive_sha_size_all_member_crc_verified": True,
-        "decoded_bytes": returned,
+        "archive_sha_and_size_verified": True,
+        "all_member_crc_verified": False,
+        "required_five_members_crc_and_sha_verified": True,
+        "unselected_members_decoded": False,
+        "declared_archive_decoded_bytes": declared,
+        "selected_decoded_bytes": returned,
         "member_count": len(all_members),
         "members": all_members,
         "original_source_receipts_match": True,
@@ -232,7 +248,7 @@ def main():
         "unexpected_success_names": name_rows(set(successful) - set(names)),
         "duplicate_success_names": name_rows(name for name, count in counts.items() if count != 1),
         "required_input_digests": {name: digest(data) for name, data in retained.items()},
-        "scope": "Readback of original diagnostic logs; no archived code executed, no native rerun, no original baseline or performance qualification.",
+        "scope": "Selected five-log readback of the immutable original diagnostic ZIP. Other members have metadata only and were not decompressed or CRC/SHA checked. No archived code executed, no native rerun, no original baseline or performance qualification.",
         "native_executed": False,
         "original_baseline_qualified": False,
         "host_qualified": False,
