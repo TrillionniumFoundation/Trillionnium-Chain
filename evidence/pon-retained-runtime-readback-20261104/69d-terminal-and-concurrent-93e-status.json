@@ -1,0 +1,887 @@
+{
+  "schema": "trnm-69d-terminal-and-concurrent-93e-status-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "scope": "Dated workflow/queue metadata and exact commit/tree boundaries; no test or performance result is transferred between sources.",
+  "frozen_69d": {
+    "observed_utc": "2026-11-04 09:48:10 UTC",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "actual_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+    "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+    "total_count": 16,
+    "counts": {
+      "success": 11,
+      "failure": 4,
+      "cancelled": 1
+    },
+    "runs": [
+      {
+        "id": 41799271218,
+        "name": "PoN isolated cloud build inputs",
+        "workflow_id": 394876294,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:25:54Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271218"
+      },
+      {
+        "id": 41799271212,
+        "name": "PoN parent-bound model evidence",
+        "workflow_id": 381968354,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:26:10Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271212"
+      },
+      {
+        "id": 41799271174,
+        "name": "PoN owned process cleanup",
+        "workflow_id": 381802523,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:27:41Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271174"
+      },
+      {
+        "id": 41799271331,
+        "name": "PoN fixed Host ROOT F0 diagnostic",
+        "workflow_id": 399731485,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:29:28Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271331"
+      },
+      {
+        "id": 41799271238,
+        "name": "Release finality reference and native baseline",
+        "workflow_id": 384076239,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:29:09Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271238"
+      },
+      {
+        "id": 41799271321,
+        "name": "PoN original large-state CPU acceptance",
+        "workflow_id": 403449877,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:30:33Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271321"
+      },
+      {
+        "id": 41799271370,
+        "name": "PoN baseline diagnostic readback",
+        "workflow_id": 379262275,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:31:13Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271370"
+      },
+      {
+        "id": 41799271249,
+        "name": "PoN original native campaign",
+        "workflow_id": 391170410,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:34:11Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271249"
+      },
+      {
+        "id": 41799271299,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "workflow_id": 403747290,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:48:27Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271299"
+      },
+      {
+        "id": 41799271300,
+        "name": "PoN branch encoding exact-source acceptance",
+        "workflow_id": 379587106,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:41:32Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271300"
+      },
+      {
+        "id": 41799271265,
+        "name": "PoN recent batch exact-source acceptance",
+        "workflow_id": 379339707,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:36:59Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271265"
+      },
+      {
+        "id": 41799271408,
+        "name": "CodeQL exact-source analysis export",
+        "workflow_id": 391170411,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:38:03Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271408"
+      },
+      {
+        "id": 41799271243,
+        "name": "PoN W1 work security observations",
+        "workflow_id": 403419146,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T08:44:36Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271243"
+      },
+      {
+        "id": 41799271168,
+        "name": "PoN PQ network and rollback witness",
+        "workflow_id": 403755130,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T09:04:23Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271168"
+      },
+      {
+        "id": 41799271178,
+        "name": "trnm-required-baseline",
+        "workflow_id": 345677268,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T09:20:40Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271178"
+      },
+      {
+        "id": 41799271270,
+        "name": "PoN priority acceptance",
+        "workflow_id": 378180520,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T08:24:36Z",
+        "updated_at": "2026-11-04T09:28:09Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41799271270"
+      }
+    ]
+  },
+  "required_baseline_69d": {
+    "run_id": 41799271178,
+    "status": "completed",
+    "conclusion": "cancelled",
+    "updated_at": "2026-11-04T09:20:40Z",
+    "original_jobs_response_json": "{\"total_count\":0,\"jobs\":[]}",
+    "instantiated_jobs": 0,
+    "native_results": null,
+    "cancellation_initiator": null,
+    "cancellation_reason": null,
+    "previous_source_results_inherited": false
+  },
+  "old_40a_baseline_tail": {
+    "observed_utc": "2026-11-04 09:48:10 UTC",
+    "run_id": 41785836318,
+    "jobs": [
+      {
+        "id": 126429599608,
+        "run_id": 41785836318,
+        "workflow_name": "trnm-required-baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdb8qXeA",
+        "head_sha": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126429599608",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318/job/126429599608",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "created_at": "2026-11-04T06:34:46Z",
+        "started_at": "2026-11-04T06:36:29Z",
+        "completed_at": "2026-11-04T09:37:09Z",
+        "name": "prospective Rust shard (runtime)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T06:36:30Z",
+            "completed_at": "2026-11-04T06:36:31Z"
+          },
+          {
+            "name": "Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T06:36:31Z",
+            "completed_at": "2026-11-04T06:36:56Z"
+          },
+          {
+            "name": "Verify immutable source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T06:36:56Z",
+            "completed_at": "2026-11-04T06:36:57Z"
+          },
+          {
+            "name": "Set isolated Cargo paths after runner allocation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T06:36:57Z",
+            "completed_at": "2026-11-04T06:36:57Z"
+          },
+          {
+            "name": "Install pinned compiler and tools in isolated hosted runner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T06:36:57Z",
+            "completed_at": "2026-11-04T06:37:06Z"
+          },
+          {
+            "name": "Install pinned dependency auditor",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T06:37:06Z",
+            "completed_at": "2026-11-04T06:39:23Z"
+          },
+          {
+            "name": "Install isolated signed-state oracle Python environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T06:39:23Z",
+            "completed_at": "2026-11-04T06:39:29Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T06:39:29Z",
+            "completed_at": "2026-11-04T06:41:12Z"
+          },
+          {
+            "name": "Run retained Rust shard",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "number": 9,
+            "started_at": "2026-11-04T06:41:12Z",
+            "completed_at": "2026-11-04T09:37:00Z"
+          },
+          {
+            "name": "Verify source remained unchanged",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T09:37:00Z",
+            "completed_at": "2026-11-04T09:37:01Z"
+          },
+          {
+            "name": "Retain source and execution observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T09:37:01Z",
+            "completed_at": "2026-11-04T09:37:05Z"
+          },
+          {
+            "name": "Retain lightweight exact Rust shard proof",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T09:37:05Z",
+            "completed_at": "2026-11-04T09:37:06Z"
+          },
+          {
+            "name": "Post Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T09:37:06Z",
+            "completed_at": "2026-11-04T09:37:06Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T09:37:06Z",
+            "completed_at": "2026-11-04T09:37:06Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126429599608",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000339156,
+        "runner_name": "GitHub Actions 1000339156",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 126429599819,
+        "run_id": 41785836318,
+        "workflow_name": "trnm-required-baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdb8qYSw",
+        "head_sha": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126429599819",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836318/job/126429599819",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "created_at": "2026-11-04T06:34:46Z",
+        "started_at": "2026-11-04T06:46:32Z",
+        "completed_at": "2026-11-04T09:47:12Z",
+        "name": "rust-baseline shard (runtime)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T06:46:32Z",
+            "completed_at": "2026-11-04T06:46:33Z"
+          },
+          {
+            "name": "Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T06:46:33Z",
+            "completed_at": "2026-11-04T06:47:03Z"
+          },
+          {
+            "name": "Verify immutable source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T06:47:03Z",
+            "completed_at": "2026-11-04T06:47:04Z"
+          },
+          {
+            "name": "Set isolated Cargo paths after runner allocation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T06:47:04Z",
+            "completed_at": "2026-11-04T06:47:04Z"
+          },
+          {
+            "name": "Install pinned compiler and tools in isolated hosted runner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T06:47:04Z",
+            "completed_at": "2026-11-04T06:47:13Z"
+          },
+          {
+            "name": "Install pinned dependency auditor",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T06:47:13Z",
+            "completed_at": "2026-11-04T06:49:37Z"
+          },
+          {
+            "name": "Install isolated signed-state oracle Python environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T06:49:37Z",
+            "completed_at": "2026-11-04T06:49:44Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T06:49:44Z",
+            "completed_at": "2026-11-04T06:51:17Z"
+          },
+          {
+            "name": "Run retained Rust shard",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "number": 9,
+            "started_at": "2026-11-04T06:51:17Z",
+            "completed_at": "2026-11-04T09:47:03Z"
+          },
+          {
+            "name": "Verify source remained unchanged",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T09:47:03Z",
+            "completed_at": "2026-11-04T09:47:04Z"
+          },
+          {
+            "name": "Retain source and execution observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T09:47:04Z",
+            "completed_at": "2026-11-04T09:47:07Z"
+          },
+          {
+            "name": "Retain lightweight exact Rust shard proof",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T09:47:07Z",
+            "completed_at": "2026-11-04T09:47:08Z"
+          },
+          {
+            "name": "Post Checkout exact candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T09:47:08Z",
+            "completed_at": "2026-11-04T09:47:08Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T09:47:08Z",
+            "completed_at": "2026-11-04T09:47:08Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126429599819",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000339278,
+        "runner_name": "GitHub Actions 1000339278",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ],
+    "raw_native_test_counts": null,
+    "cancellation_cause": null,
+    "timeout_not_inferred_from_duration": true,
+    "scope": "Both old runtime jobs now have actual cancelled conclusions; original source-after and artifact steps succeed. This metadata is not a complete native result, nor a result for 69d or 93e."
+  },
+  "concurrent_integration": {
+    "observed_utc": "2026-11-04 09:49:09 UTC",
+    "head": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "parent": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+    "actual_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+    "ordered_merge_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "93e207c8d2ccb8509f78566223abc371b9d8118b"
+    ],
+    "tracked_entries": 8761,
+    "tracked_bytes": 940655430,
+    "recursive_tree_truncated": false,
+    "full_leaf_differences_from_69d": 646,
+    "non_evidence_leaf_differences": [
+      {
+        "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+        "before": "490ec2b916657f0ce4af9f3e59222fdc45aad5f1",
+        "after": "548bc418038b5d3e5ad6e732c858108930a794eb",
+        "size": 29673
+      },
+      {
+        "path": ".github/workflows/pon-pq-system-continuation.yml",
+        "before": "b7ca2f3015b02dc827b3b0ee7cfe7f6d9e907bc8",
+        "after": "be04494621f237358f4b87418b9b5c93273c02a7",
+        "size": 12240
+      },
+      {
+        "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "before": "0cfbce49376fc0c3147f9b7558c8101ac3a24be4",
+        "after": "d915bcab943663e9283e1a57dd3a5ae3de226322",
+        "size": 31731
+      },
+      {
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "before": "f8be7530a3486d42dda5690cdcaa767a408a02a4",
+        "after": "8bc181f89cfce5b92ba980e53cb3ee8c1eb1df45",
+        "size": 72013
+      },
+      {
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "before": "b33b5e01c838c1913a15a51c51eac768f0786db7",
+        "after": "5be4fba460f2a4f67612743a2251be0f9e18be5d",
+        "size": 454711
+      },
+      {
+        "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+        "before": "923a9a3cec1ebbf93f9be8ccfc0124b5b721d615",
+        "after": "e16b801308d6f5e9e35410849b0e19cedf61ac85",
+        "size": 45851
+      },
+      {
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "before": "bea5717595de5e119d821d97a46e7d0a3a55a1f5",
+        "after": "15d2df1e78d663f89f27fc3568205900e8e841ec",
+        "size": 31768
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "before": "658ef73e4f724c387669a59c9c82db0f948af9ff",
+        "after": "fa481e98d3c9fac07f7910c30363366daecf0632",
+        "size": 326325
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+        "before": "c61b1df8d82ca63a08c652d3320112981967dd7f",
+        "after": "9245771dd9359f2cb18ccf62a85ae1d488833637",
+        "size": 33610
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "before": "4f14ad06020e08736f129ec9d18ef1dc3b4aefe9",
+        "after": "b67bdcc21c9f2cf6d8dfd6ef85ca9ea1cc52b3a2",
+        "size": 329790
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+        "after": "a7035222bc51cfe7f60e891398230c3179accc82",
+        "size": 334071
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+        "before": null,
+        "after": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+        "size": 8512
+      }
+    ],
+    "total_count": 16,
+    "workflow_counts": {
+      "in_progress": 3,
+      "success": 10,
+      "failure": 3
+    },
+    "runs": [
+      {
+        "id": 41806692746,
+        "name": "PoN PQ network and rollback witness",
+        "workflow_id": 403755130,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "in_progress",
+        "conclusion": null,
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:20:46Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692746"
+      },
+      {
+        "id": 41806693191,
+        "name": "PoN parent-bound model evidence",
+        "workflow_id": 381968354,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:21:33Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693191"
+      },
+      {
+        "id": 41806692879,
+        "name": "PoN isolated cloud build inputs",
+        "workflow_id": 394876294,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:23:16Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692879"
+      },
+      {
+        "id": 41806693197,
+        "name": "PoN owned process cleanup",
+        "workflow_id": 381802523,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:24:04Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693197"
+      },
+      {
+        "id": 41806693092,
+        "name": "Release finality reference and native baseline",
+        "workflow_id": 384076239,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:25:06Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693092"
+      },
+      {
+        "id": 41806692845,
+        "name": "PoN baseline diagnostic readback",
+        "workflow_id": 379262275,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:27:04Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692845"
+      },
+      {
+        "id": 41806693160,
+        "name": "PoN fixed Host ROOT F0 diagnostic",
+        "workflow_id": 399731485,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:27:31Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160"
+      },
+      {
+        "id": 41806693133,
+        "name": "PoN original large-state CPU acceptance",
+        "workflow_id": 403449877,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:26:50Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693133"
+      },
+      {
+        "id": 41806693207,
+        "name": "PoN priority acceptance",
+        "workflow_id": 378180520,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "in_progress",
+        "conclusion": null,
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:28:15Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693207"
+      },
+      {
+        "id": 41806693023,
+        "name": "PoN original native campaign",
+        "workflow_id": 391170410,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:30:16Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023"
+      },
+      {
+        "id": 41806692765,
+        "name": "PoN recent batch exact-source acceptance",
+        "workflow_id": 379339707,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:32:10Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692765"
+      },
+      {
+        "id": 41806693043,
+        "name": "CodeQL exact-source analysis export",
+        "workflow_id": 391170411,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:34:17Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693043"
+      },
+      {
+        "id": 41806692981,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "workflow_id": 403747290,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:44:51Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692981"
+      },
+      {
+        "id": 41806692839,
+        "name": "PoN branch encoding exact-source acceptance",
+        "workflow_id": 379587106,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:37:50Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692839"
+      },
+      {
+        "id": 41806693679,
+        "name": "PoN W1 work security observations",
+        "workflow_id": 403419146,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:40:57Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679"
+      },
+      {
+        "id": 41806693078,
+        "name": "trnm-required-baseline",
+        "workflow_id": 345677268,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "status": "in_progress",
+        "conclusion": null,
+        "created_at": "2026-11-04T09:20:38Z",
+        "updated_at": "2026-11-04T09:48:12Z",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693078"
+      }
+    ],
+    "inner_native_counts": null,
+    "F0_confirmations": null,
+    "campaign_confirmations": null,
+    "W1_business_counts": null,
+    "History_terminal_result": null,
+    "older_results_inherited": false,
+    "root_reviewed_concurrent_runtime_semantics": false
+  },
+  "interpretation": [
+    "The earlier 09:10:57 snapshot remains a true dated observation; later cancelled/failure terminals are separate observations.",
+    "The API provides no cancellation initiator or cause in these readbacks. Concurrent head advance and queue configuration do not become an observed cause.",
+    "All four 69d original History failures now have separate complete archived inner logs. Their actual native results and failure_location fields are in original-69d-four-lane-history-failures.json.",
+    "The full 69d Node result of 987/0/27, its 60 selected workspace tests per lane and original failure locations do not qualify 93e.",
+    "The new 93e F0, campaign and W1 workflows already have failure terminals in this snapshot; their inner causes/counts remain unread here.",
+    "No cancellation, rerun, protected-main merge, force push or activation was performed by this evidence collection."
+  ],
+  "references": {
+    "frozen_runs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=69d2e06c48bbbd1e22432f9b557727b140aba361&event=pull_request&per_page=100",
+    "new_runs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=93e207c8d2ccb8509f78566223abc371b9d8118b&event=pull_request&per_page=100",
+    "new_commit": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "sole_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  }
+}

@@ -1,0 +1,356 @@
+{
+  "schema": "69d-legacy-final-page-activation-static-assessment-v1",
+  "scope": {
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "actual_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+    "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+    "static_read_only": true,
+    "new_native_execution": false,
+    "new_benchmark": false,
+    "source_test_budget_ref_changes": false,
+    "newer_93e207c8_covered": false
+  },
+  "conclusion": {
+    "safe_and_measured_deadline_repair_established": false,
+    "root_measured_as_bottleneck": false,
+    "activation_entered_in_failing_call": null,
+    "durable_cursor": null,
+    "statement": "The original source proves repeated full-state validation and unchanged durability boundaries. No proposed new cache integration has both a demonstrated equivalence qualification and measured benefit on the failing original Legacy call."
+  },
+  "observation_input": {
+    "provenance": "Parent and current_runtime_review handoff; this static review did not fetch/re-read terminal logs or ZIPs.",
+    "run_id": 41799271270,
+    "arm_jobs": [
+      126471217803,
+      126471218057
+    ],
+    "completed_import_calls_per_arm": 4104,
+    "last_page_packets": 1,
+    "last_page_complete": true,
+    "rpc_ms_reported": [
+      7.75,
+      8.63
+    ],
+    "import_call_seconds_reported": [
+      30.000693324,
+      30.069217869
+    ],
+    "classification": "Entire receive_public_page_from call-expression, not an activation/root substage measurement",
+    "numeric_value_lane_mapping_independently_verified": false
+  },
+  "source_bindings": [
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "AGENTS.md",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/AGENTS.md",
+      "utf8_bytes": 1286,
+      "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91",
+      "git_blob_sha": "702727dcf00f032b16d593519b7b74894da40e17"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "utf8_bytes": 333060,
+      "sha256": "cd74756ebab44aee3479fcdeb8afa0816c467099e1db86b89e0ccadfb018dbf1",
+      "git_blob_sha": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "utf8_bytes": 33073,
+      "sha256": "be9b62089b6b276f0bb711ce063a704dc7444d8961cba044e1c31f79f9b74c9b",
+      "git_blob_sha": "ea0639e2ac3542d606c4b0fe9ff7f72b86f566c7"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "utf8_bytes": 22762,
+      "sha256": "5dfcf6130f9f41cd5812e7d9d14a16aaf185aec2fd9fddd7182172356d331325",
+      "git_blob_sha": "742c236acf5c80fa694c1a6061b7cd4ead2576d3"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+      "utf8_bytes": 4544,
+      "sha256": "244a18c2db1017c65fbcb4198186554b8635d261792765b142f80f914bca495f",
+      "git_blob_sha": "a66ede7323f326fb38e48df7e54286a8fc82fe46"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "utf8_bytes": 19849,
+      "sha256": "b2e0639a9c2e0ba1c003d8a4ea40748b9c01793bf13c7eaa6999266745e5406c",
+      "git_blob_sha": "e4c01b37441886f1359c016efb30f190eda98aa0"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "utf8_bytes": 111069,
+      "sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+      "git_blob_sha": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "utf8_bytes": 148375,
+      "sha256": "f7f8aea894d0aec0d9612abc5c7e1a0cef69ccd0e2ca992e3300205d9824e67c",
+      "git_blob_sha": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "utf8_bytes": 39161,
+      "sha256": "754f3b22bd4ae950863b8f087682ac45097cd6306e0ac7d896b7c5ff0d070cba",
+      "git_blob_sha": "19da6126d2a64dad42ff0223094d271fa8fadbbe"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "utf8_bytes": 32354,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "git_blob_sha": "9333ce92c6ba130dd182538bfd8f69ec289acc83"
+    },
+    {
+      "source": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/69d2e06c48bbbd1e22432f9b557727b140aba361/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "utf8_bytes": 21244,
+      "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+      "git_blob_sha": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465"
+    }
+  ],
+  "prior_review": {
+    "blob": "0f859f9a6c7af2aa84e59f8516d799fd6c013487",
+    "actual_format": "Markdown",
+    "represented_source": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "compared_current_files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "prior_review_blob": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+        "actual_69d_blob": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+        "equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+        "prior_review_blob": "a66ede7323f326fb38e48df7e54286a8fc82fe46",
+        "actual_69d_blob": "a66ede7323f326fb38e48df7e54286a8fc82fe46",
+        "equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "prior_review_blob": "742c236acf5c80fa694c1a6061b7cd4ead2576d3",
+        "actual_69d_blob": "742c236acf5c80fa694c1a6061b7cd4ead2576d3",
+        "equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "prior_review_blob": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd",
+        "actual_69d_blob": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd",
+        "equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "prior_review_blob": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f",
+        "actual_69d_blob": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f",
+        "equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "prior_review_blob": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465",
+        "actual_69d_blob": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465",
+        "equal": true
+      }
+    ]
+  },
+  "path_findings": [
+    "Node::open selects Legacy. Final complete page admits the final packet, then calls activation in the same original operation and absolute deadline; the final-page counter does not locate failure within this call.",
+    "Normal successful uninterrupted final activation from still-active genesis builds a staging copy and the whole attach journal, validates the full steps sequence once at resume entry, then commits each step individually.",
+    "Each attach performs original delta before-value comparison/write, cursor update/check, fresh complete staging SQL State/root, then wrapper fresh active SQL State/root, namespace/metadata/ancestry checks and original checkpoints before COMMIT.",
+    "The active State remains genesis until final publication. The final independent target root and publication transaction checks are additional; this is source topology, not an observed completed attach count.",
+    "The database uses WAL and synchronous=FULL. A mathematical cache cannot remove per-step durable commits, metadata/fs checks or current SQL reads under the requested equivalence boundary.",
+    "Activation and SQL-commit observations in these methods are AuthenticatedV1-only. Authenticated report costs are not measurements of this Legacy selector."
+  ],
+  "existing_cache_findings": [
+    "FullRootArithmetic already exists as one per-Node mutex-wrapped 2 MiB retained-material pool; root() is private. It is currently supplied to commitment/snapshot/execution paths, not Legacy persisted-State checks.",
+    "The arithmetic pool has one previous material entry. Calling it for both staging and genesis replaces the material alternately. Some common partitions may still hit; continuous adjacent-staging reuse or benefit is not guaranteed.",
+    "Every fresh State retains full grammar/count checks; exact strings compare the complete current key/value before hash reuse; other values use current canonical bytes and original hash domains; all current leaves undergo collision checking and partition reuse requires entire tuple-slice equality.",
+    "Snapshot invalidation clears active and historical snapshots, not FullRootArithmetic. Pure current-input mathematics may outlive a rollback without becoming an installation or authorization capability; it cannot return cached State or bypass SQL checks.",
+    "Historical commitment cache already has 8 entries / 2 MiB payload / 16 MiB retained software charge and checks complete current State on each use; per-call snapshot workspace limit remains 512 MiB. These are separate retained/software bounds, not process RSS."
+  ],
+  "equivalence_constraints": [
+    "Preserve fresh pq_accounts_v2::validate_state(state,cfg) before growth-profile dispatch; only the original ordinary-root branch may substitute equivalent pure arithmetic. A naked FullRootArithmetic root is not Settings::state_root.",
+    "Keep fresh record, continuity validation and its error classification, the original root errors, then fresh expected-root comparison in exactly the current order.",
+    "Do not replace Settings::state_root with checked_commitment/checked_snapshot: those have snapshot/limit/workspace/error-mapping/observation behavior and do not provide the same profile-aware entry.",
+    "Keep every original SQL row read, canonical current BLOB check, all keys/values (including old nonces/liabilities), delta before-value checks, callbacks, namespace/active-generation checks, durable cursor and per-step commit/crash boundaries.",
+    "Do not add transaction/scope guards merely for pure math reuse or change legitimate callback/error precedence; the cache mutex is limited to pure computation and falls back on contention/poison.",
+    "Reuse the existing retained pool without silently adding another 2 MiB pool; retained accounting does not establish transient peak/RSS equivalence. New integration still requires actual qualification."
+  ],
+  "candidate_boundary": {
+    "implemented": false,
+    "qualified": false,
+    "all_persisted_checks": "Mathematically plausible only behind the full profile-aware validation boundary; susceptible to staging/genesis material alternation.",
+    "active_tail_only": "A narrower unimplemented possibility could avoid that particular alternation by leaving staging on the original root and applying pure math only at active-tail calculation. No claim that other consumers cannot evict, that this is measured hot, or that it repairs the deadline.",
+    "fixed_touched_set_scaling_closed": false
+  },
+  "missing_cost_evidence": [
+    "Actual entry into activation",
+    "Committed reorg cursor and done/active/state_slot context",
+    "Legacy SQL read/JSON/canonical/root/commit CPU and wall partition",
+    "FullRootArithmetic hit/retention and memory observations on this same call",
+    "Controlled end-to-end original-selector benefit without altered budgets"
+  ],
+  "next_boundary": "Use the separately tasked read-only retained-DB evidence, if present, to locate durable reorg progress; do not attribute the deadline to root or change source/test budget based on this static review.",
+  "literal_source_evidence": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 2321,
+      "last_line": 2353,
+      "scope": "persisted actual State validation and backend dispatch",
+      "literal": "    fn check_persisted_state_with_readback(\n        &self,\n        id: Hash,\n        state: &State,\n        progress: &mut dyn FnMut() -> Result<()>,\n        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,\n    ) -> Result<()> {\n        let record = self.record(id).map_err(Error::local_integrity)?;\n        continuity_v1::check_state(state, record.height, &self.settings.app)\n            .map_err(|error| Error::from(error).local_integrity())?;\n        // The native complete-state commitment may already contain this exact\n        // full root. Compare all current State bytes before arithmetic reuse;\n        // a miss retains the original root calculation and error order. Actual\n        // SQL State, record, account graph and history checks still follow.\n        let actual_root = if self.state_backend == StateBackend::AuthenticatedV1 {\n            self.authenticated_arithmetic\n                .state_root(&self.settings, state)?\n        } else {\n            self.settings.state_root(state)?\n        };\n        ensure(actual_root == record.root, \"ROOT\").map_err(Error::local_integrity)?;\n        if self.state_backend == StateBackend::AuthenticatedV1 {\n            native_authenticated::verify_state_with_readback(\n                &self.db,\n                &self.settings,\n                id,\n                state,\n                progress,\n                Some(&self.authenticated_arithmetic),\n                readback,\n            )?;\n        }\n        Ok(())",
+      "sha256": "e73782ee9debe51d688846219758001f47fb8762932d5add01561112adda211d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 2367,
+      "last_line": 2411,
+      "scope": "fresh active tail, namespace/storage/ancestry checks",
+      "literal": "    fn check_active_before_commit_with_readback(\n        &self,\n        progress: &mut dyn FnMut() -> Result<()>,\n        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,\n    ) -> Result<()> {\n        progress()?;\n        self.namespace()?;\n        self.storage_context()?;\n        let count: u64 = self\n            .db\n            .query_row(\"SELECT COUNT(*) FROM active\", [], |row| row.get(0))?;\n        ensure(count == 1, \"GENERATION\").map_err(Error::local_integrity)?;\n        let selected = self.active()?;\n        let slot = self.slot()?;\n        let state = self.slot_state_with_progress(slot, progress)?;\n        if let Some(scope) = readback.as_deref_mut() {\n            scope.nominate_active(&self.db, selected.0)?;\n        }\n        self.check_persisted_state_with_readback(\n            selected.0,\n            &state,\n            progress,\n            readback.as_deref_mut(),\n        )?;\n        crate::ancestry_index::validate_tip(&self.db, self.ancestry_context()?, selected.0)\n            .map_err(Error::local_integrity)?;\n        if self.state_backend == StateBackend::AuthenticatedV1 {\n            native_authenticated::verify_history_with_readback(\n                &self.db,\n                &self.settings,\n                selected.0,\n                progress,\n                Some(&self.authenticated_arithmetic),\n                readback.as_deref_mut(),\n            )?;\n        }\n        ensure(\n            self.active()? == selected && self.slot()? == slot,\n            \"GENERATION\",\n        )\n        .map_err(Error::local_integrity)?;\n        if let Some(scope) = readback {\n            scope.validate_consumed(&self.db)?;\n        }\n        Ok(())",
+      "sha256": "77c1e8d8d880b0c29670893804d11c85f158891b99c8f75081c4c5a02ca3cbf8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 2481,
+      "last_line": 2546,
+      "scope": "fresh complete SQL State and canonical current BLOB comparison",
+      "literal": "    fn slot_state_with_progress(\n        &self,\n        slot: u64,\n        progress: &mut dyn FnMut() -> Result<()>,\n    ) -> Result<State> {\n        progress()?;\n        // Validate stored dimensions before copying a cell into Rust. SQL types\n        // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.\n        let mut stmt = self.db.prepare(\n            \"SELECT CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END,\n             CASE WHEN typeof(value)='blob' THEN substr(value,1,4097) ELSE value END,\n             length(CAST(key AS BLOB)),length(CAST(value AS BLOB))\n             FROM kv WHERE slot=? ORDER BY kv.key\",\n        ).map_err(|error| Error::from(error).local_integrity())?;\n        let mut rows = stmt\n            .query([slot])\n            .map_err(|error| Error::from(error).local_integrity())?;\n        let mut state = State::new();\n        let mut canonical_bytes = Vec::new();\n        while let Some(row) = rows\n            .next()\n            .map_err(|error| Error::from(error).local_integrity())?\n        {\n            if state.len().is_multiple_of(256) {\n                progress()?;\n            }\n            let key: String = (|| -> Result<_> {\n                let key_len: i64 = row.get(2)?;\n                let value_len: i64 = row.get(3)?;\n                ensure(\n                    state.len()\n                        < if growth_profile_v2::enabled(&self.settings.app) {\n                            growth_profile_v2::MAX_TOTAL_KEYS\n                        } else {\n                            65_536\n                        }\n                        && (0..=160).contains(&key_len)\n                        && (0..=4096).contains(&value_len),\n                    \"STATE_BYTES\",\n                )?;\n                Ok(row.get(0)?)\n            })()\n            .map_err(Error::local_integrity)?;\n            // The bounded SQL BLOB remains borrowed until this row advances.\n            // Decoded State owns its data; no SQLite borrow escapes this scope.\n            let cell = row\n                .get_ref(1)\n                .map_err(|error| Error::from(error).local_integrity())?;\n            let bytes = cell.as_blob().map_err(|_| {\n                Error::from(rusqlite::Error::InvalidColumnType(\n                    1,\n                    \"value\".into(),\n                    cell.data_type(),\n                ))\n                .local_integrity()\n            })?;\n            let value: Value = serde_json::from_slice(bytes)\n                .map_err(|error| Error::from(error).local_integrity())?;\n            canonical_bytes.clear();\n            serde_json::to_writer(&mut canonical_bytes, &value)\n                .map_err(|error| Error::from(error).local_integrity())?;\n            ensure(canonical_bytes == bytes, \"STATE_BYTES\").map_err(Error::local_integrity)?;\n            state.insert(key, value);\n        }\n        progress()?;\n        Ok(state)",
+      "sha256": "7dcd735d5a19f0948f896b09c734b573bed3c5bb611f3a25b0f24bace3dd5db2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 2548,
+      "last_line": 2595,
+      "scope": "snapshot invalidation and non-drop-in checked_commitment errors",
+      "literal": "    fn invalidate_commitment(&self) {\n        *self.commitment_cache.borrow_mut() = None;\n        self.historical_commitment_cache.borrow_mut().clear();\n    }\n    /// Local calculation observation only, never a state/confirmation authority.\n    pub fn derived_commitment_status(&self) -> DerivedCommitmentStatus {\n        let cache = self.commitment_cache.borrow();\n        DerivedCommitmentStatus {\n            cache_root: cache.as_ref().map(|c| c.snapshot.root()),\n            cache_keys: cache.as_ref().map_or(0, |c| c.snapshot.keys()),\n            software_charge_bytes: cache\n                .as_ref()\n                .map_or(0, |c| c.snapshot.retained_charge_bytes()),\n            last: self.commitment_observation.borrow().clone(),\n        }\n    }\n    fn checked_commitment(\n        &self,\n        actual: &State,\n        expected: Hash,\n        prior: Option<&CheckedCommitment>,\n    ) -> Result<PreparedCommitment> {\n        let result = if growth_profile_v2::enabled(&self.settings.app) {\n            pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)\n        } else {\n            pon_commitment::checked_snapshot_with_arithmetic(\n                actual,\n                expected,\n                prior,\n                CacheLimits::default(),\n                &self.commitment_root_arithmetic,\n            )\n        };\n        match result {\n            Ok(prepared) => {\n                if self.state_backend == StateBackend::AuthenticatedV1 {\n                    self.authenticated_arithmetic\n                        .offer_root_material(&self.settings, prepared.snapshot.as_ref());\n                }\n                *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());\n                Ok(prepared)\n            }\n            Err(\"COMMITMENT_ROOT\") => {\n                self.invalidate_commitment();\n                Err(Error::from(\"ROOT\").local_integrity())\n            }\n            Err(error) => Err(Error::from(error).local_integrity()),\n        }",
+      "sha256": "d7e976e30b8999e2d8221346ebfc21c4c90892a073bb7cd8426d80963b8d4fec"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 5052,
+      "last_line": 5110,
+      "scope": "unchanged reorg transaction/checkpoint/commit boundary; Auth-only SQL observer",
+      "literal": "    fn atomic_reorg_with_readback<'db>(\n        &'db self,\n        progress: &mut dyn FnMut() -> Result<()>,\n        run: impl FnOnce(\n            &mut dyn FnMut() -> Result<()>,\n            Option<&trnm_sqlite_io_boundary::TransactionScope<'db>>,\n        ) -> Result<Option<native_authenticated::PostWriteReadback<'db>>>,\n    ) -> Result<()> {\n        progress()?;\n        let tx = rusqlite::Transaction::new_unchecked(\n            &self.db,\n            rusqlite::TransactionBehavior::Immediate,\n        )?;\n        let original_owner = (self.state_backend == StateBackend::AuthenticatedV1)\n            .then(|| {\n                trnm_sqlite_io_boundary::TransactionScope::capture(&self.db)\n                    .map_err(native_authenticated::readback_scope_error)\n            })\n            .transpose()?;\n        let transaction_result: Result<()> = (|| {\n            let mut readback = run(progress, original_owner.as_ref())?;\n            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;\n            self.continuous_scope_checkpoint()?;\n            self.mining_scope_checkpoint()?;\n            progress()?;\n            if let Some(scope) = readback.as_mut() {\n                // No legitimate write remains after the closure's explicit\n                // boundary. This must follow the LAST caller callback, even\n                // when no duplicate graph was consumed by the atomic tail.\n                scope.require_unchanged_after_last_write(&self.db)?;\n            }\n            Ok(())\n        })();\n        // As in admission, a callback's transaction replacement cannot hide\n        // behind an ordinary error/cancellation. Preserve that first error as\n        // the source; a write alone does not override a failing callback.\n        let transaction_result = match original_owner\n            .as_ref()\n            .map(|owner| owner.same_write_snapshot(&self.db))\n            .transpose()\n        {\n            Ok(_) => transaction_result,\n            Err(error) => Err(match transaction_result {\n                Ok(()) => native_authenticated::readback_scope_error(error),\n                Err(first) => Error::local_replay_source(\"NATIVE_POST_WRITE_SCOPE\", first),\n            }),\n        };\n        transaction_result?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgStep)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);\n        }\n        commit_result?;\n        Ok(())",
+      "sha256": "b2b62efc6fd4a8cbf9c3cb6dc6eaa84008980a09ae349039e2eaafd9bf0e2fed"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 5473,
+      "last_line": 5552,
+      "scope": "resume sequence checked once; each step stage/cursor/root; final independent root",
+      "literal": "        progress()?;\n        let row = self\n            .db\n            .query_row(\n                \"SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1\",\n                [],\n                |r| {\n                    Ok((\n                        r.get::<_, Vec<u8>>(0)?,\n                        r.get::<_, Vec<u8>>(1)?,\n                        r.get::<_, u64>(2)?,\n                        r.get::<_, u64>(3)?,\n                        r.get::<_, u64>(4)?,\n                    ))\n                },\n            )\n            .optional()?;\n        let Some((old, target, g, position, done)) = row else {\n            return Ok(self.active()?.0);\n        };\n        ensure(done <= 2, \"REORG_STEPS\").map_err(Error::local_integrity)?;\n        if done == 2 {\n            self.check_cancelled_reorg_lifecycle()?;\n            return Ok(self.active()?.0);\n        }\n        if done == 1 {\n            return Ok(self.active()?.0);\n        }\n        self.invalidate_commitment();\n        let old = bytes32(old)?;\n        let target = bytes32(target)?;\n        ensure(g > 0 && self.active()? == (old, g - 1), \"GENERATION\")\n            .map_err(Error::local_integrity)?;\n        // Control errors are not local-integrity failures. Only malformed\n        // retained rows are classified by the checking functions themselves.\n        let count = self.check_steps_with_progress(old, target, position, progress)?;\n        for index in position..count {\n            progress()?;\n            let (kind, bytes) = self.db.query_row(\n                \"SELECT kind,block FROM steps WHERE ordinal=?\",\n                [index],\n                |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),\n            )?;\n            let id = bytes32(bytes)?;\n            self.atomic_reorg_with_readback(progress, |progress, original_owner| {\n                self.apply_delta_with_progress(id, g, kind == 0, progress)?;\n                ensure(\n                    self.db\n                        .execute(\"UPDATE reorg SET cursor=? WHERE singleton=1\", [index + 1])?\n                        == 1,\n                    \"STORAGE_WRITE\",\n                )\n                .map_err(Error::local_integrity)?;\n                self.check_reorg_row(old, target, g, index + 1, 0)?;\n                let resulting = if kind == 0 { self.parent(id)? } else { id };\n                let mut readback = self.reorg_post_write_readback(resulting, original_owner)?;\n                self.check_persisted_state_with_readback(\n                    resulting,\n                    &self.slot_state_with_progress(g, progress)?,\n                    progress,\n                    readback.as_mut(),\n                )?;\n                Ok(readback)\n            })?;\n            cut(\n                hook,\n                &format!(\"{}:{index}\", if kind == 0 { \"detach\" } else { \"attach\" }),\n            )?;\n        }\n        let state = self.slot_state_with_progress(g, progress)?;\n        progress()?;\n        continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)\n            .map_err(|error| Error::from(error).local_integrity())?;\n        ensure(\n            self.settings.state_root(&state)? == self.record(target)?.root,\n            \"ROOT\",\n        )\n        .map_err(Error::local_integrity)?;\n        progress()?;\n        cut(hook, \"before-publish\")?;",
+      "sha256": "37e2df441a287a24a7991969ce42be23c0492d3eb26eb8ef38450bbf01f01f78"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 5553,
+      "last_line": 5612,
+      "scope": "publication transaction and target persisted validation",
+      "literal": "        self.atomic_reorg_with_readback(progress, |progress, original_owner| {\n            let expected: Vec<(u64, u64, Hash)> = self\n                .db\n                .prepare(\"SELECT ordinal,kind,block FROM steps ORDER BY ordinal\")?\n                .query_map([], |row| {\n                    Ok((\n                        row.get::<_, u64>(0)?,\n                        row.get::<_, u64>(1)?,\n                        row.get::<_, Vec<u8>>(2)?,\n                    ))\n                })?\n                .map(|row| {\n                    progress()?;\n                    let (ordinal, kind, id) = row?;\n                    Ok((ordinal, kind, bytes32(id)?))\n                })\n                .collect::<Result<_>>()?;\n            ensure(\n                self.db.execute(\n                    \"UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1\",\n                    params![target.as_slice(), g, g],\n                )? == 1,\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            ensure(\n                self.db.execute(\n                    \"INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal\",\n                    [g],\n                )? == expected.len(),\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            ensure(\n                self.db\n                    .execute(\"UPDATE reorg SET done=1 WHERE singleton=1\", [])?\n                    == 1,\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            self.finish_reorg_lifecycle(old, target, g)?;\n            self.db.execute(\"DELETE FROM kv WHERE slot!=?\", [g])?;\n            ensure(\n                self.active()? == (target, g) && self.slot()? == g,\n                \"GENERATION\",\n            )\n            .map_err(Error::local_integrity)?;\n            self.check_reorg_row(old, target, g, count, 1)?;\n            self.check_events_with_progress(g, &expected, progress)?;\n            let mut readback = self.reorg_post_write_readback(target, original_owner)?;\n            self.check_persisted_state_with_readback(\n                target,\n                &self.slot_state_with_progress(g, progress)?,\n                progress,\n                readback.as_mut(),\n            )?;\n            Ok(readback)\n        })?;\n        cut(hook, \"published\")?;\n        Ok(target)",
+      "sha256": "9886e706d284264e513fe544dfa50622efa69c2851ce95e23254fbae7b678cbb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "first_line": 5670,
+      "last_line": 5687,
+      "scope": "Auth-only activation observer and original header checks",
+      "literal": "    pub(crate) fn activate_observed_with_termination(\n        &mut self,\n        tip: Hash,\n        observed_now: u64,\n        progress: &mut dyn FnMut() -> Result<()>,\n        termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,\n    ) -> Result<Hash> {\n        progress()?;\n        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe(native_authenticated::HistoryStage::Activation)\n        });\n        self.continuous_activation_gate(tip)?;\n        self.mining_activation_gate(tip)?;\n        self.check_observed_history_with_progress(tip, observed_now, progress)?;\n        self.activate_with_fault_and_progress(tip, None, progress, termination_cpu)\n    }",
+      "sha256": "0495dd41ff0d363ac6cb797f43a4193b06f1ed194c0695f5167f33214bc4259f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "first_line": 384,
+      "last_line": 424,
+      "scope": "final activation keeps original operation/deadline/checkpoints",
+      "literal": "        // Test-only cut is after the actual native COMMIT, before CPU settle.\n        cut(\"admitted\");\n        let active = if let Some(tip) = activate {\n            // Final activation keeps the original admission operation and\n            // deadline. It does not start a new reservation after paid W1.\n            Some(super::observe_submit_phase(\n                observation,\n                SubmitPhase::SubmitResult,\n                || activate_packet(owner, tip, clock, control, operation),\n            )?)\n        } else {\n            None\n        };\n        Ok((id, true, active))\n    })\n}\n\nfn activate_packet(\n    owner: &mut Owner<'_>,\n    tip: Hash,\n    clock: u64,\n    control: &Control<'_>,\n    operation: &public_v3::ServiceMutationCpuOperation,\n) -> Result<Hash> {\n    let owns_node_mutex = matches!(owner, Owner::Shared(_));\n    let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());\n    checkpoint()?;\n    let active = owner.with(control, |node| {\n        node.activate_observed_with_termination(\n            tip,\n            clock,\n            &mut || {\n                cut(\"activation_progress\");\n                checkpoint()\n            },\n            Some(&operation.checkpoint_handle()),\n        )\n    })?;\n    cut(\"activated\");\n    checkpoint()?;\n    Ok(active)",
+      "sha256": "c5f86b9d8fcae165c6ed40589f532805e66baaac21ddaf9756b4ec1e7094ca86"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "first_line": 486,
+      "last_line": 540,
+      "scope": "complete page chooses activation only on final packet",
+      "literal": "        scoped_observed(&mut owner, &control, page_observation, |owner, cpu| {\n            let (packets, next) = metered_observed(cpu, &control, page_observation, |operation| {\n                super::observe_submit_phase(page_observation, SubmitPhase::Decode, || {\n                    let mut packets = Vec::with_capacity(page.packets.len());\n                    let mut next = after;\n                    for (index, raw) in page.packets.iter().enumerate() {\n                        control.check()?;\n                        operation.checkpoint()?;\n                        let packet = hex_packet_for_context(raw, &codec)?;\n                        ensure(packet.header.parent == next, \"PAGE_PARENT\")?;\n                        next = packet.id()?;\n                        if let Some(observer) = observation {\n                            observer.decoded_packet(index, next);\n                        }\n                        packets.push(packet);\n                    }\n                    ensure(\n                        page.next == hex::encode(next) && page.complete == (next == tip),\n                        \"PAGE_COMPLETE\",\n                    )?;\n                    control.check()?;\n                    operation.checkpoint()?;\n                    Ok((packets, next))\n                })\n            })?;\n            cut(\"decoded\");\n            let count = packets.len();\n            for (index, packet) in packets.into_iter().enumerate() {\n                let activate = (page.complete && index + 1 == count).then_some(tip);\n                let packet_observation = observation.and_then(|observer| observer.packet(index));\n                super::observe_submit_phase(\n                    packet_observation,\n                    SubmitPhase::HistoryImport,\n                    || {\n                        admit_packet(\n                            owner,\n                            cpu,\n                            packet,\n                            clock,\n                            &control,\n                            activate,\n                            packet_observation,\n                        )\n                    },\n                )?;\n            }\n            if page.complete && count == 0 {\n                metered(cpu, &control, |operation| {\n                    super::observe_submit_phase(page_observation, SubmitPhase::SubmitResult, || {\n                        activate_packet(owner, tip, clock, &control, operation)\n                    })\n                })?;\n            }\n            Ok(next)\n        })",
+      "sha256": "4a72c57b81598dacc09bcbc70378e4505c97572b7be6bb41d2d21295af4cb7d6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "first_line": 32,
+      "last_line": 63,
+      "scope": "2 MiB private pure math, nonblocking lock and original error fallback",
+      "literal": "/// Optional original sparse-tree arithmetic for a full-root fallback. Every use\n/// still encodes and hashes the complete actual State; no root, partial update\n/// or validity verdict can be installed. The fixed retention bound is separate\n/// from canonical snapshot/workspace limits and is not a process RSS promise.\npub struct FullRootArithmetic(Mutex<StateRootArithmetic>);\n\nconst MAX_FULL_ROOT_ARITHMETIC_BYTES: usize = 2 * 1024 * 1024;\n\nimpl Default for FullRootArithmetic {\n    fn default() -> Self {\n        Self(Mutex::new(StateRootArithmetic::new(\n            MAX_FULL_ROOT_ARITHMETIC_BYTES,\n        )))\n    }\n}\n\nimpl FullRootArithmetic {\n    fn root(&self, state: &State) -> Result<Hash> {\n        // The guard covers only pure arithmetic, never SQL, worker joins or a\n        // caller's progress/Host check. Contention and poison keep the original\n        // full-root path; optional material cannot introduce a new refusal.\n        let Ok(mut arithmetic) = self.0.try_lock() else {\n            return pon_executor::root(state);\n        };\n        match pon_executor::root_with_arithmetic(state, &mut arithmetic) {\n            Ok(root) => Ok(root),\n            // Preserve the independent original grammar and exact error on any\n            // arithmetic failure. No cancellation callback is caught here.\n            Err(_) => pon_executor::root(state),\n        }\n    }\n}",
+      "sha256": "e93cc72f007287bc08d0a8f1e39db2dacff96f1580557676efa60670495bdfab"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "first_line": 413,
+      "last_line": 447,
+      "scope": "whole State grammar/count/current key-value arithmetic binding",
+      "literal": "/// Optional bounded tree arithmetic over the complete actual State. This is a\n/// root calculation, not a checked execution-parent or admission capability.\n/// No root claim, partial update or caller-produced leaf hash can enter it.\n/// Keep the independent original `root` above unchanged as the reference.\npub fn root_with_arithmetic(\n    state: &State,\n    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,\n) -> Result<Hash> {\n    // The complete canonical pass must still precede every wire bound. In\n    // particular, a late invalid number wins over an early oversized key.\n    for value in state.values() {\n        validate_canonical(value)?;\n    }\n    if state.len() > 65_536 {\n        return Err(\"LIMIT\");\n    }\n    let mut input = arithmetic.input_builder();\n    for (key, value) in state {\n        // Only a full current String/key equality can skip encoding. The\n        // builder proves eligibility from its private original wire bytes;\n        // every miss keeps the existing encoder and its actual allocations.\n        if let Value::String(value) = value {\n            if input\n                .try_plain_json_string(key.as_bytes(), value)\n                .map_err(|_| \"LIMIT\")?\n            {\n                continue;\n            }\n        }\n        let bytes = canonical_after_validation(value)?;\n        input\n            .add_encoded(key.as_bytes(), &bytes)\n            .map_err(|_| \"LIMIT\")?;\n    }\n    input.finish().map_err(|_| \"LIMIT\")",
+      "sha256": "6849fafcdc91d234e7bb602185d9a8ff37df0627f87464f1ae68b2745b4c8c5f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "first_line": 487,
+      "last_line": 496,
+      "scope": "fresh PQ state validation before profile dispatch",
+      "literal": "/// Consensus-profile selected root. The historical root function and every old\n/// profile retain their complete grammar, error order and 65,536-key boundary.\npub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {\n    pq_accounts_v2::validate_state(state, cfg)?;\n    if crate::growth_profile_v2::enabled(cfg) {\n        Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())\n    } else {\n        root(state)\n    }\n}",
+      "sha256": "de06e72ef667c7d1e0a09d0fd7ed6b950321e58778bcf3bd24f2cad5ea77ed0d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "first_line": 134,
+      "last_line": 165,
+      "scope": "single material, retained-only bound",
+      "literal": "/// One optional mathematical entry. Its byte limit controls retention only;\n/// refusing material never changes accepted inputs or the original state root.\n/// The opaque type cannot be restored from serialized roots or hash claims.\npub struct StateRootArithmetic {\n    max_retained_payload_bytes: usize,\n    material: Option<Material>,\n    observation: StateRootArithmeticObservation,\n}\n\n/// An operation-local complete input. Only actual bytes can add a leaf; no\n/// caller can install a prehash or root. Dropping an unfinished or failed input\n/// preserves the preceding complete material. Grammar checks that precede wire\n/// limits remain the caller's responsibility, as for `root_from_entries`.\n///\n/// ```compile_fail\n/// use trnm_protocol::pon_wire::StateRootArithmetic;\n/// let mut arithmetic = StateRootArithmetic::new(1024);\n/// let mut input = arithmetic.input_builder();\n/// input.leaves.push(([0u8; 32], [0u8; 32]));\n/// ```\npub struct StateRootInputBuilder<'a> {\n    arithmetic: &'a mut StateRootArithmetic,\n    leaves: Vec<(Hash, Hash)>,\n    prior_strings_used: Vec<bool>,\n    pending_strings: Vec<ExactString>,\n    // Built only for a potentially retainable new string, never for an exact\n    // current-key hit. Bounded by the original retained/pending entries and\n    // discarded with this builder; it carries no retained budget.\n    values: Option<BTreeMap<ValueIndex, Arc<PlainValue>>>,\n    pending_budget: usize,\n    observation: StateRootArithmeticObservation,\n    failed: Option<WireError>,",
+      "sha256": "574d46f0b36cd91631cfb2b6c63d22d579e7d128a5b805ba4e937424e8200769"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "first_line": 241,
+      "last_line": 300,
+      "scope": "all current leaves collision checked then complete partition equality",
+      "literal": "    fn finish_inputs(\n        &mut self,\n        mut leaves: Vec<(Hash, Hash)>,\n        prior_strings_used: Vec<bool>,\n        pending_strings: Vec<ExactString>,\n        mut observation: StateRootArithmeticObservation,\n    ) -> Result<Hash, WireError> {\n        leaves.sort_unstable_by_key(|row| row.0);\n        if leaves.windows(2).any(|pair| pair[0].0 == pair[1].0) {\n            return Err(WireError::KeyCollision);\n        }\n        let count = usize::from(!leaves.is_empty())\n            + leaves\n                .windows(2)\n                .filter(|pair| prefix(&pair[0].0) != prefix(&pair[1].0))\n                .count();\n        // The input hash vector has the same bounded transient size as the\n        // original root. At most 4096 partition records can be retained. Boxed\n        // slices prevent unused Vec capacity from escaping the retention charge.\n        let tree_charge = leaves.len() * std::mem::size_of::<(Hash, Hash)>()\n            + count * std::mem::size_of::<Partition>();\n        if tree_charge > self.max_retained_payload_bytes {\n            self.material = None;\n            observation.retention_refused = true;\n            self.observation = observation;\n            return state_root_from_hashes(leaves);\n        }\n\n        let empty = state_empty_hashes();\n        let mut partitions = Vec::with_capacity(count);\n        let mut reused = 0;\n        let mut start = 0;\n        while start < leaves.len() {\n            let id = prefix(&leaves[start].0);\n            let end = start + leaves[start..].partition_point(|row| prefix(&row.0) == id);\n            let prior = self.material.as_ref().and_then(|material| {\n                let index = material\n                    .partitions\n                    .binary_search_by_key(&id, |partition| partition.prefix)\n                    .ok()?;\n                let partition = &material.partitions[index];\n                (material.leaves[partition.start..partition.end] == leaves[start..end])\n                    .then_some(partition.root)\n            });\n            let root = match prior {\n                Some(root) => {\n                    reused += 1;\n                    root\n                }\n                None => subtree(&leaves[start..end], PARTITION_DEPTH, empty),\n            };\n            partitions.push(Partition {\n                prefix: id,\n                start,\n                end,\n                root,\n            });\n            start = end;\n        }\n        let root = partition_root(&partitions, 0, empty);",
+      "sha256": "913df751d1bee6646070a22b32ec8d425f859f6ab100c28e4072441402ef1fec"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "first_line": 380,
+      "last_line": 422,
+      "scope": "complete key/current string or encoded value equality",
+      "literal": "    /// Try a complete current raw JSON string. A hit proves byte-for-byte\n    /// equality with a previously encoded unescaped ASCII string under this\n    /// exact key, then adds that row. A miss adds nothing: the caller must use\n    /// its original canonical encoder and `add_encoded`, with its original\n    /// grammar/error order. No caller-supplied eligibility flag is trusted.\n    pub fn try_plain_json_string(&mut self, key: &[u8], value: &str) -> Result<bool, WireError> {\n        if let Some(error) = self.failed {\n            return Err(error);\n        }\n        let hit =\n            self.prior_string(key).and_then(|(index, prior)| {\n                (&prior.value.bytes[1..prior.value.bytes.len() - 1] == value.as_bytes())\n                    .then_some((index, prior.hashes, prior.value.bytes.len()))\n            });\n        let Some((index, hashes, encoded_len)) = hit else {\n            return Ok(false);\n        };\n        self.bounds(key, encoded_len)?;\n        self.add_exact(index, hashes, true);\n        Ok(true)\n    }\n\n    /// Add complete canonical/wire bytes. The original wire bounds precede\n    /// hashing; exact strings can avoid hashing only after full byte equality.\n    /// Other values use the original domains even when their lengths coincide.\n    pub fn add_encoded(&mut self, key: &[u8], value: &[u8]) -> Result<(), WireError> {\n        self.bounds(key, value.len())?;\n        let hit = self.prior_string(key).and_then(|(index, prior)| {\n            (prior.value.bytes.as_ref() == value).then_some((index, prior.hashes))\n        });\n        if let Some((index, hashes)) = hit {\n            self.add_exact(index, hashes, false);\n            return Ok(());\n        }\n        let hashes = (\n            hash(b\"state-key\", &[key]),\n            hash(b\"state-leaf\", &[key, value]),\n        );\n        self.leaves.push(hashes);\n        self.observation.input_keys += 1;\n        self.observation.leaf_hashes_computed += 1;\n        self.retain_string(key, value, hashes);\n        Ok(())",
+      "sha256": "9a24a5798b9b33bf95a44a075746fb813648657b60d540ed2ba900d2e9b983d1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "first_line": 293,
+      "last_line": 355,
+      "scope": "diagnostic call-expression and successful-import counter semantics",
+      "literal": "        let mut after = settings.genesis();\n        last_successful_after = Some(after);\n        let mut count = 0;\n        let mut trials = 0;\n        let mut solve_ns = 0;\n        while after != tip {\n            sync_stage = \"history-rpc\";\n            last_requested_after = Some(after);\n            advertised_page_complete = None;\n            import_call_elapsed_ns = None;\n            let call_started = Instant::now();\n            let reply_result = public_v2::call_public_protected_v2(\n                address,\n                &Request::History {\n                    tip: hex::encode(tip),\n                    after: hex::encode(after),\n                },\n                &settings,\n                &server_pin,\n                &caller,\n                policy,\n            );\n            history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());\n            let reply = reply_result?;\n            sync_stage = \"history-response-check\";\n            if !reply.ok {\n                return Err(format!(\"PUBLIC_HISTORY_REFUSED:{}\", reply.value).into());\n            }\n            trials += reply.solve_trials;\n            solve_ns += reply.solve_elapsed_ns;\n            sync_stage = \"decode-page\";\n            let page: Page = serde_json::from_value(reply.value)?;\n            advertised_page_complete = Some(page.complete);\n            sync_stage = \"page-count-check\";\n            if page.packets.len() != 1 {\n                return Err(\"PAGE_COUNT\".into());\n            }\n            sync_stage = \"first-packet-check\";\n            if count == 0\n                && Packet::decode(&hex::decode(&page.packets[0]).map_err(codec)?)?.id()?\n                    != first.ok_or(\"FIRST\")?\n            {\n                return Err(\"LONG_FIRST_PAGE\".into());\n            }\n            sync_stage = \"import-call-expression\";\n            let call_started = Instant::now();\n            let import_result = ingress::receive_public_page_from(\n                &mut confirmer,\n                address,\n                page,\n                tip,\n                after,\n                ingress::now()?,\n            );\n            import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());\n            after = import_result?;\n            count += 1;\n            completed_import_calls = count;\n            last_successful_after = Some(after);\n            sync_stage = \"partial-active-check\";\n            if count < BLOCKS && confirmer.active()?.0 != settings.genesis() {\n                return Err(\"PARTIAL_SYNC_ACTIVATED\".into());\n            }",
+      "sha256": "f8870c2d7c39427dad25923f5ee60225060ecdfbf2b007dda1ab1cf0324bada6"
+    }
+  ],
+  "qualifications": {
+    "native_pass_from_this_review": false,
+    "business_slo_pass": false,
+    "whole_pq_acceptance": false,
+    "newer_head_pass": false
+  }
+}

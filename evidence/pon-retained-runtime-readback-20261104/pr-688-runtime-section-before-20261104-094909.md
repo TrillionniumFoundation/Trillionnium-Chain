@@ -1,0 +1,110 @@
+<!-- runtime-fixture-b28098c-begin -->
+## Runtime continuation — actual closures, complete costs and retained failures
+
+**Overall HOLD remains.** Each result below names its measured source. Current integration is [69d2e06c48bbbd1e22432f9b557727b140aba361](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361), an ordinary child of concurrent b8116f65. Actual merge bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4 has ordered parents dd6e1c3c and 69d2, with the same tree d9327a58. Current 69d2 build and selected-control results are identified separately below. Historical native costs and business observations remain bound to 73ab, 40a, 44d or their explicitly named sources; none is assigned to 69d2.
+
+The [complete evidence index](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/README.md) retains every original failure and subsequent scoped result. [The immediately preceding owned PR section](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/pr-688-runtime-section-before-20261104-0810.md) is archived verbatim, including its earlier pending statements and source boundaries. Older complete sections remain linked from that index.
+
+### Two newly verified CI closures
+
+**Release toolchain installation:** [repair 73ab6e9a](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/73ab6e9a83bcc836e261d93f9bb23ceafe556758) changes exactly the original release workflow. Build and certificate steps share a fresh RUSTUP_HOME keyed by run, attempt, runner and lane, with pinned Rust 1.95.0/minimal and the original clippy/rustfmt requirements. The original 40a ARM installation conflict, skipped native steps and unknown partial-installation origin are retained in [the original failure](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/40a5-release-finality-toolchain-failure.json).
+
+[All four original release lanes now actually succeed](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/73ab-release-finality-four-lane-terminal.json), [run 41791243030](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030): x64 head/merge and ARM head/merge each execute the four original distinct selectors, each 1 PASS / 0 FAIL / 0 ignored. The original three-pattern collect-all pipelines and counter reader succeed in every lane. Exact source guards, actual audits, toolchain installation and source-bound build receipts remain. Original Cargo/rustc arguments, explicit ignored-test selection, release profile, 30-minute job cap and 300-second pipeline budgets are unchanged. Individual pipeline counter values and the full ELF-digest file content were not extracted and remain null.
+
+**Independent fuzz lock:** [the original four 40a quality/fuzz refusals](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-40a-quality-fuzz-fetch-failures.json) retain byte-identical Cargo errors: tests/fuzz/Cargo.lock required an update while --locked was active. Concurrent faa36 added only the missing sha2-to-sha2-asm edge/package; the package correspondence is a source-supported inference, not text present in the original Cargo error.
+
+[All four original fetch contexts actually pass on fixed 73ab](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/73ab-locked-fetch-four-context-terminal-readback.json), [run 41795067492](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492): stable quality and pinned nightly fuzz, each on head and actual merge. Every invocation executes the unchanged cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml, exits 0 without timeout, and retains the original 900-second owner/10-second TERM grace. All inner source flags and outer source pairs agree. All four observed lock hashes match the exact source. Complete original manifests, eight source receipts and 32 complete members were independently matched/hashed against four full job logs. This closes the fetch subgate only; complete quality checks and fuzz targets were not executed by that verification.
+
+The earlier [a10 Branch count-guard repair](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/a10-branch-four-lane-terminal-readback.json) also remains a scoped actual four-lane PASS: the stale 5/0/1 guard was corrected to the actual 6/0/2 scope without changing native selectors or acceptance.
+
+### Completed 73ab native/PQ component scope
+
+[Original run 41791242683](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242683) now has four terminal successful lanes. [The retained terminal evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/73ab-pq-four-lane-terminal-readback.json) binds head 73ab6e9a, actual merge 88f89924, tree 65a2100f, 8,120 files / 933,034,956 bytes.
+
+| Original lane | Full Node-library result | Explicit original controls | Separate cost selectors |
+| --- | --- | --- | --- |
+| ARM actual merge | 985 PASS / 0 FAIL / 27 ignored | 49 distinct controls pass | Four selectors, each 1 PASS |
+| ARM head | 985 PASS / 0 FAIL / 27 ignored | Same 49 controls pass | Same four selectors pass |
+| x64 actual merge | 985 PASS / 0 FAIL / 27 ignored | Same 49 controls pass | Same four selectors pass |
+| x64 head | 985 PASS / 0 FAIL / 27 ignored | Same 49 controls pass | Same four selectors pass |
+
+Original formatting and strict Node Clippy pass in every lane. Child-process helpers and nested libtest result lines are not added to the outer counts. The original 27 ignored tests remain ignored.
+
+The initial source JSON is directly retained from console. Before/after equality for each successful command is enforced by the separately read original recorder; those per-command raw source JSON files remain inside the ZIP and were not separately extracted here. The printed authentication-cost ELF digest belongs to that cost invocation; the full Node build-record ELF digest remains unread/null. Neither cost execution nor these native component results grant whole-chain PQ or public-business qualification.
+
+### Original confirmation and service blockers remain open
+
+| Exact measured cohort | Actual retained result |
+| --- | --- |
+| 73ab F0, run 41791243013 | 1/6 confirmations in original windows; 0/6 against the original scheduled four-second target. One confirmed, two observed unconfirmed, three unobserved. Native exit 101; NATIVE_F0_FAILED / BASELINE_MUST_PASS. |
+| 73ab three-run campaign, run 41791242816 | 6/27 confirmed, nine observed unconfirmed, twelve unobserved. Each baseline 2/3; all six pressure phases 0/3. All nine original phase criteria fail; all three native invocations exit 101. |
+| 73ab W1 fresh-service, head and actual merge | Each original selector passes 1 native test, then CONFIRMATION_TARGET rejects the business report. Each fresh selector reports 0 PASS / 1 FAIL, exit 101, at the original aggregate assertion; no harness timeout. |
+| 73ab service-model, four original lanes | Five original named selectors pass per lane; service/sustained validators pass; confirmation validator rejects CONFIRMATION_TARGET in all four. |
+| Frozen 40a F0/campaign | 0/6 F0 original-window and scheduled four-second confirmations; 6/27 campaign. Detailed actual outcomes remain separate from 73ab. |
+| Frozen 40a priority | Original run cancelled with total_count=0/jobs=[]; no instantiated History, capacity or service job and no native result. |
+| 73ab four original 4,105-block History lanes | All four native selectors fail, exit 101. x64 head/merge: lifetime expiry then IO111, last printed milestones 2,000/2,500. ARM head/merge: PUBLIC_REQUEST_DEADLINE before lifetime expiry, last printed milestones 4,000/4,000. Final durable counts and failed page/stage remain null. |
+| Frozen 44d four original 4,105-block History lanes | All four fail the original selector. x64 head/merge: lifetime expiry then IO111; ARM head/merge: PUBLIC_REQUEST_DEADLINE before server lifetime expiry. Last printed 2,000/4,000 milestones are not exact final imported/committed counts. |
+
+[73ab complete costs and original denominators](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-73ab-native-cost-readback.json), [six original service failures](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-73ab-service-w1-failures.json), [40a complete costs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/40a5-native-cost-and-confirmation-readback.json), [40a pre-job cancellation](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/40a5-priority-prejob-cancellation.json), and [44d complete four-lane History readback](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-44d-four-lane-history-failures.json) preserve these separate cohorts.
+
+The fresh-service aggregate assertion includes construction validity plus baseline/pressure invariants and confirmation targets. The last pressure replay records contain PUBLIC_REQUEST_DEADLINE, but the precise first or unique failing conjunct and internal deadline checkpoint remain unknown. Service-model execution_finished=false and terminal native_execution_completed=true have different original scopes and are both retained. Unread business counts stay null; an archive reader PASS never relabels these native/business failures.
+
+### Complete 73ab costs now identify the next investigation boundary
+
+The actual successful cost reader verifies both fixed original ZIPs, four complete reports and 33 selected members / 94,965,976 bytes, with zero omitted archive members. Its original 17 SQL controls and five decode-control groups pass. All 11 phases, 22 roles and 352 native-stage rows remain: 330 entered, 22 not entered. SQL has 88 rows: 36 observed, 52 unentered. Unentered SQL duration remains null. Original bounded console omissions are explicit; campaign run 2/3 libtest counts not printed in console remain null.
+
+| 73ab campaign baseline | Client account-graph calls | Account-graph wall / caller CPU, seconds | Observed SQL commit wall subtotal, milliseconds |
+| --- | ---: | --- | ---: |
+| run 1 | 124 | 16.133378564 / 3.844399840 | 128.574152 |
+| run 2 | 124 | 16.189713331 / 3.837764770 | 44.359511 |
+| run 3 | 124 | 16.373165976 / 3.841085166 | 43.258633 |
+
+F0 baseline has 62 account-graph calls, 17.648002309 seconds wall and 3.910179334 seconds caller CPU. Its one confirmed round ends at phase epoch 27.400817764 seconds, 26.400817764 seconds after its scheduled start. All six campaign pressure phases report PUBLIC_REQUEST_DEADLINE; their account-graph intervals are approximately 15.50–15.72 seconds. The three campaign baseline error arrays are empty and their original criteria still fail.
+
+These intervals nest and overlap; they cannot be summed into latency or subtracted into exclusive shares. They do not separate SQL reads, hashing, allocation, scheduling or Host work. Account-graph call counts are not full-traversal counts. Each campaign baseline client has 136,004 decoder calls / 135,721 exact hits / 283 original decodes, but that cache binds expected node ID plus freshly read complete SQL bytes and does not imply fewer SQL reads or a latency gain. The same-source Host projection is now retained below; it reads the existing reports without rerunning native code. Different sources and completed cohorts are not paired performance controls.
+
+### Same-source Host costs and original failure scope
+
+The [Host readback](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-73ab-native-host-cost-readback.json), actual run 41803235636, verifies the same two original ZIPs/four raw reports. All 22 reader controls and both audits pass; all 8 selected members / 91,600,775 bytes are retained with no omissions. It preserves 11 phases and 92 History records: **85 import successes / 7 failures / 0 unknown**, all with valid observers. The seven failures are F0 baseline index 7 plus index 6 in each of six campaign pressure phases. The empty F0 ROOT phase retains four unknown Host slots and complete cost totals null.
+
+| 73ab original baseline | Checkpoint calls | Checkpoint wall / sum of invoking-thread CPU, seconds |
+| --- | ---: | --- |
+| F0 | 83,581 | 6.233690200 / 4.399011445 |
+| Campaign run 1 | 166,367 | 6.837774672 / 4.159873526 |
+| Campaign run 2 | 166,344 | 7.515145033 / 4.155183110 |
+| Campaign run 3 | 166,367 | 6.467027246 / 4.158917758 |
+
+The known checkpoint subtotal is 914,503 calls. Recorded Host calls finish and accept, while the seven imports and original confirmation targets still fail. Host CPU and client-import caller CPU have different measurement scopes; no graph-exclusive cost, percentage or cross-source gain is claimed. Console retains all compact checkpoint imports plus all four Host phase summaries; the other per-import slot details remain in the output artifact, not an independently downloaded projection.
+
+[The source boundary review](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/account-graph-cost-source-boundary-69d2.json) binds 13 current blobs and explains why account_graph combines current SQL/schema checks, decoding, lift math, traversal and progress/deadline/Host callbacks. Partial/error traversals count as calls. Independent component times are unavailable, so these observations do not justify deleting verification, changing Host cadence or reusing stale SQL.
+
+[The full 73ab History failure record](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/original-73ab-four-lane-history-failures.json) retains all four original terminal native logs and GNU resource records. The successful reader checks four ZIPs / 48 selected members with zero omissions. Its x64-merge 2,500 milestone is specific to 73ab; the older 44d 2,000 value stays separate. Exact final import/durable counts, activation cursor, failed page and deadline checkpoint remain unknown.
+
+### Current engineering change: preserve the exact long-sync failure location
+
+[69d2e06c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361) changes only trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs, 16,780 to 19,849 bytes. Recursive readback verifies 8,127 files / 933,472,602 bytes, every prior file preserved, and all 389 corpus pins / 301 required paths still matching. The exact parent b811 cloud-input audit PASS and both source receipts were fully read before editing.
+
+The original test only retained an overall sync error and 500-page progress milestones. The new nested failure_location object records current operation, successful import-call count, last successful/requested cursors, unvalidated page.complete value and original returning head/history RPC/import call durations. Fixed-size local state is retained during execution; output remains the existing single exit JSON, with no per-page I/O or extra Node/SQL read.
+
+All original call arguments, the ingress::now()? expression, assertions, 4,105-block scope, 1,800-second service lifetime, separate original RPC/import deadlines and shutdown/join/error precedence remain. Import timing includes the original clock argument preparation; a non-returned call's timing remains null. A successful import-call count is not a final durable-commit count after failure: durable_committed_blocks and activation_cursor remain null. No observed-import API, cache bypass, retry or larger budget is introduced.
+
+Two static reviews and an exact inverse comparison preserve the original calls and error flow. Original 69d2 CI now passes all four format/strict-Clippy lanes and all four complete-workspace all-targets/all-features no-run builds; each workspace lane actually executes 60 distinct selected tests, all PASS with zero failed/ignored in that selected scope. Root matched all 240 result segments, source/audit literals, the complete original workflow and upload/API artifact identities. This does not mean complete-workspace test execution. The original four-lane 4,105-block History run still requires a terminal result; the new diagnostic closes its observation gap only after execution demonstrates the record. It is not yet a deadline repair or original long-sync PASS.
+
+[The Legacy operation review](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/40a5-legacy-history-operation-boundaries.md) remains relevant to interpretation: the original long-sync selector uses Legacy storage, so authenticated campaign account-graph costs cannot directly locate its failure. Its stored-delta replay does not rerun old W1 or old transactions. Final-page deep activation is a separate possible path; its actual failing cursor remains unknown until observed.
+
+### Current exact-source gate and queue status
+
+[Current formatting/strict-Clippy and queue evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/69d-format-lint-and-baseline-queue-readback.json) and [current workspace terminal evidence](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/69d-original-workspace-four-lane-terminal-readback.json) preserve the actual head/merge x64/ARM results. Each workspace lane's 60 unique tests consist of 42 Node / 18 M06; the full build uses the unchanged test profile. Growth internal values and redirected compiler-artifact/ELF bodies remain unread/null.
+
+[The 09:10:57 UTC workflow snapshot](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/69d-workflow-status-20261104-091057.json) has 11 success, three failure, one in progress and one pending. Current F0 41799271331, campaign 41799271249 and W1 41799271243 remain workflow failures, with inner current-source counts unread/null in that snapshot. PQ 41799271168 has an actual successful workflow terminal; its internal exact-source test counts require their own retained readback. Priority/History 41799271270 remains running; required baseline 41799271178 remains pending.
+
+The queue record preserves current baseline's zero jobs and the older active 40a baseline sharing the exact original PR concurrency group with cancel-in-progress=false. Blocking by that run is a configuration-supported inference; the API exposes no explicit blocking_run. The [two original b811 cancellations](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c9114e11a807fbb2f89c03e14fc59d2f241e66f2/evidence/pon-retained-runtime-readback-20261104/b811-prejob-cancelled-baseline-priority.json) each have total_count=0/jobs=[] and no native result; initiator/cause remain unknown. No run, queue rule, deadline or budget was changed.
+
+### Earlier results and independent acceptance boundaries
+
+The evidence index preserves all earlier narrow repairs and failures, including the SIGKILL marker publication race, the strict composite killed-child-output checker, the original 6f ARM cleanup FRAME_EOF, the failed first Host-reader syntax, and all original failed/unknown cohorts. Later 44d full-Node 980/0/26, Recent, 42-name state/capacity, 49 selected workspace and W1 component results remain frozen to that source. Workspace --no-run is compilation, and selected native tests are not a complete workspace test execution.
+
+[Issue #639](https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639) remains open for the original four-second signed confirmation and depth-six workload under hostile W1 pressure, including failed, cancelled, unobserved and resource outcomes. [Issue #629](https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/629) retains independent authority/revocation, PQ/W1 compiler/backend/composition, classical/quantum economics, non-rewinding recovery, real-network cost, WAN/fault-domain and governed-activation gates. Same-agent tests or source reviews cannot supply independent operator/security/model evidence.
+
+The sole development plan, complete W1/state verification, nonce/debt floors, immutable parent/current-authority separation, original Host budgets, deep-reorg recovery and publication boundaries remain mandatory. No merge, activation, force-push or self-approval is requested.
+<!-- runtime-fixture-b28098c-end -->

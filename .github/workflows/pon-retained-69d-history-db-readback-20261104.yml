@@ -1,0 +1,61 @@
+name: 69d retained History SQLite evidence (read only)
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-retained-69d-history-db-readback-20261104.yml
+      - scripts/ci/retained_69d_history_db_readback.py
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: 69d-history-db-readback-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify diagnostic source and project boundary
+        shell: bash
+        env:
+          READBACK_OUT: ${{ runner.temp }}/69d-history-db-readback-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          mkdir "$READBACK_OUT"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Read two fixed post-cleanup databases without executing archived code
+        shell: bash
+        env:
+          READBACK_OUT: ${{ runner.temp }}/69d-history-db-readback-${{ github.run_id }}-${{ github.run_attempt }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/retained_69d_history_db_readback.py
+      - name: Recheck unchanged diagnostic source and project boundary
+        if: always()
+        shell: bash
+        env:
+          READBACK_OUT: ${{ runner.temp }}/69d-history-db-readback-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-after.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Retain original ZIPs, selected bytes, queries and unavailable outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: 69d-history-db-readback-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/69d-history-db-readback-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
