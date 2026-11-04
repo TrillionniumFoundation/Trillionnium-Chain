@@ -875,7 +875,7 @@ fn write_untrusted_error(
         Instant::now() + budget,
     )
 }
-fn hex_packet(text: &str) -> Result<Packet> {
+fn decode_packet_hex(text: &str) -> Result<Vec<u8>> {
     ensure(
         text.len() <= 2_097_152
             && text.len().is_multiple_of(2)
@@ -884,7 +884,20 @@ fn hex_packet(text: &str) -> Result<Packet> {
                 .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
         "PACKET_HEX",
     )?;
-    Packet::decode(&hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?)
+    // The complete original grammar above already proves each byte is 0..9 or
+    // a..f. Decode that exact domain without classifying every character again.
+    Ok(text
+        .as_bytes()
+        .chunks_exact(2)
+        .map(|pair| {
+            let high = (pair[0] & 15) + 9 * (pair[0] >> 6);
+            let low = (pair[1] & 15) + 9 * (pair[1] >> 6);
+            (high << 4) | low
+        })
+        .collect())
+}
+fn hex_packet(text: &str) -> Result<Packet> {
+    Packet::decode(&decode_packet_hex(text)?)
 }
 /// Negotiate before sending Submit; legacy listeners see only a nonmutating hello.
 /// Durable authenticated outbox bytes remain the exact originally signed request.
@@ -3195,6 +3208,87 @@ mod history_activation_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn packet_hex_decoder_matches_retained_canonical_domain() {
+        fn reference(text: &str) -> std::result::Result<Vec<u8>, String> {
+            if text.len() > 2_097_152 {
+                return Err("PACKET_HEX".into());
+            }
+            let bytes = hex::decode(text).map_err(|_| "PACKET_HEX".to_owned())?;
+            // The retained general decoder accepts uppercase; the packet domain
+            // is exactly the canonical lowercase round trip.
+            if hex::encode(&bytes) != text {
+                return Err("PACKET_HEX".into());
+            }
+            Ok(bytes)
+        }
+        let compare = |text: &str| {
+            assert_eq!(
+                decode_packet_hex(text).map_err(|error| error.to_string()),
+                reference(text)
+            );
+        };
+        for first in 0u8..=127 {
+            for second in 0u8..=127 {
+                let pair = [first, second];
+                compare(std::str::from_utf8(&pair).unwrap());
+            }
+        }
+        for text in ["g0", "0G", "é", "éé", "🦀"] {
+            compare(text);
+        }
+        for length in [
+            0, 1, 2, 2_097_150, 2_097_151, 2_097_152, 2_097_153, 2_097_154,
+        ] {
+            compare(&"f".repeat(length));
+        }
+    }
+
+    #[test]
+    fn packet_hex_decoder_preserves_real_packet_and_codec_error_order() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let wire = packet.encode().unwrap();
+        let text = hex::encode(&wire);
+        assert_eq!(decode_packet_hex(&text).unwrap(), wire);
+        let decoded = hex_packet(&text).unwrap();
+        assert_eq!(decoded.encode().unwrap(), wire);
+        assert_eq!(decoded.id().unwrap(), packet.id().unwrap());
+
+        let uppercase = text.to_ascii_uppercase();
+        assert_ne!(uppercase, text);
+        assert_eq!(
+            hex_packet(&uppercase).unwrap_err().to_string(),
+            "PACKET_HEX"
+        );
+        assert_eq!(hex_packet("g0").unwrap_err().to_string(), "PACKET_HEX");
+        assert_eq!(hex_packet("00").unwrap_err().to_string(), "PACKET_LIMIT");
+        for invalid in [
+            Vec::new(),
+            wire[..wire.len() - 1].to_vec(),
+            vec![255; wire.len()],
+        ] {
+            let encoded = hex::encode(&invalid);
+            assert_eq!(
+                hex_packet(&encoded).unwrap_err().to_string(),
+                Packet::decode(&hex::decode(&encoded).unwrap())
+                    .unwrap_err()
+                    .to_string()
+            );
+        }
+    }
 
     #[cfg(target_os = "linux")]
     #[test]
