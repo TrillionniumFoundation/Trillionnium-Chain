@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-original-artifact-reader-v2-change-v1",
+  "original": {
+    "head": "dc4cfa884a9bf8defe2f7fefe9e9b6d588849e8c",
+    "tree": "40c3af0e539d179aef483420c90d818fd6d4596a",
+    "run": 41757614289,
+    "job": 126337337339,
+    "audit_preflight": "PASS, 26 packages",
+    "source_before_after": "PASS",
+    "synthetic_controls_passed": 15,
+    "data_readback": "FAIL: SELECTED_JSON_SIZE",
+    "payload_projection_lines_emitted": 0,
+    "reader_blob": "568312d56114fac69255a2d740324e91d9c23ad1",
+    "reader_sha256": "d66f06561c3057247a71c567b9391a03faed461673d43ebf5a8f3e5f6ee48ce8"
+  },
+  "independent_review": {
+    "blob": "39db7889434085eb6f619321fbba0cfc9e455935",
+    "sha256": "e254af3bc33ee288a1d5011b0e08b83076ab2911190b52f1427f14835c30a5b2",
+    "findings_retained": [
+      "phase summary lacked type/enum boundaries",
+      "unknown field names and uppercase error strings could reach projections",
+      "stdout cap did not bound serialized files"
+    ]
+  },
+  "changes": [
+    "Require fixed phase modes, original 30-second values, 0/24 requested actors, bounded readiness counts and actual booleans. Missing confirmations remain unknown.",
+    "Only closed field names and string values are printed; unknown field values and names are hashed. Error literals must be exact members of the fixed known-code set. Unknown archive member names are hashed in derived manifests.",
+    "Precompute serialized derived and stdout sizes before writes; retain independent cumulative 8 MiB derived and 2 MiB projection caps.",
+    "Parse only explicit required/projected JSON paths. Known raw original reports are parsed, projected and discarded one at a time under 128 MiB each and 4 GiB process address space; other selected JSON remains 16 MiB and retained small JSON remains 64 MiB. Original total decoded bound remains 512 MiB.",
+    "Use immutable Actions attempt 1 metadata rather than mutable latest-run attempt.",
+    "Keep exact original reader for nine synthetic source-bound negative controls before artifact reads."
+  ],
+  "new_reader": {
+    "blob": "f8ea44c88224d07c0796e086f5d29163f93a0ffa",
+    "sha256": "e28fd68a3756221d31f0e67f485a7d311b6459c16d093da6c7a98d857b6fcac6",
+    "bytes": 39316,
+    "local_execution": false,
+    "hosted_execution": "PENDING",
+    "intended_self_controls": 27,
+    "artifact_members_executed": 0
+  },
+  "original_native_budgets_changed": false,
+  "readback_qualification_is_not_native_qualification": true,
+  "frozen_original_artifacts_unchanged": true
+}

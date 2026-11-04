@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import io
 import json
 import math
 import os
 from pathlib import Path, PurePosixPath
 import re
+import resource
 import stat
 import tempfile
 import urllib.error
@@ -28,7 +30,10 @@ COMPRESSED_BUDGET = 96 * 1024 * 1024
 DECODED_BUDGET = 512 * 1024 * 1024
 MEMBER_BUDGET = 256 * 1024 * 1024
 JSON_MEMBER_BUDGET = 16 * 1024 * 1024
+REPORT_JSON_BUDGET = 128 * 1024 * 1024
 JSON_RETAINED_BUDGET = 64 * 1024 * 1024
+DERIVED_BUDGET = 8 * 1024 * 1024
+ADDRESS_SPACE_BUDGET = 4 * 1024 * 1024 * 1024
 PRINT_BUDGET = 2 * 1024 * 1024
 CHUNK = 64 * 1024
 
@@ -193,20 +198,19 @@ def validate_members(infos, remaining):
 
 
 def wanted_json(name, spec):
-    if name in spec["required_json"]:
-        return True
-    path = PurePosixPath(name)
-    if not name.endswith(".json"):
-        return False
-    if path.name in ("controller-result.json", "child-result.json",
-                     "phase-result.json"):
-        return True
-    return len(path.parts) <= 2 and path.name not in (
-        "artifact-files.json", "log-files.json", "files.json")
+    return name in spec["required_json"] or name in spec["project_json"]
+
+
+def large_original_report(name, spec):
+    if spec["kind"] == "campaign":
+        return name in {f"run-{i}-raw/report.json" for i in (1, 2, 3)}
+    return name in {"execution/raw/report.json", "execution/raw/baseline.json",
+                    "execution/raw/valid-work-root.json"}
 
 
 def inspect_zip(path, spec, budget):
-    files, documents = {}, {}
+    files, documents, projected, summaries = {}, {}, {}, {}
+    seen_documents = set()
     retained = 0
     with zipfile.ZipFile(path) as archive:
         infos = archive.infolist()
@@ -214,9 +218,19 @@ def inspect_zip(path, spec, budget):
         for info in infos:
             selected = not info.is_dir() and wanted_json(info.filename, spec)
             if selected:
-                require(info.file_size <= JSON_MEMBER_BUDGET, "SELECTED_JSON_SIZE")
-                retained += info.file_size
-                require(retained <= JSON_RETAINED_BUDGET, "SELECTED_JSON_TOTAL")
+                limit = (REPORT_JSON_BUDGET if large_original_report(info.filename, spec)
+                         else JSON_MEMBER_BUDGET)
+                if info.file_size > limit:
+                    print(json.dumps({"selected_json_size_rejected": {
+                        "known_member": info.filename,
+                        "declared_bytes": info.file_size, "limit_bytes": limit,
+                        "archive_digest_verified": True,
+                        "complete_zip_crc_verification": False,
+                        "native_executed": False}}, sort_keys=True), flush=True)
+                    raise Rejected("SELECTED_JSON_SIZE")
+                if not large_original_report(info.filename, spec):
+                    retained += info.file_size
+                    require(retained <= JSON_RETAINED_BUDGET, "SELECTED_JSON_TOTAL")
             parts = [] if selected else None
             digest = hashlib.sha256()
             count = 0
@@ -240,8 +254,20 @@ def inspect_zip(path, spec, budget):
                 "crc32": f"{info.CRC:08x}", "directory": info.is_dir(),
             }
             if parts is not None:
-                documents[info.filename] = parse_json(b"".join(parts))
-    require(all(name in documents for name in spec["required_json"]),
+                # A known original report is parsed, projected and discarded
+                # before reading the next one; it is never retained as a raw
+                # parsed report beside other large original reports.
+                value = parse_json(b"".join(parts))
+                seen_documents.add(info.filename)
+                if info.filename in spec["project_json"]:
+                    projected[info.filename] = projection(value)
+                    if isinstance(value, dict) and "phases" in value:
+                        summaries[info.filename] = phase_summary(value)
+                if not large_original_report(info.filename, spec):
+                    documents[info.filename] = value
+                del value
+                del parts
+    require(all(name in seen_documents for name in spec["required_json"]),
             "REQUIRED_JSON_MISSING")
     for name in spec["source_json"]:
         source = documents[name]
@@ -276,26 +302,149 @@ def inspect_zip(path, spec, budget):
             require(attempt["number"] == ordinal
                     and attempt["report_sha256"] == files[report_name]["sha256"],
                     "ORIGINAL_REPORT_HASH")
-    return files, documents, declared
+    return files, documents, declared, projected, summaries
 
 
 BLOCKED = re.compile(
     r"header|packet|transaction|signature|private|secret|payload|state_rows|"
     r"proof|witness|seed$|business$|key_material|signed_request|raw_body",
     re.IGNORECASE)
-STRING_FIELDS = {
-    "schema", "mode", "kind", "state_backend", "status", "phase", "method",
-    "profile", "source_kind", "tested_commit", "tested_tree", "candidate",
-    "cpu_max", "memory_max", "memory_swap_max", "pids_max", "name",
+# Closed field labels copied from the immutable producer's static JSON labels
+# (public_v3_multiprocess.rs Git blob ec6420becaba837f22d45c917d15554a8e653275)
+# plus the explicit controller/metric labels below. Unknown labels are hashed.
+SAFE_FIELDS = set("""
+abandoned_tasks accepted_work_admission_refusals account_parse_calls account_parse_cpu_ns account_parse_wall_ns account_rows acquisition
+acquisition_cpu_ns acquisition_wall_ns acquisitions actor_call_cap actor_readiness actor_reports_successful_without_cap_or_kill actors
+actual_compiler_artifact_profile actual_flow actual_signed_seed_transfers address admission_cpu_ns adversarial_key_churn_service_qualified aggregate_membership_verified
+aggregate_scoped_cpu_ns all_attempts_or_error all_signed_rounds_confirmed_in_window at_ns attack_calls_overlapping_each_signed_round attacker_process_rss attacker_processes
+attacker_processes_ready attacker_processes_requested attempt_cap_reached attempt_count attempts balance_identity_has_work_or_execution_authority best_observed_cold_legal_method
+binary body_bytes body_digest budget_samples business business_blocks business_packets
+business_started_ns bytes call calls candidate checked_acquisitions_complete checkpoints
+children children_os_usage_after children_os_usage_before client_thread_cost clock clock_failures cold_state_equal
+cold_unchanged command complete_success completed_utc confirmations confirmed_inside_pressure_window controller_cgroup
+cost_scope count cpu_max cpu_ns credit_freshness credit_freshness_ended_ns credit_freshness_started_ns
+criteria_met cryptographic_hardness_qualified cwd debug_assertions debuginfo decode_cpu_ns decode_wall_ns
+depleted depletion_at_ns depletion_meter depletion_qualified diagnostic_cpu_ns diagnostic_result diagnostic_wall_ns
+dispatch_started dispatch_thread_cpu_ns dispatch_wall_ns domain_cpu_scope duration_seconds each_rejection_unchanged economics
+economics_complete edges elapsed elapsed_ns elapsed_seconds encoded_packet_bytes encoding_measured
+end_ns ended_ns entire_actor_cpu_ns entire_actor_wall_ns entries epoch_ns error
+errors executor_refusals exit_status exit_success expected_head expected_legal_counts_and_tip expected_public_policy_id
+expected_resources expected_state_rows expected_stats expected_tree failure failures final_actual_flow
+final_client_tip final_flow final_meter final_receiver_tip final_state_rows final_stats finalization_failures
+finite_experiment_criteria_met finite_phase_criteria_met fixture_packet_encoding_cost flow_after flow_before full_work_accepted full_work_failed
+genuine_budget_depletion_observed graph_cpu_ns graph_wall_ns hash_cpu_ns hash_wall_ns header history
+hits hostile_packet_ids hostile_packets_absent_cold hostile_packets_absent_live id identity_scope included_block
+independent_operators independent_reference_w1_verification_cost independent_verification_cpu_ns independent_verification_wall_ns independent_wrong_root_w1_verification_cost initial_flow initial_meter
+initial_setup_cpu_ns initial_setup_wall_ns initial_state initial_stats initial_tip kind legal_after_cold_reopen
+legal_cold_equal legal_equal live_unchanged log m06_workers matched_requests max
+max_cpu_ns max_wall_ns memory_max memory_swap_max meter method method_index
+min misses mode modes mutation_cpu_charged_ns mutation_cpu_clock_failures mutation_cpu_ns
+mutation_owner_cpu_ns name native_history_arithmetic_after native_history_arithmetic_before native_stats_after nodes nonce
+number observation observation_ended_ns observation_started_ns observed_terminal_mutation_cpu_refusals observer observer_complete
+ok operation opt_level ordinal original_campaign_qualified original_criteria_met original_inputs
+overflow_checks packet_bytes packet_digest paid_owner_plus_scoped_worker_cpu_ns parent_forced_kill parent_height passed
+path peak_bytes pending_grant_wait_ns phase phase_seconds phase_startup_errors phase_summaries
+phases pid pids_max planned_complete_runs pool_context preparation preparation_cost
+preparation_cost_known preparation_measured producer_method producer_setup_cost producer_state_equal production_activation production_candidate
+profile proof_digest public_phase_placement public_request_body_digest queue_backpressure_events queue_wait_ns quiescent
+reads reason receiver_and_verifier_cpu_max receiver_and_verifier_memory_max receiver_and_verifier_setup_cpu_ns receiver_and_verifier_setup_wall_ns receiver_client_state_equal
+receiver_hostile_after receiver_hostile_before receiver_hostile_work_rejected_during_round receiver_observation receiver_setup_cost records reference_acceptance_cost
+reference_cost reference_packet reference_packet_id refusal rejected_work_cpu_ns rejections relation_diagnostics
+relation_rejection_matches_mode release_ready replies_match report report_path report_validation_failure request_encoding_cost
+response result results retained_bytes retained_software_bytes returncode returned_after_window
+reuse reuse_preparation root_cpu_ns root_wall_ns round round_snapshot_scope rss
+rss_after rss_before same_task_target_from_zero_samples sample sample_at_ns samples schema
+scope search search_cpu_ns search_wall_ns searches seed seed_blocks
+seed_packets seed_transfers selection_candidates_cpu_ns separately_observed_public_settled_cpu_ns service service_outcome settings_profile
+settled setup_calls setup_calls_per_sample setup_cpu_ns setup_wall_ns sha256_after sha256_before
+signed_seed_transfers signed_transactions slots source_after source_before source_kind spawn_to_reap_wall_ns
+sql_cpu_ns sql_wall_ns stages_match start_marker started_ns started_utc startup_or_campaign_error
+state_backend status stderr stdout step strict_changed_header_verification strict_reference_verification
+submissions success sum supplemental_criteria_met target_hit test tested_commit
+tested_tree thread_cpu_ns thread_cpu_observation_available tip total total_cpu_ns total_paid_owner_plus_scoped_worker_cpu_ns
+total_wall_ns traffic_cpu_ns traffic_wall_ns transaction transactions valid_work_for_root_rejection value
+verified_winners verifier_errors wall_ns wan_qualified whole_domain_paid_reconciled whole_entry_cpu_ns whole_entry_wall_ns
+whole_parent_phase_cpu_ns whole_parent_phase_wall_ns winning_header work_accepted work_finished work_profile_qualified work_rejected
+work_started worker writes wrong_absence_after_legal_error wrong_absence_error wrong_packet_id wrong_root_packet
+""".split())
+SAFE_FIELDS.update({"Ok", "Err", "Invalid", "Io", "BudgetExhausted",
+                    "Protocol", "Resource", "message", "code"})
+SAFE_STRINGS = {
+  "baseline",
+  "from-zero",
+  "late-product",
+  "valid-work-root",
+  "head",
+  "prospective-merge",
+  "authenticated-v1",
+  "release",
+  "test",
+  "ok",
+  "success",
+  "failure",
+  "completed",
+  "queued",
+  "in_progress",
+  "accepted",
+  "refused",
+  "rejected",
+  "timeout",
+  "run-1",
+  "run-2",
+  "run-3",
+  "25000 100000",
+  "400000 100000",
+  "2147483648",
+  "17179869184",
+  "0",
+  "256",
+  "max",
+  "pon-original-native-campaign-ci-v1",
+  "trnm-ci-source-v1",
+  "native-public-v3-separate-process-campaign-v2",
+  "native-public-v3-root-rejection-supplement-v1",
+  "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+  "87870eb9fc3d6477ee35e59334ccdbb669721777"
 }
 ERROR_FIELDS = re.compile(r"error|failure|reason|refusal", re.IGNORECASE)
-KNOWN_CODES = (
-    "PUBLIC_REQUEST_DEADLINE", "CPU_BUDGET", "ROOT", "UNKNOWN_PARENT",
-    "OwnerReorgTerminationCpuRequired", "FRESH_NATIVE_PROCESS_REQUIRED",
-    "CONFIRMATION_TARGET", "WouldBlock", "TimedOut", "ConnectionRefused",
-    "BROKEN_PIPE", "HOST_", "ARCHITECTURE_", "ORIGINAL_",
-)
+KNOWN_CODES = {
+    "PUBLIC_REQUEST_DEADLINE", "PUBLIC_MUTATION_CPU_BUDGET", "ROOT",
+    "UNKNOWN_PARENT", "OwnerReorgTerminationCpuRequired",
+    "FRESH_NATIVE_PROCESS_REQUIRED", "CONFIRMATION_TARGET",
+    "WouldBlock", "TimedOut", "ConnectionRefused", "BROKEN_PIPE",
+    "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+}
 
+
+def safe_field(name):
+    require(isinstance(name, str), "JSON_KEY_TYPE")
+    if name in SAFE_FIELDS:
+        return name
+    return "field_sha256:" + hashlib.sha256(name.encode()).hexdigest()
+
+
+def omitted_value(value):
+    digest = hashlib.sha256()
+    count = 0
+    encoder = json.JSONEncoder(sort_keys=True, separators=(",", ":"), allow_nan=False)
+    for part in encoder.iterencode(value):
+        encoded = part.encode()
+        digest.update(encoded)
+        count += len(encoded)
+    return {"canonical_json_sha256": digest.hexdigest(),
+            "canonical_json_bytes": count, "value_omitted": True}
+
+
+def safe_member_manifest(files, spec):
+    known = set(spec["required_json"] + spec["source_json"] + spec["project_json"])
+    known.add("public_v3_multiprocess.bin")
+    output = {}
+    for name, metadata in files.items():
+        label = name if name in known else (
+            "member_path_sha256:" + hashlib.sha256(name.encode()).hexdigest())
+        require(label not in output, "MEMBER_LABEL_COLLISION")
+        output[label] = metadata
+    return output
 
 
 def aggregate_records(rows):
@@ -306,7 +455,7 @@ def aggregate_records(rows):
         else:
             op = row.get("operation")
             dispatch = row.get("dispatch_started")
-            group_key = (op if op is None or type(op) is int else "unknown",
+            group_key = (op if op is None or (type(op) is int and 0 <= op <= 255) else "unknown",
                          dispatch if type(dispatch) is bool else None)
         group = groups.setdefault(group_key, {"rows": 0, "numeric": {}, "nulls": {}})
         group["rows"] += 1
@@ -319,8 +468,7 @@ def aggregate_records(rows):
                 group["numeric"].setdefault(path, []).append(item)
             elif isinstance(item, dict):
                 for name, child in item.items():
-                    if (re.fullmatch(r"[A-Za-z0-9_]{1,80}", name)
-                            and not BLOCKED.search(name)):
+                    if name in SAFE_FIELDS and not BLOCKED.search(name):
                         visit(child, f"{path}.{name}" if path else name, depth + 1)
         visit(row)
     result = []
@@ -328,7 +476,9 @@ def aggregate_records(rows):
         statistics = {}
         for name, values in group["numeric"].items():
             values.sort()
-            statistics[name] = {
+            label = ".".join(safe_field(part) for part in name.split("."))
+            require(label not in statistics, "METRIC_LABEL_COLLISION")
+            statistics[label] = {
                 "samples": len(values), "sum": sum(values),
                 "min": values[0], "max": values[-1],
                 "p50_nearest_rank": values[max(0, math.ceil(len(values) * .50) - 1)],
@@ -337,9 +487,10 @@ def aggregate_records(rows):
             }
         result.append({"operation": op, "dispatch_started": dispatch,
                        "recorded_rows": group["rows"], "statistics": statistics,
-                       "null_counts": group["nulls"]})
+                       "null_counts": {".".join(safe_field(part) for part in name.split(".")): count
+                                       for name, count in group["nulls"].items()}})
     return {"recorded_rows": len(rows), "groups": result,
-            "scope": "all recorded numeric fields per original operation; nested costs are not additive; no network latency or business acceptance claim"}
+            "scope": "numeric fields reached by this bounded projection, grouped across all recorded rows; unknown labels hashed; nested costs are not additive; no network/business acceptance claim"}
 
 def projection(value, key="", depth=0):
     if depth > 16:
@@ -347,14 +498,13 @@ def projection(value, key="", depth=0):
     if value is None or isinstance(value, (bool, int, float)):
         return value
     if isinstance(value, str):
-        if key in STRING_FIELDS and re.fullmatch(r"[A-Za-z0-9_./: +\-]{0,160}", value):
+        if value in SAFE_STRINGS:
             return value
         if ERROR_FIELDS.search(key):
             return {"text_sha256": hashlib.sha256(value.encode()).hexdigest(),
                     "characters": len(value),
-                    "known_codes": [code for code in KNOWN_CODES if code in value],
-                    "literal_code": value if re.fullmatch(
-                        r"[A-Z][A-Z0-9_]{0,100}", value) else None}
+                    "known_codes": sorted(code for code in KNOWN_CODES if code in value),
+                    "literal_code": value if value in KNOWN_CODES else None}
         return {"omitted_string_sha256": hashlib.sha256(value.encode()).hexdigest(),
                 "characters": len(value)}
     if isinstance(value, list):
@@ -367,41 +517,82 @@ def projection(value, key="", depth=0):
                     "scope": "endpoint projection only; all original samples remain in the verified archive"}
         return [projection(item, key, depth + 1) for item in value]
     if isinstance(value, dict):
-        return {name: projection(item, name, depth + 1)
-                for name, item in value.items()
-                if not BLOCKED.search(name)
-                and name not in ("economics", "children", "preparation",
-                                 "environment", "command", "cwd", "scope")}
+        output = {}
+        for name, item in value.items():
+            if BLOCKED.search(name) or name in (
+                    "economics", "children", "preparation", "environment",
+                    "command", "cwd", "scope"):
+                continue
+            label = safe_field(name)
+            require(label not in output, "JSON_LABEL_COLLISION")
+            output[label] = (projection(item, name, depth + 1)
+                             if name in SAFE_FIELDS else omitted_value(item))
+        return output
     raise Rejected("JSON_VALUE_TYPE")
 
 
 def phase_summary(report):
     phases = report.get("phases")
-    if not isinstance(phases, list):
-        return None
+    require(isinstance(phases, list), "PHASE_ARRAY")
+    def optional_bool(value):
+        require(value is None or type(value) is bool, "PHASE_BOOL")
+        return value
+    def optional_int(value, allowed):
+        require(value is None or (type(value) is int and value in allowed),
+                "PHASE_INTEGER")
+        return value
     output = []
     for phase in phases:
         require(isinstance(phase, dict), "PHASE_OBJECT")
-        confirmations = phase.get("confirmations", [])
-        require(isinstance(confirmations, list), "CONFIRMATION_ARRAY")
+        mode = phase.get("mode")
+        require(mode in ("baseline", "from-zero", "late-product", "valid-work-root"),
+                "PHASE_MODE")
+        confirmations = phase.get("confirmations")
+        require(confirmations is None or isinstance(confirmations, list),
+                "CONFIRMATION_ARRAY")
+        flags = []
+        if confirmations is not None:
+            for row in confirmations:
+                require(isinstance(row, dict), "CONFIRMATION_OBJECT")
+                flags.append(optional_bool(row.get("confirmed_inside_pressure_window")))
+        root = phase.get("root_supplement")
+        require(root is None or isinstance(root, dict), "ROOT_SUPPLEMENT_OBJECT")
         output.append({
-            "mode": phase.get("mode"),
-            "duration_seconds": phase.get("duration_seconds"),
-            "attacker_processes_requested": phase.get("attacker_processes_requested"),
-            "attacker_processes_ready": phase.get("attacker_processes_ready"),
+            "mode": mode,
+            "duration_seconds": optional_int(phase.get("duration_seconds"), {30}),
+            "attacker_processes_requested": optional_int(
+                phase.get("attacker_processes_requested"), {0, 24}),
+            "attacker_processes_ready": optional_int(
+                phase.get("attacker_processes_ready"), set(range(25))),
             "planned_signed_rounds": 3,
-            "recorded_rounds": len(confirmations),
-            "confirmed_rounds": sum(
-                row.get("confirmed_inside_pressure_window") is True
-                for row in confirmations if isinstance(row, dict)),
-            "finite_phase_criteria_met": phase.get("finite_phase_criteria_met"),
+            "recorded_rounds": len(flags) if confirmations is not None else None,
+            "confirmed_rounds": sum(flag is True for flag in flags)
+                if confirmations is not None else None,
+            "confirmation_flag_unknowns": sum(flag is None for flag in flags)
+                if confirmations is not None else None,
+            "finite_phase_criteria_met":
+                optional_bool(phase.get("finite_phase_criteria_met")),
             "all_signed_rounds_confirmed_in_window":
-                phase.get("all_signed_rounds_confirmed_in_window"),
-            "startup_or_campaign_error": projection(
-                phase.get("startup_or_campaign_error"), "error"),
-            "root_criteria": phase.get("root_supplement", {}).get("criteria_met"),
+                optional_bool(phase.get("all_signed_rounds_confirmed_in_window")),
+            "startup_or_campaign_error":
+                projection(phase.get("startup_or_campaign_error"), "error"),
+            "root_criteria":
+                optional_bool(root.get("criteria_met")) if root is not None else None,
         })
     return output
+
+
+def encode_json(value):
+    return (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
+
+
+def write_outputs(out, payloads, budget):
+    total = sum(len(payload) for payload in payloads.values())
+    require(total <= budget["derived"], "DERIVED_TOTAL_BUDGET")
+    budget["derived"] -= total
+    for name, payload in payloads.items():
+        with (out / name).open("xb") as stream:
+            stream.write(payload)
 
 
 def self_test():
@@ -457,7 +648,59 @@ def self_test():
         count += 1
     else:
         raise Rejected("SELF_TEST_CRC_ACCEPTED")
-    print(json.dumps({"self_tests_passed": count, "native_tests_executed": 0}))
+    # Replay actual prior reader functions on synthetic data only. The old
+    # committed reader is hash-bound before import; no artifact code is imported.
+    prior_path = Path(__file__).with_name("previous_readback.py")
+    require(hashlib.sha256(prior_path.read_bytes()).hexdigest()
+            == "d66f06561c3057247a71c567b9391a03faed461673d43ebf5a8f3e5f6ee48ce8",
+            "PREVIOUS_READER_BYTES")
+    module_spec = importlib.util.spec_from_file_location("previous_readback", prior_path)
+    prior = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(prior)
+    sentinel = "SYNTHETIC_UNREVIEWED_SENTINEL"
+    baseline = {"mode": "baseline", "duration_seconds": 30,
+                "attacker_processes_requested": 0, "attacker_processes_ready": 0,
+                "confirmations": [], "finite_phase_criteria_met": False,
+                "all_signed_rounds_confirmed_in_window": False}
+    for field, value, rejection in [
+            ("mode", sentinel, "PHASE_MODE"),
+            ("duration_seconds", {sentinel: True}, "PHASE_INTEGER"),
+            ("finite_phase_criteria_met", sentinel, "PHASE_BOOL"),
+            ("root_supplement", {"criteria_met": {sentinel: True}}, "PHASE_BOOL")]:
+        case = {"phases": [dict(baseline, **{field: value})]}
+        require(sentinel in json.dumps(prior.phase_summary(case)),
+                "PREVIOUS_PHASE_NEGATIVE_NOT_REPRODUCED")
+        rejects(lambda case=case: phase_summary(case), rejection)
+    for case in [
+            {sentinel: 7}, {"name": sentinel}, {"error": sentinel},
+            {"records": [{"operation": 1, "dispatch_started": True, sentinel: 42}]},
+            {"records": [{"operation": 1, "dispatch_started": True, sentinel: None}]}]:
+        require(sentinel in json.dumps(prior.projection(case)),
+                "PREVIOUS_PROJECTION_NEGATIVE_NOT_REPRODUCED")
+        require(sentinel not in json.dumps(projection(case)),
+                "PROJECTED_SENTINEL_LEAK")
+        count += 1
+    observed = phase_summary({"phases": [baseline]})[0]
+    require(observed["mode"] == "baseline" and observed["recorded_rounds"] == 0
+            and observed["confirmed_rounds"] == 0, "VALID_TYPED_PHASE")
+    unknown = phase_summary({"phases": [{"mode": "baseline"}]})[0]
+    require(unknown["recorded_rounds"] is None
+            and unknown["confirmed_rounds"] is None,
+            "ABSENT_CONFIRMATIONS_ARE_UNKNOWN")
+    count += 1
+    with tempfile.TemporaryDirectory(prefix="trnm-reader-output-control-") as root:
+        out = Path(root)
+        rejects(lambda: write_outputs(out, {"a.json": b"aa", "b.json": b"bb"},
+                                      {"derived": 3}), "DERIVED_TOTAL_BUDGET")
+        require(list(out.iterdir()) == [], "NO_WRITES_BEFORE_OUTPUT_BUDGET")
+        budget = {"derived": 4}
+        write_outputs(out, {"a.json": b"aa", "b.json": b"bb"}, budget)
+        require(budget["derived"] == 0 and (out / "a.json").read_bytes() == b"aa"
+                and (out / "b.json").read_bytes() == b"bb", "BOUNDED_OUTPUT_POSITIVE")
+        count += 1
+
+    print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
+                      "native_tests_executed": 0, "artifact_members_executed": 0}))
 
 
 def main():
@@ -476,55 +719,65 @@ def main():
     specs = parse_json(Path(__file__).with_name("inputs.json").read_bytes())
     require(isinstance(specs, list) and len(specs) == 2, "TWO_FROZEN_ARTIFACTS")
     args.out.mkdir(parents=True, exist_ok=False)
-    budget = {"compressed": COMPRESSED_BUDGET, "decoded": DECODED_BUDGET}
+    limits = resource.getrlimit(resource.RLIMIT_AS)
+    address_cap = min([ADDRESS_SPACE_BUDGET] + [value for value in limits if value >= 0])
+    require(address_cap >= 512 * 1024 * 1024, "READER_ADDRESS_SPACE_UNAVAILABLE")
+    resource.setrlimit(resource.RLIMIT_AS, (address_cap, address_cap))
+    budget = {"compressed": COMPRESSED_BUDGET, "decoded": DECODED_BUDGET,
+              "derived": DERIVED_BUDGET}
     printed = 0
     snapshots = []
     with tempfile.TemporaryDirectory(prefix="trnm-original-artifacts-") as scratch:
         for spec in specs:
             artifact = api_json(
                 f"/repos/{REPOSITORY}/actions/artifacts/{spec['artifact_id']}", token)
-            run = api_json(f"/repos/{REPOSITORY}/actions/runs/{spec['run_id']}", token)
+            run = api_json(
+                f"/repos/{REPOSITORY}/actions/runs/{spec['run_id']}/attempts/1", token)
             commit = api_json(
                 f"/repos/{REPOSITORY}/git/commits/{spec['source']}", token)
             check_metadata(spec, artifact, run, commit)
             path = Path(scratch) / f"{spec['artifact_id']}.zip"
             download(spec, token, path, budget)
-            files, documents, declared = inspect_zip(path, spec, budget)
+            files, documents, declared, projected, summaries = inspect_zip(path, spec, budget)
             snapshot = {
                 "artifact": spec, "archive_digest_and_size_verified": True,
                 "members_crc_and_sha256_verified": len(files),
                 "declared_decoded_bytes": declared,
                 "source_receipts_verified": spec["source_json"],
                 "original_binary_verified": spec["kind"] == "campaign",
-                "phase_summaries": {
-                    name: phase_summary(value) for name, value in documents.items()
-                    if isinstance(value, dict) and "phases" in value},
+                "phase_summaries": summaries,
+                "reader_address_space_cap_bytes": address_cap,
                 "qualification": {"readback_only": True, "native_executed": False,
                                   "performance_qualified": False,
                                   "production_activation": False},
             }
             prefix = str(spec["artifact_id"])
-            (args.out / (prefix + "-members.json")).write_text(
-                json.dumps(files, sort_keys=True, indent=2) + "\n")
-            projected = {name: projection(value) for name, value in documents.items()
-                         if name in spec["project_json"]}
-            (args.out / (prefix + "-selected.json")).write_text(
-                json.dumps(projected, sort_keys=True, indent=2, allow_nan=False) + "\n")
-            (args.out / (prefix + "-readback.json")).write_text(
-                json.dumps(snapshot, sort_keys=True, indent=2, allow_nan=False) + "\n")
-            for kind, value in (("READBACK", snapshot), ("SELECTED", projected)):
-                line = kind + " " + json.dumps(value, sort_keys=True, allow_nan=False)
-                printed += len(line.encode()) + 1
-                require(printed <= PRINT_BUDGET, "STDOUT_PROJECTION_BUDGET")
+            # Validate every serialized output budget before writing any of
+            # this artifact's derived files or emitting its projection.
+            payloads = {
+                prefix + "-members.json": encode_json(safe_member_manifest(files, spec)),
+                prefix + "-selected.json": encode_json(projected),
+                prefix + "-readback.json": encode_json(snapshot),
+            }
+            lines = [kind + " " + json.dumps(value, sort_keys=True, allow_nan=False)
+                     for kind, value in (("READBACK", snapshot), ("SELECTED", projected))]
+            printed_after = printed + sum(len(line.encode()) + 1 for line in lines)
+            require(printed_after <= PRINT_BUDGET, "STDOUT_PROJECTION_BUDGET")
+            require(sum(len(data) for data in payloads.values()) <= budget["derived"],
+                    "DERIVED_TOTAL_BUDGET")
+            write_outputs(args.out, payloads, budget)
+            printed = printed_after
+            for line in lines:
                 print(line, flush=True)
             snapshots.append(snapshot)
             path.unlink()
-    (args.out / "SUMMARY.json").write_text(json.dumps({
+    summary = encode_json({
         "schema": "trnm-frozen-original-artifact-readback-v1",
         "source": os.environ["GITHUB_SHA"], "snapshots": snapshots,
-        "remaining_budgets": budget, "archive_members_executed": 0,
+        "remaining_budgets_before_summary": budget, "archive_members_executed": 0,
         "scope": "integrity/source-bound diagnostic readback, not native qualification",
-    }, sort_keys=True, indent=2, allow_nan=False) + "\n")
+    })
+    write_outputs(args.out, {"SUMMARY.json": summary}, budget)
     return 0
 
 
@@ -535,7 +788,7 @@ if __name__ == "__main__":
         print(json.dumps({"readback_failed": str(error), "native_executed": False}))
         raise SystemExit(1) from None
     except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile,
-            urllib.error.URLError, RecursionError) as error:
+            urllib.error.URLError, RecursionError, MemoryError) as error:
         # Do not print signed redirect URLs, request headers, or arbitrary bytes.
         print(json.dumps({"readback_failed": type(error).__name__,
                           "native_executed": False}))

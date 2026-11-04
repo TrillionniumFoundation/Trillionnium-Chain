@@ -1,0 +1,50 @@
+{
+  "schema": "independent-static-artifact-reader-review-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "dc4cfa884a9bf8defe2f7fefe9e9b6d588849e8c",
+  "reviewer": "hepta_blockers",
+  "review_type": "Complete immutable-source read; no artifact download or original source execution",
+  "inputs": [
+    {
+      "path": "qualification/original-artifact-readback-20261104/readback.py",
+      "git_blob_sha": "568312d56114fac69255a2d740324e91d9c23ad1",
+      "sha256": "d66f06561c3057247a71c567b9391a03faed461673d43ebf5a8f3e5f6ee48ce8",
+      "bytes": 24106
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/inputs.json",
+      "git_blob_sha": "4e8e25723a6236d2875090045bfebd8c63f48e57",
+      "sha256": "95af8c86375648116e6a67b8ef975afa2fb6436a2a313cbde878f28a5d600d37",
+      "bytes": 2435
+    }
+  ],
+  "blocking_findings": [
+    {
+      "id": "OUTPUT-RAW-PHASE",
+      "status": "reported; successor fix pending independent readback",
+      "detail": "phase_summary copies several original phase fields and root criteria into the printed snapshot without schema/type validation or projection. Arbitrary strings/objects in these positions bypass the redaction path. projection also retains arbitrary dictionary names, broad STRING_FIELDS strings, and arbitrary uppercase error literals.",
+      "minimal_fix": "Validate numeric/boolean/enum phase fields, retain only declared public field names and exact public enum/error values, and hash or reject unknown strings and names."
+    },
+    {
+      "id": "OUTPUT-FILE-BUDGET",
+      "status": "reported; successor fix pending independent readback",
+      "detail": "PRINT_BUDGET is checked only after selected/readback output files are written. It limits stdout, not cumulative derived file output.",
+      "minimal_fix": "Serialize bounded public projections, check cumulative output bytes before any write, and keep stdout accounting separate."
+    }
+  ],
+  "accepted_boundaries": [
+    "API requests cannot automatically redirect with Authorization; the signed archive request is newly created without the API token and allows only HTTPS redirects.",
+    "Only two fixed artifact IDs with pinned size/SHA256, repository/run/source/tree metadata and original failed conclusions are accepted.",
+    "ZIP names are not used for file extraction or command execution; all members are streamed and checked against declared sizes and CRC; campaign binary and report hashes are bound to the verified files.",
+    "Duplicate JSON keys and non-finite numbers are rejected. No fresh native, performance or production qualification is claimed."
+  ],
+  "budget_scope": [
+    "The 512 MiB decoded cap accounts for returned member bytes and rejects declared totals before streaming; it is not an RSS or codec-internal allocation limit.",
+    "The 10,000 member limit is checked after Python ZipFile has parsed the directory. JSON parsing and serialization memory are not proven bounded by the stream byte counters.",
+    "An exception during streaming aborts the whole run; this reader does not continue to process further archives after an uncharged throwing read."
+  ],
+  "source_evidence_scope": "The current code checks fields of original source receipts against the fixed Git commit/tree. This review does not independently replay every original tracked-source byte from the artifact, and no native test was run.",
+  "native_tests_executed": 0,
+  "archive_members_executed": 0,
+  "repository_or_product_files_modified": false
+}

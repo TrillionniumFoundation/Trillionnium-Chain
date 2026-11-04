@@ -45,17 +45,22 @@ executed. Required current source receipts are checked. Campaign native binary
 and each original run report are matched to the original controller hashes.
 
 Declared bounds are 96 MiB compressed total, 512 MiB declared/returned decoded
-total, 256 MiB per member, 16 MiB per selected JSON, 64 MiB retained selected JSON
-per archive, 10,000 members per archive and 2 MiB printed projection. These are
+total, 256 MiB per member, 16 MiB per small selected JSON, 128 MiB per explicitly named raw original
+report parsed/projected/discarded one at a time, 64 MiB retained small JSON per
+archive, 10,000 members per archive, 8 MiB serialized derived files and 2 MiB
+printed projection. The reader process has a 4 GiB address-space cap. These are
 stream/metadata bounds, not claims about codec internal buffers or peak RSS.
 The workflow has a 15-minute timeout and read-only contents/actions permissions.
 No Rust build or original native experiment is launched by this reader.
 
-Only a selected diagnostic projection is printed. Packet/signature/state-row
-payloads and environment/command strings are omitted; arbitrary strings are
-hashed. Recorded receiver rows are summarized per operation and dispatch class,
-with all recorded numeric samples included in each statistic and null counts
-retained. Nested stage costs are not additive and these are not network/business
+Only a selected diagnostic projection is printed. Phase modes, original scalar
+ranges and booleans are explicitly validated. Packet/signature/state-row
+payloads and environment/command strings are omitted. Only closed field labels
+and string values are printed; unknown names and values are hashed. Error
+literals require exact membership in a fixed set. Unknown archive member names
+are also hashed in derived manifests. Recorded receiver rows are summarized per operation and dispatch class,
+with all recorded samples of each reached allowlisted numeric field included
+in its statistic and null counts retained. Nested stage costs are not additive and these are not network/business
 latency qualifications. Budget-sample projection explicitly keeps only its count
 and endpoints; the complete original samples remain in the verified archive.
 
@@ -72,7 +77,18 @@ the read-only GitHub Actions token. It verifies the research source before and
 after and runs the original project audit preflight. All output is retained,
 including failure; successful readback is never labelled native success.
 
-The current local executor is unavailable. This script has not yet been run
-locally. Its initial hosted result is pending and must be read back at its exact
-research commit. #699 7d5321a5 original Actions continue independently.
+The current local executor is unavailable. Initial reader dc4cfa88 actually
+passed source checks, audit preflight and 15 synthetic controls, then failed at
+SELECTED_JSON_SIZE before printing any payload projection. That full negative
+and exact reader are retained. Independent review identified untyped phase and
+open projection labels; the successor fixes them and adds nine actual prior-reader
+synthetic negative controls plus typed/unknown/output-budget controls. The new
+reader has not yet run locally or hosted; its own result remains pending. #699 7d5321a5 original Actions continue independently.
 DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO remains in effect.
+
+The serialized-output limits are checked before any derived file for that
+artifact is written. Decoder returned-byte limits are separate from the
+process address-space cap. Raw reports are read as JSON data using the standard
+parser, never imported or executed. The previous reader is imported only for
+synthetic self-controls after checking its exact committed hash; no archive
+member is ever imported. The original native experiments are not rerun here.

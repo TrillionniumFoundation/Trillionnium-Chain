@@ -5108,3 +5108,19 @@ Record archive integrity/source binding separately from business failure and
 preserve unobserved inner causes as unknown until actual bounded readback.
 Local execution is unavailable; source preflight and reader controls await the
 hosted research workflow. Performance, full PQ and activation remain HOLD.
+
+
+### 2026-11-04 preserve new original failures and narrow reader corrections
+
+Exact #699 7d5321a5 release CPU head lanes passed, while both actual-merge lanes
+correctly rejected event base f35ee6dc versus actual merge parent be0d5f97 before
+native execution. Preserve that full failure and the three failed original
+7d campaigns; do not change parent verification or inherit old outcomes.
+Research reader dc4cfa88 actually passed source/audit and 15 synthetic controls,
+then stopped at its selected JSON size bound before emitting payload. Retain
+that source and complete negative. Apply independent findings with closed typed
+phase fields, hashed unknown labels/values and pre-write serialized output caps.
+Only explicitly named large raw reports may be parsed one at a time within
+fixed total decode and process address-space bounds. New reader controls and
+readback remain pending until their actual hosted execution. No original
+native workload, deadline, resource allowance or business gate changes.

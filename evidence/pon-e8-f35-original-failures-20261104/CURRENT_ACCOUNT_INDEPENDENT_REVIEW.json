@@ -1,0 +1,66 @@
+{
+  "schema": "current-account-projection-independent-static-review-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "7d5321a5cb553483d36c9e5e1622d4fe70904cd0",
+  "mode": "read-only exact Git object review; no build, native execution, performance or Host qualification",
+  "scope": "CurrentAccounts fresh parsing projection, immediate graph bridge, cache lifetime, complete-root/error/cancellation boundaries and their regression source",
+  "inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "git_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "bytes": 65121,
+      "sha256": "210461095842347918bdc34aad0b8f0531dee11735e23848d6c4867240df3bcd",
+      "reviewed": "selected relevant implementation and controls"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+      "git_blob": "f4bcf19a6a96313b878ca3ab4bcb3bbbafced423",
+      "bytes": 14709,
+      "sha256": "b8897a9726b7cbb0059f6fc4a90ee5186d939c42f9b9726968f12d2d4933a51f",
+      "reviewed": "selected relevant implementation and controls"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "git_blob": "1ddfb68d7abaa7ccd4fe24f3b636bc2b3523b6f8",
+      "bytes": 94985,
+      "sha256": "7f5f7786dd8fecf13fa93b0c183b373bed69bd11fb65135900518287455686aa",
+      "reviewed": "selected relevant implementation and controls"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "git_blob": "c30d01e4b6cbb11434539b82229ccca41d11a051",
+      "bytes": 30645,
+      "sha256": "f7ca2ce8aea9ff1afbc2e832d6a900f67923485688668e8a084c82913523baa7",
+      "reviewed": "selected relevant implementation and controls"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "git_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "bytes": 23257,
+      "sha256": "f39f1d5e30c7ca81c5c373ffdd981c6070e8f497bffe93710101203e4ae795ac",
+      "reviewed": "selected relevant implementation and controls"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "git_blob": "67d52e5f80001f2dc2d1c81d776f76736013b23d",
+      "bytes": 148032,
+      "sha256": "f36ffd2e65468c61934d82fdf3eade4e41e7c2280254fbda7d42fa4e8fb40d58",
+      "reviewed": "State type alias only"
+    }
+  ],
+  "findings": [
+    "CurrentAccounts has private fields and retains an immutable borrow of the exact State plus the freshly parsed full account BTreeMap. State is BTreeMap<String, serde_json::Value>; no interior-mutability escape is present in that type.",
+    "values_for uses pointer equality while the immutable State borrow remains live. An equal clone or changed independent State falls back to the original parser; no serialized digest or caller root alone grants projection reuse.",
+    "The projection is returned only after complete account parsing, complete state root, account root/count/balance, non-account partition/aggregate/conservation and non-account root calculation succeed in the same operation.",
+    "ArithmeticCache retains CompleteEntry context/serialized bytes/commitment only. A matching complete-cache entry returns None for projection, so it cannot retain account parsing across calls. A cold calculation returns the projection directly to its caller.",
+    "verify_state_with_readback obtains the projection only when no PostWriteReadback is supplied, verifies record.state against the complete commitment, and passes the same immutable State into verify_with_current_accounts. The existing readback capability branch remains separate.",
+    "verify_with_current_accounts shares the original verify_account_values implementation with the fallback. Each invocation constructs a new NodeReader, loads the current root and all reachable child rows, retains count/digest/depth/path/duplicate/aggregate/account-value checks and every real per-node progress callback. No graph success is added to the projection.",
+    "Regression source covers equal independent clones, nonce/zero-balance existence changes, invalid account fields, complete-root/late errors, cached-call projection absence, root/non-root SQL corruption/deletion, and cancellation at each observed graph checkpoint. Those source assertions were reviewed, not executed by this reviewer."
+  ],
+  "confirmed_blockers": [],
+  "limitations": [
+    "This is not a full audit of the independent PostWriteReadback, history arithmetic, decoding cache or complete native owner.",
+    "Existing cooperative callback timing remains cooperative and the projection does not add preemption or bound the complete SQL graph traversal.",
+    "No claim that the original service budget, fixed Host campaign, runtime matrix or any production activation is qualified."
+  ]
+}
