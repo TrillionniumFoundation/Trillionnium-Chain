@@ -5520,3 +5520,18 @@ every table without Packet/work construction; the original 28 methods remain,
 with 29 registered after this addition. This local identifier regression does
 not replace complete same-source runtime qualification or erase the old 15
 failures and nine errors.
+
+The committed-source execution on `39839288` completes 15 selected ordinary
+native controls, one independent DDL control, 68 source controls, 63 simulated
+driver controls and strict complete-workspace Clippy. Full tracked-byte source
+identity agrees before and after every phase. The Node list now contains 999
+names and retains all original 974; listing is not full-suite execution.
+Three locked dependency graphs, unchanged lockfiles, formatting, 384 source
+pins, links and CI contracts pass. Raw command records and both earlier fixture
+EPERM failures remain in the continuation evidence, with full runtime, service
+and public-security qualification still open.
+
+Register the new DDL control in both original applicability/M17 selector arrays
+and advance the exact Python method count to 29. Preserve every original selector,
+source-binding evidence class, null receipt and maturity/qualification state;
+this metadata repair is not execution or promotion of the complete oracle.

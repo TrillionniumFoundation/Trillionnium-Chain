@@ -201,7 +201,49 @@ test methods remain unchanged; the registry is now 29. The one selected ordinary
 control passed locally before source freeze. That result is not a new execution
 of the complete oracle or runtime lane; their original failed receipts remain.
 
+The follow-up also registers that exact new selector in the existing native
+storage applicability profile and M17 evidence-selector array, and advances the
+existing exact test-count assertion from 28 to 29. All original selector entries,
+their source-binding evidence class, null receipt and maturity/qualification
+status remain unchanged. This closes the registration omission identified after
+the source-398 execution; the raw source-398 records preserve their original scope.
+The corresponding marked architecture-document table is regenerated from the
+same registry. Its first omitted update produced three real static-control
+errors and a failed applicability validator; the maturity validator passed.
+The [initial binding record](binding-pre-freeze.json) and
+[raw logs](binding-pre-freeze.tar.gz) preserve that failed attempt. The complete
+table-equality requirement remains in force for the corrected committed source.
+
 ## Validation and remaining gates
+
+### Exact committed source validation
+
+The [final source manifest](final-source-validation.json) and its
+[raw command archive](final-source-validation.tar.gz) bind completed execution
+to `39839288cd112930f1f334b31c8fcb10ded43e28`, tree
+`c970fe682d3e46a1febe86e91b196061f9099f18`. Each phase has successful full tracked-
+worktree identity checks before and after execution. The earlier `c9f4e9af`
+build and static records retain their own identities in the same archive.
+
+| Check on source 39839288 | Actual result | Scope |
+| --- | --- | --- |
+| Original-profile Node library build | exit 0 | Build only; Rust 1.95.0, original profiles, no compiler overrides |
+| Node test registry | 999 names; all original 974 retained | Listing only, no removed original name |
+| Selected ordinary native controls | 15 PASS, 0 FAILED, 0 ignored | History completion, full W1/M06 and stored identity, State merge, actual account graph verification |
+| Independent SQLite DDL control | 1 PASS | Both real DDL profiles; no Packet/work construction |
+| Original oracle method retention | 28 retained, 29 now registered | Original AST unchanged after removing only the added TestCase |
+| Source and driver controls | 34 + 34 + 63 PASS | Source integrity, PQ integration metadata, simulated process/report handling |
+| Strict workspace Clippy | exit 0 | All targets, all features, `-D warnings` |
+| Locked Cargo graphs | all three pass | Workspace x64/ARM: 26 members/138 packages each; fuzz x64: 1/106, metadata only |
+| Format, pins, links, CI contract, inventory | pass | 384 corpus pins; both lockfiles unchanged |
+
+The Node ELF SHA256 before and after the selected controls is
+`d5d8ed30158e0652630fff7519805ce2557cf6811a00d6a5a0ffda7e39df1bb1`.
+The full 999-name Node registry and the full 29-test Python oracle are not local
+execution claims. The two added network fixture controls retain their preceding
+startup EPERM failures and were not replaced by local stubs or counted as passed.
+
+### Earlier attempts remain separate
 
 The restored original-profile baseline compiled its 974-name Node registry and
 passed the three retained deadline controls. Before concurrent integration, the
@@ -210,9 +252,9 @@ tests, 63 simulated driver controls and strict complete-workspace Clippy. The
 subsequent fixture build succeeded, but both new legitimate-request controls
 failed at independent witness startup: this executor denied `UnixListener::bind`
 with `Operation not permitted`, before any Submit. They are not passed, skipped
-or substituted. The final cleanup-time fence and concurrent composition still
-require their own validation records. A list or `--no-run` build is never
-reported as executing the registry.
+or substituted. The exact-source records above cover the later cleanup-time fence
+and concurrent composition only within their stated selection. A list or
+`--no-run` build is never reported as executing the registry.
 
 The [pre-freeze manifest](pre-freeze-validation.json) retains these distinct
 scopes and identifies every member of the [raw validation archive](pre-freeze-validation.tar.gz).

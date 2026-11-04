@@ -2522,6 +2522,7 @@
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
+            "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeSchemaIdentifierControls.test_real_legacy_and_native_ddl_tables_are_all_read",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_full_sorted_source_includes_future_and_zero_amount_rows",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_partition_and_single_edge_rows_are_canonical",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_ranges_share_nearest_boundaries_once",
