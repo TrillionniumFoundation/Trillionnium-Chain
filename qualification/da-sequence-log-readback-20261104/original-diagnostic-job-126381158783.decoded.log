@@ -1,0 +1,402 @@
+﻿2026-11-04T04:09:50.9058698Z Current runner version: '2.338.2'
+2026-11-04T04:09:50.9086715Z ##[group]Runner Image Provisioner
+2026-11-04T04:09:50.9088003Z Hosted Compute Agent
+2026-11-04T04:09:50.9089162Z Version: 20261028.624
+2026-11-04T04:09:50.9089827Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-04T04:09:50.9090646Z Build Date: 2026-10-28T21:51:42Z
+2026-11-04T04:09:50.9091387Z Worker ID: {ee776bc2-8360-4a11-b3c9-e81de3f0e664}
+2026-11-04T04:09:50.9092112Z Region: eastus
+2026-11-04T04:09:50.9092718Z Cloud: Azure
+2026-11-04T04:09:50.9093289Z ##[endgroup]
+2026-11-04T04:09:50.9095225Z ##[group]Operating System
+2026-11-04T04:09:50.9096012Z Ubuntu
+2026-11-04T04:09:50.9096594Z 24.04.5
+2026-11-04T04:09:50.9097481Z LTS
+2026-11-04T04:09:50.9098182Z ##[endgroup]
+2026-11-04T04:09:50.9098822Z ##[group]Runner Image
+2026-11-04T04:09:50.9099564Z Image: ubuntu-24.04
+2026-11-04T04:09:50.9100157Z Version: 20261101.360.1
+2026-11-04T04:09:50.9101517Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261101.360/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-04T04:09:50.9103124Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261101.360
+2026-11-04T04:09:50.9104196Z ##[endgroup]
+2026-11-04T04:09:50.9105349Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T04:09:50.9108135Z Contents: read
+2026-11-04T04:09:50.9108829Z Metadata: read
+2026-11-04T04:09:50.9109481Z ##[endgroup]
+2026-11-04T04:09:50.9111685Z Secret source: Actions
+2026-11-04T04:09:50.9112810Z Cache mode: write
+2026-11-04T04:09:50.9113980Z Prepare workflow directory
+2026-11-04T04:09:50.9519382Z Prepare all required actions
+2026-11-04T04:09:50.9569911Z Getting action download info
+2026-11-04T04:09:51.1458551Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-04T04:09:51.2590214Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-04T04:09:51.4699173Z Complete job name: diagnostic
+2026-11-04T04:09:51.5651604Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-11-04T04:09:51.5652686Z with:
+2026-11-04T04:09:51.5653175Z   ref: e5adb2df25db655800f9e52806e91b427d734490
+2026-11-04T04:09:51.5653782Z   fetch-depth: 1
+2026-11-04T04:09:51.5654222Z   filter: blob:none
+2026-11-04T04:09:51.5654682Z   persist-credentials: false
+2026-11-04T04:09:51.5655288Z   repository: TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:09:51.5659235Z   token: ***
+2026-11-04T04:09:51.5659682Z   ssh-strict: true
+2026-11-04T04:09:51.5660121Z   ssh-user: git
+2026-11-04T04:09:51.5660543Z   clean: true
+2026-11-04T04:09:51.5660988Z   sparse-checkout-cone-mode: true
+2026-11-04T04:09:51.5661509Z   fetch-tags: false
+2026-11-04T04:09:51.5661954Z   show-progress: true
+2026-11-04T04:09:51.5662407Z   lfs: false
+2026-11-04T04:09:51.5662829Z   submodules: false
+2026-11-04T04:09:51.5663284Z   set-safe-directory: true
+2026-11-04T04:09:51.5663792Z   allow-unsafe-pr-checkout: false
+2026-11-04T04:09:51.5664634Z env:
+2026-11-04T04:09:51.5665045Z   CI: true
+2026-11-04T04:09:51.5665458Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:09:51.5665924Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:09:51.5666382Z   RUST_TEST_THREADS: 1
+2026-11-04T04:09:51.5666860Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:09:51.5667553Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:09:51.5668055Z ##[endgroup]
+2026-11-04T04:09:51.8065999Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:09:51.8068526Z ##[group]Getting Git version info
+2026-11-04T04:09:51.8069483Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-11-04T04:09:51.8070739Z [command]/usr/bin/git version
+2026-11-04T04:09:51.8173329Z git version 2.56.0
+2026-11-04T04:09:51.8198636Z ##[endgroup]
+2026-11-04T04:09:51.8215909Z Temporarily overriding HOME='/home/runner/work/_temp/b540427a-2e0d-43c4-a648-f9fb5b88f86a' before making global git config changes
+2026-11-04T04:09:51.8218789Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T04:09:51.8223613Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:09:51.8277072Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-11-04T04:09:51.8282201Z ##[group]Initializing the repository
+2026-11-04T04:09:51.8288236Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:09:51.8393408Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-04T04:09:51.8395251Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-04T04:09:51.8399615Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-04T04:09:51.8400764Z hint: call:
+2026-11-04T04:09:51.8401218Z hint:
+2026-11-04T04:09:51.8401794Z hint: 	git config --global init.defaultBranch <name>
+2026-11-04T04:09:51.8402466Z hint:
+2026-11-04T04:09:51.8403276Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-04T04:09:51.8404544Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-04T04:09:51.8405350Z hint:
+2026-11-04T04:09:51.8405803Z hint: 	git branch -m <name>
+2026-11-04T04:09:51.8406525Z hint:
+2026-11-04T04:09:51.8407725Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-04T04:09:51.8412216Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/
+2026-11-04T04:09:51.8425344Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:09:51.8475159Z ##[endgroup]
+2026-11-04T04:09:51.8476699Z ##[group]Disabling automatic garbage collection
+2026-11-04T04:09:51.8480456Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-04T04:09:51.8519941Z ##[endgroup]
+2026-11-04T04:09:51.8521528Z ##[group]Setting up auth
+2026-11-04T04:09:51.8528541Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:09:51.8569362Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:09:51.8981741Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:09:51.9040114Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:09:51.9322101Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:09:51.9380787Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:09:51.9676175Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-04T04:09:51.9741925Z ##[endgroup]
+2026-11-04T04:09:51.9742876Z ##[group]Fetching the repository
+2026-11-04T04:09:51.9760129Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --filter=blob:none --depth=1 origin e5adb2df25db655800f9e52806e91b427d734490
+2026-11-04T04:09:52.2195194Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:09:52.2196377Z  * branch            e5adb2df25db655800f9e52806e91b427d734490 -> FETCH_HEAD
+2026-11-04T04:09:52.2200219Z ##[endgroup]
+2026-11-04T04:09:52.2201182Z ##[group]Determining the checkout info
+2026-11-04T04:09:52.2202936Z ##[endgroup]
+2026-11-04T04:09:52.2210457Z [command]/usr/bin/git sparse-checkout disable
+2026-11-04T04:09:52.2273099Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-04T04:09:52.2315901Z ##[group]Checking out the ref
+2026-11-04T04:09:52.2319632Z [command]/usr/bin/git checkout --progress --force e5adb2df25db655800f9e52806e91b427d734490
+2026-11-04T04:10:11.1659506Z Updating files:   0% (1/8086)
+2026-11-04T04:10:11.1763732Z Updating files:   1% (81/8086)
+2026-11-04T04:10:11.1846331Z Updating files:   2% (162/8086)
+2026-11-04T04:10:11.1889431Z Updating files:   3% (243/8086)
+2026-11-04T04:10:11.2104390Z Updating files:   4% (324/8086)
+2026-11-04T04:10:11.2207699Z Updating files:   5% (405/8086)
+2026-11-04T04:10:11.2317849Z Updating files:   6% (486/8086)
+2026-11-04T04:10:11.2381151Z Updating files:   7% (567/8086)
+2026-11-04T04:10:11.2424282Z Updating files:   8% (647/8086)
+2026-11-04T04:10:11.2432157Z Updating files:   8% (715/8086)
+2026-11-04T04:10:11.2497962Z Updating files:   9% (728/8086)
+2026-11-04T04:10:11.2649160Z Updating files:  10% (809/8086)
+2026-11-04T04:10:11.2747803Z Updating files:  11% (890/8086)
+2026-11-04T04:10:11.2848462Z Updating files:  12% (971/8086)
+2026-11-04T04:10:11.3570326Z Updating files:  13% (1052/8086)
+2026-11-04T04:10:11.3709188Z Updating files:  14% (1133/8086)
+2026-11-04T04:10:11.3869965Z Updating files:  15% (1213/8086)
+2026-11-04T04:10:11.3927651Z Updating files:  16% (1294/8086)
+2026-11-04T04:10:11.3975823Z Updating files:  17% (1375/8086)
+2026-11-04T04:10:11.4155062Z Updating files:  18% (1456/8086)
+2026-11-04T04:10:11.4232263Z Updating files:  19% (1537/8086)
+2026-11-04T04:10:11.4421231Z Updating files:  20% (1618/8086)
+2026-11-04T04:10:11.4490598Z Updating files:  21% (1699/8086)
+2026-11-04T04:10:11.4574592Z Updating files:  22% (1779/8086)
+2026-11-04T04:10:11.4707683Z Updating files:  23% (1860/8086)
+2026-11-04T04:10:11.4785844Z Updating files:  24% (1941/8086)
+2026-11-04T04:10:11.4903140Z Updating files:  25% (2022/8086)
+2026-11-04T04:10:11.4961916Z Updating files:  26% (2103/8086)
+2026-11-04T04:10:11.5042370Z Updating files:  27% (2184/8086)
+2026-11-04T04:10:11.5165977Z Updating files:  28% (2265/8086)
+2026-11-04T04:10:11.5222405Z Updating files:  29% (2345/8086)
+2026-11-04T04:10:11.5293091Z Updating files:  30% (2426/8086)
+2026-11-04T04:10:11.5395858Z Updating files:  31% (2507/8086)
+2026-11-04T04:10:11.5505638Z Updating files:  32% (2588/8086)
+2026-11-04T04:10:11.7030109Z Updating files:  33% (2669/8086)
+2026-11-04T04:10:11.7681146Z Updating files:  34% (2750/8086)
+2026-11-04T04:10:11.7709611Z Updating files:  35% (2831/8086)
+2026-11-04T04:10:11.8179724Z Updating files:  36% (2911/8086)
+2026-11-04T04:10:11.8907812Z Updating files:  37% (2992/8086)
+2026-11-04T04:10:11.9407824Z Updating files:  38% (3073/8086)
+2026-11-04T04:10:11.9476433Z Updating files:  39% (3154/8086)
+2026-11-04T04:10:12.0513594Z Updating files:  40% (3235/8086)
+2026-11-04T04:10:12.1305100Z Updating files:  41% (3316/8086)
+2026-11-04T04:10:12.2435012Z Updating files:  42% (3397/8086)
+2026-11-04T04:10:12.2465376Z Updating files:  42% (3476/8086)
+2026-11-04T04:10:12.2993713Z Updating files:  43% (3477/8086)
+2026-11-04T04:10:12.3233215Z Updating files:  44% (3558/8086)
+2026-11-04T04:10:12.3843551Z Updating files:  45% (3639/8086)
+2026-11-04T04:10:12.4648299Z Updating files:  46% (3720/8086)
+2026-11-04T04:10:12.4847511Z Updating files:  47% (3801/8086)
+2026-11-04T04:10:12.4924310Z Updating files:  48% (3882/8086)
+2026-11-04T04:10:12.4980065Z Updating files:  49% (3963/8086)
+2026-11-04T04:10:12.5085057Z Updating files:  50% (4043/8086)
+2026-11-04T04:10:12.5455412Z Updating files:  51% (4124/8086)
+2026-11-04T04:10:12.5670705Z Updating files:  52% (4205/8086)
+2026-11-04T04:10:12.5709171Z Updating files:  53% (4286/8086)
+2026-11-04T04:10:12.5762699Z Updating files:  54% (4367/8086)
+2026-11-04T04:10:12.5893129Z Updating files:  55% (4448/8086)
+2026-11-04T04:10:12.6596125Z Updating files:  56% (4529/8086)
+2026-11-04T04:10:12.6633664Z Updating files:  57% (4610/8086)
+2026-11-04T04:10:12.6692684Z Updating files:  58% (4690/8086)
+2026-11-04T04:10:12.6816860Z Updating files:  59% (4771/8086)
+2026-11-04T04:10:12.6855588Z Updating files:  60% (4852/8086)
+2026-11-04T04:10:12.6894402Z Updating files:  61% (4933/8086)
+2026-11-04T04:10:12.6935502Z Updating files:  62% (5014/8086)
+2026-11-04T04:10:12.7041749Z Updating files:  63% (5095/8086)
+2026-11-04T04:10:12.7084737Z Updating files:  64% (5176/8086)
+2026-11-04T04:10:12.7389501Z Updating files:  65% (5256/8086)
+2026-11-04T04:10:12.7419720Z Updating files:  66% (5337/8086)
+2026-11-04T04:10:12.7457611Z Updating files:  67% (5418/8086)
+2026-11-04T04:10:12.8212769Z Updating files:  68% (5499/8086)
+2026-11-04T04:10:12.8531889Z Updating files:  69% (5580/8086)
+2026-11-04T04:10:12.8588479Z Updating files:  70% (5661/8086)
+2026-11-04T04:10:12.8666057Z Updating files:  71% (5742/8086)
+2026-11-04T04:10:12.8728535Z Updating files:  72% (5822/8086)
+2026-11-04T04:10:12.8931604Z Updating files:  73% (5903/8086)
+2026-11-04T04:10:12.9033344Z Updating files:  74% (5984/8086)
+2026-11-04T04:10:12.9075918Z Updating files:  75% (6065/8086)
+2026-11-04T04:10:12.9136491Z Updating files:  76% (6146/8086)
+2026-11-04T04:10:12.9209790Z Updating files:  77% (6227/8086)
+2026-11-04T04:10:12.9275827Z Updating files:  78% (6308/8086)
+2026-11-04T04:10:12.9339998Z Updating files:  79% (6388/8086)
+2026-11-04T04:10:12.9430709Z Updating files:  80% (6469/8086)
+2026-11-04T04:10:12.9491319Z Updating files:  81% (6550/8086)
+2026-11-04T04:10:12.9571621Z Updating files:  82% (6631/8086)
+2026-11-04T04:10:12.9648946Z Updating files:  83% (6712/8086)
+2026-11-04T04:10:12.9731007Z Updating files:  84% (6793/8086)
+2026-11-04T04:10:12.9783013Z Updating files:  85% (6874/8086)
+2026-11-04T04:10:12.9913335Z Updating files:  86% (6954/8086)
+2026-11-04T04:10:12.9990061Z Updating files:  87% (7035/8086)
+2026-11-04T04:10:13.0030222Z Updating files:  88% (7116/8086)
+2026-11-04T04:10:13.0065736Z Updating files:  89% (7197/8086)
+2026-11-04T04:10:13.0140740Z Updating files:  90% (7278/8086)
+2026-11-04T04:10:13.0224241Z Updating files:  91% (7359/8086)
+2026-11-04T04:10:13.0325272Z Updating files:  92% (7440/8086)
+2026-11-04T04:10:13.0427885Z Updating files:  93% (7520/8086)
+2026-11-04T04:10:13.0515156Z Updating files:  94% (7601/8086)
+2026-11-04T04:10:13.0591708Z Updating files:  95% (7682/8086)
+2026-11-04T04:10:13.0660393Z Updating files:  96% (7763/8086)
+2026-11-04T04:10:13.0706000Z Updating files:  97% (7844/8086)
+2026-11-04T04:10:13.0752568Z Updating files:  98% (7925/8086)
+2026-11-04T04:10:13.0789596Z Updating files:  99% (8006/8086)
+2026-11-04T04:10:13.0790382Z Updating files: 100% (8086/8086)
+2026-11-04T04:10:13.0790812Z Updating files: 100% (8086/8086), done.
+2026-11-04T04:10:13.0888129Z Note: switching to 'e5adb2df25db655800f9e52806e91b427d734490'.
+2026-11-04T04:10:13.0888466Z 
+2026-11-04T04:10:13.0888680Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-04T04:10:13.0889162Z changes and commit them, and you can discard any commits you make in this
+2026-11-04T04:10:13.0889633Z state without impacting any branches by switching back to a branch.
+2026-11-04T04:10:13.0889913Z 
+2026-11-04T04:10:13.0890147Z If you want to create a new branch to retain commits you create, you may
+2026-11-04T04:10:13.0890603Z do so (now or later) by using -c with the switch command. Example:
+2026-11-04T04:10:13.0890856Z 
+2026-11-04T04:10:13.0890995Z   git switch -c <new-branch-name>
+2026-11-04T04:10:13.0891190Z 
+2026-11-04T04:10:13.0891295Z Or undo this operation with:
+2026-11-04T04:10:13.0891464Z 
+2026-11-04T04:10:13.0891546Z   git switch -
+2026-11-04T04:10:13.0891671Z 
+2026-11-04T04:10:13.0891880Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-04T04:10:13.0892192Z 
+2026-11-04T04:10:13.0892492Z HEAD is now at e5adb2d diagnostic(da): retain exact exchange metadata for the original sequence failure
+2026-11-04T04:10:13.1045094Z ##[endgroup]
+2026-11-04T04:10:13.1101514Z [command]/usr/bin/git log -1 --format=%H
+2026-11-04T04:10:13.1136428Z e5adb2df25db655800f9e52806e91b427d734490
+2026-11-04T04:10:13.1148600Z ##[group]Removing auth
+2026-11-04T04:10:13.1152155Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:10:13.1194385Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:10:13.1455848Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:10:13.1564900Z http.https://github.com/.extraheader
+2026-11-04T04:10:13.1566268Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-04T04:10:13.1568930Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:10:13.1817584Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:10:13.1861533Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:10:13.2116981Z ##[endgroup]
+2026-11-04T04:10:13.2345694Z ##[group]Run bash scripts/project-preflight.sh --audit
+2026-11-04T04:10:13.2346208Z [36;1mbash scripts/project-preflight.sh --audit[0m
+2026-11-04T04:10:13.2369974Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:10:13.2370241Z env:
+2026-11-04T04:10:13.2370426Z   CI: true
+2026-11-04T04:10:13.2370625Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:10:13.2370854Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:10:13.2371070Z   RUST_TEST_THREADS: 1
+2026-11-04T04:10:13.2371298Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:10:13.2371553Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:10:13.2371795Z ##[endgroup]
+2026-11-04T04:10:13.2953584Z {"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 26, "branch": "", "remote_policy_mutated": false}
+2026-11-04T04:10:13.3064588Z ##[group]Run printf 'CARGO_HOME=%s/da-diagnostic-cargo\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+2026-11-04T04:10:13.3065268Z [36;1mprintf 'CARGO_HOME=%s/da-diagnostic-cargo\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"[0m
+2026-11-04T04:10:13.3065854Z [36;1mprintf 'CARGO_TARGET_DIR=%s/da-diagnostic-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"[0m
+2026-11-04T04:10:13.3066497Z [36;1mprintf 'TRNM_CI_RECEIPT_DIR=%s/da-diagnostic-provider\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"[0m
+2026-11-04T04:10:13.3089616Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-04T04:10:13.3089959Z env:
+2026-11-04T04:10:13.3090141Z   CI: true
+2026-11-04T04:10:13.3090330Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:10:13.3090547Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:10:13.3090754Z   RUST_TEST_THREADS: 1
+2026-11-04T04:10:13.3090973Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:10:13.3091222Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:10:13.3091469Z ##[endgroup]
+2026-11-04T04:10:13.3169305Z ##[group]Run rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+2026-11-04T04:10:13.3169911Z [36;1mrustup toolchain install 1.95.0 --profile minimal --component rustfmt[0m
+2026-11-04T04:10:13.3188865Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:10:13.3189103Z env:
+2026-11-04T04:10:13.3189284Z   CI: true
+2026-11-04T04:10:13.3189475Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:10:13.3189705Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:10:13.3189914Z   RUST_TEST_THREADS: 1
+2026-11-04T04:10:13.3190139Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:10:13.3190401Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:10:13.3190719Z   CARGO_HOME: /home/runner/work/_temp/da-diagnostic-cargo
+2026-11-04T04:10:13.3191125Z   CARGO_TARGET_DIR: /home/runner/work/_temp/da-diagnostic-target
+2026-11-04T04:10:13.3191645Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/da-diagnostic-provider
+2026-11-04T04:10:13.3192007Z ##[endgroup]
+2026-11-04T04:10:13.3680368Z info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu
+2026-11-04T04:10:13.4793605Z info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)
+2026-11-04T04:10:13.4795874Z info: downloading 4 components
+2026-11-04T04:10:21.4999424Z 
+2026-11-04T04:10:21.5075493Z   1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)
+2026-11-04T04:10:21.5076073Z 
+2026-11-04T04:10:21.5224321Z ##[group]Run cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+2026-11-04T04:10:21.5225132Z [36;1mcargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check[0m
+2026-11-04T04:10:21.5246353Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:10:21.5246612Z env:
+2026-11-04T04:10:21.5246815Z   CI: true
+2026-11-04T04:10:21.5247010Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:10:21.5247520Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:10:21.5247751Z   RUST_TEST_THREADS: 1
+2026-11-04T04:10:21.5247988Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:10:21.5248241Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:10:21.5248558Z   CARGO_HOME: /home/runner/work/_temp/da-diagnostic-cargo
+2026-11-04T04:10:21.5248968Z   CARGO_TARGET_DIR: /home/runner/work/_temp/da-diagnostic-target
+2026-11-04T04:10:21.5249403Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/da-diagnostic-provider
+2026-11-04T04:10:21.5249768Z ##[endgroup]
+2026-11-04T04:10:34.3181954Z ##[group]Run bash scripts/ci/prepare_pq_provider.sh
+2026-11-04T04:10:34.3182368Z [36;1mbash scripts/ci/prepare_pq_provider.sh[0m
+2026-11-04T04:10:34.3202784Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-04T04:10:34.3203125Z env:
+2026-11-04T04:10:34.3203305Z   CI: true
+2026-11-04T04:10:34.3203492Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:10:34.3203705Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:10:34.3203912Z   RUST_TEST_THREADS: 1
+2026-11-04T04:10:34.3204146Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:10:34.3204402Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:10:34.3204704Z   CARGO_HOME: /home/runner/work/_temp/da-diagnostic-cargo
+2026-11-04T04:10:34.3205092Z   CARGO_TARGET_DIR: /home/runner/work/_temp/da-diagnostic-target
+2026-11-04T04:10:34.3205519Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/da-diagnostic-provider
+2026-11-04T04:10:34.3205877Z ##[endgroup]
+2026-11-04T04:10:34.3355970Z Downloading pinned OpenSSL 3.5.9; log: /home/runner/work/_temp/da-diagnostic-provider/pq-provider/build-and-smoke.log
+2026-11-04T04:12:19.9427775Z Prepared isolated static OpenSSL 3.5.9 with verified ML-DSA-65
+2026-11-04T04:12:20.0093696Z ##[group]Run python3 qualification/da-sequence-diagnostic-20261104/run.py --out "$RUNNER_TEMP/da-sequence-diagnostic"
+2026-11-04T04:12:20.0094590Z [36;1mpython3 qualification/da-sequence-diagnostic-20261104/run.py --out "$RUNNER_TEMP/da-sequence-diagnostic"[0m
+2026-11-04T04:12:20.0115086Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:12:20.0115337Z env:
+2026-11-04T04:12:20.0115523Z   CI: true
+2026-11-04T04:12:20.0115716Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:12:20.0115934Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:12:20.0116144Z   RUST_TEST_THREADS: 1
+2026-11-04T04:12:20.0116368Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:12:20.0116628Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:12:20.0116941Z   CARGO_HOME: /home/runner/work/_temp/da-diagnostic-cargo
+2026-11-04T04:12:20.0117629Z   CARGO_TARGET_DIR: /home/runner/work/_temp/da-diagnostic-target
+2026-11-04T04:12:20.0118074Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/da-diagnostic-provider
+2026-11-04T04:12:20.0118604Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install
+2026-11-04T04:12:20.0119012Z   OPENSSL_STATIC: 1
+2026-11-04T04:12:20.0119397Z   TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install/bin/openssl
+2026-11-04T04:12:20.0119999Z   TRNM_PQ_OPENSSL_SHA256: 51d3f93f02296323e242c4e3b7700cc83e0d272e86a8d9e6f56402ab496f4da0
+2026-11-04T04:12:20.0120441Z   TRNM_PQ_OPENSSL_VERSION: 3.5.9
+2026-11-04T04:12:20.0120687Z   OPENSSL_CONF: /dev/null
+2026-11-04T04:12:20.0121116Z   OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install/lib/ossl-modules
+2026-11-04T04:12:20.0121579Z ##[endgroup]
+2026-11-04T04:13:20.1947766Z DA_DIAGNOSTIC {"binary_after": {"bytes": 59852608, "sha256": "fb2957f936ee2d6a52168494bd2fe1dbb5e203583b8f1191445ff1f03b56a060"}, "binary_before": {"bytes": 59852608, "sha256": "fb2957f936ee2d6a52168494bd2fe1dbb5e203583b8f1191445ff1f03b56a060"}, "binary_unchanged": true, "commands": [{"argv": ["rustc", "+1.95.0", "-Vv"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "elapsed_ns": 15911514, "exit_code": 0, "log": "rustc.log", "log_digest": {"bytes": 196, "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"}, "outer_timeout_seconds": 60, "timed_out": false}, {"argv": ["cargo", "+1.95.0", "-V"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "elapsed_ns": 15775800, "exit_code": 0, "log": "cargo.log", "log_digest": {"bytes": 36, "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"}, "outer_timeout_seconds": 60, "timed_out": false}, {"argv": ["cargo", "+1.95.0", "test", "--locked", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-data-availability", "--lib", "--no-run", "--message-format=json"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "elapsed_ns": 40027994365, "exit_code": 0, "log": "build.log", "log_digest": {"bytes": 95843, "sha256": "da35665005ed2ec72346fd27efd47ac13f1e64220da50b6dc9fb7a757e239432"}, "outer_timeout_seconds": 600, "timed_out": false}, {"argv": ["/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003", "--list", "--format", "terse"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability", "elapsed_ns": 3708137, "exit_code": 0, "log": "registry.log", "log_digest": {"bytes": 16944, "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"}, "outer_timeout_seconds": 60, "timed_out": false}], "complete": true, "diagnostic_all_passed": false, "host_qualified": false, "native_cases": [{"completed_plain_success_rows": 174, "exchange_diagnostic_lines": [], "execution": {"argv": ["/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003", "--test-threads=1"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability", "elapsed_ns": 17351578441, "exit_code": 0, "log": "original-module.log", "log_digest": {"bytes": 18179, "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"}, "outer_timeout_seconds": 300, "timed_out": false}, "name": "original-module", "native_summaries": [[174, 0, 0, 0, 0]], "passed": false, "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.", "selected_case_present": true}, {"completed_plain_success_rows": 0, "exchange_diagnostic_lines": ["cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3397695 response_bytes=Some(336) failure=None", "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=3991196 response_bytes=Some(336) failure=None"], "execution": {"argv": ["/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003", "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint", "--exact", "--nocapture", "--test-threads=1"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability", "elapsed_ns": 114150913, "exit_code": 0, "log": "sequence-observation-1.log", "log_digest": {"bytes": 1400, "sha256": "425a79367c007570b5762bf041612d1a1051afd2480a5ea3a87d9d1c0639f80a"}, "outer_timeout_seconds": 60, "timed_out": false}, "name": "sequence-observation-1", "native_summaries": [[1, 0, 0, 0, 173]], "passed": true, "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.", "selected_case_present": true}, {"completed_plain_success_rows": 0, "exchange_diagnostic_lines": ["cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3645440 response_bytes=Some(336) failure=None", "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=4067299 response_bytes=Some(336) failure=None"], "execution": {"argv": ["/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003", "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint", "--exact", "--nocapture", "--test-threads=1"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability", "elapsed_ns": 114118097, "exit_code": 0, "log": "sequence-observation-2.log", "log_digest": {"bytes": 1399, "sha256": "26421d6015f0798efed743cf65370532388064913cf7f962b4a87ea03215f7ae"}, "outer_timeout_seconds": 60, "timed_out": false}, "name": "sequence-observation-2", "native_summaries": [[1, 0, 0, 0, 173]], "passed": true, "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.", "selected_case_present": true}, {"completed_plain_success_rows": 0, "exchange_diagnostic_lines": ["cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3395195 response_bytes=Some(336) failure=None", "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=4103887 response_bytes=Some(336) failure=None"], "execution": {"argv": ["/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003", "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint", "--exact", "--nocapture", "--test-threads=1"], "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability", "elapsed_ns": 64035120, "exit_code": 0, "log": "sequence-observation-3.log", "log_digest": {"bytes": 1402, "sha256": "40dc554140fe97950bbed82905fbb1b37b28ba67c77404293ace83761168c4e0"}, "outer_timeout_seconds": 60, "timed_out": false}, "name": "sequence-observation-3", "native_summaries": [[1, 0, 0, 0, 173]], "passed": true, "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.", "selected_case_present": true}], "original_baseline_qualified": false, "performance_qualified": false, "production_activation": false, "reader_controls": {"native_tests_executed": 0, "synthetic_parser_cases_passed": 8}, "registered_test_count": 174, "schema": "trnm-da-original-sequence-diagnostic-v1", "scope": "Package-selected test-profile build; not the whole-workspace feature-unification denominator. Repetitions are bounded observations; any failure remains failure.", "source_after": {"base": null, "candidate": "e5adb2df25db655800f9e52806e91b427d734490", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "e5adb2df25db655800f9e52806e91b427d734490", "tested_tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b", "tests_executed_by_identity_check": false, "tracked_bytes": 934224748, "tracked_entries": 8086, "tracked_worktree_verified": true}, "source_before": {"base": null, "candidate": "e5adb2df25db655800f9e52806e91b427d734490", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "e5adb2df25db655800f9e52806e91b427d734490", "tested_tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b", "tests_executed_by_identity_check": false, "tracked_bytes": 934224748, "tracked_entries": 8086, "tracked_worktree_verified": true}, "source_unchanged": true}
+2026-11-04T04:13:20.1995493Z ##[error]Process completed with exit code 1.
+2026-11-04T04:13:20.2115925Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-04T04:13:20.2116354Z with:
+2026-11-04T04:13:20.2116695Z   name: da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1
+2026-11-04T04:13:20.2117639Z   path: /home/runner/work/_temp/da-sequence-diagnostic/
+/home/runner/work/_temp/da-diagnostic-provider/
+
+2026-11-04T04:13:20.2118174Z   if-no-files-found: error
+2026-11-04T04:13:20.2118404Z   retention-days: 30
+2026-11-04T04:13:20.2118618Z   compression-level: 6
+2026-11-04T04:13:20.2118831Z   overwrite: false
+2026-11-04T04:13:20.2119043Z   include-hidden-files: false
+2026-11-04T04:13:20.2119271Z env:
+2026-11-04T04:13:20.2119444Z   CI: true
+2026-11-04T04:13:20.2119634Z   CARGO_INCREMENTAL: 0
+2026-11-04T04:13:20.2119846Z   CARGO_BUILD_JOBS: 2
+2026-11-04T04:13:20.2120055Z   RUST_TEST_THREADS: 1
+2026-11-04T04:13:20.2120284Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:13:20.2120538Z   TRNM_DA_EXCHANGE_DIAGNOSTIC: 1
+2026-11-04T04:13:20.2121069Z   CARGO_HOME: /home/runner/work/_temp/da-diagnostic-cargo
+2026-11-04T04:13:20.2121471Z   CARGO_TARGET_DIR: /home/runner/work/_temp/da-diagnostic-target
+2026-11-04T04:13:20.2121906Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/da-diagnostic-provider
+2026-11-04T04:13:20.2122388Z   OPENSSL_DIR: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install
+2026-11-04T04:13:20.2122777Z   OPENSSL_STATIC: 1
+2026-11-04T04:13:20.2123154Z   TRNM_PQ_OPENSSL: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install/bin/openssl
+2026-11-04T04:13:20.2123754Z   TRNM_PQ_OPENSSL_SHA256: 51d3f93f02296323e242c4e3b7700cc83e0d272e86a8d9e6f56402ab496f4da0
+2026-11-04T04:13:20.2124195Z   TRNM_PQ_OPENSSL_VERSION: 3.5.9
+2026-11-04T04:13:20.2124447Z   OPENSSL_CONF: /dev/null
+2026-11-04T04:13:20.2124873Z   OPENSSL_MODULES: /home/runner/work/_temp/trnm-pq-provider-3.5.9.fbsd0cTj/install/lib/ossl-modules
+2026-11-04T04:13:20.2125333Z ##[endgroup]
+2026-11-04T04:13:20.3876057Z (node:15468) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-04T04:13:20.3877987Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-04T04:13:20.4121787Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-04T04:13:20.4123166Z The least common ancestor is /home/runner/work/_temp. This will be the root directory of the artifact
+2026-11-04T04:13:20.4123702Z With the provided path, there will be 15 files uploaded
+2026-11-04T04:13:20.4124163Z Artifact name is valid!
+2026-11-04T04:13:20.4124395Z Root directory input is valid!
+2026-11-04T04:13:20.6223846Z Beginning upload of artifact content to blob storage
+2026-11-04T04:13:20.6806453Z (node:15468) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-04T04:13:20.7140074Z Uploaded bytes 61541
+2026-11-04T04:13:20.7295717Z Finished uploading artifact content to blob storage!
+2026-11-04T04:13:20.7297393Z SHA256 digest of uploaded artifact zip is af855c28548c7cd9e31c545194285285aed40255d31e416133107652c4fd3bef
+2026-11-04T04:13:20.7299808Z Finalizing artifact upload
+2026-11-04T04:13:21.1338077Z Artifact da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1.zip successfully finalized. Artifact ID 13295132077
+2026-11-04T04:13:21.1340688Z Artifact da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1 has been successfully uploaded! Final size is 61541 bytes. Artifact ID is 13295132077
+2026-11-04T04:13:21.1344480Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771237697/artifacts/13295132077
+2026-11-04T04:13:21.1591893Z Post job cleanup.
+2026-11-04T04:13:21.2495122Z [command]/usr/bin/git version
+2026-11-04T04:13:21.2544967Z git version 2.56.0
+2026-11-04T04:13:21.2590985Z Temporarily overriding HOME='/home/runner/work/_temp/89298e04-a4d9-4dac-8566-898374bede0d' before making global git config changes
+2026-11-04T04:13:21.2592124Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T04:13:21.2597458Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:13:21.2641342Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:13:21.2679637Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:13:21.2977055Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:13:21.3026385Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:13:21.3343284Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:13:21.3394689Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:13:21.3917474Z Cleaning up orphan processes
+2026-11-04T04:13:21.4381068Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

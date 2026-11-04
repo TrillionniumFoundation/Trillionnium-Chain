@@ -1,0 +1,282 @@
+{
+  "binary_after": {
+    "bytes": 59852608,
+    "sha256": "fb2957f936ee2d6a52168494bd2fe1dbb5e203583b8f1191445ff1f03b56a060"
+  },
+  "binary_before": {
+    "bytes": 59852608,
+    "sha256": "fb2957f936ee2d6a52168494bd2fe1dbb5e203583b8f1191445ff1f03b56a060"
+  },
+  "binary_unchanged": true,
+  "commands": [
+    {
+      "argv": [
+        "rustc",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 15911514,
+      "exit_code": 0,
+      "log": "rustc.log",
+      "log_digest": {
+        "bytes": 196,
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "outer_timeout_seconds": 60,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "-V"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 15775800,
+      "exit_code": 0,
+      "log": "cargo.log",
+      "log_digest": {
+        "bytes": 36,
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "outer_timeout_seconds": 60,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 40027994365,
+      "exit_code": 0,
+      "log": "build.log",
+      "log_digest": {
+        "bytes": 95843,
+        "sha256": "da35665005ed2ec72346fd27efd47ac13f1e64220da50b6dc9fb7a757e239432"
+      },
+      "outer_timeout_seconds": 600,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003",
+        "--list",
+        "--format",
+        "terse"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability",
+      "elapsed_ns": 3708137,
+      "exit_code": 0,
+      "log": "registry.log",
+      "log_digest": {
+        "bytes": 16944,
+        "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"
+      },
+      "outer_timeout_seconds": 60,
+      "timed_out": false
+    }
+  ],
+  "complete": true,
+  "diagnostic_all_passed": false,
+  "host_qualified": false,
+  "native_cases": [
+    {
+      "completed_plain_success_rows": 174,
+      "exchange_diagnostic_lines": [],
+      "execution": {
+        "argv": [
+          "/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 17351578441,
+        "exit_code": 0,
+        "log": "original-module.log",
+        "log_digest": {
+          "bytes": 18179,
+          "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"
+        },
+        "outer_timeout_seconds": 300,
+        "timed_out": false
+      },
+      "name": "original-module",
+      "native_summaries": [
+        [
+          174,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "passed": false,
+      "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.",
+      "selected_case_present": true
+    },
+    {
+      "completed_plain_success_rows": 0,
+      "exchange_diagnostic_lines": [
+        "cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3397695 response_bytes=Some(336) failure=None",
+        "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=3991196 response_bytes=Some(336) failure=None"
+      ],
+      "execution": {
+        "argv": [
+          "/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 114150913,
+        "exit_code": 0,
+        "log": "sequence-observation-1.log",
+        "log_digest": {
+          "bytes": 1400,
+          "sha256": "425a79367c007570b5762bf041612d1a1051afd2480a5ea3a87d9d1c0639f80a"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      "name": "sequence-observation-1",
+      "native_summaries": [
+        [
+          1,
+          0,
+          0,
+          0,
+          173
+        ]
+      ],
+      "passed": true,
+      "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.",
+      "selected_case_present": true
+    },
+    {
+      "completed_plain_success_rows": 0,
+      "exchange_diagnostic_lines": [
+        "cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3645440 response_bytes=Some(336) failure=None",
+        "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=4067299 response_bytes=Some(336) failure=None"
+      ],
+      "execution": {
+        "argv": [
+          "/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 114118097,
+        "exit_code": 0,
+        "log": "sequence-observation-2.log",
+        "log_digest": {
+          "bytes": 1399,
+          "sha256": "26421d6015f0798efed743cf65370532388064913cf7f962b4a87ea03215f7ae"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      "name": "sequence-observation-2",
+      "native_summaries": [
+        [
+          1,
+          0,
+          0,
+          0,
+          173
+        ]
+      ],
+      "passed": true,
+      "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.",
+      "selected_case_present": true
+    },
+    {
+      "completed_plain_success_rows": 0,
+      "exchange_diagnostic_lines": [
+        "cell_discovery_exchange round=0 connection_attempt=1 elapsed_ns=3395195 response_bytes=Some(336) failure=None",
+        "cell_discovery_exchange round=0 connection_attempt=2 elapsed_ns=4103887 response_bytes=Some(336) failure=None"
+      ],
+      "execution": {
+        "argv": [
+          "/home/runner/work/_temp/da-diagnostic-target/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability",
+        "elapsed_ns": 64035120,
+        "exit_code": 0,
+        "log": "sequence-observation-3.log",
+        "log_digest": {
+          "bytes": 1402,
+          "sha256": "40dc554140fe97950bbed82905fbb1b37b28ba67c77404293ace83761168c4e0"
+        },
+        "outer_timeout_seconds": 60,
+        "timed_out": false
+      },
+      "name": "sequence-observation-3",
+      "native_summaries": [
+        [
+          1,
+          0,
+          0,
+          0,
+          173
+        ]
+      ],
+      "passed": true,
+      "scope": "Diagnostic case/module observations only; no original full-workspace or Host qualification.",
+      "selected_case_present": true
+    }
+  ],
+  "original_baseline_qualified": false,
+  "performance_qualified": false,
+  "production_activation": false,
+  "reader_controls": {
+    "native_tests_executed": 0,
+    "synthetic_parser_cases_passed": 8
+  },
+  "registered_test_count": 174,
+  "schema": "trnm-da-original-sequence-diagnostic-v1",
+  "scope": "Package-selected test-profile build; not the whole-workspace feature-unification denominator. Repetitions are bounded observations; any failure remains failure.",
+  "source_after": {
+    "base": null,
+    "candidate": "e5adb2df25db655800f9e52806e91b427d734490",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e5adb2df25db655800f9e52806e91b427d734490",
+    "tested_tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 934224748,
+    "tracked_entries": 8086,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "e5adb2df25db655800f9e52806e91b427d734490",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e5adb2df25db655800f9e52806e91b427d734490",
+    "tested_tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 934224748,
+    "tracked_entries": 8086,
+    "tracked_worktree_verified": true
+  },
+  "source_unchanged": true
+}

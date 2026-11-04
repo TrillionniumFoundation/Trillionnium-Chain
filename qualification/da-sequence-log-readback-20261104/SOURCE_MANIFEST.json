@@ -1,0 +1,92 @@
+{
+  "schema": "trnm-da-original-log-reader-source-v1",
+  "base": "fa2fca6cf2aede38a60b5f39c67f12b3fefb7fcb",
+  "base_tree": "018ecdddc29d6e0fe2375001cd47e21234c759ff",
+  "branch": "research/chain-da-sequence-readback-20261104-gpt6",
+  "helper": {
+    "path": "qualification/original-artifact-readback-20261104/readback.py",
+    "bytes": 55732,
+    "git_blob": "f81cf081b20cd0b652b4b09f4591aa05305c050e",
+    "sha256": "f2093a5f940fd9ac3d2dfe3fc19439a9ca32f5a1cb5b1ce1cc40bef97ac2d0c3"
+  },
+  "files": [
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
+      "bytes": 8942,
+      "git_blob": "e220d5ca3f4c5e47addc6345794a258777448496",
+      "sha256": "87ebf9822c8273625114fa5fec7bd8ef078dd1f2c4244fd1af289a51e2a96497"
+    },
+    {
+      "path": ".github/workflows/chain-da-sequence-log-readback.yml",
+      "bytes": 1812,
+      "git_blob": "dd357037ee60aaf4e470ceafcf1970f337d45d59",
+      "sha256": "6a3a01756bf5fb8dc4f32b2fbd23ff9a7045843201d1eb66175f587147958262"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/README.md",
+      "bytes": 1916,
+      "git_blob": "3dcde28430ad9ceb7122085391ec51577d76531c",
+      "sha256": "35c9b2b164cd43b401b2c1142baf3cb12bacc8efbf061ef5163cdd52413fd327"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/original-diagnostic-job-126381158783.decoded.log",
+      "bytes": 37616,
+      "git_blob": "564585a77f58dbb60ed73b6f1fa6ba1210f586f2",
+      "sha256": "92258fa9257aa8e86d460f98affddb57c3bcfb3ba7a5695bc8def38f60fd9b7a"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/ORIGINAL_FAILED_RECEIPT.json",
+      "bytes": 9380,
+      "git_blob": "5e8721febdac2a0fcd2f384341784ddf2cc11ab2",
+      "sha256": "524929d0faf7e502ce492382c122f80ca6e2f8c06bcf991301da16bebae04efe"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/v7-success/job-126382524836.decoded.log",
+      "bytes": 251218,
+      "git_blob": "84e71924b71120e6a75208446de8bf96f86eef5b",
+      "sha256": "11ea8a977a2fb1154bba705a5f0b445665cc2e2fa43e1141c3d56fdc11bd8ab8"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/v7-success/VERIFIED.json",
+      "bytes": 283971,
+      "git_blob": "0da53ce8a73088bf6bb64057b8b78059461dcbdf",
+      "sha256": "4384c40a5dc30740af7e5ae4615ade2dd4a07ba2a800b451aaf8c1b2b8292fe5"
+    },
+    {
+      "path": "qualification/frozen-codec-control-count-20261104/REMOTE_PUBLICATION.json",
+      "bytes": 2455,
+      "git_blob": "008cd76434fea011565555b6b62bd11b45f5428b",
+      "sha256": "b1b6b085ad69d98036891ccef099e1f9a7301a56b511e50abbb62aa62c558f4e"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 419291,
+      "git_blob": "d4a76d98a9a8e0c2354a6d06733f2526eb8ba3ae",
+      "sha256": "a49380503d58410add458dbf3a38d991c12327ceffd75127715297d56a635d1a"
+    }
+  ],
+  "original_artifact": {
+    "id": 13295132077,
+    "bytes": 61541,
+    "sha256": "af855c28548c7cd9e31c545194285285aed40255d31e416133107652c4fd3bef",
+    "run": 41771237697,
+    "job": 126381158783,
+    "source": "e5adb2df25db655800f9e52806e91b427d734490",
+    "tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b"
+  },
+  "limits": {
+    "compressed_allowance_bytes": 131072,
+    "returned_decoded_bytes": 4194304,
+    "member_bytes": 1048576,
+    "members_after_directory_parse": 64,
+    "serialized_output_bytes": 131072,
+    "address_space_bytes": 536870912
+  },
+  "local_execution": false,
+  "qualification": {
+    "native": false,
+    "host": false,
+    "performance": false,
+    "production": false
+  }
+}

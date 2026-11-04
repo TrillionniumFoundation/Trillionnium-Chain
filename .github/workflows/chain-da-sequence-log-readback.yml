@@ -1,0 +1,46 @@
+name: Frozen DA diagnostic log readback
+on:
+  push:
+    branches: [research/chain-da-sequence-readback-20261104-gpt6]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: chain-da-log-readback-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact reader source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Bind exact reader source and original audit
+        run: |
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Inspect fixed 61541-byte artifact without executing members
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 qualification/da-sequence-log-readback-20261104/readback.py --out "$RUNNER_TEMP/da-log-readback"
+      - name: Bind unchanged reader source
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-after.json"
+      - name: Preserve exact readback
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: da-diagnostic-log-readback-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/da-log-readback/
+            ${{ runner.temp }}/da-reader-before.json
+            ${{ runner.temp }}/da-reader-after.json
+          if-no-files-found: error
+          retention-days: 30

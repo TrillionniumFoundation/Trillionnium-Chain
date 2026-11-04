@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-current-draft-publication-v1",
+  "head": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+  "tree": "0ca060a0f2100f698b0870a42b8c29b69be33c3e",
+  "parent": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "prospective_merge": "e969a5b611764126db01168077192438efc596d1",
+  "ordered_merge_parents": [
+    "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "1ba59caf7ebd471595761d70891cb71bfe35d3f9"
+  ],
+  "verified_changed_files": [
+    {
+      "kind": "file",
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "blob": "aa9d7597904d2d0bec32a502160c46ae255381be",
+      "bytes": 25524,
+      "sha256": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633"
+    },
+    {
+      "kind": "file",
+      "path": "qualification/frozen-codec-control-count-20261104/SOURCE_MANIFEST.json",
+      "blob": "49a76221ee3f39e525c6d205fea06080135d9bd2",
+      "bytes": 3286,
+      "sha256": "74ca1d834b8c3dc8361bfb35e62dd57f47927f95f358a3021a933aa125d8bd98"
+    },
+    {
+      "kind": "file",
+      "path": "qualification/frozen-codec-control-count-20261104/INDEPENDENT_REVIEW.json",
+      "blob": "23bfa8942fc014960339fbd49d2166d637f86ab2",
+      "bytes": 1724,
+      "sha256": "8430ad2baea9ad826d0a977e3c66a2e3f91f7b44f53bee981ddf7c7aff94de2e"
+    },
+    {
+      "kind": "file",
+      "path": "qualification/frozen-codec-control-count-20261104/CODEQL_BASE_ALIGNMENT_PROPOSAL.json",
+      "blob": "bcf4b8f6fd30da44dccaa376f88a45c512c725b8",
+      "bytes": 2668,
+      "sha256": "0c72e1db77f2d1cc67d107ab41626008775a70c27030b422b3084d1cc50ba624"
+    },
+    {
+      "kind": "file",
+      "path": "qualification/frozen-codec-control-count-20261104/job-126372439045-codeql-negative.decoded.log",
+      "blob": "2e02c3a9b23c0522a17e64405691ce968c0ea83b",
+      "bytes": 128619,
+      "sha256": "4a93b4631de5c41263f94b9041c37fd2e1300e023eb6a5e9ff21b9ff1da27b2d"
+    },
+    {
+      "kind": "file",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "blob": "a1e463e031484ffa2782d14f8571fb844bf99de8",
+      "bytes": 455212,
+      "sha256": "c0dc625de9ddc4e3fcca2d754ff6dde7b052208ab6e7a74db149f316cf4d9401"
+    }
+  ],
+  "full_tree_selection_verified": true,
+  "non_tree_entries": 8085,
+  "scope": "Exact remote publication and prospective-parent proof only. No local preflight/native run; actual new-source original gates must be read independently."
+}

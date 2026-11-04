@@ -5253,3 +5253,14 @@ its original workflows are pending/queued, while the 312 merge runtime continues
 - Current1bac original campaign run41768503393/job126372438839 failed all3 complete predeclared runs under unchanged30-second phases/24 external attackers and fixed0.25CPU/2GiB service parent. Actual binary/source identities and full job log remain bound. No original acceptance is claimed.
 - Current1bac W1factorial head job126372439231 actually passed28 History cases plus1 original ignored child, then old27/1 exact-count validation rejected it. Donor41dd already supplies exact28/1 and the unique codec case. This research checkpoint records that real mismatch without changing the production/source branch or claiming a new W1 pass.
 - The unchanged v6 reader now selects the two exact1bac campaign/fresh archives under the same compressed/decoded/output bounds. New readback and new original native gates are independently pending. DRAFT/SHADOW_ONLY/DENY_ALL/HOLD_NO_GO remain.
+
+
+## 2026-11-04 — bounded readback of original DA diagnostic wrapper failure
+
+The independently published diagnostic source e5adb2df25db655800f9e52806e91b427d734490 (tree 2bb9f0f3718891ba1df19087a2fa8b96e19bf05b) completed its package-selected native module with 174 passed, zero failed/ignored, followed by three exact sequence observations returning exit 0. Its newly written wrapper nevertheless rejected the full-module successful-name set. Run 41771237697 / job 126381158783 is retained as FAILURE. These results neither reproduce nor close the earlier original full-workspace DA failure.
+
+A separate read-only workflow consumes only the immutable 61,541-byte artifact 13295132077, verifies metadata/source/ZIP digest and every member CRC, and reports the exact registry/success-name difference. It executes no archived code and performs no native rerun. Existing budgets and assertions remain unchanged. Limits are 128 KiB compressed, 4 MiB returned decoded bytes, 1 MiB/member, 64 members, 128 KiB serialized output and 512 MiB address space; these are not RSS or decompressor internal-buffer claims. Token-bearing API requests never follow artifact redirects.
+
+The unchanged v6 original-artifact reader also actually completed run 41771662582 at source fa2fca6cf2aede38a60b5f39c67f12b3fefb7fcb: 40 reader controls and nine preserved negative controls, zero native execution. Its complete 1bac campaign archive remains 3/27 overall and 0/18 pressure confirmations; fresh challenge remains PUBLIC_REQUEST_DEADLINE / CONFIRMATION_TARGET. Observed History CPU subtotals are not complete protocol/worker CPU totals. The current #699 publication and its six changed paths are recorded separately without moving old results to its new source.
+
+No local executable environment was available for this publication. Original project preflight/source verification execute on the hosted reader. All native/Host/performance/production qualification flags remain false.
