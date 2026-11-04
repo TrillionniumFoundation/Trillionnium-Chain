@@ -14,7 +14,7 @@ use std::{
 use super::{
     manifest::MAX_MANIFEST_BYTES,
     require,
-    store::{verify_chunk, verify_chunk_length, MAX_CHUNK_COMMIT_BATCH},
+    store::{verify_chunk_length, verify_chunk_with_deadline, MAX_CHUNK_COMMIT_BATCH},
     CellChunkV1, CellDigestV1, CellErrorV1, CellManifestV1, CellResultV1, CellStoreV1,
     MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
@@ -625,7 +625,8 @@ fn fetch_manifest_via(
     requests: &dyn ObjectRequests,
 ) -> CellResultV1<(CellManifestV1, usize, bool)> {
     let mut rejected = 0;
-    let (manifest, initial_cache_hit) = match store.manifest(pinned)? {
+    let cached = store.manifest_with_deadline(pinned, Some(transport.overall))?;
+    let (manifest, initial_cache_hit) = match cached {
         Some(manifest) => (manifest, true),
         None => {
             let mut received = None;
@@ -638,6 +639,7 @@ fn fetch_manifest_via(
                     requests.request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport);
                 rejected += attempts - 1;
                 let candidate = candidate.and_then(|wire| {
+                    remaining(transport.overall)?;
                     // A complete supplied object failed its pinned contract.
                     // This is distinct from missing bytes or interrupted I/O.
                     let manifest = CellManifestV1::decode(&wire).and_then(|manifest| {
@@ -651,6 +653,7 @@ fn fetch_manifest_via(
                             return Err(error);
                         }
                     };
+                    remaining(transport.overall)?;
                     require(
                         manifest.size() <= limits.max_cell_bytes,
                         "cell exceeds byte budget",
@@ -731,8 +734,15 @@ fn download_chunk_via(
             requests.request(peer, 2, chunk.sha256, chunk.size as usize, transport);
         rejected += attempts - 1;
         let candidate = candidate.and_then(|bytes| {
-            if let Err(error) = verify_chunk(chunk, &bytes) {
-                transport.responses.quarantine(peer)?;
+            if let Err(error) = verify_chunk_with_deadline(chunk, &bytes, Some(transport.overall)) {
+                // Local work expiry is not evidence that the peer supplied bad
+                // bytes. Keep quarantine tied to the pinned chunk contract.
+                if matches!(
+                    &error,
+                    CellErrorV1::Invalid("chunk length" | "chunk digest")
+                ) {
+                    transport.responses.quarantine(peer)?;
+                }
                 return Err(error);
             }
             Ok(bytes)
@@ -843,12 +853,19 @@ fn serve_one_wire(
     let digest = query[5..]
         .try_into()
         .map_err(|_| CellErrorV1::Invalid("request digest"))?;
+    // Actual exhausted egress cannot authorize another cache read or hash.
+    // Temporary in-flight reservations are not permanent exhaustion.
+    if let Some(responses) = responses {
+        responses.require_remaining()?;
+    }
     let bytes = if inventory {
         require(query[4] == 1, "availability request type")?;
         availability::serve_page(stream, store, digest, deadline)?
     } else {
         match query[4] {
-            1 => store.manifest(digest)?.map(|m| m.encode()),
+            1 => store
+                .manifest_with_deadline(digest, Some(deadline))?
+                .map(|m| m.encode()),
             2 => store.chunk_with_deadline(digest, Some(deadline))?,
             _ => return Err(CellErrorV1::Invalid("request type")),
         }
@@ -929,6 +946,13 @@ impl ResponseBudget {
             .lock()
             .map(|state| state.received)
             .map_err(|_| io::Error::other("cell response budget poisoned"))
+    }
+
+    fn require_remaining(&self) -> io::Result<()> {
+        if self.received()? == self.maximum {
+            return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED"));
+        }
+        Ok(())
     }
 
     fn is_quarantined(&self, peer: SocketAddr) -> CellResultV1<bool> {
@@ -1290,6 +1314,85 @@ mod budget_tests {
             }
         });
         (address, server)
+    }
+
+    #[test]
+    fn chunk_deadline_expiry_does_not_quarantine_peer_but_invalid_bytes_do() {
+        use sha2::{Digest, Sha256};
+
+        struct AfterActualReply {
+            expire: bool,
+        }
+        impl ObjectRequests for AfterActualReply {
+            fn request(
+                &self,
+                peer: SocketAddr,
+                kind: u8,
+                digest: CellDigestV1,
+                maximum: usize,
+                transport: &RequestContext<'_>,
+            ) -> (CellResultV1<Vec<u8>>, usize) {
+                let result = SingleRequestV1.request(peer, kind, digest, maximum, transport);
+                assert!(result.0.is_ok(), "the original TCP response must complete");
+                if self.expire {
+                    // Keep the actual response, byte accounting and original
+                    // deadline. Delay only the verification continuation.
+                    while Instant::now() < transport.overall {
+                        thread::sleep(transport.overall.saturating_duration_since(Instant::now()));
+                    }
+                }
+                result
+            }
+        }
+
+        let payload = b"real-cell-response-before-local-expiry".to_vec();
+        let expected = CellChunkV1 {
+            size: payload.len() as u32,
+            sha256: Sha256::digest(&payload).into(),
+        };
+        for (expire, corrupt) in [(false, false), (false, true), (true, true)] {
+            let supplied = if corrupt {
+                vec![0; payload.len()]
+            } else {
+                payload.clone()
+            };
+            let (peer, server) = fixed_responses(vec![(2, expected.sha256, supplied)]);
+            let responses = ResponseBudget::new(1024);
+            let requests_left = AtomicU64::new(2);
+            let transport = RequestContext {
+                timeout: Duration::from_secs(1),
+                overall: Instant::now() + Duration::from_secs(2),
+                requests_left: &requests_left,
+                responses: &responses,
+            };
+            let requests = AfterActualReply { expire };
+            let result = download_chunk_via(&expected, 0, &[peer], &transport, 0, &requests);
+            server.join().unwrap();
+            assert_eq!(requests_left.load(Ordering::Relaxed), 1);
+            assert_eq!(responses.received().unwrap(), 9 + payload.len() as u64);
+            assert_eq!(responses.is_quarantined(peer).unwrap(), corrupt && !expire);
+            if expire {
+                assert!(matches!(
+                    result,
+                    Err(CellErrorV1::Io(error)) if error.kind() == io::ErrorKind::TimedOut
+                ));
+            } else if corrupt {
+                assert!(matches!(result, Err(CellErrorV1::Unavailable)));
+                // A proven bad peer stays refused for this same reservation.
+                // No second TCP request or response byte is spent.
+                assert!(matches!(
+                    download_chunk_via(&expected, 0, &[peer], &transport, 0, &requests),
+                    Err(CellErrorV1::Unavailable)
+                ));
+                assert_eq!(requests_left.load(Ordering::Relaxed), 1);
+                assert_eq!(responses.received().unwrap(), 9 + payload.len() as u64);
+            } else {
+                let (actual, supplied_by, rejected) = result.unwrap();
+                assert_eq!(actual, payload);
+                assert_eq!(supplied_by, peer);
+                assert_eq!(rejected, 0);
+            }
+        }
     }
 
     #[test]

@@ -2,10 +2,10 @@
 //! No caller-supplied height, score or confirmation Boolean becomes authority.
 use super::{
     evaluation_observation::{candidate_membership, EvaluationPhase},
-    Node,
+    Node, StateBackend,
 };
 use crate::ancestry_index;
-use crate::{consensus, digest, ensure, sequence_root, Error, Result};
+use crate::{consensus, digest, ensure, Error, Result};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -186,9 +186,10 @@ impl Node {
         self.ready()?;
         let cfg = &self.settings.app;
         ensure(evaluation::enabled(cfg), "PUBLIC_EVAL_PROFILE")?;
+        let read = self.evaluation_read_snapshot()?;
         let (tip, generation) = self.active()?;
         let observed = self.record(tip)?;
-        let (state_tip, state_generation, state) = self.read_active()?;
+        let (state_tip, state_generation, state) = self.evaluation_current_state()?;
         ensure(
             (tip, generation) == (state_tip, state_generation),
             "STALE_VIEW",
@@ -252,7 +253,7 @@ impl Node {
                 (blocks.len() as u64) < max_round_blocks,
                 "EVALUATION_OBSERVATION_LIMIT",
             )?;
-            let link = self.stored_header_link(current_block)?;
+            let link = self.evaluation_header_link(current_block)?;
             let record = link.record;
             let header = link.header;
             ensure(header.timestamp as u128 <= time_bound, "TIME_DEFERRED")?;
@@ -285,21 +286,42 @@ impl Node {
         } else {
             // Check identity/context and stored parent, without claiming a fresh
             // clock or confirmation assessment for the predecessor.
-            self.stored_header(current_block)?;
+            if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+                self.evaluation_header_link(current_block)?;
+            } else {
+                self.stored_header(current_block)?;
+            }
         }
-        let lookup = ancestry_index::next(
-            &self.db,
-            self.ancestry_context()?,
-            tip,
-            current_block,
-            ancestry_index::READ_SQL_BUDGET,
-            &mut |_| Ok(()),
-        )?;
-        ensure(
-            lookup.next == blocks.first_key_value().map(|(_, (id, _, _))| *id)
-                && lookup.height == base_height + 1,
-            "EVALUATION_OBSERVATION_ANCESTOR",
-        )?;
+        let ancestry_index_sql_lookups =
+            if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+                // Growth retains COW roots, not the PNP1 ancestry index. Every
+                // consecutive PNP2 link from the observed active tip was checked
+                // above. Bind the first round block directly to that checked base.
+                let (_, (_, first, _)) = blocks
+                    .first_key_value()
+                    .ok_or("EVALUATION_OBSERVATION_ANCESTOR")?;
+                ensure(
+                    first.parent == Some(current_block)
+                        && base_height.checked_add(1) == Some(first.height),
+                    "EVALUATION_OBSERVATION_ANCESTOR",
+                )?;
+                0
+            } else {
+                let lookup = ancestry_index::next(
+                    &self.db,
+                    self.ancestry_context()?,
+                    tip,
+                    current_block,
+                    ancestry_index::READ_SQL_BUDGET,
+                    &mut |_| Ok(()),
+                )?;
+                ensure(
+                    lookup.next == blocks.first_key_value().map(|(_, (id, _, _))| *id)
+                        && lookup.height == base_height + 1,
+                    "EVALUATION_OBSERVATION_ANCESTOR",
+                )?;
+                lookup.sql_lookups
+            };
         // Only this round's complete consecutive path is assessed. No earlier
         // global confirmation or clock-history verdict is inferred.
         let mut frontier = None;
@@ -329,16 +351,12 @@ impl Node {
         let candidate_block = blocks
             .get(&submitted)
             .ok_or("EVALUATION_OBSERVATION_CANDIDATE")?;
-        let packet = self.packet(candidate_block.0)?;
-        ensure(
-            packet.header.transactions == sequence_root("transactions", &packet.transactions),
-            "ROOT",
-        )?;
+        let transactions = self.evaluation_transactions(candidate_block.0)?;
         let transaction = Some(candidate_membership(
             cfg,
             candidate,
             contribution,
-            &packet.transactions,
+            &transactions,
         )?);
         let submitted_state = historical
             .get(&submitted)
@@ -413,7 +431,7 @@ impl Node {
                 confirmation_evaluated: false,
                 confirmed: false,
             },
-            ancestry_index_sql_lookups: lookup.sql_lookups,
+            ancestry_index_sql_lookups,
             historical_states_root_checked,
             global_confirmed_prefix: false,
             global_clock_history_checked: false,
@@ -442,8 +460,7 @@ impl Node {
             objective_model_quality: false,
             public_ready: false,
         };
-        self.ready()?;
-        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        self.evaluation_finish_snapshot(read, tip, generation)?;
         Ok(observation)
     }
 
@@ -502,29 +519,41 @@ impl Node {
         let mut commitment = None;
         let mut checked = 0_u64;
         for (&height, (id, record, _)) in blocks.iter().rev() {
-            // The initial state is independently root-checked by read_active.
-            // Each prior state below is checked against its actual parent root.
+            // The current view is independently root-checked by read_active or
+            // the authenticated growth snapshot. Every prior state below is
+            // checked against its actual retained parent commitment.
             if height == submitted || closure == Some(height) {
                 retained.insert(height, state.clone());
             }
             if height == submitted {
                 break;
             }
-            for (key, before, after) in self.delta_rows(*id)? {
-                ensure(
-                    state.get(&key).map(super::canonical).transpose()? == after,
-                    "UNDO_ROOT",
-                )?;
-                if let Some(bytes) = before {
-                    state.insert(key, serde_json::from_slice(&bytes)?);
-                } else {
-                    state.remove(&key);
+            if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+                // The authenticated COW root directly binds each historical
+                // working partition. Never reconstruct permanent account rows
+                // through legacy full-state undo or use a caller-supplied state.
+                let parent = record.parent.ok_or("UNKNOWN_PARENT")?;
+                state = self.growth_working_in_read(parent)?;
+            } else {
+                for (key, before, after) in self.delta_rows(*id)? {
+                    ensure(
+                        state.get(&key).map(super::canonical).transpose()? == after,
+                        "UNDO_ROOT",
+                    )?;
+                    if let Some(bytes) = before {
+                        state.insert(key, serde_json::from_slice(&bytes)?);
+                    } else {
+                        state.remove(&key);
+                    }
                 }
+                let parent = record.parent.ok_or("UNKNOWN_PARENT")?;
+                let prepared = self.checked_commitment(
+                    &state,
+                    self.record(parent)?.root,
+                    commitment.as_ref(),
+                )?;
+                commitment = prepared.snapshot;
             }
-            let parent = record.parent.ok_or("UNKNOWN_PARENT")?;
-            let prepared =
-                self.checked_commitment(&state, self.record(parent)?.root, commitment.as_ref())?;
-            commitment = prepared.snapshot;
             checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
         }
         Ok((retained, checked))

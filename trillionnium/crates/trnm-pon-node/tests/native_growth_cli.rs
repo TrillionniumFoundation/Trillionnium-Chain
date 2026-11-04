@@ -2,16 +2,29 @@
 //! selected development namespace. Historical CLI/packet namespaces stay distinct.
 use serde_json::{json, Value};
 use std::{
+    collections::BTreeMap,
     io::Write,
-    path::Path,
+    path::{Path, PathBuf},
     process::{Command, Output, Stdio},
 };
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
-use trnm_mvcc_fee::continuity_v1;
+use trnm_mvcc_fee::{continuity_v1, pon_executor::Config};
 use trnm_pon_node::{development_public, GrowthPacket, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope};
 
 const NAMESPACE: &str = "native-growth-cli-v2";
+const EVALUATION_COMMANDS: [(&str, &str, &str); 2] = [
+    (
+        "growth-evaluation-observe",
+        "--ancestry-blocks",
+        "native-evaluation-confirmed-observation-v1",
+    ),
+    (
+        "growth-evaluation-round-observe",
+        "--round-blocks",
+        "native-evaluation-confirmed-round-observation-v2",
+    ),
+];
 fn command(name: &str, store: &Path) -> Command {
     let mut cmd = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
     cmd.arg(name)
@@ -86,6 +99,256 @@ fn signed_transfer() -> String {
     let mut payload = development_public(9).unwrap().to_vec();
     payload.extend(10_000u64.to_le_bytes());
     signed_transaction(1, 1, payload)
+}
+
+fn signed_candidate() -> (String, String) {
+    let cfg =
+        Config::installed_with_profiles("native-public-evaluation-dev-v1", continuity_v1::PROFILE)
+            .unwrap();
+    let owner = development_public(0).unwrap();
+    let candidate = hash(
+        b"contribution-v3",
+        &[
+            &owner,
+            &cfg.family,
+            &[0; 32],
+            &[7; 32],
+            &[8; 32],
+            &0_u64.to_le_bytes(),
+        ],
+    );
+    let mut payload = Vec::new();
+    for value in [candidate, cfg.family, [0; 32], [7; 32]] {
+        payload.extend(value);
+    }
+    payload.extend(1024_u64.to_le_bytes());
+    payload.extend([8; 32]);
+    payload.extend(0_u64.to_le_bytes());
+    (hex::encode(candidate), signed_transaction(1, 6, payload))
+}
+
+fn source_files(store: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
+    std::fs::read_dir(store)
+        .unwrap()
+        .map(|entry| {
+            let entry = entry.unwrap();
+            assert!(entry.file_type().unwrap().is_file());
+            (
+                PathBuf::from(entry.file_name()),
+                std::fs::read(entry.path()).unwrap(),
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn growth_evaluation_cli_observes_actual_tag6_current_generation_without_source_writes() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = dir.path().join("growth");
+    let transactions = dir.path().join("candidate.json");
+    let packet_path = dir.path().join("candidate.pnp2");
+    let (candidate, transaction) = signed_candidate();
+    std::fs::write(&transactions, serde_json::to_vec(&[transaction]).unwrap()).unwrap();
+    let admitted = accepted(
+        command("growth-mine", &store)
+            .arg("--transactions")
+            .arg(&transactions)
+            .args([
+                "--timestamp",
+                "11",
+                "--logical-now",
+                "1000",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(&packet_path)
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(admitted["result"]["admitted"], true);
+    let packet = GrowthPacket::decode(&std::fs::read(&packet_path).unwrap()).unwrap();
+    assert_eq!(packet.transactions.len(), 1);
+    assert_eq!(Envelope::decode(&packet.transactions[0]).unwrap().tag, 6);
+    let current = accepted(
+        command("growth-mine", &store)
+            .args([
+                "--timestamp",
+                "21",
+                "--logical-now",
+                "1000",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(dir.path().join("successor.pnp2"))
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(current["result"]["admitted"], true);
+    assert_eq!(current["result"]["state"]["height"], 2);
+    assert_ne!(
+        current["result"]["state"]["generation"],
+        admitted["result"]["state"]["generation"]
+    );
+    let before = source_files(&store);
+    for (name, bound, schema) in EVALUATION_COMMANDS {
+        let output = accepted(
+            command(name, &store)
+                .args([
+                    "--candidate",
+                    &candidate,
+                    bound,
+                    "8",
+                    "--logical-now",
+                    "1000",
+                ])
+                .output()
+                .unwrap(),
+        );
+        assert_eq!(output["profile"], "permanent-account-growth-native-v2");
+        let observed = &output["result"];
+        assert_eq!(observed["schema"], schema);
+        assert_eq!(observed["candidate"], candidate);
+        assert_eq!(observed["observed_tip"], current["result"]["block"]);
+        assert_eq!(observed["observed_height"], 2);
+        assert_eq!(observed["observed_now"], 1000);
+        assert_eq!(
+            observed["active_generation"],
+            current["result"]["state"]["generation"]
+        );
+        for field in ["network", "parameters", "genesis"] {
+            assert_eq!(observed[field], current["result"]["state"][field]);
+        }
+        assert_eq!(
+            observed["candidate_anchor"]["block"],
+            admitted["result"]["block"]
+        );
+        assert_eq!(observed["candidate_anchor"]["height"], 1);
+        assert_eq!(
+            observed["candidate_anchor"]["transaction_membership_verified"],
+            true
+        );
+        assert_eq!(observed["admitted_phase"], "candidate");
+        for field in [
+            "finalized",
+            "adoption_authority",
+            "reward_authority",
+            "execution_authority",
+            "independent_governance_accepted",
+            "objective_model_quality",
+            "public_ready",
+        ] {
+            assert_eq!(observed[field], false, "{name}: {field}");
+        }
+        if name == "growth-evaluation-round-observe" {
+            assert_eq!(observed["global_confirmed_prefix"], false);
+            assert_eq!(observed["global_clock_history_checked"], false);
+            assert_eq!(observed["ancestry_index_sql_lookups"], 0);
+        }
+        assert_eq!(source_files(&store), before);
+        let repeated = accepted(
+            command(name, &store)
+                .args(["--candidate", &candidate, "--logical-now", "1000"])
+                .output()
+                .unwrap(),
+        );
+        assert_eq!(repeated, output);
+        assert_eq!(source_files(&store), before);
+    }
+}
+
+#[test]
+fn growth_evaluation_cli_validates_before_store_io_and_never_recovers_source() {
+    let dir = tempfile::tempdir().unwrap();
+    let missing = dir.path().join("never-created");
+    let existing = dir.path().join("existing");
+    accepted(command("growth-status", &existing).output().unwrap());
+    // This source must be recovered by its original writer, never by a query.
+    std::fs::write(
+        existing.join("native.sqlite-journal"),
+        b"pending-source-recovery",
+    )
+    .unwrap();
+    let before = source_files(&existing);
+    let candidate = hex::encode([1; 32]);
+    for (name, bound, _) in EVALUATION_COMMANDS {
+        for store in [&missing, &existing] {
+            rejected(
+                command(name, store).output().unwrap(),
+                "missing --candidate",
+            );
+            rejected(
+                command(name, store)
+                    .args(["--candidate", "not-a-digest"])
+                    .output()
+                    .unwrap(),
+                "HASH",
+            );
+            for invalid in ["0", "4097", "18446744073709551615"] {
+                rejected(
+                    command(name, store)
+                        .args(["--candidate", &candidate, bound, invalid])
+                        .output()
+                        .unwrap(),
+                    "EVALUATION_OBSERVATION_LIMIT",
+                );
+            }
+            rejected(
+                command(name, store)
+                    .args(["--candidate", &candidate, bound, "not-a-number"])
+                    .output()
+                    .unwrap(),
+                &format!("invalid {bound}"),
+            );
+            for invalid in ["not-a-clock", "18446744073709551616"] {
+                rejected(
+                    command(name, store)
+                        .args(["--candidate", &candidate, "--logical-now", invalid])
+                        .output()
+                        .unwrap(),
+                    "invalid --logical-now",
+                );
+            }
+            for option in [
+                "--evaluation-policy",
+                "--task-profile",
+                "--model-profile",
+                "--height",
+                if bound == "--ancestry-blocks" {
+                    "--round-blocks"
+                } else {
+                    "--ancestry-blocks"
+                },
+            ] {
+                rejected(
+                    command(name, store)
+                        .args(["--candidate", &candidate, option, "1"])
+                        .output()
+                        .unwrap(),
+                    "GROWTH_OPTION",
+                );
+            }
+            assert!(!missing.exists());
+            assert_eq!(source_files(&existing), before);
+        }
+        rejected(
+            command(name, &missing)
+                .args(["--candidate", &candidate, "--logical-now", "1000"])
+                .output()
+                .unwrap(),
+            "GROWTH_EVALUATION_EXISTING_STORE_REQUIRED",
+        );
+        assert!(!missing.exists());
+        rejected(
+            command(name, &existing)
+                .args(["--candidate", &candidate, "--logical-now", "1000"])
+                .output()
+                .unwrap(),
+            "GROWTH_OBSERVATION_RECOVERY_REQUIRED",
+        );
+        assert_eq!(source_files(&existing), before);
+    }
 }
 
 #[test]

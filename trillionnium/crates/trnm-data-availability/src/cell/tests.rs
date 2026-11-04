@@ -1133,3 +1133,98 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+#[test]
+fn expired_cached_chunk_deadline_refuses_before_sql_or_hash() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("cache.sqlite");
+    let store = CellStoreV1::open(&path, cache_config()).unwrap();
+    let bytes = vec![7_u8; 16_384];
+    let chunk = CellChunkV1 {
+        sha256: Sha256::digest(&bytes).into(),
+        size: bytes.len() as u32,
+    };
+    store.put_chunk(&chunk, &bytes).unwrap();
+    let expired = std::time::Instant::now() - Duration::from_secs(1);
+    assert!(matches!(
+        store.chunk_with_deadline(chunk.sha256, Some(expired)),
+        Err(CellErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::TimedOut
+    ));
+    assert_eq!(store.chunk(chunk.sha256).unwrap().unwrap(), bytes);
+    Connection::open(&path)
+        .unwrap()
+        .execute_batch("DROP TABLE cell_chunks_v1")
+        .unwrap();
+    // The expired invocation cannot even enter the SQL lookup. A live call
+    // still observes the actual storage failure, never a cached verdict.
+    assert!(matches!(
+        store.chunk_with_deadline(chunk.sha256, Some(expired)),
+        Err(CellErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::TimedOut
+    ));
+    assert!(matches!(
+        store.chunk(chunk.sha256),
+        Err(CellErrorV1::Sql(_))
+    ));
+}
+
+#[test]
+fn expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = CellStoreV1::open(&directory.path().join("cache"), cache_config()).unwrap();
+    let bytes = vec![7_u8; 16_384];
+    let chunk = CellChunkV1 {
+        sha256: Sha256::digest(&bytes).into(),
+        size: bytes.len() as u32,
+    };
+    let mut corrupt = bytes.clone();
+    corrupt[0] ^= 1;
+    let expired = std::time::Instant::now() - Duration::from_secs(1);
+    for result in [
+        store.put_chunk_with_deadline(&chunk, &corrupt, Some(expired)),
+        store.put_chunk_batch_with_deadline(&[(&chunk, &corrupt)], Some(expired)),
+    ] {
+        assert!(matches!(
+            result,
+            Err(CellErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::TimedOut
+        ));
+    }
+    assert!(store.chunk(chunk.sha256).unwrap().is_none());
+    assert!(matches!(
+        store.put_chunk(&chunk, &corrupt),
+        Err(CellErrorV1::Invalid("chunk digest"))
+    ));
+    store.put_chunk(&chunk, &bytes).unwrap();
+    assert_eq!(store.chunk(chunk.sha256).unwrap().unwrap(), bytes);
+}
+
+#[test]
+fn expired_manifest_fetch_refuses_local_hit_and_put_before_decode() {
+    use super::network::{fetch_manifest_observed, RequestContext, ResponseBudget};
+    use std::{sync::atomic::AtomicU64, time::Instant};
+
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    fs::write(&input, vec![7_u8; 16_384]).unwrap();
+    let store = CellStoreV1::open(&directory.path().join("cache"), cache_config()).unwrap();
+    let manifest = store.pack_file(&input, context(), 16_384).unwrap();
+    let expired = Instant::now() - Duration::from_secs(1);
+    let requests = AtomicU64::new(7);
+    let responses = ResponseBudget::new(0);
+    let transport = RequestContext {
+        timeout: Duration::from_millis(10),
+        overall: expired,
+        requests_left: &requests,
+        responses: &responses,
+    };
+    assert!(matches!(
+        fetch_manifest_observed(&store, manifest.id(), &[], limits(), &transport),
+        Err(CellErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::TimedOut
+    ));
+    assert!(matches!(
+        store.put_manifest_with_deadline(manifest.id(), b"invalid", Some(expired)),
+        Err(CellErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::TimedOut
+    ));
+    assert_eq!(requests.load(Ordering::Relaxed), 7);
+    assert_eq!(responses.received().unwrap(), 0);
+    assert_eq!(store.manifest(manifest.id()).unwrap(), Some(manifest));
+}

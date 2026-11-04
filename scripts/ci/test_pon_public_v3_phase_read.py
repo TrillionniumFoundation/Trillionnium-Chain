@@ -139,6 +139,101 @@ def diagnostic_record():
 
 
 class ReaderTests(unittest.TestCase):
+    @staticmethod
+    def wait_slot(duration, *, accepted=True, completed=True, code=None):
+        return dict(started_ns=0, ended_ns=duration, wall_ns=duration,
+                    completed=completed, accepted=accepted, error_code=code)
+
+    def test_per_request_queue_p99_is_order_statistic_not_waiter_total(self):
+        rows = []
+        for duration in range(1, 101):
+            row = record_v4()
+            row['paid_task_queue_wait'] = self.wait_slot(duration)
+            rows.append(row)
+        result = reader.execution_summary(rows, True, observer_v4=True)
+        wait = result['wait_intervals']['paid_task_queue_wait']
+        self.assertEqual(wait['wall_ns']['sum_known_ns'], 5050)
+        detail = wait['interval_outcomes']
+        self.assertEqual(detail['p99_all_retained_entered_terminal_ns'], 99)
+        self.assertEqual(detail['terminal_wall_ns']['known_count'], 100)
+        self.assertEqual(detail['terminal_by_outcome']['accepted']['p99_all_terminal_records_ns'], 99)
+        self.assertIsNone(detail['terminal_by_outcome']['rejected']['p99_all_terminal_records_ns'])
+        self.assertIsNone(detail['scope']['whole_request_population_p99_ns'])
+        self.assertTrue(detail['scope']['cumulative_waiter_time_is_not_request_p99'])
+
+    def test_unfinished_elapsed_does_not_enter_terminal_tail_or_erase_failure(self):
+        rows = [record_v4() for _ in range(4)]
+        rows[0]['paid_task_queue_wait'] = self.wait_slot(7)
+        rows[1]['paid_task_queue_wait'] = self.wait_slot(19, accepted=False,
+                                                       code='PUBLIC_REQUEST_CANCELLED')
+        rows[2]['paid_task_queue_wait'] = self.wait_slot(1000000, accepted=None, completed=False)
+        before = copy.deepcopy(rows)
+        detail = reader.execution_summary(rows, True, observer_v4=True)[
+            'wait_intervals']['paid_task_queue_wait']['interval_outcomes']
+        self.assertEqual(rows, before)
+        self.assertEqual((detail['slots'], detail['entered'], detail['terminal_records'],
+                          detail['unfinished_records'], detail['unentered_or_entry_clock_unknown']),
+                         (4, 3, 2, 1, 1))
+        self.assertEqual(detail['terminal_wall_ns']['p99_all_terminal_records_ns'], 19)
+        self.assertEqual(detail['terminal_by_outcome']['rejected']['known_count'], 1)
+        self.assertEqual(detail['typed_cancelled_terminal_records'], 1)
+        self.assertEqual(detail['unfinished_observed_elapsed_wall_ns']['sum_known_ns'], 1000000)
+        self.assertIsNone(detail['p99_all_retained_entered_terminal_ns'])
+
+    def test_missing_terminal_clock_cannot_produce_all_terminal_p99(self):
+        rows = [record_v4(), record_v4()]
+        rows[0]['paid_task_queue_wait'] = self.wait_slot(7)
+        rows[1]['paid_task_queue_wait'] = self.wait_slot(None, accepted=False,
+                                                        code='PUBLIC_REQUEST_DEADLINE')
+        detail = reader.execution_summary(rows, True, observer_v4=True)[
+            'wait_intervals']['paid_task_queue_wait']['interval_outcomes']
+        self.assertEqual(detail['terminal_records'], 2)
+        self.assertEqual(detail['terminal_wall_ns']['unknown_count'], 1)
+        self.assertIsNone(detail['terminal_wall_ns']['p99_all_terminal_records_ns'])
+        self.assertIsNone(detail['p99_all_retained_entered_terminal_ns'])
+        self.assertEqual(detail['typed_terminal_error_counts']['PUBLIC_REQUEST_DEADLINE'], 1)
+        self.assertEqual(detail['typed_cancelled_terminal_records'], 0)
+
+    def test_phase_tails_preserve_unknown_outcomes_and_inclusive_costs(self):
+        rows = [record(), record(), record()]
+        rows[0]['submit_phases'][2].update(started=True, completed=True, accepted=False,
+                                           wall_ns=11, thread_cpu_ns=3)
+        rows[1]['submit_phases'][2].update(started=True, wall_ns=500, thread_cpu_ns=5)
+        result = reader.execution_summary(rows, True)['submit_phases'][2]
+        self.assertEqual(result['wall_ns']['sum_known_ns'], 511)
+        self.assertEqual(result['thread_cpu_ns']['sum_known_ns'], 8)
+        detail = result['interval_outcomes']
+        self.assertEqual(detail['terminal_wall_ns']['p99_all_terminal_records_ns'], 11)
+        self.assertEqual(detail['unfinished_observed_elapsed_wall_ns']['known_count'], 1)
+        self.assertIsNone(detail['p99_all_retained_entered_terminal_ns'])
+        self.assertTrue(detail['scope']['inclusive_stages_are_not_additive'])
+        empty = reader.interval_outcome_summary([])
+        self.assertEqual(empty['entered'], 0)
+        self.assertIsNone(empty['p99_all_retained_entered_terminal_ns'])
+
+    def test_current_derivation_separates_unobserved_startup_rounds_and_preserves_v2(self):
+        phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+        for phase, mode in zip(phases, reader.MODES):
+            phase['mode'] = mode
+        phases[2] = dict(mode='late-product', state_backend='authenticated-v1',
+                         startup_or_campaign_error='original native failure')
+        report = dict(schema='native-public-v3-separate-process-campaign-v2',
+            state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+            economics_complete=False, best_observed_cold_legal_method=None,
+            preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+        current = reader.analyze(report)
+        self.assertEqual(current['schema'], 'pon-public-v3-multiprocess-phase-derivation-v3')
+        self.assertEqual(current['phases'][2]['observed_confirmation_rounds'], 0)
+        self.assertEqual(current['phases'][2]['unobserved_scheduled_rounds'], 3)
+        self.assertIsNone(current['phases'][2]['confirmed_rounds'])
+        old = reader.analyze_for_retained_schema(report, 'pon-public-v3-multiprocess-phase-derivation-v2')
+        self.assertNotIn('unobserved_scheduled_rounds', old['phases'][2])
+        self.assertNotIn('interval_outcomes', old['phases'][0]['receiver'][
+            'all_retained_records']['submit_phases'][0])
+        self.assertEqual(old['phases'][0]['receiver']['all_retained_records']['submit_phases'][0][
+            'wall_ns'], current['phases'][0]['receiver']['all_retained_records']['submit_phases'][0]['wall_ns'])
+        self.assertEqual(reader.analyze_for_retained_schema(report, current['schema']), current)
+
     def test_request_error_diagnostic_extension_retains_legacy_unknown_and_typed_separation(self):
         measured = diagnostic_record()
         remote = diagnostic_record()
@@ -520,7 +615,7 @@ class ReaderTests(unittest.TestCase):
                             for phase in historical['phases']))
         current = reader.analyze(report)
         self.assertEqual(reader.analyze_for_retained_schema(report, current['schema']), current)
-        for unknown in (None, 'pon-public-v3-multiprocess-phase-derivation-v3'):
+        for unknown in (None, 'pon-public-v3-multiprocess-phase-derivation-v4'):
             with self.assertRaisesRegex(ValueError, 'unknown retained'):
                 reader.analyze_for_retained_schema(report, unknown)
         phases[0]['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v3'
@@ -779,6 +874,35 @@ class ReaderTests(unittest.TestCase):
         phase['confirmations'].pop()
         with self.assertRaisesRegex(ValueError, 'aggregate'):
             reader.phase_summary(phase)
+
+    def test_duplicate_nested_observation_cannot_overwrite_failure_or_missing_duration(self):
+        # A correct byte hash cannot make an ambiguous document authoritative.
+        # Each input below is otherwise a full reader-valid synthetic campaign.
+        phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+        for phase, mode in zip(phases, reader.MODES):
+            phase['mode'] = mode
+            phase['receiver_observation']['records'][0]['submit_phases'][0].update(
+                started=True, completed=True, accepted=False, wall_ns=None)
+        report = dict(schema='native-public-v3-separate-process-campaign-v2',
+            state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+            economics_complete=False, best_observed_cold_legal_method=None,
+            preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+        original = json.dumps(report).encode()
+        reader.analyze(report)
+        for old, new in (
+            (b'"dispatch_accepted": false', b'"dispatch_accepted": false, "dispatch_accepted": true'),
+            (b'"accepted": false, "wall_ns": null',
+             b'"accepted": false, "wall_ns": null, "wall_ns": 0'),
+            (b'"dispatch_accepted": false', b'"dispatch_accepted": false, "dispatch_accep\\u0074ed": true'),
+        ):
+            raw = original.replace(old, new, 1)
+            self.assertNotEqual(raw, original)
+            with self.subTest(new=new), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'report.json'
+                path.write_bytes(raw)
+                with self.assertRaisesRegex(ValueError, 'duplicate JSON observation key'):
+                    reader.read_report(path, hashlib.sha256(raw).hexdigest())
+                self.assertEqual(path.read_bytes(), raw)
 
     def test_exact_hash_mismatch_rejects_before_parsing(self):
         with tempfile.TemporaryDirectory() as directory:

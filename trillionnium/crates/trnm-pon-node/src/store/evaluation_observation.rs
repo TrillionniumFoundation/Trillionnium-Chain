@@ -1,12 +1,13 @@
 //! Read-only native evaluation observations under one active branch generation.
 //! No caller-supplied height, score or confirmation Boolean becomes authority.
-use super::Node;
+use super::{Node, StateBackend, StoredHeaderLink};
 use crate::{consensus, digest, ensure, sequence_root, Error, Result};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use trnm_mvcc_fee::{
-    integer_factor_candidate_v2 as factor, model_evolution_v5 as evolution, pon_executor::Config,
+    integer_factor_candidate_v2 as factor, model_evolution_v5 as evolution,
+    pon_executor::{Config, State},
     public_evaluation as evaluation,
 };
 use trnm_protocol::integer_evolution_v3::{EvolutionWitnessV3, TAG as EVOLUTION_TAG};
@@ -245,6 +246,82 @@ pub(super) fn candidate_membership(
 }
 
 impl Node {
+    /// Growth observations hold one SQLite snapshot across current state,
+    /// ancestry, packet membership and historical commitments. Legacy callers
+    /// retain the complete-state validation path and its error ordering.
+    pub(super) fn evaluation_read_snapshot(&self) -> Result<Option<rusqlite::Transaction<'_>>> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            self.growth_observation_epoch()?;
+            Ok(Some(self.db.unchecked_transaction()?))
+        } else {
+            Ok(None)
+        }
+    }
+    pub(super) fn evaluation_current_state(&self) -> Result<(Hash, u64, State)> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            let snapshot = self.growth_snapshot_in_read()?;
+            Ok((snapshot.block, snapshot.generation, snapshot.working))
+        } else {
+            self.read_active()
+        }
+    }
+    pub(super) fn evaluation_historical_state(&self, block: Hash) -> Result<State> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            self.growth_working_in_read(block)
+        } else {
+            self.state_at(block)
+        }
+    }
+    pub(super) fn evaluation_header_link(&self, block: Hash) -> Result<StoredHeaderLink> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            self.growth_evaluation_header_link(block)
+        } else {
+            self.stored_header_link(block)
+        }
+    }
+    pub(super) fn evaluation_transactions(&self, block: Hash) -> Result<Vec<Vec<u8>>> {
+        let (header, transactions) = if self.state_backend == StateBackend::PermanentAccountGrowthV2
+        {
+            let packet = self.growth_packet(block)?;
+            let record = self.record(block)?;
+            ensure(
+                record.parent == Some(packet.header.ledger.parent)
+                    && record.height == packet.header.ledger.height
+                    && record.root == packet.header.ledger.state,
+                "STORAGE_PACKET",
+            )
+            .map_err(Error::local_integrity)?;
+            (packet.header.ledger, packet.transactions)
+        } else {
+            let packet = self.packet(block)?;
+            (packet.header, packet.transactions)
+        };
+        ensure(
+            header.transactions == sequence_root("transactions", &transactions),
+            "ROOT",
+        )?;
+        Ok(transactions)
+    }
+    pub(super) fn evaluation_finish_snapshot(
+        &self,
+        read: Option<rusqlite::Transaction<'_>>,
+        tip: Hash,
+        generation: u64,
+    ) -> Result<()> {
+        self.ready()?;
+        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        if let Some(read) = read {
+            self.growth_observation_epoch()?;
+            read.rollback()?;
+            // A foreign writer cannot turn a completed snapshot into current
+            // authority. Recheck the cold-audited epoch and current generation
+            // after releasing the read transaction as well.
+            self.growth_observation_epoch()?;
+            self.ready()?;
+            ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        }
+        Ok(())
+    }
     /// Traversal bound is a software-work limit, not preemption of SQLite or native
     /// work. No partial frontier is returned if the complete ancestry exceeds it.
     pub fn evaluation_observation(
@@ -260,13 +337,14 @@ impl Node {
         self.ready()?;
         let cfg = &self.settings.app;
         ensure(evaluation::enabled(cfg), "PUBLIC_EVAL_PROFILE")?;
+        let read = self.evaluation_read_snapshot()?;
         let (tip, generation) = self.active()?;
         let observed = self.record(tip)?;
         ensure(
             observed.height <= max_ancestry_blocks,
             "EVALUATION_OBSERVATION_LIMIT",
         )?;
-        let (state_tip, state_generation, state) = self.read_active()?;
+        let (state_tip, state_generation, state) = self.evaluation_current_state()?;
         ensure(
             (tip, generation) == (state_tip, state_generation),
             "STALE_VIEW",
@@ -323,7 +401,7 @@ impl Node {
                 (blocks.len() as u64) < max_ancestry_blocks,
                 "EVALUATION_OBSERVATION_LIMIT",
             )?;
-            let link = self.stored_header_link(current_block)?;
+            let link = self.evaluation_header_link(current_block)?;
             let record = link.record;
             let header = link.header;
             ensure(header.timestamp as u128 <= time_bound, "TIME_DEFERRED")?;
@@ -371,18 +449,14 @@ impl Node {
         let candidate_block = blocks
             .get(&submitted)
             .ok_or("EVALUATION_OBSERVATION_CANDIDATE")?;
-        let packet = self.packet(candidate_block.0)?;
-        ensure(
-            packet.header.transactions == sequence_root("transactions", &packet.transactions),
-            "ROOT",
-        )?;
+        let transactions = self.evaluation_transactions(candidate_block.0)?;
         let transaction = Some(candidate_membership(
             cfg,
             candidate,
             contribution,
-            &packet.transactions,
+            &transactions,
         )?);
-        let submitted_state = self.state_at(candidate_block.0)?;
+        let submitted_state = self.evaluation_historical_state(candidate_block.0)?;
         let original = evaluation::read_evaluation(&submitted_state, candidate)?;
         ensure(
             original["plan"] == *plan && original["round"] == current["round"],
@@ -418,7 +492,7 @@ impl Node {
             let height = number(result, "closed_height")?;
             let closure = anchor(height, None)?;
             let closure_id = blocks[&height].0;
-            let closure_state = self.state_at(closure_id)?;
+            let closure_state = self.evaluation_historical_state(closure_id)?;
             ensure(
                 evaluation::read_evaluation(&closure_state, candidate)?["closed"] == *result,
                 "EVALUATION_OBSERVATION_CLOSURE",
@@ -464,8 +538,7 @@ impl Node {
             objective_model_quality: false,
             public_ready: false,
         };
-        self.ready()?;
-        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        self.evaluation_finish_snapshot(read, tip, generation)?;
         Ok(observation)
     }
 
@@ -506,6 +579,757 @@ mod tests {
     use super::*;
     use crate::{development_public, Settings};
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+
+    fn growth_evaluation_fixture(
+        model: &str,
+    ) -> (tempfile::TempDir, Node, crate::GrowthPacket, Hash) {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development_with_model_profiles(
+            None,
+            evaluation::QUORUM_PROFILE,
+            trnm_mvcc_fee::continuity_v1::PROFILE,
+            model,
+        )
+        .unwrap()
+        .with_permanent_account_growth_v2("evaluation-working-observation-v2")
+        .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings).unwrap();
+        let initial = node.growth_current_working().unwrap();
+        assert!(!initial
+            .working
+            .keys()
+            .any(|key| key.starts_with("account:")));
+        let owner = development_public(0).unwrap();
+        let mut coefficients = vec![0; 260];
+        coefficients[0] = 1;
+        coefficients[3] = 1;
+        let witness = factor::build_witness(
+            &initial.working,
+            &node.settings.app,
+            owner,
+            0,
+            factor::FactorInputV2 {
+                slot: 0,
+                rank: 1,
+                coefficients,
+            },
+            [8; 32],
+        )
+        .unwrap();
+        let mut tx = Envelope {
+            network: node.settings.network(),
+            sender: owner,
+            nonce: 1,
+            expiry: 128,
+            fee_limit: 1_000_000,
+            tag: FACTOR_TAG,
+            payload: witness.encode().unwrap(),
+            signature: [0; 64],
+        };
+        let key =
+            signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+                .unwrap();
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let packet = node
+            .make_growth_consensus_maintenance(
+                initial.block,
+                vec![tx.encode().unwrap()],
+                development_public(3).unwrap(),
+                1_800_000_010,
+                4096,
+            )
+            .unwrap();
+        let block = node.admit_growth(&packet, 1_800_010_000).unwrap();
+        node.activate(block).unwrap();
+        (directory, node, packet, witness.contribution_id)
+    }
+
+    fn changed_growth_working_row(
+        original: &[u8],
+        key: &str,
+        change: impl FnOnce(&mut Value),
+    ) -> Vec<u8> {
+        let stored: Value = serde_json::from_slice(original).unwrap();
+        let mut row = stored["working"].get(key).unwrap().clone();
+        let entry = |value: &Value| {
+            let mut bytes = serde_json::to_vec(key).unwrap();
+            bytes.push(b':');
+            bytes.extend(serde_json::to_vec(value).unwrap());
+            bytes
+        };
+        let before = entry(&row);
+        change(&mut row);
+        let after = entry(&row);
+        assert_ne!(before, after);
+        let matches: Vec<_> = original
+            .windows(before.len())
+            .enumerate()
+            .filter_map(|(index, bytes)| (bytes == before.as_slice()).then_some(index))
+            .collect();
+        assert_eq!(matches.len(), 1);
+        // Keep the StoredState/commitment/root struct-field order exactly as
+        // retained. Serializing the entire record as Value sorts those fields
+        // and would test GROWTH_RECORD_ENCODING instead of a bad working root.
+        let mut changed = original.to_vec();
+        drop(changed.splice(matches[0]..matches[0] + before.len(), after));
+        let decoded: Value = serde_json::from_slice(&changed).unwrap();
+        assert_eq!(decoded["working"][key], row);
+        changed
+    }
+
+    #[test]
+    fn growth_evaluation_views_bind_pnp2_working_roots_and_current_generation() {
+        for model in [
+            trnm_mvcc_fee::model_evidence_v3::PROFILE,
+            trnm_mvcc_fee::model_composition_v4::PROFILE,
+        ] {
+            let (_directory, mut node, packet, candidate) = growth_evaluation_fixture(model);
+            let block = packet.id().unwrap();
+            let trace = packet.proof[packet.proof.len() - 32..].try_into().unwrap();
+            // PNP2's witness-bearing identity differs from the embedded ledger
+            // header identity. All observation anchors must retain the former.
+            assert_ne!(block, packet.header.ledger.block_id(trace));
+            assert_eq!(
+                node.read_active().unwrap_err().to_string(),
+                "GROWTH_COMPLETE_STATE_UNAVAILABLE"
+            );
+            assert_eq!(
+                node.growth_evaluation_header_link(block)
+                    .err()
+                    .unwrap()
+                    .to_string(),
+                "GROWTH_READ_SNAPSHOT_REQUIRED"
+            );
+            let now = 1_800_010_000;
+            let old_global = node.evaluation_observation(candidate, now, 8).unwrap();
+            let old_round = node
+                .evaluation_round_observation(candidate, now, 8)
+                .unwrap();
+            let successor = node
+                .make_growth_consensus_maintenance(
+                    block,
+                    vec![],
+                    development_public(3).unwrap(),
+                    1_800_000_020,
+                    4096,
+                )
+                .unwrap();
+            let tip = node.admit_growth(&successor, now).unwrap();
+            node.activate(tip).unwrap();
+            assert_eq!(
+                node.check_evaluation_observation(&old_global, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "STALE_VIEW"
+            );
+            assert_eq!(
+                node.check_evaluation_round_observation(&old_round, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "STALE_VIEW"
+            );
+            let changes = node.db.total_changes();
+            let global = node.evaluation_observation(candidate, now, 8).unwrap();
+            let round = node
+                .evaluation_round_observation(candidate, now, 8)
+                .unwrap();
+            node.check_evaluation_observation(&global, now, 8).unwrap();
+            node.check_evaluation_round_observation(&round, now, 8)
+                .unwrap();
+            let global_json = serde_json::to_value(&global).unwrap();
+            let round_json = serde_json::to_value(&round).unwrap();
+            let expected_tx = hex::encode(hash(b"tx-id", &[&packet.transactions[0]]));
+            for view in [&global_json, &round_json] {
+                assert_eq!(view["observed_tip"], hex::encode(tip));
+                assert_eq!(view["candidate_anchor"]["block"], hex::encode(block));
+                assert_eq!(view["candidate_anchor"]["transaction"], expected_tx);
+                assert_eq!(
+                    view["candidate_anchor"]["transaction_membership_verified"],
+                    true
+                );
+                assert_eq!(view["adoption_authority"], false);
+                assert_eq!(view["reward_authority"], false);
+                assert_eq!(view["execution_authority"], false);
+                assert_eq!(view["finalized"], false);
+                assert_eq!(view["public_ready"], false);
+            }
+            assert_eq!(round_json["historical_states_root_checked"], 1);
+            assert_eq!(global_json["ancestry_checked"], 2);
+            assert_eq!(node.db.total_changes(), changes);
+            assert_eq!(
+                node.evaluation_observation(candidate, now, 1)
+                    .unwrap_err()
+                    .to_string(),
+                "EVALUATION_OBSERVATION_LIMIT"
+            );
+            assert_eq!(
+                node.evaluation_round_observation(candidate, now, 1)
+                    .unwrap_err()
+                    .to_string(),
+                "EVALUATION_OBSERVATION_LIMIT"
+            );
+            assert_eq!(
+                node.evaluation_observation(candidate, 0, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "TIME_DEFERRED"
+            );
+            assert_eq!(
+                node.evaluation_round_observation(candidate, 0, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "TIME_DEFERRED"
+            );
+            if model == trnm_mvcc_fee::model_evidence_v3::PROFILE {
+                // A heavier branch without the intake removes it from the
+                // current view, while the original COW history remains readable.
+                let mut fork = node.settings.genesis();
+                for height in 1..=3 {
+                    let packet = node
+                        .make_growth_consensus_maintenance(
+                            fork,
+                            vec![],
+                            development_public(3).unwrap(),
+                            1_800_000_030 + height * 10,
+                            4096,
+                        )
+                        .unwrap();
+                    fork = node.admit_growth(&packet, now).unwrap();
+                }
+                node.activate(fork).unwrap();
+                assert_eq!(node.active().unwrap().0, fork);
+                assert!(node
+                    .growth_working(block)
+                    .unwrap()
+                    .contains_key(&format!("contribution:{}", hex::encode(candidate))));
+                assert_eq!(
+                    node.check_evaluation_observation(&global, now, 8)
+                        .unwrap_err()
+                        .to_string(),
+                    "STALE_VIEW"
+                );
+                assert_eq!(
+                    node.check_evaluation_round_observation(&round, now, 8)
+                        .unwrap_err()
+                        .to_string(),
+                    "STALE_VIEW"
+                );
+                assert_eq!(
+                    node.evaluation_observation(candidate, now, 8)
+                        .unwrap_err()
+                        .to_string(),
+                    "STATE"
+                );
+                assert_eq!(
+                    node.evaluation_round_observation(candidate, now, 8)
+                        .unwrap_err()
+                        .to_string(),
+                    "STATE"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn growth_evaluation_views_follow_real_closures_and_nonzero_round_base() {
+        let (_directory, mut node, first_packet, first_candidate) =
+            growth_evaluation_fixture(trnm_mvcc_fee::model_evidence_v3::PROFILE);
+        let now = 1_800_010_000;
+        let width = node.settings.app.params["candidate_round_blocks"]
+            .as_u64()
+            .unwrap();
+        assert_eq!(width, 128);
+        let first_close = evaluation::REVEAL_END + 1;
+        let second_close = width + first_close;
+        let confirmation_depth = node.settings.limit("confirmation_depth").unwrap();
+        assert!(confirmation_depth > 0);
+        let last_height = second_close + confirmation_depth;
+        let mut blocks = BTreeMap::from([(1, first_packet.id().unwrap())]);
+        let mut second_candidate = None;
+        let mut second_transaction = None;
+        for height in 2..=last_height {
+            let transactions = if height == width {
+                let working = node.growth_current_working().unwrap();
+                let owner = development_public(0).unwrap();
+                let mut coefficients = vec![0; 260];
+                coefficients[0] = 1;
+                coefficients[3] = 2;
+                let witness = factor::build_witness(
+                    &working.working,
+                    &node.settings.app,
+                    owner,
+                    1,
+                    factor::FactorInputV2 {
+                        slot: 0,
+                        rank: 1,
+                        coefficients,
+                    },
+                    [9; 32],
+                )
+                .unwrap();
+                let account = node.growth_account(working.block, owner).unwrap().unwrap();
+                assert_eq!(account.nonce, 1);
+                let mut tx = Envelope {
+                    network: node.settings.network(),
+                    sender: owner,
+                    nonce: account.nonce + 1,
+                    expiry: 256,
+                    fee_limit: 1_000_000,
+                    tag: FACTOR_TAG,
+                    payload: witness.encode().unwrap(),
+                    signature: [0; 64],
+                };
+                let key = signing_key_from_hex(&hex::encode(hash(
+                    b"DEV-ONLY-KEY",
+                    &[&0_u64.to_le_bytes()],
+                )))
+                .unwrap();
+                tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+                    .unwrap()
+                    .try_into()
+                    .unwrap();
+                let raw = tx.encode().unwrap();
+                second_candidate = Some(witness.contribution_id);
+                second_transaction = Some(hex::encode(hash(b"tx-id", &[&raw])));
+                vec![raw]
+            } else {
+                vec![]
+            };
+            let packet = node
+                .make_growth_consensus_maintenance(
+                    node.active().unwrap().0,
+                    transactions,
+                    development_public(3).unwrap(),
+                    1_800_000_000 + height * 10,
+                    4096,
+                )
+                .unwrap();
+            assert_eq!(packet.header.ledger.height, height);
+            let block = node.admit_growth(&packet, now).unwrap();
+            node.activate(block).unwrap();
+            blocks.insert(height, block);
+
+            // Missing signed reveals cause the actual mandatory relation to
+            // close the first round as aborted. No state or closure is injected.
+            if height == first_close || height == first_close + confirmation_depth {
+                let changes = node.db.total_changes();
+                let global = node
+                    .evaluation_observation(first_candidate, now, width)
+                    .unwrap();
+                let round = node
+                    .evaluation_round_observation(first_candidate, now, width)
+                    .unwrap();
+                assert_eq!(global.closed_result(), round.closed_result());
+                assert_eq!(global.closed_result().unwrap()["status"], "aborted");
+                assert_eq!(
+                    global.closed_result().unwrap()["closed_height"],
+                    first_close
+                );
+                assert!(global.closed_result().unwrap()["score"].is_null());
+                let closed = serde_json::to_value(global.closure_anchor().unwrap()).unwrap();
+                assert_eq!(closed["block"], hex::encode(blocks[&first_close]));
+                assert_eq!(closed["height"], first_close);
+                assert_eq!(closed["confirmed"], height > first_close);
+                assert_eq!(
+                    serde_json::to_value(round.closure_anchor().unwrap()).unwrap(),
+                    closed
+                );
+                assert_eq!(node.db.total_changes(), changes);
+            }
+            if height == width || height == width + 1 {
+                let candidate = second_candidate.unwrap();
+                let checked = height - (width - 1);
+                let observation = node
+                    .evaluation_round_observation(candidate, now, checked)
+                    .unwrap();
+                let view = serde_json::to_value(&observation).unwrap();
+                assert_eq!(view["round_start"], width);
+                assert_eq!(view["round_blocks_checked"], checked);
+                assert_eq!(
+                    view["base_anchor"]["block"],
+                    hex::encode(blocks[&(width - 1)])
+                );
+                assert_eq!(view["base_anchor"]["height"], width - 1);
+                assert_eq!(view["base_anchor"]["clock_checked"], false);
+                assert_eq!(view["base_anchor"]["confirmation_evaluated"], false);
+                assert_eq!(view["base_anchor"]["confirmed"], false);
+                assert_eq!(view["ancestry_index_sql_lookups"], 0);
+                assert_eq!(view["historical_states_root_checked"], height - width);
+                assert_eq!(
+                    view["candidate_anchor"]["block"],
+                    hex::encode(blocks[&width])
+                );
+                assert_eq!(
+                    view["candidate_anchor"]["transaction"],
+                    second_transaction.as_ref().unwrap().as_str()
+                );
+                assert_eq!(
+                    view["candidate_anchor"]["transaction_membership_verified"],
+                    true
+                );
+                assert!(view["closure_anchor"].is_null());
+                assert_eq!(view["global_confirmed_prefix"], false);
+                assert_eq!(view["global_clock_history_checked"], false);
+                assert_eq!(
+                    node.evaluation_observation(candidate, now, checked)
+                        .unwrap_err()
+                        .to_string(),
+                    "EVALUATION_OBSERVATION_LIMIT"
+                );
+                if height > width {
+                    assert_eq!(
+                        node.evaluation_round_observation(candidate, now, checked - 1)
+                            .unwrap_err()
+                            .to_string(),
+                        "EVALUATION_OBSERVATION_LIMIT"
+                    );
+                }
+                let working = node.growth_current_working().unwrap().working;
+                assert!(!working
+                    .contains_key(&format!("contribution:{}", hex::encode(first_candidate))));
+                assert!(working.contains_key(&format!(
+                    "evaluation-archive:{}",
+                    hex::encode(first_candidate)
+                )));
+                assert_eq!(
+                    node.evaluation_observation(first_candidate, now, 256)
+                        .unwrap()
+                        .closed_result()
+                        .unwrap()["closed_height"],
+                    first_close
+                );
+            }
+            if height == second_close || height == last_height {
+                let candidate = second_candidate.unwrap();
+                let changes = node.db.total_changes();
+                let global = node.evaluation_observation(candidate, now, 256).unwrap();
+                let round = node
+                    .evaluation_round_observation(candidate, now, height - width + 1)
+                    .unwrap();
+                let global_view = serde_json::to_value(&global).unwrap();
+                let round_view = serde_json::to_value(&round).unwrap();
+                assert_eq!(global.closed_result(), round.closed_result());
+                assert_eq!(
+                    global.closed_result().unwrap()["closed_height"],
+                    second_close
+                );
+                assert_eq!(global.closed_result().unwrap()["status"], "aborted");
+                let historical = node.growth_working(blocks[&second_close]).unwrap();
+                let actual = evaluation::read_evaluation(&historical, candidate).unwrap();
+                assert_eq!(global.closed_result().unwrap(), &actual["closed"]);
+                assert_eq!(
+                    global_view["closed_result_digest"],
+                    hex::encode(evaluation::closed_digest(&actual).unwrap())
+                );
+                assert_eq!(
+                    global_view["closed_result_digest"],
+                    round_view["closed_result_digest"]
+                );
+                assert_eq!(global_view["closure_anchor"], round_view["closure_anchor"]);
+                assert_eq!(
+                    global_view["closure_anchor"]["block"],
+                    hex::encode(blocks[&second_close])
+                );
+                assert_eq!(
+                    global_view["closure_anchor"]["confirmed"],
+                    height > second_close
+                );
+                assert_eq!(
+                    round_view["base_anchor"]["block"],
+                    hex::encode(blocks[&(width - 1)])
+                );
+                assert_eq!(round_view["historical_states_root_checked"], height - width);
+                assert_eq!(round_view["ancestry_index_sql_lookups"], 0);
+                assert_eq!(node.db.total_changes(), changes);
+            }
+        }
+        let candidate = second_candidate.unwrap();
+        // The predecessor of the bounded round is still identity-checked, even
+        // though its clock and confirmation policy are outside the observation.
+        let base = blocks[&(width - 1)];
+        let packet = node.growth_packet(base).unwrap();
+        let original = packet.encode().unwrap();
+        let mut changed = original.clone();
+        let mut header = packet.header.clone();
+        header.witness[0] ^= 1;
+        let header = header.encode();
+        changed[4..4 + header.len()].copy_from_slice(&header);
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![changed, base.as_slice()],
+            )
+            .unwrap();
+        assert_eq!(
+            node.evaluation_round_observation(candidate, now, last_height - width + 1)
+                .unwrap_err()
+                .to_string(),
+            "GROWTH_PACKET_ID"
+        );
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![original, base.as_slice()],
+            )
+            .unwrap();
+
+        // Corrupt only the real historical closure snapshot; current and
+        // submitted partitions remain valid. Neither observer may reuse it.
+        let closure_block = blocks[&second_close];
+        let original: Vec<u8> = node
+            .db
+            .query_row(
+                "SELECT data FROM growth_states WHERE block=?",
+                [closure_block.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let changed = changed_growth_working_row(
+            &original,
+            &format!("contribution:{}", hex::encode(candidate)),
+            |row| {
+                row["public_evaluation"]["closed"]["closed_height"] = Value::from(second_close - 1);
+            },
+        );
+        node.db
+            .execute(
+                "UPDATE growth_states SET data=? WHERE block=?",
+                rusqlite::params![changed, closure_block.as_slice()],
+            )
+            .unwrap();
+        node.growth_current_working().unwrap();
+        assert_eq!(
+            node.evaluation_observation(candidate, now, 256)
+                .unwrap_err()
+                .to_string(),
+            "GROWTH_EXECUTION:StateWitness(Commitment)"
+        );
+        assert_eq!(
+            node.evaluation_round_observation(candidate, now, last_height - width + 1)
+                .unwrap_err()
+                .to_string(),
+            "GROWTH_EXECUTION:StateWitness(Commitment)"
+        );
+        node.db
+            .execute(
+                "UPDATE growth_states SET data=? WHERE block=?",
+                rusqlite::params![original, closure_block.as_slice()],
+            )
+            .unwrap();
+        node.evaluation_observation(candidate, now, 256).unwrap();
+        node.evaluation_round_observation(candidate, now, last_height - width + 1)
+            .unwrap();
+    }
+
+    #[test]
+    fn growth_evaluation_views_reject_packet_history_and_pending_reorg_corruption() {
+        let (_directory, mut node, packet, candidate) =
+            growth_evaluation_fixture(trnm_mvcc_fee::model_evidence_v3::PROFILE);
+        let block = packet.id().unwrap();
+        let now = 1_800_010_000;
+        let descendant = node
+            .make_growth_consensus_maintenance(
+                block,
+                vec![],
+                development_public(3).unwrap(),
+                1_800_000_020,
+                4096,
+            )
+            .unwrap();
+        let tip = node.admit_growth(&descendant, now).unwrap();
+        node.activate(tip).unwrap();
+        let reject = |node: &Node, code: &str| {
+            assert_eq!(
+                node.evaluation_observation(candidate, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                code
+            );
+            assert_eq!(
+                node.evaluation_round_observation(candidate, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                code
+            );
+            assert!(node.db.is_autocommit());
+        };
+        let original_packet = packet.encode().unwrap();
+        let mut changed_header = packet.header.clone();
+        changed_header.witness[0] ^= 1;
+        let mut changed_packet = original_packet.clone();
+        let header = changed_header.encode();
+        changed_packet[4..4 + header.len()].copy_from_slice(&header);
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![changed_packet, block.as_slice()],
+            )
+            .unwrap();
+        reject(&node, "GROWTH_PACKET_ID");
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![&original_packet, block.as_slice()],
+            )
+            .unwrap();
+        let mut changed = packet.clone();
+        let mut tx = Envelope::decode(&changed.transactions[0]).unwrap();
+        tx.signature[0] ^= 1;
+        changed.transactions[0] = tx.encode().unwrap();
+        assert_eq!(changed.id().unwrap(), block);
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![changed.encode().unwrap(), block.as_slice()],
+            )
+            .unwrap();
+        reject(&node, "ROOT");
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                rusqlite::params![&original_packet, block.as_slice()],
+            )
+            .unwrap();
+        let original: Vec<u8> = node
+            .db
+            .query_row(
+                "SELECT data FROM growth_states WHERE block=?",
+                [block.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let bytes = changed_growth_working_row(
+            &original,
+            &format!("contribution:{}", hex::encode(candidate)),
+            |row| row["artifact"] = Value::from(hex::encode([99; 32])),
+        );
+        node.db
+            .execute(
+                "UPDATE growth_states SET data=? WHERE block=?",
+                rusqlite::params![bytes, block.as_slice()],
+            )
+            .unwrap();
+        // Current working state is intact. Both the global history lookup and
+        // round's intermediate COW lookup must still reject the old partition.
+        node.growth_current_working().unwrap();
+        reject(&node, "GROWTH_EXECUTION:StateWitness(Commitment)");
+        node.db
+            .execute(
+                "UPDATE growth_states SET data=? WHERE block=?",
+                rusqlite::params![original, block.as_slice()],
+            )
+            .unwrap();
+        node.db.execute("UPDATE reorg SET done=0", []).unwrap();
+        reject(&node, "REORG_IN_PROGRESS");
+        node.db.execute("UPDATE reorg SET done=1", []).unwrap();
+        node.evaluation_observation(candidate, now, 8).unwrap();
+        node.evaluation_round_observation(candidate, now, 8)
+            .unwrap();
+    }
+
+    #[test]
+    fn growth_evaluation_views_refuse_foreign_writes_during_and_after_snapshot() {
+        for during in [true, false] {
+            let (directory, node, packet, candidate) =
+                growth_evaluation_fixture(trnm_mvcc_fee::model_evidence_v3::PROFILE);
+            let now = 1_800_010_000;
+            let prior = node.evaluation_observation(candidate, now, 8).unwrap();
+            let read = if during {
+                node.evaluation_read_snapshot().unwrap()
+            } else {
+                None
+            };
+            let (tip, generation) = node.active().unwrap();
+            if during {
+                node.evaluation_current_state().unwrap();
+            }
+            let version_before: u64 = node
+                .db
+                .query_row("PRAGMA data_version", [], |row| row.get(0))
+                .unwrap();
+            let external =
+                rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+            let block = packet.id().unwrap();
+            let original: Vec<u8> = external
+                .query_row(
+                    "SELECT data FROM growth_states WHERE block=?",
+                    [block.as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            let mut changed = original.clone();
+            changed.push(b' ');
+            // Two real commits change and restore the retained bytes. A no-op
+            // UPDATE need not dirty a SQLite page and cannot prove this fence.
+            assert_eq!(
+                external
+                    .execute(
+                        "UPDATE growth_states SET data=? WHERE block=?",
+                        rusqlite::params![&changed, block.as_slice()],
+                    )
+                    .unwrap(),
+                1
+            );
+            assert!(external.is_autocommit());
+            let actual: Vec<u8> = external
+                .query_row(
+                    "SELECT data FROM growth_states WHERE block=?",
+                    [block.as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(actual, changed);
+            assert_ne!(actual, original);
+            assert_eq!(
+                external
+                    .execute(
+                        "UPDATE growth_states SET data=? WHERE block=?",
+                        rusqlite::params![&original, block.as_slice()],
+                    )
+                    .unwrap(),
+                1
+            );
+            assert!(external.is_autocommit());
+            let restored: Vec<u8> = external
+                .query_row(
+                    "SELECT data FROM growth_states WHERE block=?",
+                    [block.as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(restored, original);
+            if during {
+                assert_eq!(
+                    node.evaluation_finish_snapshot(read, tip, generation)
+                        .unwrap_err()
+                        .to_string(),
+                    "GROWTH_STORAGE_EPOCH_CHANGED"
+                );
+                assert!(node.db.is_autocommit());
+            }
+            let version_after: u64 = node
+                .db
+                .query_row("PRAGMA data_version", [], |row| row.get(0))
+                .unwrap();
+            assert_ne!(version_after, version_before);
+            assert_eq!(
+                node.check_evaluation_observation(&prior, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "GROWTH_STORAGE_EPOCH_CHANGED"
+            );
+            assert_eq!(
+                node.evaluation_round_observation(candidate, now, 8)
+                    .unwrap_err()
+                    .to_string(),
+                "GROWTH_STORAGE_EPOCH_CHANGED"
+            );
+        }
+    }
 
     #[test]
     fn factor_candidate_membership_is_exact_for_evidence_and_composition() {

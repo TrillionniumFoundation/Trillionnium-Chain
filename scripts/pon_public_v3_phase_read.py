@@ -60,6 +60,69 @@ def stats(values):
             'mean_known_ns': {'numerator': sum(known), 'denominator': n} if n else None}
 
 
+
+def interval_outcome_summary(slots, *, phase=False):
+    """Separate per-request terminal durations from unfinished observed costs.
+
+    A dropped phase can have a finite elapsed duration and an unknown result.
+    That duration is useful consumed-cost evidence, but is not a sample of
+    latency to a terminal outcome. No aggregate waiter sum is a request sample.
+    These are empirical nearest-rank statistics for retained entered slots;
+    requests outside this observer, unentered stages and lost records cannot be
+    reconstructed or turned into zero-duration requests.
+    """
+    entered = [slot for slot in slots if (slot.get('started') is True if phase
+               else slot.get('started_ns') is not None)]
+    terminal = [slot for slot in entered if slot.get('completed') is True]
+    unfinished = [slot for slot in entered if slot.get('completed') is not True]
+    for slot in entered:
+        require(type(slot.get('completed')) is bool, 'interval completed boolean required')
+        require(slot['completed'] is (slot.get('accepted') is not None),
+                'interval completion/outcome mismatch')
+        outcome(slot.get('accepted'))
+
+    def terminal_stats(values):
+        measured = stats(values)
+        # Keep the actual missing-duration denominator. A percentile computed
+        # after deleting an unknown terminal duration is a selected-cohort tail.
+        known = sorted(value for value in values if value is not None)
+        measured['p99_all_terminal_records_ns'] = (
+            known[(99 * len(known) + 99) // 100 - 1]
+            if known and len(known) == len(values) else None)
+        return measured
+
+    terminal_wall = terminal_stats([slot.get('wall_ns') for slot in terminal])
+    return {
+        'schema': 'pon-per-request-interval-outcomes-v1',
+        'slots': len(slots), 'entered': len(entered),
+        'unentered_or_entry_clock_unknown': len(slots) - len(entered),
+        'terminal_records': len(terminal), 'unfinished_records': len(unfinished),
+        'terminal_wall_ns': terminal_wall,
+        'terminal_by_outcome': {
+            name: terminal_stats([slot.get('wall_ns') for slot in terminal
+                                  if outcome(slot.get('accepted')) == name])
+            for name in ('accepted', 'rejected')},
+        'typed_terminal_error_counts': dict(Counter(str(slot.get('error_code'))
+                                                    for slot in terminal)),
+        'typed_cancelled_terminal_records': sum(slot.get('error_code') == 'PUBLIC_REQUEST_CANCELLED'
+                                                for slot in terminal),
+        'unfinished_observed_elapsed_wall_ns': stats([slot.get('wall_ns') for slot in unfinished]),
+        'p99_all_retained_entered_terminal_ns': (terminal_wall['p99_all_terminal_records_ns']
+                                                if not unfinished else None),
+        'scope': {
+            'unit': 'one retained request interval',
+            'terminal_includes_accepted_and_rejected': True,
+            'unfinished_elapsed_is_not_terminal_latency': True,
+            'known_only_statistics_keep_unknown_count': True,
+            'p99_requires_all_cohort_outcomes_and_durations': True,
+            'cumulative_waiter_time_is_not_request_p99': True,
+            'inclusive_stages_are_not_additive': True,
+            'unretained_or_unentered_requests_are_not_inferred': True,
+            'whole_request_population_p99_ns': None,
+        },
+    }
+
+
 def outcome(value):
     require(value is None or type(value) is bool, 'boolean or unknown outcome required')
     return 'accepted' if value is True else 'rejected' if value is False else 'unknown'
@@ -378,7 +441,8 @@ def arithmetic_observation(value):
     return value
 
 
-def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=False):
+def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=False,
+                      *, interval_outcomes=True):
     result = {
         'records': len(rows),
         'record_complete': sum(row.get('complete') is True for row in rows),
@@ -438,6 +502,8 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
                 'wall_ns': stats([p.get('wall_ns') for p in entered]),
                 'thread_cpu_ns': stats([p.get('thread_cpu_ns') for p in entered]),
                 'scope': 'entered slots only; unentered slots are counted separately, not zero CPU',
+                **({'interval_outcomes': interval_outcome_summary(slots, phase=True)}
+                   if interval_outcomes else {}),
                 **({'parent_phase': PHASE_PARENTS_V4.get(name),
                     'error_code_counts': dict(Counter(str(p.get('error_code')) for p in entered))}
                    if observer_v4 else {}),
@@ -451,6 +517,8 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
                     'wall_ns': stats([row[key]['wall_ns'] for row in rows
                                       if row[key]['started_ns'] is not None]),
                     'scope': 'wall only; queue includes bounded enqueue backpressure and FIFO wait until dequeue',
+                    **({'interval_outcomes': interval_outcome_summary([row[key] for row in rows])}
+                       if interval_outcomes else {}),
                 } for key in WAIT_FIELDS_V4
             }
     return result
@@ -560,7 +628,7 @@ def client_history_import_observations(history):
                       'unknown_cpu_is_not_zero': True, 'business_tps_capacity': None}}
 
 
-def phase_summary(phase):
+def phase_summary(phase, *, interval_outcomes=True):
     mode = phase['mode']
     require(mode in MODES, 'unknown campaign phase')
     base = {'mode': mode, 'state_backend': phase.get('state_backend'),
@@ -581,6 +649,9 @@ def phase_summary(phase):
         base['work_profile'] = ARITHMETIC_PROFILE
     if base['startup_or_campaign_error'] is not None:
         base.update(observations_available=False, confirmed_rounds=None)
+        if interval_outcomes:
+            base.update(observed_confirmation_rounds=0, unobserved_scheduled_rounds=ROUNDS,
+                        confirmation_rounds=[])
         return base
     if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14'):
         base['completion_work_observation'] = completion_work_observation(
@@ -678,8 +749,10 @@ def phase_summary(phase):
             'dispatch_cpu_scope': ('paid-body-decode-native-dispatch-signed-response'
                                    if schema.endswith(('-v3', '-v4')) else 'native-dispatch-only'),
             'native_observer_complete': phase['observer_complete'],
-            'all_retained_records': execution_summary(observer['records'], instrumented, arithmetic_profile, observer_v4),
-            'by_observed_body_role': {role: execution_summary(rows, instrumented, arithmetic_profile, observer_v4)
+            'all_retained_records': execution_summary(observer['records'], instrumented, arithmetic_profile, observer_v4,
+                                                             interval_outcomes=interval_outcomes),
+            'by_observed_body_role': {role: execution_summary(rows, instrumented, arithmetic_profile, observer_v4,
+                                                              interval_outcomes=interval_outcomes)
                                       for role, rows in sorted(grouped.items())}},
         'native_service_outcome': phase['service_outcome'],
         'final_cpu_meter': phase['final_meter'], 'final_actual_flow': phase.get('final_actual_flow'),
@@ -697,7 +770,7 @@ def phase_summary(phase):
     return base
 
 
-def analyze(report):
+def analyze(report, *, interval_outcomes=True):
     arithmetic_profile = report['schema'] == ARITHMETIC_REPORT_SCHEMA
     require(arithmetic_profile or report['schema'] == 'native-public-v3-separate-process-campaign-v2',
             'unknown campaign schema')
@@ -721,14 +794,15 @@ def analyze(report):
              report.get('adversarial_key_churn_service_qualified') is False
              if arithmetic_profile else 'work_profile' not in report),
             'explicit separate arithmetic campaign scope required')
-    result = {'schema': 'pon-public-v3-multiprocess-phase-derivation-v2',
+    result = {'schema': ('pon-public-v3-multiprocess-phase-derivation-v3' if interval_outcomes
+                         else 'pon-public-v3-multiprocess-phase-derivation-v2'),
             'state_backend': report.get('state_backend'),
             'native_finite_experiment_criteria_met': report['finite_experiment_criteria_met'],
             'native_economics_complete': report['economics_complete'],
             'best_observed_cold_legal_method': report['best_observed_cold_legal_method'],
             'honest_preparation_cpu_ns': report['preparation']['cpu_ns'],
             'honest_preparation_wall_ns': report['preparation']['wall_ns'],
-            'phases': [phase_summary(row) for row in report['phases']],
+            'phases': [phase_summary(row, interval_outcomes=interval_outcomes) for row in report['phases']],
             'scope': {'reader_runs_native_admission': False,
                       'host_or_source_authentication_performed': False,
                       'production_qualification': False, 'business_tps_capacity': None,
@@ -755,14 +829,19 @@ def analyze_for_retained_schema(report, schema):
     The original v1 reader accepted only v1/v2 native CPU observations, which
     excluded response construction. Its output had one combined exclusion flag
     and no per-phase dispatch_cpu_scope. These are the only versioned formatting
-    differences: every original measurement, outcome, denominator and threshold
+    differences for v1/v2. Version 3 additionally separates completed per-request
+    interval tails from unfinished elapsed costs. Historical reproduction omits
+    that extension: every original measurement, outcome, denominator and threshold
     field remains in the exact equality comparison performed by the caller.
     """
     require(schema in ('pon-public-v3-multiprocess-phase-derivation-v1',
-                       'pon-public-v3-multiprocess-phase-derivation-v2'),
+                       'pon-public-v3-multiprocess-phase-derivation-v2',
+                       'pon-public-v3-multiprocess-phase-derivation-v3'),
             'unknown retained phase derivation schema')
-    if schema.endswith('-v2'):
+    if schema.endswith('-v3'):
         return analyze(report)
+    if schema.endswith('-v2'):
+        return analyze(report, interval_outcomes=False)
     require('public_resource_policy' not in report
             and all('public_resource_policy' not in phase for phase in report['phases']),
             'historical v1 derivation cannot erase explicit public policy')
@@ -772,7 +851,7 @@ def analyze_for_retained_schema(report, schema):
                     'public-v3-local-request-resource-observation-v2')
                 for phase in report['phases']),
             'historical v1 derivation cannot describe paid-envelope v3 CPU')
-    value = analyze(report)
+    value = analyze(report, interval_outcomes=False)
     value['schema'] = schema
     for phase in value['phases']:
         if phase['observations_available']:
@@ -793,7 +872,15 @@ def read_report(path, expected, expected_public_policy_id=None):
     raw = path.read_bytes()
     require(len(raw) <= MAX_REPORT_BYTES and hashlib.sha256(raw).hexdigest() == expected,
             'retained report SHA256 mismatch')
-    report = json.loads(raw, parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite JSON')))
+    def unique_object(pairs):
+        value = {}
+        for key, item in pairs:
+            require(key not in value, 'duplicate JSON observation key: ' + key)
+            value[key] = item
+        return value
+
+    report = json.loads(raw, object_pairs_hook=unique_object,
+                        parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite JSON')))
     if expected_public_policy_id is not None:
         digest(expected_public_policy_id)
         require('public_resource_policy' in report,

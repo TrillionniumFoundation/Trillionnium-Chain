@@ -183,8 +183,10 @@ impl CellStoreV1 {
         wire: &[u8],
         deadline: Option<Instant>,
     ) -> CellResultV1<CellManifestV1> {
+        check_data_deadline(deadline)?;
         let manifest = CellManifestV1::decode(wire)?;
         require(manifest.id() == pinned, "manifest digest")?;
+        check_data_deadline(deadline)?;
         self.write_with_deadline(deadline, |connection| {
             connection.execute(
                 "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
@@ -197,6 +199,15 @@ impl CellStoreV1 {
     }
 
     pub fn manifest(&self, pinned: CellDigestV1) -> CellResultV1<Option<CellManifestV1>> {
+        self.manifest_with_deadline(pinned, None)
+    }
+
+    pub(super) fn manifest_with_deadline(
+        &self,
+        pinned: CellDigestV1,
+        deadline: Option<Instant>,
+    ) -> CellResultV1<Option<CellManifestV1>> {
+        check_data_deadline(deadline)?;
         let wire: Option<Option<Vec<u8>>> = self
             .connection
             .query_row(
@@ -206,12 +217,14 @@ impl CellStoreV1 {
                 |r| r.get(0),
             )
             .optional()?;
+        check_data_deadline(deadline)?;
         match wire {
             None => Ok(None),
             Some(None) => Err(CellErrorV1::Invalid("cached manifest length")),
             Some(Some(bytes)) => {
                 let manifest = CellManifestV1::decode(&bytes)?;
                 require(manifest.id() == pinned, "cached manifest digest")?;
+                check_data_deadline(deadline)?;
                 Ok(Some(manifest))
             }
         }
@@ -227,7 +240,7 @@ impl CellStoreV1 {
         bytes: &[u8],
         deadline: Option<Instant>,
     ) -> CellResultV1<()> {
-        verify_chunk(expected, bytes)?;
+        verify_chunk_with_deadline(expected, bytes, deadline)?;
         self.write_with_deadline(deadline, |connection| {
             connection.execute(
                 "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
@@ -269,7 +282,7 @@ impl CellStoreV1 {
         // Reject a malformed member before changing even the first cache row.
         // Per-chunk lengths also bound this batch by 8 * MAX_CHUNK_BYTES.
         for (expected, bytes) in chunks {
-            verify_chunk(expected, bytes)?;
+            verify_chunk_with_deadline(expected, bytes, deadline)?;
         }
         self.write_with_deadline(deadline, |transaction| {
             {
@@ -301,6 +314,7 @@ impl CellStoreV1 {
         hash: CellDigestV1,
         deadline: Option<Instant>,
     ) -> CellResultV1<Option<Vec<u8>>> {
+        check_data_deadline(deadline)?;
         let row: Option<Option<Vec<u8>>> = self
             .connection
             .query_row(
@@ -310,11 +324,14 @@ impl CellStoreV1 {
                 |r| r.get(0),
             )
             .optional()?;
+        check_data_deadline(deadline)?;
         let Some(row) = row else {
             return Ok(None);
         };
         if let Some(bytes) = row {
-            if <[u8; 32]>::from(Sha256::digest(&bytes)) == hash {
+            let actual = <[u8; 32]>::from(Sha256::digest(&bytes));
+            check_data_deadline(deadline)?;
+            if actual == hash {
                 return Ok(Some(bytes));
             }
         }
@@ -324,8 +341,11 @@ impl CellStoreV1 {
                     "SELECT CASE WHEN length(bytes) BETWEEN 1 AND ?2 THEN bytes ELSE NULL END FROM cell_chunks_v1 WHERE hash=?1",
                     params![hash.as_slice(), i64::from(MAX_CHUNK_BYTES)], |r| r.get::<_, Option<Vec<u8>>>(0),
                 ).optional()?.flatten();
+                check_data_deadline(deadline)?;
                 if let Some(bytes) = current {
-                    if <[u8; 32]>::from(Sha256::digest(&bytes)) == hash { return Ok(Some(bytes)); }
+                    let actual = <[u8; 32]>::from(Sha256::digest(&bytes));
+                    check_data_deadline(deadline)?;
+                    if actual == hash { return Ok(Some(bytes)); }
                 }
                 connection.execute("DELETE FROM cell_chunks_v1 WHERE hash = ?1", [hash.as_slice()])?;
                 Ok(None)
@@ -527,8 +547,10 @@ impl CellStoreV1 {
             // hash without hashing the same immutable buffer a second time.
             verify_chunk_length(expected, &bytes)?;
             full.update(&bytes);
+            check_data_deadline(deadline)?;
             total += bytes.len() as u64;
             writer.write_all(&bytes)?;
+            check_data_deadline(deadline)?;
         }
         require(
             total == manifest.size()
@@ -539,11 +561,29 @@ impl CellStoreV1 {
 }
 
 pub(super) fn verify_chunk(expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
+    verify_chunk_with_deadline(expected, bytes, None)
+}
+
+// Cache content is immutable by identity, but CPU time is an invocation-local
+// resource. Never let a valid cache hit renew the caller's expired work budget.
+// A digest covers at most MAX_CHUNK_BYTES; SQLite and hashing are cooperative.
+pub(super) fn verify_chunk_with_deadline(
+    expected: &CellChunkV1,
+    bytes: &[u8],
+    deadline: Option<Instant>,
+) -> CellResultV1<()> {
+    check_data_deadline(deadline)?;
     verify_chunk_length(expected, bytes)?;
-    require(
-        <[u8; 32]>::from(Sha256::digest(bytes)) == expected.sha256,
-        "chunk digest",
-    )
+    let actual = <[u8; 32]>::from(Sha256::digest(bytes));
+    check_data_deadline(deadline)?;
+    require(actual == expected.sha256, "chunk digest")
+}
+
+fn check_data_deadline(deadline: Option<Instant>) -> CellResultV1<()> {
+    if let Some(deadline) = deadline {
+        super::network::remaining(deadline)?;
+    }
+    Ok(())
 }
 
 pub(super) fn verify_chunk_length(expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {

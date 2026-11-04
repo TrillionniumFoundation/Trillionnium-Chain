@@ -52,6 +52,57 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Request outcomes, growth evaluation and Cell work budgets — 2026-11-04
+
+Continue PR #688 from `93e207c8d2ccb8509f78566223abc371b9d8118b`.
+The existing public request reader now separates terminal request intervals from
+unfinished elapsed costs. Its versioned v3 output retains accepted, rejected,
+cancelled and unknown denominators, reports empirical per-request tails only for
+fully observed cohorts, and never substitutes cumulative waiter time for a
+request percentile. Duplicate JSON observation keys are rejected. Historical
+v1/v2 reports retain their exact original derivation shapes and failures.
+
+The actual model-evaluation and round-evaluation APIs select the authenticated
+Growth V2 working interface under one guarded SQLite snapshot. PNP2 identities,
+committed transaction membership, current and historical working roots, current
+clock/required work, active generation and pending-reorg checks remain bound.
+Fresh epoch/generation checks also run after releasing the read snapshot.
+Legacy evaluation retains its existing complete-state and ancestry-index path.
+The bounded working partition is still validated completely, and the global
+observer still traverses its explicitly bounded ancestry; this is not universal
+touched-key complexity or an authority cache.
+
+The explicit `growth-evaluation-observe` and `growth-evaluation-round-observe`
+commands expose these APIs under the existing fixed development profile and
+namespace. They validate candidate, bounds and clock before probing the source,
+require an existing store, and use the private snapshot observer instead of the
+writer initialization/recovery path. Private copying and cold audit run outside
+the bounded observation; this change does not separately measure those costs.
+
+Parallel preparation is not universally connected: Growth's Node opener, M06
+adapter and public worker option still require one worker. A future bounded
+signature-preparation connection must carry the original scoped CPU accounting
+and retain canonical-only witness access, ordered state effects and the unique
+commit owner. Existing immutable caches do not provide live permission or the
+still-absent funded runtime FinalUse factory.
+
+Cell cache reads, manifest work, chunk verification and materialization retain
+the original operation deadline through their cooperative boundaries. The
+original bounded serving owner checks actual response-byte exhaustion at its
+intake boundary; shared serving paths also check before cache access. Persistent
+V2 retains its own finite admission bounds. Temporary reservations remain
+refundable; partial writes stay charged and all admitted workers are joined.
+The legacy serving API is not silently assigned a new resource policy. These
+checks do not preempt an already entered SQLite/hash/filesystem call or prove
+cross-process CPU, memory and network isolation.
+
+The [small reproduction record](../../evidence/pon-throughput-continuation-20261104/request-working-data/README.md)
+contains original-source counterexamples, selected source identities, actual
+native controls and retained-report compatibility. Preserve the original
+four-second/16-attacker business and 4,105-block History requirements, complete
+nonce/debt/supply/expiry/reorg rules, and independent host/model/PQ acceptance.
+All qualification and activation flags remain unchanged.
+
 #### Persisted public-pilot attempts and validated local costs — 2026-11-04
 
 Continue PR #688 from `d0737cf5434894ce47fad8082376fc417313c2cb` using the existing

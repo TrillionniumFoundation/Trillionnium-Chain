@@ -332,6 +332,21 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
     "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
 ))
+# Exact consumer and business-path bytes for the request/working-state/data
+# continuation. Observation output is never execution authority, and these
+# finite resource checks do not establish host isolation or public acceptance.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/pon_public_v3_phase_read.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

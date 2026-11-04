@@ -649,3 +649,143 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+#[test]
+fn exhausted_serving_budget_refuses_before_fresh_payload_lookup() {
+    let (_dir, path, manifest) = fixture();
+    let store = CellStoreV1::open_read_only(&path).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let budget = ResponseBudget::new(9);
+    let mut query = b"TCQ1\x02".to_vec();
+    query.extend([0; 32]);
+    let mut first = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    first.write_all(&query).unwrap();
+    let (mut stream, _) = listener.accept().unwrap();
+    // A real absent-chunk response spends the complete original egress grant.
+    serve_one_budgeted(&mut stream, &store, deadline, Some(&budget)).unwrap();
+    let mut response = [0_u8; 9];
+    first.read_exact(&mut response).unwrap();
+    assert_eq!(&response[..5], b"TCS1\x01");
+    assert_eq!(budget.received().unwrap(), 9);
+    drop((stream, first));
+
+    rusqlite::Connection::open(&path)
+        .unwrap()
+        .execute_batch("DROP TABLE cell_chunks_v1")
+        .unwrap();
+    query[5..].copy_from_slice(&manifest.chunks()[0].sha256);
+    let mut second = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    second.write_all(&query).unwrap();
+    let (mut stream, _) = listener.accept().unwrap();
+    assert!(matches!(
+        serve_one_budgeted(&mut stream, &store, deadline, Some(&budget)),
+        Err(CellErrorV1::Io(error)) if error.to_string() == "CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED"
+    ));
+    assert_eq!(budget.received().unwrap(), 9);
+    drop(stream);
+    let mut bytes = Vec::new();
+    second.read_to_end(&mut bytes).unwrap();
+    assert!(bytes.is_empty());
+    // Storage was actually broken; the exhausted branch must not read it.
+    assert!(matches!(
+        store.chunk(manifest.chunks()[0].sha256),
+        Err(CellErrorV1::Sql(_))
+    ));
+}
+
+#[test]
+fn zero_serving_byte_budget_admits_no_socket_or_payload_worker() {
+    let (_dir, path, _manifest) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let _queued = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    let report = serve_cells_bounded(
+        &listener,
+        &path,
+        &AtomicBool::new(false),
+        CellServeLimitsV1 {
+            max_response_bytes: 0,
+            max_connections: 1,
+            request_timeout: Duration::from_millis(10),
+            overall_timeout: Duration::from_millis(10),
+            ..limits()
+        },
+    )
+    .unwrap();
+    assert_eq!(report, CellServeReportV1::default());
+}
+
+#[test]
+fn positive_exhaustion_stops_intake_and_joins_admitted_half_request() {
+    let (_dir, path, _manifest) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let (observed, seen) = mpsc::channel();
+    let (resume, intake) = mpsc::channel();
+    let intake = std::sync::Mutex::new(intake);
+    let handle = thread::spawn(move || {
+        serve_cells_inner(
+            &listener,
+            &path,
+            &AtomicBool::new(false),
+            CellServeLimitsV1 {
+                max_connections: 20,
+                max_response_bytes: 9,
+                request_timeout: Duration::from_millis(750),
+                overall_timeout: Duration::from_secs(3),
+                ..limits()
+            },
+            &|report| {
+                observed.send(report.clone()).unwrap();
+                if report.accepted_connections == 2 {
+                    // Stop only the intake observer. The real socket workers
+                    // retain their original deadlines and run normally.
+                    intake
+                        .lock()
+                        .unwrap()
+                        .recv_timeout(Duration::from_secs(2))
+                        .unwrap();
+                }
+            },
+        )
+    });
+    let mut half = TcpStream::connect(address).unwrap();
+    half.write_all(b"T").unwrap();
+    assert_eq!(
+        seen.recv_timeout(Duration::from_secs(2))
+            .unwrap()
+            .accepted_connections,
+        1
+    );
+    let mut absent = TcpStream::connect(address).unwrap();
+    let mut query = b"TCQ1\x02".to_vec();
+    query.extend([0; 32]);
+    absent.write_all(&query).unwrap();
+    assert_eq!(
+        seen.recv_timeout(Duration::from_secs(2))
+            .unwrap()
+            .accepted_connections,
+        2
+    );
+    absent
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
+    let mut response = [0_u8; 9];
+    absent.read_exact(&mut response).unwrap();
+    assert_eq!(&response[..5], b"TCS1\x01");
+    // EOF follows worker completion and actual-byte accounting, whereas
+    // kernel delivery alone can precede the sender's accounting checkpoint.
+    assert_eq!(absent.read(&mut [0; 1]).unwrap(), 0);
+    // The original positive grant was actually written before another socket
+    // is queued. No shutdown or max_connections exit can mask the intake guard.
+    let _queued = TcpStream::connect(address).unwrap();
+    resume.send(()).unwrap();
+    let report = handle.join().unwrap().unwrap();
+    assert_eq!(report.accepted_connections, 2);
+    assert_eq!(report.completed_requests, 1);
+    assert_eq!(report.peak_active_workers, 2);
+    assert_eq!(report.overloaded_connections, 0);
+    assert_eq!(report.sent_response_bytes, 9);
+    half.set_read_timeout(Some(Duration::from_secs(2))).unwrap();
+    assert_eq!(half.read(&mut [0; 1]).unwrap(), 0);
+}

@@ -288,7 +288,7 @@ impl CellResidencyV1 {
         for file in closure.files() {
             checkpoint(deadline, cancelled)?;
             let manifest = store
-                .manifest(file.manifest)?
+                .manifest_with_deadline(file.manifest, Some(deadline))?
                 .ok_or(CellErrorV1::Unavailable)?;
             closure.verify_manifest(&manifest)?;
             references = references

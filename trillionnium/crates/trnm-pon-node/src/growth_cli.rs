@@ -138,6 +138,8 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
         }
         "growth-submit" => "--packet --packet-stdin --logical-now",
         "growth-packet-status" => "--packet --packet-stdin",
+        "growth-evaluation-observe" => "--candidate --ancestry-blocks --logical-now",
+        "growth-evaluation-round-observe" => "--candidate --round-blocks --logical-now",
         "growth-export" => "--block --output",
         "growth-activate" => "--block",
         _ => return Err("GROWTH_COMMAND".into()),
@@ -161,6 +163,24 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
     let owner = args.get("--owner").map(|s| digest(s)).transpose()?;
     let parent = args.get("--parent").map(|s| digest(s)).transpose()?;
     let block = args.get("--block").map(|s| digest(s)).transpose()?;
+    let evaluation_query = if matches!(
+        command,
+        "growth-evaluation-observe" | "growth-evaluation-round-observe"
+    ) {
+        let candidate = digest(need(args, "--candidate")?)?;
+        let option = if command == "growth-evaluation-observe" {
+            "--ancestry-blocks"
+        } else {
+            "--round-blocks"
+        };
+        let bound = number(args, option, 4096)?;
+        if !(1..=4096).contains(&bound) {
+            return Err("EVALUATION_OBSERVATION_LIMIT".into());
+        }
+        Some((candidate, bound))
+    } else {
+        None
+    };
     if command == "growth-account" && owner.is_none() {
         return Err("GROWTH_OWNER_REQUIRED".into());
     }
@@ -179,9 +199,6 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
     } else {
         None
     };
-    if command == "growth-packet-status" && !path.join("native.sqlite").is_file() {
-        return Err("GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
-    }
     let owners = if command == "growth-witness" {
         let raw: Vec<String> = serde_json::from_slice(&read(need(args, "--owners")?, 80_000)?)?;
         if raw.is_empty() || raw.len() > limits::MAX_WITNESS_ACCOUNTS {
@@ -230,7 +247,19 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             .map_err(|_| Error::from("CLOCK"))?
             .as_secs(),
     )?;
-    let mut node = if command == "growth-packet-status" {
+    // Query inputs, including the logical clock, are validated before even the
+    // source-store probe. Observation opens only the existing private snapshot
+    // path; it must not initialize or recover the source namespace.
+    let observation_only = command == "growth-packet-status" || evaluation_query.is_some();
+    if observation_only && !path.join("native.sqlite").is_file() {
+        return Err(if command == "growth-packet-status" {
+            "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED"
+        } else {
+            "GROWTH_EVALUATION_EXISTING_STORE_REQUIRED"
+        }
+        .into());
+    }
+    let mut node = if observation_only {
         Node::open_growth_packet_observer(path, settings)?
     } else {
         Node::open_with_permanent_account_growth_v2(path, settings)?
@@ -291,6 +320,14 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
         }
         "growth-packet-status" => {
             node.growth_exact_packet_observation(&supplied.ok_or("GROWTH_PACKET_REQUIRED")?)?
+        }
+        "growth-evaluation-observe" => {
+            let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_observation(candidate, now, bound)?)?
+        }
+        "growth-evaluation-round-observe" => {
+            let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_round_observation(candidate, now, bound)?)?
         }
         "growth-export" => {
             let packet = node.growth_packet(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;

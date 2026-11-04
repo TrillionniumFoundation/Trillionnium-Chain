@@ -153,6 +153,7 @@ fn serve_cells_profile(
         let mut failure = None;
         while !shutdown.load(Ordering::Relaxed)
             && report.accepted_connections < limits.max_connections
+            && responses.received()? < limits.max_response_bytes
             && Instant::now() < deadline
         {
             for (slot, reader) in active.iter_mut().zip(&mut readers) {

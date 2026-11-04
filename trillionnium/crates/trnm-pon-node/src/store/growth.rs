@@ -3,7 +3,9 @@
 //! root and complete bounded working partition; every fork root remains pinned.
 //! Hot operations validate used paths under a cold-audited SQLite epoch. A
 //! foreign data_version/schema change refuses service until a fresh cold audit.
-use super::{bytes32, canonical, schema, Delta, NativeOwners, Node, StateBackend};
+use super::{
+    bytes32, canonical, schema, Delta, NativeOwners, Node, StateBackend, StoredHeaderLink,
+};
 use crate::account_archive_execution::state_witness::{
     growth_commitment_from_complete_state_v2, native_growth, GrowthStateCommitmentV2,
     VerifiedGrowthStateCommitmentV2,
@@ -376,7 +378,7 @@ impl Node {
         tx.rollback()?;
         Ok(result)
     }
-    /// Caller holds one read transaction for a multi-step funding/payment proof.
+    /// Caller holds one read transaction for a multi-step native observation.
     pub(in crate::store) fn growth_snapshot_in_read(&self) -> Result<GrowthWorkingSnapshot> {
         self.growth_guard()?;
         let (block, generation) = self.active()?;
@@ -391,6 +393,49 @@ impl Node {
     }
     pub(in crate::store) fn growth_payment_epoch(&self) -> Result<()> {
         self.growth_guard()
+    }
+    /// Bounded historical working state for a caller-owned read snapshot. The
+    /// complete working commitment and account-root checkpoint are still bound
+    /// to the retained block; no permanent account enumeration is needed.
+    pub(in crate::store) fn growth_working_in_read(&self, block: Hash) -> Result<State> {
+        ensure(!self.db.is_autocommit(), "GROWTH_READ_SNAPSHOT_REQUIRED")?;
+        self.growth_guard()?;
+        Ok(self.growth_parent(block)?.source.stored.working)
+    }
+    pub(in crate::store) fn growth_observation_epoch(&self) -> Result<()> {
+        self.growth_guard()
+    }
+    /// The evaluation reader has one guarded read snapshot for its entire
+    /// ancestor walk. Check the PNP2 header/trace identity and both stored rows;
+    /// the caller freshly assesses clock, chainwork and confirmation policy.
+    pub(in crate::store) fn growth_evaluation_header_link(
+        &self,
+        id: Hash,
+    ) -> Result<StoredHeaderLink> {
+        ensure(!self.db.is_autocommit(), "GROWTH_READ_SNAPSHOT_REQUIRED")?;
+        (|| {
+            let header = self.growth_header(id)?.ledger;
+            let record = self.record(id)?;
+            ensure(
+                header.network == self.settings.network()
+                    && header.parameters == self.settings.parameters()
+                    && record.parent == Some(header.parent)
+                    && record.height == header.height
+                    && record.root == header.state,
+                "GROWTH_HEADER_RECORD",
+            )?;
+            let parent = self.record(header.parent)?;
+            ensure(
+                parent.height.checked_add(1) == Some(record.height),
+                "ANCESTRY_HEIGHT",
+            )?;
+            Ok(StoredHeaderLink {
+                header,
+                record,
+                parent_work: parent.work,
+            })
+        })()
+        .map_err(Error::local_integrity)
     }
     /// Actual native point reads and compact witness construction. No full
     /// account enumeration is performed, and authenticated absence is explicit.
