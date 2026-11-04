@@ -337,6 +337,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -355,6 +362,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-checkpoint-store/src/node_commit_ledger_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs"
         )),
     ),
     (
@@ -5738,6 +5752,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-release-bundle/src/lib.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs"
         )),
     ),
     (

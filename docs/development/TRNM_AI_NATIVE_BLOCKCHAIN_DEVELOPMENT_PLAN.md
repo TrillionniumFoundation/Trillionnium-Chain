@@ -5865,3 +5865,44 @@ their original profiles and all features. Source and ELF guards remain unchanged
 through these local observations. The original complete Node, exact committed
 head and actual merge, service, history and independent qualification gates stay
 open until their own evidence passes.
+
+### 2026-11-04 independently pinned recovery, PQ release roles and fixed hybrid TLS
+
+Continue the existing integration candidate with the
+[recovery/release/transport boundary contract](../security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md).
+The checkpoint daemon separates new registration from cold recovery and requires
+an independently retained complete journal count/root before accepting an existing
+namespace. A genuine old-code counterexample restores the complete journal and
+sibling head; structural validity alone does not establish freshness. The new
+recovery expectation must be checked before local anchor repair or service binding.
+
+M15's existing release-bundle verification gains a bounded ML-DSA-65 role kernel:
+independently pinned offline-root thresholds, separate software/configuration/Cell
+manifest/Cell activation roles, old-and-new root quorums, retained retired-key
+identities, exact prior checkpoint and increasing role versions. Selecting old
+content requires fresh signed rollback approval. The kernel uses a distinct binary
+profile; complete TUF/TAP21 SDK conformance, durable installer ownership and live
+FinalUse composition retain their existing independent acceptance requirements.
+
+The real TLS/mTLS tests bind CLI, headers and libraries to the declared frozen
+OpenSSL provider. Standard hybrid-group support and ML-DSA identity are checked
+with actual handshakes and application bytes; the established peer profile keeps
+its own exact group, signature, exporter, pin and application-authority policy.
+Original wrong-provider failures remain evidence. Missing PQ capability cannot be
+silently replaced by a system crypto library or an accepted classical identity.
+
+These component changes preserve the separate effect-state obligations: durable
+intent, one stable operation ID, atomic current-revocation-aware claim, exact effect
+dispatch and same-ID reconciliation of unknown outcomes. PqWitnessV4 remains
+three-table protection. No component test or checkpoint export qualifies full
+FinalUse/effect anti-rollback, physical independent fault domains, arbitrary external
+exactly-once, whole-chain PQ, public WAN or production activation.
+
+The [compact local reproduction record](../../evidence/pq-recovery-release-transport-20261104/REPRODUCE.md)
+retains both actual recovery counterexamples and the original wrong-provider
+failures. Current controls pass 16 release tests, 11 cold-recovery tests, three
+actual CLI rejection tests, 15 retained ledger tests, 30 TLS/mTLS/backend tests
+and 35 source-integrity tests. The final checkpoint all-targets invocation records
+nine passing library tests and one Unix-bind `EPERM` failure; it is not a complete
+transport acceptance. Scoped Clippy and formatting pass. No historical observation
+or successful source check is promoted to production qualification.

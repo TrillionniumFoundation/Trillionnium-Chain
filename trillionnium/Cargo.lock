@@ -1283,6 +1283,9 @@ name = "trnm-release-bundle"
 version = "0.1.0"
 dependencies = [
  "sha2",
+ "trnm-crypto-primitives",
+ "trnm-protocol",
+ "zeroize",
 ]
 
 [[package]]
