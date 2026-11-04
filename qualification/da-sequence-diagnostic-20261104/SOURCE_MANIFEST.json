@@ -1,0 +1,113 @@
+{
+  "schema": "trnm-da-sequence-diagnostic-source-v1",
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "base_tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "inputs": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "base_blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+      "candidate_blob": "e044eb665630bc61eb1e542d13630d1b3282fc19",
+      "bytes": 37459,
+      "sha256": "c1aadcccf9cceeab75cbd15a57ee76678e0808be2c21621f631e5de4dd343f70"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "base_blob": "d01fe3075e5e7008ec293819781c78f61abcc99a",
+      "candidate_blob": "0dc3fe0372cd71e50cd15953193797e33dcd17ec",
+      "bytes": 24529,
+      "sha256": "c2c38c844a80a7b0052a1f5d8d0242e9a265d843e86420fd655fd5de22df43f6"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "base_blob": "e819fda91869473c51aa56e224689d3da1d1b876",
+      "candidate_blob": "4587f88ce6aabbaa0316d06b1aac315aa6419686",
+      "bytes": 70715,
+      "sha256": "e9a16034f5e816edbd2f7eb3c9bbc47673a542bd723ccdd720b6472b9a698914"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/run.py",
+      "base_blob": null,
+      "candidate_blob": "88ed7c656bbf051b3a1d54abaf2ff15bcae0889c",
+      "bytes": 10024,
+      "sha256": "7e27b5d8555914127c0e4bf3bda3a42c73485e226e9d52ea0ab578988f5c1064"
+    },
+    {
+      "path": ".github/workflows/chain-da-sequence-diagnostic.yml",
+      "base_blob": null,
+      "candidate_blob": "cd35017307b698285d951b1118ad25c8c7d614af",
+      "bytes": 2248,
+      "sha256": "405d4b5d594deb084def25569bab175ba031439682a8115198aa3f22510bdbcf"
+    }
+  ],
+  "original_observations": [
+    {
+      "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+      "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+      "run": 41761586798,
+      "job": 126350991887,
+      "da": {
+        "passed": 173,
+        "failed": 1,
+        "ignored": 0
+      },
+      "failure_case": "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "assertion": {
+        "record_validation_attempts_actual": 1,
+        "expected": 2
+      },
+      "decoded_log": {
+        "bytes": 234019,
+        "sha256": "34472fe39e815ac4361d3ff459addf52682d68f127959a2810b81261fa9e6fdf"
+      }
+    },
+    {
+      "source": "84c2648a6b7f8a0acd9cff4a136583fe1b39a36e",
+      "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+      "run": 41761586798,
+      "job": 126350991731,
+      "da": {
+        "passed": 174,
+        "failed": 0,
+        "ignored": 0
+      },
+      "later_failure": "Python native storage oracle NATIVE_STORAGE_TABLE_NAME; not a DA pass covering the failed head invocation",
+      "decoded_log": {
+        "bytes": 907583,
+        "sha256": "89b98061cff38862053e3a7cfafe5212d84c19fea6a16af2f8ba85584f70d14c"
+      }
+    }
+  ],
+  "original_case_budgets_unchanged": {
+    "client_request_milliseconds": 200,
+    "server_request_milliseconds": 250,
+    "overall_seconds": 10,
+    "record_lifetime_seconds": 30
+  },
+  "diagnostic_execution_plan": {
+    "full_original_da_module_executions": 1,
+    "additional_exact_failure_case_executions": 3,
+    "original_distinct_registered_da_cases": 174,
+    "build_profile": "test, package-selected",
+    "reader_controls": 8,
+    "compiler": "1.95.0",
+    "native_result": "PENDING_HOSTED_EXECUTION",
+    "all_outcomes_retained": true,
+    "no_failure_replaced_by_later_pass": true
+  },
+  "scope": {
+    "only_test_unix_instrumentation": true,
+    "original_case_assertions_preserved": true,
+    "non_test_transport_cfg_unchanged": true,
+    "diagnostic_io_not_timing_equivalent": true,
+    "stderr_independent_hard_deadline": false,
+    "whole_workspace_feature_denominator": false,
+    "original_baseline_qualified": false,
+    "host_qualified": false,
+    "performance_qualified": false,
+    "production_activation": false,
+    "local_preflight_available": false,
+    "local_compilation_executed": false,
+    "hosted_original_audit_preflight_requested": true
+  }
+}

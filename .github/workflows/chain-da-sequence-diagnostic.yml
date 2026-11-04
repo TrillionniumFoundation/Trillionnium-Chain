@@ -1,0 +1,55 @@
+name: Frozen DA sequence exchange diagnostic
+on:
+  push:
+    branches: [diagnostic/chain-da-sequence-1bac-20261104-gpt6]
+permissions:
+  contents: read
+concurrency:
+  group: chain-da-sequence-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      CARGO_INCREMENTAL: '0'
+      CARGO_BUILD_JOBS: '2'
+      RUST_TEST_THREADS: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      TRNM_DA_EXCHANGE_DIAGNOSTIC: '1'
+    steps:
+      - name: Checkout exact diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Original audit preflight
+        run: bash scripts/project-preflight.sh --audit
+      - name: Set isolated build and evidence paths
+        shell: bash
+        run: |
+          printf 'CARGO_HOME=%s/da-diagnostic-cargo\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/da-diagnostic-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s/da-diagnostic-provider\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Install original pinned compiler and formatter
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+      - name: Original source formatting check
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: Original pinned PQ provider
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
+      - name: Run bounded package-selected original cases
+        run: python3 qualification/da-sequence-diagnostic-20261104/run.py --out "$RUNNER_TEMP/da-sequence-diagnostic"
+      - name: Preserve failed and successful observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: da-sequence-diagnostic-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/da-sequence-diagnostic/
+            ${{ runner.temp }}/da-diagnostic-provider/
+          if-no-files-found: error
+          retention-days: 30

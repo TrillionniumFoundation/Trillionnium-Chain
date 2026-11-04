@@ -187,6 +187,27 @@ fn observe<T>(
     result
 }
 
+// Diagnostic-only metadata for the separately owned hosted reproduction.
+// This test module is never compiled into a non-test service binary.
+pub(super) fn observe_bootstrap_exchange(
+    round: usize,
+    connection_attempt: u64,
+    started: Instant,
+    result: &CellResultV1<Vec<u8>>,
+) {
+    let enabled = std::env::var_os("TRNM_DA_EXCHANGE_DIAGNOSTIC");
+    if enabled.as_deref() != Some(std::ffi::OsStr::new("1")) {
+        return;
+    }
+    eprintln!(
+        "cell_discovery_exchange round={round} connection_attempt={connection_attempt} \
+         elapsed_ns={} response_bytes={:?} failure={:?}",
+        started.elapsed().as_nanos(),
+        result.as_ref().ok().map(Vec::len),
+        result.as_ref().err().map(Failure::cell),
+    );
+}
+
 fn policy(peers: &[SocketAddr]) -> CellDiscoveryAddressPolicyV1 {
     let mut ports: Vec<_> = peers.iter().map(SocketAddr::port).collect();
     ports.sort_unstable();
@@ -796,7 +817,11 @@ fn tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint() {
         stale_dials, 0,
         "the superseded endpoint must receive no actual TCP connection"
     );
-    assert_eq!(report.discovery.record_validation_attempts, 2);
+    assert_eq!(
+        report.discovery.record_validation_attempts, 2,
+        "actual bootstrap observation: {:?}",
+        report.discovery
+    );
     assert_eq!(report.discovered_providers, vec![current_address]);
     assert_eq!(
         report.fetch.supplying_peers.into_iter().collect::<Vec<_>>(),

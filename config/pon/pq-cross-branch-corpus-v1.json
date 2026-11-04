@@ -542,7 +542,7 @@
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs": "9650de7c32af737061ea8381f4d1a126ba66fbfd",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs": "af33375a9a0b126e74fb99909225f561f1404dc0",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs": "6c37cdf063f6b601bc1578445429dc10d8dc6b4f",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "e044eb665630bc61eb1e542d13630d1b3282fc19",
     "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs": "20803bbdf0418856e25baf34f0def1abe7803d99",
     "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "ba1e16aa810b036eb4014ad5d72973fc07ce47fb",
     "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": "bf773ce44f40f8a7facb43a09297267e041f490a",

@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "scope": "Independent static review of the two exact diagnostic candidate blobs; no code execution, new benchmark or native qualification.",
+  "inputs": [
+    {
+      "role": "old_sequence",
+      "git_blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+      "bytes": 36622,
+      "sha256": "5b7137e9931e746e5827e5cc563138e2a958d495203a444ba8a4816ea6f30a06"
+    },
+    {
+      "role": "new_sequence",
+      "git_blob": "e044eb665630bc61eb1e542d13630d1b3282fc19",
+      "bytes": 37459,
+      "sha256": "c1aadcccf9cceeab75cbd15a57ee76678e0808be2c21621f631e5de4dd343f70"
+    },
+    {
+      "role": "old_transport",
+      "git_blob": "d01fe3075e5e7008ec293819781c78f61abcc99a",
+      "bytes": 24190,
+      "sha256": "c0ef1562047339fc4d8c3d236a646abb104961e1218f7f6ec25529664629ea11"
+    },
+    {
+      "role": "new_transport",
+      "git_blob": "0dc3fe0372cd71e50cd15953193797e33dcd17ec",
+      "bytes": 24529,
+      "sha256": "c2c38c844a80a7b0052a1f5d8d0242e9a265d843e86420fd655fd5de22df43f6"
+    }
+  ],
+  "context": {
+    "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+    "git_blob": "c19e1a7ab2f92d7731e97f9c8ea97b7c3afc2893",
+    "reviewed": "Module cfg and MAX_DISCOVERY_BOOTSTRAPS/CONNECTIONS declarations; the native observation struct and Failure classifier were read in the exact input blobs."
+  },
+  "findings": [
+    {
+      "status": "no_blocking_issue_found_in_scope",
+      "area": "compilation scope",
+      "evidence": "Both inserted call sites and the sequence_tests module are cfg(all(test, unix)); ordinary non-test service and Windows paths contain no new call. The existing Instant import was already used."
+    },
+    {
+      "status": "unchanged_logic",
+      "area": "admission and budget",
+      "evidence": "The original exchange arguments, result match/reject behavior, two rounds, bootstrap/connection/record budgets, deadline values and final assertion record_validation_attempts==2 remain unchanged. The assertion adds numeric observation diagnostics only."
+    },
+    {
+      "status": "bounded_data_fields",
+      "area": "privacy",
+      "evidence": "The enabled helper prints only round, connection count, elapsed nanoseconds, optional response length and Failure::cell's fixed class/ErrorKind/errno. It does not format raw CellError, replies, SQL messages, endpoints, provider records or signing keys. report.discovery Debug has only six count fields."
+    }
+  ],
+  "limitations": [
+    "Every Unix test exchange pays Instant/env-read overhead even when the diagnostic environment value is not exactly1.",
+    "When enabled, synchronous stderr I/O occurs after exchange and before received_at/wall samples; it can perturb scheduling, remaining deadlines and time observations.",
+    "There is no independent hard timeout for the stderr write. An outer job deadline is not proof of identical original timing.",
+    "The diagnostic package-selected feature graph and instrumented source cannot establish original full-workspace or performance qualification.",
+    "No Cargo, compiler, original fixture or native execution was performed in this review."
+  ],
+  "verdict": "No confirmed new blocking defect in the narrow static diagnostic delta; preserve diagnostic-only/HOLD qualification boundary."
+}

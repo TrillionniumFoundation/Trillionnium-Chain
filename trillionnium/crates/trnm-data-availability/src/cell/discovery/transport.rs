@@ -160,6 +160,8 @@ pub(super) fn discover(
         for bootstrap in &options.bootstraps {
             // Do not stop at eight temporary endpoints: a later bootstrap in
             // this same bounded round may carry their newer signed high water.
+            #[cfg(all(test, unix))]
+            let diagnostic_started = Instant::now();
             let response = exchange(
                 *bootstrap,
                 1,
@@ -167,6 +169,13 @@ pub(super) fn discover(
                 MAX_REPLY_BYTES,
                 transport,
                 observation,
+            );
+            #[cfg(all(test, unix))]
+            super::sequence_tests::observe_bootstrap_exchange(
+                _round,
+                observation.connection_attempts,
+                diagnostic_started,
+                &response,
             );
             let wire = match response {
                 Ok(value) => value,

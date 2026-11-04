@@ -5812,3 +5812,11 @@ are not transferred to this successor. Local execution is unavailable: no local
 preflight, Cargo, Clippy or formatter is claimed for this composition. The exact
 committed source must run the original hosted preflight, graph/lock, retained
 native, strict Clippy, formatting, source-integrity and Markdown gates. HOLD_NO_GO.
+
+
+## 2026-11-04 — independent DA sequence exchange diagnosis from frozen 1bac
+
+- Original 312 runtime head job 126350991887 remains a real 173/174 DA failure: two bootstrap records were required, one was validated. Same-tree prospective-merge job 126350991731 passed 174/174 and then failed the separately fixed storage-table oracle; that does not remove the DA failure.
+- Publish an isolated diagnostic branch from 1bac21f81fc8be67a566dddfed4da6b2fd87ad30, preserving the complete owner056 integration. Only Unix test builds gain fixed exchange timing/error metadata; native response branches, original 200/250 ms requests, 10 s operation, 30 s lifetime, and exact assertions remain unchanged. No original CI gate or production ref is replaced.
+- Hosted plan is one exact 174-case package-selected module invocation plus three fixed exact-case observations, with every outcome retained. Source/binary before-after identities and original logs remain mandatory. Extra Instant/env/stderr cost and package feature scope prevent timing/whole-workspace qualification claims.
+- Local execution remains unavailable; the independent workflow runs audit preflight, pinned formatter/provider and real native cases. Publication is not a test pass. DRAFT/SHADOW_ONLY/DENY_ALL/HOLD_NO_GO and all production performance gates remain unchanged.
