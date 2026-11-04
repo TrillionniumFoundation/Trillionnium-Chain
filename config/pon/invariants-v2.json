@@ -231,7 +231,19 @@
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_order_duplicates_rank_and_value_types_are_not_coerced",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds",
-        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_candidate_early_miss_retains_complete_late_validation",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_full_binding_cost"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
@@ -244,7 +256,9 @@
         "formal/pon-nakamoto-v1/obligation_range_oracle.py",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
         "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs"
       ],
       "limit": "256 envelopes; at most1/2/4/8 created workers per block; one main signature check per valid envelope; range capacity commands commit canonically; at most one state replay per other transaction. No per-worker full-state clone.",
       "threat": "Incorrect conflict sets, receipt order changes, unbounded retries and successful fallback masking missing implementation.",
@@ -282,7 +296,11 @@
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused",
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
-        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality"
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_paired_complete_root_cost_observation"
       ],
       "source": [
         "formal/pon-nakamoto-v1/ledger.py",
@@ -293,7 +311,10 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
         "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
-        "scripts/ci/ci_job.sh"
+        "scripts/ci/ci_job.sh",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs"
       ],
       "limit": "Ordinary append writes only changed keys; one physical state slot, separate logical generation.",
       "threat": "Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.",
@@ -650,7 +671,18 @@
         "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation",
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary",
-        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two",
+        "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_admission_when_activation_returns_error",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_activation_failure_keeps_prior_admission_return_and_remains_failure",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_all_nine_cancellations_need_their_own_return_and_timing",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement",
+        "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work"
       ],
       "source": [
         "scripts/ci/check_pon_evidence.py",
@@ -664,7 +696,10 @@
         "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
-        "scripts/ci/ci_job.sh"
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/check_growth_scale_observation.py",
+        "scripts/ci/test_growth_scale_observation.py",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs"
       ],
       "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
       "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",
@@ -715,7 +750,8 @@
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_pending_request_recovers_and_completed_response_replays",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_socket_replays_response_after_client_loses_first_ack",
-        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected"
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors"
       ],
       "source": [
         "trillionnium/crates/trnm-pon-node/src/ingress.rs",

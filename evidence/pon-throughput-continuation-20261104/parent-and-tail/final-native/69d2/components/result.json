@@ -1,0 +1,219 @@
+{
+  "action": "components",
+  "all_commands_succeeded": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "child_system_seconds": 0.008916999999999842,
+      "child_user_seconds": 0.034193000000001916,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:54:34.465837+00:00",
+      "label": "preflight",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:54:34.422517+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "wall_ns": 43321592
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-sqlite-io-boundary",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "child_system_seconds": 2.3372900000000003,
+      "child_user_seconds": 70.550492,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:55:16.228042+00:00",
+      "label": "build-components",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:54:34.466138+00:00",
+      "stderr_sha256": "b69bdfa9507c5a61e80a870f36ed310e7916a4cb286f25f149623a496e3d3699",
+      "stdout_sha256": "cb274442a405686593820cff6f017985c3af2958c08746f36f3ec5718702fba6",
+      "wall_ns": 41762067440
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "--list",
+        "--format",
+        "terse"
+      ],
+      "child_system_seconds": 0.0034929999999997463,
+      "child_user_seconds": 0.0,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:55:16.299416+00:00",
+      "label": "m06-registry-all",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:55:16.295580+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "11d6c10291567f370d942feb13b3890c75fc71664c96c19066b1ff12c78a5914",
+      "wall_ns": 3821344
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "--list",
+        "--ignored",
+        "--format",
+        "terse"
+      ],
+      "child_system_seconds": 0.002406999999999826,
+      "child_user_seconds": 0.0,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:55:16.302200+00:00",
+      "label": "m06-registry-ignored",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:55:16.299641+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d36a6749bed011fa90c70a23753db601386e9ff4c7e44ed876a68441af915473",
+      "wall_ns": 2561701
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.5218220000000002,
+      "child_user_seconds": 29.683007000000003,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:55:46.311576+00:00",
+      "label": "m06-complete-library",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:55:16.302416+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2ad43cd320eb49549610be8b118874ec7fb2fd7839ae1f6a7764fcc58f278d7c",
+      "wall_ns": 30009175944
+    },
+    {
+      "argv": [
+        "bash",
+        "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+        "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112",
+        "transaction_scope::tests::",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "child_system_seconds": 0.0019100000000005224,
+      "child_user_seconds": 0.0019109999999784577,
+      "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:55:46.320321+00:00",
+      "label": "sqlite-original-transaction-scopes",
+      "max_child_rss_kib": 1508176,
+      "started_at": "2026-11-04T08:55:46.311901+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "708bd18f02d4b6325beadea4ced5fb25b5dd5cd37c8c1bf6959d340a0aa09565",
+      "wall_ns": 8424410
+    }
+  ],
+  "component_artifacts": {
+    "trnm_mvcc_fee": {
+      "artifact": {
+        "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-5f584199a960bb80"
+        ],
+        "fresh": false,
+        "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+        "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "1",
+          "overflow_checks": true,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_mvcc_fee",
+          "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+          "test": true
+        }
+      },
+      "binary_after_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a",
+      "binary_sha256": "4e411e4057438162f4cc333c384f23931399e0493e86c3d4ed90d1cc6207c43a"
+    },
+    "trnm_sqlite_io_boundary": {
+      "artifact": {
+        "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112",
+        "features": [],
+        "filenames": [
+          "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_sqlite_io_boundary-664efef7e8321112"
+        ],
+        "fresh": false,
+        "manifest_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+        "package_id": "path+file:///workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_sqlite_io_boundary",
+          "src_path": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+          "test": true
+        }
+      },
+      "binary_after_sha256": "09b4ae6b01be2f910932542cbd1689fe81f8881353a4d0e9ebd8cbc32b312798",
+      "binary_sha256": "09b4ae6b01be2f910932542cbd1689fe81f8881353a4d0e9ebd8cbc32b312798"
+    }
+  },
+  "full_node_suite_executed": false,
+  "public_confirmation_measured": false,
+  "schema": "final-composed-local-native-observation-v1",
+  "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+  "source_unchanged": true
+}

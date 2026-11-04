@@ -153,6 +153,7 @@ pub(crate) struct HistoryArithmetic {
     deltas: Pool<DeltaInput>,
     counters: Cell<Counters>,
     stages: Arc<StageAccounting>,
+    sql_commits: Arc<SqlCommitAccounting>,
 }
 impl HistoryArithmetic {
     fn count(&self, action: impl FnOnce(&mut Counters)) {
@@ -269,6 +270,9 @@ impl HistoryArithmetic {
             cpu: cpu_ns(),
         }
     }
+    pub(crate) fn observe_sql_commit(&self, site: SqlCommitSite) -> SqlCommitObservation {
+        SqlCommitObservation::start(self.sql_commits.clone(), site)
+    }
     pub(crate) fn observation(&self) -> Value {
         let mut counters = self.counters.get();
         let bindings = &self.stages.parent_bindings;
@@ -291,7 +295,8 @@ impl HistoryArithmetic {
             "retained_software_charge_limit_bytes":3*MAX_POOL_CHARGE,
             "charge_is_process_rss_bound":false,"has_consensus_authority":false,
             "records":self.records.status(),"packets":self.packets.status(),"deltas":self.deltas.status(),
-            "counters":counters,"stage_observation_failed":self.stages.failed.load(Ordering::Relaxed),"stages":stages})
+            "counters":counters,"stage_observation_failed":self.stages.failed.load(Ordering::Relaxed),"stages":stages,
+            "sql_commit":self.sql_commits.observation()})
     }
     #[cfg(test)]
     pub(super) fn clear(&self) {
@@ -380,6 +385,185 @@ impl DeltaPass<'_> {
                 charge,
             );
         }
+    }
+}
+
+// Separate observation for the existing Transaction::commit API call only.
+// Keep the original sixteen nested stage totals and their schema unchanged.
+const SQL_COMMIT_SITES: [&str; 4] = [
+    "admission_persistence",
+    "atomic",
+    "reorg_step",
+    "reorg_termination",
+];
+#[derive(Clone, Copy)]
+pub(crate) enum SqlCommitSite {
+    AdmissionPersistence,
+    Atomic,
+    ReorgStep,
+    ReorgTermination,
+}
+#[derive(Clone, Copy, Default, Serialize)]
+struct SqlCommitTotals {
+    calls_started: u64,
+    calls_returned: u64,
+    calls_succeeded: u64,
+    calls_failed: u64,
+    calls_abandoned: u64,
+    calls_unwinding: u64,
+    wall_ns: Option<u64>,
+    cpu_ns: Option<u64>,
+    cpu_ns_known_sum: u64,
+    wall_unknown_calls: u64,
+    cpu_known_calls: u64,
+    cpu_unknown_calls: u64,
+}
+#[derive(Default)]
+struct SqlCommitAccounting {
+    rows: Mutex<[SqlCommitTotals; 4]>,
+    failed: AtomicBool,
+}
+impl SqlCommitAccounting {
+    fn fail(&self) {
+        self.failed.store(true, Ordering::Relaxed);
+    }
+    fn add(&self, total: &mut u64, increment: u64) {
+        match total.checked_add(increment) {
+            Some(next) => *total = next,
+            None => {
+                *total = u64::MAX;
+                self.fail();
+            }
+        }
+    }
+    fn sum(&self, previous: Option<u64>, sample: Option<u64>, first: bool) -> Option<u64> {
+        if first {
+            return sample;
+        }
+        let (previous, sample) = previous.zip(sample)?;
+        let total = previous.checked_add(sample);
+        if total.is_none() {
+            self.fail();
+        }
+        total
+    }
+    fn observation(&self) -> Value {
+        let rows = match self.rows.try_lock() {
+            Ok(rows) => Some(*rows),
+            Err(_) => {
+                self.fail();
+                None
+            }
+        };
+        let sites = rows.map(|rows| {
+            rows.into_iter()
+                .enumerate()
+                .map(|(index, totals)| {
+                    let in_flight = totals
+                        .calls_started
+                        .checked_sub(totals.calls_returned)
+                        .and_then(|n| n.checked_sub(totals.calls_abandoned));
+                    json!({"site":SQL_COMMIT_SITES[index],"totals":totals,"calls_in_flight":in_flight})
+                })
+                .collect::<Vec<_>>()
+        });
+        json!({
+            "schema":"pon-native-sql-commit-call-observation-v1",
+            "scope":"authenticated backend only; actual Transaction::commit API intervals at admission, shared atomic, reorg-step and reorg-termination sites; errors may include the API's existing rollback-on-drop; not isolated SQL statement time or physical fsync; initial seeding and peer replay commits are outside these four sites",
+            "pre_commit_refusals":"remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "cpu_scope":"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "observation_failed":self.failed.load(Ordering::Relaxed),
+            "has_consensus_authority":false,
+            "sites":sites
+        })
+    }
+}
+pub(crate) struct SqlCommitObservation {
+    accounting: Arc<SqlCommitAccounting>,
+    site: SqlCommitSite,
+    started: Instant,
+    thread: ThreadId,
+    cpu: Option<u64>,
+    recorded: bool,
+    returned: Option<bool>,
+}
+impl SqlCommitObservation {
+    fn start(accounting: Arc<SqlCommitAccounting>, site: SqlCommitSite) -> Self {
+        let recorded = match accounting.rows.try_lock() {
+            Ok(mut rows) => {
+                let row = &mut rows[site as usize];
+                match row.calls_started.checked_add(1) {
+                    Some(next) => {
+                        row.calls_started = next;
+                        true
+                    }
+                    None => {
+                        accounting.fail();
+                        false
+                    }
+                }
+            }
+            Err(_) => {
+                accounting.fail();
+                false
+            }
+        };
+        Self {
+            accounting,
+            site,
+            started: Instant::now(),
+            thread: thread::current().id(),
+            cpu: cpu_ns(),
+            recorded,
+            returned: None,
+        }
+    }
+    pub(crate) fn finish_sql_result(mut self, result: &rusqlite::Result<()>) {
+        self.returned = Some(result.is_ok());
+    }
+}
+impl Drop for SqlCommitObservation {
+    fn drop(&mut self) {
+        if !self.recorded {
+            return;
+        }
+        let ended = Instant::now();
+        let wall = ended
+            .checked_duration_since(self.started)
+            .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+        let cpu = (self.thread == thread::current().id())
+            .then(cpu_ns)
+            .flatten()
+            .zip(self.cpu)
+            .and_then(|(end, start)| end.checked_sub(start));
+        let Ok(mut rows) = self.accounting.rows.try_lock() else {
+            self.accounting.fail();
+            return;
+        };
+        let row = &mut rows[self.site as usize];
+        let first = row.calls_returned == 0 && row.calls_abandoned == 0;
+        row.wall_ns = self.accounting.sum(row.wall_ns, wall, first);
+        row.cpu_ns = self.accounting.sum(row.cpu_ns, cpu, first);
+        self.accounting
+            .add(&mut row.wall_unknown_calls, u64::from(wall.is_none()));
+        if let Some(cpu) = cpu {
+            self.accounting.add(&mut row.cpu_known_calls, 1);
+            self.accounting.add(&mut row.cpu_ns_known_sum, cpu);
+        } else {
+            self.accounting.add(&mut row.cpu_unknown_calls, 1);
+        }
+        if let Some(success) = self.returned {
+            self.accounting.add(&mut row.calls_returned, 1);
+            if success {
+                self.accounting.add(&mut row.calls_succeeded, 1);
+            } else {
+                self.accounting.add(&mut row.calls_failed, 1);
+            }
+        } else {
+            self.accounting.add(&mut row.calls_abandoned, 1);
+        }
+        self.accounting
+            .add(&mut row.calls_unwinding, u64::from(thread::panicking()));
     }
 }
 

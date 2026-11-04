@@ -1,0 +1,6 @@
+
+running 1 test
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::native_publish_continuation_paired_real_sql_cost_observation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1029 filtered out; finished in 6.89s
+

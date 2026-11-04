@@ -177,11 +177,12 @@ impl Fixture {
             .verify_request(prepared.wire(), ingress::now().unwrap())
             .unwrap()
     }
-    fn restart_service(&self) {
+    fn restart_service(&self, expected: Checkpoint) {
         *self.service.lock().unwrap() = None;
         let reopened = DurableWitness::open_existing(
             &self.witness_path(),
             Self::make_binding(&self.policy, 1),
+            expected,
             key(13),
         )
         .unwrap();
@@ -229,7 +230,7 @@ fn guarded_charge_pending_revocation_survive_service_cold_restart() {
         .unwrap();
     let head = f.head();
     drop(node);
-    f.restart_service();
+    f.restart_service(head);
     let mut reopened = f.reopen().unwrap();
     assert_eq!(input_bytes(&reopened), 17);
     assert_eq!(records(&reopened), 1);
@@ -370,6 +371,7 @@ fn missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive(
     assert!(DurableWitness::open_existing(
         &f.witness_path(),
         Fixture::make_binding(&f.policy, 1),
+        initial,
         key(13)
     )
     .is_err());
@@ -438,11 +440,13 @@ fn binding_generation_policy_and_distinct_identity_are_mandatory() {
         })
     )
     .is_err());
+    let retained = f.head();
     *f.service.lock().unwrap() = None;
     error(
         DurableWitness::open_existing(
             &f.witness_path(),
             Fixture::make_binding(&f.policy, 2),
+            retained,
             key(13),
         ),
         "PQ_WITNESS_BINDING",
@@ -458,11 +462,12 @@ fn binding_generation_policy_and_distinct_identity_are_mandatory() {
         DurableWitness::open_existing(
             &f.witness_path(),
             Fixture::make_binding(&changed, 1),
+            retained,
             key(13),
         ),
         "PQ_WITNESS_BINDING",
     );
-    f.restart_service();
+    f.restart_service(retained);
 }
 
 #[test]
@@ -506,7 +511,7 @@ fn replacing_external_database_path_is_rejected_while_old_descriptor_is_locked()
     // Restoration is an explicit operator action, never done by open.
     fs::remove_file(f.witness_path()).unwrap();
     fs::rename(old, f.witness_path()).unwrap();
-    f.restart_service();
+    f.restart_service(initial);
     assert_eq!(f.head(), initial);
 }
 

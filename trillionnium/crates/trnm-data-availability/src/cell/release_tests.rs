@@ -665,3 +665,135 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+fn prefetch_plan(fixture: &Fixture) -> (CellReleaseClosureV1, CellLoaderContextV1) {
+    let files = fixture
+        .members
+        .iter()
+        .enumerate()
+        .map(|(index, member)| CellClosureFileV1 {
+            path: format!("part-{index}.bin"),
+            role: if index == 0 {
+                CellFileRoleV1::Base
+            } else {
+                CellFileRoleV1::Adapter
+            },
+            manifest: member.id(),
+            payload_sha256: member.payload_sha256(),
+            payload_bytes: member.size(),
+            dependencies: if index == 0 { vec![] } else { vec![0] },
+        })
+        .collect();
+    let closure = CellReleaseClosureV1::new(context(), 7, [9; 32], vec![1], files).unwrap();
+    let expected = CellLoaderContextV1 {
+        closure_id: closure.id(),
+        context: context(),
+        selected_generation: 7,
+        loader_profile: [9; 32],
+        required_roles: vec![CellFileRoleV1::Base, CellFileRoleV1::Adapter],
+        max_payload_bytes: 1_048_576,
+        max_chunks: 64,
+    };
+    (closure, expected)
+}
+
+#[test]
+fn closure_prefetch_uses_real_transport_without_publishing_a_marker() {
+    let fixture = Fixture::new();
+    let (closure, expected) = prefetch_plan(&fixture);
+    let peer = Peer::start(&fixture.origin_path);
+    let receiver = fixture.cache("prefetch.sqlite");
+    let report = with_publication_hook(
+        Box::new(|_| panic!("prefetch must not enter marker publication")),
+        || {
+            super::release::fetch_closure(&receiver, &closure, &expected, &[peer.address], limits())
+                .unwrap()
+        },
+    );
+    assert_eq!(report.closure_id, closure.id());
+    assert_eq!(report.selected_generation, 7);
+    assert_eq!(report.release.release_id, fixture.release.id());
+    assert_eq!(report.release.downloaded_chunks, 4);
+    assert_eq!(report.release.downloaded_bytes, 40_000);
+    assert_eq!(report.release.connection_attempts, 6);
+    assert_eq!(
+        report.release.received_response_bytes,
+        fixture.successful_response_bytes()
+    );
+    assert_eq!(peer.finish(), 6);
+    receiver
+        .verify_release_complete(&fixture.release, limits().release)
+        .unwrap();
+    assert_no_partial_files(fixture.directory.path());
+    for entry in fs::read_dir(fixture.directory.path()).unwrap() {
+        let name = entry.unwrap().file_name();
+        let name = name.to_string_lossy();
+        assert!(!name.ends_with(".tcr") && !name.ends_with(".tcd"));
+    }
+}
+
+#[test]
+fn closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version() {
+    let fixture = Fixture::new();
+    let (closure, expected) = prefetch_plan(&fixture);
+    let receiver = fixture.cache("prefetch-warm.sqlite");
+    for member in &fixture.members {
+        copy_member(&fixture.origin, &receiver, member);
+    }
+    let peer = Peer::start(&fixture.origin_path);
+    let before = receiver.cache_usage().unwrap();
+    for _ in 0..2 {
+        let report = super::release::fetch_closure(
+            &receiver,
+            &closure,
+            &expected,
+            &[peer.address],
+            limits(),
+        )
+        .unwrap();
+        assert_eq!(report.closure_id, closure.id());
+        assert_eq!(report.release.cached_chunks, 4);
+        assert_eq!(report.release.downloaded_chunks, 0);
+        assert_eq!(report.release.downloaded_bytes, 0);
+        assert_eq!(report.release.connection_attempts, 0);
+        assert_eq!(report.release.received_response_bytes, 0);
+        assert!(report.release.supplying_peers.is_empty());
+    }
+    assert_eq!(receiver.cache_usage().unwrap(), before);
+    assert_eq!(peer.finish(), 0);
+}
+
+#[test]
+fn closure_prefetch_expired_original_deadline_opens_no_connections() {
+    let fixture = Fixture::new();
+    let (closure, expected) = prefetch_plan(&fixture);
+    let receiver = fixture.cache("prefetch-expired.sqlite");
+    let peer = Peer::start(&fixture.origin_path);
+    let mut expired = limits();
+    expired.release.deadline = Instant::now() - Duration::from_millis(1);
+    assert!(matches!(
+        super::release::fetch_closure(&receiver, &closure, &expected, &[peer.address], expired,),
+        Err(CellErrorV1::Invalid("release fetch deadline"))
+    ));
+    assert_eq!(peer.finish(), 0);
+    let usage = receiver.cache_usage().unwrap();
+    assert_eq!(usage.chunk_rows, 0);
+    assert_eq!(usage.manifest_rows, 0);
+}
+
+#[test]
+fn closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work() {
+    let fixture = Fixture::new();
+    let (closure, mut expected) = prefetch_plan(&fixture);
+    let receiver = fixture.cache("prefetch-stale.sqlite");
+    let peer = Peer::start(&fixture.origin_path);
+    expected.selected_generation += 1;
+    assert!(matches!(
+        super::release::fetch_closure(&receiver, &closure, &expected, &[peer.address], limits(),),
+        Err(CellErrorV1::Invalid("closure loader context"))
+    ));
+    assert_eq!(peer.finish(), 0);
+    let usage = receiver.cache_usage().unwrap();
+    assert_eq!(usage.chunk_rows, 0);
+    assert_eq!(usage.manifest_rows, 0);
+}

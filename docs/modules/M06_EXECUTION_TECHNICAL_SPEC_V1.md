@@ -354,3 +354,62 @@ partial-State、数据可用性或独立验收，`independent_accepted=false`。
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.
 
 The explicitly selected [growth-reference policy](../development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md) uses a separate revision17 parameter/root domain and account/working capacities in the same executor. It retains complete State scans; bounded-witness execution and production acceptance remain open.
+
+## Prefix range equivalence
+
+M06.TwelveCommandEquivalence retains full prefix snapshots, ordered write overlays and key/value conflict checks while seeking matching rows directly in the ordered State. Empty and nested prefixes retain their complete observed sets.
+
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_overlays_writes_and_retains_the_original_snapshot`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks`
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets`
+
+## Retained complete snapshot comparison and rejected single-pass candidate
+
+The default M06 production and test files retain the exact bytes from
+`40a5ba25e40fd5eda5b04fc1c3811320d438de11`. The existing
+M06.DeriveBranchDelta and M06.TwelveCommandEquivalence bindings cover its optional
+sharing of a private immutable canonical map. Expected root and key count select
+calculation material only. A successful candidate compares every actual current
+canonical key/value and retains the original wire bounds, cache/workspace limits,
+empty-delta tree check and final expected-root check. The first differing entry
+returns to the complete original preparation, including later canonical errors
+and the original fallback behavior. The retained map grants no authority and
+complete State comparison remains O(K).
+
+The single-pass fresh-prefix move candidate in
+`7dfee35b293cfc2964c4fd8e025c6e92355f02c2` is rejected for default use. Its completed
+`unchanged-snapshot-full-binding-cost-v4` primary observation returned `HOLD`.
+Against the actual 40a parent, unchanged-input paired median regressions were
+16.52%, 12.18% and 15.01% at 128, 1,024 and 4,096 keys. At 1,024 keys the
+last-value-mismatch p95 also regressed 19.10% against the original a10 full-map
+reference. These exceed the registered 10% per-cell limits. Passing the primary
+improvement targets does not override these four failed comparisons.
+
+The [pre-registered v4 decision](../../evidence/pon-complete-cost-continuation-20261104/comparison-preregistration.json)
+and [readback](../../evidence/pon-complete-cost-continuation-20261104/compare_v4.py)
+retain all nine cells, both references, actual return counts and every planned
+sample. The candidate remains reproducible from its Git commit; its six exclusive
+ordinary controls are removed from current source bindings and workflow selection.
+The candidate source and v4 observations must not be relabelled as execution of the
+restored default. Current `unchanged_snapshot_full_binding_cost` is the original
+40a v1 two-arm selector; reproducing v4 requires the recorded candidate source.
+
+Earlier rejected implementations remain separately preserved: the
+[two-pass candidate](../../evidence/pon-complete-cost-continuation-20261104/retained-two-pass-candidate.patch)
+repeated complete canonical work on misleading same-root inputs, while the
+[single-pass copy-prefix candidate](../../evidence/pon-complete-cost-continuation-20261104/retained-single-pass-copy-prefix.patch)
+allocated its verified prefix again on a late mismatch. Their original negative
+samples and source identities remain historical evidence. Restoring 40a does not
+grant throughput, physical-memory or complete client-confirmation acceptance.
+
+The retained six ordinary controls and explicitly ignored original cost selector are:
+
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_shares_only_after_full_actual_bytes_match`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_candidate_early_miss_retains_complete_late_validation`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_full_binding_cost`.

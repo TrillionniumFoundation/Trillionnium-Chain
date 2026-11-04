@@ -72,6 +72,71 @@ fn fixture() -> (tempfile::TempDir, Settings, Node, Packet, u64) {
     (directory, settings, node, packet, clock)
 }
 
+#[test]
+fn history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors() {
+    let (_directory, mut settings, _node, packet, _clock) = fixture();
+    let raw = packet.encode_for_settings(&settings).unwrap();
+    // Initial State is irrelevant to packet grammar. The former Settings clone
+    // copied it while holding Node; the replacement copies only Config. Keep
+    // the old full snapshot as the independent codec reference in this test.
+    settings.initial.insert(
+        "codec-snapshot-only".into(),
+        serde_json::json!("initial-state-material".repeat(65_536)),
+    );
+    let original = settings.clone();
+    let context = settings.packet_codec_context();
+    settings.initial.clear();
+    settings.app.network[0] ^= 1;
+    let decoded = hex_packet_for_context(&hex::encode(&raw), &context).unwrap();
+    let reference = Packet::decode_for_settings(&raw, &original).unwrap();
+    assert_eq!(decoded.encode().unwrap(), reference.encode().unwrap());
+    assert_eq!(decoded.encode().unwrap(), raw);
+    let completed = WorkCheckedPacket::verify(packet).unwrap();
+    assert_eq!(
+        completed.completion_identity_for_context(&context).unwrap(),
+        completed.completion_identity().unwrap()
+    );
+    assert_eq!(
+        completed
+            .completion_identity_for_context(&settings.packet_codec_context())
+            .unwrap_err()
+            .to_string(),
+        "CONTEXT"
+    );
+
+    let mut unconfigured = original;
+    unconfigured.app.params["native_pq_accounts_profile"] =
+        serde_json::json!("pon-native-pq-accounts-v2");
+    // Snapshot construction must not move profile errors ahead of the original
+    // hex framing check, or replace the absent configured PQ policy.
+    let context = unconfigured.packet_codec_context();
+    assert_eq!(
+        hex_packet_for_context("x", &context)
+            .unwrap_err()
+            .to_string(),
+        "PACKET_HEX"
+    );
+    let expected = Packet::decode_for_settings(&raw, &unconfigured)
+        .unwrap_err()
+        .to_string();
+    assert_eq!(expected, "PQ2_PROFILE_REQUIRED");
+    for _ in 0..2 {
+        assert_eq!(
+            hex_packet_for_context(&hex::encode(&raw), &context)
+                .unwrap_err()
+                .to_string(),
+            expected
+        );
+        assert_eq!(
+            completed
+                .completion_identity_for_context(&context)
+                .unwrap_err()
+                .to_string(),
+            expected
+        );
+    }
+}
+
 fn native_work_boundaries(
     packet: &Packet,
 ) -> Vec<trnm_crypto_primitives::pon_work::VerificationProgress> {

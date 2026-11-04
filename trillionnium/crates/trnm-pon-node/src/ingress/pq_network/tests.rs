@@ -588,6 +588,50 @@ fn pins_context_canonical_wire_sequence_and_classical_downgrade_refuse() {
 }
 
 #[test]
+fn cold_pq_reopen_rejects_orphan_requests_outside_pinned_peer_roster() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+    drop(node);
+    let db = rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+    // SQLite does not retroactively check rows when foreign_keys is re-enabled.
+    // A restored row outside the pinned roster must still be audited at reopen.
+    db.execute_batch("PRAGMA foreign_keys=OFF;").unwrap();
+    db.execute(
+        "INSERT INTO pq_network_request_v2 VALUES(?,1,?,zeroblob(3495),NULL,NULL,0)",
+        rusqlite::params![[99_u8; 32].as_slice(), [98_u8; 32].as_slice()],
+    )
+    .unwrap();
+    drop(db);
+    let error = Node::open_with_pq_network(directory.path(), settings, 1, &policy)
+        .err()
+        .expect("unreferenced retained request must fail complete ledger audit");
+    assert_eq!(error.to_string(), "PQ_NETWORK_ROSTER_INTEGRITY");
+}
+
+#[test]
+fn cold_pq_reopen_rejects_extra_resource_rows_outside_singleton() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+    drop(node);
+    let db = rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+    // An imported/restored database can predate enforcement of SQL constraints.
+    // Re-enabling them does not audit rows hidden by the singleton=1 selector.
+    db.execute_batch("PRAGMA ignore_check_constraints=ON;")
+        .unwrap();
+    db.execute("INSERT INTO pq_network_resource_v2 VALUES(2,0,0,0)", [])
+        .unwrap();
+    drop(db);
+    let error = Node::open_with_pq_network(directory.path(), settings, 1, &policy)
+        .err()
+        .expect("extra resource records must fail complete ledger audit");
+    assert_eq!(error.to_string(), "PQ_NETWORK_RESOURCE_STATE");
+}
+
+#[test]
 fn interrupted_owner_revocation_and_retained_ledger_corruption_fail_closed() {
     let settings = settings();
     let policy = policy(&settings, 1);

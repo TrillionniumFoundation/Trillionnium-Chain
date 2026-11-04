@@ -159,6 +159,17 @@ impl WorkFactCache {
                         product,
                     });
                 }
+                State::Computing(saved) if *saved != key => {
+                    // A direct-map collision carries no mathematical result for
+                    // this statement. Do not make an unrelated request wait for
+                    // its owner: run the same complete verifier without retaining
+                    // the result. Caller admission/deadline/CPU accounting still
+                    // bounds this replay, and the occupied slot remains untouched.
+                    drop(state);
+                    count(&self.replays);
+                    return super::verify_with_progress(challenge, task, target, bytes, progress)
+                        .map_err(FactError::from);
+                }
                 State::Computing(_) => {
                     count(&self.waits);
                     let (guard, _) = slot

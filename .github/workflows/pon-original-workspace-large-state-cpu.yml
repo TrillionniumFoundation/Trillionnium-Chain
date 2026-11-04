@@ -326,6 +326,23 @@ jobs:
             groups.append({"crate": crate, "group": group, "expected_count": len(names), "tests": names})
             selected.extend((crate, group, test) for test in names)
         prefix("m06", "full-root-arithmetic", "pon_commitment::full_root_arithmetic_tests::", 5)
+        exact("m06", "unchanged-canonical-map", [
+            "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+            "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+            "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+            "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+            "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+            "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+        ])
+        exact("node", "account-root-digest", [
+            "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+            "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+            "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+        ])
+        exact("node", "growth-return-observations", [
+            "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+            "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+        ])
         exact("m06", "canonical-ascii", [
             "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
             "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
@@ -336,6 +353,10 @@ jobs:
             "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
         ])
         prefix("node", "reorg-tail", "store::reorg_readback_tests::", 6)
+        exact("node", "direct-append-readback", [
+            "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+            "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+        ])
         exact("node", "current-sql-root", [
             "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
         ])

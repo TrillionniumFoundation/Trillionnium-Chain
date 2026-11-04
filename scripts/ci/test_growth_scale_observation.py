@@ -9,7 +9,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from check_growth_scale_observation import check
+from check_growth_scale_observation import check, returned_stage
 
 
 ACCOUNTS = (64, 1024, 16384)
@@ -178,13 +178,94 @@ def fixture():
     return files
 
 
-class GrowthObservationReaderTests(unittest.TestCase):
+def v2_stage(value):
+    value = copy.deepcopy(value)
+    value["before_commit_to_return_wall_ns"] = value.pop("final_guard_and_sqlite_commit_wall_ns")
+    value["thread_cpu_ns"] = None
+    value["process_cpu_ns"] = None
+    value["timing_scope"] = (
+        "inclusive wall time; offsets and nested intervals must not be summed; "
+        "BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement"
+    )
+    return value
+
+
+def return_receipt(*, purpose, sample, parent, target, operation, native, changes, error=None):
+    return {
+        "schema": "native-growth-stage-return-v1", "event": "native_stage_returned",
+        "purpose": purpose, "sample": sample, "parent": parent, "block": target,
+        "operation": operation, "accepted": error is None,
+        "returned_block": target if error is None else None, "error": error, "error_code": None,
+        "native_stage": copy.deepcopy(native), "sql_total_changes": changes,
+    }
+
+
+def fixture_v2():
+    """Independent new producer shape, retaining the full historical fixture above."""
+    files = fixture()
+    first, last = files["run.jsonl"]
+    first["schema"] = "native-growth-fixed-owner-scale-observation-v2"
+    first.pop("setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings")
+    first.update({
+        "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings": True,
+        "returned_native_stages_recorded_before_assertions": True,
+        "cancelled_admission_timing_separate_from_successful_samples": True,
+        "sql_total_changes_include_rolled_back_writes": True,
+        "native_stage_return_schema": "native-growth-stage-return-v1",
+        "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
+        "return_journal_scope": (
+            "one flushed record per returned measured admission, activation and deliberate cancellation; "
+            "journal IO is outside native stage timings but remains campaign cost; "
+            "panic, kill and nonreturning calls have no invented return receipt"
+        ),
+    })
+    last["returned_native_stages"] = 153
+    for accounts in ACCOUNTS:
+        for history in HISTORY:
+            name = f"cohort-a{accounts}-h{history}.jsonl"
+            rows = []
+            cancelled = v2_stage(stage(1000, history + SAMPLES))
+            for row in files[name]:
+                if row["event"] == "measurement_completed":
+                    sample = row["sample"]
+                    for operation in ("admission", "activation"):
+                        row[f"native_{operation}"] = v2_stage(row[f"native_{operation}"])
+                        rows.append(return_receipt(
+                            purpose="measurement", sample=sample,
+                            parent=block(accounts, history, history + sample), target=row["block"],
+                            operation=operation, native=row[f"native_{operation}"],
+                            changes=row[f"{operation}_sql_total_changes"],
+                        ))
+                elif row["event"] == "atomic_cancellation_started":
+                    row["parent"] = block(accounts, history, history + SAMPLES)
+                elif row["event"] == "atomic_cancellation_completed":
+                    rows.append(return_receipt(
+                        purpose="atomic_cancellation", sample=None,
+                        parent=block(accounts, history, history + SAMPLES),
+                        target=block(accounts, history, history + SAMPLES + 1),
+                        operation="admission", native=cancelled, changes=26,
+                        error="SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                    ))
+                    row["native_admission"] = copy.deepcopy(cancelled)
+                    row["admission_sql_total_changes"] = 26
+                elif row["event"] == "cohort_completed":
+                    row["returned_native_stages"] = 17
+                    row["cancelled_admission_wall_ns"] = cancelled["wall_ns"]
+                rows.append(row)
+            files[name] = rows
+    return files
+
+
+class ObservationFiles(unittest.TestCase):
+    make_fixture = staticmethod(fixture)
+    historical_v1 = True
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="trnm-growth-reader-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name) / "observations"
         self.root.mkdir()
-        self.files = fixture()
+        self.files = self.make_fixture()
         self.write()
 
     def write(self):
@@ -202,10 +283,16 @@ class GrowthObservationReaderTests(unittest.TestCase):
     def refused(self):
         self.write()
         with self.assertRaises((ValueError, KeyError, TypeError, OSError, UnicodeError)):
-            check(self.root)
+            self.read()
+
+    def read(self):
+        return check(self.root, historical_v1=self.historical_v1)
+
+
+class GrowthObservationReaderTests(ObservationFiles):
 
     def test_complete_fixture_accepts_all_seventy_two_samples_without_qualification(self):
-        result = check(self.root)
+        result = self.read()
         self.assertEqual(result["result"], "COMPLETE_LOCAL_OBSERVATION")
         self.assertEqual(result["measured_native_blocks"], 72)
         self.assertEqual(result["cancelled_admissions"], 9)
@@ -234,14 +321,14 @@ class GrowthObservationReaderTests(unittest.TestCase):
                 # The fixture already derives the same genesis per account count.
                 self.assertEqual(warmup["genesis"], block(accounts, history, 0))
         self.write()
-        result = check(self.root)
+        result = self.read()
         self.assertEqual(result["completed_cohorts"], 9)
         self.assertEqual(result["measured_native_blocks"], 72)
 
     def test_missing_cohort_file_is_refused(self):
         (self.root / "cohort-a16384-h128.jsonl").unlink()
         with self.assertRaises(ValueError):
-            check(self.root)
+            self.read()
 
     def test_missing_sample_cannot_reduce_the_denominator(self):
         self.cohort().remove(self.event("measurement_completed", 7))
@@ -326,7 +413,7 @@ class GrowthObservationReaderTests(unittest.TestCase):
                 path = self.root / name
                 path.write_bytes(path.read_bytes().replace(b'"FLOAT_PLACEHOLDER"', token.encode()))
                 with self.assertRaises(ValueError):
-                    check(self.root)
+                    self.read()
 
     def test_symlinked_file_and_directory_are_refused(self):
         path = self.root / "run.jsonl"
@@ -334,19 +421,19 @@ class GrowthObservationReaderTests(unittest.TestCase):
         path.rename(target)
         path.symlink_to(target)
         with self.assertRaises((OSError, ValueError)):
-            check(self.root)
+            self.read()
         path.unlink()
         target.rename(path)
         alias = Path(self.temp.name) / "alias"
         alias.symlink_to(self.root, target_is_directory=True)
         with self.assertRaises(ValueError):
-            check(alias)
+            check(alias, historical_v1=self.historical_v1)
 
     def test_extra_file_and_trailing_event_are_refused(self):
         extra = self.root / "omitted-failure.jsonl"
         extra.write_text("{}\n")
         with self.assertRaises(ValueError):
-            check(self.root)
+            self.read()
         extra.unlink()
         self.cohort().append({"event": "unreported_failure"})
         self.refused()
@@ -356,10 +443,10 @@ class GrowthObservationReaderTests(unittest.TestCase):
         raw = path.read_bytes()
         path.write_bytes(raw.replace(b'"workers":1', b'"workers":1,"workers":1'))
         with self.assertRaises(ValueError):
-            check(self.root)
+            self.read()
         path.write_bytes(raw[:-1])
         with self.assertRaises(ValueError):
-            check(self.root)
+            self.read()
 
     def test_inconsistent_or_out_of_range_intervals_are_refused(self):
         for key, value in (("before_commit_offset_ns", 2000),
@@ -450,6 +537,256 @@ class GrowthObservationReaderTests(unittest.TestCase):
                     done["active_generation"] = 0
                 else:
                     done["admission_sql_total_changes"] = 0
+                self.refused()
+
+
+class GrowthReturnedStageReaderTests(ObservationFiles):
+    make_fixture = staticmethod(fixture_v2)
+    historical_v1 = False
+
+    def receipt(self, operation="admission", sample=0, purpose="measurement", accounts=64, history=0):
+        return next(row for row in self.cohort(accounts, history)
+                    if row["event"] == "native_stage_returned" and row["operation"] == operation
+                    and row["purpose"] == purpose and row["sample"] == sample)
+
+    def test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians(self):
+        result = self.read()
+        self.assertEqual(result["schema"], "native-growth-fixed-owner-scale-readback-v2")
+        self.assertFalse(result["historical_v1"])
+        self.assertEqual(result["returned_native_stages"], 153)
+        self.assertEqual(result["returned_native_outcomes"], {"accepted": 144, "rejected": 9})
+        self.assertTrue(result["cancellation_stage_measurements_available"])
+        self.assertFalse(result["native_stage_cpu_measurements_available"])
+        self.assertEqual(result["measured_native_blocks"], 72)
+        self.assertEqual(result["cancelled_admissions"], 9)
+        for cohort in result["cohorts"]:
+            self.assertEqual(cohort["cancelled_admission_wall_ns"], 11000)
+            self.assertEqual(cohort["admission_median_interval_ns"], [1030, 1040])
+            self.assertIsNone(cohort["p99_ns"])
+        self.assertFalse(result["throughput_qualified"])
+        self.assertFalse(result["production_activation"])
+
+    def test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown(self):
+        self.files = fixture()
+        self.write()
+        with self.assertRaises(ValueError):
+            check(self.root)
+        historical = check(self.root, historical_v1=True)
+        self.assertTrue(historical["historical_v1"])
+        self.assertFalse(historical["cancellation_stage_measurements_available"])
+        self.assertIsNone(historical["returned_native_stages"])
+        self.assertIsNone(historical["returned_native_outcomes"])
+        self.assertTrue(all(row["cancelled_admission_wall_ns"] is None for row in historical["cohorts"]))
+        self.files = fixture_v2()
+        self.write()
+        with self.assertRaises(ValueError):
+            check(self.root, historical_v1=True)
+
+    def test_current_scope_cannot_silently_claim_old_success_only_timing(self):
+        for key in (
+                "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings",
+                "returned_native_stages_recorded_before_assertions",
+                "cancelled_admission_timing_separate_from_successful_samples",
+                "sql_total_changes_include_rolled_back_writes",
+                "native_stage_return_schema", "native_stage_timing_scope", "return_journal_scope"):
+            with self.subTest(key=key):
+                self.files = fixture_v2()
+                self.files["run.jsonl"][0][key] = False
+                self.refused()
+        self.files = fixture_v2()
+        self.files["run.jsonl"][0]["setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings"] = True
+        self.refused()
+
+    def test_erased_or_reordered_admission_and_activation_returns_are_refused(self):
+        for mutation in ("erase_admission", "erase_activation", "duplicate", "reverse"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v2()
+                rows = self.cohort()
+                admission = rows.index(self.receipt())
+                if mutation == "erase_admission":
+                    rows.pop(admission)
+                elif mutation == "erase_activation":
+                    rows.pop(admission + 1)
+                elif mutation == "duplicate":
+                    rows.insert(admission, copy.deepcopy(rows[admission]))
+                else:
+                    rows[admission], rows[admission + 1] = rows[admission + 1], rows[admission]
+                self.refused()
+
+    def test_native_return_identity_and_outcome_are_exact(self):
+        mutations = (
+            lambda row: row.update(schema="native-growth-stage-return-v0"),
+            lambda row: row.update(operation="commit"),
+            lambda row: row.update(purpose="atomic_cancellation"),
+            lambda row: row.update(sample=False),
+            lambda row: row.update(sample=1),
+            lambda row: row.update(parent="55" * 32),
+            lambda row: row.update(block="66" * 32),
+            lambda row: row.update(returned_block="77" * 32),
+            lambda row: row.update(accepted=1),
+            lambda row: row.update(error="failure"),
+            lambda row: row.update(error_code="PUBLIC_REQUEST_CANCELLED"),
+            lambda row: row.update(sql_total_changes=True),
+            lambda row: row.update(durable_commit_succeeded=True),
+        )
+        for index, mutation in enumerate(mutations):
+            with self.subTest(index=index):
+                self.files = fixture_v2()
+                mutation(self.receipt())
+                self.refused()
+
+    def test_completed_sample_cannot_rewrite_already_returned_timings_or_sql_counts(self):
+        for operation in ("admission", "activation"):
+            for field in ("wall_ns", "sql_total_changes"):
+                with self.subTest(operation=operation, field=field):
+                    self.files = fixture_v2()
+                    row = self.receipt(operation)
+                    if field == "wall_ns":
+                        row["native_stage"]["wall_ns"] += 1
+                        row["native_stage"]["before_commit_to_return_wall_ns"] += 1
+                    else:
+                        row[field] += 1
+                    self.refused()
+
+    def test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work(self):
+        for key in ("thread_cpu_ns", "process_cpu_ns"):
+            for value in (0, 1000):
+                with self.subTest(key=key, value=value):
+                    self.files = fixture_v2()
+                    self.receipt()["native_stage"][key] = value
+                    self.refused()
+
+    def test_partial_failed_admission_retains_actual_cost_but_cannot_complete_campaign(self):
+        row = self.receipt()
+        row.update(accepted=False, returned_block=None,
+                   error="PUBLIC_MUTATION_CPU_BUDGET", error_code="PUBLIC_MUTATION_CPU_BUDGET",
+                   sql_total_changes=0)
+        native = row["native_stage"]
+        native.update(wall_ns=9123, before_persistence_offset_ns=None, before_commit_offset_ns=None,
+                      persistence_and_readback_wall_ns=None, before_commit_to_return_wall_ns=None)
+        native["checkpoints"] = dict.fromkeys(COUNTERS, 0)
+        native["checkpoints"]["context_checks"] = 1
+        validated = returned_stage(row, purpose="measurement", operation="admission", sample=0,
+                                   parent=row["parent"], block=row["block"])
+        self.assertEqual(validated["native_stage"]["wall_ns"], 9123)
+        self.assertFalse(validated["accepted"])
+        self.assertEqual(validated["sql_total_changes"], 0)
+        self.assertIsNone(validated["native_stage"]["before_commit_to_return_wall_ns"])
+        self.write()
+        with self.assertRaisesRegex(ValueError, "unexpected admission failure"):
+            self.read()
+        retained = [json.loads(line) for line in (self.root / "cohort-a64-h0.jsonl").read_text().splitlines()]
+        self.assertIn(row, retained)
+
+    def test_activation_failure_keeps_prior_admission_return_and_remains_failure(self):
+        admission = copy.deepcopy(self.receipt())
+        activation = self.receipt("activation")
+        activation.update(accepted=False, returned_block=None,
+                          error="SCALE_OBSERVATION_ACTIVATION_CANCEL", error_code=None)
+        validated = returned_stage(activation, purpose="measurement", operation="activation", sample=0,
+                                   parent=activation["parent"], block=admission["block"])
+        self.assertFalse(validated["accepted"])
+        self.write()
+        with self.assertRaisesRegex(ValueError, "unexpected activation failure"):
+            self.read()
+        retained = [json.loads(line) for line in (self.root / "cohort-a64-h0.jsonl").read_text().splitlines()]
+        self.assertEqual(retained[retained.index(activation) - 1], admission)
+        self.assertTrue(admission["accepted"])
+        self.assertEqual(admission["returned_block"], activation["block"])
+
+    def test_failure_receipt_requires_real_error_and_consistent_partial_checkpoints(self):
+        for mutation in ("no_error", "bad_code", "false_returned_block", "missing_commit_offset"):
+            with self.subTest(mutation=mutation):
+                row = copy.deepcopy(self.receipt())
+                row.update(accepted=False, returned_block=None, error="ROOT", error_code=None)
+                if mutation == "no_error":
+                    row["error"] = None
+                elif mutation == "bad_code":
+                    row["error_code"] = "not a typed code"
+                elif mutation == "false_returned_block":
+                    row["returned_block"] = row["block"]
+                else:
+                    row["native_stage"]["before_commit_offset_ns"] = None
+                    row["native_stage"]["persistence_and_readback_wall_ns"] = None
+                    row["native_stage"]["before_commit_to_return_wall_ns"] = None
+                with self.assertRaises((ValueError, KeyError, TypeError)):
+                    returned_stage(row, purpose="measurement", operation="admission", sample=0,
+                                   parent=row["parent"], block=row["block"])
+
+    def test_all_nine_cancellations_need_their_own_return_and_timing(self):
+        for accounts in ACCOUNTS:
+            for history in HISTORY:
+                with self.subTest(accounts=accounts, history=history):
+                    self.files = fixture_v2()
+                    row = self.receipt(sample=None, purpose="atomic_cancellation",
+                                       accounts=accounts, history=history)
+                    self.cohort(accounts, history).remove(row)
+                    self.refused()
+        for key in ("wall_ns", "checkpoints", "before_commit_offset_ns"):
+            with self.subTest(key=key):
+                self.files = fixture_v2()
+                self.receipt(sample=None, purpose="atomic_cancellation")["native_stage"].pop(key)
+                self.refused()
+
+    def test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement(self):
+        for mutation in ("success", "old_tail", "false_scope", "no_checkpoints", "sample", "parent"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v2()
+                row = self.receipt(sample=None, purpose="atomic_cancellation")
+                native = row["native_stage"]
+                if mutation == "success":
+                    row.update(accepted=True, returned_block=row["block"], error=None)
+                elif mutation == "old_tail":
+                    native["final_guard_and_sqlite_commit_wall_ns"] = native.pop("before_commit_to_return_wall_ns")
+                elif mutation == "false_scope":
+                    native["timing_scope"] = "successful durable commit"
+                elif mutation == "no_checkpoints":
+                    native["checkpoints"] = dict.fromkeys(COUNTERS, 0)
+                elif mutation == "sample":
+                    row["sample"] = 8
+                else:
+                    row["parent"] = "55" * 32
+                self.refused()
+
+    def test_cancellation_return_cannot_disagree_with_atomic_readback_or_summary(self):
+        for mutation in ("timing", "sql", "summary_time", "summary_count", "run_count"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v2()
+                cancel = self.event("atomic_cancellation_completed")
+                end = self.event("cohort_completed")
+                if mutation == "timing":
+                    cancel["native_admission"]["wall_ns"] -= 1
+                    cancel["native_admission"]["before_commit_to_return_wall_ns"] -= 1
+                elif mutation == "sql":
+                    cancel["admission_sql_total_changes"] -= 1
+                elif mutation == "summary_time":
+                    end["cancelled_admission_wall_ns"] -= 1
+                elif mutation == "summary_count":
+                    end["returned_native_stages"] -= 1
+                else:
+                    self.files["run.jsonl"][-1]["returned_native_stages"] -= 1
+                self.refused()
+
+    def test_deliberate_before_commit_cancellation_cannot_erase_rolled_back_write_cost(self):
+        self.receipt(sample=None, purpose="atomic_cancellation")["sql_total_changes"] = 0
+        self.event("atomic_cancellation_completed")["admission_sql_total_changes"] = 0
+        self.refused()
+
+    def test_deliberate_before_commit_cancellation_cannot_erase_ancestor_work(self):
+        returned = self.receipt(sample=None, purpose="atomic_cancellation")
+        returned["native_stage"]["checkpoints"]["header_ancestors"] = 0
+        self.event("atomic_cancellation_completed")["native_admission"]["checkpoints"]["header_ancestors"] = 0
+        self.refused()
+
+    def test_cancelled_tail_is_not_a_ninth_successful_latency_sample(self):
+        for mutation in ("median", "maximum"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v2()
+                end = self.event("cohort_completed")
+                if mutation == "median":
+                    end["admission_median_interval_ns"] = [1040, 1040]
+                else:
+                    end["admission_max_ns"] = end["cancelled_admission_wall_ns"]
                 self.refused()
 
 

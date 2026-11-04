@@ -1076,16 +1076,16 @@ impl ServiceMutationCpuOperation {
 
     /// Profile selection comes from the same Node that prechecked this packet.
     /// Its larger canonical PQ wire remains charged to this original interval.
-    pub(crate) fn history_work_verified_for_settings(
+    pub(crate) fn history_work_verified_for_context(
         &self,
         checked: &crate::store::WorkCheckedPacket,
-        settings: &crate::Settings,
+        context: &crate::pq_application_v6::PacketCodecContext,
     ) -> Result<()> {
-        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+        if !context.is_pq() {
             return self.history_work_verified(checked);
         }
         self.live.checkpoint()?;
-        let identity = checked.completion_identity_for_settings(settings)?;
+        let identity = checked.completion_identity_for_context(context)?;
         self.live.promote_verified_identity(identity)
     }
 

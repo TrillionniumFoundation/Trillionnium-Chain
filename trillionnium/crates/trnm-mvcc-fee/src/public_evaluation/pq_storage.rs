@@ -142,5 +142,6 @@ pub fn hydrate(
             "PUBLIC_EVAL_RECORD_COUNT",
         )?;
     }
+    super::validate_reveals(&value)?;
     Ok(value)
 }

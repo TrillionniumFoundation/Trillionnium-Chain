@@ -197,6 +197,45 @@ equal availability and no unmodeled network or hardware advantage. Neither
 integer ratios and labels these outputs as assumptions. It excludes invalid
 from-zero target hits from both valid-work numerators.
 
+### Current-source finite strategy sensitivity
+
+The [retained native projection](../../../../evidence/pon-full-integration-20261104/w1-fixed-strategy-sensitivity.json)
+records an actual release execution of the unchanged V3 grid on source
+`5ca846a887acbe1fe43e5cf9fc45ac90312a71a0`, with raw source bytes and the retained
+ELF unchanged before and after. All 70 artifact digests were checked. The fixed
+five classes, two targets, three reuse horizons and four producer strategies
+completed 960 cohorts, 23,360 searches and 389,788 attempts. All failed attempts,
+actual per-cohort setup and producer proof materialization remain in their
+original timers. Shared material preparation, evidence generation, native
+verification and whole-node costs remain separate. There were no recorded
+native verifier disagreements. The machine was shared with other authorized
+work; these are local CPU observations, not exclusive-host or independent
+hardware qualification.
+
+The same predefined comparison is used in every row: eager transposed production
+over lazy full-limb production. At the 64-search horizon, the ten class/target
+ratios range from 1.166402 to 1.351966. They are ratios of complete producer CPU
+totals, not per-sample selection of a fastest oracle. The overlapping 1/8/64
+horizons are not independent samples and must not be added as newly credited
+work. At a **hypothetical** additive attacker CPU share of 1/4, equal targets and
+equal availability, this finite comparison gives mean-work rate shares from
+0.279954 to 0.310656 and equal-mean-work resource boundaries from 0.425176 to
+0.461595. Exact rational values accompany each shard. This hypothetical CPU
+share is separate from the service harness's host-resource quota.
+
+These values instantiate the conditional equation above; they do not provide
+an upper bound on adversarial speed, a lower bound on the cheapest legal work,
+network adversarial share or a finality probability. Structured strategies
+outside this fixed factorial grid, batching horizons, hardware acceleration,
+malicious full-request amplification and sustained honest confirmation still
+require their own evidence. In particular, the separate original source
+`6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029` has a retained F0 result of **0/6**
+four-second confirmations and a three-run result of **3 confirmed, 9 observed
+unconfirmed and 15 unobserved** out of 27 planned rounds. Its three successful
+no-attack confirmations took 27.197345, 27.093166 and 27.499756 seconds from
+actual round start. These failures remain failures; neither the W1 receipt nor
+a later composed source inherits public-service acceptance.
+
 ### Exact target rounding in the resource-to-work conversion
 
 The preceding same-target condition is necessary to cancel the expected credit

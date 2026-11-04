@@ -447,6 +447,7 @@ fn independent_clients_accept_other_writers_advances_and_cold_reopen() {
     let reopened = DurableWitness::open_existing(
         &directory.path().join("witness.sqlite"),
         WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        last,
         key(73),
     )
     .unwrap();
@@ -502,11 +503,12 @@ fn failed_local_commit_fences_owner_until_explicit_reopen() {
     drop(first);
     drop(reconnected);
     drop(owner);
-    // This injected commit failure rolled back. Reopen is explicit and reads
-    // the original durable state; it does not enroll or advance any checkpoint.
+    // This injected commit failure rolled back. The independently retained
+    // pre-attempt checkpoint is required; no value is adopted from the database.
     let reopened = DurableWitness::open_existing(
         &directory.path().join("witness.sqlite"),
         WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+        initial,
         key(73),
     )
     .unwrap();
@@ -692,4 +694,91 @@ fn known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress()
     first.advance(later, last).unwrap();
     assert_eq!(first.current().unwrap(), last);
     assert_eq!(second.current().unwrap(), last);
+}
+
+#[test]
+fn cold_reopen_requires_exact_independently_retained_checkpoint() {
+    let (_diagnostics, directory, policy, owner) = fixture();
+    let path = directory.path().join("witness.sqlite");
+    let old = directory.path().join("before.sqlite");
+    fs::copy(&path, &old).unwrap();
+    let mut first = client(&policy, owner, Arc::new(AtomicUsize::new(0)), false);
+    let initial = first.current().unwrap();
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    first.advance(initial, next).unwrap();
+    let retained = first.current().unwrap();
+    drop(first);
+    let latest = fs::read(&path).unwrap();
+    let binding =
+        || WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap();
+    // A self-consistent old SQLite image remains valid structurally. Its
+    // registered row and predecessor are insufficient authority for recovery.
+    fs::copy(&old, &path).unwrap();
+    assert_eq!(
+        DurableWitness::open_existing(&path, binding(), retained, key(73))
+            .err()
+            .unwrap()
+            .to_string(),
+        "PQ_WITNESS_STORAGE_ROLLBACK"
+    );
+    fs::write(&path, &latest).unwrap();
+    // Equivocation and locally-ahead state are both denied; only an exact
+    // externally selected checkpoint can resume signing for this binding.
+    for expected in [
+        initial,
+        Checkpoint::new(2, [9; 64]).unwrap(),
+        Checkpoint::new(3, [3; 64]).unwrap(),
+    ] {
+        assert_eq!(
+            DurableWitness::open_existing(&path, binding(), expected, key(73))
+                .err()
+                .unwrap()
+                .to_string(),
+            "PQ_WITNESS_STORAGE_ROLLBACK"
+        );
+    }
+    let reopened = DurableWitness::open_existing(&path, binding(), retained, key(73)).unwrap();
+    assert_eq!(reopened.read_head().unwrap(), retained);
+    // An already running owner retains the original exclusive writer lock.
+    assert_eq!(
+        DurableWitness::open_existing(&path, binding(), retained, key(73))
+            .err()
+            .unwrap()
+            .to_string(),
+        "PQ_WITNESS_BUSY"
+    );
+    drop(reopened);
+    assert_eq!(fs::read(&path).unwrap(), latest);
+}
+
+#[test]
+fn invalid_external_checkpoint_is_rejected_before_touching_recovery_storage() {
+    let (_diagnostics, directory, policy, owner) = fixture();
+    drop(owner);
+    let missing = directory.path().join("not-enrolled.sqlite");
+    for expected in [
+        Checkpoint {
+            sequence: 0,
+            root: [1; 64],
+        },
+        Checkpoint {
+            sequence: 1,
+            root: [0; 64],
+        },
+        Checkpoint {
+            sequence: i64::MAX as u64 + 1,
+            root: [1; 64],
+        },
+    ] {
+        let binding =
+            WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap();
+        assert_eq!(
+            DurableWitness::open_existing(&missing, binding, expected, key(73))
+                .err()
+                .unwrap()
+                .to_string(),
+            "PQ_WITNESS_CHECKPOINT"
+        );
+        assert!(!missing.exists());
+    }
 }

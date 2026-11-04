@@ -1,4 +1,6 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+#[cfg(test)]
+mod append_readback_tests;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
 pub mod capacity_observation;
@@ -590,18 +592,21 @@ impl WorkCheckedPacket {
     }
     /// The original History owner supplies its immutable ledger settings after
     /// checking the actual parent. Input bytes cannot select a weaker codec.
-    pub(crate) fn completion_identity_for_settings(&self, settings: &Settings) -> Result<Hash> {
+    pub(crate) fn completion_identity_for_context(
+        &self,
+        context: &crate::pq_application_v6::PacketCodecContext,
+    ) -> Result<Hash> {
         ensure(
-            self.packet.header.network == settings.network()
-                && self.packet.header.parameters == settings.parameters(),
+            self.packet.header.network == context.network()
+                && self.packet.header.parameters == context.parameters(),
             "CONTEXT",
         )?;
-        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+        if !context.is_pq() {
             return self.completion_identity();
         }
         Ok(hash(
             b"public-pq-history-complete-work-identity-v1",
-            &[&self.packet.encode_for_settings(settings)?],
+            &[&context.encode(&self.packet)?],
         ))
     }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
@@ -4441,7 +4446,16 @@ impl Node {
             }),
         };
         transaction_result?;
-        tx.commit()?;
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe_sql_commit(native_authenticated::SqlCommitSite::AdmissionPersistence)
+        });
+        let commit_result = tx.commit();
+        if let Some(observation) = commit_observation {
+            observation.finish_sql_result(&commit_result);
+        }
+        commit_result?;
         // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)
     }
@@ -5021,16 +5035,40 @@ impl Node {
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
         progress()?;
-        tx.commit()?;
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe_sql_commit(native_authenticated::SqlCommitSite::Atomic)
+        });
+        let commit_result = tx.commit();
+        if let Some(observation) = commit_observation {
+            observation.finish_sql_result(&commit_result);
+        }
+        commit_result?;
         // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
     }
-    /// Only reorganization closures return readback from their explicit final
-    /// write boundary. The original writer predates every callback and write;
-    /// neither it nor any graph result survives this one transaction.
     fn atomic_reorg_with_readback<'db>(
         &'db self,
         progress: &mut dyn FnMut() -> Result<()>,
+        run: impl FnOnce(
+            &mut dyn FnMut() -> Result<()>,
+            Option<&trnm_sqlite_io_boundary::TransactionScope<'db>>,
+        ) -> Result<Option<native_authenticated::PostWriteReadback<'db>>>,
+    ) -> Result<()> {
+        self.atomic_with_readback(
+            progress,
+            native_authenticated::SqlCommitSite::ReorgStep,
+            run,
+        )
+    }
+    /// Append and reorganization closures return readback from their explicit
+    /// final write boundary. The original writer predates every callback and
+    /// write; neither it nor any graph result survives this one transaction.
+    fn atomic_with_readback<'db>(
+        &'db self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        commit_site: native_authenticated::SqlCommitSite,
         run: impl FnOnce(
             &mut dyn FnMut() -> Result<()>,
             Option<&trnm_sqlite_io_boundary::TransactionScope<'db>>,
@@ -5076,7 +5114,16 @@ impl Node {
             }),
         };
         transaction_result?;
-        tx.commit()?;
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe_sql_commit(commit_site)
+        });
+        let commit_result = tx.commit();
+        if let Some(observation) = commit_observation {
+            observation.finish_sql_result(&commit_result);
+        }
+        commit_result?;
         Ok(())
     }
     fn reorg_post_write_readback<'db>(
@@ -5183,42 +5230,51 @@ impl Node {
             let prior = self.cached_parent(old)?;
             progress()?;
             let mut staged = None;
-            self.atomic_with_progress(progress, |progress| {
-                self.apply_delta_with_progress(target, slot, false, progress)?;
-                let state = self.slot_state_with_progress(slot, progress)?;
-                continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
+            self.atomic_with_readback(
+                progress,
+                native_authenticated::SqlCommitSite::Atomic,
+                |progress, original_owner| {
+                    self.apply_delta_with_progress(target, slot, false, progress)?;
+                    let state = self.slot_state_with_progress(slot, progress)?;
+                    continuity_v1::check_state(
+                        &state,
+                        self.record(target)?.height,
+                        &self.settings.app,
+                    )
                     .map_err(|error| Error::from(error).local_integrity())?;
-                progress()?;
-                staged = Some(self.checked_commitment(
-                    &state,
-                    self.record(target)?.root,
-                    prior.as_ref(),
-                )?);
-                progress()?;
-                ensure(
-                    self.db.execute(
-                        "UPDATE active SET tip=?,generation=? WHERE singleton=1",
-                        params![target.as_slice(), next],
-                    )? == 1,
-                    "STORAGE_WRITE",
-                )
-                .map_err(Error::local_integrity)?;
-                ensure(
-                    self.db.execute(
-                        "INSERT INTO events VALUES(?,0,1,?)",
-                        params![next, target.as_slice()],
-                    )? == 1,
-                    "STORAGE_WRITE",
-                )
-                .map_err(Error::local_integrity)?;
-                ensure(
-                    self.active()? == (target, next) && self.slot()? == slot,
-                    "GENERATION",
-                )
-                .map_err(Error::local_integrity)?;
-                self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
-                Ok(())
-            })?;
+                    progress()?;
+                    staged = Some(self.checked_commitment(
+                        &state,
+                        self.record(target)?.root,
+                        prior.as_ref(),
+                    )?);
+                    progress()?;
+                    ensure(
+                        self.db.execute(
+                            "UPDATE active SET tip=?,generation=? WHERE singleton=1",
+                            params![target.as_slice(), next],
+                        )? == 1,
+                        "STORAGE_WRITE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    ensure(
+                        self.db.execute(
+                            "INSERT INTO events VALUES(?,0,1,?)",
+                            params![next, target.as_slice()],
+                        )? == 1,
+                        "STORAGE_WRITE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    let readback = self.reorg_post_write_readback(target, original_owner)?;
+                    ensure(
+                        self.active()? == (target, next) && self.slot()? == slot,
+                        "GENERATION",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
+                    Ok(readback)
+                },
+            )?;
             ensure(
                 self.active()? == (target, next) && self.slot()? == slot,
                 "GENERATION",

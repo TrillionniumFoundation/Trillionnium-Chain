@@ -135,6 +135,24 @@ class PQMutualTLSProbeTests(unittest.TestCase):
                 self.assertFalse(c==0 and s==0,(ce,se))
                 self.assertIsNone(so)
 
+    def test_hybrid_key_exchange_does_not_authorize_a_classical_peer_identity(self):
+        # The TLS chain is trusted and the configured group is hybrid. Only
+        # the independent PQ identity gate must refuse this classical key.
+        key, cert = self.dir / "classical.key", self.dir / "classical.cert"
+        cmd(["openssl", "req", "-new", "-x509", "-newkey", "ED25519",
+             "-keyout", str(key), "-out", str(cert), "-nodes", "-days", "1",
+             "-subj", "/CN=classical.local"])
+        spki = cmd(["openssl", "pkey", "-in", str(key), "-pubout", "-outform", "DER"]).stdout
+        # This pin is intentionally not produced by public_key_id(), which
+        # already refuses classical SPKI. It reaches the actual TLS peer gate.
+        expected = hashlib.sha256(b"TRNM/PoN/PQKey/v1\x00" + spki).digest()
+        self.keys["classical"] = key, cert, expected
+        c, s, co, so, ce, se = self.pair(client="classical", server_trust="classical")
+        self.assertNotEqual(s, 0, (ce, se))
+        self.assertIsNone(co)
+        self.assertIsNone(so)
+        self.assertIn("REFUSED peer_not_mldsa65", se)
+
     def test_hostname_and_trustroot_refused(self):
         c,s,co,so,ce,se=self.pair(hostname="malicious.invalid")
         self.assertNotEqual(c,0,(ce,se));self.assertIsNone(co)

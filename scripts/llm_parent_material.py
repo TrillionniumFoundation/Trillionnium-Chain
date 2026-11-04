@@ -8,6 +8,7 @@ it does not select a parent, authorize installation, train, or update CURRENT.
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import stat
@@ -15,6 +16,8 @@ import struct
 import sys
 
 import llm_runtime_pilot as runtime
+
+MAX_F32_HEADER_BYTES = 1024 * 1024
 
 
 def read_regular(path, maximum):
@@ -35,23 +38,30 @@ def read_regular(path, maximum):
     return raw
 
 
-def factor_bytes(raw, contract):
-    """Parse only the bounded, complete F32 safetensors factor set we support."""
+def f32_tensor_bytes(raw, shapes):
+    """Parse exact F32 tensor extents from one immutable, bounded byte snapshot.
+
+    Shapes come from the checked loader contract, never from the file. This
+    accepts both vectors and matrices; it neither converts/broadcasts values nor
+    grants use. The caller still checks value finiteness and the material root.
+    """
+    runtime.require(type(shapes) is dict and shapes and
+                    all(type(name) is str and type(shape) is list and 1 <= len(shape) <= 8 and
+                        all(type(n) is int and n > 0 for n in shape)
+                        for name, shape in shapes.items()), 'PARENT_MATERIAL_SHAPES')
+    maximum = 8 + MAX_F32_HEADER_BYTES + 4 * sum(math.prod(shape) for shape in shapes.values())
+    runtime.require(type(raw) is bytes and len(raw) <= maximum, 'PARENT_MATERIAL_FILE_LIMIT')
     runtime.require(len(raw) >= 10, 'PARENT_MATERIAL_HEADER')
     length = struct.unpack('<Q', raw[:8])[0]
-    runtime.require(2 <= length <= 1024 * 1024 and 8 + length <= len(raw),
+    runtime.require(2 <= length <= MAX_F32_HEADER_BYTES and 8 + length <= len(raw),
                     'PARENT_MATERIAL_HEADER')
     header = json.loads(raw[8:8 + length].decode('utf-8'), object_pairs_hook=runtime.unique)
     runtime.require(type(header) is dict, 'PARENT_MATERIAL_HEADER')
     metadata = header.pop('__metadata__', {})
     runtime.require(type(metadata) is dict and all(type(k) is str and type(v) is str
                     for k, v in metadata.items()), 'PARENT_MATERIAL_METADATA')
-    shapes = {}
-    for target in contract['targets']:
-        shapes[target['module'] + '.A'] = [target['rank'], target['in_features']]
-        shapes[target['module'] + '.B'] = [target['out_features'], target['rank']]
-    runtime.require(set(header) == set(shapes), 'PARENT_MATERIAL_FACTOR_SET')
-    payload = raw[8 + length:]
+    runtime.require(set(header) == set(shapes), 'PARENT_MATERIAL_TENSOR_SET')
+    payload = memoryview(raw)[8 + length:]
     material, intervals = {}, []
     for name, shape in shapes.items():
         value = header[name]
@@ -64,17 +74,26 @@ def factor_bytes(raw, contract):
         runtime.require(type(offsets) is list and len(offsets) == 2 and
                         all(type(n) is int for n in offsets) and
                         0 <= offsets[0] < offsets[1] <= len(payload) and
-                        offsets[1] - offsets[0] == shape[0] * shape[1] * 4,
+                        offsets[1] - offsets[0] == math.prod(shape) * 4,
                         'PARENT_MATERIAL_TENSOR_RANGE')
         start, end = offsets
         intervals.append((start, end))
-        material[name] = payload[start:end]
+        material[name] = bytes(payload[start:end])
     cursor = 0
     for start, end in sorted(intervals):
         runtime.require(start == cursor, 'PARENT_MATERIAL_OVERLAP_OR_HOLE')
         cursor = end
     runtime.require(cursor == len(payload), 'PARENT_MATERIAL_TRAILING_BYTES')
     return material
+
+
+def factor_bytes(raw, contract):
+    """Parse only the complete F32 safetensors factor set already contracted."""
+    shapes = {}
+    for target in contract['targets']:
+        shapes[target['module'] + '.A'] = [target['rank'], target['in_features']]
+        shapes[target['module'] + '.B'] = [target['out_features'], target['rank']]
+    return f32_tensor_bytes(raw, shapes)
 
 
 def verify_parent(contract_path, adapter_path, artifact_path, *, expected_contract,

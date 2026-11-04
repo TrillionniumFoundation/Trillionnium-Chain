@@ -1214,3 +1214,529 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+fn acknowledgement_writer_deadline(copied_before_ack: bool, reconcile: bool) {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    if copied_before_ack {
+        // An actual durable initial charge and payload, with the final ACK lost.
+        let mut pending = store.required_row(duty.operation).unwrap();
+        pending.initial_bytes = manifest.size();
+        store.write_row(&pending, false).unwrap();
+        store.copy_payload(&pending, &cache, deadline()).unwrap();
+    }
+    let before = store.reserve(duty.clone()).unwrap();
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    let mut other_writer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let held = other_writer
+        .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
+    let (mut store, result, finished_while_locked) = thread::scope(|scope| {
+        let (done, complete) = std::sync::mpsc::channel();
+        let worker = scope.spawn(move || {
+            let start = Instant::now();
+            let end = start + Duration::from_millis(100);
+            let result = if reconcile {
+                store.reconcile_acknowledgement(duty.operation, end)
+            } else {
+                store.acknowledge(duty.operation, &cache, end)
+            };
+            eprintln!("CELL_ACK_DEADLINE copied={copied_before_ack} reconcile={reconcile} original_budget_ms=100 elapsed_ns={} result={result:?}", start.elapsed().as_nanos());
+            let _ = done.send(());
+            (store, result)
+        });
+        // Releasing the lock after this bound lets the old implementation
+        // demonstrate a late durable mutation instead of leaving a stuck child.
+        let finished = complete.recv_timeout(Duration::from_millis(600)).is_ok();
+        held.rollback().unwrap();
+        let (store, result) = worker.join().unwrap();
+        (store, result, finished)
+    });
+    let after = store.reserve(duty.clone()).unwrap();
+    assert!(finished_while_locked && result.is_err() && after == before,
+        "ACK renewed its original writer deadline: finished={finished_while_locked}, result={result:?}, before={before:?}, after={after:?}");
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(store.reserve(duty.clone()).unwrap(), before);
+    if copied_before_ack {
+        let acknowledged = store
+            .reconcile_acknowledgement(duty.operation, deadline())
+            .unwrap();
+        assert!(acknowledged.acknowledged);
+        assert_eq!(
+            acknowledged.initial_copy_bytes_committed,
+            before.initial_copy_bytes_committed
+        );
+    }
+}
+
+#[test]
+fn acknowledgement_initial_charge_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(false, false);
+}
+
+#[test]
+fn acknowledgement_lost_ack_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(true, false);
+}
+
+#[test]
+fn acknowledgement_reconciliation_wait_keeps_original_deadline() {
+    acknowledgement_writer_deadline(true, true);
+}
+
+#[test]
+fn acknowledgement_schema_change_cannot_debit_or_copy_initial_payload() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let mut store =
+        CellRetentionStoreV1::create(&dir.path().join("retention"), config(1, 8192)).unwrap();
+    let duty = contract(1, &manifest);
+    let before = store.reserve(duty.clone()).unwrap();
+    let arena_before = fs::read(store.directory.join("payload.arena")).unwrap();
+    store
+        .connection
+        .execute_batch(
+            "CREATE TRIGGER extra_ack_hook AFTER UPDATE ON obligations BEGIN SELECT 1; END;",
+        )
+        .unwrap();
+    assert!(matches!(
+        store.acknowledge(duty.operation, &cache, deadline()),
+        Err(CellErrorV1::Invalid("retention schema"))
+    ));
+    assert_eq!(store.reserve(duty).unwrap(), before);
+    assert_eq!(
+        fs::read(store.directory.join("payload.arena")).unwrap(),
+        arena_before
+    );
+}
+
+#[test]
+fn acknowledgement_after_commit_cancellation_keeps_exact_durable_ack() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    let mut pending = store.required_row(duty.operation).unwrap();
+    pending.initial_bytes = manifest.size();
+    store.write_row(&pending, false).unwrap();
+    store.copy_payload(&pending, &cache, deadline()).unwrap();
+    let observer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let result =
+        store.reconcile_acknowledgement_controlled(duty.operation, deadline(), &mut || {
+            let status: u8 =
+                observer.query_row("SELECT status FROM obligations", [], |row| row.get(0))?;
+            if status == 1 {
+                Err(CellErrorV1::Invalid(
+                    "test acknowledgement completion observation cancelled",
+                ))
+            } else {
+                Ok(())
+            }
+        });
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid(
+            "test acknowledgement completion observation cancelled"
+        ))
+    ));
+    let persisted = store.reserve(duty.clone()).unwrap();
+    assert!(persisted.acknowledged);
+    assert_eq!(persisted.initial_copy_bytes_committed, manifest.size());
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(
+        store
+            .reconcile_acknowledgement(duty.operation, deadline())
+            .unwrap(),
+        persisted
+    );
+}
+
+#[test]
+fn acknowledgement_cannot_rewind_a_concurrent_retirement() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let mut store = CellRetentionStoreV1::create(&path, config(1, 8192)).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    let prior_ack = store.required_row(duty.operation).unwrap();
+    store
+        .retire(duty.operation, duty.retain_until_height, None, deadline())
+        .unwrap();
+    let retired = store.reserve(duty.clone()).unwrap();
+    // A delayed completion holding the old read cannot overwrite the newer
+    // irreversible retirement even though its payload and schema still match.
+    let result = store.write_row_controlled(
+        &prior_ack,
+        false,
+        &mut OperationControl {
+            deadline: deadline(),
+            checkpoint: &mut || Ok(()),
+            stopped: false,
+        },
+    );
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("retention acknowledgement prior"))
+    ));
+    assert_eq!(store.reserve(duty).unwrap(), retired);
+}
+
+fn repair_writer_deadline(case: u8) {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    let repair_operation = [101; 32];
+    store.reserve(duty.clone()).unwrap();
+    store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    if case == 0 {
+        damage(&mut store);
+    } else if case >= 2 {
+        // An actual durable repair charge and completed payload with the final
+        // completion publication interrupted. Preserve that exact debit on retry.
+        damage(&mut store);
+        let observer = Connection::open(path.join("retention.sqlite")).unwrap();
+        let mut copied = false;
+        let result = store.repair_controlled(
+            duty.operation,
+            repair_operation,
+            &cache,
+            deadline(),
+            &mut || {
+                let pending: Option<i64> = observer
+                    .query_row(
+                        "SELECT complete FROM repairs WHERE operation=?1",
+                        [repair_operation.as_slice()],
+                        |row| row.get(0),
+                    )
+                    .optional()?;
+                if pending == Some(0) {
+                    let bytes = fs::read(path.join("payload.arena"))?;
+                    if bytes[..manifest.size() as usize] == fs::read(dir.path().join("input"))? {
+                        copied = true;
+                        return Err(CellErrorV1::Invalid("test lost repair completion"));
+                    }
+                }
+                Ok(())
+            },
+        );
+        assert!(copied && result.is_err());
+        assert_eq!(
+            store.repair_row(repair_operation).unwrap(),
+            Some((duty.operation, manifest.size(), false))
+        );
+        store.verify(duty.operation, deadline()).unwrap();
+    }
+    let before = store.reserve(duty.clone()).unwrap();
+    let prior_repair = store.repair_row(repair_operation).unwrap();
+    let prior_payload = fs::read(path.join("payload.arena")).unwrap();
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    let mut other_writer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let held = other_writer
+        .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)
+        .unwrap();
+    let (mut store, result, finished_while_locked) = thread::scope(|scope| {
+        let (done, complete) = std::sync::mpsc::channel();
+        let worker = scope.spawn(move || {
+            let start = Instant::now();
+            let end = start + Duration::from_millis(100);
+            let result = if case == 1 || case == 3 {
+                store.reconcile_repair(duty.operation, repair_operation, end)
+            } else {
+                store.repair(duty.operation, repair_operation, &cache, end)
+            };
+            eprintln!("CELL_REPAIR_WRITER_DEADLINE case={case} original_budget_ms=100 elapsed_ns={} result={result:?}", start.elapsed().as_nanos());
+            let _ = done.send(());
+            (store, result)
+        });
+        // Bounded regression detection releases the writer even with the old
+        // implementation, while distinguishing its renewed 2-second wait.
+        let finished = complete.recv_timeout(Duration::from_millis(600)).is_ok();
+        held.rollback().unwrap();
+        let (store, result) = worker.join().unwrap();
+        (store, result, finished)
+    });
+    let after = store.reserve(duty.clone()).unwrap();
+    assert!(finished_while_locked && result.is_err() && before == after,
+        "repair renewed the original deadline: case={case} finished={finished_while_locked} result={result:?}");
+    assert_eq!(store.repair_row(repair_operation).unwrap(), prior_repair);
+    assert_eq!(fs::read(path.join("payload.arena")).unwrap(), prior_payload);
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(store.reserve(duty.clone()).unwrap(), before);
+    assert_eq!(store.repair_row(repair_operation).unwrap(), prior_repair);
+    if case != 0 {
+        let recovered = store
+            .reconcile_repair(duty.operation, repair_operation, deadline())
+            .unwrap();
+        assert!(recovered.acknowledged);
+        assert_eq!(
+            recovered.repair_bytes_committed,
+            before.repair_bytes_committed
+        );
+        assert_eq!(
+            store.repair_row(repair_operation).unwrap(),
+            Some((
+                duty.operation,
+                if case == 1 { 0 } else { manifest.size() },
+                true
+            ))
+        );
+    }
+}
+
+#[test]
+fn repair_intent_writer_wait_keeps_original_deadline() {
+    repair_writer_deadline(0);
+}
+
+#[test]
+fn repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline() {
+    repair_writer_deadline(1);
+}
+
+#[test]
+fn repair_completion_retry_writer_wait_keeps_original_deadline() {
+    repair_writer_deadline(2);
+}
+
+#[test]
+fn repair_completion_reconciliation_writer_wait_keeps_original_deadline() {
+    repair_writer_deadline(3);
+}
+
+#[derive(Clone, Copy, Debug)]
+enum RepairPostCommitCase {
+    Intent,
+    MissingIntentReconciliation,
+    Completion,
+}
+
+fn repair_post_commit_refusal(case: RepairPostCommitCase) {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    let operation = [101; 32];
+    store.reserve(duty.clone()).unwrap();
+    let before = store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    let complete_payload = fs::read(path.join("payload.arena")).unwrap();
+    let (amount, complete) = match case {
+        RepairPostCommitCase::Intent => (manifest.size(), false),
+        RepairPostCommitCase::MissingIntentReconciliation => (0, true),
+        RepairPostCommitCase::Completion => (manifest.size(), true),
+    };
+    if amount != 0 {
+        damage(&mut store);
+    }
+    let payload_before = fs::read(path.join("payload.arena")).unwrap();
+    // An old mtime detects even an identical-byte rewrite. Byte equality alone
+    // cannot distinguish a read-only retry from a second physical copy.
+    let untouched = std::time::UNIX_EPOCH + Duration::from_secs(1);
+    store.arena.set_modified(untouched).unwrap();
+    assert_eq!(
+        store.arena.metadata().unwrap().modified().unwrap(),
+        untouched
+    );
+    let original_busy_ms: u64 = store
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    // Exercise actual timeout restoration: this new fixture's deadline is
+    // shorter than the unchanged owner setting, without a sleep or test clock.
+    assert!(original_busy_ms > 1000);
+    let end = Instant::now() + Duration::from_secs(1);
+    let observer = Connection::open(path.join("retention.sqlite")).unwrap();
+    assert!(store.repair_row(operation).unwrap().is_none());
+    let mut observed_pending = false;
+    let mut observed_committed = false;
+    let result = {
+        let mut checkpoint = || {
+            // This separate connection sees only committed rows. Trigger the
+            // refusal from their real transition, never a callback ordinal.
+            let observed: Option<(u64, bool)> = observer
+                .query_row(
+                    "SELECT amount,complete FROM repairs WHERE operation=?1 AND obligation=?2",
+                    params![operation.as_slice(), duty.operation.as_slice()],
+                    |row| Ok((row.get(0)?, row.get(1)?)),
+                )
+                .optional()?;
+            observed_pending |= observed == Some((manifest.size(), false));
+            if observed == Some((amount, complete)) {
+                observed_committed = true;
+                Err(CellErrorV1::Invalid(
+                    "test repair committed observation cancelled",
+                ))
+            } else {
+                Ok(())
+            }
+        };
+        match case {
+            RepairPostCommitCase::MissingIntentReconciliation => {
+                store.reconcile_repair_controlled(duty.operation, operation, end, &mut checkpoint)
+            }
+            _ => store.repair_controlled(duty.operation, operation, &cache, end, &mut checkpoint),
+        }
+    };
+    assert!(
+        observed_committed,
+        "{case:?}: no durable transition observed"
+    );
+    assert_eq!(observed_pending, amount != 0);
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid(
+            "test repair committed observation cancelled"
+        ))
+    ));
+    let expected_repair = Some((duty.operation, amount, complete));
+    assert_eq!(store.repair_row(operation).unwrap(), expected_repair);
+    let mut expected = before;
+    expected.repair_bytes_committed += amount;
+    assert_eq!(store.reserve(duty.clone()).unwrap(), expected);
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    let payload_after = fs::read(path.join("payload.arena")).unwrap();
+    if matches!(case, RepairPostCommitCase::Completion) {
+        assert_eq!(payload_after, complete_payload);
+        assert_ne!(
+            store.arena.metadata().unwrap().modified().unwrap(),
+            untouched
+        );
+        assert_eq!(store.verify(duty.operation, deadline()).unwrap(), expected);
+    } else {
+        assert_eq!(payload_after, payload_before);
+        assert_eq!(
+            store.arena.metadata().unwrap().modified().unwrap(),
+            untouched
+        );
+    }
+    store.arena.set_modified(untouched).unwrap();
+    drop(observer);
+    drop(store);
+
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert_eq!(store.reserve(duty.clone()).unwrap(), expected);
+    assert_eq!(store.repair_row(operation).unwrap(), expected_repair);
+    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
+    assert!(empty.verify_complete(&manifest).is_err());
+    if matches!(case, RepairPostCommitCase::Intent) {
+        // The intent committed before the first copy. Even a complete source
+        // cannot redispatch this ID; target-only recovery must also refuse.
+        assert!(matches!(
+            store.repair(duty.operation, operation, &cache, deadline()),
+            Err(CellErrorV1::Invalid(
+                "retention repair requires reconciliation"
+            ))
+        ));
+        assert!(store
+            .reconcile_repair(duty.operation, operation, deadline())
+            .is_err());
+    } else {
+        // Successful exact retry has no source bytes available. It can only
+        // read the actual target and preserve the already committed identity.
+        assert_eq!(
+            store
+                .repair(duty.operation, operation, &empty, deadline())
+                .unwrap(),
+            expected
+        );
+        assert_eq!(
+            store
+                .reconcile_repair(duty.operation, operation, deadline())
+                .unwrap(),
+            expected
+        );
+    }
+    assert_eq!(store.reserve(duty).unwrap(), expected);
+    assert_eq!(store.repair_row(operation).unwrap(), expected_repair);
+    assert_eq!(fs::read(path.join("payload.arena")).unwrap(), payload_after);
+    assert_eq!(
+        store.arena.metadata().unwrap().modified().unwrap(),
+        untouched
+    );
+    assert_eq!(
+        store
+            .connection
+            .query_row("SELECT count(*) FROM repairs", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        store
+            .connection
+            .pragma_query_value(None, "busy_timeout", |row| row.get::<_, u64>(0))
+            .unwrap(),
+        original_busy_ms
+    );
+    eprintln!(
+        "CELL_REPAIR_POST_COMMIT case={case:?} committed_amount={amount} \
+         committed_complete={complete} observed_pending={observed_pending} \
+         reopened_charge={} original_busy_ms={original_busy_ms} \
+         exact_retry_added_charge=0 exact_retry_payload_write=false",
+        expected.repair_bytes_committed
+    );
+}
+
+#[test]
+fn repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch() {
+    repair_post_commit_refusal(RepairPostCommitCase::Intent);
+}
+
+#[test]
+fn repair_post_commit_zero_byte_reconciliation_keeps_exact_identity() {
+    repair_post_commit_refusal(RepairPostCommitCase::MissingIntentReconciliation);
+}
+
+#[test]
+fn repair_post_commit_completion_refusal_reopens_without_copy_or_charge() {
+    repair_post_commit_refusal(RepairPostCommitCase::Completion);
+}

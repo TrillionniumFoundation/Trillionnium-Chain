@@ -8,6 +8,7 @@ use crate::public_evaluation;
 use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
+use std::ops::Bound;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
@@ -28,6 +29,17 @@ pub mod pq_accounts_v2;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Borrow every matching row in the original map order. String prefixes occupy
+/// one contiguous range; seek its start without walking unrelated state. The
+/// open upper bound also handles empty and maximum-Unicode prefixes exactly.
+pub(crate) fn prefix_rows<'a>(
+    state: &'a State,
+    prefix: &'a str,
+) -> impl Iterator<Item = (&'a String, &'a Value)> + 'a {
+    state
+        .range::<str, _>((Bound::Included(prefix), Bound::Unbounded))
+        .take_while(move |(key, _)| key.starts_with(prefix))
+}
 /// Optional computation-input gate for semantic account point accesses. The
 /// callback itself conveys no proof, signature, parent or admission authority.
 /// Aggregate balance scans and complete state commitments still use full State.
@@ -1256,19 +1268,12 @@ impl<'a> View<'a> {
     }
     fn scan(&mut self, prefix: &str) -> State {
         self.scans.entry(prefix.to_owned()).or_insert_with(|| {
-            self.base
-                .iter()
-                .filter(|(k, _)| k.starts_with(prefix))
+            prefix_rows(self.base, prefix)
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect()
         });
         let mut rows = self.scans[prefix].clone();
-        rows.extend(
-            self.writes
-                .iter()
-                .filter(|(k, _)| k.starts_with(prefix))
-                .map(|(k, v)| (k.clone(), v.clone())),
-        );
+        rows.extend(prefix_rows(&self.writes, prefix).map(|(k, v)| (k.clone(), v.clone())));
         rows
     }
     fn account(&mut self, who: &str) -> Result<Value> {
@@ -1354,17 +1359,18 @@ impl crate::integer_factor_candidate_v2::FactorState for View<'_> {
 impl Patch {
     fn current(&self, state: &State) -> bool {
         self.reads.iter().all(|(k, v)| state.get(k) == v.as_ref())
-            && self.scans.iter().all(|(prefix, old)| {
-                state
-                    .iter()
-                    .filter(|(k, _)| k.starts_with(prefix))
-                    .eq(old.iter())
-            })
+            && self
+                .scans
+                .iter()
+                .all(|(prefix, old)| prefix_rows(state, prefix).eq(old.iter()))
     }
     fn apply(self, state: &mut State) {
         state.extend(self.writes);
     }
 }
+#[cfg(test)]
+mod prefix_scan_tests;
+
 struct Payload<'a> {
     bytes: &'a [u8],
     pos: usize,

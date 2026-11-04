@@ -1384,7 +1384,17 @@ fn caller_write_half_alive(
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
 ) -> Result<()> {
-    if !caller_write_half_open(socket)? {
+    let open = match caller_write_half_open(socket, true) {
+        Ok(open) => open,
+        Err(error) => {
+            // A complete request has no further client frame. In particular,
+            // one unread byte must not hide a FIN from every later peek. Keep
+            // the original task/CPU obligations until their owners settle.
+            cancelled.store(true, Ordering::Release);
+            return Err(error);
+        }
+    };
+    if !open {
         metrics
             .lock()
             .map_err(|_| "PUBLIC_METRICS")?
@@ -1394,9 +1404,10 @@ fn caller_write_half_alive(
     }
     Ok(())
 }
-fn caller_write_half_open(socket: &TcpStream) -> Result<bool> {
+fn caller_write_half_open(socket: &TcpStream, body_complete: bool) -> Result<bool> {
     match socket.peek(&mut [0; 1]) {
         Ok(0) => Ok(false),
+        Ok(_) if body_complete => Err("PUBLIC_TRAILING_INPUT".into()),
         Err(e)
             if !matches!(
                 e.kind(),
@@ -1410,7 +1421,9 @@ fn caller_write_half_open(socket: &TcpStream) -> Result<bool> {
 }
 fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
     task_alive(conn.deadline, stop, &conn.cancelled)?;
-    if !caller_write_half_open(&conn.socket)? {
+    // Pending Challenge/Ready input may already contain the next legal frame.
+    // It is not trailing input until the declared body has been fully read.
+    if !caller_write_half_open(&conn.socket, false)? {
         conn.cancelled.store(true, Ordering::Release);
         return Err("PUBLIC_EOF".into());
     }
@@ -2665,10 +2678,12 @@ fn serve_public_protected_v3_inner(
                                 if let Err(error) =
                                     caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)
                                 {
-                                    metrics
-                                        .lock()
-                                        .map_err(|_| "PUBLIC_METRICS")?
-                                        .disconnected_before_enqueue += 1;
+                                    if !error.is(crate::ErrorCode::PublicTrailingInput) {
+                                        metrics
+                                            .lock()
+                                            .map_err(|_| "PUBLIC_METRICS")?
+                                            .disconnected_before_enqueue += 1;
+                                    }
                                     return Err(error);
                                 }
                                 let sender = if mutating_operation(task.cookie.op) {
@@ -4246,6 +4261,287 @@ mod tests {
         assert_eq!(m.completed_submit, 1);
         assert_eq!(m.mutating_grants_after_shutdown, 0);
         assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn completed_input_boundary_rejects_tail_without_consuming_pending_frame() {
+        for half_close in [false, true] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let mut caller = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+            let (socket, _) = listener.accept().unwrap();
+            socket.set_nonblocking(true).unwrap();
+            let cancelled = AtomicBool::new(false);
+            let metrics = Mutex::new(PublicMetrics::default());
+            caller_write_half_alive(&socket, &cancelled, &metrics).unwrap();
+            assert!(!cancelled.load(Ordering::Acquire));
+            caller.write_all(b"X").unwrap();
+            if half_close {
+                caller.shutdown(std::net::Shutdown::Write).unwrap();
+            }
+            // Establish actual socket arrival, without consuming the byte or
+            // interpreting a buffered pending frame as a completed body tail.
+            socket.set_nonblocking(false).unwrap();
+            socket
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            assert_eq!(socket.peek(&mut [0; 1]).unwrap(), 1);
+            socket.set_nonblocking(true).unwrap();
+            assert!(caller_write_half_open(&socket, false).unwrap());
+            let error = caller_write_half_alive(&socket, &cancelled, &metrics).unwrap_err();
+            assert!(error.is(crate::ErrorCode::PublicTrailingInput));
+            assert_eq!(error.kind(), crate::ErrorKind::Transport);
+            assert!(cancelled.load(Ordering::Acquire));
+            assert_eq!(metrics.lock().unwrap().disconnected_await_requests, 0);
+            let mut byte = [0; 1];
+            assert_eq!(socket.peek(&mut byte).unwrap(), 1);
+            assert_eq!(byte, *b"X");
+        }
+    }
+    #[test]
+    fn early_complete_body_waiting_for_ready_preserves_signed_native_submission() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let raw = serde_json::to_vec(&Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        })
+        .unwrap();
+        let owner = shared(source);
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        let mut held = Vec::new();
+        for index in 0..8 {
+            let caller = identity(80 + index);
+            let mut h = hello(1, 1);
+            h.caller = digest(caller.public_key()).unwrap();
+            held.push(paid_grant(address, h, &caller, policy).unwrap());
+        }
+        let caller = identity(90);
+        let mut h = hello(1, raw.len());
+        h.caller = digest(caller.public_key()).unwrap();
+        h.digest = hash(b"public-request-body-v3", &[&raw]);
+        let (mut socket, cookie, _, deadline) =
+            paid_solution_only(address, h, &caller, policy).unwrap();
+        client_write(&mut socket, &raw, deadline).unwrap();
+        wait_metric(&metrics, |m| m.pending_grant_entered == 9);
+        // An actual independent read forces further reactor progress while all
+        // mutation grants are still held and the early body is in the socket.
+        assert!(
+            call_public_protected_v3(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(91),
+                policy,
+            )
+            .unwrap()
+            .ok
+        );
+        {
+            let m = metrics.lock().unwrap();
+            assert_eq!(m.pending_grant_entered, 10);
+            assert_eq!(m.pending_grant_granted, 9);
+            assert_eq!(m.pending_grant_closed, 0);
+            assert_eq!(m.work_started, 0);
+            assert_eq!(m.mutation_cpu_reservations, 0);
+            assert_eq!(
+                m.body_bytes_received,
+                serde_json::to_vec(&Request::Head).unwrap().len() as u64
+            );
+        }
+        drop(held.pop());
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut socket, 256, deadline).unwrap()).unwrap();
+        assert_eq!(ready["cookie_digest"], hex::encode(cookie.id().unwrap()));
+        // Do not send a second body: the pending bytes must now be read by the
+        // ordinary bounded body stage and complete genuine native verification.
+        let response: Response = serde_json::from_slice(
+            &client_frame(
+                &mut socket,
+                response_maximum(1),
+                Instant::now() + Duration::from_secs(2),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        verify_hex_strict(
+            identity(71).public_key(),
+            &response.message().unwrap(),
+            &response.signature,
+        )
+        .unwrap();
+        assert!(response.ok, "{}", response.value);
+        assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+        drop((socket, held));
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.work_started, 1);
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.mutation_cpu_reservations, 1);
+        assert_eq!(m.mutation_cpu_in_flight_after_shutdown, 0);
+        assert_eq!(m.mutation_cpu_clock_failures, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn trailing_input_after_complete_body_cancels_without_starting_work() {
+        for half_close in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let clock = super::super::now().unwrap();
+            let settings = Settings::development(Some(clock - 100)).unwrap();
+            let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            let packet = source
+                .make(
+                    source.active().unwrap().0,
+                    vec![],
+                    crate::development_public(0).unwrap(),
+                    clock - 50,
+                    4096,
+                )
+                .unwrap();
+            let request = Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            };
+            let raw = serde_json::to_vec(&request).unwrap();
+            let owner = shared(source);
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+            let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+            let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+            let server = PublicServer::new(identity(71), policy).unwrap();
+            let cpu_domain = server.mutation_cpu_domain();
+            let worker = thread::spawn(move || {
+                serve_public_protected_v3_with_metrics(
+                    listener,
+                    node,
+                    Duration::from_secs(8),
+                    signal,
+                    server,
+                    counters,
+                )
+                .unwrap()
+            });
+            assert!(
+                call_public_protected_v3(
+                    address,
+                    &Request::Head,
+                    &settings,
+                    identity(71).public_key(),
+                    &identity(72),
+                    policy
+                )
+                .unwrap()
+                .ok
+            );
+            let locked = owner.lock().unwrap();
+            let before = locked.active().unwrap();
+            let caller = identity(80);
+            let mut h = hello(1, raw.len());
+            h.caller = digest(caller.public_key()).unwrap();
+            h.digest = hash(b"public-request-body-v3", &[&raw]);
+            let mut sockets = Vec::new();
+            for _ in 0..8 {
+                let mut socket = paid_grant(address, h, &caller, policy).unwrap();
+                socket.write_all(&raw).unwrap();
+                sockets.push(socket);
+            }
+            // Initial Head was one task. Two Submit workers are waiting for this
+            // actual owner lock, leaving two in the channel and four inside bounded pending connections.
+            wait_metric(&metrics, |m| {
+                m.tasks_enqueued == 5 && m.tasks_dequeued == 3 && m.peak_pending_enqueue == 4
+            });
+            // The entire declared body was already received and queued. Extra bytes
+            // are not another request; they must not hide a subsequent TCP FIN.
+            for socket in &mut sockets {
+                socket.write_all(b"X").unwrap();
+                if half_close {
+                    socket.shutdown(std::net::Shutdown::Write).unwrap();
+                }
+            }
+            wait_metric(&metrics, |m| {
+                m.retained_phase_errors.get("queue").copied().unwrap_or(0)
+                    + m.retained_phase_errors.get("work").copied().unwrap_or(0)
+                    == 8
+            });
+            // Both open and half-closed callers lose the malformed transport. The
+            // original task obligation remains until its existing worker settles.
+            assert!(client_frame(
+                &mut sockets[0],
+                MAX_RESPONSE,
+                Instant::now() + Duration::from_secs(2)
+            )
+            .is_err());
+            drop(sockets);
+            drop(locked);
+            wait_metric(&metrics, |m| m.abandoned_tasks == 4);
+            assert_eq!(metrics.lock().unwrap().work_started, 0);
+            assert_eq!(owner.lock().unwrap().active().unwrap(), before);
+            let reply = call_public_protected_v3(
+                address,
+                &request,
+                &settings,
+                identity(71).public_key(),
+                &identity(81),
+                policy,
+            )
+            .unwrap();
+            assert!(reply.ok, "{}", reply.value);
+            assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+            stop.store(true, Ordering::Release);
+            let m = worker.join().unwrap();
+            assert_eq!(m.disconnected_await_requests, 0);
+            assert_eq!(m.disconnected_before_enqueue, 0);
+            assert_eq!(m.abandoned_tasks, 4);
+            assert_eq!(m.work_started, 1);
+            assert_eq!(m.completed_submit, 1);
+            assert_eq!(m.mutating_grants_after_shutdown, 0);
+            assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+            // Dequeue precedes its alive/reserve check. Cancellation may race
+            // any of the four actually queued mutations; only the final valid
+            // retry must reserve. The exact account identity below governs all
+            // real reservations and settlements, not a scheduler coincidence.
+            assert!((1..=5).contains(&m.mutation_cpu_reservations));
+            assert_eq!(m.mutation_cpu_in_flight_after_shutdown, 0);
+            assert_eq!(m.mutation_cpu_clock_failures, 0);
+            assert!(!m.mutation_cpu_unavailable_after_shutdown);
+            assert!(m.mutation_cpu_charged_ns > 0);
+            assert!(m.mutation_cpu_credit_ns_after_shutdown <= MUTATION_CPU_BURST_NS);
+            let flow = cpu_domain.observe_actual_flow().unwrap().unwrap();
+            assert!(flow.balance_identity_verified);
+            assert_eq!(flow.live_owners, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+            assert_eq!(flow.settled_full_cpu_ns, m.mutation_cpu_charged_ns);
+        }
     }
     #[test]
     fn eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline() {

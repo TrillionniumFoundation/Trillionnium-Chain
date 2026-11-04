@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "child_system_seconds": 0.010847999999999969,
+  "child_user_seconds": 0.028696000000003608,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:54:05.690468+00:00",
+  "label": "tcp-2",
+  "max_child_rss_kib": 90852,
+  "started_at": "2026-11-04T08:54:05.579240+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1f4c9015a3019da6e64f3bcbdda304d8ee0c4c50384e8ed56313cd059e276926",
+  "wall_ns": 111245400
+}

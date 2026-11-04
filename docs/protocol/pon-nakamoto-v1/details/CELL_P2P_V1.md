@@ -605,3 +605,128 @@ for every requested release, not just available popular chunks. The 72-hour
 minimum and replica objective are development coverage, not current production
 guarantees. Long-term durability and permissionless incentives need independent
 review and funded sustained observations.
+
+## Native local byte residency and explicit route preparation
+
+`CellResidencyV1` in M09 now provides a finite in-process byte pool between the
+existing fixed-content disk cache and its loader. It operates on the existing
+TCM1/TCD1 identities without changing a wire format, signed domain or stored
+schema. The existing loader supplies `CellLoaderContextV1` independently: exact
+closure, context, selected generation, loader profile, required roles and payload/
+chunk limits. A peer response or routing prediction cannot replace those pins.
+
+The intended local flow is: retain frequently used Cells, prepare a predicted
+route ahead of its use, and explicitly stage a cold miss before attempting the
+local read again. There is no background queue or predictor in this component.
+The caller decides which exact closure to prefetch and pays its original finite
+transport reservation. A miss in the local read path remains a miss; it cannot
+start a download or silently select another release.
+
+| API | Byte-path behavior |
+| --- | --- |
+| `prefetch` | Explicitly acquire the complete pinned closure through the existing bounded transport/cache path and stage its verified bytes; an exact resident hit does no disk or network work. Preparation leaves the current local selection unchanged. |
+| `prepare_cached` | Stage the exact closure from the existing content-addressed disk cache without a peer argument; missing/corrupt bytes refuse. A process restart must re-prepare its mapping rather than restore an authority ticket from disk. |
+| `pin_hot` / `unpin_hot` | Keep an admitted closure protected from explicit eviction until the owning local policy releases its hot pin. These operations create no remote storage duty. |
+| `evict` | Remove only an unpinned, unselected local mapping. Bytes shared with another resident closure remain retained and counted. No automatic eviction occurs during a speculative prefetch. |
+| `with_local` / `with_selected` | Borrow exact immutable file/chunk views. These methods have no store or transport capability and perform no weight rehash on a hit; a caller may independently parse or hash the borrowed bytes. |
+| `select_local` | Compare and replace this manager's local byte-selection ticket under an explicit deadline and cancellation flag. A manager identity and revision reject stale tickets, including an A-to-B-to-A cycle. |
+
+Borrowed views keep the manager borrowed for the lifetime of their bytes. Safe
+Rust therefore prevents eviction or selection mutation while those views remain
+in use. The internal `Arc` owners are not exposed for external cloning; dropping
+a local mapping cannot refund a payload that an external clone still owns.
+This is an in-process ownership guarantee, not a cross-process lease protocol.
+
+### Exact shared base and finite capacity
+
+Resident chunks are keyed by their complete SHA-256 digest and length. Admission
+checks the pinned manifests and ordered full-file payload digests before adding
+the mapping. Two Cells or versions whose base/tokenizer chunks are identical
+reference the same immutable buffers; a `Base` role or a matching filename alone
+does not establish shared identity. Different adapters retain their own bytes.
+Every resident file keeps its original path, role, manifest and payload digest,
+so deduplicating storage cannot substitute one version's file plan for another.
+
+`CellResidencyConfigV1` independently caps unique retained payload bytes,
+resident closures and total chunk references. `usage()` reports all four of
+unique bytes, unique chunks, closure count and references. The reference bound
+counts repeated references as well as unique chunks, preventing unlimited
+metadata growth through aliases. A full pool refuses admission; the caller must
+explicitly release an eligible mapping before retrying. Preparation commits its
+mapping only after complete verification and a final checkpoint, so failure does
+not change residency or selection. Valid disposable disk chunks can remain from
+an interrupted download for a later independently budgeted attempt.
+
+These limits cover retained byte buffers and finite metadata counts, not exact
+process RSS or device memory. Manifest decoding, allocator overhead and a
+temporary chunk buffer during the owned-buffer conversion still consume memory.
+The current mapping is an immutable chunk view, not OS `mmap`, a deserialized
+tensor, a GPU allocation or a zero-copy claim across those layers. Safe format,
+shape and ABI checks plus RAM/device reservations stay with the actual loader.
+
+### Separate download, local switch and model-use deadlines
+
+The caller supplies `limits.release.deadline` before calling `prefetch`. Its
+earlier intersection with the finite peer timeout covers acquisition, complete
+verification and RAM staging; internal phases cannot start fresh windows.
+`prepare_cached` also consumes the caller's absolute deadline. A cold-load owner
+that prepares multiple predicted closures under one request must pass the same
+absolute deadline and retain its own aggregate byte/connection reservation;
+multiple public prefetch calls do not create such an aggregate reservation for
+the caller. The existing closure fetch still shares one reservation across all
+members and retries within each closure.
+
+The owner separately supplies a switch deadline to `select_local`, which checks
+cancellation and time before replacing its local ticket. Expiry, cancellation,
+wrong expected identity or a stale previous ticket preserves the old selection.
+Lookup deadlines admit a local view; they do not preempt the consumer callback.
+Cancellation is checked before/after the complete fetch phase and at local
+staging checkpoints. The existing fetch does not accept this caller's token,
+so it can continue downloading within its original deadline and byte/connection
+budgets after external cancellation. SQLite/filesystem/hash calls cannot be
+forcibly preempted by this API. No timeout is evidence that an external effect
+rolled back.
+
+`select_local` changes only a process-local byte hint. Ordinary Hepta still owns
+CURRENT, generation/withdrawal checks, resource admission, physical tensor/GPU
+loading, loaded-hash readback and fresh FinalUse under its existing guard. An
+exact local hit does not cache or renew authorization. Integrating these borrowed
+buffers with that ordinary runtime and measuring its complete cold/warm path are
+still required for PN3; this component alone does not close model-load latency.
+The handoff's original preparation, transfer and startup windows remain unchanged.
+
+### Finite native observer
+
+Run the self-contained byte-path observer from the repository root:
+
+```sh
+bash scripts/project-preflight.sh
+cargo run --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example cell_residency_observer
+```
+
+It creates isolated temporary caches and a bounded loopback TCP provider, then
+acquires one cold three-file closure and explicitly prefetches a second adapter
+sharing the base/tokenizer. Both calls receive the same original download
+deadline. It stops and joins the provider before 1,000 selected local reads,
+independently rehashes the borrowed file bytes, compares shared base buffer
+identities, switches the local byte ticket and re-prepares a fixed disk version
+without peers. Hot/selected eviction refuses; releasing the old hot pin and
+evicting that version frees its adapter while the selected version's shared
+base remains readable. Cold local misses, stale tickets, wrong generation,
+deadline, cancellation and capacity refusals retain their errors. The small JSON result
+reports actual transfer/cache/retained-byte counters and the observer source
+digest; a failed observation exits nonzero and cannot print a passing result.
+
+The inputs are synthetic byte fixtures. The explicit route hint is not a real
+neuron router prediction, and a local byte read is not a token forward. The
+observer does not supply model quality, tensor parsing, GPU usage, real FinalUse,
+WAN, latency percentile or independent-failure-domain evidence. A source-file
+digest alone also does not identify the complete binary/dependency composition;
+retain the ordinary exact-source build receipt with any reported run.
+
+P2P weight acquisition and cross-node distributed inference remain separate
+interfaces. This implementation transfers no activations or KV cache, defines
+no layer-to-layer execution protocol and provides no remote inference failover.
+The local path requires the needed bytes to be resident before use. A deployment
+that wants remote layers must specify its own execution, memory, ordering,
+privacy, latency and recovery contract rather than infer it from Cell download.

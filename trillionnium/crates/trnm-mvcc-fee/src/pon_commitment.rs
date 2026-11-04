@@ -778,11 +778,122 @@ fn checked_snapshot_with_optional_arithmetic(
     limits: CacheLimits,
     arithmetic: Option<&FullRootArithmetic>,
 ) -> Result<PreparedCommitment> {
-    let prepared = prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?;
+    // The freshly supplied root and key count select calculation material only.
+    // A hit still canonically compares EVERY actual key/value below. Historical
+    // transitions with a different root retain the original single encoding
+    // pass; a misleading same-root hint takes that original path on mismatch.
+    let unchanged = prior
+        .filter(|previous| {
+            previous.root == expected_root && previous.values.len() == actual_state.len()
+        })
+        .map(|previous| prepare_unchanged_snapshot(actual_state, previous, limits))
+        .transpose()?
+        .flatten();
+    let prepared = match unchanged {
+        Some(prepared) => prepared,
+        None => prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?,
+    };
     if prepared.root != expected_root {
         return Err("COMMITMENT_ROOT");
     }
     Ok(prepared)
+}
+
+/// Share a private immutable canonical map only after a complete fresh State
+/// comparison. Its retained Vec capacities are those of the same canonical
+/// encoder used by prepare_values; cloning the Arc does not shrink them. Keep
+/// the original software charges, empty-delta tree check and repair behavior.
+/// Refused budgets and invalid limit settings use the original path, including
+/// its canonical-error-before-limit ordering and optional full-root arithmetic.
+fn prepare_unchanged_snapshot(
+    actual_state: &State,
+    previous: &CheckedCommitment,
+    limits: CacheLimits,
+) -> Result<Option<PreparedCommitment>> {
+    let Ok(current) = charges(&previous.values) else {
+        return Ok(None);
+    };
+    let Ok(workspace) = workspace_charge(current, current, 0) else {
+        return Ok(None);
+    };
+    if limits.validate().is_err()
+        || fallback_reason(previous.keys(), current, workspace, true, 0, limits).is_some()
+    {
+        return Ok(None);
+    }
+    if !matches_unchanged_candidate(actual_state, &previous.values)? {
+        return Ok(None);
+    }
+    mark_stage("budget-selected");
+    let mut observation = CommitmentObservation {
+        method: CommitmentMethod::CheckedApply,
+        actual_keys: actual_state.len(),
+        actual_payload_bytes: current.payload,
+        changed_keys: 0,
+        changed_payload_bytes: 0,
+        compressed_nodes: Some(current.nodes),
+        workspace_charge_bytes: workspace,
+    };
+    mark_stage("changes-allocation");
+    let changes = Vec::new();
+    mark_stage("tree-allocation");
+    let tree = match previous.tree.apply(previous.root, &changes) {
+        Ok(tree) => tree,
+        Err(_) => {
+            observation.method =
+                CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch);
+            observation.compressed_nodes = None;
+            return Ok(Some(PreparedCommitment {
+                root: state_root(&previous.values).map_err(|_| "LIMIT")?,
+                snapshot: None,
+                changes,
+                observation,
+            }));
+        }
+    };
+    let root = tree.root();
+    Ok(Some(PreparedCommitment {
+        root,
+        snapshot: Some(CheckedCommitment {
+            values: Arc::clone(&previous.values),
+            tree,
+            root,
+            charges: current,
+        }),
+        changes,
+        observation,
+    }))
+}
+
+/// A miss only declines this optional candidate: the caller then executes the
+/// complete original preparation path. It is therefore safe to stop at the
+/// first differing key/value; no rejection or checked State follows that miss.
+/// Keep matches_encoded's separate full-pass contract for all its other users.
+/// A successful candidate still checks every actual value and all wire bounds.
+fn matches_unchanged_candidate(state: &State, expected: &CanonicalValues) -> Result<bool> {
+    if state.len() != expected.len() {
+        return Ok(false);
+    }
+    let mut within_limits = state.len() <= 65_536;
+    let mut previous = expected.iter();
+    let mut actual = Vec::new();
+    for (key, value) in state {
+        let Some((old_key, old_value)) = previous.next() else {
+            return Ok(false);
+        };
+        if key.as_bytes() != old_key {
+            return Ok(false);
+        }
+        pon_executor::canonical_into(value, &mut actual)?;
+        within_limits &= key.len() <= 160 && actual.len() <= 4096;
+        if actual != *old_value {
+            return Ok(false);
+        }
+    }
+    if !within_limits {
+        return Err("LIMIT");
+    }
+    Ok(true)
 }
 /// Compute a successor commitment from complete actual state values. This is
 /// only a calculation: an admitted context must use checked_snapshot or compare
@@ -2691,3 +2802,7 @@ mod bounded_encoding_tests {
 #[cfg(test)]
 #[path = "pon_commitment_binding_tests.rs"]
 mod checked_binding_tests;
+
+#[cfg(test)]
+#[path = "pon_commitment/unchanged_snapshot_tests.rs"]
+mod unchanged_snapshot_tests;

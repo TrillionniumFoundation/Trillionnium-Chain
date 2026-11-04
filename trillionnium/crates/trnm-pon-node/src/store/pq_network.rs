@@ -255,7 +255,36 @@ impl Node {
 
     pub(crate) fn validate_pq_network_ledger(&self, policy: &PqNetworkPolicy) -> Result<()> {
         self.check_pq_network_policy(policy)?;
+        // Restoring a database does not re-run SQL constraints. Account for
+        // every row before narrowing the audit to the operator-pinned peers.
+        let resources: u64 =
+            self.db
+                .query_row("SELECT COUNT(*) FROM pq_network_resource_v2", [], |row| {
+                    row.get(0)
+                })?;
+        ensure(resources == 1, "PQ_NETWORK_RESOURCE_STATE")?;
         self.pq_ingress_usage()?;
+        let expected_peers = policy.peer_ids().collect::<Vec<_>>();
+        let peer_count: u64 =
+            self.db
+                .query_row("SELECT COUNT(*) FROM pq_network_peer_v2", [], |row| {
+                    row.get(0)
+                })?;
+        ensure(
+            peer_count == expected_peers.len() as u64,
+            "PQ_NETWORK_ROSTER_INTEGRITY",
+        )?;
+        let (records, bytes) = self.pq_network_usage()?;
+        ensure(
+            records <= MAX_RECORDS && bytes <= MAX_LEDGER_BYTES,
+            "PQ_NETWORK_LEDGER_BUDGET",
+        )?;
+        let orphaned_requests: bool = self.db.query_row(
+            "SELECT EXISTS(SELECT 1 FROM pq_network_request_v2 AS request LEFT JOIN pq_network_peer_v2 AS peer ON request.peer=peer.peer WHERE peer.peer IS NULL)",
+            [],
+            |row| row.get(0),
+        )?;
+        ensure(!orphaned_requests, "PQ_NETWORK_ROSTER_INTEGRITY")?;
         let mut statement = self.db.prepare(
             "SELECT peer,highest_sequence,revoked FROM pq_network_peer_v2 ORDER BY peer",
         )?;
@@ -269,17 +298,11 @@ impl Node {
             })?
             .collect::<std::result::Result<Vec<_>, _>>()?;
         ensure(
-            peers.iter().map(|row| row.0.as_slice()).eq(policy
-                .peer_ids()
-                .collect::<Vec<_>>()
+            peers
                 .iter()
-                .map(|p| p.as_slice())),
+                .map(|row| row.0.as_slice())
+                .eq(expected_peers.iter().map(|p| p.as_slice())),
             "PQ_NETWORK_ROSTER_INTEGRITY",
-        )?;
-        let (records, bytes) = self.pq_network_usage()?;
-        ensure(
-            records <= MAX_RECORDS && bytes <= MAX_LEDGER_BYTES,
-            "PQ_NETWORK_LEDGER_BUDGET",
         )?;
         for (peer, highest, _) in peers {
             let mut statement = self.db.prepare("SELECT sequence,operation,wire,response,response_digest,status FROM pq_network_request_v2 WHERE peer=? ORDER BY sequence")?;

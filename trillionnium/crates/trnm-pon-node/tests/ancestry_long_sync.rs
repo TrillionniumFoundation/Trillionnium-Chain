@@ -261,26 +261,47 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
         );
         service_result
     });
+    // Retain only fixed-size location/timing state while the original calls run.
+    // Emit it with the existing exit record, after success or failure returns.
+    let mut sync_stage = "open-confirmer";
+    let mut completed_import_calls = 0_u64;
+    let mut last_successful_after = None;
+    let mut last_requested_after = None;
+    let mut advertised_page_complete = None;
+    let mut head_rpc_elapsed_ns = None;
+    let mut history_rpc_elapsed_ns = None;
+    let mut import_call_elapsed_ns = None;
     let sync_result = (|| -> Result<(u64, u64, u64)> {
         let mut confirmer = Node::open(&directory.join("confirmer"), settings.clone(), 2)?;
         let caller = identity(112);
-        let head = public_v2::call_public_protected_v2(
+        sync_stage = "head-rpc";
+        let call_started = Instant::now();
+        let head_result = public_v2::call_public_protected_v2(
             address,
             &Request::Head,
             &settings,
             &server_pin,
             &caller,
             policy,
-        )?;
+        );
+        head_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());
+        let head = head_result?;
+        sync_stage = "head-response-check";
         if !head.ok || head.value["tip"] != hex::encode(tip) || head.value["height"] != BLOCKS {
             return Err("PUBLIC_HEAD".into());
         }
         let mut after = settings.genesis();
+        last_successful_after = Some(after);
         let mut count = 0;
         let mut trials = 0;
         let mut solve_ns = 0;
         while after != tip {
-            let reply = public_v2::call_public_protected_v2(
+            sync_stage = "history-rpc";
+            last_requested_after = Some(after);
+            advertised_page_complete = None;
+            import_call_elapsed_ns = None;
+            let call_started = Instant::now();
+            let reply_result = public_v2::call_public_protected_v2(
                 address,
                 &Request::History {
                     tip: hex::encode(tip),
@@ -290,31 +311,45 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
                 &server_pin,
                 &caller,
                 policy,
-            )?;
+            );
+            history_rpc_elapsed_ns = Some(call_started.elapsed().as_nanos());
+            let reply = reply_result?;
+            sync_stage = "history-response-check";
             if !reply.ok {
                 return Err(format!("PUBLIC_HISTORY_REFUSED:{}", reply.value).into());
             }
             trials += reply.solve_trials;
             solve_ns += reply.solve_elapsed_ns;
+            sync_stage = "decode-page";
             let page: Page = serde_json::from_value(reply.value)?;
+            advertised_page_complete = Some(page.complete);
+            sync_stage = "page-count-check";
             if page.packets.len() != 1 {
                 return Err("PAGE_COUNT".into());
             }
+            sync_stage = "first-packet-check";
             if count == 0
                 && Packet::decode(&hex::decode(&page.packets[0]).map_err(codec)?)?.id()?
                     != first.ok_or("FIRST")?
             {
                 return Err("LONG_FIRST_PAGE".into());
             }
-            after = ingress::receive_public_page_from(
+            sync_stage = "import-call-expression";
+            let call_started = Instant::now();
+            let import_result = ingress::receive_public_page_from(
                 &mut confirmer,
                 address,
                 page,
                 tip,
                 after,
                 ingress::now()?,
-            )?;
+            );
+            import_call_elapsed_ns = Some(call_started.elapsed().as_nanos());
+            after = import_result?;
             count += 1;
+            completed_import_calls = count;
+            last_successful_after = Some(after);
+            sync_stage = "partial-active-check";
             if count < BLOCKS && confirmer.active()?.0 != settings.genesis() {
                 return Err("PARTIAL_SYNC_ACTIVATED".into());
             }
@@ -325,11 +360,14 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
                 );
             }
         }
+        sync_stage = "final-active-read";
         let confirmed = confirmer.read_active()?;
+        sync_stage = "final-state-check";
         if count != BLOCKS || confirmed.0 != expected.0 || confirmed.2 != expected.2 {
             return Err("CONFIRMATION_STATE".into());
         }
         drop(confirmer);
+        sync_stage = "reopen-read-and-compare";
         if Node::open(&directory.join("confirmer"), settings.clone(), 2)?.read_active()?
             != confirmed
         {
@@ -345,6 +383,22 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
             "schema": "native-ancestry-independent-sync-exit-evidence-v1",
             "elapsed_ns": started.elapsed().as_nanos(),
             "sync_error": sync_result.as_ref().err().map(ToString::to_string),
+            "failure_location": sync_result.as_ref().err().map(|_| json!({
+                "schema": "native-ancestry-independent-sync-failure-location-v1",
+                "stage": sync_stage,
+                "completed_import_calls": completed_import_calls,
+                "last_successful_after": last_successful_after.map(hex::encode),
+                "last_requested_after": last_requested_after.map(hex::encode),
+                "pinned_tip": hex::encode(tip),
+                "advertised_page_complete": advertised_page_complete,
+                "head_rpc_elapsed_ns": head_rpc_elapsed_ns,
+                "last_history_rpc_elapsed_ns": history_rpc_elapsed_ns,
+                "last_import_call_expression_elapsed_ns": import_call_elapsed_ns,
+                "durable_committed_blocks": null,
+                "activation_cursor": null,
+                "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+                "production_activation": false
+            })),
             "scope": "observed signed full-history replay, not a qualification verdict",
             "production_activation": false
         })

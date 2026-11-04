@@ -1,0 +1,65 @@
+{
+  "schema": "cell-retention-ack-deadline-local-observation-v1",
+  "base_sha": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "tested_source_sha": "213d61176c84452a419e098d54ac51a629c975e4",
+  "tested_source_tree": "b1d835eab8f22b827b1016218ff5d1d77771a1ce",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "scope": "original writer acquisition and mutation boundary in local retained Cell ACK/ACK reconciliation",
+  "tests": {
+    "regression_before": {
+      "passed": 0,
+      "failed": 3,
+      "original_deadline_ms": 100,
+      "writer_release_after_ms": 600,
+      "initial_charge_elapsed_ns": 632397060,
+      "lost_ack_elapsed_ns": 631478156,
+      "reconciliation_elapsed_ns": 634735779
+    },
+    "retention_after": {
+      "passed": 33,
+      "failed": 0
+    },
+    "committed_library_after": {
+      "passed": 179,
+      "failed": 0,
+      "ignored": 0
+    },
+    "committed_clippy_all_targets": "passed -D warnings",
+    "format_check": "passed"
+  },
+  "sources": {
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03"
+  },
+  "artifacts": {
+    "red-native.log.gz": {
+      "sha256": "e754444bd821d4955f01502a5a387d8acbd89d75e4b27de7d0fd2e37ee0dcafb",
+      "uncompressed_sha256": "69537c285f4db6aa838635ea603ee0cadc881acbada0d055d57b2074f829d7ca",
+      "bytes": 1853
+    },
+    "green-retention.log.gz": {
+      "sha256": "ef349a298ba8c3e23109e7b05213ae111e8deda66abd9fce2365db82818d4fea",
+      "uncompressed_sha256": "747b187536f5a89a3a43beb69dfc0192e17d25b1d38429626e03be3518bbcf77",
+      "bytes": 1612
+    },
+    "committed-cell-native.log.gz": {
+      "sha256": "7fef80686c2ee515936f2379af75140034ea7dd41ec8be6cdddaba069fb60421",
+      "uncompressed_sha256": "90c35dcd89c6da215642c34c519bb3fc3184abf967bb57a18b17bd8d674c771f",
+      "bytes": 5119
+    },
+    "committed-clippy.log.gz": {
+      "sha256": "9bfa304abcc75d2f46ee7847744ecb8f6fbaac5d585f16502d984d505540a27e",
+      "uncompressed_sha256": "22e0df986057b9ba5be07526ac5fb348862a3dedef42108383cc3e088acbb889",
+      "bytes": 91
+    }
+  },
+  "limitations": [
+    "SQLite/filesystem operations are cooperative; this test covers BEGIN IMMEDIATE writer acquisition, not every possible EXCLUSIVE/read lock wait.",
+    "An already acknowledged read-only retry is an observation of its validated row/payload, not a new grant; concurrent external retirement is not reauthorized by a stale readback.",
+    "No independent administrative or physical failure domains were exercised.",
+    "No production deployment, external monotonic root, model efficacy, or prospective study qualification is claimed."
+  ],
+  "independent_failure_domains_verified": false,
+  "prospective_model_accepted": false,
+  "production_activation": false
+}

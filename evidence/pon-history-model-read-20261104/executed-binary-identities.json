@@ -1,0 +1,38 @@
+[
+  {
+    "path": "trillionnium/target/debug/deps/evaluation_quorum_v2-4bcc821df407ab4b",
+    "bytes": 58627264,
+    "sha256": "2f8f3eb4cd17f46308795f4c990f7495347697e2ab31cbacf8a078b8e6aa6410",
+    "capture": "after_execution_only"
+  },
+  {
+    "path": "trillionnium/target/debug/deps/incremental_prefix-be341ec23a3c1580",
+    "bytes": 62392312,
+    "sha256": "71823c4eb04cf630f6527abaea3b3ccac03ba204d8a4da4ff61956f5224624a9",
+    "capture": "after_execution_only"
+  },
+  {
+    "path": "trillionnium/target/debug/deps/model_evolution_v5-185cc2a8154538af",
+    "bytes": 60782400,
+    "sha256": "54e657d94b32363c4394bbb680d3213cb5f5b57d83d3353115542127e4a8e7ec",
+    "capture": "after_execution_only"
+  },
+  {
+    "path": "trillionnium/target/debug/deps/pon_commitment-55f122940ed279f9",
+    "bytes": 61130672,
+    "sha256": "f04f182ac9d1f715a67713ad16edddee6122b8b17dc697136ba245072450ba36",
+    "capture": "after_execution_only"
+  },
+  {
+    "path": "trillionnium/target/debug/deps/trnm_mvcc_fee-48fd410c9e830723",
+    "bytes": 75172144,
+    "sha256": "74d987f19bb21005ea2c1d7dd165bb9700f54800d6fb55cc00150b800efc0822",
+    "capture": "after_execution_only"
+  },
+  {
+    "path": "trillionnium/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+    "bytes": 411446336,
+    "sha256": "8cf92452d96d4a3184875a62c84896722335ee2f802bd79b694f22fe1d955588",
+    "capture": "after_execution_only"
+  }
+]

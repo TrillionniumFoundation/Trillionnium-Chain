@@ -1,0 +1,121 @@
+{
+  "all_five_and_readers_passed": true,
+  "binary": {
+    "adoption_receipt": "adopted-build.json",
+    "build_command": "build-origin/command.json",
+    "build_receipt": "build-origin/result.json",
+    "sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+    "unchanged_during_tests": true
+  },
+  "historical_parent": {
+    "manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+    "original_sha256sums_sha256": "8cd676d67de94b246e38b8d43021c9bfa0245565bcbcffc556db4487046b10d9",
+    "parent_files_modified": false
+  },
+  "observed_at": "2026-11-04T08:03:44.418500+00:00",
+  "packaged_at": "2026-11-04T08:08:51.098361+00:00",
+  "reconstruction": {
+    "apply_parent_patch_first": "../native/tested-native-from-73ab.patch.gz",
+    "then_apply_overlay": "from-f56.patch.gz",
+    "verify_target_manifest": "native-inputs.json.gz"
+  },
+  "schema": "local-tcp-control-evidence-v1",
+  "scope": {
+    "cargo_executed_during_tcp_rerun": false,
+    "complete_node_suite_executed": false,
+    "hosted_campaign_rerun": false,
+    "hosted_f0_rerun": false,
+    "ordinary_classical_development_v3_tcp_controls": true,
+    "throughput_or_four_second_slo_qualification": false
+  },
+  "source": {
+    "base_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "dirty": true,
+    "native_input_count": 1194,
+    "native_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+    "qualification_does_not_apply_to": "b8116f65789a85148254f870c678a44f895316de or a later combined candidate",
+    "unchanged_during_tests": true
+  },
+  "tests": [
+    {
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:03:42.558977+00:00",
+      "libtest": {
+        "failed": 0,
+        "filtered_out": 1029,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok"
+      },
+      "reader_exit_code": 0,
+      "selector": "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+      "stderr": "tests/test-1.stderr",
+      "stdout": "tests/test-1.stdout"
+    },
+    {
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:03:42.705491+00:00",
+      "libtest": {
+        "failed": 0,
+        "filtered_out": 1029,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok"
+      },
+      "reader_exit_code": 0,
+      "selector": "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+      "stderr": "tests/test-2.stderr",
+      "stdout": "tests/test-2.stdout"
+    },
+    {
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:03:43.003300+00:00",
+      "libtest": {
+        "failed": 0,
+        "filtered_out": 1029,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok"
+      },
+      "reader_exit_code": 0,
+      "selector": "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+      "stderr": "tests/test-3.stderr",
+      "stdout": "tests/test-3.stdout"
+    },
+    {
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:03:43.150211+00:00",
+      "libtest": {
+        "failed": 0,
+        "filtered_out": 1029,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok"
+      },
+      "reader_exit_code": 0,
+      "selector": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "stderr": "tests/test-4.stderr",
+      "stdout": "tests/test-4.stdout"
+    },
+    {
+      "exit_code": 0,
+      "finished_at": "2026-11-04T08:03:43.348454+00:00",
+      "libtest": {
+        "failed": 0,
+        "filtered_out": 1029,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok"
+      },
+      "reader_exit_code": 0,
+      "selector": "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+      "stderr": "tests/test-5.stderr",
+      "stdout": "tests/test-5.stdout"
+    }
+  ]
+}

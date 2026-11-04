@@ -1,0 +1,58 @@
+{
+  "base_native_result_sha256": "f0bed1919b86308488079cd46f5937759a45de45bc37fe3f35e0ed5dfb5e460f",
+  "original_reader_runtime": {
+    "required_reader_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "wrapper_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8"
+  },
+  "overlap_with_previous_passed": [],
+  "previous_unique_passed": 118,
+  "prior_logs": {
+    "append-reorg": {
+      "receipt_sha256": "544b1c7ba5a12ed00e156220fc90f8f2e1a547c7ff4b6134c1449be973f40789",
+      "stdout_sha256": "c216a1c0c7954ae5897027cdf789d5a66421ac2795b8d756e2b2a6dec8a9ba3d"
+    },
+    "archive-store": {
+      "receipt_sha256": "dcefc7b75bc545e879a0ebce69df26e6f63904037197d0845b694ec9c8f672d9",
+      "stdout_sha256": "9858ffe78d74de228bd33cf7f74b9f137ed9a4a06f0a22cba507184a108f2971"
+    },
+    "authenticated": {
+      "receipt_sha256": "ecf1c1bec73908607e75fa60c14fc9f3feaedc223b0393ef7ee40244e078b0ec",
+      "stdout_sha256": "5e1fe4b7db5cb47e65c4b76eafa417a5e5ec767049868b60d0082ff3855dbe22"
+    },
+    "tcp-1": {
+      "receipt_sha256": "b6bd6a7aeab8fd0fec95aaa4ce0193a1d934c9dbdbdb05251efea6a817f22ee6",
+      "stdout_sha256": "ffea1083a82888f7f5cc328280fee218afe2bc65919902775c089c48daaca235"
+    },
+    "tcp-2": {
+      "receipt_sha256": "5070f2aaf831cae6482435f154548c838cdfabb05be33c60bfc13d135b22ec79",
+      "stdout_sha256": "1f4c9015a3019da6e64f3bcbdda304d8ee0c4c50384e8ed56313cd059e276926"
+    },
+    "tcp-3": {
+      "receipt_sha256": "05a2b2327e5b24b9470b4312d5ef3e642ccb01d494e33301df26db734b096feb",
+      "stdout_sha256": "043903616ad35b3b9add8df3320eae65513480e1deef0e77c9de24797557d4e2"
+    },
+    "tcp-4": {
+      "receipt_sha256": "50b86872d64c745424f1dcca8176af708a8861c1828348d725243c1fb8704345",
+      "stdout_sha256": "6885d58de7339d1cd88edfd095ae0b97c45cf5fa37c7b3c51f6f9c0af1039731"
+    },
+    "tcp-5": {
+      "receipt_sha256": "6ce1dde9d83e01d349fefdb2376c40ca1a9b2ab93bd9f369e56ae5c351e71225",
+      "stdout_sha256": "676847a3e6e803bb81ad69585d773aa50f2f426a8846647fd972e250862aa2a7"
+    },
+    "tcp-6": {
+      "receipt_sha256": "b0bb961dfd5848d944ca4f89e05c3da4e6ff7901ef2b9a0b22ea9f71cd945409",
+      "stdout_sha256": "1fb2bea3e4be4e8cec59bd4c4dec4c12d369c3920b9852f8840c9028cfc9e925"
+    }
+  },
+  "selectors": [
+    "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+    "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+    "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+    "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+    "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+    "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+    "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+    "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+    "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures"
+  ]
+}

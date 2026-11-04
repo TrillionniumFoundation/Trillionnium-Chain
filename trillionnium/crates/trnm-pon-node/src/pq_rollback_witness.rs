@@ -536,11 +536,18 @@ impl DurableWitness {
         owner.check_storage()?;
         Ok(owner)
     }
+    /// Recover only the exact checkpoint independently retained by the caller.
+    /// The expected value must come from an authenticated pre-stop receipt or
+    /// an independently durable monotonic authority, never from this SQLite
+    /// database or a sibling file restored with it. A newer or older on-disk
+    /// checkpoint requires explicit external reconciliation, not auto-adoption.
     pub fn open_existing(
         path: &Path,
         binding: WitnessBinding,
+        expected: Checkpoint,
         signer: PqNativeSigningKey,
     ) -> Result<Self> {
+        Checkpoint::new(expected.sequence, expected.root)?;
         ensure(
             signer.public_key_id() == binding.witness.public_key_id(),
             "PQ_WITNESS_SERVICE_PIN",
@@ -565,7 +572,7 @@ impl DurableWitness {
         let parent_identity =
             file_identity(&fs::metadata(path.parent().ok_or("PQ_WITNESS_PATH")?)?);
         let db = Self::connection(&path)?;
-        let mut owner = Self {
+        let owner = Self {
             db,
             lock,
             path,
@@ -573,10 +580,10 @@ impl DurableWitness {
             parent_identity,
             binding,
             signer,
-            known_head: None,
+            known_head: Some(expected),
             commit_uncertain: false,
         };
-        owner.known_head = Some(owner.read_head()?);
+        owner.read_head()?;
         Ok(owner)
     }
     fn connection(path: &Path) -> Result<Connection> {

@@ -181,16 +181,20 @@ for a disallowed floating value remains an error after a successful integer read
 The same owner also retains at most 8,192 compressed-path hash results. A key
 contains every variable mathematical input: node path, node digest, source depth
 and target depth. The omitted empty-tree table is the immutable compiled hash
-grammar. Capacity exhaustion clears these optional entries. Complete account-root
+grammar. Fixed eight-way buckets replace only bounded optional arithmetic entries
+after checking every input field; capacity does not clear the entire cache.
+Complete account-root
 construction still parses, orders and rebuilds every supplied account; it can
 reuse only the lift arithmetic for unchanged inputs. Stored-tree verification
-still reads and decodes each actual SQL node, checks its content identity and
+still reads each actual SQL node, checks its content identity and
 parent path/depth/hash relation, and compares every leaf, count and balance with
 the complete State. The complete-root calculation takes accounts from actual
 State and never substitutes account values retained from the stored tree.
 
-Neither cache retains a database validity verdict, a parsed stored record, a
-history prefix, a selected block or execution authority. Current KV, records,
+The separate bounded decode pool may reuse a parsed node only after matching its
+complete freshly read SQL bytes and expected content ID. It supplies no row or
+graph-validity result. These pools retain no database validity verdict, history
+prefix, selected block or execution authority. Current KV, records,
 deltas, packet bytes, required archive nodes and all historical links are read
 and checked as before, including after transaction triggers and during recovery.
 Consequently a cache hit requires no claim that SQLite `data_version` detects
@@ -199,6 +203,25 @@ actual rows through a second connection and require the same local-integrity
 error as a cold cache. Existing late-trigger, old-delta, cancellation, branch and
 reopen regressions remain required. This change reduces repeated hash arithmetic;
 the State and history scans remain linear in their respective sizes.
+
+### Account commitment without storage-record construction
+
+The complete account-root arithmetic entry now builds a private `RootDigest`
+containing only path, depth and digest. These are the same mathematical inputs
+used by the original Patricia construction and exact-input lift cache. Each leaf
+reuses its path from the current call's complete account ordering. Fork shape,
+child lift order and branch hashes retain the original rules. A commitment-only
+calculation therefore avoids creating encoded storage records and their content
+IDs, which do not contribute to the final account digest.
+
+Actual persistence and graph verification continue to construct or decode full
+`Node` records and check their IDs, child links and all original progress points.
+The new type has no placeholder ID, database handle or stored-node authority.
+The original record-building root and an independent full sparse-tree relation
+remain differential references. Exact-value, owner/nonce changes, malformed
+internal shape, collision, cancellation order and lift-depth controls accompany
+the paired complete-account-root observation. Its cost excludes State parsing,
+SQL graph verification, Host checks, PQ authorization and client confirmation.
 
 ### Exact strings in the existing complete-root arithmetic pool
 
@@ -603,6 +626,31 @@ logical SQLite table after cancellation, valid retry and cold reopen in both
 backends. These fixtures do not constitute permanent-account growth beyond the
 old ledger cap, physical power-loss acceptance, or public throughput measurement.
 
+
+## Direct append final readback
+
+Ordinary direct append returns an existing post-write scope after its final event
+insertion, using the same final readback helper as reorganization. All actual
+active State, ancestry, event and history checks remain, followed by the original
+last callback and unchanged-write fence. Direct append retains its `Atomic` SQL
+commit observation; reorganization retains `ReorgStep`. Cancellation before
+COMMIT rolls back that transaction. A later transport cancellation does not
+reverse a committed result. An unqualified optional scope retains the original
+complete checks, without promising the strict write-epoch fence of a qualified
+scope. Transaction replacement now uses the existing reorganization scope error:
+`NATIVE_POST_WRITE_SCOPE`, preserving the earlier callback error as its source.
+The observer refuses a result; it cannot undo a callback's own COMMIT. No graph
+proof survives a transaction boundary.
+
+The separately studied parent-graph continuation through native INSERTs is
+**not enabled**. Its exact source, native controls and both paired cost runs are
+retained in the [candidate record](../../../../evidence/pon-throughput-continuation-20261104/parent-and-tail/graph-candidate/README.md).
+A small changed-state fixture still regresses after the first correction, and
+the reviewed catalog checks alone do not establish physical SQLite page
+ownership. No bypass was reproduced by that review; the missing justification
+remains unresolved. The default publisher retains the complete parent and
+post-write child checks. A future candidate must establish its actual storage
+boundary and pass the original complete-cost criteria before default use.
 
 ## Growth reservation readback boundary
 

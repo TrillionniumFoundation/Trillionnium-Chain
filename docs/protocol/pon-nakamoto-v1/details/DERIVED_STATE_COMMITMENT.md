@@ -66,6 +66,34 @@ cancelled-publication or reorganization tests.
 
 ## Resource selection and errors
 
+### Unchanged complete-State snapshot preparation
+
+`checked_snapshot` and `checked_snapshot_with_arithmetic` can now share the
+opaque predecessor's canonical-map allocation when its root equals the freshly
+supplied expected root and its key count equals the actual State's count. These
+two values select a candidate only. A successful reuse still canonically checks
+every actual key and value against that map, then executes the original empty-
+delta `StateTree::apply` and the final expected-root comparison.
+
+A first differing key or byte returns to the original full-map preparation;
+that path repeats complete canonical validation and retains late error priority.
+An unrelated root or count bypasses the comparison. Invalid limits and refused
+cache budgets also retain the original preparation and full-root fallback.
+Existing map capacities, conservative workspace charges and internal-tree repair
+behavior remain unchanged. No State is reconstructed from this material, and no
+database read, current-row check or admission decision is supplied by it.
+
+The `pon_commitment::unchanged_snapshot_tests` controls compare results, complete
+observations, error order, allocation-stage order and actual Arc identity with
+the retained preparation entry. Their explicit paired full-binding observation
+includes both identical State and misleading same-root hints with changed first
+or last values. A late mismatch can still pay for a comparison followed by the
+original encoder; that cost belongs in the observation. This is an O(N) complete
+input check with fewer allocations on a hit, not touched-key execution or a
+business-confirmation result.
+
+### Existing ceilings and fallback
+
 The default retained-cache limits are 65,536 keys and 8 MiB of canonical key/value
 payload. The workspace software-charge ceiling is 512 MiB. Operators may select lower
 adapter limits; they cannot use this API to increase those ceilings. Charges include

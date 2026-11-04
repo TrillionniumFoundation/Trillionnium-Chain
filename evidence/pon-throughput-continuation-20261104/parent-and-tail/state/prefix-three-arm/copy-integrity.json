@@ -1,0 +1,298 @@
+{
+  "created_utc": "2026-11-04T08:33:22.604788+00:00",
+  "scope": "byte-preserved sole M06 experiment; archived source is not active native source; no native rerun",
+  "raw_files": [
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/build-result.json",
+      "destination": "raw/build-result.json",
+      "bytes": 2275,
+      "source_sha256": "99998d47e952722c0b8c9b402792a01e4ba484adaf71df43fbb2bbb8a54ab67f",
+      "destination_sha256": "99998d47e952722c0b8c9b402792a01e4ba484adaf71df43fbb2bbb8a54ab67f"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/build.stderr",
+      "destination": "raw/build.stderr",
+      "bytes": 330,
+      "source_sha256": "8cf621b34c48be98a2a9c94ec06807238caa4cbea1b03944c3bb7d92dc9e243a",
+      "destination_sha256": "8cf621b34c48be98a2a9c94ec06807238caa4cbea1b03944c3bb7d92dc9e243a"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/build.stdout",
+      "destination": "raw/build.stdout",
+      "bytes": 98143,
+      "source_sha256": "4cf3c91114be97e456b9026e18758897890f8568f08170c11c8c8bb3924a2b64",
+      "destination_sha256": "4cf3c91114be97e456b9026e18758897890f8568f08170c11c8c8bb3924a2b64"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/compiler-environment-result.json",
+      "destination": "raw/compiler-environment-result.json",
+      "bytes": 1432,
+      "source_sha256": "6e62a2457ed63a2af7258bdc36a4a293d4c1a34c61c4568dc9ac8e02d9207ac8",
+      "destination_sha256": "6e62a2457ed63a2af7258bdc36a4a293d4c1a34c61c4568dc9ac8e02d9207ac8"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/compiler-environment.stderr",
+      "destination": "raw/compiler-environment.stderr",
+      "bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/compiler-environment.stdout",
+      "destination": "raw/compiler-environment.stdout",
+      "bytes": 1335,
+      "source_sha256": "84b4ffc3047ee748c3fda9003d414fce8dd920427d70df0b3b32b195841da905",
+      "destination_sha256": "84b4ffc3047ee748c3fda9003d414fce8dd920427d70df0b3b32b195841da905"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/decision-result.json",
+      "destination": "raw/decision-result.json",
+      "bytes": 1119,
+      "source_sha256": "4cbbe4d244b400a847cf5c41147988a375bc4142c0e86ebccd44db4224573ebe",
+      "destination_sha256": "4cbbe4d244b400a847cf5c41147988a375bc4142c0e86ebccd44db4224573ebe"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/decision.stderr",
+      "destination": "raw/decision.stderr",
+      "bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/decision.stdout",
+      "destination": "raw/decision.stdout",
+      "bytes": 15487,
+      "source_sha256": "14ff8e53a497f94b3a2146f558c92e0a28fd1da3595b77eb9920b09a648e232b",
+      "destination_sha256": "14ff8e53a497f94b3a2146f558c92e0a28fd1da3595b77eb9920b09a648e232b"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/measurement-result.json",
+      "destination": "raw/measurement-result.json",
+      "bytes": 1438,
+      "source_sha256": "d150a500c66a72b383cf8cec8be4ab5e13f99a5abedae718af59ba62e1fb0547",
+      "destination_sha256": "d150a500c66a72b383cf8cec8be4ab5e13f99a5abedae718af59ba62e1fb0547"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/measurement.stderr",
+      "destination": "raw/measurement.stderr",
+      "bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/measurement.stdout",
+      "destination": "raw/measurement.stdout",
+      "bytes": 34437,
+      "source_sha256": "c0b5d65c9dbf60e8a89f0fb7a5d49d05520c33bfbb106d713f4948d96a8eb62f",
+      "destination_sha256": "c0b5d65c9dbf60e8a89f0fb7a5d49d05520c33bfbb106d713f4948d96a8eb62f"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/preflight-result.json",
+      "destination": "raw/preflight-result.json",
+      "bytes": 566,
+      "source_sha256": "88029758ac6b9512f192db1b5304d04e61b5c69c29a94ba67923d2637c67c662",
+      "destination_sha256": "88029758ac6b9512f192db1b5304d04e61b5c69c29a94ba67923d2637c67c662"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/preflight.stderr",
+      "destination": "raw/preflight.stderr",
+      "bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/preflight.stdout",
+      "destination": "raw/preflight.stdout",
+      "bytes": 170,
+      "source_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "destination_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/registration-bound.json",
+      "destination": "raw/registration-bound.json",
+      "bytes": 7827,
+      "source_sha256": "5a6d1f93426df5faac0eec39b97c3712cc41a2885ec925ebd173bad98ba2428a",
+      "destination_sha256": "5a6d1f93426df5faac0eec39b97c3712cc41a2885ec925ebd173bad98ba2428a"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/required-native-reader.stderr",
+      "destination": "raw/required-native-reader.stderr",
+      "bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/required-native-reader.stdout",
+      "destination": "raw/required-native-reader.stdout",
+      "bytes": 209,
+      "source_sha256": "550c004be94c030ed7b1f8804de0670c2c1476d9b463ac0a57ae7bc8df11f1f2",
+      "destination_sha256": "550c004be94c030ed7b1f8804de0670c2c1476d9b463ac0a57ae7bc8df11f1f2"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-after-build.json",
+      "destination": "raw/source-after-build.json",
+      "bytes": 176983,
+      "source_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e",
+      "destination_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-after-measurement.json",
+      "destination": "raw/source-after-measurement.json",
+      "bytes": 176983,
+      "source_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e",
+      "destination_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-before-build.json",
+      "destination": "raw/source-before-build.json",
+      "bytes": 176983,
+      "source_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e",
+      "destination_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-before-measurement.json",
+      "destination": "raw/source-before-measurement.json",
+      "bytes": 176983,
+      "source_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e",
+      "destination_sha256": "f18cb36934a79c8f611e242dd13f2137ec4c84d44ae4b0cb1f6aee147542e03e"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/checked_prefix_three_arm_tests.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/checked_prefix_three_arm_tests.rs.txt",
+      "bytes": 21279,
+      "source_sha256": "015d1225d9773e5d85b0247352a1a31e9a8a264f85dff5e08746577a2a821aa0",
+      "destination_sha256": "015d1225d9773e5d85b0247352a1a31e9a8a264f85dff5e08746577a2a821aa0"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs.txt",
+      "bytes": 21782,
+      "source_sha256": "4609b72cb03de234fa2f87119a1a5f4288d02c41b43f8cecfec2df15199df72c",
+      "destination_sha256": "4609b72cb03de234fa2f87119a1a5f4288d02c41b43f8cecfec2df15199df72c"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs.txt",
+      "bytes": 114299,
+      "source_sha256": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832",
+      "destination_sha256": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs.txt",
+      "bytes": 3248,
+      "source_sha256": "2a9c7130fc264b670e2b2041f99a2d51cf6f26faa4eb1200df04ce8a127bc29c",
+      "destination_sha256": "2a9c7130fc264b670e2b2041f99a2d51cf6f26faa4eb1200df04ce8a127bc29c"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs.txt",
+      "bytes": 149747,
+      "source_sha256": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0",
+      "destination_sha256": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs.txt",
+      "bytes": 326925,
+      "source_sha256": "647161dfd07cc0f3f7a0e65a90c43e07b4e87fc1db24e3791f89d431808f0fab",
+      "destination_sha256": "647161dfd07cc0f3f7a0e65a90c43e07b4e87fc1db24e3791f89d431808f0fab"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-pon-node/src/error.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-pon-node/src/error.rs.txt",
+      "bytes": 33610,
+      "source_sha256": "260ec57946cc5268bf916f95547ebdf70b2ed70cfd01696f2caf8d601736830e",
+      "destination_sha256": "260ec57946cc5268bf916f95547ebdf70b2ed70cfd01696f2caf8d601736830e"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs.txt",
+      "bytes": 329790,
+      "source_sha256": "605435c5454913edc8faad4666252a5ab035bd0a87fe74dff93bee16db733bd3",
+      "destination_sha256": "605435c5454913edc8faad4666252a5ab035bd0a87fe74dff93bee16db733bd3"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs.txt",
+      "bytes": 8512,
+      "source_sha256": "93054fdbb3f32e2df9ee76fb0f8adbfe5812383d9b99121739e99f1f651d9930",
+      "destination_sha256": "93054fdbb3f32e2df9ee76fb0f8adbfe5812383d9b99121739e99f1f651d9930"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "destination": "raw/source-snapshot/trillionnium/crates/trnm-pon-node/src/store.rs.txt",
+      "bytes": 334071,
+      "source_sha256": "e097b9e8cb972187333c56854f8cfc55c0e27bd608ea596e454ecb7eeb9f62b4",
+      "destination_sha256": "e097b9e8cb972187333c56854f8cfc55c0e27bd608ea596e454ecb7eeb9f62b4"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/source-snapshot.json",
+      "destination": "raw/source-snapshot.json",
+      "bytes": 1397,
+      "source_sha256": "8409c2273bd8b361d0746d313b15e6fc962153ded961b3e43ee0544694daaa09",
+      "destination_sha256": "8409c2273bd8b361d0746d313b15e6fc962153ded961b3e43ee0544694daaa09"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/timed-attempt.started.json",
+      "destination": "raw/timed-attempt.started.json",
+      "bytes": 497,
+      "source_sha256": "f9b97e7a169671894a52966423b4a1a1431592ecd03c1d9432b30bce272338e8",
+      "destination_sha256": "f9b97e7a169671894a52966423b4a1a1431592ecd03c1d9432b30bce272338e8"
+    }
+  ],
+  "helper_files": [
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/run_prefix_three_arm_once.py",
+      "destination": "run_prefix_three_arm_once.original.py",
+      "bytes": 9140,
+      "source_sha256": "386d4ad06fccf3370d81f2ba0dbb90dac07270e081b8100ff6d68357d45893af",
+      "destination_sha256": "386d4ad06fccf3370d81f2ba0dbb90dac07270e081b8100ff6d68357d45893af",
+      "capture_scope": "archival copy after the sole observation; the original absolute paths are preserved"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/throughput-readback/run_tail_native_controls.py",
+      "destination": "run_tail_native_controls.original.py",
+      "bytes": 8161,
+      "source_sha256": "0d5846a109c6a6a1c510443cbb2482b4b9551000543e780fd5472b17fdcd6641",
+      "destination_sha256": "0d5846a109c6a6a1c510443cbb2482b4b9551000543e780fd5472b17fdcd6641",
+      "capture_scope": "archival copy after the sole observation; the original absolute paths are preserved"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+      "destination": "run-throughput.original.sh",
+      "bytes": 792,
+      "source_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8",
+      "destination_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8",
+      "capture_scope": "archival copy after the sole observation; the original absolute paths are preserved"
+    },
+    {
+      "source": "/workspace/scratch/7318d5f890d1/chain-throughput/scripts/ci/check_required_native_test.py",
+      "destination": "check_required_native_test.original.py",
+      "bytes": 2928,
+      "source_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+      "destination_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+      "capture_scope": "archival copy after the sole observation; the original absolute paths are preserved"
+    }
+  ],
+  "all_copies_byte_identical": true,
+  "raw_files_count": 34,
+  "raw_files_bytes": 2217857,
+  "before_after_manifests_equal": true,
+  "native_input_files_count": 1192,
+  "source_manifest_sha256": "d88c742223b09b2597aeefed95191869528410f2765e7d25a5a7f62cf6243430",
+  "source_snapshot_files_verified": 10,
+  "reader_replay": {
+    "command": [
+      "python3",
+      "/workspace/scratch/7318d5f890d1/chain-throughput/evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/compare_v4.py",
+      "/workspace/scratch/7318d5f890d1/chain-throughput/evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/raw/measurement.stdout"
+    ],
+    "exit_code": 1,
+    "stdout_sha256": "14ff8e53a497f94b3a2146f558c92e0a28fd1da3595b77eb9920b09a648e232b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "byte_identical_to_original_decision_output": true,
+    "native_execution_performed": false
+  },
+  "decision": "HOLD; two p95 nonregression failures; candidate defaults restored"
+}

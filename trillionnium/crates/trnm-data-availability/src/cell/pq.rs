@@ -330,6 +330,11 @@ impl CellPqReleaseAuthorizationV2 {
         require(!s.withdrawn, "PQ Cell release withdrawn")?;
         Ok(VerifiedCellPqReleaseV2 {
             release,
+            network: s.network,
+            parameters: s.parameters,
+            signer_key_id: s.signer_key_id,
+            key_generation: s.generation,
+            sequence: s.sequence,
             verified_at: expected.now,
             expires_at: s
                 .expires_at
@@ -339,17 +344,45 @@ impl CellPqReleaseAuthorizationV2 {
     }
 }
 
-/// Opaque publisher observation. Revalidate its time immediately before use;
-/// this does not replace current authority/revocation retrieval by the host.
+/// Opaque publisher observation, not a transferable authorization capability.
+/// Every access requires the host's current authority view, including key
+/// retirement and release sequence. The host must obtain that view from its
+/// authority owner at the actual use boundary; a copied old view is not fresh.
+/// This cache/acquisition API is not a CURRENT update or a FinalUse capability.
+///
+/// ```compile_fail
+/// use trnm_data_availability::cell::VerifiedCellPqReleaseV2;
+/// fn stale_time_only(proof: &VerifiedCellPqReleaseV2<'_>) {
+///     let _ = proof.release_at(300);
+/// }
+/// ```
 pub struct VerifiedCellPqReleaseV2<'a> {
     release: &'a CellReleaseManifestV1,
+    network: CellDigestV1,
+    parameters: CellDigestV1,
+    signer_key_id: CellDigestV1,
+    key_generation: u64,
+    sequence: u64,
     verified_at: u64,
     expires_at: u64,
 }
 impl<'a> VerifiedCellPqReleaseV2<'a> {
-    pub fn release_at(&self, now: u64) -> CellResultV1<&'a CellReleaseManifestV1> {
+    pub fn release_at(
+        &self,
+        current: &CellPqReleaseExpectationV2<'_>,
+    ) -> CellResultV1<&'a CellReleaseManifestV1> {
+        current.key.validate()?;
+        current.key.live_at(current.now)?;
         require(
-            now >= self.verified_at && now < self.expires_at,
+            current.network == self.network
+                && current.parameters == self.parameters
+                && current.key.key_id == self.signer_key_id
+                && current.key.generation == self.key_generation
+                && current.sequence == self.sequence,
+            "PQ Cell current authority changed",
+        )?;
+        require(
+            current.now >= self.verified_at && current.now < self.expires_at,
             "PQ Cell verified lifetime",
         )?;
         Ok(self.release)

@@ -3,7 +3,7 @@
 //! and bounded M06 execution. The original owner checks the private execution
 //! artifact and retains the original transaction/readback publication fences.
 use super::{
-    ensure, hex_packet_for_settings, now, public_v3, Hash, Node, Packet, Page, Result, Settings,
+    ensure, hex_packet_for_context, now, public_v3, Hash, Node, Packet, Page, Result, Settings,
     WorkCheckedPacket, MAX_FRAME,
 };
 use public_v3::{request_observation::TaskObservation, SubmitPhase};
@@ -306,7 +306,7 @@ fn admit_packet(
         // control.check() performed no ledger work and duplicated Host reads.
         let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
         check()?;
-        let (existing, permit, settings) =
+        let (existing, permit, codec) =
             super::observe_submit_phase(observation, SubmitPhase::Context, || {
                 owner.with(control, |node| {
                     let existing = node.precheck_public_admission_context_with_progress(
@@ -319,7 +319,7 @@ fn admit_packet(
                     } else {
                         None
                     };
-                    Ok((existing, permit, node.settings().clone()))
+                    Ok((existing, permit, node.settings().packet_codec_context()))
                 })
             })?;
         if let Some(id) = existing {
@@ -335,7 +335,7 @@ fn admit_packet(
         let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
             verify_history_work(packet, &progress, owns_node_mutex, control)
         })?;
-        operation.history_work_verified_for_settings(&checked, &settings)?;
+        operation.history_work_verified_for_context(&checked, &codec)?;
         // Promotion changes only scheduling for this complete, unique W1.
         // Shared owners retain nonwaiting checkpoints while holding Node;
         // exclusive embedding has no Node mutex and keeps its exact stack.
@@ -449,11 +449,11 @@ pub(super) fn receive_observed(
     }
     let page_observation = observation.map(HistoryImportObserver::page);
     super::observe_submit_phase(page_observation, SubmitPhase::HistoryImport, || {
-        let (settings, continuous) =
+        let (codec, continuous) =
             super::observe_submit_phase(page_observation, SubmitPhase::Context, || {
                 owner.with(&control, |node| {
                     validate_page(node.settings(), &page, tip, after)?;
-                    Ok((node.settings().clone(), node.is_continuous()))
+                    Ok((node.settings().packet_codec_context(), node.is_continuous()))
                 })
             })?;
         if continuous {
@@ -491,7 +491,7 @@ pub(super) fn receive_observed(
                     for (index, raw) in page.packets.iter().enumerate() {
                         control.check()?;
                         operation.checkpoint()?;
-                        let packet = hex_packet_for_settings(raw, &settings)?;
+                        let packet = hex_packet_for_context(raw, &codec)?;
                         ensure(packet.header.parent == next, "PAGE_PARENT")?;
                         next = packet.id()?;
                         if let Some(observer) = observation {

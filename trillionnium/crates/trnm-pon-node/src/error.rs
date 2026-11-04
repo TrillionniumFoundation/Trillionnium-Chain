@@ -105,6 +105,7 @@ error_codes! {
     FrameEof => ("FRAME_EOF", Transport),
     FrameDeadline => ("FRAME_DEADLINE", Cancelled),
     PublicEof => ("PUBLIC_EOF", Transport),
+    PublicTrailingInput => ("PUBLIC_TRAILING_INPUT", Transport),
     PublicClientDeadline => ("PUBLIC_CLIENT_DEADLINE", Cancelled),
     PeerPollCancelled => ("PEER_POLL_CANCELLED", Cancelled),
     LegacyRequestCancelled => ("CANCELLED", Cancelled),

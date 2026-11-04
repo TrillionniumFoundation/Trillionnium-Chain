@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "check_selection_execution.py"
+  ],
+  "cwd": "this evidence directory",
+  "scope": "Offline existing artifact readback only; no native execution",
+  "started_at": "2026-11-04T09:05:44.331976+00:00",
+  "finished_at": "2026-11-04T09:05:44.385671+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "f8d3248205bd6fe725720960e78883e4cc05037281c0fa22667d8e526c7563f3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

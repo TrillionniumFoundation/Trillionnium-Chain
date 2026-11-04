@@ -923,10 +923,22 @@ fn write_untrusted_error(
 fn hex_packet(text: &str) -> Result<Packet> {
     decode_hex_packet(text, None)
 }
-fn hex_packet_for_settings(text: &str, settings: &Settings) -> Result<Packet> {
-    decode_hex_packet(text, Some(settings))
+fn hex_packet_for_context(
+    text: &str,
+    context: &crate::pq_application_v6::PacketCodecContext,
+) -> Result<Packet> {
+    decode_hex_packet_with(text, |raw| context.decode(raw))
 }
 fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> {
+    decode_hex_packet_with(text, |raw| match settings {
+        Some(settings) => Packet::decode_for_settings(raw, settings),
+        None => Packet::decode(raw),
+    })
+}
+fn decode_hex_packet_with(
+    text: &str,
+    decode: impl FnOnce(&[u8]) -> Result<Packet>,
+) -> Result<Packet> {
     ensure(
         text.len() <= 2_097_152
             && text.len().is_multiple_of(2)
@@ -936,10 +948,7 @@ fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> 
         "PACKET_HEX",
     )?;
     let raw = hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?;
-    match settings {
-        Some(settings) => Packet::decode_for_settings(&raw, settings),
-        None => Packet::decode(&raw),
-    }
+    decode(&raw)
 }
 /// Negotiate before sending Submit; legacy listeners see only a nonmutating hello.
 /// Durable authenticated outbox bytes remain the exact originally signed request.

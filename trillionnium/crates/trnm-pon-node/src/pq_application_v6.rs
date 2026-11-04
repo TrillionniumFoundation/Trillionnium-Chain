@@ -4,11 +4,42 @@ use crate::{ensure, Packet, Result, Settings};
 pub use pq::application_v6::ApplicationPolicy;
 pub use pq::{GenesisAccount, TrustedMigrationAnchor};
 use trnm_crypto_primitives::pon_work;
-use trnm_mvcc_fee::pon_executor::pq_accounts_v2 as pq;
+use trnm_mvcc_fee::pon_executor::{pq_accounts_v2 as pq, Config};
 use trnm_protocol::pon_wire::{Header, HEADER_BYTES};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, UnverifiedEnvelope};
 
+/// An immutable copy of the original packet configuration, without genesis
+/// State or operator task material. History only needs this configuration while
+/// its Node owner is unlocked. Profile validation still runs at every original
+/// codec/identity call; construction neither validates nor caches a verdict.
+pub(crate) struct PacketCodecContext {
+    app: Config,
+}
+
+impl PacketCodecContext {
+    pub(crate) fn network(&self) -> crate::Hash {
+        self.app.network
+    }
+    pub(crate) fn parameters(&self) -> crate::Hash {
+        self.app.parameters
+    }
+    pub(crate) fn is_pq(&self) -> bool {
+        pq::enabled(&self.app)
+    }
+    pub(crate) fn encode(&self, packet: &Packet) -> Result<Vec<u8>> {
+        encode_packet_for_config(packet, &self.app)
+    }
+    pub(crate) fn decode(&self, raw: &[u8]) -> Result<Packet> {
+        decode_packet_for_config(raw, &self.app)
+    }
+}
+
 impl Settings {
+    pub(crate) fn packet_codec_context(&self) -> PacketCodecContext {
+        PacketCodecContext {
+            app: self.app.clone(),
+        }
+    }
     pub fn native_pq_application_v6(
         accounts: &[GenesisAccount],
         timestamp: u64,
@@ -70,18 +101,24 @@ impl Packet {
         }
     }
     pub fn encode_for_settings(&self, settings: &Settings) -> Result<Vec<u8>> {
-        if pq::enabled(&settings.app) {
-            encode_packet_for_profile(self, pq::account_profile(&settings.app)?)
-        } else {
-            self.encode()
-        }
+        encode_packet_for_config(self, &settings.app)
     }
     pub fn decode_for_settings(raw: &[u8], settings: &Settings) -> Result<Self> {
-        if pq::enabled(&settings.app) {
-            decode_packet_for_profile(raw, pq::account_profile(&settings.app)?)
-        } else {
-            Self::decode(raw)
-        }
+        decode_packet_for_config(raw, &settings.app)
+    }
+}
+fn encode_packet_for_config(packet: &Packet, app: &Config) -> Result<Vec<u8>> {
+    if pq::enabled(app) {
+        encode_packet_for_profile(packet, pq::account_profile(app)?)
+    } else {
+        packet.encode()
+    }
+}
+fn decode_packet_for_config(raw: &[u8], app: &Config) -> Result<Packet> {
+    if pq::enabled(app) {
+        decode_packet_for_profile(raw, pq::account_profile(app)?)
+    } else {
+        Packet::decode(raw)
     }
 }
 pub(crate) fn checked_length_for_profile(

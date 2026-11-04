@@ -192,6 +192,7 @@ from test_llm_runtime_evidence_pipe import EvidencePipeOwnershipTests
 from test_llm_runtime_evidence_frames import EvidenceFrameTests, EvidenceWriterTests
 from test_llm_runtime_evidence_transport import EvidenceTransportTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
+from test_llm_runtime_artifact_loading import ArtifactChildTests, RecipeBindingTests
 
 
 if __name__=='__main__':unittest.main()

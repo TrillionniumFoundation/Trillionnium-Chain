@@ -231,3 +231,43 @@ it does not claim those external tools ran. No second ledger or acceptance flag
 is added. Full two-repository baselines, native capacity/history, minimum physical
 work cost, independent future-task adoption, physical power loss, long-term DA
 and independent WAN confirmed throughput retain their distinct acceptance duties.
+
+## Work report semantic status
+
+M17.HistoricalEvidence preserves the full V2 report and refuses a successful command status when the underlying reader reports semantic disagreement. Explicit requested cost/local gates retain exit-code priority; ordinary report success grants no work-cost or production qualification.
+
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit`
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two`
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in`
+
+## Returned and cancelled native growth operations
+
+The fixed-owner A/H observer emits v2 recordings with separate admission and
+activation return records. Each record is flushed before the original unwrap
+or acceptance assertion, so a later failure cannot erase a successful earlier
+admission. Original failures still fail the campaign. A complete 3-by-3 campaign
+has 144 successful admission/activation returns and nine deliberately cancelled
+admission returns. The eight successful block samples in each cohort remain a
+separate latency population; cancellation is never a ninth successful sample.
+
+The original BeforeCommit cancellation and complete SQL/generation rollback
+comparison remain. BeforeCommit-to-return includes the actual success or error
+return and is not an isolated durable-commit measurement. Unmeasured thread and
+process CPU remain null. Journal append/sync is outside the ended native span
+and belongs to whole-campaign overhead. Nested offsets must not be added.
+
+The strict reader requires v2 by default. Explicit `--historical-v1` reads old
+recordings with return/cancellation timing unavailable; it cannot qualify the
+new recording contract. Native execution identity, full source/binary checks,
+the original fixed workload and original business gates remain separate.
+
+The existing M17.HistoricalEvidence binding includes these exact controls:
+
+- `trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_rejected_and_cancelled_admission_returns`.
+- `trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_admission_when_activation_returns_error`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_activation_failure_keeps_prior_admission_return_and_remains_failure`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_all_nine_cancellations_need_their_own_return_and_timing`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement`.
+- `scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work`.
