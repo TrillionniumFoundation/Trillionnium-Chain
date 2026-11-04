@@ -1,0 +1,128 @@
+{
+  "current_heads": 648,
+  "prior_heads": 630,
+  "changed_or_added_heads": 22,
+  "scanned_heads": 22,
+  "failed_heads": 0,
+  "inventory_blobs": [
+    "13dbe6779254f3c4316f90a8356d458b0bf8061d",
+    "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
+    "a8dfa67be9f376c606994142aed3a6c6491a4a81",
+    "d846deb176a4290658859efb369b5b0947f04356"
+  ],
+  "new_m04_blobs": [],
+  "comparison": "baseline 6cdbf9551aae1754e489773bac29bc0598e20a9b plus 161 frozen candidate blobs",
+  "limits": "Inventory declarations and source-tree metadata only; no source semantic review, old evaluation/calibration/consumer content, training, repository file edits, or remote publishing.",
+  "exact_heads": [
+    {
+      "head": "3f0f21db859df0ead267ed52b1a4f9611e4773fc",
+      "branch": "archive/chain-initial-root-cloud-evidence-20261104",
+      "old": null
+    },
+    {
+      "head": "35f8e3419ae3c57d093f26870199806c347901d0",
+      "branch": "archive/chain-initial-root-evidence-20261104",
+      "old": null
+    },
+    {
+      "head": "1ac0628e1bed5ecf097498d3e9c21cc8eb436b9f",
+      "branch": "archive/host-source-custody-20261103-desktop-v2",
+      "old": null
+    },
+    {
+      "head": "c8c095bb2eee9272dcc77421f055897e6806da12",
+      "branch": "diagnostic/chain-da-sequence-1bac-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+      "branch": "diagnostic/chain-fuzz-asm-lock-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "d0bf48059d4a5fab35401fc49370de8d204f3ef4",
+      "branch": "fix/chain-architecture-native-host-20261104",
+      "old": null
+    },
+    {
+      "head": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "branch": "fix/chain-cell-rendezvous-readiness-20261103-gpt6",
+      "old": "8543bd9f9777d3ef97dbbe55459fa6cb11ec5c2f"
+    },
+    {
+      "head": "89b6ca8b7300dd7f026a073b2ddc79d04df8091a",
+      "branch": "fix/chain-ci-identities-20261104",
+      "old": null
+    },
+    {
+      "head": "45ebc8234f6275b2a8308c79ded73868bc25aa69",
+      "branch": "fix/chain-evaluation-native-host-20261104",
+      "old": null
+    },
+    {
+      "head": "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+      "branch": "fix/chain-hex-decode-20261104",
+      "old": null
+    },
+    {
+      "head": "7a6669e4365eca68a9f6874ea1bab4dfb7c3d784",
+      "branch": "fix/chain-native-sql-reuse-qualified-20261104",
+      "old": null
+    },
+    {
+      "head": "5a5ddbd4577207af7f7771a4a50c76620f32940f",
+      "branch": "fix/chain-pq-integrated-closure-20261103",
+      "old": "1b81e25fd1a1e31f65ea6da88f17ac52a1020606"
+    },
+    {
+      "head": "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+      "branch": "fix/chain-recent-store-pin-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "433948bd39792ba578f9de3c3d4793ac58411780",
+      "branch": "fix/chain-rejection-cost-v2-20261104",
+      "old": null
+    },
+    {
+      "head": "b68bf4038e4ee777cadd32bc92e4eef516726274",
+      "branch": "fix/chain-retained-failure-readback-20261104",
+      "old": null
+    },
+    {
+      "head": "8cda240c205908fb2079b93a86649626eab1306f",
+      "branch": "fix/chain-rustsec-inputs-20261104",
+      "old": null
+    },
+    {
+      "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "branch": "fix/chain-six-axis-performance-20261103",
+      "old": "bbcb3804576b9eb0b908eb3054bedccc189fb7ef"
+    },
+    {
+      "head": "056303b5193809597d4b5ec1f075dfc5109fe888",
+      "branch": "qualification/chain-owner-056303b5-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+      "branch": "qualification/chain-owner-be0d5f97-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+      "branch": "research/chain-da-sequence-readback-20261104-gpt6",
+      "old": null
+    },
+    {
+      "head": "3a862b0d4b6423885e48e839ad8208b037771239",
+      "branch": "research/chain-original-cpu-readback-20261103-gpt6",
+      "old": "d1620baaa50775edf37bc9abf784d2606b6420b9"
+    },
+    {
+      "head": "c08530709df6295c3403fa451db12c5ac8939976",
+      "branch": "test/chain-evidence-integrity-20261104",
+      "old": null
+    }
+  ]
+}

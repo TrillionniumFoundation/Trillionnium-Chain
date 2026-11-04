@@ -1,0 +1,12 @@
+{
+  "baseline_rust_paths": 332,
+  "cache_written": false,
+  "candidate_blobs": 161,
+  "missing_objects": [],
+  "network_used": false,
+  "required_blobs": 494,
+  "required_objects": 544,
+  "result": "PASS",
+  "schema": "chain-source-cache-recovery-report-v1",
+  "training_run": false
+}

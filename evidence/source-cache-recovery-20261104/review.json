@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "independent_test_replay": 18,
+  "script_review": "Pinned manifest and exact object hashes; offline Git transport; dirfd nofollow reads; atomic no-replace writes; conflict precheck.",
+  "original_frozen_packages_unchanged": true,
+  "new_model_training": false,
+  "claims": "Cache recovery and unchanged source replay, not model improvement or independent acceptance.",
+  "rust_native_checks": "Not run: no cargo/rustc in environment.",
+  "python": "3.12.14",
+  "git": "git version 2.52.0"
+}

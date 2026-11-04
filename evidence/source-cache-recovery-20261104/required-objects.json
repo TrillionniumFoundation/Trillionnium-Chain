@@ -1,0 +1,3763 @@
+{
+  "baseline": "6cdbf9551aae1754e489773bac29bc0598e20a9b",
+  "baseline_entries": [
+    {
+      "mode": "040000",
+      "oid": "8cc549ddbccaec96f9c6278d3354afc9eb37242d",
+      "path": "config",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "d846deb176a4290658859efb369b5b0947f04356",
+      "path": "config/portability-inventory-v1.json",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "4de19a9bb72786a6ce7fd568dcf3dbcdda55178b",
+      "path": "trillionnium",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "7639b262e4190360c3c3583ab2ec53605cc8e249",
+      "path": "trillionnium/crates",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "a16f51a15c376a383d9d7bcbf5952ec65ce7b112",
+      "path": "trillionnium/crates/trnm-peer-lease",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "e3704bc2f319bc66a70ff326f0be4cb8583729d4",
+      "path": "trillionnium/crates/trnm-peer-lease/src",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "6a859e48420c0f10fb94ded0db695932d7cb747d",
+      "path": "trillionnium/crates/trnm-peer-lease/src/bin",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "a8ee11166851ded22605ec4d3e5ad08a7dee77a7",
+      "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3ebaaca8588d129f956204fffa48e318cfeda8a8",
+      "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "06d1cfaae94c57e623710b1d3315ff32a31587c2",
+      "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon-v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d4c2d01f9bc8577d473a70cf5aa07b5a54d7d673",
+      "path": "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a5cd019a48ab71863edae7a7fe0ab290aaf37c1a",
+      "path": "trillionnium/crates/trnm-peer-lease/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "928a96f20d12c957cfb88ea37ac7dc929e58c9b6",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4e500a4709d0a5c3aeb82754639c3a3ede1e2ccc",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_body.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1696360a4d6de9d10bf3a240307716a02ae0dc69",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "c4f2777ddb56be218719d95ca675c42301dd713c",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "b2491209d5c0bbe9c4a6f9a1a89f2c6942a8ecbe",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ccfbc4e7a17f5f82f2ebcb4cdef5cac76694c429",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a67b04392b5960c1d23de4fac7d41a028b83c881",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "35dd286849308e4f358813b764e0e0537d1f299c",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ceaa750ae0bfeb596624ab2dc5d6164f6bafa6e5",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "dabea8e3d05c2dce0aa9d98548bf8c12be2e7ed0",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "142cde73d0d40fe9922a4f256ac1dff412a3f00a",
+      "path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5583cb001548beaa7d029386870274c02c3a301",
+      "path": "trillionnium/crates/trnm-peer-lease/src/protocol.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "80ef797b9f4369fb0a2c56a2e8c7a1b7bfacd339",
+      "path": "trillionnium/crates/trnm-peer-lease/src/store.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9e3c32483facefc0d8bc8e04f04bd267527400da",
+      "path": "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "a70bf09f98944b7e0578250b10f5d1edd693c1c8",
+      "path": "trillionnium/crates/trnm-peer-lease/src/unix",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "7624b6ec6bdb7e37443e6547d85641b0ab6bd9ec",
+      "path": "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "be61413f6edd8285a8f2ff99f92ddd12b1703d23",
+      "path": "trillionnium/crates/trnm-peer-lease/tests",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "4b204136a1d88ff7906018a6767cfd107f2fc3d1",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/cross_process.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "71004261923840c9bc386748d8800dd9e5c29638",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/payload_recovery_quarantine_collision.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "860e3e0e6889c7e2400565a31433b46347c9a708",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_cross_process.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6a461da26b7040dd1327cf2e4de7e85807276c04",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_owner_socket.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f1b118cda931ce29cb0475f151f662aca67b0da9",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8be0a992a4bf7d1219d8721c3a4c46d51470db6f",
+      "path": "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process_matrix.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "1d24406d6a50d197acd5ba7f4ee58c59b15a917d",
+      "path": "trillionnium/crates/trnm-protocol",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "091634ab5f19efc196070b7266e349347b59870a",
+      "path": "trillionnium/crates/trnm-protocol/examples",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "227d3296e7271fc8e8108244caadbc6eab9dbf73",
+      "path": "trillionnium/crates/trnm-protocol/examples/pon_wire.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "565354698e0addd119bf7fd334654638c04c38e9",
+      "path": "trillionnium/crates/trnm-protocol/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "523c91846a53e509a8d83d8d13db4444bc45036c",
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4ea8e30cb15880c6e645b2f7950f6cf3d94cd9f9",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "f3a0881f6e7b5fa0fc9a7608f0623584b57d1547",
+      "path": "trillionnium/crates/trnm-research-protocol",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "6a920d35a3306d9f440b01eff9d559c35741cf38",
+      "path": "trillionnium/crates/trnm-research-protocol/fixtures",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "2cbd6cd9eddb08237275cf5698119631c580a888",
+      "path": "trillionnium/crates/trnm-research-protocol/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "19a3b31da74e889cb7427354feb6ac492e81b7f4",
+      "path": "trillionnium/crates/trnm-research-protocol/src/canonical.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "518b49ce93861966e8cf239c9651e5d02a1fd6c8",
+      "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cec078765580cd1f3008721ef9a0b9b96f3a7d6a",
+      "path": "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bce4fcf5894150681b2a5ff27d251b753673fdfd",
+      "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ade501df57ff576cb1a6b71ff7444cfc794806f5",
+      "path": "trillionnium/crates/trnm-research-protocol/src/types.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "b6c7cf49ade5bcc9a32a67a39b5b54d1cdd4b3b7",
+      "path": "trillionnium/crates/trnm-research-protocol/tests",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "01783e9592890512506585908deb59c8b06915a2",
+      "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "af12fbb6b706042f3eb8de4046b4778ef16b037c",
+      "path": "trillionnium/crates/trnm-task-kernel",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "8a8535e616eb3de40266bce9eed450fdb19863f9",
+      "path": "trillionnium/crates/trnm-task-kernel/examples",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "630908c808e9ba92fb7f05f6b662ced2d16524a6",
+      "path": "trillionnium/crates/trnm-task-kernel/examples/agent_transaction_wire_v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "93441cfb0cb911bc6edbf304ed1b700876f22eb8",
+      "path": "trillionnium/crates/trnm-task-kernel/fixtures",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "241e8f956feab4af6643c365a86b883a7863316c",
+      "path": "trillionnium/crates/trnm-task-kernel/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "2eecc06d93fc74964c21361ea10e118625d3a7fa",
+      "path": "trillionnium/crates/trnm-task-kernel/src/agent_transaction_wire_v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "66541fced3ba70bd1a715bb398f9dd4fea573ff7",
+      "path": "trillionnium/crates/trnm-task-kernel/src/archive.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "69aefd479b85860e7c3f745958743fa9cfa11be1",
+      "path": "trillionnium/crates/trnm-task-kernel/src/archive_store.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "879812d5351a7c8e55b9ce30b349e983bddd400d",
+      "path": "trillionnium/crates/trnm-task-kernel/src/archive_verifier.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0fb036705dfa72c048dbd176482085bb17a65212",
+      "path": "trillionnium/crates/trnm-task-kernel/src/codec.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3b5bc92c2ac753f14cc9a27531f7ba1a6104e6a0",
+      "path": "trillionnium/crates/trnm-task-kernel/src/error.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1e5df4cf1ee57b4af3187d0502420d69d71ac27a",
+      "path": "trillionnium/crates/trnm-task-kernel/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "45a709b205b845a0d99c537881a07f8414458220",
+      "path": "trillionnium/crates/trnm-task-kernel/src/store.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0fe44de1abca3b9653202df64325d2732a8ba2af",
+      "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bad1a7a4c1ae076c63f8b3dfecc6418d636a4200",
+      "path": "trillionnium/crates/trnm-task-kernel/src/types.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "1ad583c9a95402dc1b8c88c53918f4127fcb72c4",
+      "path": "trillionnium/crates/trnm-task-kernel/tests",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "1c8a3c83e835322aab8dd6fb354365c682f0fd3e",
+      "path": "trillionnium/crates/trnm-task-kernel/tests/agent_transaction_wire_v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "637be350906a80fa8cfffe9bcc65ce5f62ce6eef",
+      "path": "trillionnium/crates/trnm-task-kernel/tests/task_archive_store_recovery.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "01a3fca728187a0ac7106b7dfd02a6a87bd88f77",
+      "path": "trillionnium/crates/trnm-transport",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "791d0246680dd14a0cf2e8d09c27c9de16497c83",
+      "path": "trillionnium/crates/trnm-transport/examples",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "c97cbe56f8e9ce02e6232d2dd1631950078dc7a2",
+      "path": "trillionnium/crates/trnm-transport/examples/pon_admission_load.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "7ee6ae5b083d3fd042831f54c28c717ed7e07780",
+      "path": "trillionnium/crates/trnm-transport/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "82c0e78ea28aacd94546c73917702c25183f0917",
+      "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cead7d5025897cda771f897213652cce776220fc",
+      "path": "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "96dcba6f64881b5bec4f83ef0921a2b3cdc15cde",
+      "path": "trillionnium/crates/trnm-types",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "daf477893f5f21f82ae8523fd586dbba3d124b1e",
+      "path": "trillionnium/crates/trnm-types/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "9181de9c730c06e288578c0b26c38c45c0073df5",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "250548c3d560865dcc23925d63a8888e0e2338bf",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "d80bba053d5c7d3b7cdc9b1a5e05a88829d2d47b",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d2fea3f6b6a514c455663c4809eae69f3b531280",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "819b72af296e6ce0fe514ebf89cfb81984bffeea",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/identity.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "2151243000a502a6d00062aba9cb74fdd9f20f91",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/identity",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "c3936410516ff16d7c470c3f6c02a7750b0cec5f",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5069dc5ef693357cd01bf67eb0ba21ad8a0a6bb3",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f72ddbcd0b8767c30cc9cab720691df85eb19f63",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0fd3c44612298af7bf58d782a0a88f71e53f33b3",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1428c4d0f8366db6b528c82d91bb1fdad614b3df",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "4d7d7364bf08260520ae759e9e62b60d878a5802",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "5ccd2c610ed430ac8347ccb059b46ba81fd2ee24",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6911f6338ae48a73f278f5d81ae6886727561155",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "6dbe27d9e60f622ec760c3eab9e89b3a5e04f16c",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "1ced1629faf31e705f330116fca00f362c44102b",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ffeef1a2920b0d4e3496dfd188cd7afbbb7c677c",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "452ef12d9f216be339760580bb256d2539344f06",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "90b92fab3b0db09cf01171e5be74bd72dffab152",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f28edca5a9cf470d513f0f375f48c44cdc90bbea",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d34333188e40913aa3fcc17cc69fdb4c6195c8f2",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "768403d4bafde4e6309d81c47bfe1a93c56d5afe",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c5b762615831343c1dabba7ad0c335c02cde3397",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "529d823dd35125b6d1265b99cb489db7dfbcd1c5",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6756ff732ff1031b53a29dfe024f57b6c73582e2",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "111ee1ccaf6238367b7bfcf33b89c73c41a9eea6",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "de08a295a7a24af25027af2c94a849bb711d9b14",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "619689a1cf58180d1bc4a25b2dfc25c4865ec555",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f0030b060727fd572de2768e338bac42ed4c1dc9",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d93eb6dce1b3a0c9269028ce0e8d1954464a4ba0",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6a76a8eeccb65314ac356b8ef6af1ebec29b2f80",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8a61566a1ae2effb65dbe908c15924dfceb29968",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "936f77ccc17dbcd1edfd0b97adcb4ea1f5ee97bc",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e5afdf2380751ec6d6bdb7229972e61ebd5ae7af",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "41afc9bd9a26ed081f86a7874e5f06b1545de73d",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "463aaec1e704e3ec94029ff0b9d7dfbc45323959",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d66821944a3bd65c3a779c58283603507eac1db2",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "be9cfae14c57a281bc9d127040cb300a28809501",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "49bd4997db5c1c9e43125b6dba6e5119111ece24",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c46cc246a597e607aaffb4835611c403918a7325",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "fd2674d1d540868f29ebc0a69689fc0ad57906d9",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "d97a684194dd17c8558f6a7b0981e7100246be59",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9b15269f6dd296dc3286bc596b8b1b8209610e5a",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "3abecdec585d27e51d8d4cea201d3840df0527b8",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "3483aa747f6b6459b0f9f5918c792e5091b62104",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6189f18296a45027caa25b4199ea97d4831f6bc2",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a66a52e529cc9adeddd9466d7380a473536a0ca0",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e0e4de25f76b8c48ccc33213931d5eee1d1fe0dc",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "43e70a11dd927c3edbd2e3f44e5fba7b6383e59e",
+      "path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c8e8fa8c27633d44a3fcc9801f24d370ed944a57",
+      "path": "trillionnium/crates/trnm-types/src/lib.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5579dde5b81e177d597df8d3d78dcc332539a091",
+      "path": "trillionnium/crates/trnm-types/src/market_reputation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "443998a11f439439805b9df68919901ac0013a0a",
+      "path": "trillionnium/crates/trnm-types/src/relay.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "f10b542fa1fb9bea92da77de5d0797de7282c15a",
+      "path": "trillionnium/crates/trnm-types/src/relay",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "c0dd1bbb152acf7a3f2958d976c08fed0c9fd3b8",
+      "path": "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5cdab18edcf3e88862cf245baa1e570020ccc71",
+      "path": "trillionnium/crates/trnm-types/src/relay/records.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "01e1c9f39044d2e43eb9505f7e59da0dffe1aafa",
+      "path": "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "f095069a1f4d4f2d27a8bb0d07ac139df6c6115c",
+      "path": "trillionnium/crates/trnm-types/src/request_status",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "eec3839f0d1e6b699305a93dd82aab2547d3441f",
+      "path": "trillionnium/crates/trnm-types/src/request_status/mod.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c1cb7e8e87bc0444fc0d34f5aa8fef90865b294b",
+      "path": "trillionnium/crates/trnm-types/src/request_status/models.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "95eb0e2db148e2bee1337c5cd10d6db2e421fde1",
+      "path": "trillionnium/crates/trnm-types/src/request_status/parsing.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f9d04aa4d651e2c59ef80012a9dba6315e4b6214",
+      "path": "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "3797fd4205d32f87fe82d5abd918cca6a5bb7008",
+      "path": "trillionnium/crates/trnm-types/src/transcript",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "c180596a888f8705876354dc317f656d50999c7c",
+      "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "07da3166b2b244b81e8272fdcb69b0e8ef9ec971",
+      "path": "trillionnium/crates/trnm-types/src/transcript/normalization.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ec7efff288eb1515a704ee39b18486b2b9de8462",
+      "path": "trillionnium/crates/trnm-types/src/transcript/records.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7b25ae36192a3fcea7dab15b71b49c3ac91a75bf",
+      "path": "trillionnium/crates/trnm-types/src/transcript/verification.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "90f1f7106b302aeea147800bec02aef635d59539",
+      "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "12c7412f2560b1d4361f56f6d3989f8bc571cb50",
+      "path": "trillionnium/crates/trnm-types/tests",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "dd79714afecff105c331fabafb56a13f69485cb2",
+      "path": "trillionnium/crates/trnm-types/tests/i1_did_activity_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bb42b1116521468f136a6c12ba14f08d18706ed2",
+      "path": "trillionnium/crates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "91508a326d6852d8c636fe892f9ae9602a196f24",
+      "path": "trillionnium/crates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "62751b3cdef953a0d940ab642c938685bc484176",
+      "path": "trillionnium/crates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7ebd90551765db43648ce5262af099b798f3e102",
+      "path": "trillionnium/crates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c767d1de4a992524e64c089442605f5fdcf13423",
+      "path": "trillionnium/crates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d7d11ef8588513fa45255ec63be4052a25dbc3dd",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "d760eb447a0320e310e89080becefa0cf7ff2580",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "0f1ee603271af0df78fa3716bf047c57d394e381",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "751452c01a069b55282a79bdb2bb236c18a957e2",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f02110d5e410adc433d87d5474a7a3a0cf69840f",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "df5b26721529b539ef793867fcc29b3922e4f3ff",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "7765c88bbfcc7c162a3e45ad9521ee07a79b13a4",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "b3f7e95d2aeb5f088bd939ff0d044fe69a778001",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cd9e8b0ec63b48a3f0d8415ebf24853a08682ad4",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "17a18592076436ad7f5f9bd6fd9d9c5ea23819ad",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f3f562c87311378027fd57b154c7ef816052f540",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "dd47c310b860242ce3d32acabe92618e528c777a",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "188333ba13562fe4cc1e6fd1e21940d3c0c0eb6a",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "afd056bdbfdf3c8dd815c529e5d9429c56abea32",
+      "path": "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8677c5ef7853f180d93b42d7035dc8a8dd326a1b",
+      "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "2ad0570090f43eeac913a55a0099347d8ae92caa",
+      "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "7078d4fc1c1695ac0d53945458fad537867383fa",
+      "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "add7b2ed5bfc59291c8f4896c0992a15ffbdd907",
+      "path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5b567d5eaf80d19cf3f4dbee3116b5e0deb1db2",
+      "path": "trillionnium/crates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "37d46e14544cca43ff4864c8b5e5b66a18f55dee",
+      "path": "trillionnium/crates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "acde0eb09097f8cbe2fab31bb381efbd4e52643c",
+      "path": "trillionnium/crates/trnm-types/tests/m2_reputation_upper_bound.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fe1fb25de0c8b741053d3c074889789f27c2a1b0",
+      "path": "trillionnium/crates/trnm-types/tests/task_metadata_compatibility_truth_table.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f86a1c28520e4ec50392905aef1cb983a39f796d",
+      "path": "trillionnium/crates/trnm-types/tests/task_metadata_settlement_alias.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d49b269bbd5fce68b823b5cc8d242b633ceb04f5",
+      "path": "trillionnium/crates/trnm-types/tests/task_metadata_settlement_threading.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "068acc75ccff16cc0db68206432dccff60b87978",
+      "path": "trillionnium/crates/trnm-types/tests/x3_settlement_stale_pending_replay.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "b8184e05e57495615e62fa297ae1fdf073a80d68",
+      "path": "trillionnium/crates/trnm-worker-agent",
+      "type": "tree"
+    },
+    {
+      "mode": "040000",
+      "oid": "58717c8af5b38700847b7958c7935150c9d86b85",
+      "path": "trillionnium/crates/trnm-worker-agent/src",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "94ecafe5d237789fc6e6005e9fbee0540f3edebe",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "deae55950cb2427b49257e2024a2293d15022f62",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_constants.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "de6c0dee4d538938bf62329aee53cdd954a39464",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "21d7f4a152c303add90b8c6b16729b0f463b96a7",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_models.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fcb8895eb4030170509cd963bf0abf585c004ff8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_ops.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8ff4bcf3932964248a68a23e4c6d25643fec9d0d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_flow.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d3cdcb958087799569fcbf1f15f6f6fe6bdcaa99",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_model.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f2e25f0b0b82808db5845404e1bd2ec89d7685e1",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5b9c55e04230893039a55c011bdc0d7f576b7781",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_hash.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5fa56f48c604e559d992f76801092763d65534eb",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "44bff47b13f97e35da6fc616f4f8a7dc1fd502f1",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "f2d001ebe01500ec158599d90f894c75e1f81cb0",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/common.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3ad6af075cd9e9415389fbee0bd1610daadf5cbd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/compliance.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "98c0d63e367da9c3029ad5cbed234c337c28c990",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "8eed143d0993d24531228cede952f5b08e56091c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "139e9de8ad347498a0c5de2e77585150851944c6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mcp_aliases.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d4e13ddd59cbcfa92bb34b9cf445a9402801a758",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mod.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "013a13bf1945383080e248fe54479ea784437d16",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/sanitization.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7c00dc6dbf3314fde914c678fb5defd4d6231e4f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/token_match.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "61581657fee1c272671aa1aa6d8377f44b7f0bd2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_provenance.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a82df8de90bca53bfadd4427508dc509818971f2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "35c386410e153414710fd3049d1062ed4e1435b1",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2747c7f51b77d0cb84e72c6e67fef000f00f4d55",
+      "path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_policy.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "52defb0c01c615c79cd9229e527f9fd65de352eb",
+      "path": "trillionnium/crates/trnm-worker-agent/src/assigned.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1589a526485ffb99980543082163f2c2a0e657df",
+      "path": "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "95b7a1d62478fbf6ec30efd885c94f4dd2c736a8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "137a738ebacd8a0ebd3460a4d9183c8e4985751c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "71ccd75233f6d866f4b090f6adf57acdd75781d0",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_conversion.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e87f9ba2fb80149106333433d6088c9c62e774f8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_format.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a8c98663b94aedabe74b0af58ad669d1c95c3604",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_index.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "740c5cabf2124fd9dbef9b7338a34e1b16455fb1",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_export_types.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "12150fad7e31e2cc4e799f1f53e2e62aae16069a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_ops.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bc38b98f24b18e8c043869b4f576409eb35f7fc8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_query.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "b5a093dff3e4e34284d2e4f8417c1a365c8c690d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e39a24206af7e52f3016097f1b41e5ff1249e789",
+      "path": "trillionnium/crates/trnm-worker-agent/src/cli.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "253d44f558b58ed20e6ab508a114d5ee2af8fe23",
+      "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5093abb169471997b5382137c589bba88a4bcb5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e6960b3374ae7ef99ae88eabf1768acf297c9b17",
+      "path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c5e65a2746427a7f7032a6c54a7bc1f04462a1be",
+      "path": "trillionnium/crates/trnm-worker-agent/src/dispatch.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bb76e529bef16ad9b4d603bd7db5e16ef6cb6908",
+      "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_assigned.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "221d674f50f698f4370fc034cfc59bb082352e75",
+      "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_audit.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f1b078c86ecb85cd2aa298b3fc5c998b493511cd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2a2920dbc99aede2d65fef08ecddf69ee85b2f5a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/dispatch_workflow.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "92b75fdb36219981cfbca130eaa10229bcbba3b9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a262bb210150438afa83fe2dddd9fb1f9169284c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "040000",
+      "oid": "5c54bccef905c7f63f3ab5caa9af11a80793c0fb",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission",
+      "type": "tree"
+    },
+    {
+      "mode": "100644",
+      "oid": "a96bdca191c438afa8116d04a46c6c14a5e4790f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/bookkeeping.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bf9d5d2001c798c47a3a66d2f3bece10bd90001f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/receipt_update.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "bbeaae773fb980c752a0de9e2090ebf11be1ea11",
+      "path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/retry_outcome.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0f90ac2c190a0d30b4e515278bbfa64ba65233b0",
+      "path": "trillionnium/crates/trnm-worker-agent/src/llm_retry.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d37dd7f0cb6059fceeea848d83db08c8d8d7667e",
+      "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d848f665d5ae43f8798a4620967e6e69710d715a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cd8f0495a9a587246224237b40f1e00edd755e88",
+      "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_retry.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "dfad82f222c186f7016635ee137711e2162c52e9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e87d5db3e89f2e4b33cda8b03ad3073e3d15a06f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ba8de66b9e24bde67ae572aa1dacb82656e9daa9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1c99e0d0d455e37e24c3d0388f0699db5c5285b4",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7431cd7ce897481f1fa6e85cd0e2e94278769e14",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7d5293a9aef55ccd95e6d88bfc74d487e943293b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6845e4eddd9ab28c9950845594a9773fe7777571",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d83e783178a5226e876b057ec58620480e8a4874",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "23685839a4f600a31c598784340e0924fdda5978",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fa63d4a23a39221697fcbfaaa32c17aef3e85783",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "eb4dc43f8327728215e42ee0927e1d0f2ebe62d8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "63eeb76a3f54d42e4e7490d3322566bc42c7e655",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "84c9cf175fb3db2c05fb64d09f3303ba240d90c5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_accepts.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "748e88253de7bc0550486142e49293fde186cc7f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_separators.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8d9ff0591bdf38e02eedc393ec9493476b172581",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8c4cec4018ab366086027a02d37008e9b1e069a6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_json.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "69076e598fc724b26ce2157888cd8f2744eb2a78",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_label.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2cd230d8b6c2061d18557d48ecdef0f8d6bc1083",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9a32e6161d94ef996150002a888b8edae915b928",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4891db6d55ebd5658ea3939866777e8c068ffde2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_noise.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c29acc59e1cf9f1ff120bb4785e2a24b6a270b27",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "914ad1a438551459bb8ca256dd4fbec9bbbccb21",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1ab0ac7d9fbfc14e62c55ad5154efa7d6de58dae",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_tee.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3c40a17dda401018f7c713240fc28f3ddc849fd6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_zk.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "75b585df48b808aa1163a6d22cef9bec358dc2a8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "202494de5a616c06c314dec8a7b306b239471f45",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_json.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9afbb52e1a410382752b15497e61a8f4b8aeb86f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_norm.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "96358924ca5f0ee2b75535e6ac6f424fe6bdb3a5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "48b21d89065e7bd029d86aae1faca588e837ed56",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "32430f761dbce95f4800e3eb2da584c48ede9b81",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fa52e11b63ff04ea22a35403ae8ab38568509dd2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "11734525b884bb0dbade06f7e2dad6a2c5f1d28c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7cbffedd1f9d7b54005810ed8bde100366820b21",
+      "path": "trillionnium/crates/trnm-worker-agent/src/state.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8775db920e20b33a957a1e46cfa683b8d344ccdc",
+      "path": "trillionnium/crates/trnm-worker-agent/src/state_models.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9726487a13b4e73dcccec77e75ae0c5c7929eaae",
+      "path": "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "26cd716c7271b7e6c03973496eb75b8d7930f7e3",
+      "path": "trillionnium/crates/trnm-worker-agent/src/state_persistence.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "14436361907c885358cd140abecd0f57692c7df6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f228ab898806c61ef137eb73a0b73039aa4b9081",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fa78636c87e9762ee3fbb284ba9986c6a60db8ca",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cd66a25db0f6e07ed0f80b701d85b02ab86cc5f0",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5c1b51a2b7949096760888329d5ee35be59ffda",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4f3c5710f4f901da2f8c318b3a30976ec63b827c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "da32cdfd03290a61a7313b58b3bccf076a99328b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps_tail.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7863d61da6973e1bf430666d271160fc40b398ac",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_precedence.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fd13970284252146f62aa6c7c7cfa462d8902acf",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_unified.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f06e4d6115c07684e01089deda05b54a3eb99f78",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_output.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "b97e7b5f04969e4f193da3963e1ca50590530c68",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2841ba71ceb608ebba26926515a8d80da4172046",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation_score_bps.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0558a7dcb0a0605824f14c5012646c9bc1659db6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation_surface_export.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4885332f20587e6b1ea79b99770b2ffb9b0dae37",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_retry.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0ba5658d91b3bf50746a64f6c583768a3fe4ea95",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "385b8e46bc7a8504a0f099e4c43c24c1305e3ebe",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_config.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f46b5dd526f1097c5e93b64e5f450273573165c2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_llm.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6d397b63a36fb596092ca7bafd0fc287e73ff0dd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_misc.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7eed855e29b6bc5d6650c9299a30be26c93e5c2d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "0618b0b36ebae264813adeca094d10a831381fb3",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_tee.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2340a6aa45f7ec57c47f947bcc8c75c1b871c18a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_timeout.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4fb3d2698248b9d748746c77a7c4c9df4a58b811",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4d65e82da7405a13ffc3f3ef7c2184a07a5a2b14",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f874723807fd0c71e5b7dde1d54e09154c9c3069",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "67eb17ac0a830a5b6fa7d95102d804f3662bf620",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "32a906d23eb3f9cbf4b34d5aad6fbe0451c68b76",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "6ab003ba775b181a8c1b1d175065fc0d3ee0d6ba",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "26fdb49a3de82ffa5e57a90e88a14a726fb60ff2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "aa07620a8080086c2760ee301360a2b70a82eca6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cac0d16a6a61da8c36b8e455539830d8728bc955",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_provider.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a2cd38d7f8b1c4c99e7556ceb71ef6a8c0d5878a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_reputation.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ef5994e6aa92d4e71d16dfe493380205379d4f4c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "14e05ed7262d2034c1c6a82101c85915aa481a6e",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_alias.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5dd0abf391dbec394d435e51fec94ccbb53cfe42",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "34777f8668a11c9d493e49f7ca8dbfe850563e90",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_compat.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f883e7bf5fe3dc5506f0d8876371e2c309b6b4ec",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_gating.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ce8881c7bb1614b1302d92a047825c7d5d3ff8e1",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_fail.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "32adc2f3f931cbf61fcdd2c69dea093e2bb87ca9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "dd18d54b3c88b07ab24cefa82124e3919939363b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_normalize.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a20253fe69472fbba3e50083f985673a5d164b11",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1bb53498821fd813d4513b1647ef8736f28b85f5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7980ac562dbcbcb2bbe6307340a8c1ab03559e01",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "aa814705cfe7ef6fabe0b60d58128ce75628c811",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_flatten.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e267f3ace79ff292ec5d1306b4345e5b88982a49",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_normalize.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e14b44271c526498bb7df16367b3604234cb8f8b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_sse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f881c5bba73afbe5b8cf0e5a701a6169fdcd63c9",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_streamable.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9c703f6bfe8ca2ca404d5278a60b8cd7c6bbab92",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_websocket.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1a50cb949528994529055c9b7c4e193e97a165b5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "7ab2b8e0e0345cec97d94ae3497804b47fa455cd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "704c740a9526cde10b33c127653f8a668a6186ac",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "55e535d4fa115710cf49d32e1425a78b3e9e922a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_fingerprint.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8782926363dc82dca9af33fcbfa786c96ae38754",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_protocol_profile.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4ea012d4ae2d8ece0e7e6162c501a516e4b0004f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "647cb611fc658cee3bb7aed892a4c43952c3051e",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "4b63fe3e89191ecc6b6b3297dfba185238de810b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_accept.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e206185e461c42cfa161ca0a39a2c7a5c17273ff",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c88274802474c2d68ee4d807fe747e94e3d362c2",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "029c12b761a0af559178945a68902f93f2a54c9b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "8cdfa77e11a9a76b808bf497a052f6cefda61ece",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_base.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "dbccb05fbb8ad2b5bcb556138abb028a4f14c3cb",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_normalize.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "92e9cf1a40da0326ad37a33c4b1de192c7865850",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5f018840815fddc69ac10fce16b6da790ee5555f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "851e44b4c3f5e2d231a2013ed63ddd14ad5122ab",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_label.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ade9ac4166efb81804571d8f130baa9ed77428be",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "077995b66bc46d200daa99f740525b97d8cb966c",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fb93a332b3ee4cebb5a4827bce4f7eab6e2b5b59",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_provenance.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c425479521d1a336886fdb5b7cf70f20a3f7b6ec",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_schema.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "61c079aedc736feb0e27f77a34d493177e3b322f",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5394e662212bf4daa6071b875ea9665e9f71d943",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_keep_v1.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ae1d80582ac4a2514206ead450cc0a4855a0eb55",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "088a37afc7e272406fe16cc33d33c96c0c1b8622",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_tests.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1888c521d77065e8b0617066c218a784f75d3ae6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3edbd05dce3dc03d412dd70bd689e3b634c4bf4b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "f2052263083900af2f647265dfc7351f381cdfa5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_future.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "223266602f282ff340fd1809742e2e5692f09de3",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "047745f60743c53b5b8aede6ff4845c67184be93",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_base.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "b3e8cb1ae9bd6587b906bc287c3db8af45b02b68",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_google.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "878af75c12b231fcb92ac6b70cee4299b19c89dd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "110b443320c9add70ef9c38b394994799b1ba869",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "88ccefb8acc86362385e737a0672686a241f416a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_websocket.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d5b1916e3108d418447750cd57c83f5f5c6e44f3",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "05017bb0b16013ea1cda2f243e05887c047e1219",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "19456fe6cd855770ac31ea879664b1c7c2799a57",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "84f9dca7cacab6dbe6cbb351e409905d1737e2ee",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "fa784d075634ba7ec7f9e8f5517e57d0e9fb2275",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_normalize.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "30a6cacfaec43d6c3d70de5dbd8d9d76a6fb4279",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_quotes.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "1aa7ec6d61b5c739b364d2788680642a907c004a",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3a5adfe7515e0bed0c96b82fc6f1ecf6b7ab4acd",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_output.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a0cd3ab4c8171392769e782fd1b58dae7c45b641",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "05c23007b2ddabe02698aab542a0e3dc82766bba",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c021d51b1e3ed34da2d0b6474fd36f03eadd1922",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "dee70e550641bdea1fab8f433225b0408900e71e",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_ok.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "a5db96108dab3d30857e4312b21fbe55454846f5",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "034d52d2339b7bb5f62c20bb86c87caf30b33c89",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_invalid.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3637e5d93fb90730079ee17c9302696cb62fe9ef",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_separators.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "235f38b8c82b3841c3f5c58047fd452a3ff848a4",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_label.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "319dd6e05f56353ba0563b11358726433c3c8414",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "137a187ba1799062854c7977189d4569880bc09b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_boundary.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "ae6bfd216e825d81067a7ec53f51b38f0d0bc6a6",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e19d728a97428eba5c73f0cb7a565a5a3a07b079",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_separators.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "3abf0b79242cb584354a53485b3976cd19fb6745",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_tokens.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "b25c8d9669e238fefb76e52c93182dc73f2ca8c8",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9f9e11195e6bc540cbb618a9f6b9ca55d9cef90d",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_status.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "cc291f24b1a7ccf9d2e9debc439f45619c8eea39",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "e88bb76572291724e6ed8b9a608621b7e2ba3d74",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_alias.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "c470a9c416d915b7de4f36cfdc7c846bf484012b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_misc.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "889e4c9c28789c0b29e77397e6a5768ad60be132",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "2483ca5e7d3089185d16ef31501b107eb6452979",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_delimiters.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "93bfff60a18d94c2efe96123f872659534588684",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "9d40b4eff28172faefc5d8ea14438f1182d31e84",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_quotes.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "53a535bcc73cabdbea5411aafc3fd7f36fb6b98b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "5009faf45ebbce5970c1ec489bcc6f095910870e",
+      "path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d879967334f98ac5c9130b797d4821dc3788926b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/workflow.rs",
+      "type": "blob"
+    },
+    {
+      "mode": "100644",
+      "oid": "d081f4381bf831aecd99130a5ddc50491f588e3b",
+      "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+      "type": "blob"
+    }
+  ],
+  "baseline_root_tree": "521ea862cd063904aaf3acb949208ac87dc0d762",
+  "candidates": [
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "106de4bc5d466b9ec2d12a22b69747dd5c8ae5a4",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "dc8c9ad84519c789c550f6afa90236a6e86702f8",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "788393bea295b075fa09386cec73be766f2db54f",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "6b556163921abcea93513759125022c28e3689fc",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_growth.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "3d5338b5597f294f9d36bbb98c28a9e025cb184f",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "8843c980bf9c502b31f014dea26903160ce5bfd0",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "d67077da9799f7996838d853e9c3ef53796b9496",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "4492ffa49e8ca980beee52f4f17505c6a3f7be38",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "5f835457eef4bcd560cdcc6973a0a57922309f6a",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "9e52815b3783f1017b606ed7280c728605fcbb2f",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "e7ca624311723723e48b507ba2fdf420cd75f480",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "2959ffb3dd8f802fa24f0ba1253fbc5771178769",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/command.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "1fb62c18270da8a0657c340dc87e3364c9b48cb5",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "a74998c640bcfa1c95e6ee21cdce38529fa49564",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "4edef08b3cc3f997cb12b2c45d3a4b25818b6446",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "42a43786cb434c24880ee772ab51ae3eb66e247f",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/types.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "1c51bc7104e9c96abc45c185cf1f5140e5ce107b",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "c4dab21a45104062f3a0a5251ecfa063193cd2d4",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "d236c97ace74c9a09f68f2fd0858ed1a83f23893",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "18c692ccec1f75079a6bd20d0f19bddc8bfd9fc3",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "0a5029b5b41b74ba0e47c72da20de08edbe9e67c",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "f831f465f1cd32d89a84ec429abd9862a53a9eff",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "a2dd80371a81b99576626518aeb474c9a329965f",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "1480b708459ee1f194103e81f72c306b6d3ff0d9",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "8fb3fe91288d5a3295d1b90db10a147d1c9a395f",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "ba8a6f0216ad4076177a5bfc03aee90e9b3b96b4",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "8653863813f222d92cee72f58d2860ac7b134206",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_journal_security.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "5c70ca8bf2e4f002093a58cb681db70090d99c22",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/worker_journal.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "fb23872a547b93a76fe3cd7ddd458851f8f33fde",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+      ],
+      "oid": "45d92fc5f479659874ed29894e06acfc3fb0cda9",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "b05c534aafb544deb72a631bdd8ee5cf49205298",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "6b0e3687c7c1348dec11fd5fff91b7eda884d561",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "6b3289048df36ba5a8b5184f58ef3899e57de57c",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "a7b6df84cc7575ddc881e9448ba8781a34b7561d",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "c05ab30c5e531ad343bbf3ae51d420d4bee53ab7",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "48b97d23fcbe32c5c73de5b959f1a430fe3c53e3",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "019cfc40eb58839fd5184e0731d58dd628d47259",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_transaction.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "178bd386421ec8245ce0031f625769b0fdad3063",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "8d27dc28a1fc72750d12427d619e03028db304a4",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "e9bc1c18e2c56b917a1ceaeaf09d16b564552dd8",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "c134de102047d6029a263e4d6d5e3478c4948264",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "d5df645418cd6c4317d83961e859bd94254443fb",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dd4ba5c13c1d99a17efff3285b4168fd2e00ecdc"
+      ],
+      "oid": "df74a7b13e469887c9b0e44053881ab2014a3cca",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "87056297a3d23b833015bf13ee2bf7f57d809e80"
+      ],
+      "oid": "c5dee3aa0d3cdd34803ce1c79bdbfae14e345c58",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "87056297a3d23b833015bf13ee2bf7f57d809e80"
+      ],
+      "oid": "69e23b53f18bb53b437c930858802843c9abdb0d",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+      ]
+    },
+    {
+      "heads": [
+        "87056297a3d23b833015bf13ee2bf7f57d809e80"
+      ],
+      "oid": "4be5679595004e4bbc40afabafd54d315cf585a7",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "beca44084947a4d0d468171eca335fe6e5001457"
+      ],
+      "oid": "01a9781c127dbb22388920d0738898be867403dc",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "f5ad30e7430ab42d3662190c8e7af048a63843f7",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "d32a3de85be0f60f0478294985431e6f2b3af1dd",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "c036a84a3199da568278a98401d1e6a7d7bf807a",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "5379fc902bb9c4124f52c0a9cc0205baf3035e75",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "5470d41a32698272e0b1fab8b7911130560314e4",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "00cf63722c73426ed9b2dacfb61b7965a83a94e2",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "2ceb1c9f46d5df6583488fce07b45bef3d4187cb",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "221b02653432507b14c8f90f35bf688b85c0eeed",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "294befcb49b001fc3dedc35366f9a498c5a8dad5",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "3cfb1af6fc8d2561a3a3cdbf910bf5e5f312a663",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "083f8bbfa8c707d67bdc172dde4786e20d520f3c",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_transfer_v1.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "f958996dc0e680d30569c6e52856fb30cdd58241",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_transfer.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "abc57563a63d7738ba406c26d510ae27e4bdf86b",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9d83890975bdf29ab4818b248e0dea9f6d516e45"
+      ],
+      "oid": "010b22ff7e0a81d7157973580c1e1e5bf19324f9",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+      ]
+    },
+    {
+      "heads": [
+        "01fc23f0a48fdd4580b7ebca9c523f7ec67301c7"
+      ],
+      "oid": "49aabd2c3114ef78815388538fa53097ade2923d",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "01fc23f0a48fdd4580b7ebca9c523f7ec67301c7"
+      ],
+      "oid": "38212a9ce6458e47c213124ade2dc05d3c07f0b5",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "01fc23f0a48fdd4580b7ebca9c523f7ec67301c7"
+      ],
+      "oid": "6154ccdc5395614f8ad97867ed6dfcf827e81ef7",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "01fc23f0a48fdd4580b7ebca9c523f7ec67301c7"
+      ],
+      "oid": "da5746ebebbcf1bffcd361425a3762fee34d9339",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2c3e885e033cbe8a5d9d34ef161c7a5c4ed3aad0"
+      ],
+      "oid": "a1db06eda53e7716d26769054444f125c8071819",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2c3e885e033cbe8a5d9d34ef161c7a5c4ed3aad0"
+      ],
+      "oid": "70647c830a61a251cc5dca137f8878a6b0679aa8",
+      "paths": [
+        "trillionnium/crates/trnm-transport/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a6e78fd090e018e0c07f825ee6751d877259d9e0"
+      ],
+      "oid": "ba0ebef95ce63b77fe590489b59b176d6bc3cfa3",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a6e78fd090e018e0c07f825ee6751d877259d9e0"
+      ],
+      "oid": "7c5dabd5da23889de3e0a668eac2bb6bbfd1cab0",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a6e78fd090e018e0c07f825ee6751d877259d9e0"
+      ],
+      "oid": "06d016297b7fc9e9698332e508baf877dbc1ddf7",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "174643f61a7f0de22318e5a48160fcf01d6367e4"
+      ],
+      "oid": "358d40314e4471fe4075560dadc8f4a90bda0e23",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "3e755b9f225cb8363b55907c942282b1a5146348",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "03eb8cecf02e5828fa9b4b3a413d05ac62a9c746",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "4c53db3ef227b7c948627ed856ddf3d08a004d9d",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "440551945d0af918656b1465bf9bef3a988b36ad",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "8e073cab311d3c454d230cc979af56cb1fd5db56",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+      ],
+      "oid": "ce23a727461ad9c47f914e390aa481057d808925",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs"
+      ]
+    },
+    {
+      "heads": [
+        "8ed17cf06bec65a098b1f5d6befd82e79cc38929"
+      ],
+      "oid": "63a5c159e22fb778fc340fb889a956956415ce15",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "281b569e12f571e38fe953bf5bba58dd9e77db52",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "96a43e6a2db42e90a40d1eb404bf80f30465b250",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "d2480f6bb8e643e5c54c6b0b8b1946dabea6eae1",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "6daf8e2a0693147f0ae598382571e9d78c860b79",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "4759c3a3d74b4b6a6509fb40a18c474e9e3342e9",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "dc6dbc96ae8b1f09544c4620dbe8fe5f942ef8c9"
+      ],
+      "oid": "f71fdb60455d95ed194c7c31a4601ad61c76cf00",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a77d94db1525f5cfeec0433b27d9c0ceadde1e1d"
+      ],
+      "oid": "a6885d7a0fdf18e536b0360e545f2829c8bbc49d",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "086a5b67d07278c95972ce9b4587d3eab6125a52"
+      ],
+      "oid": "1bdfbb5bc8bbb568dd255e354e1b93727935310f",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "086a5b67d07278c95972ce9b4587d3eab6125a52"
+      ],
+      "oid": "6898f8298f73185163bc4c22a1f1c2294157e8cb",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+      ]
+    },
+    {
+      "heads": [
+        "32f8355f904a5e70ababaf74e70386a6d9f033ac"
+      ],
+      "oid": "b0134c9b958019915e62a2188a8c90177ff01435",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "b32849189637cc853267ff48dcbe002a79dabddb"
+      ],
+      "oid": "336b5615c10fae1890ff947a20ab5a182c862921",
+      "paths": [
+        "trillionnium/crates/trnm-transport/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "oid": "c9c4b5110596143f775e4f5b6f798e83d29ef923",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "8447d416a4ac3a32a75aceee7c2083e41a9c192b"
+      ],
+      "oid": "46bb09a69d68318580e2856116267376489aaf78",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "58d533877ccdf56f2fc2b87e0b60c485300955a5"
+      ],
+      "oid": "77752656bc6f4403eec8567d19df5fdabb0e741b",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "8b03c31b4b0bd2e0bc39f6058d837e1a67639254",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_body.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "775597459251b4b1eff466e787138bf54ac8a02d",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "24d197379c930cdcd0615bc31cfecbeaa7cc26a4",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "bd21aa8e78d651b6e50cc65c982416c7f7f73742",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/protocol.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "737ef1ad60cf9bea816c8656c5f3e270e7aa3479",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/unix.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "81f655c309d681ea35a6932dbf7f847b057d8e9c",
+      "paths": [
+        "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "23f55148585323fca1eceec0dcb51cb2814145d3",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "778c285abc8e35c633281e9b520d949fdf119d7d",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/canonical.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "edc0969d277d34a00b43a365bb13c41bc834f655",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/command.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "971a9707a1d8f26b3b2fb79a3e71ccfc9ef52cdf",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "0a237ba63d07f901b741b027ad7a7baf1eed2bd5",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "4c334e54b73a0a6127f44840c59506ca7911546b",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/types.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "f12c340e2a21f23a9a28f89c50b68b9a1246871f",
+      "paths": [
+        "trillionnium/crates/trnm-task-kernel/src/store.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "8166ee79e6e1dfe2758661b1137f0ec766d79716",
+      "paths": [
+        "trillionnium/crates/trnm-task-kernel/src/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "67c6e588af0427b54b6a5a2ea4ead19c07e919de",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/interop_identity.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "e3e4f02de7dff8ac0b3cc4d5742d376a5841544f",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "21b5107f4e1ed1cded4ce67cb6e692acba4edaf6",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/transfer.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "c773fa685b30c10d7cde0835ee1ce666772b7305",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/assigned.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "17333a47c7b7eed3440d006cedb91082a1ee0c59",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/audit.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "7c846e985ca0157e0e5f8bd6b390b80fef508fe8",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "70e2a7f4f47465f17a153ad34ba0b4f519b551bf",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "39c6223c03a27be4f240e925147ec85f90264fd8",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "oid": "280dd7f231329dee72873ed76a1d9525e0dbfb22",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "6cc0e1ff1f25dec1e71fe7c93624559659d371b1",
+      "paths": [
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "e16c75c51faacf25096645e7715c9ff91baf95ad",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "5781e75638e38d4f23df92786520b0d5c9fe78ee",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "c5afc05d541b7b87e5996119e8e78afd740c34bb",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "0549819e3b86d8fcd30057068e67d928df3a14a8",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+      ]
+    },
+    {
+      "heads": [
+        "333d6183132c3d0d73e781da0e514a7026181ccf"
+      ],
+      "oid": "f547af5f651e70abd949b7b96a9cf4942ccba7ea",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+      ]
+    },
+    {
+      "heads": [
+        "0682274361e529cd6a8e13285324c3c9ee0744b8"
+      ],
+      "oid": "1229dfe04b0fb7202a0541b08e3482eb5d7eeff9",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "6ee97ee8f2955d2d0cd4a451268a906c5aa07584"
+      ],
+      "oid": "9734363a3e8884189468b0ca706aa96094d826f7",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a72438a9d7aed54da4b23e6353cc2d913e65e592"
+      ],
+      "oid": "71dd28026d40f4c61b50d108fb05834961af2e6a",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "29e1f194742e436b44b4c8758777341e62fe2bd8"
+      ],
+      "oid": "b0fc4a1f5b70a2d5d1a7eae4370688ee88e313b2",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "7d9a8550c684c8a7324b7811929cbf4ee95efe53"
+      ],
+      "oid": "577ec27d0af60757d7e9ed49a1a82b9196ac993e",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "7d9a8550c684c8a7324b7811929cbf4ee95efe53"
+      ],
+      "oid": "6e9f52fa2ca4e3afd15f4e396e95e0ae0a9ec8a0",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+      ]
+    },
+    {
+      "heads": [
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588"
+      ],
+      "oid": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588"
+      ],
+      "oid": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs"
+      ]
+    },
+    {
+      "heads": [
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588"
+      ],
+      "oid": "5a6e5b89cfec6ee1941b96ac5585cd5bc8d98d8d",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "3efeaaadb98db9cd00ad1883ed9b6d6c5bd0e426"
+      ],
+      "oid": "dd00de515d05f3ab84873b6cf88eb67e0ef84418",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "826c7fff8c31a532976805319fe67a5631053946",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/state.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "178420a3a45b5d62bc3b04de6ed59e818664425c",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "572c9136229c24062c19bbc0c0b6a81446ab82c4",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "6f67a0a2f9f4472928af36427241b4256e3efc63",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/flush_submission.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "f7a04cffa4bc4dc5c4a73ca479b53514e7cf66f1",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "ebb45ef67878b9db55a8a1e339c7e35f1812aa11",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "a30e171006469d45fcffa1dc15b8336c0d9551d2",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "39396ac6458b9ad60a0c23b5aa142fdd89e791c9",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+      ],
+      "oid": "c2b8180f740be0436149ddb4171b017468b79054",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c700412b60a74069a6430b3e5a8c0047a8514d30"
+      ],
+      "oid": "865470336a4cdb69481f69545ff5f91ad7e43ad7",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c700412b60a74069a6430b3e5a8c0047a8514d30"
+      ],
+      "oid": "05acd261db56f43e3bde90d36b225b8ea274ba00",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/main.rs"
+      ]
+    },
+    {
+      "heads": [
+        "c700412b60a74069a6430b3e5a8c0047a8514d30"
+      ],
+      "oid": "f31e936f952cd773c53534c385c9ebdf143cf713",
+      "paths": [
+        "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
+      ]
+    },
+    {
+      "heads": [
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c"
+      ],
+      "oid": "6e28e94da44717cf5f207d080f6cb734e2f62e83",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c"
+      ],
+      "oid": "77da9cacbe9da26a1a11b8624301083a0ad6f07f",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs"
+      ]
+    },
+    {
+      "heads": [
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+      ],
+      "oid": "bad46dcee707bc7c9fa27a0c33047ca3f4ee7ccd",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+      ],
+      "oid": "30eb59db0febf0217f8a23227021e685ce8a3803",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+      ]
+    },
+    {
+      "heads": [
+        "da4469729976d2bf77e0abd9ca5e89e182ce424c"
+      ],
+      "oid": "d75388625d9052d54853699155fcd1f96557501e",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs"
+      ]
+    },
+    {
+      "heads": [
+        "da4469729976d2bf77e0abd9ca5e89e182ce424c"
+      ],
+      "oid": "721619cf927a2e2608a7646e4d8f0ffdbd190b46",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+      ]
+    },
+    {
+      "heads": [
+        "e9c3ce71fa86effa08814afae040da1da751475c"
+      ],
+      "oid": "2f83b651373d54f4cd345622f1ea42a0d0cf5bc7",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+      ]
+    },
+    {
+      "heads": [
+        "a39ff809a1088abc7a6373a1a46fbf020562ca7a"
+      ],
+      "oid": "8caf4368f2e3d5bae3a8f43af213d9456c8a8733",
+      "paths": [
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+      ]
+    },
+    {
+      "heads": [
+        "4a786915b3d004c4399202ad7ab3b82bd35dc4cc"
+      ],
+      "oid": "cd5f73a48dc41fb07730b22d9b9485815a921e52",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "8f8ce34f27dd8fbffcfafdeccfbaa987daed1b05"
+      ],
+      "oid": "3efc9343d1845d469208ba6e98a79fbd3f908db6",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "ddb5d45fb14150907b8a5640bea3ddab9f856ee2"
+      ],
+      "oid": "6e2b2d5d808a4543429fbb5ed4b868fa9c67e2b3",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "9baae3670011cc719249ed46fe33b0b50e75a31a"
+      ],
+      "oid": "a985a746d674d7bbd18d2949bc82ad8ed0f5e40f",
+      "paths": [
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1d4778507e1e99ab54cca72b7c26b6ec2ff33344"
+      ],
+      "oid": "f637d6eac0e34d54ece35f377d467e0fac8cf271",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+      ]
+    },
+    {
+      "heads": [
+        "1d4778507e1e99ab54cca72b7c26b6ec2ff33344"
+      ],
+      "oid": "22e776bc53cf6a4b0a0af7b53326fc39dca3cd99",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs"
+      ]
+    },
+    {
+      "heads": [
+        "b9f465f9d8b6f14b8d68331cc63185c48ea95078"
+      ],
+      "oid": "e9904db38a75475104ea12ed7933e62468d29bf1",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+      ]
+    },
+    {
+      "heads": [
+        "da31aff73adadda492da2642bef1f8d3d74be530"
+      ],
+      "oid": "e172955a2640f18fb7f0df36ef422aed367f78f1",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ]
+    },
+    {
+      "heads": [
+        "33945bc5cdf91977792faefefed0981f6b88222c"
+      ],
+      "oid": "770c7f48c814999763bce2d196f41b4d6b65c2d3",
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/lib.rs"
+      ]
+    }
+  ],
+  "inventory_blob": "d846deb176a4290658859efb369b5b0947f04356",
+  "package_paths": [
+    "trillionnium/crates/trnm-types",
+    "trillionnium/crates/trnm-worker-agent",
+    "trillionnium/crates/trnm-research-protocol",
+    "trillionnium/crates/trnm-protocol",
+    "trillionnium/crates/trnm-peer-lease",
+    "trillionnium/crates/trnm-task-kernel",
+    "trillionnium/crates/trnm-transport"
+  ],
+  "package_sha256": {
+    "COLLECTION_PLAN.json": "ac67d8b33d77ac700c9096e95cdc2c069971f13de30e448b543975402f459b0b",
+    "SHA256SUMS": "a2994ed0ecfc15fb61d0f706b3a31def75f75c0efdd6bb27d28ba398fecd9654",
+    "collect.py": "73ff2d6e17b632b8d9e3783ab7748d25f78dc925ca7979ed5fad7e408677180f",
+    "decoded-hashes.json": "f480b5690da890a72e5af865b5e8a9bbf4ef4c021d6dace77ea4e7962c1b072d",
+    "history-filter.json.gz": "544f10afb36b0a73cb660e4743d46cf64377f2e85705050c5b3adeb97fd99885",
+    "owner-discovery.json.gz": "f49f0c31a6cae240891b16bfe008d9657ff6d041343a92fa1c52991e08f404e3",
+    "verify_frozen.py": "6d56012a0336cf6a1f449f707e61ea46d879d4d71eae09b3b58e05ffdf5611fb"
+  },
+  "schema": "chain-source-cache-recovery-v1"
+}

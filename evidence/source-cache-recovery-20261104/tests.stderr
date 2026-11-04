@@ -1,0 +1,23 @@
+test_check_does_not_write (__main__.RecoveryTests.test_check_does_not_write) ... ok
+test_conflict_preserved (__main__.RecoveryTests.test_conflict_preserved) ... ok
+test_corrupt_blob_rejected (__main__.RecoveryTests.test_corrupt_blob_rejected) ... ok
+test_frozen_package_tampering_rejected (__main__.RecoveryTests.test_frozen_package_tampering_rejected) ... ok
+test_manifest_tampering_rejected (__main__.RecoveryTests.test_manifest_tampering_rejected) ... ok
+test_metadata_conflict_preserved (__main__.RecoveryTests.test_metadata_conflict_preserved) ... ok
+test_missing_fails_without_partial_cache (__main__.RecoveryTests.test_missing_fails_without_partial_cache) ... ok
+test_missing_metadata_rejected (__main__.RecoveryTests.test_missing_metadata_rejected) ... ok
+test_network_disabled_even_with_environment_overrides (__main__.RecoveryTests.test_network_disabled_even_with_environment_overrides) ... ok
+test_positive_and_idempotent (__main__.RecoveryTests.test_positive_and_idempotent) ... ok
+test_resume_partial_valid_cache (__main__.RecoveryTests.test_resume_partial_valid_cache) ... ok
+test_symlink_ancestor_rejected (__main__.RecoveryTests.test_symlink_ancestor_rejected) ... ok
+test_symlink_blob_directory (__main__.RecoveryTests.test_symlink_blob_directory) ... ok
+test_symlink_blob_file (__main__.RecoveryTests.test_symlink_blob_file) ... ok
+test_symlink_cache_root (__main__.RecoveryTests.test_symlink_cache_root) ... ok
+test_traversal_and_invalid_oid (__main__.RecoveryTests.test_traversal_and_invalid_oid) ... ok
+test_wrong_object_type_rejected (__main__.RecoveryTests.test_wrong_object_type_rejected) ... ok
+test_wrong_repository (__main__.RecoveryTests.test_wrong_repository) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.415s
+
+OK

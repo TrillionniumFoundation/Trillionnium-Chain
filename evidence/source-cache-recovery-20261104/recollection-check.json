@@ -1,0 +1,52 @@
+{
+  "result": "PASS",
+  "full_verifier_matches_frozen_report": true,
+  "files": {
+    "rows.json": {
+      "byte_equal": true,
+      "original_sha256": "d27e63332cd6479181b7083c8d91414034fb4495a4f2d551ff8873e9747c00c3",
+      "rebuilt_sha256": "d27e63332cd6479181b7083c8d91414034fb4495a4f2d551ff8873e9747c00c3"
+    },
+    "groups.json": {
+      "byte_equal": true,
+      "original_sha256": "e20d38343534a5020a36f2fdf94d60cd8c967e58c894db512e26415f2b891ac1",
+      "rebuilt_sha256": "e20d38343534a5020a36f2fdf94d60cd8c967e58c894db512e26415f2b891ac1"
+    },
+    "summary.json": {
+      "byte_equal": true,
+      "original_sha256": "78696210678c7b8559a3e5f8e812654e9b42d32b899f8da0a513c33e76d66850",
+      "rebuilt_sha256": "78696210678c7b8559a3e5f8e812654e9b42d32b899f8da0a513c33e76d66850"
+    },
+    "parse-audit.json": {
+      "byte_equal": true,
+      "original_sha256": "243c1a3580c5f2c842a623af6f72f382f2d3e99c9db5ccb19eda3ee63158ea2b",
+      "rebuilt_sha256": "243c1a3580c5f2c842a623af6f72f382f2d3e99c9db5ccb19eda3ee63158ea2b"
+    },
+    "excluded.json": {
+      "byte_equal": true,
+      "original_sha256": "20d42de34233e4f887dedb613bf0e6b79baad631632939a917a924da5a37b2ba",
+      "rebuilt_sha256": "20d42de34233e4f887dedb613bf0e6b79baad631632939a917a924da5a37b2ba"
+    },
+    "near-edges.json": {
+      "byte_equal": false,
+      "original_sha256": "0e472a210454b7573a03d09989cea25b248a2d012cf5051833575c2b2893da14",
+      "rebuilt_sha256": "574c805f59aa07ae9fbd8e9e1a1f587dbdd55e8e9b705bd4a33466e2727e02c9",
+      "canonical_multiset_equal": true,
+      "edges": 32
+    },
+    "family-edges.json": {
+      "byte_equal": true,
+      "original_sha256": "8b4ccd586090e7b6e2f9a887f890eb5e584068c8845a1e00a42360bdd1f8db31",
+      "rebuilt_sha256": "8b4ccd586090e7b6e2f9a887f890eb5e584068c8845a1e00a42360bdd1f8db31",
+      "canonical_multiset_equal": true,
+      "edges": 942
+    },
+    "mixed-owner-quarantine.json": {
+      "byte_equal": true,
+      "original_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "rebuilt_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    }
+  },
+  "edges_compared_as_multisets_due_to_preexisting_nondeterministic_order": true,
+  "no_model_fit": true
+}
