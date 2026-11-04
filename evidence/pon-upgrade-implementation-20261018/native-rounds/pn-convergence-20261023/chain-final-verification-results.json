@@ -1,0 +1,13 @@
+[
+  {
+    "name": "chain-final-repository-truth",
+    "command": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "returncode": 2,
+    "seconds": 14.830274114967324,
+    "log_sha256": "c7ca5437c44cb6809e45eb18fd7c77a25212481f189087739846beb3c47eb515"
+  }
+]

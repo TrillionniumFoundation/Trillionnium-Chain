@@ -1,0 +1,313 @@
+{
+  "all_eight_sample_producer_effects": {
+    "full_limb_vs_transposed_eager": {
+      "baseline_ns": 522452415,
+      "candidate_ns": 389088027,
+      "delta_ns": -133364388,
+      "percent_change": -25.526609538210288
+    },
+    "full_limb_vs_transposed_lazy": {
+      "baseline_ns": 659306687,
+      "candidate_ns": 797971203,
+      "delta_ns": 138664516,
+      "percent_change": 21.03186858773662
+    },
+    "interaction_ns": 272028904,
+    "joint_lazy_full_limb_vs_eager_transposed_percent_change": 52.73567124768674,
+    "lazy_vs_eager_full_limb": {
+      "baseline_ns": 389088027,
+      "candidate_ns": 797971203,
+      "delta_ns": 408883176,
+      "percent_change": 105.08757597930403
+    },
+    "lazy_vs_eager_transposed": {
+      "baseline_ns": 522452415,
+      "candidate_ns": 659306687,
+      "delta_ns": 136854272,
+      "percent_change": 26.19459075521739
+    }
+  },
+  "all_eight_sample_producer_plus_measured_evidence_effects": {
+    "full_limb_vs_transposed_eager": {
+      "baseline_ns": 540508540,
+      "candidate_ns": 406552624,
+      "delta_ns": -133955916,
+      "percent_change": -24.783311656833398
+    },
+    "full_limb_vs_transposed_lazy": {
+      "baseline_ns": 676541789,
+      "candidate_ns": 815017388,
+      "delta_ns": 138475599,
+      "percent_change": 20.468151598540796
+    },
+    "interaction_ns": 272431515,
+    "joint_lazy_full_limb_vs_eager_transposed_percent_change": 50.7871435296841,
+    "lazy_vs_eager_full_limb": {
+      "baseline_ns": 406552624,
+      "candidate_ns": 815017388,
+      "delta_ns": 408464764,
+      "percent_change": 100.47033025668037
+    },
+    "lazy_vs_eager_transposed": {
+      "baseline_ns": 540508540,
+      "candidate_ns": 676541789,
+      "delta_ns": 136033249,
+      "percent_change": 25.1676410145157
+    }
+  },
+  "concentration": {
+    "all_samples_lazy_full_limb_minus_eager_full_limb_cpu_ns": 408883176,
+    "all_samples_lazy_full_limb_minus_lazy_transposed_cpu_ns": 138664516,
+    "lazy_full_limb_share_of_its_arm_shard_cpu_percent": 57.47481742145023,
+    "other_seven_signed_differences_sum_lf_minus_ef_cpu_ns": -2721265,
+    "other_seven_signed_differences_sum_lf_minus_lt_cpu_ns": -254881302,
+    "sample": 5,
+    "sample_lazy_full_limb_minus_eager_full_limb_cpu_ns": 411604441,
+    "sample_lazy_full_limb_minus_lazy_transposed_cpu_ns": 393545818
+  },
+  "economic_lower_bound": false,
+  "filtered_performance_estimate": false,
+  "input_sha256": {
+    "analysis.json": "b4137c04fd03f85109d7ac79fda01fc861fc4e9a18a8091093a950909e6d2631",
+    "independent-reader-readback.json": "57d7372dcf032c9c42908c1b7dc0c904a47366f55e27d0f9ca1cc2619f397f35"
+  },
+  "limitations": [
+    "Descriptive concentration of retained timing observations only; it does not identify a mechanism or establish stability.",
+    "The producer CPU interval includes actual task setup, all complete relation attempts, tickets, target-hit PNW1 serialization, and eager losing-proof materialization/destruction.",
+    "Separately measured attempt evidence CPU is excluded from the producer column; neither subtotal is total system or mining cost.",
+    "All samples remain in the published thirty-shard totals; no trimmed, replacement, or fastest-sample estimate is reported.",
+    "Matching nonce streams and attempt counts do not make this one local timing campaign a hardware-independent cost bound."
+  ],
+  "matched_full_search_streams": true,
+  "native_reexecution": false,
+  "original_public_host_acceptance": false,
+  "per_sample": [
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -92806808,
+        "percent_change": -63.86690694552381
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": -6477794,
+        "percent_change": -10.98232493040082
+      },
+      "paid_complete_attempts_per_arm": 123,
+      "producer_cpu_ns": {
+        "eager-full-limb": 58983813,
+        "eager-transposed": 51103590,
+        "lazy-full-limb": 52506019,
+        "lazy-transposed": 145312827
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 59067825,
+        "eager-transposed": 51352421,
+        "lazy-full-limb": 65491080,
+        "lazy-transposed": 212388148
+      },
+      "sample": 0,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -23875639,
+        "percent_change": -27.25862115164666
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": 10412187,
+        "percent_change": 19.534515050208636
+      },
+      "paid_complete_attempts_per_arm": 135,
+      "producer_cpu_ns": {
+        "eager-full-limb": 53301487,
+        "eager-transposed": 61228897,
+        "lazy-full-limb": 63713674,
+        "lazy-transposed": 87589313
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 67274223,
+        "eager-transposed": 136781088,
+        "lazy-full-limb": 87969016,
+        "lazy-transposed": 95822533
+      },
+      "sample": 1,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -23564645,
+        "percent_change": -30.91356273663285
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": -1312273,
+        "percent_change": -2.4312536969554346
+      },
+      "paid_complete_attempts_per_arm": 128,
+      "producer_cpu_ns": {
+        "eager-full-limb": 53975157,
+        "eager-transposed": 58397923,
+        "lazy-full-limb": 52662884,
+        "lazy-transposed": 76227529
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 114625663,
+        "eager-transposed": 85282971,
+        "lazy-full-limb": 112755988,
+        "lazy-transposed": 90567619
+      },
+      "sample": 2,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -26135784,
+        "percent_change": -43.624554063522424
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": -16667918,
+        "percent_change": -33.043170654919145
+      },
+      "paid_complete_attempts_per_arm": 110,
+      "producer_cpu_ns": {
+        "eager-full-limb": 50442853,
+        "eager-transposed": 63624882,
+        "lazy-full-limb": 33774935,
+        "lazy-transposed": 59910719
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 64627137,
+        "eager-transposed": 63736650,
+        "lazy-full-limb": 59891873,
+        "lazy-transposed": 80055960
+      },
+      "sample": 3,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -24934388,
+        "percent_change": -34.30595215930966
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": 12462896,
+        "percent_change": 35.32055105847475
+      },
+      "paid_complete_attempts_per_arm": 108,
+      "producer_cpu_ns": {
+        "eager-full-limb": 35285112,
+        "eager-transposed": 59890583,
+        "lazy-full-limb": 47748008,
+        "lazy-transposed": 72682396
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 82440897,
+        "eager-transposed": 138046951,
+        "lazy-full-limb": 49387775,
+        "lazy-transposed": 152463394
+      },
+      "sample": 4,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": 393545818,
+        "percent_change": 604.6488379479953
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": 411604441,
+        "percent_change": 875.2317653989105
+      },
+      "paid_complete_attempts_per_arm": 133,
+      "producer_cpu_ns": {
+        "eager-full-limb": 47028051,
+        "eager-transposed": 90794418,
+        "lazy-full-limb": 458632492,
+        "lazy-transposed": 65086674
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 58600530,
+        "eager-transposed": 204327511,
+        "lazy-full-limb": 562953105,
+        "lazy-transposed": 103844430
+      },
+      "sample": 5,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -36045906,
+        "percent_change": -47.414699718593035
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": -2387865,
+        "percent_change": -5.6364632564199
+      },
+      "paid_complete_attempts_per_arm": 126,
+      "producer_cpu_ns": {
+        "eager-full-limb": 42364598,
+        "eager-transposed": 59328845,
+        "lazy-full-limb": 39976733,
+        "lazy-transposed": 76022639
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 89914059,
+        "eager-transposed": 72499915,
+        "lazy-full-limb": 96030567,
+        "lazy-transposed": 162149989
+      },
+      "sample": 6,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    },
+    {
+      "full_limb_vs_transposed_lazy": {
+        "delta_ns": -27518132,
+        "percent_change": -35.98336650121302
+      },
+      "lazy_vs_eager_full_limb": {
+        "delta_ns": 1249502,
+        "percent_change": 2.619119107075287
+      },
+      "paid_complete_attempts_per_arm": 134,
+      "producer_cpu_ns": {
+        "eager-full-limb": 47706956,
+        "eager-transposed": 78083277,
+        "lazy-full-limb": 48956458,
+        "lazy-transposed": 76474590
+      },
+      "producer_wall_ns": {
+        "eager-full-limb": 104096713,
+        "eager-transposed": 141934796,
+        "lazy-full-limb": 51712973,
+        "lazy-transposed": 103853348
+      },
+      "sample": 7,
+      "searches_per_arm": 64,
+      "target_hits_per_arm": 64
+    }
+  ],
+  "qualification_status": "HOLD",
+  "receipt_mutations": false,
+  "schema": "pon-w1-legal-strategy-v3-retained-sample-diagnostic-v1",
+  "scope": "One retained local 8 CPU / 8 GiB campaign at exact commit 2b250859; all eight samples and all thirty shards retained.",
+  "selection": {
+    "class": "zero",
+    "reuse_winners": 64,
+    "target_index": 0
+  },
+  "semantic_alerts": [],
+  "source": {
+    "commit": "2b250859e7c07088e6c3c01f75006372c684de61",
+    "source_state": "committed-clean",
+    "tracked_bytes": 792733780,
+    "tracked_entries": 6881,
+    "tracked_worktree_verified": true,
+    "tree": "12c414a565f58fde6e98ec6eba503d9389ddd06f"
+  },
+  "timing_cause_attributed": false
+}

@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/smollm-cpu-env/bin/python",
+    "/workspace/scratch/56818e4fba76/chain-cell-model/scripts/llm_inherited_runtime.py",
+    "train",
+    "--materials",
+    "/workspace/scratch/56818e4fba76/smollm-materials",
+    "--output",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2",
+    "--operation-id",
+    "cell-research-public-smoke-gen2",
+    "--input",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/training-input.json",
+    "--input-sha256",
+    "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+    "--parent",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen1/worker/parent-material.json",
+    "--parent-sha256",
+    "9ee99491551fa0646072a24c25e3a1c62b071361816af5b48bdaba919aeb5f86",
+    "--threads",
+    "2",
+    "--steps",
+    "10"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 43.04144839399942
+}

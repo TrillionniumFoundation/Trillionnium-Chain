@@ -1,0 +1,158 @@
+{
+  "schema": "pon-pq-local-origin-runtime-readback-v1",
+  "status": "LOCAL_REGRESSION_PASS_NOT_WHOLE_CHAIN_ACCEPTANCE",
+  "compiled_source": "990aeb651f793ca44bf94b074356be06e58e75c1",
+  "compiled_tree": "91b8178b05d867f063ce21264043c2a49fcc6e41",
+  "source_unchanged": true,
+  "exact_terminal_identity": "source-exact-terminal.json inside raw-native-records.zip",
+  "result_sha256": "5886686ca79182a8a77e58e0c8096c3d5734d465de7297742cee24b593cb78ce",
+  "original_deadline_body_unchanged": true,
+  "original_request_deadline_seconds": 10,
+  "native_tests": {
+    "pq_network": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    "error_origin": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "original_network_six_and_error_nine_retained": true,
+  "observations": [
+    {
+      "schema": "pq-post-intent-native-observation-v1",
+      "planned_calls": 5,
+      "observed_calls": 5,
+      "honest_followups_planned": 3,
+      "honest_followups_succeeded": 3,
+      "checks_not_evaluated": [],
+      "checks": 24,
+      "failures": []
+    },
+    {
+      "schema": "pq-post-intent-real-expiry-observation-v1",
+      "planned_calls": 5,
+      "observed_calls": 5,
+      "honest_followups_planned": 3,
+      "honest_followups_succeeded": 3,
+      "checks_not_evaluated": [],
+      "checks": 23,
+      "failures": []
+    },
+    {
+      "schema": "pq-intent-origin-observation-v1",
+      "planned_cases": 15,
+      "observed_cases": 15,
+      "checks": 120,
+      "failures": []
+    },
+    {
+      "schema": "pq-real-signed-remote-control-origin-v1",
+      "planned_calls": 6,
+      "observed_calls": 6,
+      "checks": 12,
+      "failures": []
+    }
+  ],
+  "phase_wall_seconds": {
+    "preflight": 0.08031669499177951,
+    "format": 10.512431499999366,
+    "locked-graph": 0.1474754990049405,
+    "strict-clippy": 52.88031753699761,
+    "pq-network": 461.2810699900001,
+    "error-origin": 0.08864428299420979
+  },
+  "guard": {
+    "status": "completed",
+    "elapsed_seconds": 525.3495891069906,
+    "cpu_peak_seconds": 508.373779,
+    "sampled_peak_rss_bytes": 2602369024,
+    "sampled_peak_target_growth_bytes": 473300992,
+    "wait4_peak_process_rss_bytes": 2545856512,
+    "errors": [],
+    "remaining_owned_processes": []
+  },
+  "independent_pid_birth_readback": {
+    "seen": 41,
+    "matching_live": 0,
+    "unknown": 0
+  },
+  "source_controls_observed_separately": {
+    "repository_tests": 50,
+    "repository_test_wall_seconds": 102.988,
+    "pq_source_controls": 26,
+    "pq_source_control_wall_seconds": 1.152,
+    "exact_pinned_blobs": 147,
+    "full_raw_source_control_stream_captured_in_packet": false,
+    "observation_origin": "terminal session 89249, exit 0; these source controls are not native or crypto qualification"
+  },
+  "prior_attempts": [
+    {
+      "name": "pq-post-intent-baseline",
+      "result_sha256": "1dfcc86cbd3298ac80f6ee895455bbb1516f7475631a73fa41bf09365789302c",
+      "wall_seconds": 1.5918712790007703,
+      "cpu_seconds": 1.322636,
+      "tests": null,
+      "source_unchanged": true
+    },
+    {
+      "name": "pq-post-intent-baseline-attempt2",
+      "result_sha256": "a5f9e8177eefeea55ac1fac15e6eda246450af99706f968ce2281741e980bb5d",
+      "wall_seconds": 433.21138507599244,
+      "cpu_seconds": 424.179358,
+      "tests": {
+        "status": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0
+      },
+      "source_unchanged": true
+    }
+  ],
+  "three_native_attempt_guard_wall_seconds": 960.1528454619838,
+  "three_native_attempt_captured_cpu_seconds": 933.875773,
+  "cost_scope": "Three exact regression native guard attempts only; earlier PQ suites, source review and evidence preservation are separate retained costs, never zero.",
+  "raw_archive": {
+    "path": "raw-native-records.zip",
+    "bytes": 1545993,
+    "sha256": "4ebe0c59fa64383172f4afae2ef7f2a76e61c8d80e34224d34956abaf5321cb7",
+    "members": 39
+  },
+  "elf_preservation": {
+    "status": "completed",
+    "elapsed_seconds": 3.74272320199816,
+    "self_cpu_seconds": 3.74431,
+    "self_peak_rss_kib": 16916,
+    "free_after": 2209804288,
+    "records": [
+      {
+        "source": "/tmp/chain-pq-target-56818e4fba76/debug/deps/trnm_pon_node-75744e5b33675b38",
+        "source_commit": "990aeb651f793ca44bf94b074356be06e58e75c1",
+        "qualification_receipt": "/workspace/scratch/56818e4fba76/recovery/round8/pq-local-origin-candidate-attempt1/result.json",
+        "qualification_sha256": "5886686ca79182a8a77e58e0c8096c3d5734d465de7297742cee24b593cb78ce",
+        "archive": "/workspace/scratch/56818e4fba76/recovery/round8/preserved-native-elf/trnm_pon_node-75744e5b33675b38-local-origin-990aeb651.gz",
+        "source_bytes": 324768024,
+        "source_sha256": "9bfa7a8f4d12e292112cace3f23632c33fb34dc76de3500c22e458821e65495c",
+        "source_mode": 33261,
+        "source_allocated": 324718592,
+        "archive_bytes": 80088201,
+        "archive_sha256": "7ac1c16b0a8f88981808a030def292b65c78152019b0b78edfcf0944eaa62d6c",
+        "decompressed_identity_verified": true,
+        "active_matching_readable_processes": [],
+        "unreadable_proc_exe_count": 16,
+        "ownership_basis": "Root-owned named target; root and History/W1 workers report no active native process in this target; no global process-inactivity claim.",
+        "redundant_source_unlinked": true,
+        "free_after": 2209804288
+      }
+    ]
+  },
+  "public_paid_host_qualified": false,
+  "actual_post_intent_parallel_durable_revocation": false,
+  "physical_power_loss": false,
+  "whole_chain_pq": false,
+  "production_activation": false,
+  "wan_accepted": false
+}

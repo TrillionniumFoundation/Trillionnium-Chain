@@ -1,0 +1,21 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 4.65s
+     Running tests/public_pool_v3.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_pool_v3-5258f8ac4deef04b)
+
+running 3 tests
+test both_actual_socket_cross_version_clients_reject_without_body_or_fallback ... ok
+test serving_cannot_enable_pool_and_lifetime_has_explicit_72h_bound ... ok
+test real_guest_bundle_exact_pool_duplicate_stale_snapshot_and_restart_no_authority ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests/public_v3_from_zero.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_v3_from_zero-68039cdc5668ecbd)
+
+running 4 tests
+test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok
+test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok
+test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... ok
+test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.02s
+

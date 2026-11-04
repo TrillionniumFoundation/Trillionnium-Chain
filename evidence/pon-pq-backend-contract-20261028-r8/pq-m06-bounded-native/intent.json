@@ -1,0 +1,41 @@
+{
+  "schema": "pon-r8-offline-synthetic-m06-v1",
+  "started_utc": "2026-10-28T03:39:45.375305+00:00",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--features",
+    "pq-native-openssl",
+    "--test",
+    "pq_account_owner",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered",
+  "wall_limit_seconds": 600,
+  "disk_free_floor_bytes": 1073741824,
+  "cargo_build_jobs": 1,
+  "deployed_keys_or_state": false,
+  "network_requested": false,
+  "earlier_interruption_preserved": true,
+  "qualification_scope": "dirty candidate, original synthetic M06 fixture only",
+  "backend": {
+    "OPENSSL_DIR": "/tmp/pure-pon-openssl-3.5.9",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/tmp/pure-pon-openssl-3.5.9/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "0f9db29e103b1c7da08c7fe45ae47f84a0e9c388775520114598646a9041867f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/tmp/pure-pon-openssl-3.5.9/lib/ossl-modules"
+  },
+  "whole_chain_pq_accepted": false,
+  "interrupted": false,
+  "stop_reason": null
+}

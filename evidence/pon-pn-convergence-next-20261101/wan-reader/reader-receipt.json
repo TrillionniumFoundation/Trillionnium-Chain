@@ -1,0 +1,39 @@
+{
+  "scope": "Existing synthetic WAN evidence reader controls only; no physical WAN or independent administrators",
+  "source_commit": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "source_files": {
+    "scripts/pon_wan_evidence.py": {
+      "git_blob": "e07d434c151c35b0d51282983df45ab1ad8cbe59",
+      "sha256": "28a46b943965efb8859636e40ba02d071e2376ccbf5650d4dfa9531f8e6b03b2",
+      "bytes": 26899
+    },
+    "scripts/ci/test_pon_wan_evidence.py": {
+      "git_blob": "136db0e99c1b0a0ef9a91d7f7131fa0590432488",
+      "sha256": "3e72176aefebaae6b0cd1651be1082ffec99b01bd60514d176035ee9e1f4a715",
+      "bytes": 22364
+    }
+  },
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pon_wan_evidence.py",
+    "-v"
+  ],
+  "cwd": "/tmp/pn-wan-reader",
+  "started_utc": "2026-11-01T07:50:37.678972+00:00",
+  "elapsed_seconds": 0.27732064200245077,
+  "returncode": 0,
+  "test_summary": [
+    "----------------------------------------------------------------------",
+    "Ran 25 tests in 0.193s",
+    "",
+    "OK"
+  ],
+  "pn5_accepted": false,
+  "production_activation": false
+}

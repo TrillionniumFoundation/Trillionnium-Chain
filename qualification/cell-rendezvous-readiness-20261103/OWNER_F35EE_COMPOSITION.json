@@ -1,0 +1,589 @@
+{
+  "schema": "trnm-chain-readiness-owner-composition-v3",
+  "date_utc": "2026-11-04",
+  "ordered_commit_parents": [
+    "e8bc6eff6f51abedf45229ded84aa552133ee68b",
+    "f35ee6dc61feaba7c68b16e1f9384b5c3794a976"
+  ],
+  "owner_tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+  "previous_source_and_failed_gate": {
+    "head": "e8bc6eff6f51abedf45229ded84aa552133ee68b",
+    "tree": "c7f7f962e264ac7ea842bc4a1132fe733fc171aa",
+    "run_id": 41751960684,
+    "jobs": [
+      126318926403,
+      126318926289
+    ],
+    "failure": "CI contract: inline source pin differs: .github/workflows/pon-recent-batch-acceptance.yml:67: trillionnium/crates/trnm-pon-node/src/store.rs: expected c7669f3107ec806ecc680ab5a56fc0883dedc999, observed 3eb46aa54bf428b84dca400973475ef9f79fe05f",
+    "narrow_corpus_tree_check_did_not_replace_CI_contract": true
+  },
+  "owner_fix": "Adopt the existing complete owner: 29586a77 fixes stale inline source guards; f35ee6dc applies exactly the three observed hosted rustfmt hunks in two test sources and refreshes their one existing corpus pin. No second independent patch to these inputs is claimed.",
+  "source_construction": "Complete exact owner tree plus unchanged DA readiness blob and historical qualification objects; insertion-only combination of both plan histories, plus immutable original failure logs and this record.",
+  "retained_overlay": [
+    {
+      "path": "qualification/architecture-fixed-host-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2688a4d154188a14a3d6872c60b13315fe872eb",
+      "bytes": 1377
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96081c0890b42a9f189c691e7d9cf4b05209801a",
+      "bytes": 5519
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/REPRODUCTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "309b7be22c4de59112bac81d25410297cb4b2c1c",
+      "bytes": 4062
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "17a5846365a202e309be58219cee0446b01220d9",
+      "bytes": 167
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "200f082db582c3ae60c1abb7c0a0b9f0c329f739",
+      "bytes": 72
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/capture.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2440904f2214752df7889352a9552fd3cb61f6d",
+      "bytes": 283
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd710dc95f05da0cd91b3dab4f87ebe657df50d4",
+      "bytes": 470
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/invocation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3f9451f66f940405b6b76b98b14e18ec6a04b10",
+      "bytes": 538
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/tests/architecture_delivery_compare.rs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea4cfa95d14775392e3a09865b701dcc5173bc90",
+      "bytes": 40
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/ci-contract.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92a3e47248ccd54f73fc4dbd33ebad59b1389eb3",
+      "bytes": 180
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/diff-check.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/final-check-0.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7318b8aef8720c4622cc09fe286130fcb5bc20a0",
+      "bytes": 5826
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-failure-derived.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e6a2f2fd28c125a1f5f2828125b6442ea0043ad",
+      "bytes": 20833
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bf1a333e23b870de95e92000e4c0a506cdb93ce",
+      "bytes": 1195
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3f9a99c48fd9b02258ed12f3ef4d4821a2b9779",
+      "bytes": 9325
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-source.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bbcae1777e5ec43960b27c43e5146be380b7e077",
+      "bytes": 421
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/preflight.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "926d86709b68c2c344eba0aab02d6462de793634",
+      "bytes": 180
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_architecture_delivery_host.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a66648d2bbbf9c0f2635427e67e993b7b258578",
+      "bytes": 1625
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_rust_baseline_shards.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4e126956edd2e44009c2160615be95f28c37511",
+      "bytes": 1559
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450dc8da1084d366f6d69a2b33bf9d7a761e0512",
+      "bytes": 983
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FINAL_INPUT_BINDING.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3652b6351cee6cb5a3f170efe5c0970e6c5de7ee",
+      "bytes": 176555
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f8536e1217f8daec883447c8cf277a80fc97e6d",
+      "bytes": 1555
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INITIAL_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e5be8db43d2ce0e48376ea820f75667cf790656",
+      "bytes": 815
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCAL_COMMANDS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "739fa748536794154e27f7bbe04caeed3af567fe",
+      "bytes": 117717
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCKED_GRAPH.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "946a98efc505ebc18daf53afddac5f8df90cba59",
+      "bytes": 260468
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/MARKDOWN_LINKS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b9adab0a2b9f702e08372ae651e2db7559e79a73",
+      "bytes": 51398
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NATIVE_INPUTS_AT_EXECUTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9999188df2af699f74bf83d1e78c840561c94f96",
+      "bytes": 173541
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NEGATIVE_MUTATION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e7ac196fce530d1e0916400cd999a51311dbe0e",
+      "bytes": 806
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/ORIGINAL_HOSTED_FAILURE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f6c803d85297fbaa6b9e5856a904d162a9ac841",
+      "bytes": 738
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_CONTROLS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9a5c88b7ed7f84ff94e74bccfaaefc87fd8bed7",
+      "bytes": 452969
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_HOST_CONTROLS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c00036aa38e2965f2c72f8fd3d60c6fc12deee91",
+      "bytes": 140120
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_INDEPENDENT_REVIEW.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd5050d075e95d49e7c0699da5fbc7c20db2fff8",
+      "bytes": 3007
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_MERGE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1eb07a8a192eff68042d1eb8feb1d7fbc8eeea07",
+      "bytes": 10074
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_8A74_MERGE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8176bd45b90bbdd22d3704c30f8eaa4ad1b623d3",
+      "bytes": 18580
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/PIN_CORRECTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88a14a8c4954c45b9b6d5787c0dc47b95f4f9034",
+      "bytes": 16797
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f924e6b288354d27ffa60ed3308aa2e0628b08e7",
+      "bytes": 14029
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/RETAINED_TESTS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "456eebfd4eea354f9b42b4cf0fa8f2f0fffda94c",
+      "bytes": 2836
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/SOURCE_MANIFEST.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "423cf9b0c8a088cfd34281f68ee4a5b672ffd453",
+      "bytes": 14143
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/TOOLCHAIN.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf0d599c87c9451815a20edf6d924db018455fb5",
+      "bytes": 581
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/WHITESPACE_CHECK.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e985740f9bae4643623a8b92f2c2ce0cb9fe9d61",
+      "bytes": 644
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/candidate-before-comment.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c942b9ac09abc4fd74d85842f9dd34bb6199f24e",
+      "bytes": 45694
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/negative-mutant.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78faf39168efe9a2352fa08d4f53e086062f0f69",
+      "bytes": 45365
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/original-tests.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b0e61bc5acaebbcd095fd6fbd7ae1eb7cd1e233",
+      "bytes": 41759
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-12171-controls/run_controls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b982b3e4491992cb8b27e73258b38ff6a5d85c4",
+      "bytes": 3799
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-12171-controls/run_host_control.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59b5e153793cba8de8bd7e1ebd9d5a1f0d2f68b7",
+      "bytes": 1746
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/parent-format-only.patch.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47c534abfe637e35772aac83c8584b23b5c232a5",
+      "bytes": 1656
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+      "bytes": 45766
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_BBCB_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e142799f10139a613f21daa2c5c28299af95aded",
+      "bytes": 14118
+    }
+  ],
+  "new_plan": {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "sha": "ee9dcdc2282121bdc96109673f1dc1c112b5909a",
+    "sha256": "484f1e979c18ec39ab0181b71cb4197d5e505ca365574394bed31ca825834efe",
+    "bytes": 441867
+  },
+  "failed_job_logs": [
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-e8-negative/job-126318926403-repository-truth.decoded.log",
+      "git_blob": "2a3b3268a81421fbe66ca87c4b9c5a26e6b839dc",
+      "sha256": "d3f03afc133bdf2d1765b021bb7f359841cf54c2e32485a7ceb419988491df78",
+      "bytes": 138538,
+      "scope": "complete decoded connector log encoded as UTF-8; not an independent ZIP download/hash"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-e8-negative/job-126318926289-external-evidence.decoded.log",
+      "git_blob": "7d7bd292bbf86fb71a5b6b15352a980d278afd16",
+      "sha256": "b320745f956a3b2c8fbb70212f1327b75bbf8f9ada00270cbfd5e350b65941f6",
+      "bytes": 133438,
+      "scope": "complete decoded connector log encoded as UTF-8; not an independent ZIP download/hash"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-295-negative/job-126319351908-rustfmt.decoded.log",
+      "git_blob": "5785bdc54aeaa811933abdc7c9f7a0e5c2219715",
+      "sha256": "63be786d292f102a343887a4a8585114792eed4e643eebd93d3041754eed8f1b",
+      "bytes": 152556,
+      "scope": "complete decoded connector log encoded as UTF-8; not an independent ZIP download/hash"
+    }
+  ],
+  "remote_pin_checks": {
+    "schema": "trnm-git-source-pin-readback-v1",
+    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+    "source_tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+    "workflows_full_bytes_verified": 16,
+    "inline_guard_count": 20,
+    "inline_guards": [
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "line": 51,
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "git_blob": "45c458780452e82c2e59ac34ae8a200a167a6647"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "line": 52,
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "git_blob": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "line": 53,
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "git_blob": "c30d01e4b6cbb11434539b82229ccca41d11a051"
+      },
+      {
+        "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "line": 73,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 67,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "git_blob": "3eb46aa54bf428b84dca400973475ef9f79fe05f"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 68,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+        "git_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 69,
+        "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+        "git_blob": "aa6c50f60f631574b341632be63d6cf20f40a8d1"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 70,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "git_blob": "1ddfb68d7abaa7ccd4fe24f3b636bc2b3523b6f8"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 71,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+        "git_blob": "cecb8a984c02ffca7590e69c4392223ea748b40f"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 72,
+        "path": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+        "git_blob": "7301aeb3033913f080b23767bfca52a2bf76d45b"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 73,
+        "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+        "git_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 74,
+        "path": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+        "git_blob": "526f155f2215184aa607da6d453423ca6930ded2"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 75,
+        "path": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "git_blob": "c8567475a36cf449d9fd2b33363a545fbd4704ab"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 76,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+        "git_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 77,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+        "git_blob": "3fcbc873fcc89de208922e6ffd74361442797bed"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 78,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+        "git_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 79,
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+        "git_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 80,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+        "git_blob": "ac0a694a02610bf494abdd5ee708a6f5c03adf49"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 81,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+        "git_blob": "13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11"
+      },
+      {
+        "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "line": 84,
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "git_blob": "ec6420becaba837f22d45c917d15554a8e653275"
+      }
+    ],
+    "corpus_count": 384,
+    "all_bound_to_git_tree": true,
+    "original_python_contract_executed": false,
+    "shell_preflight_executed": false,
+    "native_executed": false,
+    "workflow_byte_readback_at": "29586a77faa98655b735f564a73ec861bf3d369e",
+    "workflow_bytes_unchanged_in_exact_three_file_owner_increment": true,
+    "corpus_blob": "b9142aa2a10fec490bd811111660cd382124828b"
+  },
+  "only_native_difference_from_owner": {
+    "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+    "git_blob": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+    "kind": "unchanged previously published test fixture; no production API edit"
+  },
+  "local_execution": {
+    "available": false,
+    "preflight": false,
+    "format": false,
+    "clippy": false,
+    "rust": false,
+    "python": false
+  },
+  "pending": [
+    "original exact-head and actual-merge source/preflight gates",
+    "all original format and strict Clippy checks",
+    "all original native and new owner regression selectors",
+    "original 4s/16-hostile and 30s campaign criteria"
+  ],
+  "qualification": {
+    "draft": true,
+    "shadow_only": true,
+    "deny_all": true,
+    "hold_no_go": true,
+    "performance_qualified": false,
+    "whole_chain_pq_qualified": false,
+    "production_activation": false
+  },
+  "formatter_failure": {
+    "job_id": 126319351908,
+    "run_id": 41752086762,
+    "source": "29586a77faa98655b735f564a73ec861bf3d369e",
+    "actual_merge": "482e516436bcc6c5cf7c8d54a47e77fd7cd0f097",
+    "tree": "9aa0ea419cdc53b192bba7c70ff3258745a82fa7",
+    "source_identity_passed": true,
+    "audit_preflight_passed": true,
+    "format_exit": 1,
+    "native_qualified": false,
+    "observed_hunks": 3,
+    "delta_exactly_matches_observed_formatter": true,
+    "corrected_source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+    "changed_paths": [
+      {
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "git_blob": "b9142aa2a10fec490bd811111660cd382124828b",
+        "additions": 1,
+        "deletions": 1
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "git_blob": "b6167eaa94886e25310e614a61639c244ae897e1",
+        "additions": 9,
+        "deletions": 2
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+        "git_blob": "f4bcf19a6a96313b878ca3ab4bcb3bbbafced423",
+        "additions": 3,
+        "deletions": 7
+      }
+    ]
+  },
+  "owner_freeze": "Freeze this exact reviewed complete owner for real hosted qualification. Do not follow later concurrent owner updates automatically or transfer earlier native results."
+}

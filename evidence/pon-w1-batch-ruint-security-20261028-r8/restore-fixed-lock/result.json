@@ -1,0 +1,81 @@
+{
+  "schema": "TRNM-W1-BATCH-RESTORE-PATCHED-DEPENDENCY-LOCK1",
+  "reason": "Reject MSRV-only downgrade with two known ruint advisories; restore exact initial hardened-version graph and require official newer guest compiler. No advisory ignore/backport or build.",
+  "commands": [
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+        "update",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+        "-p",
+        "enum-ordinalize-derive@4.3.0",
+        "--precise",
+        "4.4.2"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.1397402769944165,
+      "child_cpu_seconds": 0.13877199999999998,
+      "lock_sha256_after": "5e4f05bd63727772f1f76bc2aa4c2b09a35fc5bd476f9753ff982471a952cb46",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f5b442f2f42f21adbe3e0939277474437414c5392063792a25e157e7268f9d93"
+    },
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+        "update",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+        "-p",
+        "enum-ordinalize@4.3.0",
+        "--precise",
+        "4.4.2"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.1248184720025165,
+      "child_cpu_seconds": 0.12406600000000004,
+      "lock_sha256_after": "7957bb75af22f645bf2cded667c14928bc53f0bd76fb542516ef8d904707d05d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4f82bc4629194a7678c23aeba7bf0b3798d1a1b2eb0ef2322ff1a3c7b419d5e3"
+    },
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+        "update",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+        "-p",
+        "ruint@1.15.0",
+        "--precise",
+        "1.21.1"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.12032282899599522,
+      "child_cpu_seconds": 0.11953599999999998,
+      "lock_sha256_after": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "9c5e53cd5c5605cd6415c165fe34fd192b50295873edfbbd522a9da13729c158"
+    }
+  ],
+  "rejected_lock_sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+  "restored_lock_sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+  "restored_guest_lock_is_byte_identical_to_original_source_commit_b3f3fa5": true,
+  "native_lock_unchanged_sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+  "batch_nonlock_source_unchanged": true,
+  "ruint_version": "1.21.1",
+  "addresses_reviewed_advisories": [
+    "RUSTSEC-2025-0137",
+    "RUSTSEC-2026-0220"
+  ],
+  "full_dependency_security_audit_claimed": false,
+  "required_guest_rust_msrv": "1.90",
+  "next_official_compiler_candidate": "r0.1.91.1",
+  "wall_sum_seconds": 0.3848815779929282,
+  "child_cpu_sum_seconds": 0.382374,
+  "native_or_guest_compilation_executed": false,
+  "prover_executed": false,
+  "old_vulnerable_candidate_attempt4_started": false
+}

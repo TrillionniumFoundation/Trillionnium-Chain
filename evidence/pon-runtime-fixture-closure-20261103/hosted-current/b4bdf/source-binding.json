@@ -1,0 +1,101 @@
+{
+  "schema": "exact-candidate-source-binding-v1",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "candidate_parent": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "ordered_merge_parents": [
+    "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "b4bdf142f513081715ecc8d1f9674291e85302cc"
+  ],
+  "candidate_metadata": {
+    "sha": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "node_id": "C_kwDOTty1_doAKGI0YmRmMTQyZjUxMzA4MTcxNWVjYzhkMWY5Njc0MjkxZTg1MzAyY2M",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:34:08Z"
+    },
+    "committer": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:34:08Z"
+    },
+    "tree": {
+      "sha": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb"
+    },
+    "message": "fix(ci): bind fresh W1 service to its canonical source receipt\n\nBoth actual c5dd head and merge fresh-service jobs stopped before Host/native preparation because the producer wrote source-before.json while the existing lease verifier requires source.json. Change only that producer basename; retain event-bound exact source verification, every current-source guard, native command and original Host budget.\n\nRetain the separate actual hosted failures and real clean-source producer/consumer regression, including stale/wrong receipt refusals. Preserve the final composed 974-entry terminal (950 passed, one original UnixListener EPERM failure, 23 original ignored), complete raw source gates and the unchanged dated PENDING snapshot. This follow-up changes no native source or qualification flag; actual repaired Host/service acceptance remains required.",
+    "parents": [
+      {
+        "sha": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "actual_merge_metadata": {
+    "sha": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+    "node_id": "C_kwDOTty1_doAKGQ5ZWZiMGYzYmM0ZGZkYmZkOGZjYjYwOTM3NWRmZWI4NTI0MDdiZmI",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-03T22:37:07Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-11-03T22:37:07Z"
+    },
+    "tree": {
+      "sha": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb"
+    },
+    "message": "Merge b4bdf142f513081715ecc8d1f9674291e85302cc into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "parents": [
+      {
+        "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+      },
+      {
+        "sha": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/b4bdf142f513081715ecc8d1f9674291e85302cc"
+      }
+    ],
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq6mITCRC1aQ7uu5UhlAAAbmUQAArC9IbG3xNoUW0hgJ53rdXY\nv5fpH4G4Hvgktl00G6zi/5xt7c1un6F6WcH010WST1ohilGN0maXrNeO/5Lqle3s\n1xF+2WvATDQkrP8ZLziwLTE+UXKwYpjvwESENmgNXj5eV6rEbj8/5VHqtxyDI4DT\nON1DZtm6AwdFvLxWzWvV7Sm0coqPhGmZmyylUzut8WK05HOFqH88BgbAD49c2JL8\ng5Un4pckmANp3kuuA/UAjAe+vHwobnY+xQJNPtkanW4Sav304dC1ttMahwnP4mwk\nAWIZuwz/185spoNvc7m1XeEa8TqwJdUfsV414rEJ6KBE/qmm8qR/hXUJCmen4z13\nFp5jeVkEZsIfJtwQdlZOkNIEHp74RKBc4QNcJjKD+JqyLyYqlDTsJQvUoTRwYOXL\niKIzZaPfpNQQHuNGXb0OaRkWyRs/AVc+iURgC1pyanbD/9TgnUqkRS4paKPIOOSl\n4k6rhN8c+QMiulZ6pYB87hxBxVaKRSKusd11gXnjulFHR7S/VLOQee0mnfJTsuOD\n0zKpnSn6VyTX6dhn9rcDj+Nk4kDbrUI+vw2L0wroL5LK8uPQivY2FThySC3Low8e\n+GaAPwwWdM46lOP/Sw/DsS1cocrz2EitR8BRRZbbhB9RffHRoUQPXqN3WhcTB+IH\nPZK8RMYYs1U1E+IuGScI\n=T3hO\n-----END PGP SIGNATURE-----\n",
+      "payload": "tree 3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb\nparent dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\nparent b4bdf142f513081715ecc8d1f9674291e85302cc\nauthor Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793745427 +0000\ncommitter GitHub <noreply@github.com> 1793745427 +0000\n\nMerge b4bdf142f513081715ecc8d1f9674291e85302cc into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n",
+      "verified_at": "2026-11-03T22:37:08Z"
+    }
+  },
+  "receipts": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T223820048Z-candidate-commit.json",
+      "bytes": 5553,
+      "sha256": "84c68b00ba3a1f7570f99e2d4d0fc923b95eb9837108f9339df12a5e4151dbfb"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/w1-source-publication/actual-merge-commit.json",
+      "bytes": 3023,
+      "sha256": "436f223393fda2cab5de37d77fb2c4eb5e7877a1c06f651039990ea4d9e0b429"
+    }
+  ],
+  "scope": "source identity only; no native/Host/performance qualification",
+  "repository_mutated": false
+}

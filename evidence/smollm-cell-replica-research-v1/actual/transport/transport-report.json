@@ -1,0 +1,365 @@
+{
+  "all_model_dependencies_rehashed": true,
+  "authority": {
+    "hepta_final_use": false,
+    "independent_accepted": false,
+    "installation_authorized": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false,
+    "selection_authorized": false
+  },
+  "connection_budget": 560,
+  "consumer_acquisition": {
+    "cached_chunks": 0,
+    "cells": 11,
+    "chunks": 269,
+    "connection_attempts": 280,
+    "downloaded_bytes": 272190131,
+    "downloaded_chunks": 269,
+    "max_response_bytes": 555919638,
+    "payload_bytes": 272190131,
+    "received_response_bytes": 272204931,
+    "rejected_responses": 0,
+    "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56",
+    "schema": "trnm.cell.release.fetch.v1",
+    "suppliers": 1
+  },
+  "consumer_materials": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials",
+  "consumer_parent": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-parent/parent-material.json",
+  "hepta_final_use": false,
+  "independent_operators": false,
+  "members": [
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/README.md",
+      "materialization": {
+        "bytes": 6772,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "5fc07d04621cff314f151e96b847c6de53f5bc469ba7caa9e9dc39e327d4187a",
+        "max_response_bytes": 0,
+        "payload_sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/README.md",
+      "pack": {
+        "bytes": 6772,
+        "chunks": 1,
+        "manifest": "5fc07d04621cff314f151e96b847c6de53f5bc469ba7caa9e9dc39e327d4187a",
+        "payload_sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/README.md"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/config.json",
+      "materialization": {
+        "bytes": 861,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "bbab66c829b63eabccdbc04d689db4a8a4deeab9c08f77101dc7f3e34e32def0",
+        "max_response_bytes": 0,
+        "payload_sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/config.json",
+      "pack": {
+        "bytes": 861,
+        "chunks": 1,
+        "manifest": "bbab66c829b63eabccdbc04d689db4a8a4deeab9c08f77101dc7f3e34e32def0",
+        "payload_sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/config.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/generation_config.json",
+      "materialization": {
+        "bytes": 132,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "951afb93812a2662d7cc35c3582abc9baa044381c8b08527d7300f103a764fda",
+        "max_response_bytes": 0,
+        "payload_sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/generation_config.json",
+      "pack": {
+        "bytes": 132,
+        "chunks": 1,
+        "manifest": "951afb93812a2662d7cc35c3582abc9baa044381c8b08527d7300f103a764fda",
+        "payload_sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/generation_config.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/model.safetensors",
+      "materialization": {
+        "bytes": 269060552,
+        "cached_chunks": 257,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "622779a4d87f2ee5e69024f2d75108b6a9c674941425648f12b0f3d50cb9f24c",
+        "max_response_bytes": 0,
+        "payload_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/model.safetensors",
+      "pack": {
+        "bytes": 269060552,
+        "chunks": 257,
+        "manifest": "622779a4d87f2ee5e69024f2d75108b6a9c674941425648f12b0f3d50cb9f24c",
+        "payload_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/model.safetensors"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/special_tokens_map.json",
+      "materialization": {
+        "bytes": 655,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "d91fef2378eaa351db17ee4275569e04d744285d32dfeac7d8c261d59f3e2259",
+        "max_response_bytes": 0,
+        "payload_sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/special_tokens_map.json",
+      "pack": {
+        "bytes": 655,
+        "chunks": 1,
+        "manifest": "d91fef2378eaa351db17ee4275569e04d744285d32dfeac7d8c261d59f3e2259",
+        "payload_sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/special_tokens_map.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/tokenizer.json",
+      "materialization": {
+        "bytes": 2104556,
+        "cached_chunks": 3,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "dbc7b56775d6d43bf94b319ce56186efa0fea3937696ae2d3d4059871fb8f1e0",
+        "max_response_bytes": 0,
+        "payload_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/tokenizer.json",
+      "pack": {
+        "bytes": 2104556,
+        "chunks": 3,
+        "manifest": "dbc7b56775d6d43bf94b319ce56186efa0fea3937696ae2d3d4059871fb8f1e0",
+        "payload_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/tokenizer.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/tokenizer_config.json",
+      "materialization": {
+        "bytes": 3764,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "3c65b021f9e000a07ee34eae572819105499809d9e2839ed0985f3813222e130",
+        "max_response_bytes": 0,
+        "payload_sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/tokenizer_config.json",
+      "pack": {
+        "bytes": 3764,
+        "chunks": 1,
+        "manifest": "3c65b021f9e000a07ee34eae572819105499809d9e2839ed0985f3813222e130",
+        "payload_sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/tokenizer_config.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-materials/material-manifest.json",
+      "materialization": {
+        "bytes": 1524,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "19fe60a19d91cf0ed47bfdece8f9c9c0f1902243546ffbc2fbe198b5dedabce1",
+        "max_response_bytes": 0,
+        "payload_sha256": "0c4af4660592c50041f302fefefa6c98ad512247bbc5df14089bfdd3a7a5454e",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "base/material-manifest.json",
+      "pack": {
+        "bytes": 1524,
+        "chunks": 1,
+        "manifest": "19fe60a19d91cf0ed47bfdece8f9c9c0f1902243546ffbc2fbe198b5dedabce1",
+        "payload_sha256": "0c4af4660592c50041f302fefefa6c98ad512247bbc5df14089bfdd3a7a5454e",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-materials/material-manifest.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-parent/target-contract.json",
+      "materialization": {
+        "bytes": 56809,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "6c1aa5784102e9a3704799f73333490d757257923340814b52ead395c8354f6e",
+        "max_response_bytes": 0,
+        "payload_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "adapter/target-contract.json",
+      "pack": {
+        "bytes": 56809,
+        "chunks": 1,
+        "manifest": "6c1aa5784102e9a3704799f73333490d757257923340814b52ead395c8354f6e",
+        "payload_sha256": "97c456c986104fb88ade884e822886f88e4e8424afa3e3019f5f89dfe4ba7851",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/target-contract.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-parent/wrapped-adapter.json",
+      "materialization": {
+        "bytes": 20962,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "3b06ff2aa133e7ae9e9dad446d28199dc90b3b53e04465226137df0e51e678c2",
+        "max_response_bytes": 0,
+        "payload_sha256": "ff08061e81f16a0fc0401064da0070423336d0ffa1c73f414af16b33d0706b18",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "adapter/wrapped-adapter.json",
+      "pack": {
+        "bytes": 20962,
+        "chunks": 1,
+        "manifest": "3b06ff2aa133e7ae9e9dad446d28199dc90b3b53e04465226137df0e51e678c2",
+        "payload_sha256": "ff08061e81f16a0fc0401064da0070423336d0ffa1c73f414af16b33d0706b18",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/wrapped-adapter.json"
+    },
+    {
+      "destination": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer-parent/artifact.safetensors",
+      "materialization": {
+        "bytes": 933544,
+        "cached_chunks": 1,
+        "connection_attempts": 0,
+        "downloaded_bytes": 0,
+        "downloaded_chunks": 0,
+        "manifest": "9d48a8e172974be14f380b422d6373841f04284d773fddbcd3895e2bf6d83296",
+        "max_response_bytes": 0,
+        "payload_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+        "received_response_bytes": 0,
+        "rejected_responses": 0,
+        "schema": "trnm.cell.fetch.v1",
+        "suppliers": 0
+      },
+      "name": "adapter/artifact.safetensors",
+      "pack": {
+        "bytes": 933544,
+        "chunks": 1,
+        "manifest": "9d48a8e172974be14f380b422d6373841f04284d773fddbcd3895e2bf6d83296",
+        "payload_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker/artifact.safetensors"
+    }
+  ],
+  "offline_publisher_negative": {
+    "no_completion_file": true,
+    "returncode": 1
+  },
+  "original_hepta_installed": false,
+  "parent_sha256": "5af1be62fb8e719c34ac0f05fd7c8b12b1d00ace6373e3a4dc779ed0cfbd2f96",
+  "pq_authenticated_transport": false,
+  "publisher": {
+    "address": "127.0.0.1:38785",
+    "pid": 107942,
+    "returncode": -15,
+    "stopped": true,
+    "store": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher.sqlite"
+  },
+  "release": {
+    "cells": 11,
+    "chunks": 269,
+    "payload_bytes": 272190131,
+    "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56",
+    "schema": "trnm.cell.release.prepare.v1"
+  },
+  "release_sha256": "522e8f17530f6d729bd1895e50f39ae72d12a14e82d77217fad0fedb74b3e9ed",
+  "replica": {
+    "address": "127.0.0.1:40011",
+    "pid": 109727,
+    "returncode": -15,
+    "stopped": true,
+    "store": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica.sqlite"
+  },
+  "replica_acquisition": {
+    "cached_chunks": 0,
+    "cells": 11,
+    "chunks": 269,
+    "connection_attempts": 280,
+    "downloaded_bytes": 272190131,
+    "downloaded_chunks": 269,
+    "max_response_bytes": 555919638,
+    "payload_bytes": 272190131,
+    "received_response_bytes": 272204931,
+    "rejected_responses": 0,
+    "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56",
+    "schema": "trnm.cell.release.fetch.v1",
+    "suppliers": 1
+  },
+  "response_byte_budget": 555919638,
+  "scope": "one-host-controlled-native-TCL4-complete-model-and-LoRA-replica"
+}

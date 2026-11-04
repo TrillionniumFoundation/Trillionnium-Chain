@@ -1,0 +1,9 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 1m 50s
+     Running unittests src/lib.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/trnm_pon_node-aafb8b567cab19df)
+
+running 1 test
+test store::evaluation_observation::tests::factor_candidate_membership_is_exact_for_evidence_and_composition ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 527 filtered out; finished in 0.58s
+

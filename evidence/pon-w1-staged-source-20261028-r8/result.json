@@ -1,0 +1,48 @@
+{
+  "schema": "TRNM-W1-STAGED-SOURCE-REVIEW1",
+  "outcome": "SOURCE_CONTROLS_PASS_NOT_NATIVE_QUALIFIED",
+  "commands": [
+    {
+      "name": "public-controls",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/w1_batch/contract_controls.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.16798608298995532
+    },
+    {
+      "name": "rustfmt",
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "formal/pon-nakamoto-v1/w1_batch/host/src/main.rs",
+        "formal/pon-nakamoto-v1/w1_batch/host/src/staged.rs"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.025192691013216972
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.00838082299742382
+    }
+  ],
+  "wall_seconds": 0.2342904079996515,
+  "captured_self_and_child_cpu_seconds": 0.236467,
+  "guest_statement_methods_and_locks_unchanged": true,
+  "new_host_compiled": false,
+  "native_tests_or_clippy_run": false,
+  "guest_executed": false,
+  "receipt_verified": false,
+  "proof_run": false,
+  "all_conditional_or_resolve_claims": "SOURCE_DESIGN_ONLY",
+  "independent_operator_WAN": "NOT_RUN"
+}

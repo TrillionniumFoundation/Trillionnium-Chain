@@ -1,0 +1,66 @@
+{
+  "actual_benefit_established": false,
+  "actual_guest_execution": {
+    "cryptographic_proof_generated": false,
+    "execution_ns": 359796799,
+    "segments": 59,
+    "user_cycles": 12693395
+  },
+  "complete_cryptographic_proof_demonstrated": false,
+  "complete_relation_code_prototype": true,
+  "completed_cryptographic_proof_trials": 0,
+  "consensus_admission": false,
+  "cryptographic_verifier_cost_ns": null,
+  "host_wait4_is_not_total_proving_cost": true,
+  "native_full_verifier": {
+    "count": 1000,
+    "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "max_ns": 6346603,
+    "median_ns": 693803.5,
+    "min_ns": 528284,
+    "mining_search_cost_established": false,
+    "observed_nearest_rank_p99_ns": 1559635,
+    "production_tail_established": false
+  },
+  "observed_wall_seconds": 3600.081027159,
+  "planned_proof_trials": 1,
+  "production_activation": false,
+  "proof_source_commit": "65c97a95cab4702a368855397c65413e2a754b97",
+  "prover_p99_ns": null,
+  "prover_process_observation": {
+    "aggregate_process_tree_peak_memory_established": false,
+    "cpu_seconds_lower_bound": 7182.5199999999995,
+    "full_process_tree_cpu_established": false,
+    "last_event": {
+      "error": "FileNotFoundError",
+      "terminal": "process_unavailable",
+      "time": 1793096153.287156
+    },
+    "last_observed_unix_seconds": 1793096148.2841058,
+    "observed_process_lifetime_high_water_rss_bytes": 2478088192,
+    "observer_started_late": true,
+    "pid": 144565,
+    "sample_count": 400,
+    "start_ticks": 582034
+  },
+  "raw_host_wait4": {
+    "child_peak_rss_bytes": 111165440,
+    "child_system_cpu_seconds": 0.07564499999999999,
+    "child_user_cpu_seconds": 0.157014,
+    "elapsed_wall_seconds": 3600.081027159,
+    "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+    "returncode": -15,
+    "sigkill_after_timeout": false,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "timed_out": true
+  },
+  "schema": "trnm-w1-full-relation-cost-readback-v1",
+  "sigkill_used": false,
+  "successful_proof_bytes": null,
+  "terminal_signal": "SIGTERM",
+  "timed_out_trials": 1,
+  "timeout_seconds": 3600,
+  "whole_chain_quantum_security_qualified": false,
+  "work_package_2a_verdict": "NO_GO"
+}

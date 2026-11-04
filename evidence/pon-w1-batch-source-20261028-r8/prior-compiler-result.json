@@ -1,0 +1,31 @@
+{
+  "schema": "TRNM-W1-GUEST-COMPILER-CACHE-RECLAIM1",
+  "started_utc": "2026-10-28T00:52:32Z",
+  "removed_extracted_cache": "/tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+  "archive": "/tmp/trnm-risc0-rust-1.88.0.tar.gz",
+  "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+  "archive_bytes": 490849318,
+  "matching_native_processes_checked": [],
+  "live_dependency_detected": false,
+  "ldd": {
+    "/tmp/pure-pon-risc0-3.0.3/r0vm": "\tlinux-vdso.so.1 (0x00007fed07f5c000)\n\tlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fed01a3e000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007fed017c0000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fed01792000)\n\tlibpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fed0178d000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fed016a4000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fed01490000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007fed07f5e000)\n",
+    "/tmp/trnm-w1-r2-target/release/w1-staged-prover": "\tlinux-vdso.so.1 (0x00007f227d4d3000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f227cf2c000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f227ce43000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f227cc31000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007f227d4d5000)\n"
+  },
+  "frozen_artifacts_sha256": {
+    "/tmp/pure-pon-risc0-3.0.3/r0vm": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+    "/tmp/trnm-w1-r2-target/release/w1-staged-prover": "1640e4304ad09e6db494c94d0d5069b9e2c3f83e7adb401481a431d81e1f1c2c",
+    "/tmp/trnm-w1-r2-target/release/trnm-w1-zk-host": "f87b03adcf1d268f724150b5f39fd81c09ca4afd585c7ea239d568ed117fe1b0",
+    "/tmp/w1-staged-full-20261028-r3/guest.bin": "6b58409420f2bd3f7a733de531ce20144580b259fde8ca9362b43d9728a8772c"
+  },
+  "free_disk_before": 1363181568,
+  "restore_commands": [
+    "mkdir -p /tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+    "tar -xzf /tmp/trnm-risc0-rust-1.88.0.tar.gz -C /tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+    "RISC0_HOME=/tmp/pure-pon-risc0-home-20261027"
+  ],
+  "guest_proving_path": "Frozen exported segments -> explicit pinned r0vm API, no compilation. All guest bytes embedded and separately retained.",
+  "native_rust_1_95_untouched": true,
+  "free_disk_after": 2882138112,
+  "all_frozen_artifact_digests_unchanged": true,
+  "completed_utc": "2026-10-28T00:52:32Z"
+}

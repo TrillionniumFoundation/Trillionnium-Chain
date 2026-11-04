@@ -1,0 +1,56 @@
+{
+  "after": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "base_sha": "f8c9419df6ddeb36ff8b522a50219981fb8d9345",
+  "before": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "command": [
+    "just",
+    "test",
+    "--locked",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "-E",
+    "test(real_growth_chain_submit_lost_ack_confirm_reorg_cold_reopen)",
+    "--run-ignored",
+    "only",
+    "--no-capture"
+  ],
+  "command_exit_code": 100,
+  "elapsed_seconds": 4.336221682955511,
+  "error": "required tests were not observed passing",
+  "exit_code": 100,
+  "finished_at": "2026-10-23T06:55:23.332907+00:00",
+  "job": null,
+  "lane": "source-head",
+  "log_bytes": 27650,
+  "log_file": "real_growth_chain_submit_lost_ack_confirm_reorg_cold_reopen.json.d32757e3575e42c5bd48d7afce6dd25d.log",
+  "log_sha256": "d1db912c7e9297604b1f2ad9e4d9fb7f79c3b8433744710f5d67b6b2272ffa31",
+  "minimum_tests": 1,
+  "observed_failed_tests": 1,
+  "observed_passed_tests": 0,
+  "output_limit_exceeded": false,
+  "returncode": 100,
+  "run_attempt": null,
+  "run_id": null,
+  "schema_version": 1,
+  "source_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "started_at": "2026-10-23T06:55:18.991480+00:00",
+  "status": "failed",
+  "tested_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "timed_out": false,
+  "working_directory": "/tmp/trnm-pn-convergence-20261023/hepta-integration"
+}

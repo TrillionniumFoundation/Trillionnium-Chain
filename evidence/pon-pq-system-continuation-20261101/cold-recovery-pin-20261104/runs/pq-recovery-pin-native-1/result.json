@@ -1,0 +1,36 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "pq_rollback_witness",
+    "--",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 101,
+  "failure": null,
+  "elapsed_ns": 389814468018,
+  "timeout_seconds": 1800,
+  "files": {
+    "stdout.log": {
+      "bytes": 279174,
+      "sha256": "7fa653d4df517dbee8d32b829f0b0c7bb0c08895b5d063d3063419d3100a5863"
+    },
+    "stderr.log": {
+      "bytes": 1622,
+      "sha256": "0668610514f677ab4b2e257f0383dfbf85b892706a02e72eb7753884d240dbf0"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

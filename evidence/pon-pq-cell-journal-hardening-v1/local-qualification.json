@@ -1,0 +1,25 @@
+{
+  "schema": "trnm-pq-custody-journal-hardening-v1",
+  "baseline_parent": "f408fc65f99c2b5445c75e0595e9208c887f7015",
+  "previous_blob": "5dabec97985cebe3de8feff51089267bd8650aea",
+  "source_blob": "9edfc22d7831dd84bda3ced8e798fcb5000d5f0a",
+  "test_blob": "b1f81b556b50adb5c873dad28a26de1992c16496",
+  "source_sha256": "d3ed27a78f4ccde6f0cc4a8ca94411555575a9857baaa23d5b9be03cdbbb8b1a",
+  "test_sha256": "94658cf075496f208f4a9782ec0f2f1391030f03c890031d6c6bff7bbef624ea",
+  "original_fail_reproduced": true,
+  "focused_tests_passed": 12,
+  "focused_tests_failed": 0,
+  "compatibility_tests_passed": 27,
+  "compatibility_dependency_exact_original": false,
+  "compatibility_real_openssl_ml_dsa": true,
+  "environment": {
+    "python": "3.13.5",
+    "sqlite": "3.46.1",
+    "openssl": "3.5.5",
+    "filesystem": "overlayfs",
+    "native_rust_available": false
+  },
+  "native_chain_qualified": false,
+  "independent_accepted": false,
+  "production_activation": false
+}

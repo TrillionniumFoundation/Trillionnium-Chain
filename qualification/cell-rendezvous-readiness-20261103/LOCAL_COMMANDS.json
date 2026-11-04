@@ -1,0 +1,905 @@
+{
+  "commands": [
+    {
+      "logs": {
+        ".log": {
+          "bytes": 24933,
+          "sha256": "7a17d1a97f2b43eb5f512ce6a46a6a739b61bd738b3722cd89d203b3811cee28",
+          "utf8": "   Compiling trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.81s\n     Running unittests src/lib.rs (/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003)\n\nrunning 174 tests\ntest cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs ... ok\ntest cell::closure_tests::closure_checks_independent_owner_context_and_required_roles ... ok\ntest cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership ... ok\ntest cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker ... ok\ntest cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker ... ok\ntest cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities ... ok\ntest cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases ... ok\ntest cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies ... ok\ntest cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts ... ok\ntest cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload ... ok\ntest cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker ... ok\ntest cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... ok\ntest cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire ... ok\ntest cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound ... ok\ntest cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart ... ok\ntest cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication ... ok\ntest cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes ... ok\ntest cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget ... ok\ntest cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... cell_sequence phase=startup role=silent_trap setup_elapsed_ns=200903 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=353653801 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=353702214\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793730735.946710306s) completed_wall=Some(1793730735.954790347s) elapsed_ns=8080372 expiry_seconds=1793731035 failure=None\nok\ntest cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... cell_sequence phase=startup role=silent_trap setup_elapsed_ns=12682525 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=peer setup_elapsed_ns=14951040 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=17909269 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=21729068 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=28708800\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793730735.989449312s) completed_wall=Some(1793730735.996533281s) elapsed_ns=7084219 expiry_seconds=1793731035 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793730735.996547662s) completed_wall=Some(1793730736.000110323s) elapsed_ns=3562872 expiry_seconds=1793731035 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793730736.000122802s) completed_wall=Some(1793730736.037601022s) elapsed_ns=37478591 expiry_seconds=1793731035 failure=Some(Failure { class: \"invalid\", kind: None, errno: None })\nok\ntest cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... cell_sequence phase=startup role=peer setup_elapsed_ns=12914760 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=13086489 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=16118770 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=18672580 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=25823815\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793730736.074522708s) completed_wall=Some(1793730736.077573923s) elapsed_ns=3051425 expiry_seconds=1793731036 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793730736.077637168s) completed_wall=Some(1793730736.085835317s) elapsed_ns=8198660 expiry_seconds=1793730738 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793730736.085849318s) completed_wall=Some(1793730738.01902962s) elapsed_ns=1933180912 expiry_seconds=1793730738 failure=Some(Failure { class: \"io\", kind: Some(WouldBlock), errno: None })\ncell_sequence phase=expiry_proxy worker_phase=accept_after_reply connections=1 connected=Some(1793730736.123359271s) request_arrived=Some(1793730736.123363698s) backend_frame_ready=Some(1793730736.128105341s)\nok\ntest cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... cell_sequence phase=startup role=peer setup_elapsed_ns=13293064 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=silent_trap setup_elapsed_ns=13933555 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=17540941 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=22389608 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=31903897\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793730738.073328682s) completed_wall=Some(1793730738.079859916s) elapsed_ns=6531815 expiry_seconds=1793731038 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793730738.079885164s) completed_wall=Some(1793730738.087607713s) elapsed_ns=7722799 expiry_seconds=1793731038 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793730738.087627983s) completed_wall=Some(1793730738.131320091s) elapsed_ns=43692868 expiry_seconds=1793731038 failure=None\nok\ntest cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok\ntest cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... ok\ntest cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok\ntest cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... cell_discovery phase=rendezvous_ready elapsed_ns=4958438 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok\ntest cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... ok\ntest cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... cell_discovery phase=rendezvous_ready elapsed_ns=2897066 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok\ntest cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok\ntest cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok\ntest cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok\ntest cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok\ntest cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok\ntest cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget ... cell_discovery phase=rendezvous_ready elapsed_ns=203642055 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok\ntest cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... cell_discovery phase=rendezvous_ready elapsed_ns=6915012 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... cell_discovery phase=rendezvous_ready elapsed_ns=6141932 outcome=Ok(Ok(()))\nok\ntest cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector ... ok\ntest cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget ... ok\ntest cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock ... CELL_PERSISTENCE_DEADLINE_OBSERVATION phase=manifest original_budget_ms=250 elapsed_ns=250105600 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 0, chunk_rows: 0, manifest_rows: 0 } after=CellCacheUsageV2 { logical_bytes: 0, chunk_rows: 0, manifest_rows: 0 } outcome=Err(CacheWriterBusy)\nCELL_PERSISTENCE_DEADLINE_OBSERVATION phase=batch original_budget_ms=250 elapsed_ns=250130037 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 296, chunk_rows: 0, manifest_rows: 1 } after=CellCacheUsageV2 { logical_bytes: 296, chunk_rows: 0, manifest_rows: 1 } outcome=Err(CacheWriterBusy)\nCELL_PERSISTENCE_DEADLINE_OBSERVATION phase=repair original_budget_ms=250 elapsed_ns=250095856 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 356, chunk_rows: 1, manifest_rows: 1 } after=CellCacheUsageV2 { logical_bytes: 356, chunk_rows: 1, manifest_rows: 1 } outcome=Err(CacheWriterBusy)\nok\ntest cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff ... ok\ntest cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest ... ok\ntest cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits ... ok\ntest cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes ... ok\ntest cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline ... CELL_SERVING_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250108414 finished_while_locked=true outcome=Err(CacheWriterBusy)\nok\ntest cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes ... ok\ntest cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin ... ok\ntest cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged ... ok\ntest cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff ... ok\ntest cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... \nthread '<unnamed>' (220) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (219) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\n\nthread '<unnamed>' (222) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\n\nthread '<unnamed>' (221) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\nok\ntest cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap ... ok\ntest cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch ... ok\ntest cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store ... ok\ntest cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval ... ok\ntest cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers ... ok\ntest cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline ... ok\ntest cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path ... ok\ntest cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry ... ok\ntest cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry ... ok\ntest cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge ... ok\ntest cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation ... ok\ntest cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates ... ok\ntest cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures ... ok\ntest cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound ... ok\ntest cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback ... ok\ntest cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores ... ok\ntest cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections ... ok\ntest cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker ... ok\ntest cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path ... ok\ntest cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed ... ok\ntest cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks ... ok\ntest cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download ... ok\ntest cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download ... ok\ntest cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache ... ok\ntest cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing ... ok\ntest cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff ... ok\ntest cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen ... ok\ntest cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id ... actual retention repair CPU: complete=47134178ns limited=11783544ns observed=11845239ns checks=644\nok\ntest cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term ... ok\ntest cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge ... CELL_RETENTION_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250126767 finished_while_locked=true\nok\ntest cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost ... ok\ntest cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor ... ok\ntest cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration ... ok\ntest cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation ... ok\ntest cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair ... ok\ntest cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge ... ok\ntest cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse ... ok\ntest cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id ... ok\ntest cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled ... ok\ntest cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation ... ok\ntest cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... \nrunning 1 test\ntest cell::retention::tests::retention_process_child ... ok\ntest cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent ... ok\ntest cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge ... ok\ntest cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... ok\ntest cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss ... ok\ntest cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention ... CELL_RETENTION_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250136980 finished_while_locked=true\nok\ntest cell::retention::tests::retention_process_child ... ok\ntest cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation ... ok\ntest cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty ... ok\ntest cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... ok\ntest cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage ... ok\ntest cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early ... ok\ntest cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open ... ok\ntest cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal ... ok\ntest cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic ... ok\ntest cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes ... ok\ntest cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen ... ok\ntest cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery ... ok\ntest cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it ... ok\ntest cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds ... ok\ntest cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close ... ok\ntest cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks ... ok\ntest cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache ... ok\ntest cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row ... ok\ntest cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance ... ok\ntest cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance ... ok\ntest cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset ... ok\ntest cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once ... ok\ntest cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite ... ok\ntest cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance ... ok\ntest cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge ... ok\ntest cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup ... ok\ntest cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup ... ok\ntest cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten ... ok\ntest cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null ... ok\ntest cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed ... ok\ntest cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes ... ok\ntest cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation ... ok\ntest cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated ... ok\ntest cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap ... main DB cap=262144; held-reader WAL length=449112\nok\ntest cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible ... ok\ntest cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset ... ok\ntest cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite ... ok\ntest cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes ... actual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\nok\ntest cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap ... actual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\nactual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\nok\ntest cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin ... ok\ntest cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers ... ok\ntest cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites ... ok\ntest cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry ... ok\ntest cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works ... ok\ntest cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline ... ok\ntest cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output ... ok\ntest cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication ... ok\ntest cell::tests::foreign_database_is_not_repurposed ... ok\ntest cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication ... ok\ntest cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes ... ok\ntest cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair ... ok\ntest cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes ... ok\ntest cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation ... ok\ntest cell::tests::release_manifest_requires_complete_context_bound_closure ... ok\ntest cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads ... ok\ntest cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin ... ok\ntest cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback ... ok\ntest cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed ... ok\ntest tests::admission_is_atomic_replay_safe_and_bounded ... ok\ntest tests::attestation_and_certificate_reject_foreign_committed_context ... ok\ntest tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse ... ok\ntest tests::attestation_manifest_is_stable_across_certificate_retention_and_repair ... ok\ntest tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok\ntest tests::durable_before_attest_survives_reopen_and_rejects_bad_signature ... ok\ntest tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok\ntest tests::row_tamper_is_rejected_on_reopen ... ok\ntest tests::schema_drift_and_sidecar_are_fail_closed_without_migration ... ok\ntest tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens ... ok\ntest tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed ... ok\ntest tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder ... ok\ntest tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy ... ok\ntest tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed ... ok\ntest tests::tamper_latches_unavailable_and_exact_repair_recovers ... ok\ntest tests::typed_namespace_and_batch_derivation_are_deterministic ... ok\ntest tests::under_quorum_and_signed_equivocation_are_distinct ... ok\ntest tests::weighted_certificate_retrieval_retention_and_gc_close ... ok\n\ntest result: ok. 174 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.18s\n\n"
+        }
+      },
+      "name": "candidate-da-full",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "base_source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+        "baseline_source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 33.09431670699996,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "executed_binary_after": {
+          "bytes": 59825008,
+          "path": "/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "sha256": "a5451fbcabbc0f7a519ad273f6c56b152250fe5ba325e8f00ba6c93799eb80e9"
+        },
+        "exit_code": 0,
+        "log_sha256": "7a17d1a97f2b43eb5f512ce6a46a6a739b61bd738b3722cd89d203b3811cee28",
+        "scope": "Complete trnm-data-availability library under exact locked Rust1.95 default test profile; not full workspace or production performance qualification",
+        "source_after_sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9",
+        "source_before_sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+      }
+    },
+    {
+      "logs": {
+        ".log": {
+          "bytes": 2721,
+          "sha256": "06681a3041413d17c452fa9ee112c0d52ef098d7fa96c48f43621645a85e820f",
+          "utf8": "   Compiling trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.85s\n     Running unittests src/lib.rs (/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003)\n\nrunning 17 tests\ntest cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok\ntest cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... ok\ntest cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok\ntest cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... cell_discovery phase=rendezvous_ready elapsed_ns=3879186 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok\ntest cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... ok\ntest cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... cell_discovery phase=rendezvous_ready elapsed_ns=2720670 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok\ntest cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok\ntest cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok\ntest cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok\ntest cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok\ntest cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok\ntest cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget ... cell_discovery phase=rendezvous_ready elapsed_ns=207241577 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok\ntest cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... cell_discovery phase=rendezvous_ready elapsed_ns=10300687 outcome=Ok(Ok(()))\nok\ntest cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... cell_discovery phase=rendezvous_ready elapsed_ns=3634106 outcome=Ok(Ok(()))\nok\n\ntest result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 157 filtered out; finished in 2.78s\n\n"
+        }
+      },
+      "name": "candidate-discovery-tests",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::discovery::tests::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "baseline_source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+        "elapsed_seconds": 16.65046918600092,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "log_sha256": "06681a3041413d17c452fa9ee112c0d52ef098d7fa96c48f43621645a85e820f",
+        "receipt_field_correction": "Initial driver inherited the baseline source_sha256 field; initial receipt retained. Before/after fields always bound the tested candidate.",
+        "source_after_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+        "source_before_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+        "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+        "source_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 1625,
+          "sha256": "522e45e6caf1a7e700d8144c105d497707800b887456017acf7c3cad218e465a",
+          "utf8": "test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits (__main__.ArchitectureControls.test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits) ... ok\ntest_other_targets_retain_actual_arguments_environment_and_cwd (__main__.ArchitectureControls.test_other_targets_retain_actual_arguments_environment_and_cwd) ... ok\ntest_report_requires_every_sample_and_original_confirmation_contract (__main__.ArchitectureControls.test_report_requires_every_sample_and_original_confirmation_contract) ... ok\ntest_target_match_is_exact_and_filtered_or_local_invocation_refuses (__main__.ArchitectureControls.test_target_match_is_exact_and_filtered_or_local_invocation_refuses) ... ok\ntest_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test (__main__.ArchitectureControls.test_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test) ... ok\ntest_actual_child_then_parent_readback_retains_distinct_environment_contexts (__main__.BoundHarmlessProcess.test_actual_child_then_parent_readback_retains_distinct_environment_contexts) ... ok\ntest_current_binary_source_or_runtime_mutation_and_reuse_refuse (__main__.BoundHarmlessProcess.test_current_binary_source_or_runtime_mutation_and_reuse_refuse) ... ok\ntest_missing_controller_or_late_host_failure_cannot_pass (__main__.BoundHarmlessProcess.test_missing_controller_or_late_host_failure_cannot_pass) ... ok\ntest_source_drift_cannot_borrow_completed_result (__main__.BoundHarmlessProcess.test_source_drift_cannot_borrow_completed_result) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 1.263s\n\nOK\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-architecture-controls",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_architecture_delivery_host.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 1.421125621000101,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "522e45e6caf1a7e700d8144c105d497707800b887456017acf7c3cad218e465a",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 2425,
+          "sha256": "8928d0f7a8ee73eeefa948ec56ef79e7cce96d69a580e228eece9ce7d7672140",
+          "utf8": "test_activation_and_preservation_policy_are_not_relaxed (__main__.ProjectBoundaryTests.test_activation_and_preservation_policy_are_not_relaxed) ... ok\ntest_canonical_push_target_does_not_rescue_foreign_origin (__main__.ProjectBoundaryTests.test_canonical_push_target_does_not_rescue_foreign_origin) ... ok\ntest_checker_does_not_modify_refs_config_or_tracked_files (__main__.ProjectBoundaryTests.test_checker_does_not_modify_refs_config_or_tracked_files) ... ok\ntest_checkout_https_without_suffix_audits_detached_head (__main__.ProjectBoundaryTests.test_checkout_https_without_suffix_audits_detached_head) ... ok\ntest_detached_source_is_audit_only (__main__.ProjectBoundaryTests.test_detached_source_is_audit_only) ... ok\ntest_exact_repository_spellings_allow_audit_and_dev (__main__.ProjectBoundaryTests.test_exact_repository_spellings_allow_audit_and_dev) ... ok\ntest_foreign_or_decorated_origins_are_not_normalized (__main__.ProjectBoundaryTests.test_foreign_or_decorated_origins_are_not_normalized) ... ok\ntest_missing_updates_deletion_and_unchecked_sha_reject (__main__.ProjectBoundaryTests.test_missing_updates_deletion_and_unchecked_sha_reject) ... ok\ntest_new_branch_must_be_the_checked_out_continuation (__main__.ProjectBoundaryTests.test_new_branch_must_be_the_checked_out_continuation) ... ok\ntest_non_fast_forward_update_is_rejected (__main__.ProjectBoundaryTests.test_non_fast_forward_update_is_rejected) ... ok\ntest_protected_branch_cannot_become_a_development_branch (__main__.ProjectBoundaryTests.test_protected_branch_cannot_become_a_development_branch) ... ok\ntest_protected_remote_branch_and_mixed_updates_reject (__main__.ProjectBoundaryTests.test_protected_remote_branch_and_mixed_updates_reject) ... ok\ntest_push_hook_accepts_only_canonical_repository_spellings (__main__.ProjectBoundaryTests.test_push_hook_accepts_only_canonical_repository_spellings) ... ok\ntest_push_remote_name_and_destination_still_reject (__main__.ProjectBoundaryTests.test_push_remote_name_and_destination_still_reject) ... ok\ntest_source_inventory_and_external_path_dependency_still_reject (__main__.ProjectBoundaryTests.test_source_inventory_and_external_path_dependency_still_reject) ... ok\ntest_staged_and_push_modes_read_their_own_source (__main__.ProjectBoundaryTests.test_staged_and_push_modes_read_their_own_source) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 4.581s\n\nOK\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-boundary-controls",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_project_boundary.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 4.652967708001597,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "8928d0f7a8ee73eeefa948ec56ef79e7cce96d69a580e228eece9ce7d7672140",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 180,
+          "sha256": "94518a76575e23390cd612172692ce8908c8cad40cfbb59352a309e53b796294",
+          "utf8": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 20, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n"
+        }
+      },
+      "name": "composed-ci-contract",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.10891725900000893,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "94518a76575e23390cd612172692ce8908c8cad40cfbb59352a309e53b796294"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 6625,
+          "sha256": "6ed9fab37ab7884cf73267f2e27f7549bc3d83b3afa51327dda49ac86a6bf47f",
+          "utf8": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s\n     Running unittests src/lib.rs (/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003)\ncell_sequence phase=startup role=silent_trap setup_elapsed_ns=232611 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=353821468 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=353879575\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793731540.408023293s) completed_wall=Some(1793731540.416814575s) elapsed_ns=8791592 expiry_seconds=1793731840 failure=None\ncell_sequence phase=startup role=silent_trap setup_elapsed_ns=11090110 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=peer setup_elapsed_ns=13643492 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=17897990 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=24004803 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=33064901\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793731540.458994967s) completed_wall=Some(1793731540.469918391s) elapsed_ns=10924075 expiry_seconds=1793731840 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793731540.47018311s) completed_wall=Some(1793731540.48048071s) elapsed_ns=10298111 expiry_seconds=1793731840 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793731540.480504576s) completed_wall=Some(1793731540.570838562s) elapsed_ns=90334516 expiry_seconds=1793731840 failure=Some(Failure { class: \"invalid\", kind: None, errno: None })\ncell_sequence phase=startup role=peer setup_elapsed_ns=16299780 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=16421994 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=21153442 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=25546689 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=33104020\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793731540.613012394s) completed_wall=Some(1793731540.622020584s) elapsed_ns=9008390 expiry_seconds=1793731840 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793731540.622095166s) completed_wall=Some(1793731540.626369785s) elapsed_ns=4274939 expiry_seconds=1793731542 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793731540.626389425s) completed_wall=Some(1793731542.022695326s) elapsed_ns=1396306712 expiry_seconds=1793731542 failure=Some(Failure { class: \"io\", kind: Some(WouldBlock), errno: None })\ncell_sequence phase=expiry_proxy worker_phase=accept_after_reply connections=1 connected=Some(1793731540.661266615s) request_arrived=Some(1793731540.661275118s) backend_frame_ready=Some(1793731540.665029932s)\ncell_sequence phase=startup role=peer setup_elapsed_ns=37061960 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=silent_trap setup_elapsed_ns=37193087 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=47722903 outcome=Ok(Ok(()))\ncell_sequence phase=startup role=rendezvous setup_elapsed_ns=60679104 outcome=Ok(Ok(()))\ncell_sequence phase=setup_complete elapsed_ns=80726672\ncell_sequence phase=announce ordinal=0 started_wall=Some(1793731542.138679031s) completed_wall=Some(1793731542.141742795s) elapsed_ns=3064084 expiry_seconds=1793731842 failure=None\ncell_sequence phase=announce ordinal=1 started_wall=Some(1793731542.141764778s) completed_wall=Some(1793731542.147347655s) elapsed_ns=5583397 expiry_seconds=1793731842 failure=None\ncell_sequence phase=discovery ordinal=0 started_wall=Some(1793731542.147376748s) completed_wall=Some(1793731542.214305789s) elapsed_ns=66929922 expiry_seconds=1793731842 failure=None\ncell_discovery phase=rendezvous_ready elapsed_ns=5610359 outcome=Ok(Ok(()))\ncell_discovery phase=rendezvous_ready elapsed_ns=6751903 outcome=Ok(Ok(()))\ncell_discovery phase=rendezvous_ready elapsed_ns=204173580 outcome=Ok(Ok(()))\ncell_discovery phase=rendezvous_ready elapsed_ns=7594514 outcome=Ok(Ok(()))\ncell_discovery phase=rendezvous_ready elapsed_ns=2913925 outcome=Ok(Ok(()))\nCELL_PERSISTENCE_DEADLINE_OBSERVATION phase=manifest original_budget_ms=250 elapsed_ns=250144237 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 0, chunk_rows: 0, manifest_rows: 0 } after=CellCacheUsageV2 { logical_bytes: 0, chunk_rows: 0, manifest_rows: 0 } outcome=Err(CacheWriterBusy)\nCELL_PERSISTENCE_DEADLINE_OBSERVATION phase=batch original_budget_ms=250 elapsed_ns=250268360 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 296, chunk_rows: 0, manifest_rows: 1 } after=CellCacheUsageV2 { logical_bytes: 296, chunk_rows: 0, manifest_rows: 1 } outcome=Err(CacheWriterBusy)\nCELL_PERSISTENCE_DEADLINE_OBSERVATION phase=repair original_budget_ms=250 elapsed_ns=250093782 finished_while_locked=true output_exists=false before=CellCacheUsageV2 { logical_bytes: 356, chunk_rows: 1, manifest_rows: 1 } after=CellCacheUsageV2 { logical_bytes: 356, chunk_rows: 1, manifest_rows: 1 } outcome=Err(CacheWriterBusy)\nCELL_SERVING_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250082450 finished_while_locked=true outcome=Err(CacheWriterBusy)\n\nthread '<unnamed>' (196) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (195) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\n\nthread '<unnamed>' (198) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\n\nthread '<unnamed>' (197) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:409:25:\ninjected cell serving worker panic\nactual retention repair CPU: complete=55169095ns limited=13792273ns observed=13817109ns checks=822\nCELL_RETENTION_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250657819 finished_while_locked=true\nCELL_RETENTION_CACHE_DEADLINE_OBSERVATION original_budget_ms=250 elapsed_ns=250113573 finished_while_locked=true\nmain DB cap=262144; held-reader WAL length=449112\nactual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\nactual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\nactual SQLite error: Error { code: DiskFull, extended_code: 13 } Some(\"database or disk is full\")\n"
+        },
+        ".stdout": {
+          "bytes": 18179,
+          "sha256": "2b18843bf89a1c0eb331f52ef1deec3f9c1b3e7fb21963fda84e550508b0c3de",
+          "utf8": "\nrunning 174 tests\ntest cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs ... ok\ntest cell::closure_tests::closure_checks_independent_owner_context_and_required_roles ... ok\ntest cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership ... ok\ntest cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker ... ok\ntest cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker ... ok\ntest cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities ... ok\ntest cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases ... ok\ntest cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies ... ok\ntest cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts ... ok\ntest cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload ... ok\ntest cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker ... ok\ntest cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... ok\ntest cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire ... ok\ntest cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound ... ok\ntest cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart ... ok\ntest cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication ... ok\ntest cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes ... ok\ntest cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget ... ok\ntest cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... ok\ntest cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... ok\ntest cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... ok\ntest cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... ok\ntest cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok\ntest cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... ok\ntest cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok\ntest cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... ok\ntest cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok\ntest cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... ok\ntest cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... ok\ntest cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok\ntest cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok\ntest cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok\ntest cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok\ntest cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok\ntest cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok\ntest cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget ... ok\ntest cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok\ntest cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... ok\ntest cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... ok\ntest cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector ... ok\ntest cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget ... ok\ntest cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock ... ok\ntest cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff ... ok\ntest cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest ... ok\ntest cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits ... ok\ntest cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes ... ok\ntest cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline ... ok\ntest cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes ... ok\ntest cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin ... ok\ntest cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged ... ok\ntest cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff ... ok\ntest cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... ok\ntest cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap ... ok\ntest cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch ... ok\ntest cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store ... ok\ntest cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval ... ok\ntest cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers ... ok\ntest cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline ... ok\ntest cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path ... ok\ntest cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry ... ok\ntest cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry ... ok\ntest cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge ... ok\ntest cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation ... ok\ntest cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates ... ok\ntest cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures ... ok\ntest cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound ... ok\ntest cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback ... ok\ntest cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores ... ok\ntest cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections ... ok\ntest cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker ... ok\ntest cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path ... ok\ntest cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed ... ok\ntest cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks ... ok\ntest cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download ... ok\ntest cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download ... ok\ntest cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache ... ok\ntest cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing ... ok\ntest cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff ... ok\ntest cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen ... ok\ntest cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id ... ok\ntest cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term ... ok\ntest cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge ... ok\ntest cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost ... ok\ntest cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor ... ok\ntest cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration ... ok\ntest cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation ... ok\ntest cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair ... ok\ntest cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge ... ok\ntest cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse ... ok\ntest cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id ... ok\ntest cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled ... ok\ntest cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation ... ok\ntest cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... \nrunning 1 test\ntest cell::retention::tests::retention_process_child ... ok\ntest cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent ... ok\ntest cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge ... ok\ntest cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... ok\ntest cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss ... ok\ntest cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention ... ok\ntest cell::retention::tests::retention_process_child ... ok\ntest cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation ... ok\ntest cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty ... ok\ntest cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... ok\ntest cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage ... ok\ntest cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early ... ok\ntest cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open ... ok\ntest cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal ... ok\ntest cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic ... ok\ntest cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes ... ok\ntest cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen ... ok\ntest cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery ... ok\ntest cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it ... ok\ntest cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds ... ok\ntest cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close ... ok\ntest cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks ... ok\ntest cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache ... ok\ntest cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row ... ok\ntest cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance ... ok\ntest cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance ... ok\ntest cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset ... ok\ntest cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once ... ok\ntest cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite ... ok\ntest cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance ... ok\ntest cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge ... ok\ntest cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup ... ok\ntest cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup ... ok\ntest cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten ... ok\ntest cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null ... ok\ntest cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed ... ok\ntest cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes ... ok\ntest cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation ... ok\ntest cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated ... ok\ntest cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap ... ok\ntest cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible ... ok\ntest cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset ... ok\ntest cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite ... ok\ntest cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes ... ok\ntest cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap ... ok\ntest cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin ... ok\ntest cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers ... ok\ntest cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites ... ok\ntest cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry ... ok\ntest cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works ... ok\ntest cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline ... ok\ntest cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output ... ok\ntest cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication ... ok\ntest cell::tests::foreign_database_is_not_repurposed ... ok\ntest cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication ... ok\ntest cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes ... ok\ntest cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair ... ok\ntest cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes ... ok\ntest cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation ... ok\ntest cell::tests::release_manifest_requires_complete_context_bound_closure ... ok\ntest cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads ... ok\ntest cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin ... ok\ntest cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback ... ok\ntest cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed ... ok\ntest tests::admission_is_atomic_replay_safe_and_bounded ... ok\ntest tests::attestation_and_certificate_reject_foreign_committed_context ... ok\ntest tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse ... ok\ntest tests::attestation_manifest_is_stable_across_certificate_retention_and_repair ... ok\ntest tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok\ntest tests::durable_before_attest_survives_reopen_and_rejects_bad_signature ... ok\ntest tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok\ntest tests::row_tamper_is_rejected_on_reopen ... ok\ntest tests::schema_drift_and_sidecar_are_fail_closed_without_migration ... ok\ntest tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens ... ok\ntest tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed ... ok\ntest tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder ... ok\ntest tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy ... ok\ntest tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed ... ok\ntest tests::tamper_latches_unavailable_and_exact_repair_recovers ... ok\ntest tests::typed_namespace_and_batch_derivation_are_deterministic ... ok\ntest tests::under_quorum_and_signed_equivocation_are_distinct ... ok\ntest tests::weighted_certificate_retrieval_retention_and_gc_close ... ok\n\ntest result: ok. 174 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.51s\n\n"
+        }
+      },
+      "name": "composed-da-full",
+      "receipt": {
+        "all_inputs_unchanged": true,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "binary_bytes": 59825008,
+        "binary_sha256": "a5451fbcabbc0f7a519ad273f6c56b152250fe5ba325e8f00ba6c93799eb80e9",
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 21.73118957999941,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "input_count": 1189,
+        "input_manifest_sha256": "3c62742701f58f77a635ea0f9c906fe39d8726f3f75030725cd6c742c00d3986",
+        "profile_override": null,
+        "schema": "chain-cell-source-bound-local-command-v1",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "source_state": "uncommitted candidate; full native input hashes retained",
+        "stderr_sha256": "6ed9fab37ab7884cf73267f2e27f7549bc3d83b3afa51327dda49ac86a6bf47f",
+        "stdout_sha256": "2b18843bf89a1c0eb331f52ef1deec3f9c1b3e7fb21963fda84e550508b0c3de"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-format",
+      "receipt": {
+        "argv": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "change": "only two assert_eq line wraps in owner9f046 deadline regression; no semantics changed",
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 12.989176333001524,
+        "exit_code": 0,
+        "formatted_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+        "source_after_format_unchanged": true,
+        "source_after_sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f",
+        "source_before_sha256": "c4e319bb10efd2d860a3aa25e13337d3e844749f3479f614884f3d74c5e307c4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 1214,
+          "sha256": "a444e129cf2ca37b4e2beaaf0263a14166464c8dc66912c98c92ef56987c85fc",
+          "utf8": "Diff in /tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs:152:\n     assert!(paid.balance_identity_verified);\n     assert_eq!(cpu.observe().unwrap().in_flight, 0);\n     assert!(cpu.accounting_available());\n-    assert_eq!(cpu.observe_completion_work().unwrap().retained_identities, 1);\n+    assert_eq!(\n+        cpu.observe_completion_work().unwrap().retained_identities,\n+        1\n+    );\n \n     let observed_w1 = w1.clone();\n     OBSERVER.with(|hook| {\nDiff in /tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs:172:\n     OBSERVER.with(|hook| *hook.borrow_mut() = None);\n     assert_eq!(retry.unwrap(), (false, Some(id)));\n     assert_eq!(w1.load(Ordering::SeqCst), verified);\n-    assert_eq!(cpu.observe_completion_work().unwrap().retained_identities, 1);\n+    assert_eq!(\n+        cpu.observe_completion_work().unwrap().retained_identities,\n+        1\n+    );\n     let after_retry = cpu.observe_actual_flow().unwrap().unwrap();\n     assert!(after_retry.paid_cpu_debit_ns >= paid.paid_cpu_debit_ns);\n     assert_eq!(after_retry.initial_credit_ns, paid.initial_credit_ns);\n"
+        }
+      },
+      "name": "composed-format-unformatted-parent",
+      "receipt": {
+        "all_inputs_unchanged": true,
+        "argv": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 12.205592120999427,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 1,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "input_count": 1189,
+        "input_manifest_sha256": "3c62742701f58f77a635ea0f9c906fe39d8726f3f75030725cd6c742c00d3986",
+        "profile_override": null,
+        "schema": "chain-cell-source-bound-local-command-v1",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "source_state": "uncommitted candidate; full native input hashes retained",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "a444e129cf2ca37b4e2beaaf0263a14166464c8dc66912c98c92ef56987c85fc"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 5826,
+          "sha256": "1ec5e9af0b20ce7fcc6c07d8a136685eb580c5bc32748a280cd28c262fb21d54",
+          "utf8": "test_compiler_artifact_requires_one_exact_target_source_and_real_bounded_binary (__main__.HistoryAdapterControls.test_compiler_artifact_requires_one_exact_target_source_and_real_bounded_binary) ... ok\ntest_exact_history_mode_does_not_generalize_or_rebuild_original_modes (__main__.HistoryAdapterControls.test_exact_history_mode_does_not_generalize_or_rebuild_original_modes) ... ok\ntest_history_callsite_is_exact_and_does_not_allow_an_arbitrary_second_host (__main__.HistoryAdapterControls.test_history_callsite_is_exact_and_does_not_allow_an_arbitrary_second_host) ... ok\ntest_native_binary_drift_is_retained_after_otherwise_successful_process (__main__.HistoryAdapterControls.test_native_binary_drift_is_retained_after_otherwise_successful_process) ... ok\ntest_observed_success_requires_a_positive_integer_child_pid (__main__.HistoryAdapterControls.test_observed_success_requires_a_positive_integer_child_pid) ... ok\ntest_original_summary_requires_full_completion_and_unqualified_scope (__main__.HistoryAdapterControls.test_original_summary_requires_full_completion_and_unqualified_scope) ... ok\ntest_preparation_cannot_borrow_other_job_source_or_changed_binary (__main__.HistoryAdapterControls.test_preparation_cannot_borrow_other_job_source_or_changed_binary) ... ok\ntest_preparation_failure_signal_and_source_drift_keep_incomplete_receipt (__main__.HistoryAdapterControls.test_preparation_failure_signal_and_source_drift_keep_incomplete_receipt) ... ok\ntest_real_harmless_nonzero_process_has_known_exit_and_retained_log (__main__.HistoryAdapterControls.test_real_harmless_nonzero_process_has_known_exit_and_retained_log) ... ok\ntest_source_uses_workflow_receipt_and_event_expected_head_or_merge (__main__.HistoryAdapterControls.test_source_uses_workflow_receipt_and_event_expected_head_or_merge) ... ok\ntest_stderr_close_failure_keeps_actual_child_and_known_exit (__main__.HistoryAdapterControls.test_stderr_close_failure_keeps_actual_child_and_known_exit) ... ok\ntest_unknown_native_exit_retains_original_failed_summary (__main__.HistoryAdapterControls.test_unknown_native_exit_retains_original_failed_summary) ... ok\ntest_wait_failure_and_unobserved_cleanup_keep_unknown_exit (__main__.HistoryAdapterControls.test_wait_failure_and_unobserved_cleanup_keep_unknown_exit) ... ok\ntest_whole_native_command_and_actual_saved_outputs_bind_to_one_preparation (__main__.HistoryAdapterControls.test_whole_native_command_and_actual_saved_outputs_bind_to_one_preparation) ... ok\ntest_zero_test_exit_or_source_drift_never_becomes_history_pass (__main__.HistoryAdapterControls.test_zero_test_exit_or_source_drift_never_becomes_history_pass) ... ok\ntest_all_three_actual_callsites_retain_exact_one_wrapped_subprocess (__main__.OriginalHostControls.test_all_three_actual_callsites_retain_exact_one_wrapped_subprocess) ... ok\ntest_changed_boot_parent_caps_or_unit_are_not_same_host (__main__.OriginalHostControls.test_changed_boot_parent_caps_or_unit_are_not_same_host) ... ok\ntest_current_thread_must_belong_to_this_service (__main__.OriginalHostControls.test_current_thread_must_belong_to_this_service) ... ok\ntest_existing_parent_configuration_and_activity_are_refused (__main__.OriginalHostControls.test_existing_parent_configuration_and_activity_are_refused) ... ok\ntest_failed_and_timed_out_preparation_cannot_borrow_a_binary (__main__.OriginalHostControls.test_failed_and_timed_out_preparation_cannot_borrow_a_binary) ... ok\ntest_inactive_implicit_parent_is_not_a_resource_owner (__main__.OriginalHostControls.test_inactive_implicit_parent_is_not_a_resource_owner) ... ok\ntest_invalid_inner_host_never_runs_native_child (__main__.OriginalHostControls.test_invalid_inner_host_never_runs_native_child) ... ok\ntest_local_invocation_never_runs_a_host_command (__main__.OriginalHostControls.test_local_invocation_never_runs_a_host_command) ... ok\ntest_native_failure_and_late_signal_remain_nonzero (__main__.OriginalHostControls.test_native_failure_and_late_signal_remain_nonzero) ... ok\ntest_observation_failure_or_wrong_caller_cannot_pass (__main__.OriginalHostControls.test_observation_failure_or_wrong_caller_cannot_pass) ... ok\ntest_only_original_from_zero_argv_can_be_wrapped (__main__.OriginalHostControls.test_only_original_from_zero_argv_can_be_wrapped) ... ok\ntest_original_unit_bytes_and_finite_limits (__main__.OriginalHostControls.test_original_unit_bytes_and_finite_limits) ... ok\ntest_parent_identity_refuses_absent_foreign_symlink_and_writable (__main__.OriginalHostControls.test_parent_identity_refuses_absent_foreign_symlink_and_writable) ... ok\ntest_parent_property_output_must_be_complete_and_unambiguous (__main__.OriginalHostControls.test_parent_property_output_must_be_complete_and_unambiguous) ... ok\ntest_preparation_signal_retains_incomplete_receipt (__main__.OriginalHostControls.test_preparation_signal_retains_incomplete_receipt) ... ok\ntest_preparation_source_drift_refuses_and_keeps_both_identities (__main__.OriginalHostControls.test_preparation_source_drift_refuses_and_keeps_both_identities) ... ok\ntest_preparation_uses_exact_build_only_and_retains_original_build_budget (__main__.OriginalHostControls.test_preparation_uses_exact_build_only_and_retains_original_build_budget) ... ok\ntest_prepared_execution_binds_source_binary_and_original_acceptance (__main__.OriginalHostControls.test_prepared_execution_binds_source_binary_and_original_acceptance) ... ok\ntest_self_consistent_other_service_and_privilege_changes_refused (__main__.OriginalHostControls.test_self_consistent_other_service_and_privilege_changes_refused) ... ok\ntest_transient_service_preserves_command_and_unprivileged_identity (__main__.OriginalHostControls.test_transient_service_preserves_command_and_unprivileged_identity) ... ok\n\n----------------------------------------------------------------------\nRan 35 tests in 0.100s\n\nOK\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-host-controls",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_from_zero_host_ci.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.2910436429992842,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "1ec5e9af0b20ce7fcc6c07d8a136685eb580c5bc32748a280cd28c262fb21d54",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 817872,
+          "reason": "Reproducible verbose Cargo metadata; complete normalized graph retained separately.",
+          "retained_in_local_scratch_only": true,
+          "sha256": "234c16c1078c42d4bc47b2cdfab73d39a58059d31485ed5f0427b9f8dafb8e30"
+        }
+      },
+      "name": "composed-locked-metadata",
+      "receipt": {
+        "all_inputs_unchanged": true,
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.14118104800036235,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "input_count": 1189,
+        "input_manifest_sha256": "3c62742701f58f77a635ea0f9c906fe39d8726f3f75030725cd6c742c00d3986",
+        "packages": 174,
+        "profile_override": null,
+        "resolve_nodes": 174,
+        "schema": "chain-cell-source-bound-local-command-v1",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "source_state": "uncommitted candidate; full native input hashes retained",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "234c16c1078c42d4bc47b2cdfab73d39a58059d31485ed5f0427b9f8dafb8e30",
+        "workspace_members": 26
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 180,
+          "sha256": "ca6580bbd25d21c9b8ca2d2e59d08a402debc95bddfa3f8576f29c66d41d53c6",
+          "utf8": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-rendezvous-readiness-20261103-gpt6\", \"remote_policy_mutated\": false}\n"
+        }
+      },
+      "name": "composed-preflight",
+      "receipt": {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.05196338600035233,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ca6580bbd25d21c9b8ca2d2e59d08a402debc95bddfa3f8576f29c66d41d53c6"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 1559,
+          "sha256": "fcc46885dacc4650b1693b5a199ae16633a5c5af745910b2eb3bd299ff23286f",
+          "utf8": "test_actual_nonzero_child_retains_failure_and_cannot_fan_in (__main__.RustShardTests.test_actual_nonzero_child_retains_failure_and_cannot_fan_in) ... ok\ntest_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled (__main__.RustShardTests.test_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled) ... ok\ntest_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file (__main__.RustShardTests.test_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file) ... ok\ntest_full_local_lane_and_hosted_command_union_are_exact (__main__.RustShardTests.test_full_local_lane_and_hosted_command_union_are_exact) ... ok\ntest_missing_extra_alias_duplicate_json_and_changed_script_refuse (__main__.RustShardTests.test_missing_extra_alias_duplicate_json_and_changed_script_refuse) ... ok\ntest_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse (__main__.RustShardTests.test_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse) ... ok\ntest_real_child_source_mutation_keeps_zero_process_code_but_fails_owner (__main__.RustShardTests.test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner) ... ok\ntest_two_complete_current_source_receipts_are_required (__main__.RustShardTests.test_two_complete_current_source_receipts_are_required) ... ok\ntest_zero_child_without_current_host_execution_stays_failed (__main__.RustShardTests.test_zero_child_without_current_host_execution_stays_failed) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.713s\n\nOK\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-shard-controls",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_rust_baseline_shards.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.8091761750001751,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "fcc46885dacc4650b1693b5a199ae16633a5c5af745910b2eb3bd299ff23286f",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 5025,
+          "sha256": "de776ca94c03d66ac8970ea51bc839d6bf2f2b974f276cde2afd8afcb2296f5d",
+          "utf8": "test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok\ntest_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok\ntest_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok\ntest_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected) ... ok\ntest_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok\ntest_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok\ntest_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok\ntest_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok\ntest_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ok\ntest_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok\ntest_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok\ntest_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok\ntest_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok\ntest_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ok\ntest_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ok\ntest_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ok\ntest_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ok\ntest_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ok\ntest_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ok\ntest_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ok\ntest_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ok\ntest_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ok\ntest_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ok\ntest_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ok\ntest_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ok\ntest_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ok\ntest_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ok\ntest_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ok\ntest_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ok\ntest_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected) ... ok\ntest_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok\ntest_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok\ntest_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok\ntest_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok\n\n----------------------------------------------------------------------\nRan 34 tests in 2.916s\n\nOK\n"
+        },
+        ".stdout": {
+          "bytes": 484,
+          "sha256": "77080ef8f5257c0648102611f8a47eb541bea1799606629efdabfa70bb06aa17",
+          "utf8": "{\"receipt\": \"/tmp/trnm-ci-raw-source-qv94x6k_/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-2e2n8rre/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-qyjqfaoo/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-q3237n0o/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-eb3k0t9b/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-eb3k0t9b/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n"
+        }
+      },
+      "name": "composed-source-integrity",
+      "receipt": {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py",
+          "-v"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 3.0089242979993287,
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "stderr_sha256": "de776ca94c03d66ac8970ea51bc839d6bf2f2b974f276cde2afd8afcb2296f5d",
+        "stdout_sha256": "77080ef8f5257c0648102611f8a47eb541bea1799606629efdabfa70bb06aa17"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 72,
+          "sha256": "9d892c5778d0c975f64a671e66ea5a753502353da3addd1dfdf3825225e406a2",
+          "utf8": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "composed-strict-clippy",
+      "receipt": {
+        "all_inputs_unchanged": true,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 0.32343808699988585,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "first_parent": "9f04640877078204d367f753eba684d94e705a74",
+        "input_count": 1189,
+        "input_manifest_sha256": "3c62742701f58f77a635ea0f9c906fe39d8726f3f75030725cd6c742c00d3986",
+        "profile_override": null,
+        "schema": "chain-cell-source-bound-local-command-v1",
+        "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+        "source_state": "uncommitted candidate; full native input hashes retained",
+        "stderr_sha256": "9d892c5778d0c975f64a671e66ea5a753502353da3addd1dfdf3825225e406a2",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 681,
+          "sha256": "84e400fe12600182e4a5470f2539f23130758d6da7fdddbe3cabca7833a1e9b1",
+          "utf8": " Downloading crates ...\n  Downloaded shell-escape v0.1.5\n  Downloaded clap_lex v1.1.0\n  Downloaded cpufeatures v0.3.1\n  Downloaded colorchoice v1.0.5\n  Downloaded clap_derive v4.6.0\n  Downloaded anstyle v1.0.14\n  Downloaded wasm-bindgen-macro v0.2.129\n  Downloaded wasm-bindgen-shared v0.2.129\n  Downloaded rustversion v1.0.23\n  Downloaded rsqlite-vfs v0.1.1\n  Downloaded anstream v1.0.0\n  Downloaded anstyle-parse v1.0.0\n  Downloaded clap v4.6.0\n  Downloaded clap_builder v4.6.0\n  Downloaded bumpalo v3.20.3\n  Downloaded wasm-bindgen v0.2.129\n  Downloaded wasm-bindgen-macro-support v0.2.129\n  Downloaded syn v3.0.9\n  Downloaded js-sys v0.3.106\n  Downloaded sqlite-wasm-rs v0.5.5\n"
+        },
+        ".stdout": {
+          "bytes": 817872,
+          "reason": "Reproducible verbose Cargo metadata; complete normalized graph retained separately.",
+          "retained_in_local_scratch_only": true,
+          "sha256": "234c16c1078c42d4bc47b2cdfab73d39a58059d31485ed5f0427b9f8dafb8e30"
+        }
+      },
+      "name": "locked-workspace-metadata",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 4.929703179999706,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "packages": 174,
+        "resolve_nodes": 174,
+        "source_after": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "source_before": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "stderr_sha256": "84e400fe12600182e4a5470f2539f23130758d6da7fdddbe3cabca7833a1e9b1",
+        "stdout_sha256": "234c16c1078c42d4bc47b2cdfab73d39a58059d31485ed5f0427b9f8dafb8e30",
+        "workspace_members": 26
+      }
+    },
+    {
+      "logs": {
+        ".log": {
+          "bytes": 1854,
+          "sha256": "69f274e4ca26463a77ad3957d747f92f3ca7e7fb66a3f8e2541e767b84b31374",
+          "utf8": "   Compiling trnm-protocol v0.1.0 (/tmp/chain-cell-startup-negative-20261103/trillionnium/crates/trnm-protocol)\n   Compiling trnm-crypto-primitives v0.1.0 (/tmp/chain-cell-startup-negative-20261103/trillionnium/crates/trnm-crypto-primitives)\n   Compiling trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-negative-20261103/trillionnium/crates/trnm-data-availability)\nwarning: unused variable: `setup_deadline`\n   --> crates/trnm-data-availability/src/cell/discovery/tests.rs:154:13\n    |\n154 |         let setup_deadline = started + limits().overall_timeout;\n    |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_setup_deadline`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\nwarning: `trnm-data-availability` (lib test) generated 1 warning (run `cargo fix --lib -p trnm-data-availability --tests` to apply 1 suggestion)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.95s\n     Running unittests src/lib.rs (/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003)\n\nrunning 1 test\ntest cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget ... \nthread 'cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget' (126) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:245:5:\nfixture exposed its endpoint before real initialization\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 173 filtered out; finished in 0.01s\n\nerror: test failed, to rerun pass `-p trnm-data-availability --lib`\n"
+        }
+      },
+      "name": "mutant-startup-control",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::discovery::tests::rendezvous_fixture_waits_for_initialization_before_starting_request_budget",
+          "--",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "baseline_source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+        "cwd": "/tmp/chain-cell-startup-negative-20261103",
+        "elapsed_seconds": 37.01051965700026,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "executed_binary_after": {
+          "bytes": 59738432,
+          "path": "/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003",
+          "sha256": "135eb12740fbda1ad77744ddf5aa67c15311ab65a327db30c98290ce6d9927da"
+        },
+        "exit_code": 101,
+        "expected_negative": true,
+        "log_sha256": "69f274e4ca26463a77ad3957d747f92f3ca7e7fb66a3f8e2541e767b84b31374",
+        "negative_observed": true,
+        "source_after_sha256": "a3957f72ec655e7ac5008954b8b526578a2a28184c694286d81019591df5fa13",
+        "source_before_sha256": "a3957f72ec655e7ac5008954b8b526578a2a28184c694286d81019591df5fa13",
+        "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8"
+      }
+    },
+    {
+      "logs": {
+        ".log": {
+          "bytes": 4194,
+          "sha256": "fa7514a7abf5590e0830173adaf9cd2e9252aec2399a075f0da4d73211b309f5",
+          "utf8": "    Updating crates.io index\n Downloading crates ...\n  Downloaded toml_edit v0.25.13+spec-1.1.0\n  Downloaded proc-macro-crate v3.5.0\n  Downloaded sponge-cursor v0.1.0\n  Downloaded module-lattice v0.2.3\n  Downloaded hashlink v0.11.1\n  Downloaded itoa v1.0.18\n  Downloaded cfg_aliases v0.2.2\n  Downloaded fs2 v0.4.3\n  Downloaded zmij v1.0.21\n  Downloaded autocfg v1.5.1\n  Downloaded cmov v0.5.4\n  Downloaded keccak v0.2.2\n  Downloaded borsh-derive v1.8.0\n  Downloaded bitflags v2.11.0\n  Downloaded unicode-ident v1.0.24\n  Downloaded ml-dsa v0.1.1\n  Downloaded borsh v1.8.0\n  Downloaded cc v1.2.59\n  Downloaded indexmap v2.13.1\n  Downloaded ctutils v0.4.6\n  Downloaded shake v0.1.0\n  Downloaded typenum v1.20.1\n  Downloaded libc v0.2.184\n  Downloaded memchr v2.8.0\n   Compiling typenum v1.20.1\n   Compiling proc-macro2 v1.0.106\n   Compiling quote v1.0.45\n   Compiling unicode-ident v1.0.24\n   Compiling syn v2.0.117\n   Compiling version_check v0.9.5\n   Compiling generic-array v0.14.7\n   Compiling cfg-if v1.0.4\n   Compiling zeroize v1.8.2\n   Compiling cmov v0.5.4\n   Compiling ctutils v0.4.6\n   Compiling hybrid-array v0.4.15\n   Compiling block-buffer v0.10.4\n   Compiling crypto-common v0.1.7\n   Compiling serde_core v1.0.228\n   Compiling autocfg v1.5.1\n   Compiling semver v1.0.27\n   Compiling rustc_version v0.4.1\n   Compiling num-traits v0.2.19\n   Compiling digest v0.10.7\n   Compiling crypto-common v0.2.2\n   Compiling cpufeatures v0.2.17\n   Compiling equivalent v1.0.2\n   Compiling find-msvc-tools v0.1.9\n   Compiling shlex v1.3.0\n   Compiling winnow v1.0.4\n   Compiling libc v0.2.184\n   Compiling hashbrown v0.16.1\n   Compiling indexmap v2.13.1\n   Compiling toml_parser v1.1.3+spec-1.1.0\n   Compiling cc v1.2.59\n   Compiling digest v0.11.3\n   Compiling curve25519-dalek v4.1.3\n   Compiling serde v1.0.228\n   Compiling thiserror v1.0.69\n   Compiling toml_datetime v1.1.1+spec-1.1.0\n   Compiling pkg-config v0.3.32\n   Compiling vcpkg v0.2.15\n   Compiling libsqlite3-sys v0.37.0\n   Compiling toml_edit v0.25.13+spec-1.1.0\n   Compiling sha2 v0.10.9\n   Compiling keccak v0.2.2\n   Compiling serde_derive v1.0.228\n   Compiling thiserror-impl v1.0.69\n   Compiling curve25519-dalek-derive v0.1.1\n   Compiling foldhash v0.2.0\n   Compiling rustix v1.1.4\n   Compiling bitflags v2.11.0\n   Compiling cfg_aliases v0.2.2\n   Compiling getrandom v0.4.2\n   Compiling subtle v2.6.1\n   Compiling zmij v1.0.21\n   Compiling signature v2.2.0\n   Compiling anyhow v1.0.103\n   Compiling sponge-cursor v0.1.0\n   Compiling shake v0.1.0\n   Compiling ed25519 v2.2.3\n   Compiling borsh v1.8.0\n   Compiling module-lattice v0.2.3\n   Compiling proc-macro-crate v3.5.0\n   Compiling signature v3.0.0\n   Compiling linux-raw-sys v0.12.1\n   Compiling once_cell v1.21.4\n   Compiling serde_json v1.0.149\n   Compiling hex v0.4.3\n   Compiling trnm-protocol v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-protocol)\n   Compiling borsh-derive v1.8.0\n   Compiling ml-dsa v0.1.1\n   Compiling hashlink v0.11.1\n   Compiling ed25519-dalek v2.2.0\n   Compiling fastrand v2.3.0\n   Compiling itoa v1.0.18\n   Compiling memchr v2.8.0\n   Compiling smallvec v1.15.1\n   Compiling fallible-iterator v0.3.0\n   Compiling fallible-streaming-iterator v0.1.9\n   Compiling rusqlite v0.39.0\n   Compiling tempfile v3.27.0\n   Compiling trnm-crypto-primitives v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-crypto-primitives)\n   Compiling fs2 v0.4.3\n   Compiling trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability)\nerror: couldn't read `/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json`: No such file or directory (os error 2)\n  --> crates/trnm-data-availability/src/cell/closure_tests.rs:20:26\n   |\n20 |       serde_json::from_str(include_str!(concat!(\n   |  __________________________^\n21 | |         env!(\"CARGO_MANIFEST_DIR\"),\n22 | |         \"/../../../formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json\"\n23 | |     )))\n   | |______^\n\nerror: could not compile `trnm-data-availability` (lib test) due to 1 previous error\n"
+        }
+      },
+      "name": "original-selector-missing-vector",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit",
+          "--",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "elapsed_seconds": 87.02869230600118,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 101,
+        "log_sha256": "fa7514a7abf5590e0830173adaf9cd2e9252aec2399a075f0da4d73211b309f5",
+        "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+        "source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd"
+      }
+    },
+    {
+      "logs": {
+        ".log": {
+          "bytes": 549,
+          "sha256": "4ee69e46fbfd2ee801aadf0a5f91e99419fbf6827b845a567f4bfb9645df92e6",
+          "utf8": "   Compiling trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.77s\n     Running unittests src/lib.rs (/tmp/chain-cell-target-20261103/debug/deps/trnm_data_availability-3593f3aeff905003)\n\nrunning 1 test\ntest cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 172 filtered out; finished in 0.21s\n\n"
+        }
+      },
+      "name": "original-selector",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit",
+          "--",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "elapsed_seconds": 13.004357211999377,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "log_sha256": "4ee69e46fbfd2ee801aadf0a5f91e99419fbf6827b845a567f4bfb9645df92e6",
+        "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+        "source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 2050,
+          "sha256": "965ad824fa6e73e09589288940bbef7fa8495446df95dbcc21dc74f9fbbc7471",
+          "utf8": "    Checking typenum v1.20.1\n    Checking zeroize v1.8.2\n    Checking cfg-if v1.0.4\n    Checking cmov v0.5.4\n    Checking ctutils v0.4.6\n    Checking generic-array v0.14.7\n    Checking hybrid-array v0.4.15\n    Checking crypto-common v0.1.7\n    Checking block-buffer v0.10.4\n    Checking digest v0.10.7\n    Checking crypto-common v0.2.2\n    Checking cpufeatures v0.2.17\n    Checking digest v0.11.3\n    Checking serde_core v1.0.228\n   Compiling curve25519-dalek v4.1.3\n    Checking num-traits v0.2.19\n    Checking libc v0.2.184\n    Checking sha2 v0.10.9\n    Checking keccak v0.2.2\n    Checking sponge-cursor v0.1.0\n    Checking bitflags v2.11.0\n    Checking signature v2.2.0\n    Checking foldhash v0.2.0\n    Checking subtle v2.6.1\n    Checking hashbrown v0.16.1\n    Checking ed25519 v2.2.3\n    Checking shake v0.1.0\n    Checking serde v1.0.228\n    Checking thiserror v1.0.69\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n    Checking hex v0.4.3\n    Checking linux-raw-sys v0.12.1\n    Checking rustix v1.1.4\n    Checking trnm-protocol v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-protocol)\n    Checking ml-dsa v0.1.1\n    Checking libsqlite3-sys v0.37.0\n    Checking ed25519-dalek v2.2.0\n    Checking hashlink v0.11.1\n    Checking anyhow v1.0.103\n    Checking smallvec v1.15.1\n    Checking fallible-iterator v0.3.0\n    Checking fallible-streaming-iterator v0.1.9\n    Checking rusqlite v0.39.0\n    Checking borsh v1.8.0\n    Checking trnm-crypto-primitives v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-crypto-primitives)\n    Checking fs2 v0.4.3\n    Checking getrandom v0.4.2\n    Checking zmij v1.0.21\n    Checking trnm-data-availability v0.1.0 (/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-data-availability)\n    Checking memchr v2.8.0\n    Checking itoa v1.0.18\n    Checking once_cell v1.21.4\n    Checking fastrand v2.3.0\n    Checking tempfile v3.27.0\n    Checking serde_json v1.0.149\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 31.07s\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "strict-clippy",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-data-availability",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 31.184884341000725,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "source_after": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "source_before": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "stderr_sha256": "965ad824fa6e73e09589288940bbef7fa8495446df95dbcc21dc74f9fbbc7471",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "workspace-format-check",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 14.894150903999616,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 0,
+        "source_after": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "source_before": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "logs": {
+        ".stderr": {
+          "bytes": 571,
+          "sha256": "83236ddb2348ae3e9cbbc1be4f7ebd4702db58c79a4dbd5f53fe51493d99c74c",
+          "utf8": "error: couldn't read `/tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/tests/../../../../tests/fuzz/fuzz_targets/support/work_certificate.rs`: No such file or directory (os error 2)\n --> /tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs:3:1\n  |\n3 | mod checks;\n  | ^^^^^^^^^^^\n\nError writing files: failed to resolve mod `checks`: /tmp/chain-cell-startup-current-20261103/trillionnium/crates/trnm-pon-node/tests/../../../../tests/fuzz/fuzz_targets/support/work_certificate.rs does not exist\n"
+        },
+        ".stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "utf8": ""
+        }
+      },
+      "name": "workspace-format-missing-fuzz",
+      "receipt": {
+        "argv": [
+          "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/tmp/chain-cell-startup-current-20261103",
+        "elapsed_seconds": 12.773274847999346,
+        "environment": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+          "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+          "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+          "RUST_TEST_THREADS": "1"
+        },
+        "exit_code": 1,
+        "source_after": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "source_before": {
+          "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9"
+        },
+        "stderr_sha256": "83236ddb2348ae3e9cbbc1be4f7ebd4702db58c79a4dbd5f53fe51493d99c74c",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "initial_discovery_receipt_before_explicit_field_correction": {
+    "argv": [
+      "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "cell::discovery::tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "elapsed_seconds": 16.65046918600092,
+    "environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_HOME": "/tmp/chain-cell-cargo-home-20261103",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/tmp/chain-cell-target-20261103",
+      "RUSTC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustc",
+      "RUSTDOC": "/workspace/scratch/1f1d02319616/recovered-toolchain-20261103/bin/rustdoc",
+      "RUST_TEST_THREADS": "1"
+    },
+    "exit_code": 0,
+    "log_sha256": "06681a3041413d17c452fa9ee112c0d52ef098d7fa96c48f43621645a85e820f",
+    "source_after_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+    "source_before_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+    "source_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "source_sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd"
+  },
+  "scope": "Actual local component and control execution; no fixed Host/ARM/4s/30s/native-workspace qualification implied."
+}

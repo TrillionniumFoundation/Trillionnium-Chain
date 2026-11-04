@@ -1,0 +1,203 @@
+{
+  "schema": "trnm-research-cache-cleanup-v1",
+  "source_inputs_retained": true,
+  "original_failure_and_success_logs_retained": true,
+  "objects": [
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer.sqlite-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica.sqlite-wal",
+      "bytes": 2154792,
+      "sha256": "09a96b29a71c841b9aeb0f63f773543f1d222c803ca823d59ba10585851bde9e",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/.consumer.sqlite.ZkP8d7",
+      "bytes": 243531776,
+      "sha256": "010df29ff14b4278eabde0917fe105d869a6521ed68cfcf6040a9cd3cd43f943",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-negative.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "bcf25a9773cd9c07829335316d41b2e81e5542f98dd07b3df3f4bd9c05e799d9",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher.sqlite-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "80ce900f4501c86156859c0d12ef9b3ee0fa90dc089af549d20d201219d903ae",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-negative.sqlite-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica.sqlite",
+      "bytes": 270499840,
+      "sha256": "d41ca2f003dc51fca4f81d6ddf30f292e32a6dec997dc19df175c5a502cd7371",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/consumer.sqlite",
+      "bytes": 272609280,
+      "sha256": "be8bf7cee675cf34a68a711b7ae0a12573ee9a325190191e6855d4ece15ebd55",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-negative.sqlite",
+      "bytes": 28672,
+      "sha256": "5afb5787b0f6eb2c4dfb250c741966d5b8b6cc014bd0aa20077b234fa309dbc8",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "70b2d2d36f7c73e87c0bc3ccfa625f8f53cf3618133e4b13ba60a9554c651ebc",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/replica.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/publisher.sqlite",
+      "bytes": 272613376,
+      "sha256": "0ec93dca41c21f6939f4eab8d4e63bdda204794b4ef7f3e90063e022459659d6",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/offline-negative.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/transport/.consumer.sqlite.ZkP8d7.gq1L7Y",
+      "bytes": 139984896,
+      "sha256": "d412beaa7616a7e4f2d3ef5a1106904ecbcf4aa71dac6f512178833ecae7cb21",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/replica.sqlite-wal",
+      "bytes": 4247752,
+      "sha256": "84bcc203f9f2252d20ea3b0606eae578c8516ea4c6c93f8895f7ed327debd4c0",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/.publisher.sqlite.c86zJ4",
+      "bytes": 163315712,
+      "sha256": "4c2afc2315393abceedb7ee887664901cb1212e59bdb18e70bcac426e46b78e6",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher.sqlite-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/replica.sqlite",
+      "bytes": 142880768,
+      "sha256": "e5f9e7a88769a0dddc97902ae6c16598563bd52c707b5bb88aa5e5faa84045a8",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/replica.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "2a7851c85801ebb461bb137c5fce00f23645b9c1b19b45f391a11bec38483070",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/replica.sqlite-writer-lock-v4",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/publisher.sqlite",
+      "bytes": 272613376,
+      "sha256": "0ec93dca41c21f6939f4eab8d4e63bdda204794b4ef7f3e90063e022459659d6",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/optimized-transport/.publisher.sqlite.c86zJ4.svPcjI",
+      "bytes": 144703488,
+      "sha256": "b4c4c6b84b88b0246e97d64eed84d3cfb415f013e463ca66f7af7ae87f1d0cf2",
+      "kind": "disposable-generated-public-model-cache",
+      "deleted": true
+    }
+  ]
+}

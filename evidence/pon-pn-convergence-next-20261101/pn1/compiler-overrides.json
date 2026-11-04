@@ -1,0 +1,12 @@
+{
+  "compiler_override_variables_present": {
+    "RUSTFLAGS": false,
+    "CARGO_ENCODED_RUSTFLAGS": false,
+    "CARGO_BUILD_RUSTFLAGS": false,
+    "RUSTC_WRAPPER": false,
+    "RUSTC_WORKSPACE_WRAPPER": false,
+    "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS": false,
+    "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": false
+  },
+  "cargo_configs": []
+}

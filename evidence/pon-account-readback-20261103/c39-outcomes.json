@@ -1,0 +1,112 @@
+{
+  "schema": "chain-c39-original-budget-outcomes-v1",
+  "observed_at_utc": "2026-11-03 12:35:01 UTC",
+  "head": "c39c65b15cde72c30d69dec62ae630a7ebffa3da",
+  "tree": "04525f5777c53736be56683358c413813022f49f",
+  "actual_merge": {
+    "commit": "be3fc38118b40b91e24f8abe36e233e78dabc39b",
+    "tree": "04525f5777c53736be56683358c413813022f49f",
+    "ordered_parents": ["9a05cae09b175a51773db398541b14ab76061a39","c39c65b15cde72c30d69dec62ae630a7ebffa3da"]
+  },
+  "scope": "Read-only retained hosted evidence for c39 HEAD and be3 actual merge only. No result is attributed to later W1 or graph candidates. No rerun of old source. No qualification or activation promoted.",
+  "resources": {
+    "public_receiver_and_verifier": {"cpu_max":"25000 100000","memory_max_bytes":2147483648,"swap_max_bytes":0},
+    "original_30s_controller": {"cpu_max":"400000 100000","memory_max_bytes":17179869184,"nice":10},
+    "budget_changes": false,
+    "full_W1_and_original_selectors_retained": true,
+    "rss_scope": "Any reported RSS is a process lifetime peak, not a per-call or incremental bound; no resource cap was raised."
+  },
+  "four_second": [
+    {"source":"head","run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160","job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907861896","artifact":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/artifacts/13229453347","artifact_sha256":"fe904f550ebd31a019026a60e15a23da5efd7b895da86730734b19ab09fa11fd","artifact_digest_verified":true,"original_window_ns":4000000000,"planned_packets_per_phase":7,"planned_confirmations_per_phase":1,"required_depth":6,"required_work_delta_hex":"0c","reports":[{"kind":"original","report_sha256":"fa79d15dd5a94ba8c91ca2bfcd4056c485473bac184b5bf7844f5ccd73473d44","native_exit_code":0,"business_gate_passed":false,"wrapper_failure":"CONFIRMATION_TARGET","phase_rows":[[0,7,7,1,2394696579,false,207799134,7,0,2106754674,428564812,8784,387435342,null,null,null,null,[],{},0,0],[16,7,3,0,null,true,1443090382,2,1,2291176148,168922580,3275,155332011,3448630573,4043439840,43951813,41198824,["history_import","work"],{"refused":300,"error":16},16,7]]},{"kind":"fresh","report_sha256":"b2044ac0a888a7f33cfbb550a47d3f643e4909d72938e6cc58bde238a3fc6df4","native_exit_code":101,"business_gate_passed":false,"wrapper_failure":"FRESH_NATIVE_PROCESS_REQUIRED","phase_rows":[[0,7,7,1,2509867278,false,191491443,7,0,2234607308,445412733,8770,400229412,null,null,null,null,[],{},0,0],[16,7,3,0,null,true,1671229982,2,1,1993500796,138600700,2637,126686772,3862658753,4063537936,15170464,13507459,["history_import","work"],{"refused":263,"error":16},16,1]]}],"shared_phase_observations":{"submit_errors":0,"successful_acks_after_window":0,"successful_acks_after_request_deadline":0,"hostile_accepted":false,"observer_dropped_records":0,"Host_checkpoint_rejections":0,"unknown_import_cpu_samples":0,"failed_import_error":"PUBLIC_REQUEST_DEADLINE"}},
+    {"source":"actual-merge","run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160","job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862222","artifact":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/artifacts/13229891028","artifact_sha256":"d1e2dd349425bd284a9575200beabbe5af7441e25c61d444f35d502b9be3e63c","artifact_digest_verified":true,"original_window_ns":4000000000,"planned_packets_per_phase":7,"planned_confirmations_per_phase":1,"required_depth":6,"required_work_delta_hex":"0c","reports":[{"kind":"original","report_sha256":"2fdd91fe4871b2d6e2c0a0560cbc01f185f34f6fdf1e1e6a5bbb3acab00e0c83","native_exit_code":0,"business_gate_passed":false,"wrapper_failure":"CONFIRMATION_TARGET","phase_rows":[[0,7,7,1,2319275912,false,148575392,7,0,2014814260,419291844,8784,374346920,null,null,null,null,[],{},0,1],[16,7,3,0,null,true,1372960436,2,1,2300322940,177260328,3486,162538707,3370486488,4071139719,55881456,51892484,["admission","admission_prepare","history_import"],{"refused":308,"error":16},16,4]]},{"kind":"fresh","report_sha256":"486504a7e90c878b60c47225bd5e790d4bcf9ef891ccffd3896c5fc00deb9667","native_exit_code":101,"business_gate_passed":false,"wrapper_failure":"FRESH_NATIVE_PROCESS_REQUIRED","phase_rows":[[0,7,7,1,2482341922,false,198972233,7,0,2201913481,426777787,8785,384405923,null,null,null,null,[],{},0,0],[16,7,3,0,null,true,1559792727,2,1,2186018633,133785530,2615,121005773,3853777506,4052989634,14997212,12908265,["history_import","work"],{"refused":277,"error":16},16,5]]}],"shared_phase_observations":{"submit_errors":0,"successful_acks_after_window":0,"successful_acks_after_request_deadline":0,"hostile_accepted":false,"observer_dropped_records":0,"Host_checkpoint_rejections":0,"unknown_import_cpu_samples":0,"failed_import_error":"PUBLIC_REQUEST_DEADLINE"}}
+  ],
+  "four_second_note": "Original native test exit 0 checks protocol/accounting invariants, not the business target. Fresh exit 101 is a native four-second confirmation assertion; wrapper FRESH_NATIVE_PROCESS_REQUIRED does not mean the process was absent. A failed confirmation has null latency, never zero or a post-window success.",
+  "F0": {
+    "source": "head",
+    "run": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244413",
+    "job": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244413/job/125907861774",
+    "artifact": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244413/artifacts/13229272328",
+    "artifact_sha256": "2683c3bfe52532be04dfef4ec2f7619edd5917c3f3e9a9bfd95dffbb01d50e99",
+    "artifact_digest_verified": true,
+    "report_sha256": "ec500f20b69c6b2d3b3ac40e61f36ff8cb20074577494631bd5ade376d87c798",
+    "phase_seconds": 30,
+    "planned_confirmations": 6,
+    "planned_packet_exposures": 42,
+    "confirmed": 0,
+    "four_second_slo_successes": 0,
+    "failure": "NATIVE_F0_FAILED",
+    "report_validation_failure": "BASELINE_MUST_PASS",
+    "controller_resources_complete": true,
+    "phase_columns": ["mode","attackers_ready","observed_distinct_packets","timely_packet_acks","submit_attempt_status","attempts_per_observed_packet","last_submit_end_ns","history_response_status","round0_started_ns","round0_ended_ns","imports"],
+    "shared_phase_observations": {"planned_packets":21,"planned_confirmations":3,"confirmed":0,"observed_rounds":[0],"unobserved_rounds":[1,2],"successful_acks_after_window":0,"four_second_slo_successes":0,"genuine_budget_depletion_observed":false,"observer_complete":true},
+    "phase_rows": [["baseline",0,7,7,{"ok":7},{"0":1,"1":1,"2":1,"3":1,"4":1,"5":1,"6":1},3600026767,{"ok":7},1001601823,30002019181,{"observed":7,"accepted":6,"failed":1,"wall_ns_sum":26315325143,"caller_cpu_ns_sum":5850577099,"host_checkpoint_calls":92288,"host_checkpoint_cpu_ns_sum":5051692647,"host_checkpoint_rejections":0,"unknown_cpu_calls":0,"failed_calls":[{"error":"PUBLIC_REQUEST_DEADLINE","started_ns":24722955159,"ended_ns":30001886163,"wall_ns":5278930974,"caller_cpu_ns":1187164437,"host_checkpoint_calls":18628,"host_checkpoint_cpu_ns":1017427481,"native_failed_phases":["history_import","submit_result"]}]}],["valid-work-root",24,4,3,{"error":12,"ok":3},{"0":3,"1":2,"2":8,"3":2},30030194181,{},1030159041,30031816170,{"observed":0,"accepted":0,"failed":0,"wall_ns_sum":0,"caller_cpu_ns_sum":0,"host_checkpoint_calls":0,"host_checkpoint_cpu_ns_sum":0,"host_checkpoint_rejections":0,"unknown_cpu_calls":0,"failed_calls":[]}]]
+  },
+  "original_30_second_campaign": {
+    "source": "head",
+    "run": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244191",
+    "job": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244191/job/125907860940",
+    "artifact": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244191/artifacts/13230052081",
+    "artifact_sha256": "367f1914ebb3e4abe478c21bf6258731826702dddbc713bd51679352bcd72903",
+    "artifact_digest_verified": true,
+    "complete_runs_planned": 3,
+    "complete_runs_passed": 0,
+    "planned_phase_count": 9,
+    "phase_seconds": 30,
+    "planned_confirmations": 27,
+    "confirmed": 0,
+    "planned_packet_exposures": 189,
+    "actual_packet_acks": 63,
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "unobserved_rounds_per_phase": [1,2],
+    "late_ack_scope": "after original 30-second window; per-request deadline flag is absent in this driver and is unknown",
+    "runs": [{"number":1,"report_sha256":"1ae9f16f5e9584ab44d2c649d646cceb3f938099c4599fb1198c7c90ab6eac56","native_exit_code":101,"original_criteria_met":false,"phase_startup_errors":[],"phase_rows":[["baseline",0,7,3803567321,7,6,1,26042810002,5755940592,88378,4885053195,30001052246,974025694,819080622,["history_import","submit_result"]],["from-zero",24,7,6662355715,3,2,1,23084823496,2158848902,27064,1826055305,30049224416,301905971,258813054,["admission","commit","history_import"]],["late-product",24,7,6991157229,3,2,1,22594909581,2015332043,25092,1691801833,30073343118,147543672,126040821,["admission","admission_prepare","history_import"]]]},{"number":2,"report_sha256":"bf88d1a19ef90ef7ccd762a4e876a7df84c1c6421cb33f0682f9984a791d6e6a","native_exit_code":101,"original_criteria_met":false,"phase_startup_errors":[],"phase_rows":[["baseline",0,7,3800420293,7,6,1,25834241075,5783976326,88378,4892287048,30001153784,978350077,817832030,["history_import","submit_result"]],["from-zero",24,7,6781399630,3,2,1,22982523421,2122008911,26350,1780361528,30066389796,257031729,217374190,["admission","admission_prepare","history_import"]],["late-product",24,7,7041398046,3,2,1,22677052830,2003450383,24789,1677841952,30024554691,127870620,110629056,["admission","admission_prepare","history_import"]]]},{"number":3,"report_sha256":"f0f335b8983ff73924ed502f12ca18a77d7a49d9e202d840f9b24156d0a80d3b","native_exit_code":101,"original_criteria_met":false,"phase_startup_errors":[],"phase_rows":[["baseline",0,7,3907626736,7,6,1,25869330402,5747701830,87918,4866185520,30001651907,937607975,788106568,["history_import","submit_result"]],["from-zero",24,7,6768421932,3,2,1,22982881610,2077313408,25779,1744607385,30058018516,206596666,177073277,["admission","admission_prepare","history_import"]],["late-product",24,7,6889019870,3,2,1,22793887400,2049588537,25576,1723594514,30072864155,188672694,160766145,["admission","admission_prepare","history_import"]]]}],
+    "phase_columns": ["mode","attackers_ready","submit_acks","last_submit_end_ns","history_response_acks","import_ok","import_failed","import_wall_ns","import_caller_cpu_ns","Host_checkpoint_calls","Host_checkpoint_cpu_ns","failed_import_end_ns","failed_import_cpu_ns","failed_Host_checkpoint_cpu_ns","failed_native_phases"],
+    "shared_phase_observations": {"planned_packets":21,"planned_confirmations":3,"observed_rounds":[0],"confirmed":0,"successful_acks_after_window":0,"genuine_budget_depletion_observed":false,"observer_complete":true,"Host_checkpoint_rejections":0,"unknown_import_cpu_samples":0,"failed_import_error":"PUBLIC_REQUEST_DEADLINE"}
+  },
+  "measurement_scope_correction": {
+    "account_graph": "Arithmetic before/after snapshots also include later confirmation/read_active; account_graph is not strictly nested in client_import. Any exact graph/import percentage across those scopes is withdrawn. Original snapshots and failures remain in the raw artifacts.",
+    "import_and_Host": "Per-call import wall/CPU and its Host checkpoint observation refer to the same calls. Host/packet/page phases are inclusive and nested; never add them. Caller CPU excludes scoped worker CPU; Host CPU records the actual invoking threads, not total worker CPU.",
+    "failed_and_unobserved": "Failed, cancelled, late and unobserved outcomes remain in the original planned denominators. No-traffic imports have zero samples, not a measured successful latency.",
+    "qualification": "No independent operator/WAN, PQ hardness, whole-chain readiness, production activation or later-source qualification."
+  },
+  "ci_as_of_observed_time": {
+    "recent_batch": {"run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303","passed_jobs":["https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303/job/125907861875","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303/job/125907861999","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303/job/125907862064","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244303/job/125907862180"],"failed_jobs":[],"unfinished":[]},
+    "original_large_state_release": {"run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244210","passed_jobs":["https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244210/job/125907861630","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244210/job/125907862047","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244210/job/125907862090","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244210/job/125907862136"],"failed_jobs":[],"unfinished":[]},
+    "w1_legal_and_false_trace": {"run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160","passed_jobs":["https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862227","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862310","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862315","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862335","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862353","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862364","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862371","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862382","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862388","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862398","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862423","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862427","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862461","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862493","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862503","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244160/job/125907862535"],"failed_jobs":[],"unfinished":[]},
+    "original_workspace_test_profile": {"run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244153","passed_jobs":["https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244153/job/125907861734","https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244153/job/125907862018"],"failed_jobs":[],"unfinished":[{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244153/job/125907862254","conclusion":"unknown","failed_steps":["Execute both original test-profile CPU selectors and reactor-exit controls"],"running_steps":["Observe fixed touched owners across actual account and history growth"]},{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244153/job/125907862266","conclusion":"unknown","failed_steps":["Execute both original test-profile CPU selectors and reactor-exit controls"],"running_steps":["Observe fixed touched owners across actual account and history growth"]}]},
+    "pq_network_and_witness": {"run":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244276","passed_jobs":[],"failed_jobs":[],"unfinished":[{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244276/job/125907862414","conclusion":"unknown","failed_steps":[],"running_steps":["Preserve the complete original Node library regression suite"]},{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244276/job/125907862708","conclusion":"unknown","failed_steps":[],"running_steps":["Preserve the complete original Node library regression suite"]},{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244276/job/125907862734","conclusion":"unknown","failed_steps":[],"running_steps":["Preserve the complete original Node library regression suite"]},{"job":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244276/job/125907862938","conclusion":"unknown","failed_steps":[],"running_steps":["Preserve the complete original Node library regression suite"]}]},
+    "codeql": {"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244265","job_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244265/job/125907861431","status":"failure","reason":"PR head/base moved or PR is no longer an open same-repository PR","classification":"source-fence failure after PR advanced; no code-analysis verdict"},
+    "cancelled_without_native_result": [{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244185","status":"cancelled","jobs_observed":0,"native_outcome":"unknown"},{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244168","status":"cancelled","jobs_observed":0,"native_outcome":"unknown"}],
+    "other_completed_runs": [{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244179","status":"success","independent_job_artifact_digests":"not downloaded"},{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244156","status":"success","independent_job_artifact_digests":"not downloaded"},{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244151","status":"success","independent_job_artifact_digests":"not downloaded"},{"run_url":"https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41633244212","status":"success","independent_job_artifact_digests":"not downloaded"}],
+    "unmeasured_artifact_digests": "unknown for status-only CI jobs; only the four linked outcome artifacts above were downloaded and hashed"
+  },
+  "retention": {
+    "raw_artifacts_retained": true,
+    "elf_or_database_extracted": false,
+    "artifact_and_report_hashes_verified": true,
+    "repository_source_modified_by_this_audit": false
+  },
+  "four_second_columns": [
+    "workers",
+    "submit_acks",
+    "history_response_acks",
+    "confirmed",
+    "confirmation_latency_ns",
+    "confirmation_censored",
+    "last_submit_end_ns",
+    "import_ok",
+    "import_failed",
+    "import_wall_ns",
+    "import_caller_cpu_ns",
+    "Host_checkpoint_calls",
+    "Host_checkpoint_cpu_ns",
+    "failed_import_start_ns",
+    "failed_import_end_ns",
+    "failed_import_cpu_ns",
+    "failed_Host_checkpoint_cpu_ns",
+    "failed_native_phases",
+    "hostile_call_status",
+    "hostile_calls_after_window",
+    "receiver_cancelled_connections"
+  ]
+}

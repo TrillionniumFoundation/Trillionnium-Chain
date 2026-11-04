@@ -1,0 +1,52 @@
+{
+  "clock_ticks_per_second": 100,
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "150s",
+    "python3",
+    "/tmp/w1-rust1911-acquire-20261028-r8.py",
+    "install",
+    "/tmp/w1-risc0-1911-install-20261028-r8"
+  ],
+  "cpu_accounting": "wait4 reaped subtrees plus live inclusive /proc ticks; monotone max",
+  "cwd": "/workspace/scratch/56818e4fba76",
+  "disk_accounting": "allocated st_blocks, unique inodes, no intentional symlink following",
+  "disk_probe_path": "/tmp/w1-risc0-1911-resources-r8",
+  "guarantee": "sampled detection and stop; not kernel CPU/RSS/disk hard limits",
+  "initial_free_bytes": 3256979456,
+  "interval_seconds": 0.5,
+  "kill_reap_grace_seconds": 3.0,
+  "limits": {
+    "cpu_seconds": 180.0,
+    "min_free_bytes": 1073741824,
+    "rss_bytes": 805306368,
+    "target_growth_bytes": 2147483648,
+    "wall_seconds": 150.0
+  },
+  "ownership": "one new session, tracked descendants, process-local subreaper, pidfds",
+  "page_bytes": 4096,
+  "pid_fields": "pid/ppid/pgid/sid are procfs-visible; local_pid is signal namespace PID",
+  "root_birth": 7586899,
+  "root_pgid": 982769,
+  "root_pid": 5,
+  "root_proc_pid": 982769,
+  "root_sid": 982769,
+  "rss_accounting": "sum of sampled process RSS; shared pages may be counted repeatedly",
+  "schema": 1,
+  "source_commit_freeze": "caller responsibility; this file records only source hash",
+  "source_path": "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+  "source_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "started_monotonic": 75868.994411291,
+  "supervisor_nspids": [
+    982766,
+    2
+  ],
+  "supervisor_pid": 2,
+  "supervisor_pid_namespace": "pid:[4026532278]",
+  "supervisor_proc_pid": 982766,
+  "target": "/tmp/w1-risc0-1911-resources-r8",
+  "target_baseline_bytes": 515342336,
+  "term_grace_seconds": 3.0
+}

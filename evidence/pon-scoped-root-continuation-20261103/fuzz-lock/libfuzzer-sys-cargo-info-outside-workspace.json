@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "info",
+    "libfuzzer-sys@0.4.10",
+    "--registry",
+    "crates-io",
+    "--config",
+    "net.retry=0",
+    "--config",
+    "http.timeout=20"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/fuzz-lock-repair-20261103",
+  "exit_code": 0,
+  "stdout": "libfuzzer-sys\nA wrapper around LLVM's libFuzzer runtime.\nversion: 0.4.10 (latest 0.4.13)\nlicense: (MIT OR Apache-2.0) AND NCSA\nrust-version: unknown\ndocumentation: https://docs.rs/libfuzzer-sys/0.4.10\nrepository: https://github.com/rust-fuzz/libfuzzer\ncrates.io: https://crates.io/crates/libfuzzer-sys/0.4.10\nfeatures:\n +default          = [link_libfuzzer]\n  link_libfuzzer   = []\n  arbitrary-derive = [arbitrary/derive]\n",
+  "stderr": "    Updating crates.io index\n Downloading crates ...\n  Downloaded libfuzzer-sys v0.4.10\n",
+  "expected_checksum": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+  "actual_checksum": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+  "checksum_matches": true
+}

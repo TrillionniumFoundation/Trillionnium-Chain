@@ -1,0 +1,49 @@
+{
+  "schema": "pon-six-axis-performance-observation-v1",
+  "status": "development-observation-hold",
+  "integration_baseline": {
+    "commit": "af064bf751ed92c82da0b113682a7dfff3225d97",
+    "tree": "06c2a2493183a48ade725db226fc44b24c1f9b0f",
+    "parents": [
+      "9a05cae09b175a51773db398541b14ab76061a39",
+      "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c"
+    ]
+  },
+  "original_public_business_gate": {
+    "window_ns": 4000000000,
+    "hostile_workers": 16,
+    "required_unique_confirmed_transactions": 1,
+    "confirmation_depth": 6,
+    "host_cpu_quota_ns_per_second": 250000000,
+    "host_memory_bytes": 2147483648,
+    "native_runner": "scripts/ci/run_from_zero_native.py"
+  },
+  "growth_observation": {
+    "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+    "accounts": [64, 1024, 16384],
+    "warmup_history_blocks": [0, 16, 128],
+    "measured_blocks_per_cohort": 8,
+    "deliberately_cancelled_admissions_per_cohort": 1,
+    "required_cold_reopens_per_cohort": 1,
+    "require_identical_actual_witness_owner_set": true,
+    "maximum_separate_query_point_reads_exclusive": 1024,
+    "maximum_added_cow_nodes_exclusive": 4096,
+    "expanded_witness_allocations": 0,
+    "p99_minimum_independent_observations": 100,
+    "p99_for_this_cohort": null,
+    "scope": "real signed native Node make/admit/activate, complete-State reference, atomic cancellation and cold recovery; no public throughput or permanent bounded-storage claim"
+  },
+  "paired_component_decision": {
+    "comparison_order": "ABBA with every planned outcome retained",
+    "maximum_failed_or_unknown_operations_for_acceptance": 0,
+    "minimum_paired_median_improvement_fraction": 0.05,
+    "maximum_p95_regression_fraction": 0.10,
+    "same_mathematical_inputs_workload_resources_and_confirmation_rules_required": true,
+    "component_result_cannot_replace_original_public_business_gate": true,
+    "scope": "finite development decision, no statistical confidence or production capacity claim"
+  },
+  "whole_chain_post_quantum_qualified": false,
+  "independent_accepted": false,
+  "public_network_ready": false,
+  "production_activation": false
+}

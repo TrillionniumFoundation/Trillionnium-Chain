@@ -1,0 +1,15 @@
+{
+  "name": "backend",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_openssl_backend"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered/formal/pon-nakamoto-v1",
+  "started_utc": "2026-10-28T03:37:09.823663+00:00",
+  "wall_seconds": 0.5049551369884284,
+  "returncode": 0,
+  "real_cryptographic_success_test": false
+}

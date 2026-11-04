@@ -1,0 +1,711 @@
+{
+  "schema": "trnm-source-publication-readback-archive-index-v1",
+  "archive": "remote-commit-readbacks.tar.gz",
+  "count": 39,
+  "scope": "Exact original GET response wrappers: 32 from batch003 and seven fresh responses from batch005.",
+  "records": [
+    {
+      "original_commit": "c9bec058eed88708944b29e7b9332c9617849015",
+      "remote_commit": "8d7c84c85f0680ab397c195756d4eb2269fed7e0",
+      "tree": "39a88f9f598fa66b809d482426ab377f07c03591",
+      "ordered_remote_parents": [
+        "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/8d7c84c85f0680ab397c195756d4eb2269fed7e0",
+      "read_utc": "2026-10-27T10:08:39.940Z",
+      "archive_member": "readbacks/c9bec058eed88708944b29e7b9332c9617849015.json",
+      "bytes": 6721,
+      "sha256": "52b095e84b7cb745a303c95147aa59e61df82e6023056d879650ae27fcea2a90",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "e92d3ac72663a3e77f1b45a76d991018d34583c4",
+      "remote_commit": "5be1b694be5556cf0cf4b88a8722d4d42eab2147",
+      "tree": "b6a6c7bd4fd54c3b8b1d5f9e9c0b193dc62b6542",
+      "ordered_remote_parents": [
+        "8d7c84c85f0680ab397c195756d4eb2269fed7e0"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/5be1b694be5556cf0cf4b88a8722d4d42eab2147",
+      "read_utc": "2026-10-27T10:08:39.837Z",
+      "archive_member": "readbacks/e92d3ac72663a3e77f1b45a76d991018d34583c4.json",
+      "bytes": 6712,
+      "sha256": "21eb22828060db9b28c0343e4dac18cbd9544b1aaf523c9a899da80ece23f7c8",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "f1829c8fa8550a1665bc2da34cbd8b6e6a8b2714",
+      "remote_commit": "df2dc6bc89f33115aa98b0beff38996b252f60fc",
+      "tree": "3af2ef2af0ff632e522865086c8a40b1b00acd47",
+      "ordered_remote_parents": [
+        "5be1b694be5556cf0cf4b88a8722d4d42eab2147"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/df2dc6bc89f33115aa98b0beff38996b252f60fc",
+      "read_utc": "2026-10-27T10:08:39.909Z",
+      "archive_member": "readbacks/f1829c8fa8550a1665bc2da34cbd8b6e6a8b2714.json",
+      "bytes": 6745,
+      "sha256": "6ef4797898f2e68bb00ccf974ca7c8b7bc88892327b016b296861c21bcf76e26",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "0915e5ab19f4489618b9c7cfa25fe65644bfa010",
+      "remote_commit": "993f36d65dc0be019a28f7191846200544e6c356",
+      "tree": "85d448bb8d8b3a5acf49ab29b2406de862f9fa04",
+      "ordered_remote_parents": [
+        "df2dc6bc89f33115aa98b0beff38996b252f60fc"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/993f36d65dc0be019a28f7191846200544e6c356",
+      "read_utc": "2026-10-27T10:08:39.837Z",
+      "archive_member": "readbacks/0915e5ab19f4489618b9c7cfa25fe65644bfa010.json",
+      "bytes": 6739,
+      "sha256": "54f56244da034d7cbb6829043c5427ffd2f98422e72f32cab949ccc737fac5f6",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "bf1f4b1044a6fbcf47e0a51d6a72535996dbd928",
+      "remote_commit": "bee267fe67c816a53126b3c313eef6c7f0757827",
+      "tree": "0d6bc43e3af6ec51821676a125540dc741f796e8",
+      "ordered_remote_parents": [
+        "993f36d65dc0be019a28f7191846200544e6c356"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/bee267fe67c816a53126b3c313eef6c7f0757827",
+      "read_utc": "2026-10-27T10:08:40.953Z",
+      "archive_member": "readbacks/bf1f4b1044a6fbcf47e0a51d6a72535996dbd928.json",
+      "bytes": 6781,
+      "sha256": "b8c9ca73c8dc519b3bf8f88aa21140b4f105487a56e4e10d9f64f0809e3f51b3",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+      "remote_commit": "2a0e8c46ef96e3a60abc8a03c968aee60690069f",
+      "tree": "9d646f30c7db395079836ddce491966612f8ae67",
+      "ordered_remote_parents": [
+        "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/2a0e8c46ef96e3a60abc8a03c968aee60690069f",
+      "read_utc": "2026-10-27T10:08:40.938Z",
+      "archive_member": "readbacks/bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1.json",
+      "bytes": 6778,
+      "sha256": "0582e5d6c1f71db370833533261dd6481047a6b952338d05b99fff2b155da44a",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "375ea483fbf73044e9737fa13114fe050183bfc5",
+      "remote_commit": "33f489f691b4f3be743aa7630c971ee088eb8d7b",
+      "tree": "5f891b3fc7a1b50ff4cbbc5c03492d3a7e8bd12c",
+      "ordered_remote_parents": [
+        "2a0e8c46ef96e3a60abc8a03c968aee60690069f"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/33f489f691b4f3be743aa7630c971ee088eb8d7b",
+      "read_utc": "2026-10-27T10:08:40.954Z",
+      "archive_member": "readbacks/375ea483fbf73044e9737fa13114fe050183bfc5.json",
+      "bytes": 6754,
+      "sha256": "ca02004b5a340cce4885489fbf630af4846c364500eba42f6e8295638f47d3d3",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "a3f82bb6ceff5cdcc1b8cc86d6da75143ead5c84",
+      "remote_commit": "fb0a74d55b1db6a3d42118f5bb65208182458877",
+      "tree": "0afff3377df5b9c80f07136a90d1357b8bb19b6d",
+      "ordered_remote_parents": [
+        "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/fb0a74d55b1db6a3d42118f5bb65208182458877",
+      "read_utc": "2026-10-27T10:08:40.942Z",
+      "archive_member": "readbacks/a3f82bb6ceff5cdcc1b8cc86d6da75143ead5c84.json",
+      "bytes": 6778,
+      "sha256": "bcb5031247dd5385dc512e1a8be8e8a8378566a6c2f9b478134cc0a85f21aee2",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec",
+      "remote_commit": "1a85bcc35bc08aec83f1fd33c8af73f2ee071f57",
+      "tree": "7d900eb63393e0ab67a7f47e22a859436c6cb505",
+      "ordered_remote_parents": [
+        "fb0a74d55b1db6a3d42118f5bb65208182458877"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/1a85bcc35bc08aec83f1fd33c8af73f2ee071f57",
+      "read_utc": "2026-10-27T10:08:41.940Z",
+      "archive_member": "readbacks/414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec.json",
+      "bytes": 6784,
+      "sha256": "497b476853efb89a642a453858887f3731953f39046ad1e67d825d5a8670aaea",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "08d647017c38eb0213f8d60db938222df4f59195",
+      "remote_commit": "024f4806d3baf28cb48b876ea5e5f1a6cd302a5c",
+      "tree": "b44ea2d1f35c79995ce26a1a27ed9b9cb912bb8d",
+      "ordered_remote_parents": [
+        "2a0e8c46ef96e3a60abc8a03c968aee60690069f"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/024f4806d3baf28cb48b876ea5e5f1a6cd302a5c",
+      "read_utc": "2026-10-27T10:35:29.273Z",
+      "archive_member": "readbacks/08d647017c38eb0213f8d60db938222df4f59195.json",
+      "bytes": 4619,
+      "sha256": "c98079d523f759175f6ef44022751bfa886c9ea67f8b00aac41b4213a6631c44",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "81ba310858136f7f57b0ef5997e4e153b606616c",
+      "remote_commit": "28ccd3174c1824c277d896b8193153f6c1d2a0ba",
+      "tree": "2465ec369f9d1d856158fb867bf596002dc08181",
+      "ordered_remote_parents": [
+        "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/28ccd3174c1824c277d896b8193153f6c1d2a0ba",
+      "read_utc": "2026-10-27T10:08:41.945Z",
+      "archive_member": "readbacks/81ba310858136f7f57b0ef5997e4e153b606616c.json",
+      "bytes": 6793,
+      "sha256": "feecd8632be0d1e2b387188dbdb60fe7c2d6db8c63d4c1e54434075ed3a8cdfe",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "24d94c1b4015f4b6d50b1301ba73a88fdbbbb4f3",
+      "remote_commit": "f6afc9e9b71d7dd5c5c9d949117a8985e18d790e",
+      "tree": "4a1400bc455668af08d5f9a20141179c4e71a602",
+      "ordered_remote_parents": [
+        "28ccd3174c1824c277d896b8193153f6c1d2a0ba"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/f6afc9e9b71d7dd5c5c9d949117a8985e18d790e",
+      "read_utc": "2026-10-27T10:08:41.985Z",
+      "archive_member": "readbacks/24d94c1b4015f4b6d50b1301ba73a88fdbbbb4f3.json",
+      "bytes": 6721,
+      "sha256": "602aa7e6d584c65b0a044486aa1f540c218923cbfb5ab43498657374c1199584",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "fee9da23d95235a0e0552133bab815cc91dd7e5c",
+      "remote_commit": "d3d739f894c5ec18b4196ccad4c6d9131bc3aa4d",
+      "tree": "904b8f8d4818914ef653468219222653ceee83f0",
+      "ordered_remote_parents": [
+        "f6afc9e9b71d7dd5c5c9d949117a8985e18d790e"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/d3d739f894c5ec18b4196ccad4c6d9131bc3aa4d",
+      "read_utc": "2026-10-27T10:08:41.947Z",
+      "archive_member": "readbacks/fee9da23d95235a0e0552133bab815cc91dd7e5c.json",
+      "bytes": 6712,
+      "sha256": "6d9dddef9fc34e2f83c729d1604580d356b8d93dc531378082da1b396f252882",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "4e0d71007ab6ed633a4f90ad237f15dbd8a2a5cc",
+      "remote_commit": "3636bec60c3a4d4ba43b867842681f361bf96fbf",
+      "tree": "79496630489e2e75b42cfd74a0831be8e57be398",
+      "ordered_remote_parents": [
+        "6f4b9cae0dafcb0e6bc171e2aa9b8f630e74eca6"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/3636bec60c3a4d4ba43b867842681f361bf96fbf",
+      "read_utc": "2026-10-27T10:08:42.962Z",
+      "archive_member": "readbacks/4e0d71007ab6ed633a4f90ad237f15dbd8a2a5cc.json",
+      "bytes": 6748,
+      "sha256": "cf8842d8f86e48022bac8fadcd3e7327bef77f3a815dbbf06795e86c98ee873c",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "d4a40b47374799b8e892f2fb7a378d4a6096509b",
+      "remote_commit": "7728ec63f0bcc942ad542c55a303ae744780be9d",
+      "tree": "28efe538aff28a742f1a649735248ed97654ac6b",
+      "ordered_remote_parents": [
+        "d3d739f894c5ec18b4196ccad4c6d9131bc3aa4d",
+        "3636bec60c3a4d4ba43b867842681f361bf96fbf"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/7728ec63f0bcc942ad542c55a303ae744780be9d",
+      "read_utc": "2026-10-27T10:08:43.210Z",
+      "archive_member": "readbacks/d4a40b47374799b8e892f2fb7a378d4a6096509b.json",
+      "bytes": 7817,
+      "sha256": "070f0b6c50aa9dba11889416082587af28c66f08be1482b25c508f4aba53b72d",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "d3e60c603aa575d1a0107dfce6f8918232dd19e2",
+      "remote_commit": "69901c81afe31331695779ab3e1431dde3854350",
+      "tree": "fff8a3585fcb55a52882a102ab5b7c2d0f97da28",
+      "ordered_remote_parents": [
+        "7728ec63f0bcc942ad542c55a303ae744780be9d"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/69901c81afe31331695779ab3e1431dde3854350",
+      "read_utc": "2026-10-27T10:08:43.028Z",
+      "archive_member": "readbacks/d3e60c603aa575d1a0107dfce6f8918232dd19e2.json",
+      "bytes": 6805,
+      "sha256": "30d97cf73c80d844bd872426f0c2ffad82757983e8f3287a14b479ed011b0353",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "9419359c6e58a3f3313a15f4ad7db70421c21121",
+      "remote_commit": "d52dacd60de7a2d8861e6f1abb263526b0b8b5c5",
+      "tree": "6c525d070f9519d0a86e0ff777bffaa2e9c8c3fc",
+      "ordered_remote_parents": [
+        "69901c81afe31331695779ab3e1431dde3854350"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/d52dacd60de7a2d8861e6f1abb263526b0b8b5c5",
+      "read_utc": "2026-10-27T10:08:42.957Z",
+      "archive_member": "readbacks/9419359c6e58a3f3313a15f4ad7db70421c21121.json",
+      "bytes": 6745,
+      "sha256": "6dc1c412356fdb315efacd5147f535c21b64bd688efa0272ebc1952383cb1abd",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "416a8c0a08c86176244c6d306ebde39f5b3d1449",
+      "remote_commit": "86f9236a474ca9ccf5751fba9c5f3d78d2d354e7",
+      "tree": "4cec1bc0d9bea22298c9b2cffbe25c6cb4c13f08",
+      "ordered_remote_parents": [
+        "d52dacd60de7a2d8861e6f1abb263526b0b8b5c5"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/86f9236a474ca9ccf5751fba9c5f3d78d2d354e7",
+      "read_utc": "2026-10-27T10:08:44.241Z",
+      "archive_member": "readbacks/416a8c0a08c86176244c6d306ebde39f5b3d1449.json",
+      "bytes": 6805,
+      "sha256": "b1ec5a5a09d2438923e94a7fc639eaca6e8bbb4e2f1edbae72dea7673cc46d8d",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "83e90cb2b4b2c3ac17b000280b976ddbe607ebb1",
+      "remote_commit": "dc8d2370799d28f7e46a245b79eb8eb47f0db879",
+      "tree": "ee1ae25cc5de34bab53b8a643dafccd627a53df8",
+      "ordered_remote_parents": [
+        "86f9236a474ca9ccf5751fba9c5f3d78d2d354e7"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dc8d2370799d28f7e46a245b79eb8eb47f0db879",
+      "read_utc": "2026-10-27T10:08:44.359Z",
+      "archive_member": "readbacks/83e90cb2b4b2c3ac17b000280b976ddbe607ebb1.json",
+      "bytes": 6778,
+      "sha256": "d84f13b34a76a86620084e6f5135c37337df283b85809671e02eb486b99aa1ee",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "37203880dfaaf6f555a6c46ebdd2de667f262655",
+      "remote_commit": "9e3f787b59e2d534c0429a8e7d10b2f791c3076c",
+      "tree": "e9a18653096f8cd4270aa2823f1a47b8e10f4f6a",
+      "ordered_remote_parents": [
+        "dc8d2370799d28f7e46a245b79eb8eb47f0db879"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/9e3f787b59e2d534c0429a8e7d10b2f791c3076c",
+      "read_utc": "2026-10-27T10:08:44.263Z",
+      "archive_member": "readbacks/37203880dfaaf6f555a6c46ebdd2de667f262655.json",
+      "bytes": 6778,
+      "sha256": "984c24fa408b5cc288de33c942ed9f3802b288dd2e4078b98eb88ff0976f34b8",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "3ec9aecb0aeae2bcd8dac36e5621dafbfc88ebcd",
+      "remote_commit": "0e750055855869bafc74115ce53786b42aafcf3b",
+      "tree": "6b942b02f5978f88d1eaf6783dd415eb2b37c837",
+      "ordered_remote_parents": [
+        "9e3f787b59e2d534c0429a8e7d10b2f791c3076c"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/0e750055855869bafc74115ce53786b42aafcf3b",
+      "read_utc": "2026-10-27T10:08:44.412Z",
+      "archive_member": "readbacks/3ec9aecb0aeae2bcd8dac36e5621dafbfc88ebcd.json",
+      "bytes": 6817,
+      "sha256": "e35955f21bb8cd4855d35a7cba3c7e95572fad804e426ac8fc4660e496856dc3",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "31dc8b2247aed8cbb4e3f6912659da97a2cbc2b3",
+      "remote_commit": "1690cbfc0102aaf1cd2bb914c2f5593450713566",
+      "tree": "1e1f37feb7d778dce70d377f83bc416c75d0a874",
+      "ordered_remote_parents": [
+        "0e750055855869bafc74115ce53786b42aafcf3b"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/1690cbfc0102aaf1cd2bb914c2f5593450713566",
+      "read_utc": "2026-10-27T10:08:45.464Z",
+      "archive_member": "readbacks/31dc8b2247aed8cbb4e3f6912659da97a2cbc2b3.json",
+      "bytes": 6760,
+      "sha256": "826bc5d0619c2bd719c386889103eb6f36e58b57b9b38880bc632108fc2d4643",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "966d3bd06af3785c2af24ad59afa94dd673f97dd",
+      "remote_commit": "b70a20e7d836bf6dea344e5e431fdc464d24377c",
+      "tree": "5f01914c8ea34b5e1659f3f5b800e1935e454cd3",
+      "ordered_remote_parents": [
+        "1690cbfc0102aaf1cd2bb914c2f5593450713566"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/b70a20e7d836bf6dea344e5e431fdc464d24377c",
+      "read_utc": "2026-10-27T10:08:45.456Z",
+      "archive_member": "readbacks/966d3bd06af3785c2af24ad59afa94dd673f97dd.json",
+      "bytes": 6739,
+      "sha256": "944f032828d47fdaac6f11855d91daae0da6a5e6eec6f1fd63a6502f77a6b802",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "65c97a95cab4702a368855397c65413e2a754b97",
+      "remote_commit": "bffbc1313a75a1b8a47c33f8504594bb7e6527d3",
+      "tree": "70e0ce2e61bb6726b371f392a2362ad3680e24a5",
+      "ordered_remote_parents": [
+        "b70a20e7d836bf6dea344e5e431fdc464d24377c"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/bffbc1313a75a1b8a47c33f8504594bb7e6527d3",
+      "read_utc": "2026-10-27T10:08:45.609Z",
+      "archive_member": "readbacks/65c97a95cab4702a368855397c65413e2a754b97.json",
+      "bytes": 6823,
+      "sha256": "1001fcd958bf1963094ffdbed5fbd9f8749a2c26e3cb1e1f694ab53fc91aadf4",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "7703b966d3dcee1851a3276d13c1ed85860aaef7",
+      "remote_commit": "87ee3b796fb8dc3a40e11c45d978930204e03c6d",
+      "tree": "e8659d7a4fa77812d2be17696c2c73e82fbcb582",
+      "ordered_remote_parents": [
+        "bffbc1313a75a1b8a47c33f8504594bb7e6527d3"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/87ee3b796fb8dc3a40e11c45d978930204e03c6d",
+      "read_utc": "2026-10-27T10:08:45.455Z",
+      "archive_member": "readbacks/7703b966d3dcee1851a3276d13c1ed85860aaef7.json",
+      "bytes": 6760,
+      "sha256": "19dd00d0125c047e8410b7e155dd85a247f0199af9c804173f761cfb4f55b621",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "065414299a6605ea5c151ad6e0cadca4895d44c2",
+      "remote_commit": "756a1604f96a98ba01869e04e91b86ed5cf90990",
+      "tree": "30390d6fe5a4a7f3a81dd34a6d1ff57253a3aaf6",
+      "ordered_remote_parents": [
+        "87ee3b796fb8dc3a40e11c45d978930204e03c6d"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/756a1604f96a98ba01869e04e91b86ed5cf90990",
+      "read_utc": "2026-10-27T10:08:46.624Z",
+      "archive_member": "readbacks/065414299a6605ea5c151ad6e0cadca4895d44c2.json",
+      "bytes": 6781,
+      "sha256": "0b70b928c60312f1dd90ed87f301d91c980565176ee573ceaadb32327b3ad045",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "8c81c4e1c4f731ceab7ed9914c78753c0f57681a",
+      "remote_commit": "4df0be6cba0b08c957489a3f05422a1a841ca662",
+      "tree": "34ce97a048019faf5e1bd9697049b26c687db02f",
+      "ordered_remote_parents": [
+        "756a1604f96a98ba01869e04e91b86ed5cf90990"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/4df0be6cba0b08c957489a3f05422a1a841ca662",
+      "read_utc": "2026-10-27T10:08:46.672Z",
+      "archive_member": "readbacks/8c81c4e1c4f731ceab7ed9914c78753c0f57681a.json",
+      "bytes": 6757,
+      "sha256": "87a359abb647074afc3942e02decf93306a8a0f3f306b913985d323d47a161d0",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "31fc8a0ecada2c04927daee998fd0ba106da872a",
+      "remote_commit": "bd6dfcdb72e11bdb4bbfc837f9b4458da15aaa43",
+      "tree": "1bd2dac5b94fa5a8ca8e56e7fdffc25f5a4ed513",
+      "ordered_remote_parents": [
+        "4df0be6cba0b08c957489a3f05422a1a841ca662"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/bd6dfcdb72e11bdb4bbfc837f9b4458da15aaa43",
+      "read_utc": "2026-10-27T10:08:46.762Z",
+      "archive_member": "readbacks/31fc8a0ecada2c04927daee998fd0ba106da872a.json",
+      "bytes": 6754,
+      "sha256": "aa7cfe45ed9046c8e274c9669a0ad86e3febac98c6585d3d9986882f70313de2",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "7c697640084d77410439fe895de57d5daaf11ce3",
+      "remote_commit": "89891db115c320b6339169e0cbdf11d38f0dee6d",
+      "tree": "dc71773a722a7bbfe70e68c7518dd8d7b60d34a7",
+      "ordered_remote_parents": [
+        "bd6dfcdb72e11bdb4bbfc837f9b4458da15aaa43"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/89891db115c320b6339169e0cbdf11d38f0dee6d",
+      "read_utc": "2026-10-27T10:08:46.647Z",
+      "archive_member": "readbacks/7c697640084d77410439fe895de57d5daaf11ce3.json",
+      "bytes": 6784,
+      "sha256": "766788e1e228895f7b1008b0428a169882b4dc2b7fbb4b19f3a04c2cbd47701c",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "ed01141d88138bc1ea8da9bd6c1ee4c7396de10f",
+      "remote_commit": "f902d76ffb5cb1a28cbf326469b172cdf4173ce5",
+      "tree": "abfd45b86aa1fefb58846c701e30f1933d7bf851",
+      "ordered_remote_parents": [
+        "89891db115c320b6339169e0cbdf11d38f0dee6d"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/f902d76ffb5cb1a28cbf326469b172cdf4173ce5",
+      "read_utc": "2026-10-27T10:08:47.762Z",
+      "archive_member": "readbacks/ed01141d88138bc1ea8da9bd6c1ee4c7396de10f.json",
+      "bytes": 6775,
+      "sha256": "fb540ad03e2cb7d3f243d97346792ac0aa9b4f7347a22055689de21f267113c2",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198",
+      "remote_commit": "63d9669d813bd4352f4784030baa422db117a23d",
+      "tree": "a93d416f4928dfeb46d4bb2224edcfef03dc9d61",
+      "ordered_remote_parents": [
+        "f902d76ffb5cb1a28cbf326469b172cdf4173ce5"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/63d9669d813bd4352f4784030baa422db117a23d",
+      "read_utc": "2026-10-27T10:08:47.752Z",
+      "archive_member": "readbacks/f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198.json",
+      "bytes": 6766,
+      "sha256": "32674ff607ec62027d120303505c8e896dbd75463fba384102b89b1b6dad523e",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "f6c6380abc1b1a942ad90120f87e44e36b07f83c",
+      "remote_commit": "8844c4dcee4976e480c0d9f136c9ed39e39322ec",
+      "tree": "288b7a3a1bcf9688ceb18825ac5c8134a31decd7",
+      "ordered_remote_parents": [
+        "63d9669d813bd4352f4784030baa422db117a23d"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/8844c4dcee4976e480c0d9f136c9ed39e39322ec",
+      "read_utc": "2026-10-27T10:08:47.715Z",
+      "archive_member": "readbacks/f6c6380abc1b1a942ad90120f87e44e36b07f83c.json",
+      "bytes": 6775,
+      "sha256": "2c73ed9c0f41582234ca118ffea08cd6ce6226ab0012d8a2065d69dd0b1825e2",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "ce04877b6cab8109fee51c7013bf1c8127978946",
+      "remote_commit": "293b991c7d8ef29808923e743ff52a3cedf4ca29",
+      "tree": "8f74345fc281d92f5890ff62adfa55d4c954cb6f",
+      "ordered_remote_parents": [
+        "8844c4dcee4976e480c0d9f136c9ed39e39322ec"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/293b991c7d8ef29808923e743ff52a3cedf4ca29",
+      "read_utc": "2026-10-27T10:08:47.764Z",
+      "archive_member": "readbacks/ce04877b6cab8109fee51c7013bf1c8127978946.json",
+      "bytes": 6760,
+      "sha256": "ef85143a61067741b29834bb17e5cffbecc9acec7c6cbdee5bf756ebb3a3f8ac",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "d2aa63db38cbf90b509d4668f09db7a83aaec3de",
+      "remote_commit": "56d9556cd727ab3767db0f833b5ed01915e92828",
+      "tree": "feb6d78543620de096c1c13f32505c20d9aeced8",
+      "ordered_remote_parents": [
+        "293b991c7d8ef29808923e743ff52a3cedf4ca29"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/56d9556cd727ab3767db0f833b5ed01915e92828",
+      "read_utc": "2026-10-27T10:35:29.138Z",
+      "archive_member": "readbacks/d2aa63db38cbf90b509d4668f09db7a83aaec3de.json",
+      "bytes": 4629,
+      "sha256": "7c377784fc74393cde027d0a8f07be887edcee0e5fe1f2895404f64e0423fb12",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "bf175e730f857fd42df2b724f4e702b1320ec287",
+      "remote_commit": "e2c0f2cc1b9da466f6e5cffb1b79a16cfd27c686",
+      "tree": "5548cfa174c3b8a7bea553dddb5223ef2aff7f7a",
+      "ordered_remote_parents": [
+        "56d9556cd727ab3767db0f833b5ed01915e92828"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/e2c0f2cc1b9da466f6e5cffb1b79a16cfd27c686",
+      "read_utc": "2026-10-27T10:35:29.170Z",
+      "archive_member": "readbacks/bf175e730f857fd42df2b724f4e702b1320ec287.json",
+      "bytes": 4659,
+      "sha256": "cefbb0f917cc009ccbf1152dce8a9460d3a5ea07b2225b69862f8625f350165e",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "87f25d27d8b9d02a82d9d4aeb2256ddbec7742a2",
+      "remote_commit": "59b5e1326a356cd0e718daadd05fa3df845dd09d",
+      "tree": "a41179de6f4ce31c61d3535f1763418c82c1f588",
+      "ordered_remote_parents": [
+        "e2c0f2cc1b9da466f6e5cffb1b79a16cfd27c686"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/59b5e1326a356cd0e718daadd05fa3df845dd09d",
+      "read_utc": "2026-10-27T10:35:29.271Z",
+      "archive_member": "readbacks/87f25d27d8b9d02a82d9d4aeb2256ddbec7742a2.json",
+      "bytes": 4631,
+      "sha256": "acf61ce8ceb8c4544b4934a3aa175c2ba04df4190739aa8da512657631613bc2",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "413e7209181191b29605a69b9256b14c5a66bb20",
+      "remote_commit": "58296902163666fc2f3f9ec01fe7a03fe760af39",
+      "tree": "9881a6c277d01f86b3cea03f11fdd23d5d769e99",
+      "ordered_remote_parents": [
+        "59b5e1326a356cd0e718daadd05fa3df845dd09d"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/58296902163666fc2f3f9ec01fe7a03fe760af39",
+      "read_utc": "2026-10-27T10:35:30.266Z",
+      "archive_member": "readbacks/413e7209181191b29605a69b9256b14c5a66bb20.json",
+      "bytes": 4645,
+      "sha256": "1bb494bd05b1117440e24632bd2a9a7f6f0753e499b8592de76fcfffb22e86ea",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "3eda9238c71e859271ef057f66e1ce87f4253386",
+      "remote_commit": "3cf2947c572f1a788ef041ae2cc4791470612fec",
+      "tree": "765051dfd946eac60a2e3787baa20cf1a4e673af",
+      "ordered_remote_parents": [
+        "58296902163666fc2f3f9ec01fe7a03fe760af39"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/3cf2947c572f1a788ef041ae2cc4791470612fec",
+      "read_utc": "2026-10-27T10:35:30.271Z",
+      "archive_member": "readbacks/3eda9238c71e859271ef057f66e1ce87f4253386.json",
+      "bytes": 4635,
+      "sha256": "a9336f519ff8138e88516be88c5932b119e0db18ea49da94a8eed3d129d6c24a",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    },
+    {
+      "original_commit": "86c2e3a68d28d6b4e583555f16c649d7d3c24cd3",
+      "remote_commit": "ecdaf1679e9c2e1ea725d4ebf355fd9bdaee82a9",
+      "tree": "9f57f975d74537af5032859a59f7fdb0e02a7b59",
+      "ordered_remote_parents": [
+        "3cf2947c572f1a788ef041ae2cc4791470612fec"
+      ],
+      "request_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/ecdaf1679e9c2e1ea725d4ebf355fd9bdaee82a9",
+      "read_utc": "2026-10-27T10:35:30.319Z",
+      "archive_member": "readbacks/86c2e3a68d28d6b4e583555f16c649d7d3c24cd3.json",
+      "bytes": 4641,
+      "sha256": "8ffd7ca9ee11b4dfaa9804a787fb41b6ef780f8938d3840b75d474e7723f8bc6",
+      "checks": {
+        "sha": true,
+        "exact_tree": true,
+        "ordered_mapped_parents": true
+      }
+    }
+  ]
+}

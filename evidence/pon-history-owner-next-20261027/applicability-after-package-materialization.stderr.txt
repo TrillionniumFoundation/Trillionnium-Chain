@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_applicability.py", line 337, in <module>
+    result = validate()
+             ^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_applicability.py", line 308, in validate
+    require(expected_table in authority, 'documentation applicability table drift')
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_invariant_evidence.py", line 9, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: documentation applicability table drift

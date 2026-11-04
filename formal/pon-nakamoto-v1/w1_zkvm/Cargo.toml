@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["relation", "methods", "host"]
+exclude = ["methods/guest"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+publish = false
+
+[profile.release]
+debug = 1
+
+# An isolated proof experiment. None of these packages is a Node dependency.
+# Exact versions and both lockfiles are part of the measured source identity.

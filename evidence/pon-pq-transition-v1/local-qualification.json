@@ -1,0 +1,53 @@
+{
+  "schema": "trnm-pq-offline-local-qualification-v1",
+  "measured_date_utc": "2026-10-26",
+  "original_main_sha": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026",
+    "os": "Linux x86_64",
+    "filesystem": "overlayfs",
+    "rust_toolchain_available": false
+  },
+  "invocation": [
+    "python",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_envelope.py",
+    "test_pq_kem.py",
+    "test_pq_tls.py",
+    "test_pq_account_migration.py"
+  ],
+  "test_result": {
+    "run": 18,
+    "passed": 18,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "elapsed_seconds": 4.749
+  },
+  "source_git_blob_sha": {
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "formal/pon-nakamoto-v1/pq_account_migration.py": "70387674fdce404349b316e57e44f8a50c96b849",
+    "formal/pon-nakamoto-v1/test_pq_envelope.py": "249febc677d04f3e4b37330fdcd22934a606c079",
+    "formal/pon-nakamoto-v1/test_pq_kem.py": "5ff183707fc37bc6d13b970fe0d23ab326d69343",
+    "formal/pon-nakamoto-v1/test_pq_tls.py": "35b3e876d0ad53c87c9f423e2941127cb7f285d4",
+    "formal/pon-nakamoto-v1/test_pq_account_migration.py": "99e9b003f4aea2f230a51fb8b56fb2e33640c960",
+    "formal/pon-nakamoto-v1/strict_signature.py": "b0cedca3a0423f2563359a8645ba322f966804dc"
+  },
+  "measured_scope": [
+    "real ML-DSA-65 signs/verifies",
+    "canonical TPQ1 context negative mutations",
+    "real ML-KEM-768 KEM and implicit rejection",
+    "real loopback TLS1.3 hybrid X25519MLKEM768 / ML-DSA authenticated server",
+    "dual signed Ed25519->ML-DSA offline migration and eight-connection SQLite WAL local idempotence"
+  ],
+  "independent_accepted": false,
+  "production_eligible": false,
+  "native_node_integrated": false,
+  "changes_consensus": false,
+  "public_network_ready": false,
+  "pq_pow_hardness_qualified": false,
+  "caveat": "Source blob equality is verified via Git hashes. Results are local offline tests, not an exact-branch native Rust/Chain qualification, independent operator audit, a public network claim, or post-quantum Chain activation."
+}

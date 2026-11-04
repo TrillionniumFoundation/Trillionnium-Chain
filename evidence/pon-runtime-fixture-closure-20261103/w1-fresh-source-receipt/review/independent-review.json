@@ -1,0 +1,92 @@
+{
+  "schema": "trnm-w1-fresh-producer-path-independent-review-v1",
+  "completed_utc": "2026-11-03T22:17:55.289354+00:00",
+  "verdict": "APPROVE_ONE_LINE_PRODUCER_BASENAME_FIX_AT_SOURCE_GATE_SCOPE",
+  "reviewed_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "reviewed_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "hosted_original": {
+    "run_id": 41728500666,
+    "job_id": 126239416973,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41728500666/job/126239416973",
+    "readback_sha256": "79aa3c32bd9f253e573d63eb89a932df868a1c3f6d42e0d3b5b1733b1540337f",
+    "raw_bundle_sha256": "58e91ecf233a51df2f86c329ab043b211b2fb9fc68a2ee43a6cd8f01178104b6",
+    "actual_failure": "missing source.json before child native service execution",
+    "original_failure_preserved": true
+  },
+  "root_cause": {
+    "producer": ".github/workflows/pon-w1-work-security.yml:398",
+    "producer_basename": "source-before.json",
+    "consumer": "scripts/ci/public_fixture_host_lease.py:74",
+    "consumer_basename": "source.json",
+    "call_path": [
+      "run_from_zero_host.outer",
+      "lease.parent_lock",
+      "lease.context",
+      "lease.workflow_source"
+    ],
+    "no_native_manifest_or_Host_controller_in_original_artifact": true
+  },
+  "consumer_review": {
+    "fresh_block_legacy_basename_occurrences": 1,
+    "only_legacy_basename_occurrence_is_producer": true,
+    "fresh_runner_or_Host_reader_requires_legacy_basename": false,
+    "artifact_upload_is_whole_job_output_directory": true,
+    "other_three_work_security_producers_unchanged": true,
+    "all_source_after_commands_unchanged": true,
+    "other_workflows_have_independent_output_roots_and_consumers": true,
+    "source_scan_log": "source-basename-consumers.stdout",
+    "host_callsite_scan_log": "host-callsites.stdout"
+  },
+  "real_controls": {
+    "producer_invocations": 2,
+    "producer_exits": [
+      0,
+      0
+    ],
+    "consumer_invocations": 5,
+    "corrected_positive": 1,
+    "retained_old_missing_filename_failure": 1,
+    "wrong_or_stale_refusals": 3,
+    "self_consistent_genuine_stale_receipt_reaches_actual_source_recheck_and_refuses": true,
+    "positive_identity": {
+      "base": null,
+      "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "tested_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 882506480,
+      "tracked_entries": 7723,
+      "tracked_worktree_verified": true
+    },
+    "genuine_old_receipt_used_only_for_negative_controls": {
+      "original_path": "/workspace/scratch/b5a148b09b11/next-validation/committed-check/exact-source.stdout",
+      "sha256": "ad4dd0271ae1941621e012a13b433cf2d71338de49e301a9a71609b84994412b",
+      "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "copied_unchanged_for_negative_control_only": true
+    }
+  },
+  "patch": {
+    "path": ".github/workflows/pon-w1-work-security.yml",
+    "original_sha256": "7434725504d9ea31e96226d027fbaa2cf2080d56c5a58f41c453685311dc79cf",
+    "candidate_sha256": "a2fbb452b33462fa34847bb0d790e3b71b4d68d7af91a755803edff47332249f",
+    "candidate_patch_sha256": "c9530bea383e91f67a2deb81feebaff149f610f529037ca26d4c3941ea96d1af",
+    "changes": 1,
+    "scope": "Only fresh-challenge-service producer output basename source-before.json to source.json; all other jobs and source-after preserved."
+  },
+  "limitations": {
+    "patch_applied": false,
+    "repository_test_added": false,
+    "consumer_fallback_or_guard_change": false,
+    "fabricated_positive_identity": false,
+    "context_or_parent_lock_called": false,
+    "Host_provisioned": false,
+    "native_or_cargo_executed": false,
+    "budgets_or_command_semantics_changed": false,
+    "service_or_confirmation_acceptance_claimed": false,
+    "full974_terminal_read": false
+  },
+  "clean_checkout_unchanged": true
+}

@@ -1,0 +1,18 @@
+    Checking rand_core v0.10.1
+    Checking const-oid v0.10.2
+    Checking getrandom v0.4.2
+    Checking crypto-common v0.2.2
+    Checking digest v0.11.3
+    Checking shake v0.1.0
+    Checking signature v3.0.0
+    Checking linux-raw-sys v0.12.1
+    Checking der v0.8.3
+    Checking rustix v1.1.4
+    Checking spki v0.8.1
+    Checking pkcs8 v0.11.0
+    Checking ml-dsa v0.1.1
+    Checking rusqlite v0.39.0
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/abae1861b451/chain-cell-ready/trillionnium/crates/trnm-crypto-primitives)
+    Checking tempfile v3.27.0
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/abae1861b451/chain-cell-ready/trillionnium/crates/trnm-data-availability)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 12.20s

@@ -1,0 +1,5 @@
+
+thread '<unnamed>' panicked at src/main.rs:14:51:
+full native PNH1/PNW1 relation: Work(Product)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+Error: execution unavailable; no guest rejection established: Guest panicked: full native PNH1/PNW1 relation: Work(Product)

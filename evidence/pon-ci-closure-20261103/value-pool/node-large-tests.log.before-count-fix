@@ -1,0 +1,24 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/value-pool-target/debug/deps/trnm_pon_node-44fc5e7d3de9a554)
+
+running 2 tests
+test store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks ... FAILED
+test store::native_authenticated::arithmetic_cache::large_input_tests::warmed_large_arithmetic_keeps_actual_sql_rows_cancellation_and_cold_reopen ... ok
+
+failures:
+
+---- store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks stdout ----
+
+thread 'store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks' (2338) panicked at crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs:64:5:
+assertion `left == right` failed
+  left: 2101
+ right: 2100
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    store::native_authenticated::arithmetic_cache::large_input_tests::large_complete_inputs_keep_actual_accounts_conservation_and_context_checks
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 939 filtered out; finished in 9.77s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

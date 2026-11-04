@@ -1,0 +1,34 @@
+{
+  "runtime_commit": "618d1bd225db4df8fb7c1d0fc53af991d7f7fdf7",
+  "temporary_legacy_adapter_removed": true,
+  "files": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 438306,
+      "sha256": "9fa96a452457fe4804e54c277cc919621322f84ea6a8a9cc6f5c74aa988e1dec"
+    },
+    "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md": {
+      "bytes": 16955,
+      "sha256": "151209958dd519d411ab9750a2691a89a4afcd09f126d73e42cf83f92fc88afb"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+      "bytes": 36217,
+      "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": {
+      "bytes": 27953,
+      "sha256": "57af491f886603245962c1ac26f6ff21edfa623a8437b957282852422fa254db"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": {
+      "bytes": 23380,
+      "sha256": "967dfdaa623f252debe1f8d1b680287f1940b275d17b85ddafa9394d3faa1454"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": {
+      "bytes": 26042,
+      "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": {
+      "bytes": 34649,
+      "sha256": "2941acb3e8c1836f115b44b98f5e6b72aa87664beb19e92c8a4b9fdb2ae928ae"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 4.60s
+     Running tests/model_evidence_v3.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/model_evidence_v3-c5bc25a5cd728bd3)
+
+running 6 tests
+test explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg ... FAILED
+test known_alias_intakes_share_one_limit_and_reorganization_restores_it ... ok
+test missing_corrupt_or_noncanonical_control_bytes_refuse_signed_admission ... ok
+test combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup has been running for over 60 seconds
+test objective_release_shared_source_reward_reopen_and_review_fork_are_native has been running for over 60 seconds
+test objective_release_shared_source_reward_reopen_and_review_fork_are_native ... ok
+test zero_gain_and_noop_cannot_become_positive_by_consistent_signatures ... ok
+test combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup ... ok
+
+failures:
+
+---- explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg stdout ----
+
+thread 'explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg' (198654) panicked at crates/trnm-pon-node/tests/model_evidence_v3.rs:498:14:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "MEMBERSHIP", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 419.37s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test model_evidence_v3`

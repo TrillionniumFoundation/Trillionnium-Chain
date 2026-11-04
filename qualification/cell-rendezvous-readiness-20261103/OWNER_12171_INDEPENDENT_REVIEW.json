@@ -1,0 +1,49 @@
+{
+  "schema": "independent-readonly-source-review-v1",
+  "reviewed_commit": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+  "reviewer": "private_ci_blockers",
+  "utc": "2026-11-03T20:41:18.441700+00:00",
+  "inputs": {
+    "scripts/ci/public_fixture_host_lease.py": {
+      "git_blob": "69ecbe1183ef9e6123d3014376f9c50a3f43a063",
+      "bytes": 11040,
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70"
+    },
+    "scripts/ci/run_public_fixture_native.py": {
+      "git_blob": "253fbc7806b6631f5a29220ea42b0711f853f278",
+      "bytes": 29037,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    "scripts/ci/run_from_zero_host.py": {
+      "git_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "bytes": 24743,
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+    },
+    "scripts/ci/public_host_ci_observation.py": {
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "bytes": 5452,
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    "scripts/ci/run_history_native.py": {
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "bytes": 21380,
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+    }
+  },
+  "result": "no_new_blocking_defect_found_in_reviewed_scope",
+  "execution_performed": false,
+  "findings": [
+    "The nonblocking root-owned global lock rejects concurrent owners and does not replace an existing lock inode.",
+    "The sealed parent binds job, source, uid/gid, cwd, boot, exact parent inode/limits/unit bytes and systemd properties; reuse is restricted to the current-ELF registry and requires no remaining children.",
+    "The fixed systemd parent retains CPU 25000/100000, memory 2147483648, swap 0, pids 256; service uses original uid/gid, NoNewPrivileges, empty capability bounding set and control-group cleanup.",
+    "The exact direct libtest parent executable and cwd are observed; both libtest and launcher process identities are verified around pidfd_open and monitored while the native child runs.",
+    "The original selector argv, source and binary before/after, native log and architecture 18-sample report are bound. Late cleanup or parent seal failure invalidates success."
+  ],
+  "limits": [
+    "This review executed no native fixture, systemd setup, Cargo, cgroup or Host qualification.",
+    "Only architecture receives the explicit 120-second adapter timeout. Other fixtures retain their original native budgets and CI supervisor lifetime.",
+    "The root-owned seal is not an authorization barrier against malicious root/passwordless-sudo same-job code; the event-bound reviewed source remains the trust boundary.",
+    "No business, performance, public admission or all-honest gate is closed by this review.",
+    "Rust child-marker and actual KernelBudget verification were independently reviewed by the Chain owner, not re-executed here."
+  ]
+}

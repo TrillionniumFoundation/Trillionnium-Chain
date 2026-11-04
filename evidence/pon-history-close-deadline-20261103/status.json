@@ -1,0 +1,67 @@
+{
+  "schema": "pon-history-close-deadline-candidate-v1",
+  "parent": "45962558a7133375b16c0ac2600f2edb4a115585",
+  "parent_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+  "changes": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "57616573bfeddd872c9e167332ad5882d2bd5ccc",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "50dc63962d4edbd5379ccecc3f553e9fb6ab8802",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs": "96dc58e1a69c0a4f44327bd019b6ef78eef597d1",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "a113d916cae14d723beee7ae8d83f31dec687dc4",
+    "config/pon/pq-cross-branch-corpus-v1.json": "effab1486891185e51d6da5ac946e23e38c77d24"
+  },
+  "recovery": {
+    "execution_environment": "unavailable_before_build_and_tests",
+    "local_preflight_before_edits": "PASS at f66f7f741ac8c78b795ed0bc789ca8f7d23f3b8d",
+    "project_boundary_blobs_unchanged_in_parent": true,
+    "affected_existing_source_files_equal_between_f66_and_parent": true,
+    "production_matches_recorded_blob_prefix": "57616573bf",
+    "recovered_tests": "original patch text; two long assertions manually wrapped; recovered bytes not formatter-verified",
+    "local_current_parent_import_completed": false,
+    "exact_recovered_combination_preflight_executed": false
+  },
+  "static_review": {
+    "production_placement": "reviewed with no identified blocker",
+    "error_precedence": [
+      "cleanup_or_settlement_error",
+      "original_native_error",
+      "late_success_deadline"
+    ],
+    "final_check": "original Control.alive without a new Host observation",
+    "closed_epoch_guard_retained": true,
+    "committed_native_facts_retained": true,
+    "original_paid_cpu_retained": true,
+    "independent_external_security_acceptance": false
+  },
+  "prepared_controls": {
+    "selector": "ingress::history_import::tests::deadline_controls::",
+    "count": 3,
+    "platform": "Linux",
+    "executed": false,
+    "timely_native_then_expiry_only_inside_cleanup_executed": false
+  },
+  "source_composition": {
+    "parent_inventory_renderer_matches": true,
+    "expected_embedded_paths": 1157,
+    "expected_pin_entries": 376,
+    "qualification_flags_unchanged": true,
+    "command_line_source_checkers_executed_on_recovered_candidate": false,
+    "concurrent_pq_pins_preserved": 4,
+    "history_production_diff_is_exactly_two_final_fences": true,
+    "existing_test_module_diff_is_only_new_include": true,
+    "original_sole_plan_preserved": true
+  },
+  "gates": {
+    "compilation": "PENDING",
+    "rustfmt": "PENDING",
+    "strict_clippy": "PENDING",
+    "native_regressions": "PENDING",
+    "exact_clean_source_checks": "PENDING",
+    "new_candidate_codeql": "PENDING",
+    "original_public_service": "HOLD",
+    "original_work_cost_and_hardness": "HOLD",
+    "all_blockers_closed": false,
+    "public_readiness": false,
+    "execution_authority": false,
+    "activation_authority": false
+  }
+}

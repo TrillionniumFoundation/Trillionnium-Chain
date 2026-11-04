@@ -1,0 +1,25 @@
+{
+  "source_commit": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5",
+  "source_state": "candidate working tree; not a committed qualification receipt",
+  "primitive_source_sha256": "a605dd18d967ec945ea7a4ae7d40549ee8d1ef9b9ce525c5214f5854e35123dc",
+  "binary_sha256": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e",
+  "harness_sha256": "6de123ce524fbf2ef6b4e7a3af965800886fa7d3cd162e8ae0da966c056b4760",
+  "library_sha256": "b56c542e6400482e8d97c5f82c9db5b8f1a8f8bd78448e391ddbd610675d3618",
+  "command": [
+    "rustc",
+    "+1.95.0",
+    "--edition=2021",
+    "-C",
+    "opt-level=3",
+    "/workspace/scratch/ed36d74e0124/w1-resource-local/valid_work_observation.rs",
+    "-L",
+    "dependency=/workspace/scratch/ed36d74e0124/pon-work-security/trillionnium/target/release/deps",
+    "--extern",
+    "trnm_crypto_primitives=/workspace/scratch/ed36d74e0124/pon-work-security/trillionnium/target/release/libtrnm_crypto_primitives.rlib",
+    "-o",
+    "/workspace/scratch/ed36d74e0124/w1-resource-local/candidate-valid-work"
+  ],
+  "clock_ticks_per_second": "100",
+  "cpu.max": "800000 100000",
+  "memory.max": "8589934592"
+}

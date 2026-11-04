@@ -1,0 +1,40 @@
+{"name": "preflight", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "cargo-metadata", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "format", "exit_code": 0, "counts": null, "source_verified": true}
+{"name": "w1-complete", "exit_code": 0, "counts": [["113", "0"]], "source_verified": true}
+{"name": "host-parent", "exit_code": 101, "counts": [], "source_verified": true}
+{"name": "history-import", "exit_code": 0, "counts": [["20", "1"]], "source_verified": true}
+{"name": "cache-explicit", "exit_code": 0, "counts": [["1", "0"]], "source_verified": true}
+Traceback (most recent call last):
+  File "/workspace/scratch/e08750459604/pon-native-682-validation.py", line 83, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/scratch/e08750459604/pon-native-682-validation.py", line 57, in main
+    item = run(command, OUT/(name+'.log'), timeout=900, env=env, expected_source=COMMIT)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/ci_observation.py", line 116, in run
+    source_error = _source_error(expected_source)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/ci_observation.py", line 49, in _source_error
+    verify('head', expected_commit, root=ROOT)
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/verify_ci_source.py", line 112, in verify
+    clean()
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/verify_ci_source.py", line 92, in clean
+    if git('status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none'):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/verify_ci_source.py", line 82, in git
+    return git_bytes(*args).decode('utf-8').strip()
+           ^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e08750459604/pon-work/scripts/ci/verify_ci_source.py", line 79, in git_bytes
+    return subprocess.check_output(['git', '--no-replace-objects', *args], cwd=root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1196, in communicate
+    stdout = self.stdout.read()
+             ^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

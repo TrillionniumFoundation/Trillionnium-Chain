@@ -1,0 +1,52 @@
+{
+  "schema": "exact-candidate-four-lane-node-small-handoff-v1",
+  "observed_utc": "2026-11-03T23:38:31.210314+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "run_id": 41732369827,
+  "aggregate": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-original-node-four-lane-readback.json",
+    "bytes": 19241,
+    "sha256": "605d0871e56b1d485381b72ad1ccec082e09e5c4823d7a3b9cf4b575a84caa58"
+  },
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-head-13279503756-readback.json",
+      "bytes": 288856,
+      "sha256": "d8124ff5fd2be3b38980fa50a5c8fd916f4d66d6568d4288c0ef17e676a03b57"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-head-13279503756-original-records.json.gz",
+      "bytes": 938038,
+      "sha256": "f6a795090fa864ee7cf317cac2286cae4a6f2943e34d256c170ffaa5a5861ad5"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-merge-13279562975-readback.json",
+      "bytes": 289315,
+      "sha256": "7c0d619b0a59a2e0393ad68cab1e244d304f5122c5572dd247b8b63082e966de"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-merge-13279562975-original-records.json.gz",
+      "bytes": 955427,
+      "sha256": "78adc431d8b940c37558179cfbcfa3b52013fecf109f222f14156a9f78e90c9d"
+    }
+  ],
+  "previously_frozen_x64_handoff": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-two-x64-terminal-handoff.json",
+    "bytes": 4271,
+    "sha256": "34af53c75ed9a78bd7bfd7a32e47d6bc86e31d478067f3df1832825ed14a04c6"
+  },
+  "new_file_scope": "Only the two newly completed ARM lane readbacks/original bundles and the four-lane aggregate/index are handed off here. Existing x64 files are referenced without rewriting or duplicating them.",
+  "scope": "951 unique PASS names repeated on four exact source/architecture lanes. The original43 selectors overlap that population and are not added. Nested subprocess harness summaries are retained in per-lane records but not added. The three candidate diagnostic tests are included; all23 original ignored tests remain ignored. W1 History default-feature958 is a separate invocation profile. No results from a previous candidate are inherited.",
+  "metadata": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T233738774Z-pq-full-jobs.json",
+    "bytes": 33878,
+    "sha256": "255e7bbca5873f15ddd97949a4bb3f85ae9332c60867cc54bb371a1855d08333"
+  },
+  "reader": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/aggregate-pq-four-lane.py",
+    "bytes": 7512,
+    "sha256": "1375c8af27d5afc1fa245a46fc779dcdf774a1c5285de69cff955068a11fb044"
+  }
+}

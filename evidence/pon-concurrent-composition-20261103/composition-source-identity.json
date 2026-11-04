@@ -1,0 +1,122 @@
+{
+  "parents": [
+    "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2",
+    "1c41b3b7add7541d86a8112869bd21ce5343d2fd"
+  ],
+  "merge_base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "review_scope": "Internal source review; no source-semantic blocker found. Neither code review nor old measurements confer current native, ARM, service or independent security acceptance.",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "bytes": 36622,
+      "sha256": "5b7137e9931e746e5827e5cc563138e2a958d495203a444ba8a4816ea6f30a06",
+      "composed_blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "71e7a36bc9ba448fd9383baa0f758c9c55836df0",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "8b4df477c381a01f43844cb85d66af613b6ae405",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "6a568982251c7b14727e4a55b6e4d843f8c89c56"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
+      "bytes": 18967,
+      "sha256": "e55a049a30c1f2b979247132a27ded6386ec9052535328f7363710dc67ed00b8",
+      "composed_blob": "5c90fd5966e964724e0bbb2b91de0577d70f628f",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "a1f2412d673bd4d3a628e33a9b83ad4f39b52c7f",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "d847bfba15c28e2ea28b47f5d5fd804087e3cb30",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "40b58175be7ff7c617ee063dec37ed41922f959e"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "bytes": 34128,
+      "sha256": "c7e0cb5ea0a12ee845b60e0a7e5495a088da7eedfd81750b475b80dc597df176",
+      "composed_blob": "c0413946e748a349aeb7ee2de253e7679270a51c",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "2edb656a0e7795db5d8950596b3ee87458de2d8b",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "c0413946e748a349aeb7ee2de253e7679270a51c",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "241003ed34eff9a0a0ab4992acfa527ad38d702d"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs",
+      "bytes": 41717,
+      "sha256": "0153c8fe811dccaa64bb6f8ac2d882e83e79f49c068a74526dc3e03c5ac80a8e",
+      "composed_blob": "655f0701562203f2e57c4e71591e08b301ac8b92",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "fb103ea998c8c9907b2276d6f3ec9703f5718609",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "655f0701562203f2e57c4e71591e08b301ac8b92",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "e0ac7c518715943c8ba1bd73f383beef8d7a7781"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "bytes": 13879,
+      "sha256": "608456c63fd4e11dabe818be51cea042aeae862bd77d4836b824b3c3c0c848a7",
+      "composed_blob": "9c1b5573ae7a4f43745fd29e6e6d1a28abf64da8",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "fc02fbf611e1b853637114841be8b0202eb1c32e",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "d55340db363fdee75d43502e43ba36072283a7c7",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "cb82771b6cf02518cccaa029c692cc05345e6ab6"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "bytes": 17092,
+      "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+      "composed_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "308ee4541d34682f82debb574eb523f23d1faad4",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "1c528e1bf2435331d91ae627fd5b1541da70c3a4",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "abd262b2ed92ce3ac720d17bbe0b61e8f082c675"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "bytes": 21244,
+      "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+      "composed_blob": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "827ba53a9ed39b06cbb5f39c5a25effd65ce5422",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+      "bytes": 30536,
+      "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+      "composed_blob": "321027f2a9677b9c20c09319e9a4c3b778718e79",
+      "prior_blobs": {
+        "bebb1f3289cd7050fefde89ea8f2cf33c6c37588": "5a6e5b89cfec6ee1941b96ac5585cd5bc8d98d8d",
+        "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2": "5a6e5b89cfec6ee1941b96ac5585cd5bc8d98d8d",
+        "1c41b3b7add7541d86a8112869bd21ce5343d2fd": "321027f2a9677b9c20c09319e9a4c3b778718e79"
+      }
+    }
+  ],
+  "source_expected_counts": {
+    "protocol_wire_passed": 27,
+    "protocol_wire_ignored": 1,
+    "m06_root": 11,
+    "node_root": 7,
+    "node_large_input": 3,
+    "native_authenticated": 86,
+    "postwrite": 23,
+    "cell_sequence": 4,
+    "pq_observation": 4,
+    "unchanged_pq_required_config": 43
+  },
+  "retained_assertions": {
+    "bebb_cell": 32,
+    "prior_1c_cell": 34,
+    "prior_0443_cell": 40,
+    "composed_cell": 42
+  },
+  "decisions": {
+    "cell": "Keep real shared Setup readiness and bounded failure metadata; retain remote slow-start test and sign seq2 TTL only after original seq1 announcement. Preserve every original bound and assertion condition.",
+    "pq": "Keep remote with_operation FnOnce helper and its two new boundary tests; remove the now-unused invoke helper. Both PQ files match 0443 exactly; production macro unchanged.",
+    "arithmetic": "Protocol production/tests match 1c exactly; three arithmetic test files retain the union of both parents. Existing borrowed experiment remains outside default Node path.",
+    "plans": "Append both original plan continuations byte-for-byte after the common base; keep both immutable evidence sets and rejected outcomes."
+  }
+}

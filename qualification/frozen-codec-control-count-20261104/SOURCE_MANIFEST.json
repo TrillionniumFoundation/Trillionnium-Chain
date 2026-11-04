@@ -1,0 +1,73 @@
+{
+  "schema": "trnm-frozen-history-codec-control-count-v1",
+  "parent": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "parent_tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "workflow_reused_from_existing_owner": {
+    "commit": "41dd661222285728720b97519da1f5a024c7716b",
+    "path": ".github/workflows/pon-w1-work-security.yml",
+    "blob": "aa9d7597904d2d0bec32a502160c46ae255381be",
+    "bytes": 25524,
+    "sha256": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633",
+    "entire_owner_tree_not_adopted": true
+  },
+  "delta": {
+    "parent": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+    "donor": "41dd661222285728720b97519da1f5a024c7716b",
+    "before_blob": "a2e0f3586abf676b03c12b26597261aac35438b9",
+    "after_blob": "aa9d7597904d2d0bec32a502160c46ae255381be",
+    "only_count_and_exact_codec_case": true,
+    "all_other_bytes_equal": true,
+    "added": "          codec_selector = ('ingress::history_import::tests::'\n              'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')\n          codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \\.\\.\\. ok$', history, re.M)\n          if len(codec_rows) != 1:\n              raise SystemExit(codec_selector + ': exact codec control did not execute once')\n"
+  },
+  "existing_case_source": {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "blob": "c75147a7ec1c51fc402bb5bf2c9a88994b2a1ff7",
+    "case": "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+    "single_test_definition_verified": true,
+    "source_unchanged": true
+  },
+  "corpus": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "blob": "e819fda91869473c51aa56e224689d3da1d1b876",
+    "unchanged": true,
+    "exact_w1_workflow_not_in_current_pins": true,
+    "no_source_pins_modified": true
+  },
+  "negative": {
+    "run_id": 41768503400,
+    "job_id": 126372439231,
+    "source": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+    "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+    "actual_history": {
+      "passed": 28,
+      "failed": 0,
+      "ignored": 1,
+      "filtered": 955
+    },
+    "old_workflow_expected": {
+      "passed": 27,
+      "ignored": 1
+    },
+    "failure": "history-import-tests: exact native controls did not execute",
+    "decoded_log_bytes": 191239,
+    "decoded_log_sha256": "fe430363a2481d6aa32f9026916e2cbe04e5d18b43de171c8c47518569938a19",
+    "immutable_evidence_commit": "fa2fca6cf2aede38a60b5f39c67f12b3fefb7fcb",
+    "immutable_evidence_path": "evidence/pon-1bac-original-gates-20261104/job-126372439231-w1-factorial-negative.decoded.log"
+  },
+  "validation": {
+    "reverse_byte_restoration": true,
+    "independent_review_blob": "23bfa8942fc014960339fbd49d2166d637f86ab2",
+    "local_preflight_available": false,
+    "local_rust_or_python_execution": false,
+    "new_original_matrix": "PENDING",
+    "budgets_assertions_original_commands_and_matrix_unchanged": true
+  },
+  "scope": {
+    "production_rust_changed": false,
+    "entire_frozen_owner056_source_preserved": true,
+    "da_diagnostic_not_included": true,
+    "performance_qualified": false,
+    "host_qualified": false,
+    "production_activation": false
+  }
+}

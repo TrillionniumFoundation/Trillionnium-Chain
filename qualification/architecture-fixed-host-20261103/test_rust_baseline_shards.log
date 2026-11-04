@@ -1,0 +1,14 @@
+test_actual_nonzero_child_retains_failure_and_cannot_fan_in (__main__.RustShardTests.test_actual_nonzero_child_retains_failure_and_cannot_fan_in) ... ok
+test_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled (__main__.RustShardTests.test_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled) ... ok
+test_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file (__main__.RustShardTests.test_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file) ... ok
+test_full_local_lane_and_hosted_command_union_are_exact (__main__.RustShardTests.test_full_local_lane_and_hosted_command_union_are_exact) ... ok
+test_missing_extra_alias_duplicate_json_and_changed_script_refuse (__main__.RustShardTests.test_missing_extra_alias_duplicate_json_and_changed_script_refuse) ... ok
+test_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse (__main__.RustShardTests.test_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse) ... ok
+test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner (__main__.RustShardTests.test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner) ... ok
+test_two_complete_current_source_receipts_are_required (__main__.RustShardTests.test_two_complete_current_source_receipts_are_required) ... ok
+test_zero_child_without_current_host_execution_stays_failed (__main__.RustShardTests.test_zero_child_without_current_host_execution_stays_failed) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.664s
+
+OK

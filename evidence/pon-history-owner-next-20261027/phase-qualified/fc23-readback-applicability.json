@@ -1,0 +1,443 @@
+{
+  "schema": "history-external-evidence-applicability-v1",
+  "source_summary_path": "/workspace/scratch/56818e4fba76/recovery/next-publication/fc23-ci-readback-summary.json",
+  "source_summary_sha256": "77f2fdf7b9de7a14cf15ecae8edb89964c6e1306a2b1356205dfc0ff737a525a",
+  "source_summary_bytes": 134132,
+  "actual_merge": "9ae4fd76ede88a1cff56ca2e1afe28ed39668ff0",
+  "not_current_history_candidate_native_measurement": true,
+  "received_from_independent_readback_agent": true,
+  "readback_derived_from_raw_not_original_raw_reexecution": true,
+  "scope": "Existing original 4-second in-process from-zero gate; sixteen hostile threads, receiver and independent verifier all inside the fixed 25% public Host. Distinct from new multiprocess controller/public-phase layout. No new measurement or relaxed threshold.",
+  "lanes": [
+    {
+      "lane": "protocol-head",
+      "archive": "fc23-artifact-12783021727.zip",
+      "archive_sha256": "28fd8eb823511681bb81e0111f4e0573e7fdd704965559b27f929aabb8b530be",
+      "all_named_tests_passed": true,
+      "finite_target_met": false,
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 987665716,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "verification_errors": [],
+          "full_native_state_equal": true,
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 34277832,
+          "independent_replay_and_confirmation_cpu_ns": 103677411,
+          "independent_replay_and_confirmation_wall_ns": 788599167,
+          "mutation_cpu_charged_ns": 30271957,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1996477381,
+            "worker_limit": 2
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "full_native_state_equal": false,
+          "attacker_workers_cpu_ns": 258845985,
+          "reader_cpu_ns": 11446744,
+          "independent_replay_and_confirmation_cpu_ns": 96801137,
+          "independent_replay_and_confirmation_wall_ns": 2494493747,
+          "mutation_cpu_charged_ns": 505130073,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999174725,
+            "worker_limit": 2
+          }
+        }
+      ]
+    },
+    {
+      "lane": "cross-arch-x64",
+      "archive": "fc23-artifact-12783296539.zip",
+      "archive_sha256": "8b25a31a9eaea8e4928037538c2ad116c227066c5c78473128307fb344572468",
+      "all_named_tests_passed": true,
+      "finite_target_met": false,
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1281294772,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "verification_errors": [],
+          "full_native_state_equal": true,
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 38842021,
+          "independent_replay_and_confirmation_cpu_ns": 141894266,
+          "independent_replay_and_confirmation_wall_ns": 982684850,
+          "mutation_cpu_charged_ns": 45146017,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1994678789,
+            "worker_limit": 2
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 4,
+            "errors": {},
+            "statuses": {
+              "ok": 4
+            },
+            "timely_successes": 4
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "full_native_state_equal": false,
+          "attacker_workers_cpu_ns": 263184140,
+          "reader_cpu_ns": 11621026,
+          "independent_replay_and_confirmation_cpu_ns": 54704957,
+          "independent_replay_and_confirmation_wall_ns": 1792433718,
+          "mutation_cpu_charged_ns": 526140447,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1998271515,
+            "worker_limit": 2
+          }
+        }
+      ]
+    },
+    {
+      "lane": "cross-arch-arm64",
+      "archive": "fc23-artifact-12782961722.zip",
+      "archive_sha256": "06f2702c5565878742a5ae22bc4c5a38039f129559ef6a448c3245ce42d15cc9",
+      "all_named_tests_passed": true,
+      "finite_target_met": false,
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1094236480,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "verification_errors": [],
+          "full_native_state_equal": true,
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 42148088,
+          "independent_replay_and_confirmation_cpu_ns": 105468304,
+          "independent_replay_and_confirmation_wall_ns": 787557154,
+          "mutation_cpu_charged_ns": 54455336,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1992663556,
+            "worker_limit": 2
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 5,
+            "errors": {},
+            "statuses": {
+              "ok": 5
+            },
+            "timely_successes": 5
+          },
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "full_native_state_equal": false,
+          "attacker_workers_cpu_ns": 296578008,
+          "reader_cpu_ns": 12071376,
+          "independent_replay_and_confirmation_cpu_ns": 50471216,
+          "independent_replay_and_confirmation_wall_ns": 2000384344,
+          "mutation_cpu_charged_ns": 530522976,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1999839960,
+            "worker_limit": 2
+          }
+        }
+      ]
+    },
+    {
+      "lane": "protocol-merge",
+      "archive": "fc23-artifact-12782458035.zip",
+      "archive_sha256": "56c3f4fc0fb454ca2352faae6d3466abc22c7de367745da68c59c719b8bfa463",
+      "all_named_tests_passed": true,
+      "finite_target_met": false,
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "workers": 0,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1281994664,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "verification_errors": [],
+          "full_native_state_equal": true,
+          "attacker_workers_cpu_ns": 0,
+          "reader_cpu_ns": 42443837,
+          "independent_replay_and_confirmation_cpu_ns": 138693094,
+          "independent_replay_and_confirmation_wall_ns": 979430487,
+          "mutation_cpu_charged_ns": 47735585,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1993044049,
+            "worker_limit": 2
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "workers": 16,
+          "requested_window_ns": 4000000000,
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "honest_submissions": {
+            "after_deadline": 0,
+            "after_window": 0,
+            "attempts": 7,
+            "errors": {},
+            "statuses": {
+              "ok": 7
+            },
+            "timely_successes": 7
+          },
+          "honest_history": {
+            "after_deadline": 0,
+            "after_window": 1,
+            "attempts": 4,
+            "errors": {
+              "IO: Resource temporarily unavailable (os error 11)": 1
+            },
+            "statuses": {
+              "error": 1,
+              "ok": 3
+            },
+            "timely_successes": 3
+          },
+          "verification_errors": [],
+          "full_native_state_equal": false,
+          "attacker_workers_cpu_ns": 255614949,
+          "reader_cpu_ns": 13012895,
+          "independent_replay_and_confirmation_cpu_ns": 48517885,
+          "independent_replay_and_confirmation_wall_ns": 1693117139,
+          "mutation_cpu_charged_ns": 536137517,
+          "mutation_cpu_refusals": 0,
+          "final_meter": {
+            "accounting_unavailable": false,
+            "burst_ns": 2000000000,
+            "in_flight": 0,
+            "refill_ns_per_second": 250000000,
+            "schema": "public-v3-local-stored-cpu-budget-v1",
+            "start_reserve_ns": 100000000,
+            "stored_credit_ns": 1998955909,
+            "worker_limit": 2
+          }
+        }
+      ]
+    }
+  ],
+  "other_lanes_without_phase_reports": [
+    {
+      "lane": "cleanup-macos-head",
+      "archive": "fc23-artifact-12782512072.zip",
+      "archive_sha256": "6235f9ea530370654c256b6e0a2526ee6232ea6d7b546971dfde4ae0448b3540",
+      "original_passed": null,
+      "scope": null
+    }
+  ]
+}

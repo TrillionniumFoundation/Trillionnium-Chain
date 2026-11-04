@@ -1,0 +1,48 @@
+{
+  "schema": "pon-pq-cell-release-local-qualification-v1",
+  "parent_pull_request": 405,
+  "branch": "research/pq-cell-release-attestations-20261026",
+  "files_blob_sha1": {
+    "formal/pon-nakamoto-v1/pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "formal/pon-nakamoto-v1/pq_cell_release.py": "ced847d3047ff93907ad82dd2ec1f0df7bfe19a5",
+    "formal/pon-nakamoto-v1/test_pq_cell_release.py": "12925f4696d438bcf15a4bf008820a1c952b3dfd"
+  },
+  "environment": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026",
+    "full_git_checkout": false,
+    "rustc_available": false,
+    "independent_operator": false
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_cell_release.py"
+  ],
+  "result": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 1.384,
+    "raw_log": "local-unittest.log"
+  },
+  "content_sample": {
+    "manifest_size_bytes": 358,
+    "manifest_id": "b6ee54065376c13e85afc5bd518606ff33a2567d48aaa1518faff84fe3f092ea9a558649bf2bbd86ea1c38f9036cb068",
+    "manifest_two_reviews_one_release_bytes": 10819
+  },
+  "scope": {
+    "signed_by_independent_evaluators": false,
+    "actual_future_evaluation": false,
+    "remote_storage": false,
+    "production_replay": false,
+    "native_pq_signer_integrated": false,
+    "model_adoption_authorized": false,
+    "chain_production_activation": false,
+    "quantum_work_security_qualified": false
+  }
+}

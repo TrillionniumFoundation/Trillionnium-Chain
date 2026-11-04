@@ -6,23 +6,44 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::{
     collections::HashSet,
-    env,
-    fs::{self, OpenOptions},
-    io::Write,
+    env, fs,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output},
+    process::Output,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 mod assigned;
 mod audit;
 mod cli;
+#[cfg(unix)]
+mod commit_salt;
 mod dispatch;
 mod flush;
 mod flush_submission;
 mod proof_adapter;
+mod worker_journal;
 mod workflow;
 mod workflow_ops;
+#[cfg(not(unix))]
+mod commit_salt {
+    use anyhow::{bail, Result};
+    use std::path::Path;
+    pub(crate) fn journal_automatic_submission(
+        _: &Path,
+        _: u64,
+        _: &str,
+        _: &str,
+        _: &str,
+    ) -> Result<String> {
+        bail!("secure commit journaling requires a Unix local owner; no fallback")
+    }
+    pub(crate) fn append_private_manual_submission(_: &Path, _: &str) -> Result<()> {
+        bail!("private manual salt journaling requires a Unix local owner; no fallback")
+    }
+}
+#[cfg(test)]
+#[path = "tests_commit_salt_security.rs"]
+mod tests_commit_salt_security;
 
 #[cfg(test)]
 pub(crate) use audit::{
@@ -44,12 +65,14 @@ use command_runtime_exec::run_command_with_timeout;
 
 const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
 const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
+const DEFAULT_TX_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
 const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 
 const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
 const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
+const TX_ADAPTER_TIMEOUT_ENV: &str = "TRNM_TX_ADAPTER_TIMEOUT_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
@@ -203,23 +226,20 @@ pub(crate) fn commitment(
     hex::encode(h.finalize())
 }
 
-pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
-    let mut s = if state.exists() {
-        serde_json::from_str::<WorkerState>(&fs::read_to_string(state)?)?
-    } else {
-        WorkerState { last_task_id: 1000 }
-    };
-    s.last_task_id += 1;
-    fs::write(state, serde_json::to_string_pretty(&s)?)?;
-    Ok(s.last_task_id)
+pub(crate) fn next_task_id(state: &Path) -> Result<u64> {
+    worker_journal::next_task_id(state)
 }
 
-pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, _task_id: u64) -> Result<(String, String)> {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
-    let salt_hex = format!("{:064x}", task_id);
-    (result_hash, salt_hex)
+    // The old salt was the public task ID. Use OS CSPRNG; never fall back to
+    // timestamps, public identities or predictable process counters on failure.
+    let mut salt = [0_u8; 32];
+    getrandom::fill(&mut salt)
+        .map_err(|error| anyhow!("commit salt entropy unavailable: {error}"))?;
+    Ok((result_hash, hex::encode(salt)))
 }
 
 pub(crate) fn now_ms() -> u128 {
@@ -230,14 +250,7 @@ pub(crate) fn now_ms() -> u128 {
 }
 
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
-    file.write_all(line.as_bytes())?;
-    file.write_all(b"\n")?;
-    file.flush()?;
-    Ok(())
+    worker_journal::append(path, line)
 }
 
 pub(crate) fn append_submission(
@@ -249,14 +262,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -269,39 +276,32 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(submit_log, &line)
+    commit_salt::append_private_manual_submission(submit_log, &line)
 }
 
-fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
-    if !ack_log.exists() {
-        return vec![];
-    }
-    fs::read_to_string(ack_log)
-        .ok()
-        .map(|raw| {
-            raw.lines()
-                .filter(|l| !l.trim().is_empty())
-                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
-                .collect()
-        })
-        .unwrap_or_default()
+fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
+    worker_journal::read(ack_log)
 }
 
-pub(crate) fn load_acked(ack_log: &Path) -> HashSet<u64> {
-    load_ack_records(ack_log)
+pub(crate) fn load_acked(ack_log: &Path) -> Result<HashSet<u64>> {
+    Ok(load_ack_records(ack_log)?
         .into_iter()
         .filter(|rec| rec.status == "accepted")
         .map(|rec| rec.task_id)
-        .collect()
+        .collect())
 }
 
 pub(crate) struct TaskExecutionLock {
-    path: PathBuf,
+    // Never unlink: another waiter may already hold the same inode.
+    _file: fs::File,
 }
 
 impl Drop for TaskExecutionLock {
     fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
+        // Release the shared open-file-description lock explicitly: an
+        // unrelated concurrent fork may briefly retain this CLOEXEC fd.
+        #[cfg(unix)]
+        let _ = rustix::fs::flock(&self._file, rustix::fs::FlockOperation::Unlock);
     }
 }
 
@@ -321,44 +321,48 @@ pub(crate) fn try_acquire_task_lock(
     ack_log: &Path,
     task_id: u64,
 ) -> Result<Option<TaskExecutionLock>> {
-    let path = task_lock_path(ack_log, task_id);
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    match OpenOptions::new().write(true).create_new(true).open(&path) {
-        Ok(_) => Ok(Some(TaskExecutionLock { path })),
-        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => Ok(None),
-        Err(e) => Err(e.into()),
+    Ok(
+        worker_journal::try_lock_path(&task_lock_path(ack_log, task_id))?
+            .map(|file| TaskExecutionLock { _file: file }),
+    )
+}
+
+pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
+    Ok(load_acked(ack_log)?.contains(&task_id))
+}
+
+pub(crate) fn load_ingress_records(path: &Path) -> Result<Vec<MessageIngressRecord>> {
+    worker_journal::read(path)
+}
+
+pub(crate) struct IngressSnapshot {
+    records: Vec<MessageIngressRecord>,
+    digest: [u8; 32],
+}
+
+impl std::ops::Deref for IngressSnapshot {
+    type Target = Vec<MessageIngressRecord>;
+    fn deref(&self) -> &Self::Target {
+        &self.records
     }
 }
 
-pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> bool {
-    load_acked(ack_log).contains(&task_id)
+impl std::ops::DerefMut for IngressSnapshot {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.records
+    }
 }
 
-pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
-    if !path.exists() {
-        return Ok(vec![]);
-    }
-    let raw = fs::read_to_string(path)?;
-    Ok(raw
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
-        .collect())
+pub(crate) fn load_ingress_snapshot(path: &Path) -> Result<IngressSnapshot> {
+    let bytes = worker_journal::read_raw(path)?;
+    Ok(IngressSnapshot {
+        records: worker_journal::decode(&bytes)?,
+        digest: Sha256::digest(&bytes).into(),
+    })
 }
 
-pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    let mut out = String::new();
-    for rec in records {
-        out.push_str(&serde_json::to_string(rec)?);
-        out.push('\n');
-    }
-    fs::write(path, out)?;
-    Ok(())
+pub(crate) fn save_ingress_snapshot(path: &Path, snapshot: &IngressSnapshot) -> Result<()> {
+    worker_journal::replace(path, &snapshot.records, snapshot.digest)
 }
 
 pub(crate) fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
@@ -817,13 +821,16 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> PersistedAckHashes {
+pub(crate) fn persisted_ack_hashes_for_task(
+    ack_log: &Path,
+    task_id: u64,
+) -> Result<PersistedAckHashes> {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
     };
 
-    for ack in load_ack_records(ack_log).into_iter().rev() {
+    for ack in load_ack_records(ack_log)?.into_iter().rev() {
         if ack.task_id != task_id {
             continue;
         }
@@ -838,7 +845,7 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> Per
         }
     }
 
-    hashes
+    Ok(hashes)
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -945,22 +952,34 @@ where
     })
 }
 
-pub(crate) fn run_adapter_with_retry(
+#[cfg(test)]
+fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    run_adapter_with_retry_bounded(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(resolve_tx_adapter_timeout_ms()),
+    )
+}
+
+pub(crate) fn run_adapter_with_retry_bounded(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+    timeout: Duration,
+) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     run_adapter_with_retry_inner(
         max_retries,
         backoff_ms,
-        || {
-            Ok(ProcCommand::new(&program)
-                .args(&base_args)
-                .args(action_args)
-                .output()?)
-        },
+        || run_command_with_timeout(&program, &base_args, action_args, timeout),
         thread::sleep,
     )
 }
@@ -1063,6 +1082,15 @@ pub(crate) fn resolve_tx_retry_policy(
         backoff_ms_cli,
         env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
         env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+    )
+}
+
+pub(crate) fn resolve_tx_adapter_timeout_ms() -> u64 {
+    resolve_u64(
+        None,
+        env::var(TX_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
+        DEFAULT_TX_ADAPTER_TIMEOUT_MS,
+        1,
     )
 }
 
@@ -2218,6 +2246,9 @@ pub(crate) fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod tests_journal_security;
 
 fn main() -> Result<()> {
     let args = Args::parse();

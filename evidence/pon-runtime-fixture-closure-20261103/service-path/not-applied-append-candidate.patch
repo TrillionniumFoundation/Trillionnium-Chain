@@ -1,0 +1,83 @@
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -5018,6 +5018,71 @@
+         // No cancellation after COMMIT: the durable result is already factual.
+         Ok(result)
+     }
++    /// Reuse graph work only after this direct append's last legitimate write.
++    /// The original target verification still builds the first complete graph;
++    /// only the remaining unchanged-writer readback may borrow that result.
++    fn atomic_append_with_readback(
++        &self,
++        target: Hash,
++        progress: &mut dyn FnMut() -> Result<()>,
++        run: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<()>,
++    ) -> Result<()> {
++        progress()?;
++        let tx = rusqlite::Transaction::new_unchecked(
++            &self.db,
++            rusqlite::TransactionBehavior::Immediate,
++        )?;
++        let original_owner = self
++            .post_write_schema
++            .as_ref()
++            .map(|_| {
++                trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
++                    .map_err(native_authenticated::readback_scope_error)
++            })
++            .transpose()?;
++        let transaction_result: Result<()> = (|| {
++            run(progress)?;
++            let mut readback = original_owner
++                .as_ref()
++                .zip(self.post_write_schema.as_ref())
++                .map(|(owner, expected)| {
++                    native_authenticated::PostWriteReadback::new(
++                        &self.db,
++                        &self.settings,
++                        target,
++                        owner,
++                        expected,
++                    )
++                })
++                .transpose()?
++                .flatten();
++            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
++            self.continuous_scope_checkpoint()?;
++            self.mining_scope_checkpoint()?;
++            progress()?;
++            if let Some(scope) = readback.as_mut() {
++                // Match admission's consumed-result fence. A pre-hit write
++                // disables reuse; it cannot create a replacement graph epoch.
++                scope.validate_consumed(&tx)?;
++            }
++            Ok(())
++        })();
++        let transaction_result = match original_owner
++            .as_ref()
++            .map(|owner| owner.same_write_snapshot(&tx))
++            .transpose()
++        {
++            Ok(_) => transaction_result,
++            Err(error) => Err(match transaction_result {
++                Ok(()) => native_authenticated::readback_scope_error(error),
++                Err(first) => Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", first),
++            }),
++        };
++        transaction_result?;
++        tx.commit()?;
++        // No cancellation after COMMIT: the durable result is already factual.
++        Ok(())
++    }
+     /// Only reorganization closures return readback from their explicit final
+     /// write boundary. The original writer predates every callback and write;
+     /// neither it nor any graph result survives this one transaction.
+@@ -5176,7 +5241,7 @@
+             let prior = self.cached_parent(old)?;
+             progress()?;
+             let mut staged = None;
+-            self.atomic_with_progress(progress, |progress| {
++            self.atomic_append_with_readback(target, progress, |progress| {
+                 self.apply_delta_with_progress(target, slot, false, progress)?;
+                 let state = self.slot_state_with_progress(slot, progress)?;
+                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)

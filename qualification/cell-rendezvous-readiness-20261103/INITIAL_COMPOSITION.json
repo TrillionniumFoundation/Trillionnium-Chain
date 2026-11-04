@@ -1,0 +1,14 @@
+{
+  "base": "0443a5e2e68be9c5df68b87ebeb5fed3b96ec5d2",
+  "first_parent": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+  "second_parent": "4204c4b0b1300cbb5d5325d9915a161173983491",
+  "conflicts": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "resolution": "preserve first-parent plan, append every byte added to shared base by second parent",
+  "first_plan_sha256": "5d17d5abf29c70682f1c949ce0c8b9e628b1a64ae65eeccfeefe57e7a2472c90",
+  "second_plan_sha256": "c7df52a77912bd40ab9c4bd63f040433b6d6532a4877d802f114ea7374486196",
+  "resolved_before_new_fixture_section_sha256": "0a2f651c795088d29106fa914aa13ccb55cee474bab6acc166b89766820a6260",
+  "source_fixture_sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9",
+  "merge_command_exit_before_resolution": 1
+}

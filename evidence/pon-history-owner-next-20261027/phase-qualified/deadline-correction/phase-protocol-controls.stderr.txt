@@ -1,0 +1,10 @@
+
+thread 'phase_host::phase_job_refuses_unknown_fields_and_broker_never_claims_actor_authority' (44) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:56:5:
+assertion failed: !path.exists() && !temporary.exists()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'phase_host::phase_job_refuses_unknown_fields_and_broker_never_claims_actor_authority' (44) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:48:5:
+bounded lifecycle payload
+
+thread 'phase_host::phase_job_refuses_unknown_fields_and_broker_never_claims_actor_authority' (44) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:44:10:
+called `Result::unwrap()` on an `Err` value: Os { code: 40, kind: FilesystemLoop, message: "Too many levels of symbolic links" }

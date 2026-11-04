@@ -1,0 +1,335 @@
+{
+  "schema": "trnm-fuzz-asm-lock-observation-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+  "tree": "eda854d290a9808c0db433efac4d8c9a84eb598c",
+  "parent": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "run_id": 41779987720,
+  "job_id": 126409090815,
+  "actual_result": {
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "--no-replace-objects",
+          "diff",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "elapsed_ns": 16158112,
+        "exit_code": 0,
+        "label": "source-clean-before",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "--no-replace-objects",
+          "worktree",
+          "add",
+          "--detach",
+          "/home/runner/work/_temp/chain-fuzz-asm-owned-worktree",
+          "2c5349cb785d83e007b06c7af4ab1262277ad870"
+        ],
+        "elapsed_ns": 2520527771,
+        "exit_code": 0,
+        "label": "create-owned-worktree",
+        "log_bytes": 2107,
+        "log_sha256": "cc2461cb396599fd30f144d9d927c464e0b7653d6bc9770637ca6952e79628c8",
+        "outer_timeout_seconds": 120,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "rustc",
+          "--version",
+          "--verbose"
+        ],
+        "elapsed_ns": 15982633,
+        "exit_code": 0,
+        "label": "rustc",
+        "log_bytes": 214,
+        "log_sha256": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+        "outer_timeout_seconds": 60,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "cargo",
+          "--version",
+          "--verbose"
+        ],
+        "elapsed_ns": 64132493,
+        "exit_code": 0,
+        "label": "cargo",
+        "log_bytes": 353,
+        "log_sha256": "138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427",
+        "outer_timeout_seconds": 60,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "cargo",
+          "fetch",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml"
+        ],
+        "elapsed_ns": 364616211,
+        "exit_code": 101,
+        "label": "original-locked-negative",
+        "log_bytes": 299,
+        "log_sha256": "de1ee90590e316af7ea3877ad33fca74c131b383c1542d0b6d557073ac5d20b2",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "cargo",
+          "fetch",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml"
+        ],
+        "elapsed_ns": 1367178463,
+        "exit_code": 0,
+        "label": "cargo-generated-lock",
+        "log_bytes": 4419,
+        "log_sha256": "34364a9c4707facebcb6b0c25e2eb6c516c43dd2d7dd6393abe6b63af8549b8f",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "--no-replace-objects",
+          "diff",
+          "--name-only",
+          "HEAD",
+          "--"
+        ],
+        "elapsed_ns": 515960529,
+        "exit_code": 0,
+        "label": "worktree-diff",
+        "log_bytes": 22,
+        "log_sha256": "b7c6d40667a3964bc332a0f8da641914e5f2d3a2379f7f538550f1aaa4112e2b",
+        "outer_timeout_seconds": 60,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "cargo",
+          "fetch",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml"
+        ],
+        "elapsed_ns": 114528166,
+        "exit_code": 0,
+        "label": "same-locked-positive",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml"
+        ],
+        "elapsed_ns": 165205870,
+        "exit_code": 0,
+        "label": "offline-locked-metadata",
+        "log_bytes": 721320,
+        "log_sha256": "4c1f4e0e0723ae785eb0c830fc9df9023555ae043bbec6586b155306c087895f",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "git",
+          "--no-replace-objects",
+          "diff",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "elapsed_ns": 16636008,
+        "exit_code": 0,
+        "label": "source-clean-after",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer_timeout_seconds": 300,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "--no-replace-objects",
+          "worktree",
+          "remove",
+          "--force",
+          "/home/runner/work/_temp/chain-fuzz-asm-owned-worktree"
+        ],
+        "elapsed_ns": 314739718,
+        "exit_code": 0,
+        "label": "remove-owned-worktree",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outer_timeout_seconds": 120,
+        "stderr_bytes": null,
+        "stderr_sha256": null
+      }
+    ],
+    "controls": {
+      "native_executions": 0,
+      "synthetic_negatives": 7,
+      "synthetic_positive": 1
+    },
+    "fuzz_mutations_executed": 0,
+    "generated_lock": {
+      "bytes": 33605,
+      "git_blob": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+      "sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d"
+    },
+    "graph": {
+      "added_identity": [
+        "sha2-asm",
+        "0.6.4",
+        "registry+https://github.com/rust-lang/crates.io-index"
+      ],
+      "changed_dependency_identity": [
+        "sha2",
+        "0.10.9",
+        "registry+https://github.com/rust-lang/crates.io-index"
+      ],
+      "packages_after": 147,
+      "packages_before": 146,
+      "unchanged_old_package_records": 145
+    },
+    "inputs": [
+      {
+        "bytes": 33374,
+        "git_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+        "path": "tests/fuzz/Cargo.lock",
+        "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2"
+      },
+      {
+        "bytes": 1122,
+        "git_blob": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
+        "path": "tests/fuzz/Cargo.toml",
+        "sha256": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+      },
+      {
+        "bytes": 39976,
+        "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+      },
+      {
+        "bytes": 684,
+        "git_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      },
+      {
+        "bytes": 6446,
+        "git_blob": "62a62cc717f7ffd41cdb9b952f407f215cf9810b",
+        "path": "scripts/ci/run_fuzz_smoke.py",
+        "sha256": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9"
+      },
+      {
+        "bytes": 185,
+        "git_blob": "6b7d4459a5e8ae69ac6ad36a0376443138e7b474",
+        "path": "scripts/ci/tool-versions.env",
+        "sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408"
+      }
+    ],
+    "metadata_packages": 147,
+    "metadata_sha256": "4c1f4e0e0723ae785eb0c830fc9df9023555ae043bbec6586b155306c087895f",
+    "native_tests_executed": 0,
+    "original_checkout_unchanged": true,
+    "original_fuzz_gate_qualified": false,
+    "original_locked_refusal_demonstrated": true,
+    "owned_worktree_removed": true,
+    "performance_qualified": false,
+    "production_activation": false,
+    "result": "PASS",
+    "schema": "trnm-fuzz-asm-lock-generation-v1",
+    "source": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "toolchain": "nightly-2026-10-01",
+    "tree": "eda854d290a9808c0db433efac4d8c9a84eb598c"
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "tested_tree": "eda854d290a9808c0db433efac4d8c9a84eb598c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 932602508,
+    "tracked_entries": 8099,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "tested_tree": "eda854d290a9808c0db433efac4d8c9a84eb598c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 932602508,
+    "tracked_entries": 8099,
+    "tracked_worktree_verified": true
+  },
+  "decoded_job_log": {
+    "path": "fuzz-lock/job-126409090815.decoded.log",
+    "bytes": 78089,
+    "sha256": "b75591dc4cbb0f22fb075a239b83c0a9d760bb857ca1f89a9357792337da3093"
+  },
+  "generated_lock_reconstruction": {
+    "method": "Concatenate the 15 numbered base64 chunks printed by the actual runner; decode; verify byte length, SHA256, and Git blob against the actual result before creating the Git object.",
+    "chunk_count": 15,
+    "git_blob": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+    "bytes": 33605,
+    "sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+    "hand_edited": false
+  },
+  "raw_evidence_artifact": {
+    "id": 13299155563,
+    "bytes": 82767,
+    "sha256": "8acdee9c69e6b8939ff1ac1e8ede3a2ef8366204bbe4f8aed2b330700729515e",
+    "raw_negative_text_in_this_git_checkpoint": false,
+    "note": "The 299-byte original refusal and full metadata remain in the original artifact. This checkpoint preserves the actual job log and receipt hashes, not reconstructed raw text."
+  },
+  "recipe_commit": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+  "recipe_paths": [
+    ".github/workflows/chain-fuzz-asm-lock.yml",
+    "qualification/fuzz-sha2-asm-lock-20261104/run.py",
+    "qualification/fuzz-sha2-asm-lock-20261104/inputs.json"
+  ],
+  "boundary": "This is Cargo graph generation and locked metadata verification on the generator source. It executes no package tests, sanitizer fuzz mutations, or Host/performance campaign. The new composed source must run its own first locked command, and the original complete quality/fuzz gate remains required."
+}

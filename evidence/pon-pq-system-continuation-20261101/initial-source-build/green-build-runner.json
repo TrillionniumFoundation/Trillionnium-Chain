@@ -1,0 +1,7 @@
+{
+  "helper_sha256": "3cf16e76cae957cb34226a0d2118ac15bbe2d1946d3758efc9426c25612cdc39",
+  "source_verifier_sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "source": "/workspace/scratch/8620c8cb53f6/chain-pq",
+  "head": "ed31b019525963456e0e84eb5f0862ef6ee0186a"
+}

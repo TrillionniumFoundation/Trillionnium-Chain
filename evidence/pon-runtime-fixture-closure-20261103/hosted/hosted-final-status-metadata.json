@@ -1,0 +1,385 @@
+{
+  "schema": "b280-hosted-final-status-metadata-v1",
+  "observed_utc": "2026-11-03T21:28:16.736Z",
+  "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+  "workflow_count": 17,
+  "workflow_runs": [
+    {
+      "id": 41708486758,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486758"
+    },
+    {
+      "id": 41708486809,
+      "name": "PoN original native campaign",
+      "status": "completed",
+      "conclusion": "failure",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486809"
+    },
+    {
+      "id": 41708486800,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "status": "completed",
+      "conclusion": "failure",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486800"
+    },
+    {
+      "id": 41708486775,
+      "name": "PoN owned process cleanup",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486775"
+    },
+    {
+      "id": 41708486738,
+      "name": "PoN recent batch exact-source acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486738"
+    },
+    {
+      "id": 41708486941,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486941"
+    },
+    {
+      "id": 41708486721,
+      "name": "PoN W1 work security observations",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486721"
+    },
+    {
+      "id": 41708488238,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708488238"
+    },
+    {
+      "id": 41708486796,
+      "name": "PoN priority acceptance",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486796"
+    },
+    {
+      "id": 41708487094,
+      "name": "CodeQL exact-source analysis export",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708487094"
+    },
+    {
+      "id": 41708486821,
+      "name": "PoN isolated cloud build inputs",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486821"
+    },
+    {
+      "id": 41708486793,
+      "name": "PoN parent-bound model evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486793"
+    },
+    {
+      "id": 41708486783,
+      "name": "Release finality reference and native baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486783"
+    },
+    {
+      "id": 41708486866,
+      "name": "PoN branch encoding exact-source acceptance",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708486866"
+    },
+    {
+      "id": 41708487004,
+      "name": "PoN PQ network and rollback witness",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708487004"
+    },
+    {
+      "id": 41708487030,
+      "name": "trnm-required-baseline",
+      "status": "completed",
+      "conclusion": "failure",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708487030"
+    },
+    {
+      "id": 41708473807,
+      "name": "PR #688",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "dynamic",
+      "run_attempt": 1,
+      "head_sha": "b28098c092dca72165c0d26054fce95a8636d777",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41708473807"
+    }
+  ],
+  "baseline_jobs": [
+    {
+      "id": 126173966334,
+      "name": "fuzz-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173966677,
+      "name": "cross-arch-cost (x64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12
+        }
+      ]
+    },
+    {
+      "id": 126173966791,
+      "name": "repository-truth",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173966811,
+      "name": "rust-baseline shard (runtime)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 9
+        }
+      ]
+    },
+    {
+      "id": 126173966883,
+      "name": "W1 actual reuse V3 (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173966884,
+      "name": "prospective-merge (fuzz-smoke)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173966948,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173966959,
+      "name": "prospective-merge (protocol-contract)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Execute the same lane on the prospective merge",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 126173966993,
+      "name": "rust-baseline shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967014,
+      "name": "prospective-merge (repository-truth)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967031,
+      "name": "cross-arch-cost (arm64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12
+        }
+      ]
+    },
+    {
+      "id": 126173967036,
+      "name": "protocol-contract",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Run actual protocol-contract checks",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8
+        }
+      ]
+    },
+    {
+      "id": 126173967060,
+      "name": "prospective-merge (external-evidence-contract)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967063,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967101,
+      "name": "prospective Rust shard (runtime)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 9
+        }
+      ]
+    },
+    {
+      "id": 126173967103,
+      "name": "prospective Rust shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967108,
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126173967163,
+      "name": "external-evidence-contract",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126187471688,
+      "name": "cross-arch-cost-consistency",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_or_cancelled_steps": []
+    },
+    {
+      "id": 126206550363,
+      "name": "rust-baseline",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Require both successful exact-source Rust shards",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5
+        }
+      ]
+    },
+    {
+      "id": 126213262616,
+      "name": "prospective-merge (rust-baseline)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_or_cancelled_steps": [
+        {
+          "name": "Require both successful exact-source Rust shards",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "scope": "Metadata only. Detailed four-lane Node execution and two runtime Host-native results are separate source-bound readbacks; cancelled and unobserved never count as pass."
+}

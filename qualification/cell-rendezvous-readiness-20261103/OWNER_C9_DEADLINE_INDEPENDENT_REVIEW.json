@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_commit": "c9f4e9aff6490fd6dcba1cdf6fe2e513243dbc8f",
+  "base_commit": "be0d5f978dc86008115524a6be85c38e03982b33",
+  "review_kind": "read-only source review, no execution",
+  "inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "blob": "b901f0ea15b8bc6b3393320575fe9e1d2fdf2912"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "blob": "82d7ca1fd6e3fadf23fbf22a0ed7529bf0c47660"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+      "blob": "7b3e99aab51d827f4faffccf2b81be733543152a"
+    }
+  ],
+  "scope": "Previously completed exact-source narrow review of finish_with_resource, four synchronous History completion paths and the new deadline/error-order controls.",
+  "findings": [
+    "The mandatory final resource check still executes first. Its failure retains priority over native and deadline results.",
+    "When the resource check succeeds, an existing native error is returned unchanged. Only a successful native result is subject to the final check of the same original deadline.",
+    "The four synchronous completion branches add a final deadline fence before returning success without replacing owner, domain, CPU account, activation, settlement or epoch cleanup.",
+    "The new 5-second control preserves the committed packet and active tip; paid/settled expectations remain and ongoing reservations and unsettled work must be zero.",
+    "The new 25-millisecond controls cover error priority without increasing original operation budgets."
+  ],
+  "conclusion": "No blocking source defect was found in the reviewed narrow delta.",
+  "boundaries": [
+    "No Cargo, native Host execution or benchmark was performed for this independent review.",
+    "This review does not transfer results from an older source, prove full CI success, or qualify resource/throughput admission.",
+    "Other files in c9f4e9a, including PQ fixture cleanup, are outside this review."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "trnm-fuzz-lock-repair-r7",
+  "source_before": "581f2ab283d958f6cf6b894b39897c4bdf8c9bc6",
+  "before_sha256": "8c66c431d35a78b2ec64092728fb0366a4c638f1c3261ebf2fe98a82a3fda64f",
+  "after_sha256": "1af7193519b236d0f771b53a447ce43414944bc6f14318e15db0692c3df9e173",
+  "observations": [
+    {
+      "command": [
+        "cargo",
+        "update",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--offline",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.17745552299311385
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.00947542600624729
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 0.06675527599873021
+    }
+  ],
+  "native_builds_or_tests_executed": false,
+  "default_node_graph_changed": false,
+  "first_offline_dry_run": "exit101: libfuzzer-sys index absent in new cache; index-only online dry-run then succeeded with 0 package-version updates",
+  "full_dependency_graph_claim": false
+}

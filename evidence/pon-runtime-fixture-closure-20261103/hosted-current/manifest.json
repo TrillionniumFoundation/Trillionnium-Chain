@@ -1,0 +1,924 @@
+{
+  "schema": "frozen-hosted-terminal-bundle-manifest-v1",
+  "created_utc": "2026-11-03T23:14:56.998999+00:00",
+  "status": "COMPLETE_FOR_REQUESTED_FROZEN_SCOPE",
+  "scope": "Immutable dated handoffs and frozen source records copied without re-encoding. Later terminal records are appended in a new snapshot, never substituted for this one.",
+  "original_files": [
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/current-terminal-small-records-handoff.json",
+      "relative_path": "b4bdf/current-terminal-small-records-handoff.json",
+      "bytes": 4429,
+      "sha256": "6791432d16cb348666a75c6a31f09ab7e39188f03f246bdcdc18b974233e3b63",
+      "required_by": [
+        "frozen handoff itself",
+        "w1-history-small-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-controller-readback-refusal.json",
+      "relative_path": "b4bdf/f0-controller-readback-refusal.json",
+      "bytes": 7735,
+      "sha256": "60f59e22c6c99ddcdb78410509555339b9182f788e706a6f0bfd19a83bdd9211",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/reader_refusal_records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-reader-native-derived-shape-refusal.json",
+      "relative_path": "b4bdf/f0-reader-native-derived-shape-refusal.json",
+      "bytes": 1495,
+      "sha256": "3f888b67fddd33c35b59fc81d5298634cf6d71258c97543d2ec69922371e7da4",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/reader_refusal_records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-selected-original-records.json.gz",
+      "relative_path": "b4bdf/f0-selected-original-records.json.gz",
+      "bytes": 1862302,
+      "sha256": "565fba925680ceafaaff48a8d5207a3e20b4e7fca52b7ce49e5bfd57a06ee135",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/f0-two-phase-terminal-readback.json",
+      "relative_path": "b4bdf/f0-two-phase-terminal-readback.json",
+      "bytes": 116400,
+      "sha256": "f343bdcacca720e13e962cc1a7ba30cf27cfe0c539eb20669ba20bf188ec1cfd",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-compact-terminal-readback.json",
+      "relative_path": "b4bdf/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39654,
+      "sha256": "d37120c9043672bb4d461adb24b439c7a190c32161a5a187abdf025a6c723a52",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/original-three-campaign-selected-records.json.gz",
+      "relative_path": "b4bdf/original-three-campaign-selected-records.json.gz",
+      "bytes": 6035838,
+      "sha256": "c12419f067220378b1e285fbe49e27bc5387c47c4df1ae4c8449c0b87e67056e",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/source-binding.json",
+      "relative_path": "b4bdf/source-binding.json",
+      "bytes": 6561,
+      "sha256": "0ee84001eb8410e88cbb46a45e3c838ffc07509cbd1429e4cbc86ba2d7c7fb10",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-selected-original-records.json.gz",
+      "relative_path": "b4bdf/w1-fresh-head-selected-original-records.json.gz",
+      "bytes": 586184,
+      "sha256": "6a0e7b09ad2fa5d934d1be3bea582715cab37d4723d30212a383a4c7307ef97b",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-head-terminal-readback.json",
+      "relative_path": "b4bdf/w1-fresh-head-terminal-readback.json",
+      "bytes": 65475,
+      "sha256": "de81c882e8326fcde096379ea8447451291d30ef1c16423ad1775e607c1501a3",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-selected-original-records.json.gz",
+      "relative_path": "b4bdf/w1-fresh-merge-selected-original-records.json.gz",
+      "bytes": 585192,
+      "sha256": "675b6f08c059e9d1e0275ce0fe8c31124b98a821ebaa4cb1ee10203db7cb967e",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-fresh-merge-terminal-readback.json",
+      "relative_path": "b4bdf/w1-fresh-merge-terminal-readback.json",
+      "bytes": 65603,
+      "sha256": "3e41bd1ed21c105971a9f898704bf5b2e409ae4494e57bf6a1f758ff4abe0a82",
+      "required_by": [
+        "current-terminal-small-records-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-original-job-logs.json.gz",
+      "relative_path": "b4bdf/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153240,
+      "sha256": "9faab61fd3b7ebc114faca5edcea21067419ee988aeac9b85f2d4c1d177c825a",
+      "required_by": [
+        "w1-history-small-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-four-lane-terminal-readback.json",
+      "relative_path": "b4bdf/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26299,
+      "sha256": "c7edcbc14e68d890f7c375af99fc8afe8a4aad702a990e98cd918cdffb358b34",
+      "required_by": [
+        "w1-history-small-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/w1-history-small-handoff.json",
+      "relative_path": "b4bdf/w1-history-small-handoff.json",
+      "bytes": 1474,
+      "sha256": "0a7ed96d02a31be258c6d43c959ba553ffceb75695bc01658f93f3cc9f77abb8",
+      "required_by": [
+        "frozen handoff itself"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230901764Z-pq-final-jobs.json",
+      "relative_path": "c5dd/20261103T230901764Z-pq-final-jobs.json",
+      "bytes": 33906,
+      "sha256": "ce047dfe5d41a91d3a20e20d5c4cda92a653dd6c122a636e592d8105cc88f78d",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/metadata"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-original-records.json.gz",
+      "relative_path": "c5dd/cost-arm64-fromzero-original-records.json.gz",
+      "bytes": 776787,
+      "sha256": "1832c212ca2f60c1813fc846a07d9a2e3547cf8433cffd0d6405483597c3bcf9",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-arm64-fromzero-terminal-readback.json",
+      "relative_path": "c5dd/cost-arm64-fromzero-terminal-readback.json",
+      "bytes": 72935,
+      "sha256": "16fc14aca64337a3bc92da8f6561c9039b1f2181e6a301cbb88a8fc2ab09a8b2",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-original-records.json.gz",
+      "relative_path": "c5dd/cost-x64-fromzero-original-records.json.gz",
+      "bytes": 767226,
+      "sha256": "1e23545944c52d745311e422d5d1b7cfbb5b428f1ef88a5ad8edba89638482b6",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/cost-x64-fromzero-terminal-readback.json",
+      "relative_path": "c5dd/cost-x64-fromzero-terminal-readback.json",
+      "bytes": 72847,
+      "sha256": "b3d0228ce580cf2445c542e0121bc965a574c36266a51a397bda4788b161503e",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/current-business-terminal-handoff.json",
+      "relative_path": "c5dd/current-business-terminal-handoff.json",
+      "bytes": 3666,
+      "sha256": "b811562aabceb2712acd7d0dd3f48ea038d0d5a624f58003b844c1c9ef1652c0",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/prior_frozen_handoff",
+        "frozen handoff itself"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/current-terminal-supplement-handoff.json",
+      "relative_path": "c5dd/current-terminal-supplement-handoff.json",
+      "bytes": 3774,
+      "sha256": "18feb1be44c3d85624d149151c22de4522781824c296935163c8591267250e45",
+      "required_by": [
+        "frozen handoff itself"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "relative_path": "c5dd/f0-selected-original-records.json.gz",
+      "bytes": 1835912,
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "relative_path": "c5dd/f0-two-phase-terminal-readback.json",
+      "bytes": 32980,
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "relative_path": "c5dd/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39725,
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "relative_path": "c5dd/original-three-campaign-selected-records.json.gz",
+      "bytes": 6069186,
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "relative_path": "c5dd/pq-node-arm64-head-13277434557-original-records.json.gz",
+      "bytes": 953366,
+      "sha256": "343ec5e56195ebf6dae672f4ad9290ef63a0a5a164616b3b1107b7d92b84553d",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-head-13277434557-readback.json",
+      "relative_path": "c5dd/pq-node-arm64-head-13277434557-readback.json",
+      "bytes": 288856,
+      "sha256": "8d190c22d93dd1cc42b254fdce3a6730917275a70d2bae8575a6198151c3a219",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "relative_path": "c5dd/pq-node-arm64-merge-13280090271-original-records.json.gz",
+      "bytes": 955308,
+      "sha256": "0975a80368bcfbe2a78d611a23058fc13faa06c17919c0db8037a8179eacce07",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-arm64-merge-13280090271-readback.json",
+      "relative_path": "c5dd/pq-node-arm64-merge-13280090271-readback.json",
+      "bytes": 289315,
+      "sha256": "a18b70dcfcce45affc0831c27b5e5a4d66935541debbf1b87c805c226f58c913",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-original-records.json.gz",
+      "relative_path": "c5dd/pq-node-x64-head-13277997507-original-records.json.gz",
+      "bytes": 956062,
+      "sha256": "3a0d2471046cdc2bb389538eafb681ec4366ec6c32d47ce4353ae8e887cbb9fe",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records",
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-head-13277997507-readback.json",
+      "relative_path": "c5dd/pq-node-x64-head-13277997507-readback.json",
+      "bytes": 288846,
+      "sha256": "373388ded2c97d4ccb0f96836e7e72614f7ac48f648ca92428018dd5f2e078eb",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records",
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "relative_path": "c5dd/pq-node-x64-merge-13277323560-original-records.json.gz",
+      "bytes": 957673,
+      "sha256": "984601525c9c9c92e7937c9c5745abd514be195b4be34ce76cbb9d3ea58bf0c1",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records",
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-node-x64-merge-13277323560-readback.json",
+      "relative_path": "c5dd/pq-node-x64-merge-13277323560-readback.json",
+      "bytes": 289305,
+      "sha256": "26b222d70d91c01cca9485d875abe28e882f1d4c93a0a8efd95c982e5e96b87e",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records",
+        "pq-original-node-four-lane-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-original-node-four-lane-handoff.json",
+      "relative_path": "c5dd/pq-original-node-four-lane-handoff.json",
+      "bytes": 3147,
+      "sha256": "8bd22f09bc4a7f78b77da231e9ab41454405cfedbd57f2f3117355fe1d25a223",
+      "required_by": [
+        "frozen handoff itself"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/pq-original-node-four-lane-readback.json",
+      "relative_path": "c5dd/pq-original-node-four-lane-readback.json",
+      "bytes": 16589,
+      "sha256": "f9744015c6390c6725cf42fbc0507f158f4d139036fd4814d7a831626c0e3a7a",
+      "required_by": [
+        "pq-original-node-four-lane-handoff.json/aggregate"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-original-records.json.gz",
+      "relative_path": "c5dd/protocol-head-fromzero-original-records.json.gz",
+      "bytes": 1024873,
+      "sha256": "4a69ce849e1c8aaec37e9921e9cc321ddb22fb4d991a3bbf25cda455a72cb0a2",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-head-fromzero-terminal-readback.json",
+      "relative_path": "c5dd/protocol-head-fromzero-terminal-readback.json",
+      "bytes": 73173,
+      "sha256": "d107a9fe5c54823fd441b7c2c15e2c547d0bf3ecdc0f82de34c30297a9316b06",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-fromzero-terminal-readback.json",
+      "relative_path": "c5dd/protocol-merge-fromzero-terminal-readback.json",
+      "bytes": 46841,
+      "sha256": "00e523f20dc26a018ce2116220ab3a2e5a943e140d348010b863b0c37b305019",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-packager-recovery.json",
+      "relative_path": "c5dd/protocol-merge-packager-recovery.json",
+      "bytes": 3553,
+      "sha256": "7e38e14132af6fdcbedc1f19e1290b50882f754d0ce0326bef1833c99710dd1b",
+      "required_by": [
+        "preserved original packager refusal/recovery"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-selected-original-records.json.gz",
+      "relative_path": "c5dd/protocol-merge-selected-original-records.json.gz",
+      "bytes": 876521,
+      "sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/runtime-original-deadline-readback.json",
+      "relative_path": "c5dd/runtime-original-deadline-readback.json",
+      "bytes": 4065,
+      "sha256": "48f2378335f489979d645409e748e559ba023ce4beccf79ac240de629d87ed74",
+      "required_by": [
+        "current-terminal-supplement-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+      "relative_path": "c5dd/source-binding.json",
+      "bytes": 6701,
+      "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-original-job-logs.json.gz",
+      "relative_path": "c5dd/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153596,
+      "sha256": "e80d46c15d6f8d24fe5d1f74d6e069490288be0e02bc4c61f8b6741843a794c7",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-terminal-readback.json",
+      "relative_path": "c5dd/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26283,
+      "sha256": "5ddbe69482b7f73bf356dc686cd30bf85aeec35a2ae10752588b2e7f8e7d6994",
+      "required_by": [
+        "current-business-terminal-handoff.json/records"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/artifact-index.json",
+      "relative_path": "diagnostics/artifact-index.json",
+      "bytes": 2541,
+      "sha256": "d9e1e77d6bd234db3ffdf3c69e944ba670d43916bedd3bdbfd8771293b440fe6",
+      "required_by": [
+        "complete frozen directory index"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/draft-v1/read_observability.py",
+      "relative_path": "diagnostics/draft-v1/read_observability.py",
+      "bytes": 21809,
+      "sha256": "57685ad23b1ac91122ad8e5b9710baee5671b28190efa749efe0f03aecd95876",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/draft-v1/readback.json",
+      "relative_path": "diagnostics/draft-v1/readback.json",
+      "bytes": 827183,
+      "sha256": "02eb0a3920690084cc38554f57f9752d2ae6f041ff6cad564b6a9dcfd3492e8e",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/draft-v1/selected-original-rows.json.gz",
+      "relative_path": "diagnostics/draft-v1/selected-original-rows.json.gz",
+      "bytes": 43207,
+      "sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/draft-v1/source-identities.json",
+      "relative_path": "diagnostics/draft-v1/source-identities.json",
+      "bytes": 4318,
+      "sha256": "7a0bc23b193008faa61f13ac73ff58995331e162d2532f2be5e53258f3f1b224",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/finalize_readback.py",
+      "relative_path": "diagnostics/finalize_readback.py",
+      "bytes": 10380,
+      "sha256": "e422ee1903ca322842a16894d25d9484069f0b27df46804491b4090d44095105",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/read_observability.py",
+      "relative_path": "diagnostics/read_observability.py",
+      "bytes": 22441,
+      "sha256": "2b501278966246ed924d661eab752706076752750e287efa7a5642af67c2b242",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/readback.json",
+      "relative_path": "diagnostics/readback.json",
+      "bytes": 966118,
+      "sha256": "72deb9444572e8d48f73d657ec1ee263d48fa3c0a9d79471596dfb44095f201d",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-1.json",
+      "relative_path": "diagnostics/reader-attempt-1.json",
+      "bytes": 541,
+      "sha256": "bf77d0131c573a5b1052f9f6cfe79a4cb0e1836e2590071357293f5b642796a6",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-1.stderr.log",
+      "relative_path": "diagnostics/reader-attempt-1.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-1.stdout.log",
+      "relative_path": "diagnostics/reader-attempt-1.stdout.log",
+      "bytes": 190,
+      "sha256": "7b59f5488819b8d8ca7f38655cf0e3d6310df12b8043383c8148f3db38ac2d5d",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-2.json",
+      "relative_path": "diagnostics/reader-attempt-2.json",
+      "bytes": 760,
+      "sha256": "68fc1302f02ce45e699ba93e580f708ea17f081951858ef6481b2a91e4466162",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-2.stderr.log",
+      "relative_path": "diagnostics/reader-attempt-2.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/reader-attempt-2.stdout.log",
+      "relative_path": "diagnostics/reader-attempt-2.stdout.log",
+      "bytes": 190,
+      "sha256": "e8e257359d043cb20e54b9b8fa495048e2b88caf3d5eab583587eccea420efa1",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/selected-original-rows.json.gz",
+      "relative_path": "diagnostics/selected-original-rows.json.gz",
+      "bytes": 43207,
+      "sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/source-identities.json",
+      "relative_path": "diagnostics/source-identities.json",
+      "bytes": 4318,
+      "sha256": "7a0bc23b193008faa61f13ac73ff58995331e162d2532f2be5e53258f3f1b224",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/summary.json",
+      "relative_path": "diagnostics/summary.json",
+      "bytes": 14037,
+      "sha256": "c0c134b107088709b0048e562bbfb5ca8e35da6db5da2bfc7f9b4b3aab8c435f",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/c5dd-diagnostic-observability-readback/verification.json",
+      "relative_path": "diagnostics/verification.json",
+      "bytes": 508,
+      "sha256": "82243d8ecc3a2ddf9f45e8fbfc5f15e389888b33f1064f75441e23d635f380c2",
+      "required_by": [
+        "c5dd-diagnostic-observability-readback/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/artifact-index.json",
+      "relative_path": "service-path/c5dd-baseline-critical-path/artifact-index.json",
+      "bytes": 449,
+      "sha256": "3b980601ce9e8052c5bfee3e39dde50ed0142184d542fa3ef09527ff70009fda",
+      "required_by": [
+        "complete frozen directory index"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "relative_path": "service-path/c5dd-baseline-critical-path/critical-path-readback.json",
+      "bytes": 806894,
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492",
+      "required_by": [
+        "c5dd-baseline-critical-path/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/read_baseline.py",
+      "relative_path": "service-path/c5dd-baseline-critical-path/read_baseline.py",
+      "bytes": 16195,
+      "sha256": "b2d9184d53b17a02bfeba1c55702bcb8ac4944a2d092a6001857e91bb7568730",
+      "required_by": [
+        "c5dd-baseline-critical-path/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/small-readback.json",
+      "relative_path": "service-path/c5dd-baseline-critical-path/small-readback.json",
+      "bytes": 15282,
+      "sha256": "63f5cf4a73141d032b8cb4a426a3e8aae7b8c3bd7be69fab4a76e28a4b991763",
+      "required_by": [
+        "c5dd-baseline-critical-path/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/artifact-index.json",
+      "relative_path": "service-path/c5dd-graph-internal-review/artifact-index.json",
+      "bytes": 594,
+      "sha256": "28f30ba8e35b67575b18fe4e5754c773db51b45f7d7b479909eb8c58e976a5dc",
+      "required_by": [
+        "complete frozen directory index"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "relative_path": "service-path/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "bytes": 98104,
+      "sha256": "18814413f21bf6ab89a803b44290d8e4ab8b9659986158c3fdd8f175caaf534d",
+      "required_by": [
+        "c5dd-graph-internal-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/read_internal_evidence.py",
+      "relative_path": "service-path/c5dd-graph-internal-review/read_internal_evidence.py",
+      "bytes": 7610,
+      "sha256": "e134d6ef86ce6f085d4a1c1c2e14ef3ea6d8f65d868b12a10eec3e9862a440a7",
+      "required_by": [
+        "c5dd-graph-internal-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/reader-receipt.json",
+      "relative_path": "service-path/c5dd-graph-internal-review/reader-receipt.json",
+      "bytes": 777,
+      "sha256": "f10c5b42fc671189c34335026a709d53c8df254e0f664f46db6e6a47f3a28403",
+      "required_by": [
+        "c5dd-graph-internal-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/review.json",
+      "relative_path": "service-path/c5dd-graph-internal-review/review.json",
+      "bytes": 30495,
+      "sha256": "8e821be2100646483aa258dddf127b2c454c3080ee969dd31dab90892b4a274d",
+      "required_by": [
+        "c5dd-graph-internal-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/artifact-index.json",
+      "relative_path": "service-path/c5dd-graph-scope-review/artifact-index.json",
+      "bytes": 448,
+      "sha256": "0b3ebecd918155d0982b76186570fa03f0e939c129a9cee78d661565853eaf03",
+      "required_by": [
+        "complete frozen directory index"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/read_stored_graph_shapes.py",
+      "relative_path": "service-path/c5dd-graph-scope-review/read_stored_graph_shapes.py",
+      "bytes": 10963,
+      "sha256": "09411a646846e465ac8a0c725b4977e571fd6826bc4cceb129dfc3e72a75117b",
+      "required_by": [
+        "c5dd-graph-scope-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/review.json",
+      "relative_path": "service-path/c5dd-graph-scope-review/review.json",
+      "bytes": 23760,
+      "sha256": "0985533fa71a2470c02f74bfa2e8f1d6ae0db0a1670f03abaf7917315c2075ec",
+      "required_by": [
+        "c5dd-graph-scope-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "relative_path": "service-path/c5dd-graph-scope-review/stored-graph-shapes.json",
+      "bytes": 43582,
+      "sha256": "7cc95fe20ff903280bc6a077e5712e3ace969421f785f194ee4b729bbd4d43db",
+      "required_by": [
+        "c5dd-graph-scope-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/artifact-index-draft-v1.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/artifact-index-draft-v1.json",
+      "bytes": 1169,
+      "sha256": "104c4852abd7fb38ebcb0edd0d6bdaf9142762f263375dfaef9e61f063a5cf81",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/artifact-index.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/artifact-index.json",
+      "bytes": 1515,
+      "sha256": "725518f29e982ff4509591145c2a8c6406b6f8dffed362365f9835ca3aef727c",
+      "required_by": [
+        "complete frozen directory index"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/host-checkpoint-readback.json",
+      "bytes": 98996,
+      "sha256": "ca3302f2bb99112a74901a3bad1e2822eb62e375a33edd4f1cf614b8331ec14e",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/read_checkpoint_cost.py",
+      "relative_path": "service-path/host-checkpoint-cost-review/read_checkpoint_cost.py",
+      "bytes": 7908,
+      "sha256": "6362b92728ad38f6d8afca779c8a3237b82bd169ecc16dce1fd085332dcf518b",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/review-draft-v1.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/review-draft-v1.json",
+      "bytes": 18128,
+      "sha256": "aea380dcb3891b0691d5b6d9d45b26bf950c90ef7b9afca4c74cddc3bc0d11c0",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/review.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/review.json",
+      "bytes": 19828,
+      "sha256": "f22ac51c3595407efb30a2d247aeb4e8478812485732fa183713e5aa07bfbe41",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/rust-1.95.0-small_c_string-source.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/rust-1.95.0-small_c_string-source.json",
+      "bytes": 367,
+      "sha256": "afde65b2b4a4742fac7bb48a887e0d2bf42153de99895ccc054e82d62733f26b",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/rust-1.95.0-small_c_string.rs",
+      "relative_path": "service-path/host-checkpoint-cost-review/rust-1.95.0-small_c_string.rs",
+      "bytes": 1937,
+      "sha256": "6f8b59e7841fcd20e24809e2f182b7120e4c2edff2917877e6de2a5cf5436a73",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/rust-1.95.0-unix-source.json",
+      "relative_path": "service-path/host-checkpoint-cost-review/rust-1.95.0-unix-source.json",
+      "bytes": 337,
+      "sha256": "bcfbaf1954fdac78fb65a47decea0ff3ad3c8c42d2c625c3297fad4e658b1c82",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    },
+    {
+      "source_path": "/workspace/scratch/b5a148b09b11/next-validation/host-checkpoint-cost-review/rust-1.95.0-unix.rs",
+      "relative_path": "service-path/host-checkpoint-cost-review/rust-1.95.0-unix.rs",
+      "bytes": 88655,
+      "sha256": "77c6419ee048c348d9ed4bef226ce6ceb735d6077d0eb9f6bcac0ef46fa7b86d",
+      "required_by": [
+        "host-checkpoint-cost-review/artifact-index.json"
+      ],
+      "byte_equal_verified": true
+    }
+  ],
+  "source_files": 86,
+  "source_bytes": 29736639,
+  "by_directory": {
+    "b4bdf": {
+      "files": 15,
+      "bytes": 9557881
+    },
+    "c5dd": {
+      "files": 30,
+      "bytes": 16923017
+    },
+    "diagnostics": {
+      "files": 18,
+      "bytes": 1961748
+    },
+    "service-path": {
+      "files": 23,
+      "bytes": 1293993
+    }
+  },
+  "skipped_missing_changed_or_unfrozen": [],
+  "native_executions": 0,
+  "data_integrity_check_is_not_native_PASS": true,
+  "generated_records": [
+    {
+      "relative_path": "assemble_stage.py",
+      "bytes": 19510,
+      "sha256": "2340f1d968c2006dd1f1e27635236abc5828d98d774466fe4554d126893e7427"
+    },
+    {
+      "relative_path": "preflight.json",
+      "bytes": 546,
+      "sha256": "8c8fb0e76fc54701106452fef938aee8ec710d67069492e879e1c6e0eb2eae9d"
+    },
+    {
+      "relative_path": "embedded-records-index.json",
+      "bytes": 365881,
+      "sha256": "b4821773a2043f119e1c6705a6b032aaa1cbe4be7560117bd67f787c7fe52275"
+    },
+    {
+      "relative_path": "reference-check.json",
+      "bytes": 101603,
+      "sha256": "51e0606c1827adbd6f6d37e8f8ad7bc69bf9719650b134684f1a6ef827db32fe"
+    },
+    {
+      "relative_path": "verification.json",
+      "bytes": 14486,
+      "sha256": "1b19fb7f45d19c4985cb8c5b235acf1404b546e63bb8b24ceefbec8e8af3bf09"
+    }
+  ]
+}

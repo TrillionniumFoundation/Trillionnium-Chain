@@ -1,0 +1,17 @@
+{
+  "schema": "trnm-pq-startup-incomplete-execution-observation-v1",
+  "source_commit": "2936d148019e20d6ad4f1ad8351026365c9904ea",
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "label": "candidate-bounded-reopen-native",
+  "outcome": "INCOMPLETE",
+  "cargo_exit_code": null,
+  "completion_record_available": false,
+  "log_sha256": "fba6dfa55bda7207933e5d8e5b2cf0adff8d465945327dc6674a6d920e8f4dfc",
+  "observed_log": "Compiling trnm-pon-node only; no test summary",
+  "environment_observation": "Tool transport was interrupted. The shared filesystem was later observed full. After recovery no matching runner or compiler remained; the exact termination cause and Cargo exit are unknown.",
+  "acceptance": false,
+  "subsequent_offline_retry": "candidate-bounded-reopen-native-retry.json",
+  "subsequent_retry_failure": "Original-lock autocfg 1.5.1 archive absent after cache reclamation; Cargo exit 101 before compilation or tests.",
+  "dependency_recovery": "cargo fetch --locked --manifest-path trillionnium/Cargo.toml with original CARGO_HOME and qualified Rust 1.95, configured proxy/TLS unchanged; exit 0.",
+  "next_execution": "candidate-bounded-reopen-native-restored.json"
+}
