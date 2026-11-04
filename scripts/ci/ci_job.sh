@@ -14,6 +14,10 @@ case "${1:?required job}" in
     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v
     python3 scripts/ci/pq_chain_claim_guard.py
     python3 scripts/ci/check_repository.py
     python3 scripts/refresh_distributed_source_inventory.py --check

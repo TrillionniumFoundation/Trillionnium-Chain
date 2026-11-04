@@ -1,5 +1,6 @@
 """Event and counterexample controls; no physical quantum qualification."""
 from dataclasses import replace
+from fractions import Fraction
 import json
 import math
 from pathlib import Path
@@ -356,6 +357,219 @@ class CampaignControls(unittest.TestCase):
         mutated[index]["chainwork"] = "1"
         with self.assertRaisesRegex(ValueError, "CHAINWORK"):
             check_trace_arithmetic(mutated)
+
+
+class AdversarialPolicyControls(unittest.TestCase):
+    def test_upward_mode_rounds_exact_stage_sum_and_search_and_proof_deadlines(self):
+        case = NetworkScenario("upward", classical_block_rate_at_initial_target=0,
+                               quantum_fixed_iterations=5, quantum_iteration_seconds=1 + 2**-52,
+                               quantum_prepare_seconds=0.125, quantum_measure_seconds=0.5,
+                               quantum_candidate_check_seconds=0.5, quantum_proof_seconds=1 + 2**-52,
+                               quantum_domain_size=1, quantum_domain_marked_count=1,
+                               quantum_domain_setup_seconds=0.25)
+        exact = sum((Fraction.from_float(value) for value in (0.125, 0.5, 0.5, 0.25)), Fraction(0))
+        exact += 5 * Fraction.from_float(case.quantum_iteration_seconds)
+        nearest = Simulator(case)
+        nearest.start()
+        self.assertLess(Fraction.from_float(nearest.active["q"].finishes), exact)
+        sim = Simulator(replace(case, quantum_clock_rounding="upward"))
+        sim.now = 0.1
+        sim.start()
+        trial = sim.active["q"]
+        self.assertGreaterEqual(Fraction.from_float(trial.finishes), Fraction.from_float(0.1) + exact)
+        self.assertEqual(next(r for r in sim.trace if r["kind"] == "search-start")["clock_rounding"], "upward")
+        sim.now = trial.finishes
+        sim._search_done("q", trial.serial)
+        _, started, finished = sim.proofs["q"]
+        self.assertGreaterEqual(Fraction.from_float(finished),
+                                Fraction.from_float(started) + Fraction.from_float(case.quantum_proof_seconds))
+        self.assertEqual(sim.counts["q"]["logical_iterations_completed"], 5)
+
+    def test_upward_mode_preserves_classical_clocks_and_rejects_unknown_mode(self):
+        case = NetworkScenario("classical_rounding", quantum_initial_factor=0, duration_seconds=50)
+        self.assertEqual(run_network_scenario(case),
+                         run_network_scenario(replace(case, quantum_clock_rounding="upward")))
+        with self.assertRaisesRegex(ValueError, "QUANTUM_CLOCK_ROUNDING"):
+            replace(case, quantum_clock_rounding="downward").validate()
+
+    def test_slow_effective_clock_after_permitted_speed_factor_is_censored(self):
+        case = NetworkScenario("scaled_slow_clock", duration_seconds=10,
+                               classical_block_rate_at_initial_target=0, quantum_initial_factor=1e-9,
+                               quantum_iteration_seconds=1e30, quantum_trial_policy="bounded-throughput",
+                               quantum_iteration_candidates=(1, 2), quantum_clock_rounding="upward")
+        summary, rows = run_network_scenario(case)
+        start = next(row for row in rows if row["kind"] == "search-start")
+        self.assertGreater(start["iteration_seconds_upper"], 1e38)
+        self.assertEqual(summary["termination"], "horizon")
+        self.assertEqual(summary["miners"]["q"]["searches_censored"], 1)
+        self.assertEqual(summary["miners"]["q"]["logical_iterations_completed"], 0)
+
+    def test_persistent_zero_domain_freezes_header_and_charges_shared_setup_once(self):
+        case = NetworkScenario("empty_domain", duration_seconds=10,
+                               classical_block_rate_at_initial_target=0, quantum_processors=4,
+                               quantum_fixed_iterations=0, quantum_prepare_seconds=0,
+                               quantum_measure_seconds=0.5, quantum_candidate_check_seconds=0.5,
+                               quantum_domain_size=16, quantum_domain_marked_count=0,
+                               quantum_domain_setup_seconds=2)
+        summary, rows = run_network_scenario(case)
+        domains = [r for r in rows if r["kind"] == "quantum-domain"]
+        starts = [r for r in rows if r["kind"] == "search-start"]
+        self.assertEqual(len(domains), 1)
+        self.assertEqual(len({r["domain_id"] for r in starts}), 1)
+        self.assertEqual(len({r["timestamp"] for r in starts}), 1)
+        self.assertEqual(starts[0]["domain_setup_seconds"], 2)
+        self.assertTrue(all(r["domain_setup_seconds"] == 0 for r in starts[1:]))
+        self.assertEqual(summary["adversarial"]["domain_setup_seconds_charged"], 2)
+        self.assertEqual(summary["adversarial"]["domain_setup_processor_seconds_charged"], 8)
+        self.assertEqual(summary["miners"]["q"]["searches_completed"], 8)
+        self.assertEqual(summary["miners"]["q"]["candidate_checks_completed"], 32)
+        self.assertEqual(summary["miners"]["q"]["proofs_started"], 0)
+
+    def test_refresh_is_after_measured_batches_and_pays_setup_again(self):
+        case = NetworkScenario("refresh", duration_seconds=10,
+                               classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,
+                               quantum_prepare_seconds=0, quantum_measure_seconds=0.5,
+                               quantum_candidate_check_seconds=0.5, quantum_domain_size=16,
+                               quantum_domain_marked_count=0, quantum_domain_setup_seconds=2,
+                               quantum_domain_trials_before_refresh=2)
+        summary, rows = run_network_scenario(case)
+        domains = [r for r in rows if r["kind"] == "quantum-domain"]
+        self.assertEqual([r["at_seconds"] for r in domains], [0, 4, 8])
+        self.assertEqual(len({r["domain_id"] for r in domains}), 3)
+        self.assertEqual(summary["adversarial"]["domain_setup_seconds_charged"], 6)
+
+    def test_sampled_shared_m_is_not_resampled_per_processor_or_retry(self):
+        class EmptyTickets:
+            calls = 0
+
+            def getrandbits(self, bits):
+                self.calls += 1
+                return (1 << bits) - 1
+
+        sim = Simulator(NetworkScenario("shared", duration_seconds=5,
+                                        classical_block_rate_at_initial_target=0, quantum_processors=4,
+                                        quantum_fixed_iterations=0, quantum_prepare_seconds=0,
+                                        quantum_measure_seconds=0.5, quantum_candidate_check_seconds=0.5,
+                                        quantum_domain_size=16))
+        sim.domain_rng = EmptyTickets()
+        summary, _ = sim.run()
+        self.assertEqual(sim.domain_rng.calls, 16)
+        self.assertEqual(summary["adversarial"]["zero_marked_domains"], 1)
+        self.assertEqual(summary["miners"]["q"]["searches_failed"], 5)
+
+    def test_trial_selection_never_receives_sampled_marked_count(self):
+        class ConstantTickets:
+            def __init__(self, marked):
+                self.marked = marked
+
+            def getrandbits(self, bits):
+                return 0 if self.marked else (1 << bits) - 1
+
+        case = NetworkScenario("hidden_m", classical_block_rate_at_initial_target=0,
+                               quantum_trial_policy="bounded-throughput", quantum_iteration_candidates=tuple(range(9)),
+                               quantum_domain_size=8, quantum_domain_trials_before_refresh=1,
+                               quantum_domain_setup_seconds=0.1)
+        choices, successes = [], []
+        for marked in (False, True):
+            sim = Simulator(case)
+            sim.domain_rng = ConstantTickets(marked)
+            sim.start()
+            choices.append(sim.active["q"].iterations)
+            successes.append(sim.active["q"].success_probability)
+        self.assertEqual(choices[0], choices[1])
+        self.assertEqual(successes, [0, 1])
+
+    def test_optimizer_refuses_persistent_m_or_fixed_count_throughput_claim(self):
+        case = NetworkScenario("bad_prior", quantum_trial_policy="bounded-throughput",
+                               quantum_iteration_candidates=(0, 1), quantum_domain_size=8)
+        for patch in ({}, dict(quantum_domain_trials_before_refresh=1, quantum_domain_marked_count=1),
+                      dict(quantum_domain_trials_before_refresh=1, quantum_domain_size=65)):
+            with self.assertRaises(ValueError):
+                replace(case, **patch).validate()
+
+    def test_branch_minimum_and_epoch_extremes_allow_valid_backward_timestamps(self):
+        for mode in ("mtp-min", "retarget-extremes"):
+            case = NetworkScenario("backward", duration_seconds=3,
+                                   classical_block_rate_at_initial_target=0, quantum_strategy="private-branch",
+                                   quantum_timestamp_mode=mode, quantum_fixed_iterations=0,
+                                   quantum_domain_size=1, quantum_domain_marked_count=1,
+                                   quantum_prepare_seconds=0, quantum_measure_seconds=0.1,
+                                   quantum_candidate_check_seconds=0.1, quantum_proof_seconds=0)
+            sim = Simulator(case)
+            _, rows = sim.run()
+            check_trace_arithmetic(rows)
+            backwards = [b for b in sim.blocks.values() if b.parent is not None
+                         and b.timestamp < sim.blocks[b.parent].timestamp]
+            self.assertTrue(backwards, mode)
+            self.assertTrue(all(sim.validate_block(b) == "admissible" for b in backwards))
+
+    def test_adaptive_release_uses_only_miner_delivered_public_view(self):
+        results = []
+        for deliver_to_quantum in (False, True):
+            sim = Simulator(idle(quantum_strategy="private-branch", private_release_policy="observed-work-lead"))
+            public = "prefix"
+            for index in range(3):
+                public = append_block(sim, f"public{index}", public).block_id
+            sim.receive("observer", public)
+            if deliver_to_quantum:
+                sim.receive("q", public)
+            private = append_block(sim, "own", miner="q")
+            sim.private_tip = private.block_id
+            sim.private_wait_started = 0
+            sim.receive("q", private.block_id, from_network=False)
+            sim._maybe_adaptive_release("private-block")
+            results.append(sim.adaptive_releases)
+            self.assertEqual(sim.public_q_tip, public if deliver_to_quantum else "prefix")
+            if not deliver_to_quantum:
+                self.assertEqual(sim.views["observer"].tip, public)
+                self.assertEqual(sim.last_published_private_tip, "own")
+        self.assertEqual(results, [1, 0])
+
+    def test_adaptive_release_defers_future_prefix_then_uses_local_timer(self):
+        sim = Simulator(idle(duration_seconds=5, quantum_strategy="private-branch",
+                             private_release_policy="observed-work-lead"))
+        private = append_block(sim, "future", stamp=sim.start_timestamp + 121, miner="q")
+        sim.private_tip = private.block_id
+        sim.private_wait_started = 0
+        sim.receive("q", private.block_id, from_network=False)
+        sim._maybe_adaptive_release("private-block")
+        self.assertEqual(sim.adaptive_releases, 0)
+        sim.start()
+        while sim.events and sim.events[0][0] <= 1:
+            sim.step()
+        self.assertEqual(sim.adaptive_releases, 1)
+        self.assertEqual(sim.public_q_tip, "prefix")
+        published = [r for r in sim.trace if r["kind"] == "publish"]
+        self.assertEqual([r["at_seconds"] for r in published], [1])
+
+    def test_explicit_timeout_can_release_without_work_advantage(self):
+        sim = Simulator(idle(duration_seconds=5, quantum_strategy="private-branch",
+                             private_release_policy="observed-work-lead", private_release_work_lead=100,
+                             private_release_max_wait_seconds=2))
+        private = append_block(sim, "own", miner="q")
+        sim.private_tip = private.block_id
+        sim.private_wait_started = 0
+        sim._maybe_adaptive_release("private-block")
+        self.assertEqual(sim.adaptive_releases, 0)
+        sim.start()
+        while sim.events and sim.events[0][0] <= 2:
+            sim.step()
+        self.assertEqual(sim.adaptive_releases, 1)
+        release = [r for r in sim.trace if r["kind"] == "adaptive-release-check" and r["release"]][0]
+        self.assertTrue(release["timed_out"])
+        self.assertEqual(release["at_seconds"], 2)
+
+    def test_slow_quantum_resource_clocks_censor_at_finite_horizon(self):
+        case = NetworkScenario("slow_physics", duration_seconds=10,
+                               classical_block_rate_at_initial_target=0,
+                               quantum_iteration_seconds=1e25, quantum_prepare_seconds=1e24,
+                               quantum_measure_seconds=1e23, quantum_candidate_check_seconds=1e22)
+        summary, rows = run_network_scenario(case)
+        self.assertEqual(summary["termination"], "horizon")
+        self.assertEqual(summary["miners"]["q"]["searches_censored"], 1)
+        self.assertEqual(summary["miners"]["q"]["logical_iterations_completed"], 0)
+        self.assertEqual(summary["miners"]["q"]["proofs_started"], 0)
+        self.assertGreater(rows[0]["scheduled_finish_seconds"], 1e25)
 
 
 if __name__ == "__main__":

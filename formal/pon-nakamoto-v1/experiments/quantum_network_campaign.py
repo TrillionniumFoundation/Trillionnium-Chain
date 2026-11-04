@@ -29,6 +29,7 @@ SOURCE_FILES = (
     "trillionnium/crates/trnm-pon-node/src/consensus.rs",
     "formal/pon-nakamoto-v1/reference.py",
     "formal/pon-nakamoto-v1/quantum_daa_model.py",
+    "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
     "formal/pon-nakamoto-v1/quantum_network_sim.py",
     "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
     "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",

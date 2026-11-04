@@ -8,6 +8,7 @@ physical qubits, fault correction and useful-work soundness are not simulated.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from fractions import Fraction
 import hashlib
 import heapq
 import json
@@ -20,6 +21,11 @@ from quantum_daa_model import (
     Header, POW_LIMIT, Scenario, common_history, probability, required, uint,
 )
 from reference import retarget, timestamp_state, work
+from quantum_adversarial_search import (
+    ADVERSARIAL_ASSUMPTIONS, MAX_CLOCK_SECONDS, MAX_DOMAIN_SIZE,
+    MAX_EXACT_BINOMIAL_SIZE, TrialCosts, bounded_throughput_choice,
+    finite_domain_success, sample_marked_count, upward_float, validate_candidates,
+)
 
 WORK_MAX = (1 << 512) - 1
 PROFILE = "conditional-w1-lottery-dev-profile-v1"
@@ -123,6 +129,13 @@ class NetworkScenario:
     quantum_fixed_iterations: int | None = None
     quantum_max_iterations: int = 1_000_000
     quantum_processors: int = 1
+    quantum_trial_policy: str = "first-peak"
+    quantum_iteration_candidates: tuple[int, ...] = ()
+    quantum_domain_size: int | None = None
+    quantum_domain_marked_count: int | None = None
+    quantum_domain_trials_before_refresh: int = 0
+    quantum_domain_setup_seconds: float = 0.0
+    quantum_clock_rounding: str = "nearest"
     classical_proof_seconds: float = 0.1
     quantum_proof_seconds: float = 1.0
     propagation_seconds: float = 0.5
@@ -130,6 +143,10 @@ class NetworkScenario:
     quantum_timestamp_mode: str = "wall"
     private_timestamp_step: int = 5
     private_timestamp_schedule: tuple[TimestampPhase, ...] = ()
+    private_release_policy: str = "scheduled"
+    private_release_work_lead: int = 1
+    private_release_min_blocks: int = 1
+    private_release_max_wait_seconds: float | None = None
     private_censors_probe: bool = True
     probe_arrival_seconds: float = 1.0
     confirmation_depth: int = 6
@@ -165,7 +182,8 @@ class NetworkScenario:
             raise ValueError("CLASSICAL_SHARE_SUM")
         if self.quantum_strategy not in ("honest-tip", "private-branch"):
             raise ValueError("QUANTUM_STRATEGY")
-        if self.quantum_timestamp_mode not in ("wall", "compressed"):
+        if self.quantum_timestamp_mode not in ("wall", "compressed", "mtp-min",
+                                               "future-bound", "retarget-extremes"):
             raise ValueError("TIMESTAMP_MODE")
         if self.quantum_strategy != "private-branch" and self.quantum_timestamp_mode != "wall":
             raise ValueError("HONEST_TIMESTAMP_MODE")
@@ -173,11 +191,12 @@ class NetworkScenario:
             finite(value, name, 0, 1000)
             if 0 < value < 1e-9:
                 raise ValueError("QUANTUM_FACTOR_PRECISION")
-        finite(self.quantum_iteration_seconds, "ITERATION_SECONDS", 1e-9, 86400)
-        finite(self.quantum_measure_seconds, "MEASURE_SECONDS", 1e-9, 86400)
-        finite(self.quantum_candidate_check_seconds, "CANDIDATE_CHECK_SECONDS", 1e-9, 86400)
-        for name in ("quantum_prepare_seconds", "classical_proof_seconds",
-                     "quantum_proof_seconds", "propagation_seconds"):
+        finite(self.quantum_iteration_seconds, "ITERATION_SECONDS", 1e-9, MAX_CLOCK_SECONDS)
+        finite(self.quantum_measure_seconds, "MEASURE_SECONDS", 1e-9, MAX_CLOCK_SECONDS)
+        finite(self.quantum_candidate_check_seconds, "CANDIDATE_CHECK_SECONDS", 1e-9, MAX_CLOCK_SECONDS)
+        for name in ("quantum_prepare_seconds", "quantum_proof_seconds", "quantum_domain_setup_seconds"):
+            finite(getattr(self, name), name, 0, MAX_CLOCK_SECONDS)
+        for name in ("classical_proof_seconds", "propagation_seconds"):
             finite(getattr(self, name), name)
         uint(self.quantum_max_iterations, "MAX_ITERATIONS", 100_000_000)
         if not self.quantum_max_iterations:
@@ -187,6 +206,33 @@ class NetworkScenario:
         uint(self.quantum_processors, "PROCESSORS", 1024)
         if self.quantum_processors == 0:
             raise ValueError("PROCESSORS")
+        if self.quantum_clock_rounding not in ("nearest", "upward"):
+            raise ValueError("QUANTUM_CLOCK_ROUNDING")
+        if self.quantum_trial_policy not in ("first-peak", "bounded-throughput"):
+            raise ValueError("QUANTUM_TRIAL_POLICY")
+        if self.quantum_trial_policy == "bounded-throughput":
+            if self.quantum_fixed_iterations is not None:
+                raise ValueError("AMBIGUOUS_ITERATION_POLICY")
+            validate_candidates(self.quantum_iteration_candidates, self.quantum_max_iterations)
+        elif self.quantum_iteration_candidates != ():
+            raise ValueError("UNUSED_ITERATION_CANDIDATES")
+        uint(self.quantum_domain_trials_before_refresh, "DOMAIN_REFRESH_TRIALS", 100_000)
+        if self.quantum_domain_size is None:
+            if (self.quantum_domain_marked_count is not None or self.quantum_domain_trials_before_refresh
+                    or self.quantum_domain_setup_seconds):
+                raise ValueError("DOMAIN_PARAMETERS_WITHOUT_DOMAIN")
+        else:
+            uint(self.quantum_domain_size, "DOMAIN_SIZE", MAX_DOMAIN_SIZE)
+            if not self.quantum_domain_size:
+                raise ValueError("DOMAIN_SIZE")
+            if self.quantum_domain_marked_count is not None:
+                uint(self.quantum_domain_marked_count, "DOMAIN_MARKED_COUNT", self.quantum_domain_size)
+            if self.quantum_trial_policy == "bounded-throughput":
+                if (self.quantum_domain_trials_before_refresh != 1
+                        or self.quantum_domain_marked_count is not None):
+                    raise ValueError("FINITE_THROUGHPUT_REQUIRES_FRESH_BINOMIAL_DOMAINS")
+                if self.quantum_domain_size > MAX_EXACT_BINOMIAL_SIZE:
+                    raise ValueError("EXACT_BINOMIAL_SUPPORT")
         uint(self.private_timestamp_step, "STAMP_STEP", 120)
         if type(self.private_timestamp_schedule) is not tuple or len(self.private_timestamp_schedule) > 16:
             raise ValueError("TIMESTAMP_SCHEDULE")
@@ -213,6 +259,20 @@ class NetworkScenario:
                 raise ValueError(name)
         if self.private_release_seconds is not None and self.quantum_strategy != "private-branch":
             raise ValueError("RELEASE_WITHOUT_PRIVATE_BRANCH")
+        if self.private_release_policy not in ("scheduled", "observed-work-lead"):
+            raise ValueError("RELEASE_POLICY")
+        uint(self.private_release_work_lead, "RELEASE_WORK_LEAD", 10000)
+        uint(self.private_release_min_blocks, "RELEASE_MIN_BLOCKS", 10000)
+        if not self.private_release_work_lead or not self.private_release_min_blocks:
+            raise ValueError("RELEASE_THRESHOLD")
+        if self.private_release_policy == "observed-work-lead":
+            if self.quantum_strategy != "private-branch" or self.private_release_seconds is not None:
+                raise ValueError("ADAPTIVE_RELEASE_SCOPE")
+            if self.private_release_max_wait_seconds is not None:
+                finite(self.private_release_max_wait_seconds, "RELEASE_MAX_WAIT", 1e-9, self.duration_seconds)
+        elif (self.private_release_work_lead != 1 or self.private_release_min_blocks != 1
+              or self.private_release_max_wait_seconds is not None):
+            raise ValueError("UNUSED_RELEASE_PARAMETERS")
         uint(self.confirmation_depth, "CONFIRMATION_DEPTH", 1000)
         uint(self.confirmation_work_multiplier, "CONFIRMATION_WORK_MULTIPLIER", 1000)
         if self.confirmation_depth == 0 or self.confirmation_work_multiplier == 0:
@@ -266,6 +326,20 @@ class Trial:
     success_probability: float
     query_rate: float
     iteration_seconds: float
+    domain_setup_seconds: float = 0.0
+    domain_id: str | None = None
+
+
+@dataclass
+class DomainTemplate:
+    """Evaluator state; its marked count must not be passed to trial selection."""
+    domain_id: str
+    parent: str
+    timestamp: int
+    target: int
+    contains_probe: bool
+    marked_count: int
+    completed_batches: int = 0
 
 
 @dataclass
@@ -310,12 +384,25 @@ class Simulator:
         self.views = {name: View("prefix", {"prefix"}) for name in self.miners + ("observer",)}
         self.rngs = {name: random.Random(int.from_bytes(hashlib.sha256(
             f"{case.seed}:{name}".encode()).digest(), "big")) for name in self.miners}
+        self.domain_rng = random.Random(int.from_bytes(hashlib.sha256(
+            f"{case.seed}:q-domain".encode()).digest(), "big"))
+        self.quantum_domain: DomainTemplate | None = None
+        self.domain_count = 0
+        self.zero_marked_domains = 0
+        self.domain_setup_seconds_charged = 0.0
+        self.iteration_choices: dict[tuple[int, float], Any] = {}
         self.active: dict[str, Trial] = {}
         self.proofs: dict[str, tuple[Trial, float, float]] = {}
         self.proof_completed: set[str] = set()
         self.deferred: dict[tuple[str, str], list[str]] = {}
         self.private_tip = "prefix"
         self.released = False
+        self.public_q_tip = "prefix"
+        self.public_q_delivery_tips: set[str] = set()
+        self.last_published_private_tip = "prefix"
+        self.private_wait_started: float | None = None
+        self.adaptive_next_check: float | None = None
+        self.adaptive_releases = 0
         self.classical_factor = 1.0
         self.quantum_factor = case.quantum_initial_factor
         self.now = 0.0
@@ -499,22 +586,91 @@ class Simulator:
             return
         self.deferred[key] = [old for old in existing if not self._is_ancestor(old, tip)] + [tip]
 
-    def receive(self, recipient: str, tip: str) -> None:
+    def receive(self, recipient: str, tip: str, *, from_network: bool = True) -> None:
         """Deliver a complete ancestor bundle after its configured link delay."""
         if recipient not in self.views or tip not in self.blocks:
             raise ValueError("DELIVERY_IDENTITY")
+        track_public = recipient == "q" and self.case.private_release_policy == "observed-work-lead"
+        if track_public and from_network:
+            self.public_q_delivery_tips.add(tip)
+        public_message = track_public and tip in self.public_q_delivery_tips
         for block_id in self.path(tip):
             if block_id in self.views[recipient].known:
                 continue
             block = self.blocks[block_id]
             if self.validate_block(block) == "deferred-future":
                 self._adopt(recipient, block.parent)
+                if public_message:
+                    self._observe_public_tip(block.parent)
                 self._defer(recipient, block_id, tip,
                             float(block.timestamp - 120 - self.start_timestamp))
                 self._emit("future-delivery-deferred", recipient=recipient, block=block_id)
                 return
             self.views[recipient].known.add(block_id)
         self._adopt(recipient, tip)
+        if public_message:
+            self._observe_public_tip(tip)
+
+    def _observe_public_tip(self, candidate: str) -> None:
+        """Only receive() calls this, after that miner's timestamp admission."""
+        if self.blocks[candidate].chainwork > self.blocks[self.public_q_tip].chainwork:
+            previous = self.public_q_tip
+            self.public_q_tip = candidate
+            self._emit("quantum-public-view", previous=previous, tip=candidate,
+                       chainwork=str(self.blocks[candidate].chainwork))
+        self._maybe_adaptive_release("public-message")
+
+    def _schedule_adaptive_check(self, at: float) -> None:
+        if at > self.now and (self.adaptive_next_check is None or at < self.adaptive_next_check):
+            self.adaptive_next_check = at
+            self._schedule(at, "adaptive-check", None)
+
+    def _maybe_adaptive_release(self, reason: str) -> None:
+        """Repeated publication decisions from own work and delayed public view.
+
+        The release threshold is in initial-target required-work units. A timeout
+        optionally publishes an eligible prefix without a work advantage. Neither
+        the observer's tip nor another miner's undelivered block enters a choice.
+        Future-dated ancestors defer even a locally preferred private prefix.
+        """
+        case = self.case
+        if case.private_release_policy != "observed-work-lead":
+            return
+        if self.private_tip == self.last_published_private_tip:
+            return
+        eligible = "prefix"
+        first_future = None
+        ceiling = self.start_timestamp + int(self.now) + 120
+        for block_id in self.path(self.private_tip):
+            if self.blocks[block_id].timestamp > ceiling:
+                first_future = block_id
+                break
+            eligible = block_id
+        unpublished = (self.blocks[eligible].height
+                       - self.blocks[self.last_published_private_tip].height)
+        observed_work = self.blocks[self.public_q_tip].chainwork
+        eligible_work = self.blocks[eligible].chainwork
+        threshold = case.private_release_work_lead * work(self.initial_target)
+        timed_out = (case.private_release_max_wait_seconds is not None
+                     and self.private_wait_started is not None
+                     and self.now - self.private_wait_started >= case.private_release_max_wait_seconds)
+        release = unpublished > 0 and (timed_out or (
+            unpublished >= case.private_release_min_blocks and eligible_work - observed_work >= threshold))
+        self._emit("adaptive-release-check", reason=reason, public_tip=self.public_q_tip,
+                   private_tip=self.private_tip, eligible_tip=eligible,
+                   observed_public_work=str(observed_work), eligible_private_work=str(eligible_work),
+                   required_lead=str(threshold), unpublished_blocks=unpublished,
+                   timed_out=timed_out, release=release)
+        if release:
+            self._publish("q", eligible)
+            self.last_published_private_tip = eligible
+            self.adaptive_releases += 1
+            self.private_wait_started = None if eligible == self.private_tip else self.now
+            self.adaptive_next_check = None
+        if first_future is not None:
+            self._schedule_adaptive_check(float(self.blocks[first_future].timestamp - 120 - self.start_timestamp))
+        if self.private_wait_started is not None and case.private_release_max_wait_seconds is not None:
+            self._schedule_adaptive_check(self.private_wait_started + case.private_release_max_wait_seconds)
 
     def private_step(self) -> int:
         count = self.counts["q"]["blocks_created"]
@@ -527,9 +683,53 @@ class Simulator:
     def _iterations(self, target: int) -> int:
         if self.case.quantum_fixed_iterations is not None:
             return self.case.quantum_fixed_iterations
+        if self.case.quantum_trial_policy == "bounded-throughput":
+            # Deliberately no DomainTemplate or sampled marked count is used.
+            key = (target, self.quantum_factor)
+            if key not in self.iteration_choices:
+                case = self.case
+                costs = TrialCosts(case.quantum_prepare_seconds, self._quantum_iteration_seconds(),
+                                   case.quantum_measure_seconds, case.quantum_candidate_check_seconds,
+                                   case.quantum_proof_seconds, case.quantum_domain_setup_seconds,
+                                   case.quantum_clock_rounding)
+                self.iteration_choices[key] = bounded_throughput_choice(
+                    probability(target), case.quantum_iteration_candidates, case.quantum_processors,
+                    costs, finite_domain_size=case.quantum_domain_size)
+            choice = self.iteration_choices[key]
+            self._emit("quantum-trial-policy", **asdict(choice))
+            return choice.iterations
         theta = math.asin(math.sqrt(float(probability(target))))
         peak = math.pi / (4 * theta) - 0.5
         return min(self.case.quantum_max_iterations, max(0, int(round(peak))))
+
+    def _quantum_iteration_seconds(self) -> float:
+        if self.case.quantum_clock_rounding == "upward":
+            return upward_float(Fraction.from_float(float(self.case.quantum_iteration_seconds))
+                                / Fraction.from_float(float(self.quantum_factor)))
+        return self.case.quantum_iteration_seconds / self.quantum_factor
+
+    def _domain_template(self, parent: str, timestamp: int, target: int,
+                         contains_probe: bool) -> tuple[DomainTemplate, float]:
+        case, current = self.case, self.quantum_domain
+        refresh = case.quantum_domain_trials_before_refresh
+        if (current is not None and current.parent == parent and current.target == target
+                and (not refresh or current.completed_batches < refresh)):
+            return current, 0.0
+        self.domain_count += 1
+        identity = [self.profile, parent, timestamp, target, contains_probe, self.domain_count]
+        domain_id = hashlib.sha256(json.dumps(identity, separators=(",", ":")).encode()).hexdigest()
+        marked = case.quantum_domain_marked_count
+        if marked is None:
+            marked = sample_marked_count(self.domain_rng, case.quantum_domain_size, target)
+        current = DomainTemplate(domain_id, parent, timestamp, target, contains_probe, marked)
+        self.quantum_domain = current
+        self.zero_marked_domains += int(marked == 0)
+        self._emit("quantum-domain", domain_id=domain_id, domain_number=self.domain_count,
+                   parent=parent, timestamp=timestamp, target_hex=f"{target:064x}", contains_probe=contains_probe,
+                   size=case.quantum_domain_size, marked_count=marked,
+                   marked_count_source="sampled-binomial" if case.quantum_domain_marked_count is None else "caller-conditioned",
+                   marked_count_available_to_policy=False, setup_seconds=case.quantum_domain_setup_seconds)
+        return current, case.quantum_domain_setup_seconds
 
     def _start_miner(self, miner: str) -> None:
         if miner in self.active or miner in self.proofs or self.finished:
@@ -543,18 +743,36 @@ class Simulator:
         stamp = max(self.start_timestamp + int(self.now), mtp + 1)
         if miner == "q" and case.quantum_timestamp_mode == "compressed":
             stamp = parent.timestamp + self.private_step()
+        elif miner == "q" and case.quantum_timestamp_mode == "mtp-min":
+            stamp = mtp + 1
+        elif miner == "q" and case.quantum_timestamp_mode in ("future-bound", "retarget-extremes"):
+            future = max(mtp + 1, self.start_timestamp + int(self.now) + 120)
+            stamp = (mtp + 1 if case.quantum_timestamp_mode == "retarget-extremes"
+                     and (parent.height + 1) % 16 else future)
         contains_probe = self.now >= case.probe_arrival_seconds and not self._probe(parent_id)[0]
         if miner == "q" and case.quantum_strategy == "private-branch" and case.private_censors_probe:
             contains_probe = False
-        iterations, qrate, itime = 0, 0.0, 0.0
+        iterations, qrate, itime, setup, domain_id = 0, 0.0, 0.0, 0.0, None
         if miner == "q":
             if self.quantum_factor == 0:
                 return
+            if case.quantum_domain_size is not None:
+                domain, setup = self._domain_template(parent_id, stamp, target, contains_probe)
+                stamp, contains_probe, domain_id = domain.timestamp, domain.contains_probe, domain.domain_id
             iterations = self._iterations(target)
-            itime = case.quantum_iteration_seconds / self.quantum_factor
-            elapsed = (case.quantum_prepare_seconds + iterations * itime
-                       + case.quantum_measure_seconds + case.quantum_candidate_check_seconds)
-            success = grover_success(p, iterations, case.quantum_processors)
+            itime = self._quantum_iteration_seconds()
+            if case.quantum_clock_rounding == "upward":
+                elapsed = TrialCosts(case.quantum_prepare_seconds, itime, case.quantum_measure_seconds,
+                                     case.quantum_candidate_check_seconds, case.quantum_proof_seconds,
+                                     setup, "upward").measured_batch_seconds(iterations)
+            else:
+                elapsed = (case.quantum_prepare_seconds + iterations * itime
+                           + case.quantum_measure_seconds + case.quantum_candidate_check_seconds)
+                if setup:
+                    elapsed += setup
+            success = (grover_success(p, iterations, case.quantum_processors) if domain_id is None else
+                       finite_domain_success(case.quantum_domain_size, domain.marked_count,
+                                             iterations, case.quantum_processors))
         else:
             share = case.classical_shares[self.classical_miners.index(miner)]
             qrate = case.classical_block_rate_at_initial_target * share * self.classical_factor / self.base_probability
@@ -563,14 +781,21 @@ class Simulator:
             elapsed = self.rngs[miner].expovariate(qrate * p)
             success = 1.0
         self.trial_serial += 1
+        finishes = self.now + elapsed
+        if miner == "q" and case.quantum_clock_rounding == "upward":
+            finishes = upward_float(Fraction.from_float(float(self.now)) + Fraction.from_float(elapsed))
         trial = Trial(self.trial_serial, miner, parent_id, stamp, target, contains_probe,
-                      self.now, self.now + elapsed, iterations, success, qrate, itime)
+                      self.now, finishes, iterations, success, qrate, itime, setup, domain_id)
         self.active[miner] = trial
         self.counts[miner]["searches_started"] += 1
         self._schedule(trial.finishes, "search", (miner, trial.serial))
+        additional = {"domain_id": domain_id, "domain_setup_seconds": setup} if domain_id is not None else {}
+        if miner == "q" and case.quantum_clock_rounding == "upward":
+            additional.update(clock_rounding="upward", duration_seconds_upper=elapsed,
+                              iteration_seconds_upper=itime)
         self._emit("search-start", miner=miner, trial=trial.serial, parent=parent_id,
                    target_hex=f"{target:064x}", timestamp=stamp, iterations=iterations,
-                   success_probability=success, scheduled_finish_seconds=trial.finishes)
+                   success_probability=success, scheduled_finish_seconds=trial.finishes, **additional)
 
     def _charge_search(self, trial: Trial, status: str) -> None:
         counts = self.counts[trial.miner]
@@ -579,11 +804,21 @@ class Simulator:
         counts["classical_query_equivalents"] += elapsed * trial.query_rate
         logical = 0
         if trial.miner == "q":
-            logical = min(trial.iterations, max(0, int(math.floor(
-                (elapsed - self.case.quantum_prepare_seconds) / trial.iteration_seconds + 1e-9))))
+            self.domain_setup_seconds_charged += min(elapsed, trial.domain_setup_seconds)
+            if self.case.quantum_clock_rounding == "upward":
+                exact_elapsed = (Fraction.from_float(float(min(self.now, trial.finishes)))
+                                 - Fraction.from_float(float(trial.started)))
+                exact_prepare = (Fraction.from_float(float(self.case.quantum_prepare_seconds))
+                                 + Fraction.from_float(float(trial.domain_setup_seconds)))
+                logical = min(trial.iterations, max(0, (exact_elapsed - exact_prepare)
+                              // Fraction.from_float(trial.iteration_seconds)))
+            else:
+                logical = min(trial.iterations, max(0, int(math.floor(
+                    (elapsed - (self.case.quantum_prepare_seconds + trial.domain_setup_seconds))
+                    / trial.iteration_seconds + 1e-9))))
             logical *= self.case.quantum_processors
             counts["logical_iterations_completed"] += logical
-            check_starts_after = (self.case.quantum_prepare_seconds
+            check_starts_after = (self.case.quantum_prepare_seconds + trial.domain_setup_seconds
                                   + trial.iterations * trial.iteration_seconds
                                   + self.case.quantum_measure_seconds)
             checked_seconds = min(self.case.quantum_candidate_check_seconds,
@@ -620,6 +855,10 @@ class Simulator:
             return
         del self.active[miner]
         self.counts[miner]["searches_completed"] += 1
+        if trial.domain_id is not None:
+            if self.quantum_domain is None or self.quantum_domain.domain_id != trial.domain_id:
+                raise ValueError("ACTIVE_DOMAIN_MISMATCH")
+            self.quantum_domain.completed_batches += 1
         won = miner != "q" or self.rngs[miner].random() < trial.success_probability
         if not won:
             self.counts[miner]["searches_failed"] += 1
@@ -628,10 +867,13 @@ class Simulator:
             return
         self._charge_search(trial, "won")
         duration = self.case.quantum_proof_seconds if miner == "q" else self.case.classical_proof_seconds
+        finish = self.now + duration
+        if miner == "q" and self.case.quantum_clock_rounding == "upward":
+            finish = upward_float(Fraction.from_float(float(self.now)) + Fraction.from_float(float(duration)))
         self.proof_completed.discard(miner)
-        self.proofs[miner] = (trial, self.now, self.now + duration)
+        self.proofs[miner] = (trial, self.now, finish)
         self.counts[miner]["proofs_started"] += 1
-        self._schedule(self.now + duration, "proof", miner)
+        self._schedule(finish, "proof", miner)
         self._emit("proof-start", miner=miner, trial=serial, proof_seconds=duration)
 
     def _proof_done(self, miner: str) -> None:
@@ -683,9 +925,13 @@ class Simulator:
         private = miner == "q" and self.case.quantum_strategy == "private-branch"
         if private:
             self.private_tip = block.block_id
-        self.receive(miner, block.block_id)
+            if self.private_wait_started is None:
+                self.private_wait_started = self.now
+        self.receive(miner, block.block_id, from_network=False)
         if not private or self.released:
             self._publish(miner, block.block_id)
+        if private:
+            self._maybe_adaptive_release("private-block")
         self._start_miner(miner)
 
     def _shock(self, shock: ParticipationShock) -> None:
@@ -732,12 +978,18 @@ class Simulator:
         elif kind == "deferred":
             tips = self.deferred.pop(payload, [])
             for tip in tips:
-                self.receive(payload[0], tip)
+                self.receive(payload[0], tip, from_network=False)
         elif kind == "shock":
             self._shock(payload)
         elif kind == "release":
             self.released = True
             self._publish("q", self.private_tip)
+        elif kind == "adaptive-check":
+            if self.adaptive_next_check == self.now:
+                self.adaptive_next_check = None
+                self._maybe_adaptive_release("local-timer")
+            else:
+                self.obsolete_events += 1
         elif kind == "probe":
             self._emit("probe-arrival")
         else:
@@ -810,6 +1062,20 @@ class Simulator:
             "quantum_hardware_executed": False, "production_consensus_activation": False,
             "release_ready": False,
         }
+        if (self.case.quantum_trial_policy != "first-peak" or self.case.quantum_domain_size is not None
+                or self.case.private_release_policy != "scheduled"
+                or self.case.quantum_timestamp_mode not in ("wall", "compressed")):
+            summary["adversarial"] = {
+                "assumptions": ADVERSARIAL_ASSUMPTIONS,
+                "domains_created": self.domain_count,
+                "zero_marked_domains": self.zero_marked_domains,
+                "domain_setup_seconds_charged": self.domain_setup_seconds_charged,
+                "domain_setup_processor_seconds_charged": self.domain_setup_seconds_charged * self.case.quantum_processors,
+                "adaptive_releases": self.adaptive_releases,
+                "quantum_observed_public_tip": self.public_q_tip,
+                "quantum_last_published_private_tip": self.last_published_private_tip,
+                "iteration_candidates_are_global_optimum": False,
+            }
         return summary, self.trace
 
 
