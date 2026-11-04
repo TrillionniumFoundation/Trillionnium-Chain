@@ -2452,9 +2452,8 @@ impl Node {
         ] {
             let actual: Option<Vec<u8>> = self
                 .db
-                .query_row("SELECT value FROM metadata WHERE key=?", [key], |row| {
-                    fixed_blob::<32>(row, 0)
-                })
+                .prepare_cached("SELECT value FROM metadata WHERE key=?")?
+                .query_row([key], |row| fixed_blob::<32>(row, 0))
                 .optional()?;
             ensure(
                 actual.as_deref() == Some(expected.as_slice()),
@@ -2566,7 +2565,8 @@ impl Node {
         self.storage_context()?;
         let count: u64 = self
             .db
-            .query_row("SELECT COUNT(*) FROM active", [], |row| row.get(0))?;
+            .prepare_cached("SELECT COUNT(*) FROM active")?
+            .query_row([], |row| row.get(0))?;
         ensure(count == 1, "GENERATION").map_err(Error::local_integrity)?;
         let selected = self.active()?;
         let slot = self.slot()?;
@@ -2605,18 +2605,15 @@ impl Node {
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
             .db
-            .query_row(
-                "SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |r| {
-                    Ok((
-                        optional_fixed_blob::<32>(r, 0)?,
-                        r.get::<_, u64>(1)?,
-                        fixed_blob::<64>(r, 2)?,
-                        fixed_blob::<32>(r, 3)?,
-                    ))
-                },
-            )
+            .prepare_cached("SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?")?
+            .query_row([id.as_slice()], |r| {
+                Ok((
+                    optional_fixed_blob::<32>(r, 0)?,
+                    r.get::<_, u64>(1)?,
+                    fixed_blob::<64>(r, 2)?,
+                    fixed_blob::<32>(r, 3)?,
+                ))
+            })
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         Ok(Record {
@@ -2627,11 +2624,10 @@ impl Node {
         })
     }
     pub fn active(&self) -> Result<(Hash, u64)> {
-        let (tip, g) = self.db.query_row(
-            "SELECT tip,generation FROM active WHERE singleton=1",
-            [],
-            |r| Ok((fixed_blob::<32>(r, 0)?, r.get::<_, u64>(1)?)),
-        )?;
+        let (tip, g) = self
+            .db
+            .prepare_cached("SELECT tip,generation FROM active WHERE singleton=1")?
+            .query_row([], |r| Ok((fixed_blob::<32>(r, 0)?, r.get::<_, u64>(1)?)))?;
         Ok((bytes32(tip)?, g))
     }
     pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
@@ -2666,9 +2662,8 @@ impl Node {
     fn slot(&self) -> Result<u64> {
         Ok(self
             .db
-            .query_row("SELECT state_slot FROM active WHERE singleton=1", [], |r| {
-                r.get(0)
-            })?)
+            .prepare_cached("SELECT state_slot FROM active WHERE singleton=1")?
+            .query_row([], |r| r.get(0))?)
     }
     fn slot_state(&self, slot: u64) -> Result<State> {
         self.slot_state_with_progress(slot, &mut || Ok(()))
@@ -2681,7 +2676,7 @@ impl Node {
         progress.checkpoint()?;
         // Validate stored dimensions before copying a cell into Rust. SQL types
         // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.
-        let mut stmt = self.db.prepare(
+        let mut stmt = self.db.prepare_cached(
             "SELECT CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END,
              CASE WHEN typeof(value)='blob' THEN substr(value,1,4097) ELSE value END,
              length(CAST(key AS BLOB)),length(CAST(value AS BLOB))
@@ -3404,7 +3399,7 @@ impl Node {
         progress.checkpoint()?;
         let mut stmt = self
             .db
-            .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            .prepare_cached("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
         let rows = stmt.query_map([id.as_slice()], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
         let mut out = Vec::new();
         for row in rows {
@@ -5681,18 +5676,16 @@ impl Node {
             while left != right {
                 progress.checkpoint()?;
                 if self.record(left)?.height >= self.record(right)?.height {
-                    self.db.execute(
-                        "INSERT INTO steps VALUES(?,0,?)",
-                        params![detached, left.as_slice()],
-                    )?;
+                    self.db
+                        .prepare_cached("INSERT INTO steps VALUES(?,0,?)")?
+                        .execute(params![detached, left.as_slice()])?;
                     detached = detached.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
                     left = self.parent(left)?;
                 } else {
                     attached = attached.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
-                    self.db.execute(
-                        "INSERT INTO steps VALUES(?,1,?)",
-                        params![-attached, right.as_slice()],
-                    )?;
+                    self.db
+                        .prepare_cached("INSERT INTO steps VALUES(?,1,?)")?
+                        .execute(params![-attached, right.as_slice()])?;
                     right = self.parent(right)?;
                 }
             }
@@ -5735,7 +5728,7 @@ impl Node {
         progress.checkpoint()?;
         let mut stmt = self
             .db
-            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
+            .prepare_cached("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
             .map_err(|error| Error::from(error).local_integrity())?;
         let rows = stmt
             .query_map([], |r| {
@@ -5790,7 +5783,9 @@ impl Node {
     ) -> Result<()> {
         let rows: Vec<ReorgRow> = self
             .db
-            .prepare("SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton")?
+            .prepare_cached(
+                "SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton",
+            )?
             .query_map([], |row| {
                 Ok((
                     row.get(0)?,
@@ -5814,9 +5809,9 @@ impl Node {
         progress: &mut dyn NativeProgress,
     ) -> Result<()> {
         progress.checkpoint()?;
-        let mut statement = self
-            .db
-            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
+        let mut statement = self.db.prepare_cached(
+            "SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal",
+        )?;
         let rows = statement.query_map([generation], |row| {
             Ok((
                 row.get::<_, u64>(0)?,
@@ -5850,19 +5845,18 @@ impl Node {
         progress.checkpoint()?;
         let row = self
             .db
-            .query_row(
+            .prepare_cached(
                 "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
-                [],
-                |r| {
-                    Ok((
-                        r.get::<_, Vec<u8>>(0)?,
-                        r.get::<_, Vec<u8>>(1)?,
-                        r.get::<_, u64>(2)?,
-                        r.get::<_, u64>(3)?,
-                        r.get::<_, u64>(4)?,
-                    ))
-                },
-            )
+            )?
+            .query_row([], |r| {
+                Ok((
+                    r.get::<_, Vec<u8>>(0)?,
+                    r.get::<_, Vec<u8>>(1)?,
+                    r.get::<_, u64>(2)?,
+                    r.get::<_, u64>(3)?,
+                    r.get::<_, u64>(4)?,
+                ))
+            })
             .optional()?;
         let Some((old, target, g, position, done)) = row else {
             return Ok(self.active()?.0);
@@ -5881,17 +5875,19 @@ impl Node {
         let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
             progress.checkpoint()?;
-            let (kind, bytes) = self.db.query_row(
-                "SELECT kind,block FROM steps WHERE ordinal=?",
-                [index],
-                |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),
-            )?;
+            let (kind, bytes) = self
+                .db
+                .prepare_cached("SELECT kind,block FROM steps WHERE ordinal=?")?
+                .query_row([index], |r| {
+                    Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?))
+                })?;
             let id = bytes32(bytes)?;
             self.atomic_with_progress(progress, |progress| {
                 self.apply_delta_with_progress(id, g, kind == 0, progress)?;
                 ensure(
                     self.db
-                        .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?
+                        .prepare_cached("UPDATE reorg SET cursor=? WHERE singleton=1")?
+                        .execute([index + 1])?
                         == 1,
                     "STORAGE_WRITE",
                 )
