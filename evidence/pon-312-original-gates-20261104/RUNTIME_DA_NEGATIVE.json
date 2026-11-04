@@ -1,0 +1,48 @@
+{
+  "schema": "trnm-original-runtime-da-failure-v1",
+  "run_id": 41761586798,
+  "job_id": 126350991887,
+  "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+  "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+  "returned_decoded_log": {
+    "bytes": 234019,
+    "sha256": "34472fe39e815ac4361d3ff459addf52682d68f127959a2810b81261fa9e6fdf"
+  },
+  "observed": {
+    "crate": "trnm-data-availability",
+    "registered_executions": 174,
+    "passed": 173,
+    "failed": 1,
+    "failed_selector": "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+    "assertion": "report.discovery.record_validation_attempts == 2",
+    "actual": 1,
+    "expected": 2,
+    "elapsed_seconds": 21.7
+  },
+  "source_file": {
+    "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+    "blob": "f421574a21837c5b6db5909ee69d68bc1c3d38db"
+  },
+  "previous_assertions_reached_and_passed": [
+    "downloaded manifest and bytes exact",
+    "actual current record sequence is 2",
+    "original Cell server served manifest and payload",
+    "both rendezvous report exactly 2 actual connections and 0 rejected requests",
+    "superseded endpoint received 0 actual connections"
+  ],
+  "hypothesis_not_proof": "The client exchange error branch can discard one bootstrap even if the server counted its connection; no individual exchange failure/timing was emitted by this failing case, so its cause is not yet proven.",
+  "unreached_later_gate": "The Python signed-state schema oracle was not reached in this head-runtime job; existing owner398 fixes that separate known failure.",
+  "budgets_unchanged": {
+    "client_request_ms": 200,
+    "server_request_ms": 250,
+    "overall_seconds": 10,
+    "server_lifetime_seconds": 30
+  },
+  "qualification": {
+    "fixed": false,
+    "full_da_pass": false,
+    "host_qualified": false,
+    "performance_qualified": false,
+    "local_execution": false
+  }
+}

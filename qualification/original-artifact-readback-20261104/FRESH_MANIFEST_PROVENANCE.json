@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-reader-fresh-manifest-provenance-v1",
+  "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+  "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
+  "producer": [
+    {
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "git_blob": "68a3c2307159e17773c6a33c2636c62ddca56507",
+      "bytes": 21503,
+      "sha256": "dbc50b7fd7d23e2df5a158791c67b8935418d95f84beef1fdabb9bc9566961ef"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "git_blob": "7f31b74f3177b1c0ba5ebfeef14829492c3856a6",
+      "bytes": 71315,
+      "sha256": "01715b107dee86678e4706ff13b70d99c6556ae4f845eb4120f491001c22f9a8"
+    }
+  ],
+  "projection_scope": "Only the exact manifest producer's fixed field labels and closed schema/selector literals are newly printable. Unknown strings and keys remain hashed. No fresh report phases are parsed by the 30-second campaign parser. Fresh original binary verification remains false. Existing source-receipt/whole-ZIP integrity checks are unchanged.",
+  "expected_self_tests": 39,
+  "local_execution": false
+}

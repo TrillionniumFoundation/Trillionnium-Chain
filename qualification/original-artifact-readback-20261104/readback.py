@@ -370,6 +370,15 @@ work_started worker writes wrong_absence_after_legal_error wrong_absence_error w
 """.split())
 SAFE_FIELDS.update({"Ok", "Err", "Invalid", "Io", "BudgetExhausted",
                     "Protocol", "Resource", "message", "code"})
+# Fixed labels from the exact 312 fresh-service manifest producer. Values
+# still pass through the same closed scalar/error projection and output caps.
+SAFE_FIELDS.update("""
+all_named_tests_passed execution_finished source_recompiled requested_window_ns
+attack_workers independent_wan_accepted work_hardness_accepted failure_diagnostic
+native_returncode finite_target_met last_history_replay replay_error replay_accepted
+history_call_index acceptance_authority
+""".split())
+
 SAFE_STRINGS = {
   "baseline",
   "from-zero",
@@ -407,6 +416,15 @@ SAFE_STRINGS = {
   "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
   "87870eb9fc3d6477ee35e59334ccdbb669721777"
 }
+SAFE_STRINGS.update({
+    "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "a53dc18d56df9d61179114aa16b341253a940acb",
+    "trnm-w1-fresh-service-execution-v1",
+    "trnm-w1-fresh-failure-diagnostic-v1",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+    "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+    "attack-free-baseline", "from-zero-pressure", "unknown",
+})
 ERROR_FIELDS = re.compile(r"error|failure|reason|refusal", re.IGNORECASE)
 KNOWN_CODES = {
     "PUBLIC_REQUEST_DEADLINE", "PUBLIC_MUTATION_CPU_BUDGET", "ROOT",
@@ -935,6 +953,33 @@ def self_test():
     count += 1
     phase_rows[-1] = dict(phase_rows[0])
     rejects(lambda: client_cost_summary(original), "CLIENT_PHASE_IDENTITIES")
+
+    # Only fixed manifest labels are newly readable. This is a diagnostic
+    # projection, not validation or acceptance of its business flags.
+    fresh = projection({
+        "requested_window_ns": 4_000_000_000, "attack_workers": 16,
+        "source_recompiled": True, "execution_finished": True,
+        "all_named_tests_passed": False,
+        "failure_diagnostic": {"native_returncode": 101,
+            "finite_target_met": False, "acceptance_authority": False,
+            "last_history_replay": {"phase": "from-zero-pressure",
+                "history_call_index": 2, "replay_accepted": False,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"}}})
+    require(fresh["requested_window_ns"] == 4_000_000_000
+            and fresh["attack_workers"] == 16
+            and fresh["all_named_tests_passed"] is False
+            and fresh["failure_diagnostic"]["native_returncode"] == 101
+            and fresh["failure_diagnostic"]["last_history_replay"]["replay_error"]["literal_code"]
+                == "PUBLIC_REQUEST_DEADLINE", "FIXED_FRESH_MANIFEST_PROJECTION")
+    count += 1
+    injected = projection({"failure_diagnostic": {
+        "native_returncode": "SYNTHETIC_UNREVIEWED_SENTINEL",
+        "last_history_replay": {"replay_error": "SYNTHETIC_UNREVIEWED_SENTINEL",
+                               "SYNTHETIC_UNREVIEWED_SENTINEL": 7}}})
+    require("SYNTHETIC_UNREVIEWED_SENTINEL" not in json.dumps(injected)
+            and injected["failure_diagnostic"]["last_history_replay"]["replay_error"]["literal_code"]
+                is None, "FRESH_UNKNOWN_STRINGS_AND_KEYS_REMAIN_OMITTED")
+    count += 1
 
     print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
                       "native_tests_executed": 0, "artifact_members_executed": 0}))

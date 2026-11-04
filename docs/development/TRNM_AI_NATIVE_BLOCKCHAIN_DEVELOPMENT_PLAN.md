@@ -5177,3 +5177,43 @@ actual hosted execution. All artifact, output, address-space and deadline
 bounds, original native selectors and production budgets remain unchanged.
 No local executor/preflight or new native run is claimed by this research
 commit. DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO remain in force.
+
+### Exact 312 CPU matrix and bounded original CPU readback — 2026-11-04
+
+The fixed-base candidate 312c9abc0d5bfafb6aa5409f4596f85c2993241e and its actual
+prospective merge 84c2648a6b7f8a0acd9cff4a136583fe1b39a36e have the same
+a53dc18d56df9d61179114aa16b341253a940acb tree. Original release and workspace-test
+runs 41761586795 and 41761586790 each completed all four architecture/source
+cells. Complete returned job logs independently show 32 executions of four
+distinct original selectors, and the four workspace-test cells show 180
+executions of the same 45 semantic controls. Before/after source receipts match.
+All 24 schedule-parity records retain 8,625,548 canonical bytes, two completed
+workers, and false Host/all-honest-service qualification. This is log readback;
+the compiler-version files and archived binary hashes have not been independently
+downloaded in this step. No observation is transferred to a future owner056 tree.
+
+The original 312 head runtime job 126350991887 remains failed: DA 173/174 passed.
+The two-bootstrap newer-sequence test observed one record validation instead of
+the required two, after the actual payload/current sequence, two connections per
+bootstrap, zero rejected server requests and zero stale-provider dials passed.
+The missing exchange cause is not yet logged. Preserve the original assertion
+and 200 ms client / 250 ms server / 10 s overall / 30 s service bounds. This job
+did not reach the separate signed-state schema oracle.
+
+Reader ebfa960a87874a08153c17ff82fa97526bfc7652, run 41765481713, job
+126362726158 completed successfully with 37 controls and nine reproduced prior
+output-boundary negatives. Both exact original f35 ZIPs passed complete CRC and
+SHA256 readback. Client-cost observations are limited to that original experiment:
+campaign checkpoint checks account for about 84% of recorded importer-thread CPU,
+with roughly 35,000–100,000 checks per phase. F0 shows about 72–73%. Nested phases
+are not additive, absent observations remain unknown, and importer phase CPU
+excludes scoped workers. Campaign remains 3/27 overall and 0/18 under pressure.
+These are source-bound diagnostic costs, not a new native run or qualification.
+
+The next read-only batch pins the exact 312 campaign ZIP and the original 312
+fresh-service ZIP. It preserves every size/deadline/output limit and all 37
+controls, adds only closed manifest field labels and two projection controls,
+and reads the fresh manifest without executing its binary or claiming fresh
+binary verification. All 39 controls and the complete new two-artifact readback
+are pending their actual hosted run. Original performance, Host and production
+gates remain HOLD_NO_GO.

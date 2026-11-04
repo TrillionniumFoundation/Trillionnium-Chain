@@ -1,13 +1,13 @@
 [
   {
     "kind": "campaign",
-    "artifact_id": 13287158757,
-    "run_id": 41752900360,
-    "artifact_name": "pon-native-campaign-x64-head-release-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
-    "bytes": 60599441,
-    "sha256": "d66801acae25f6ec7d8a8e40cc6ebbbc7c895c5a694b51f433f4cc6b279757bd",
-    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
-    "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+    "artifact_id": 13290719390,
+    "run_id": 41761586787,
+    "artifact_name": "pon-native-campaign-x64-head-release-312c9abc0d5bfafb6aa5409f4596f85c2993241e-1",
+    "bytes": 56158559,
+    "sha256": "64dced6b2fc6c89e3be3361991a36925c5b730ea6e0080b6d24498a7f31eb57d",
+    "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
     "required_json": [
       "source-before.json",
       "source-after.json",
@@ -28,42 +28,25 @@
     ]
   },
   {
-    "kind": "f0",
-    "artifact_id": 13287122967,
-    "run_id": 41752900351,
-    "artifact_name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
-    "bytes": 19665544,
-    "sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
-    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
-    "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777",
+    "kind": "fresh-manifest",
+    "artifact_id": 13290304594,
+    "run_id": 41761586824,
+    "artifact_name": "w1-fresh-service-head-312c9abc0d5bfafb6aa5409f4596f85c2993241e-1",
+    "bytes": 5283581,
+    "sha256": "534ac7f99686f65d5c68c5a8b663f7d61cf94d407807a75fc786a28c7199ccf1",
+    "source": "312c9abc0d5bfafb6aa5409f4596f85c2993241e",
+    "tree": "a53dc18d56df9d61179114aa16b341253a940acb",
     "required_json": [
-      "source-before.json",
+      "source.json",
       "source-after.json",
-      "execution/results.json",
-      "execution/raw/report.json",
-      "execution/raw/baseline.json",
-      "execution/raw/valid-work-root.json",
-      "finalization/result.json"
+      "fresh-service/manifest.json"
     ],
     "source_json": [
-      "source-before.json",
+      "source.json",
       "source-after.json"
     ],
     "project_json": [
-      "execution/results.json",
-      "execution/raw/report.json",
-      "execution/raw/baseline.json",
-      "execution/raw/valid-work-root.json",
-      "finalization/result.json",
-      "execution/raw/baseline-fixed-root-host-control/phase-result.json",
-      "execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
-      "execution/raw/baseline-fixed-root-host-control/host/child-result.json",
-      "finalization/baseline/result.json",
-      "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
-      "execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
-      "execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
-      "finalization/valid-work-root/result.json",
-      "finalization/controller/result.json"
+      "fresh-service/manifest.json"
     ]
   }
 ]
