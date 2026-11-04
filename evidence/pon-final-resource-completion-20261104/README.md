@@ -121,6 +121,10 @@ expanded assertions, all 384 corpus pins and both sets of plan entries, then
 refreshing only reviewed changed-file identities. Local results from before
 this integration cannot qualify the combined source.
 
+The later concurrent `5a677aae` adds only archival CI readback to an existing
+diagnostic workflow. It is preserved byte-for-byte; it changes no runtime source
+or corpus binding and supplies no new native acceptance by itself.
+
 ## Hosted source 362 readback
 
 The [initial hosted snapshot](hosted-362-readback.json) binds candidate `362fbebe`
@@ -165,6 +169,37 @@ overridden by the merge lane's successful job metadata.
 The [status refresh](hosted-362-status-refresh.json) has its own observation time;
 runtime and ARM lanes were still running then. Their unobserved terminal results
 are not filled in from C1/C2 or from local selected controls.
+
+### Later runtime terminal identifies an oracle compatibility defect
+
+The [final four-job readback](hosted-362-final-status.json) resolves those old
+pending states with actual source receipts. Both ARM Node lanes completed their
+974-name registries with 951 PASS, zero FAILED and 23 original ignored; strict
+Clippy also exited zero. Both runtime lanes likewise completed the Node library
+with 951/0/23. Their later Python storage oracle failed: 28 tests, 15 failures and
+nine errors, step exit one. The two
+[original head error](hosted-362-runtime-126307454181-oracle-error.json) and
+[merge error](hosted-362-runtime-126307453978-oracle-error.json) excerpts retain
+`NATIVE_STORAGE_TABLE_NAME`. Multiple nested Rust summaries are not added into
+one test count, and these successful Node invocations do not erase the separate
+x64 head failure already recorded above.
+
+The oracle first verifies the complete SQLite catalog against source-derived
+native DDL, then its row reader incorrectly restricts table identifiers to
+letters and underscores. The real `reorg_lifecycle_v1` table therefore passes
+the schema contract and is rejected for its numeric version suffix. The fix
+allows ASCII digits after the original first letter/underscore. It leaves the
+exact catalog comparison, all retained tables, row/byte/column budgets, typed
+values and complete state replay unchanged; punctuation and leading digits
+remain outside the grammar.
+
+A new independent ordinary SQLite control creates the actual legacy and native
+DDL in memory and reads every table, including `reorg_lifecycle_v1` and
+`sqlite_sequence`, without changing data. It constructs no Packet or work
+certificate and does not inherit the synthetic storage fixture. All 28 original
+test methods remain unchanged; the registry is now 29. The one selected ordinary
+control passed locally before source freeze. That result is not a new execution
+of the complete oracle or runtime lane; their original failed receipts remain.
 
 ## Validation and remaining gates
 

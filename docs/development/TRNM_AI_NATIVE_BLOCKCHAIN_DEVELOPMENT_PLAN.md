@@ -5509,3 +5509,14 @@ binding with executor EPERM before Submit, so neither is reported as passed.
 The original source-362 full Node failure (950/1/23, native exit 101) and witness
 250 ms failure remain separate blockers. This fixture diagnostic correction does
 not establish their root cause or original-service acceptance.
+
+The later source-362 runtime receipts locate a separate compatibility defect:
+after successful Rust Node execution, the independent storage oracle rejects the
+source-declared `reorg_lifecycle_v1` name because its identifier grammar excludes
+digits. Permit digits only after the first ASCII letter/underscore while keeping
+the complete catalog equality, all retained tables and read/replay budgets.
+A separate ordinary control builds both actual DDL profiles in memory and reads
+every table without Packet/work construction; the original 28 methods remain,
+with 29 registered after this addition. This local identifier regression does
+not replace complete same-source runtime qualification or erase the old 15
+failures and nine errors.
