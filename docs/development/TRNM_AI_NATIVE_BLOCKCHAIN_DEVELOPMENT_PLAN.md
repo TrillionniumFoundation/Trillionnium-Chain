@@ -5639,3 +5639,45 @@ The complete decoded formatter log is also retained with its actual source
 source identity and audit preflight succeeded, but formatting stopped before
 new native qualification. The frozen owner's correction requires fresh hosted
 verification; neither this log nor remote byte matching is a native PASS.
+
+
+### 2026-11-04 fixed owner snapshot for original prospective-merge qualification
+
+The original `7d5321a5` release CPU merge job `126330126759` received
+event base `f35ee6dc`, while the actual GitHub merge `ddf086e5` had
+ordered parents `be0d5f97` and `7d5321a5`. The unchanged source verifier
+correctly rejected this mismatch before native execution. Preserve that failed
+job and the actual Git commit parents. Do not accept a moving branch tip in
+place of the event base, relax parent order, or count these merge failures as
+completed native tests.
+
+Freeze the already-reviewed complete owner `be0d5f978dc86008115524a6be85c38e03982b33`
+under the separate qualification base
+`qualification/chain-owner-be0d5f97-20261104-gpt6`. Keep the concurrent owner
+branch and main untouched. The next readiness head retains both previous
+`7d5321a5` and this owner as parents, every owner file, the same sole DA test
+fixture, and all previous evidence and both plan histories. The snapshot ref is
+an owned fixed-input convention, not a claim of server-enforced immutability.
+
+The exact owner increment changes only the recent-batch workflow and its
+existing corpus pin. It accounts for the original History module's observed
+six passing and three intentionally ignored tests, requires both new test
+identities, and requires all 91 complete authenticated tests including five
+new same-State controls. The original commands, 23 post-write controls,
+selectors, timeouts, production code and performance criteria are unchanged.
+All 384 corpus pins and the 20 existing inline source bindings still match
+the complete owner tree; this mechanical Git readback does not execute the
+original Python checks.
+
+The previous head's release/workspace CPU head jobs succeeded, while the
+merge jobs failed source identity. Its campaign and fresh-service outcomes
+remain failed. An earlier exact `e8bc6eff` head also retained a 173/174 DA
+result: the slow-start fixture had completed readiness but its subsequent
+200 ms request timed out. Neither the old 174/174 result nor a successful
+component run qualifies this source or proves that later scheduling is bounded.
+
+No local executor is available for shell preflight, Rust, Python, formatting
+or strict Clippy. The new exact head and actual merge must run the original
+hosted gates with the same 4-second/16-hostile, 30-second campaign, fixed Host,
+resource, history, error and settlement requirements. DRAFT, SHADOW_ONLY,
+DENY_ALL and HOLD_NO_GO remain in force.
