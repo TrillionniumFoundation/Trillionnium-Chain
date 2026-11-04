@@ -13,6 +13,8 @@ mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
+#[cfg(test)]
+mod legacy_reorg_observation_tests;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
@@ -3126,10 +3128,41 @@ impl Node {
     pub fn history_read_counters(&self) -> HistoryReadCounters {
         self.history_read_counters.get()
     }
+    /// Explicit local diagnostics only; no validation, cache or budget is enabled.
+    /// Repeated calls never reset counters. Other backends retain their profile.
+    pub fn enable_native_legacy_reorg_observation(&self) -> bool {
+        if self.state_backend != StateBackend::Legacy {
+            return false;
+        }
+        self.authenticated_arithmetic
+            .history
+            .enable_legacy_reorg_observation();
+        true
+    }
+    fn native_legacy_reorg_observation_enabled(&self) -> bool {
+        self.state_backend == StateBackend::Legacy
+            && self
+                .authenticated_arithmetic
+                .history
+                .legacy_reorg_observation_enabled()
+    }
+    fn legacy_reorg_step_observation_enabled(
+        &self,
+        site: native_authenticated::SqlCommitSite,
+    ) -> bool {
+        self.native_legacy_reorg_observation_enabled()
+            && matches!(site, native_authenticated::SqlCommitSite::ReorgStep)
+    }
     /// Local cumulative diagnostics only. No SQL, native validation, CPU credit,
     /// clock verdict or durable fact is supplied by these nested observations.
     pub fn native_history_arithmetic_observation(&self) -> Value {
-        self.authenticated_arithmetic.observation()
+        if self.native_legacy_reorg_observation_enabled() {
+            self.authenticated_arithmetic
+                .history
+                .legacy_reorg_observation()
+        } else {
+            self.authenticated_arithmetic.observation()
+        }
     }
 
     fn parent(&self, id: Hash) -> Result<Hash> {
@@ -5087,7 +5120,14 @@ impl Node {
             .transpose()?;
         let transaction_result: Result<()> = (|| {
             let mut readback = run(progress, original_owner.as_ref())?;
-            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
+            {
+                let _stage = self.legacy_reorg_step_observation_enabled(commit_site).then(|| {
+                    self.authenticated_arithmetic
+                        .history
+                        .observe(native_authenticated::HistoryStage::ReadActive)
+                });
+                self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
+            }
             self.continuous_scope_checkpoint()?;
             self.mining_scope_checkpoint()?;
             progress()?;
@@ -5114,7 +5154,9 @@ impl Node {
             }),
         };
         transaction_result?;
-        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1
+            || self.legacy_reorg_step_observation_enabled(commit_site))
+        .then(|| {
             self.authenticated_arithmetic
                 .history
                 .observe_sql_commit(commit_site)
@@ -5341,12 +5383,19 @@ impl Node {
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, next, 0, 0)?;
             let mut readback = self.reorg_post_write_readback(old, original_owner)?;
-            self.check_persisted_state_with_readback(
-                old,
-                &self.slot_state_with_progress(next, progress)?,
-                progress,
-                readback.as_mut(),
-            )?;
+            {
+                let _stage = self.native_legacy_reorg_observation_enabled().then(|| {
+                    self.authenticated_arithmetic
+                        .history
+                        .observe(native_authenticated::HistoryStage::VerifyState)
+                });
+                self.check_persisted_state_with_readback(
+                    old,
+                    &self.slot_state_with_progress(next, progress)?,
+                    progress,
+                    readback.as_mut(),
+                )?;
+            }
             Ok(readback)
         })?;
         let outcome = (|| {
@@ -5552,12 +5601,19 @@ impl Node {
                 self.check_reorg_row(old, target, g, index + 1, 0)?;
                 let resulting = if kind == 0 { self.parent(id)? } else { id };
                 let mut readback = self.reorg_post_write_readback(resulting, original_owner)?;
-                self.check_persisted_state_with_readback(
-                    resulting,
-                    &self.slot_state_with_progress(g, progress)?,
-                    progress,
-                    readback.as_mut(),
-                )?;
+                {
+                    let _stage = self.native_legacy_reorg_observation_enabled().then(|| {
+                        self.authenticated_arithmetic
+                            .history
+                            .observe(native_authenticated::HistoryStage::VerifyState)
+                    });
+                    self.check_persisted_state_with_readback(
+                        resulting,
+                        &self.slot_state_with_progress(g, progress)?,
+                        progress,
+                        readback.as_mut(),
+                    )?;
+                }
                 Ok(readback)
             })?;
             cut(
@@ -5626,12 +5682,19 @@ impl Node {
             self.check_reorg_row(old, target, g, count, 1)?;
             self.check_events_with_progress(g, &expected, progress)?;
             let mut readback = self.reorg_post_write_readback(target, original_owner)?;
-            self.check_persisted_state_with_readback(
-                target,
-                &self.slot_state_with_progress(g, progress)?,
-                progress,
-                readback.as_mut(),
-            )?;
+            {
+                let _stage = self.native_legacy_reorg_observation_enabled().then(|| {
+                    self.authenticated_arithmetic
+                        .history
+                        .observe(native_authenticated::HistoryStage::VerifyState)
+                });
+                self.check_persisted_state_with_readback(
+                    target,
+                    &self.slot_state_with_progress(g, progress)?,
+                    progress,
+                    readback.as_mut(),
+                )?;
+            }
             Ok(readback)
         })?;
         cut(hook, "published")?;

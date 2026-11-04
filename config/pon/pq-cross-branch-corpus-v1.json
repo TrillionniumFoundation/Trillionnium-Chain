@@ -327,11 +327,16 @@
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
-    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs"
+    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+    "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    ".github/workflows/pon-legacy-reorg-cost-20261104.yml"
   ],
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "1d4022888c91e5153482eb10bd3185cd6675eb18",
-    ".github/workflows/pon-recent-batch-acceptance.yml": "d915bcab943663e9283e1a57dd3a5ae3de226322",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "1432ac33c8722446098c25f887f4728d35c86300",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
@@ -620,7 +625,7 @@
     "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs": "80e747c9db26eae011813255f88b901b5007f6b9",
     "trillionnium/crates/trnm-pon-node/src/peer_polling.rs": "cb8ee16131be79e01a8c053235c8c145abfae27a",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "ef2494869bfe78083d890e400ec6be7642bef033",
-    "trillionnium/crates/trnm-pon-node/src/store.rs": "a7035222bc51cfe7f60e891398230c3179accc82",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "8c5d473a8310cf5e6d0ecb0afc58d5d51773d170",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "e0045e56dbaf555ff761ee64ba3e32227c18c489",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs": "93f14af5f15018c4cf05269ce63e369411b2f555",
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
@@ -635,7 +640,7 @@
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "15684ef0415b37a9829960ed6aa61ca2f9d5ae38",
     "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs": "a4b5912d6c6b335c4e467a477fc1679dc00254ba",
     "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "3442137e33f8d979270257fa77cf4e7ed503b1b8",
-    "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+    "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs": "4dd89831914b44a2f58c270c9726abd539620ec5",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": "48062d074584e8b49bcf06623207fdc92aef1e50",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": "e3024dd47ef79a829e9f7f8c7718746f75d191d1",
     "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs": "9abb5919de004e5398690bcb8efe6556a463bd86",
@@ -719,7 +724,12 @@
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": "6bd1deafeedef4955202a3fb76e87225b6989a75",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
-    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa"
+    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+    "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs": "e558451e6b0ffbfea77ad963577bbab3c08ba65a",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "9485070dc13c5bd0ddbdf72cccac4e0d3dd9fa29",
+    ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49"
   },
   "assertions": {
     "production_activation": false,

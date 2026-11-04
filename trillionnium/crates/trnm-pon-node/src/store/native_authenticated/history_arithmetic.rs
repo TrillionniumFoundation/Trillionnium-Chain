@@ -154,8 +154,74 @@ pub(crate) struct HistoryArithmetic {
     counters: Cell<Counters>,
     stages: Arc<StageAccounting>,
     sql_commits: Arc<SqlCommitAccounting>,
+    legacy_reorg_observation: Cell<bool>,
 }
 impl HistoryArithmetic {
+    pub(crate) fn enable_legacy_reorg_observation(&self) {
+        self.legacy_reorg_observation.set(true);
+    }
+    pub(crate) fn legacy_reorg_observation_enabled(&self) -> bool {
+        self.legacy_reorg_observation.get()
+    }
+    pub(crate) fn legacy_reorg_observation(&self) -> Value {
+        let rows = match self.stages.rows.try_lock() {
+            Ok(rows) => Some(*rows),
+            Err(_) => {
+                self.stages.failed.store(true, Ordering::Relaxed);
+                None
+            }
+        };
+        let failed = self.stages.failed.load(Ordering::Relaxed);
+        let roles = rows.map(|rows| {
+            [
+                (HistoryStage::VerifyState, "staging_validation"),
+                (HistoryStage::ReadActive, "active_tail_validation"),
+            ]
+            .into_iter()
+            .map(|(stage, role)| {
+                let totals = rows[stage as usize];
+                let counter_saturated = [
+                    totals.calls,
+                    totals.wall_ns,
+                    totals.cpu_known_calls,
+                    totals.cpu_unknown_calls,
+                    totals.cpu_ns,
+                    totals.unwinding_calls,
+                ]
+                .contains(&u64::MAX);
+                let entered = totals.calls > 0;
+                let known = !failed && !counter_saturated;
+                json!({
+                    "role":role,
+                    "collector_stage":STAGE_NAMES[stage as usize],
+                    "totals":totals,
+                    "complete_wall_ns":(known && entered).then_some(totals.wall_ns),
+                    "complete_cpu_ns":(known && entered
+                        && totals.cpu_unknown_calls == 0
+                        && totals.cpu_known_calls == totals.calls).then_some(totals.cpu_ns),
+                    "known_cpu_ns_subtotal":(known && totals.cpu_known_calls > 0)
+                        .then_some(totals.cpu_ns),
+                    "counter_saturated":counter_saturated,
+                    "per_outcome_counts":null
+                })
+            })
+            .collect::<Vec<_>>()
+        });
+        json!({
+            "schema":"pon-native-legacy-reorg-observation-v1",
+            "backend":"legacy",
+            "enabled":self.legacy_reorg_observation.get(),
+            "scope":"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+            "roles":roles,
+            "stage_observation_failed":failed,
+            "stage_outcomes":"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters",
+            "cpu_scope":"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "counter_scope":"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+            "interval_scope":"component intervals are not complete importer time; nested observations are not generally additive",
+            "sql_commit":self.sql_commits.legacy_reorg_observation(),
+            "has_consensus_authority":false
+        })
+    }
     fn count(&self, action: impl FnOnce(&mut Counters)) {
         let mut counters = self.counters.get();
         action(&mut counters);
@@ -424,6 +490,12 @@ struct SqlCommitAccounting {
     failed: AtomicBool,
 }
 impl SqlCommitAccounting {
+    fn legacy_reorg_observation(&self) -> Value {
+        let mut value = self.observation();
+        value["schema"] = json!("pon-native-legacy-reorg-sql-commit-call-observation-v1");
+        value["scope"] = json!("explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync");
+        value
+    }
     fn fail(&self) {
         self.failed.store(true, Ordering::Relaxed);
     }
