@@ -1,0 +1,1679 @@
+{
+  "schema": "trnm-original-44d-priority-service-model-failures-v1",
+  "scope": "Four exact original 44d priority service-model archives, separated by x64/ARM and head/prospective-merge. Completed bounded readback is not native business acceptance. No old 016/6f or separate W1 cohort is inherited.",
+  "reader": {
+    "run": 41783972276,
+    "job": 126421721724,
+    "attempt": 1,
+    "head": "ed566d78bc4f4e484b897e727d0046f2f8dfaf01",
+    "tree": "4ef90dd269c32ccbf768bc4f506eef17de921acb",
+    "workflow": ".github/workflows/pon-44d-service-model-failure-readback-20261104.yml",
+    "workflow_blob": "12bdfee2404974168692ce58ce3809b7ace7afac",
+    "conclusion": "success",
+    "audit_before": "PASS",
+    "audit_after": "PASS",
+    "audit_packages": 26,
+    "source_before_after_equal": true,
+    "tracked_entries": 8001,
+    "tracked_bytes": 930436863,
+    "diagnostic_log_characters": 392341,
+    "diagnostic_log_lines": 1418,
+    "complete_archives": 4,
+    "selected_records": 108,
+    "selected_text_bytes": 1212245,
+    "selector_log_digest_checks_verified": 40,
+    "omitted_members": 0,
+    "absent_fixed_small_members": 0,
+    "unverified_required_source_members": 0,
+    "source_mismatches": 0,
+    "source_unknown": 0,
+    "native_code_executed": false,
+    "native_acceptance_granted": false,
+    "output_artifact": {
+      "id": 13300122097,
+      "name": "44d-service-model-failure-readback-ed566d78bc4f4e484b897e727d0046f2f8dfaf01-1",
+      "size_in_bytes": 27832105,
+      "digest": "sha256:2525d97026c6437df1db2f936ca257723f159c813a12d7b72895ea50025d485f",
+      "expired": false,
+      "workflow_run": {
+        "id": 41783972276,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "ed566d78bc4f4e484b897e727d0046f2f8dfaf01"
+      },
+      "identity_verified_against_upload_console": true
+    }
+  },
+  "precision_and_retention": {
+    "literal_json": "Each raw_json string is the exact timestamp-stripped JSON line emitted by the successful Python reader. No JSON parse-and-reserialize is used for this literal evidence; integer tokens beyond JavaScript safe integer range remain text.",
+    "literal_native_logs": "Each text string is an exact timestamp-stripped reader console line identifying original archive/member/line. Displayed excerpts are bounded; no completeness claim is made for omitted compiler or Host log lines.",
+    "complete_original_data": "The output artifact retains all four original ZIPs, complete selected original-member bytes, full parsed selected JSON, member indexes, source receipts and readback outcomes. Literal console JSON is the reader projection, not the full original manifest.",
+    "reports": "Large native/service/sustained/confirmation reports and ELF were not expanded. Report byte sizes/digests and before/after retention equality below come from the original manifest. Business confirmation counts beyond displayed facts remain null.",
+    "result_boundaries": "All five named tests may pass while the original confirmation validator fails. Original execution_finished=false and terminal native_execution_completed=true are both retained; neither means business acceptance."
+  },
+  "source_before_literal_json": "{\n  \"base\": null,\n  \"candidate\": \"ed566d78bc4f4e484b897e727d0046f2f8dfaf01\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"ed566d78bc4f4e484b897e727d0046f2f8dfaf01\",\n  \"tested_tree\": \"4ef90dd269c32ccbf768bc4f506eef17de921acb\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 930436863,\n  \"tracked_entries\": 8001,\n  \"tracked_worktree_verified\": true\n}",
+  "source_after_literal_json": "{\n  \"base\": null,\n  \"candidate\": \"ed566d78bc4f4e484b897e727d0046f2f8dfaf01\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"ed566d78bc4f4e484b897e727d0046f2f8dfaf01\",\n  \"tested_tree\": \"4ef90dd269c32ccbf768bc4f506eef17de921acb\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 930436863,\n  \"tracked_entries\": 8001,\n  \"tracked_worktree_verified\": true\n}",
+  "cohorts": [
+    {
+      "target": {
+        "digest": "sha256:d301993b7b83d458bcfa65e828d23468996cd226a8ccdd08962aeab5c5979328",
+        "family": "from-zero",
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "id": 13298344954,
+        "job": 126407622369,
+        "kind": "head",
+        "name": "priority-ubuntu-24.04-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "run": 41778472816,
+        "size": 7304158,
+        "tested": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "reader_status": "completed",
+      "selected_records": 27,
+      "selected_text_bytes": 301336,
+      "member_index_sha256": "a60238875715210f6539a52f6f42b30a9fe311ad353d538b462edb7f3888b140",
+      "manifest_member": "from-zero-native/manifest.json",
+      "manifest_bytes": 48929,
+      "manifest_sha256": "4cae24a82667e07907f756102d050996bf9e504db3946ecdc6c65322be81cc3c",
+      "source_identity_status": "verified",
+      "source_before": {
+        "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "source_after": {
+        "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "original_manifest": {
+        "schema": "trnm-from-zero-native-execution-v3",
+        "passed": false,
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "format_passed": true,
+        "source_recompiled": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "binary_sha256_before": "a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862",
+        "binary_sha256_after": "a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862"
+      },
+      "original_build_process_exit": 0,
+      "original_format_process_exit": 0,
+      "native_invocation_denominator": 5,
+      "native_invocations_returned": 5,
+      "native_named_tests_passed": 5,
+      "native_named_tests_failed": 0,
+      "native_named_tests_unknown": 0,
+      "count_scope": "Five named test invocations in this original lane; repeated lanes do not add new unique test identities.",
+      "original_test_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        }
+      ],
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "finalization_completed": true,
+        "acceptance_passed": false,
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_native_tests": [],
+        "unexecuted_acceptance_stages": []
+      },
+      "acceptance_stage_denominator": 3,
+      "acceptance_stages": {
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "original_manifest_report_before_validation": {
+            "bytes": 8160284,
+            "sha256": "c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 8160284,
+            "sha256": "c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 3474581,
+            "sha256": "6aad40ed8aac329180ebef09fb1bce4d401a731dbb5baad8e441d27cf846e0df",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 3474581,
+            "sha256": "6aad40ed8aac329180ebef09fb1bce4d401a731dbb5baad8e441d27cf846e0df",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 12186252,
+            "sha256": "7ae75984a8fdc8c0a05c03007645b419081611f1f12e5d7c6bbd8da73882b94f",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 12186252,
+            "sha256": "7ae75984a8fdc8c0a05c03007645b419081611f1f12e5d7c6bbd8da73882b94f",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        }
+      },
+      "confirmation_stdout": {
+        "finite_target_met": false,
+        "source": "literal original confirmation stdout JSON",
+        "diagnostic_log_line": 869,
+        "report_schema": "public-v3-signed-confirmation-pressure-v1"
+      },
+      "confirmation_observation": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "schema": "trnm-original-confirmation-observation-v1",
+        "sha256": "c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53",
+        "simulated_control": false
+      },
+      "business_confirmation_counts": null,
+      "sustained_stdout": {
+        "finite_service_target_met": true,
+        "source": "literal original sustained-service stdout JSON",
+        "diagnostic_log_line": 862,
+        "phases": [
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 0,
+            "reads_on_time": 21,
+            "records_not_retained": 0,
+            "requested_reads": 21,
+            "service_target_met": true
+          },
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 1,
+            "reads_on_time": 21,
+            "records_not_retained": 0,
+            "requested_reads": 21,
+            "service_target_met": true
+          }
+        ]
+      },
+      "host": {
+        "systemd_run_exit": 1,
+        "native_child_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "host_errors": [],
+        "final_parent_lease_error": null,
+        "cleanup": "already-collected",
+        "host_readiness_only": true
+      },
+      "native_scope_acceptance": false,
+      "production_activation": false
+    },
+    {
+      "target": {
+        "digest": "sha256:0968962e4f4b9a2185d994bf1f10512a1d5248216d410d5848cbd264068f1bb2",
+        "family": "from-zero",
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "id": 13298993182,
+        "job": 126407622314,
+        "kind": "prospective-merge",
+        "name": "priority-ubuntu-24.04-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "run": 41778472816,
+        "size": 7214082,
+        "tested": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "reader_status": "completed",
+      "selected_records": 27,
+      "selected_text_bytes": 301337,
+      "member_index_sha256": "af2f69e41236c8019f1c77fe676bf6ec0183a35894f4a710fd5d44f1c91e609f",
+      "manifest_member": "from-zero-native/manifest.json",
+      "manifest_bytes": 48891,
+      "manifest_sha256": "c7590ce3ee92d2d493e9d8171cac3c4880ef2084e2e4ebf91f699579d99ee110",
+      "source_identity_status": "verified",
+      "source_before": {
+        "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "source_after": {
+        "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "original_manifest": {
+        "schema": "trnm-from-zero-native-execution-v3",
+        "passed": false,
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "format_passed": true,
+        "source_recompiled": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "binary_sha256_before": "a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862",
+        "binary_sha256_after": "a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862"
+      },
+      "original_build_process_exit": 0,
+      "original_format_process_exit": 0,
+      "native_invocation_denominator": 5,
+      "native_invocations_returned": 5,
+      "native_named_tests_passed": 5,
+      "native_named_tests_failed": 0,
+      "native_named_tests_unknown": 0,
+      "count_scope": "Five named test invocations in this original lane; repeated lanes do not add new unique test identities.",
+      "original_test_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        }
+      ],
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "finalization_completed": true,
+        "acceptance_passed": false,
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_native_tests": [],
+        "unexecuted_acceptance_stages": []
+      },
+      "acceptance_stage_denominator": 3,
+      "acceptance_stages": {
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "original_manifest_report_before_validation": {
+            "bytes": 7317240,
+            "sha256": "b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 7317240,
+            "sha256": "b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 3478026,
+            "sha256": "7b121d313fbbf510f3c6dcc12e92b00c31a98e9d7384cdf7c57b6d6d9e0448b3",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 3478026,
+            "sha256": "7b121d313fbbf510f3c6dcc12e92b00c31a98e9d7384cdf7c57b6d6d9e0448b3",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 10707519,
+            "sha256": "b2d78ba9f387d64b9e9a242e91df5e454866e20aa3a2daf2f47c6da15a324fbe",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 10707519,
+            "sha256": "b2d78ba9f387d64b9e9a242e91df5e454866e20aa3a2daf2f47c6da15a324fbe",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        }
+      },
+      "confirmation_stdout": {
+        "finite_target_met": false,
+        "source": "literal original confirmation stdout JSON",
+        "diagnostic_log_line": 998,
+        "report_schema": "public-v3-signed-confirmation-pressure-v1"
+      },
+      "confirmation_observation": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "schema": "trnm-original-confirmation-observation-v1",
+        "sha256": "b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f",
+        "simulated_control": false
+      },
+      "business_confirmation_counts": null,
+      "sustained_stdout": {
+        "finite_service_target_met": true,
+        "source": "literal original sustained-service stdout JSON",
+        "diagnostic_log_line": 991,
+        "phases": [
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 0,
+            "reads_on_time": 21,
+            "records_not_retained": 0,
+            "requested_reads": 21,
+            "service_target_met": true
+          },
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 1,
+            "reads_on_time": 20,
+            "records_not_retained": 0,
+            "requested_reads": 20,
+            "service_target_met": true
+          }
+        ]
+      },
+      "host": {
+        "systemd_run_exit": 1,
+        "native_child_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "host_errors": [],
+        "final_parent_lease_error": null,
+        "cleanup": "already-collected",
+        "host_readiness_only": true
+      },
+      "native_scope_acceptance": false,
+      "production_activation": false
+    },
+    {
+      "target": {
+        "digest": "sha256:a42ac35380682d6cb2c5d63aa0f658441640308ca106bd80a884af7918d67d23",
+        "family": "from-zero",
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "id": 13299476462,
+        "job": 126407622505,
+        "kind": "head",
+        "name": "priority-ubuntu-24.04-arm-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "run": 41778472816,
+        "size": 7252731,
+        "tested": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "reader_status": "completed",
+      "selected_records": 27,
+      "selected_text_bytes": 304735,
+      "member_index_sha256": "15e427d019a4f8d1d638814e47f564aa1fc060bc46c167c359bd101bbf966054",
+      "manifest_member": "from-zero-native/manifest.json",
+      "manifest_bytes": 48879,
+      "manifest_sha256": "83d281e9ffd7242ba7d32950a2696eb037c73e93cdd36279f48325c9581ee3d7",
+      "source_identity_status": "verified",
+      "source_before": {
+        "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "source_after": {
+        "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "original_manifest": {
+        "schema": "trnm-from-zero-native-execution-v3",
+        "passed": false,
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "format_passed": true,
+        "source_recompiled": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "binary_sha256_before": "3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe",
+        "binary_sha256_after": "3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe"
+      },
+      "original_build_process_exit": 0,
+      "original_format_process_exit": 0,
+      "native_invocation_denominator": 5,
+      "native_invocations_returned": 5,
+      "native_named_tests_passed": 5,
+      "native_named_tests_failed": 0,
+      "native_named_tests_unknown": 0,
+      "count_scope": "Five named test invocations in this original lane; repeated lanes do not add new unique test identities.",
+      "original_test_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        }
+      ],
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "finalization_completed": true,
+        "acceptance_passed": false,
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_native_tests": [],
+        "unexecuted_acceptance_stages": []
+      },
+      "acceptance_stage_denominator": 3,
+      "acceptance_stages": {
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "original_manifest_report_before_validation": {
+            "bytes": 9350282,
+            "sha256": "ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 9350282,
+            "sha256": "ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 3475164,
+            "sha256": "ba154bafb50f81e48e5066c519e4679d20adef62985e90cf5657ed02d6c9a53b",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 3475164,
+            "sha256": "ba154bafb50f81e48e5066c519e4679d20adef62985e90cf5657ed02d6c9a53b",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 14606954,
+            "sha256": "17e84578cd81344ac051b0be58cb4fd231ac74cca4bb05557e518812726deb0f",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 14606954,
+            "sha256": "17e84578cd81344ac051b0be58cb4fd231ac74cca4bb05557e518812726deb0f",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        }
+      },
+      "confirmation_stdout": {
+        "finite_target_met": false,
+        "source": "literal original confirmation stdout JSON",
+        "diagnostic_log_line": 1129,
+        "report_schema": "public-v3-signed-confirmation-pressure-v1"
+      },
+      "confirmation_observation": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "schema": "trnm-original-confirmation-observation-v1",
+        "sha256": "ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85",
+        "simulated_control": false
+      },
+      "business_confirmation_counts": null,
+      "sustained_stdout": {
+        "finite_service_target_met": true,
+        "source": "literal original sustained-service stdout JSON",
+        "diagnostic_log_line": 1122,
+        "phases": [
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 0,
+            "reads_on_time": 24,
+            "records_not_retained": 0,
+            "requested_reads": 24,
+            "service_target_met": true
+          },
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 1,
+            "reads_on_time": 27,
+            "records_not_retained": 0,
+            "requested_reads": 27,
+            "service_target_met": true
+          }
+        ]
+      },
+      "host": {
+        "systemd_run_exit": 1,
+        "native_child_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "host_errors": [],
+        "final_parent_lease_error": null,
+        "cleanup": "already-collected",
+        "host_readiness_only": true
+      },
+      "native_scope_acceptance": false,
+      "production_activation": false
+    },
+    {
+      "target": {
+        "digest": "sha256:cb57379ee7f3d8a3122a341144712991862d5bd838f3a8236f3ce2032c0d33e3",
+        "family": "from-zero",
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "id": 13299640686,
+        "job": 126407622427,
+        "kind": "prospective-merge",
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "run": 41778472816,
+        "size": 7290852,
+        "tested": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "reader_status": "completed",
+      "selected_records": 27,
+      "selected_text_bytes": 304837,
+      "member_index_sha256": "a49a7b632eadeb108395cab547fe4d9a3a3e3b1a9b2df127a750d55bdd552478",
+      "manifest_member": "from-zero-native/manifest.json",
+      "manifest_bytes": 48893,
+      "manifest_sha256": "849e7c3f171f96817402f0399592e24ed8c5a76780ad548af95bcb6ca74df749",
+      "source_identity_status": "verified",
+      "source_before": {
+        "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "source_after": {
+        "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+      },
+      "original_manifest": {
+        "schema": "trnm-from-zero-native-execution-v3",
+        "passed": false,
+        "execution_finished": false,
+        "all_named_tests_passed": true,
+        "format_passed": true,
+        "source_recompiled": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "binary_sha256_before": "3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe",
+        "binary_sha256_after": "3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe"
+      },
+      "original_build_process_exit": 0,
+      "original_format_process_exit": 0,
+      "native_invocation_denominator": 5,
+      "native_invocations_returned": 5,
+      "native_named_tests_passed": 5,
+      "native_named_tests_failed": 0,
+      "native_named_tests_unknown": 0,
+      "count_scope": "Five named test invocations in this original lane; repeated lanes do not add new unique test identities.",
+      "original_test_selectors": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process_exit": 0,
+          "timed_out": false,
+          "named_result": "PASS",
+          "passed": true,
+          "failure": null
+        }
+      ],
+      "terminal": {
+        "schema": "trnm-from-zero-native-terminal-v1",
+        "native_execution_completed": true,
+        "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+        "finalization_completed": true,
+        "acceptance_passed": false,
+        "subsequent_ci_steps_observed": false,
+        "unexecuted_native_tests": [],
+        "unexecuted_acceptance_stages": []
+      },
+      "acceptance_stage_denominator": 3,
+      "acceptance_stages": {
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "original_manifest_report_before_validation": {
+            "bytes": 9672652,
+            "sha256": "47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 9672652,
+            "sha256": "47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 3474043,
+            "sha256": "f4dc23334c6997dc313de5ca64c0f09a8fe540a367656524cdffffbdb4a1d7f4",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 3474043,
+            "sha256": "f4dc23334c6997dc313de5ca64c0f09a8fe540a367656524cdffffbdb4a1d7f4",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "original_manifest_report_before_validation": {
+            "bytes": 15155253,
+            "sha256": "224c32337571c0eb2fb15a346559480182be78e84ec34fe17ead44dac45742f2",
+            "state": "present"
+          },
+          "original_manifest_retained_report": {
+            "bytes": 15155253,
+            "sha256": "224c32337571c0eb2fb15a346559480182be78e84ec34fe17ead44dac45742f2",
+            "state": "present"
+          },
+          "retained_matches_before_validation": true,
+          "report_expanded_by_this_reader": false
+        }
+      },
+      "confirmation_stdout": {
+        "finite_target_met": false,
+        "source": "literal original confirmation stdout JSON",
+        "diagnostic_log_line": 1258,
+        "report_schema": "public-v3-signed-confirmation-pressure-v1"
+      },
+      "confirmation_observation": {
+        "original_gate_validated": false,
+        "original_gate_validation_error": "CONFIRMATION_TARGET",
+        "schema": "trnm-original-confirmation-observation-v1",
+        "sha256": "47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f",
+        "simulated_control": false
+      },
+      "business_confirmation_counts": null,
+      "sustained_stdout": {
+        "finite_service_target_met": true,
+        "source": "literal original sustained-service stdout JSON",
+        "diagnostic_log_line": 1251,
+        "phases": [
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 0,
+            "reads_on_time": 26,
+            "records_not_retained": 0,
+            "requested_reads": 26,
+            "service_target_met": true
+          },
+          {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "invariant_target_met": true,
+            "measurement_failures": 0,
+            "phase": 1,
+            "reads_on_time": 27,
+            "records_not_retained": 0,
+            "requested_reads": 27,
+            "service_target_met": true
+          }
+        ]
+      },
+      "host": {
+        "systemd_run_exit": 1,
+        "native_child_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "host_errors": [],
+        "final_parent_lease_error": null,
+        "cleanup": "already-collected",
+        "host_readiness_only": true
+      },
+      "native_scope_acceptance": false,
+      "production_activation": false
+    }
+  ],
+  "literal_reader_console_json_lines": [
+    {
+      "diagnostic_log_line": 220,
+      "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    },
+    {
+      "diagnostic_log_line": 835,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"build\":{\"cpu_ns\":103141000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1\",\"stdout_sha256\":\"0bc8cfa78f918d591d73abed8a269fe7757fc6d6f41824b9aadd17efe418fe50\",\"system_cpu_ns\":37327000,\"timed_out\":false,\"user_cpu_ns\":65814000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":406801091},\"confirmation_observation\":{\"original_gate_validated\":false,\"original_gate_validation_error\":\"CONFIRMATION_TARGET\",\"schema\":\"trnm-original-confirmation-observation-v1\",\"sha256\":\"c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53\",\"simulated_control\":false},\"expected_source_kind\":\"head\",\"expected_tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"format\":{\"cpu_ns\":9874758000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"system_cpu_ns\":128561000,\"timed_out\":false,\"user_cpu_ns\":9746197000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":40304511766},\"member\":\"from-zero-native/manifest.json\",\"member_bytes\":48929,\"member_sha256\":\"4cae24a82667e07907f756102d050996bf9e504db3946ecdc6c65322be81cc3c\",\"original\":{\"all_named_tests_passed\":true,\"binary_sha256_after\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"binary_sha256_before\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"execution_finished\":false,\"failures\":[\"CONFIRMATION_TARGET\"],\"format_passed\":true,\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"schema\":\"trnm-from-zero-native-execution-v3\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"runs\":[{\"failure\":null,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"},\"passed\":true,\"process\":{\"cpu_ns\":1630000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\",\"system_cpu_ns\":815000,\"timed_out\":false,\"user_cpu_ns\":815000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5554482},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"},{\"failure\":null,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"},\"passed\":true,\"process\":{\"cpu_ns\":3361000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\",\"system_cpu_ns\":840000,\"timed_out\":false,\"user_cpu_ns\":2521000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5416674},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"},{\"failure\":null,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\"},\"passed\":true,\"process\":{\"cpu_ns\":19311000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"2ed8b3f63b8606e0642c5eb5b57aa15b5601eb9fec87be46d4cdcb1e2e6b9d52\",\"system_cpu_ns\":6759000,\"timed_out\":false,\"user_cpu_ns\":12552000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":91649761},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"2ed8b3f63b8606e0642c5eb5b57aa15b5601eb9fec87be46d4cdcb1e2e6b9d52\"},{\"failure\":null,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\"},\"passed\":true,\"process\":{\"cpu_ns\":2413013000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"dc925e6765ba037d6ae8ecce931a3aa8c7bc43dc4c6c33bdf6cfa15e5577d897\",\"system_cpu_ns\":733834000,\"timed_out\":false,\"user_cpu_ns\":1679179000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":9800805178},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"dc925e6765ba037d6ae8ecce931a3aa8c7bc43dc4c6c33bdf6cfa15e5577d897\"},{\"failure\":null,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\"},\"passed\":true,\"process\":{\"cpu_ns\":1844060000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b\",\"system_cpu_ns\":946810000,\"timed_out\":false,\"user_cpu_ns\":897250000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":8602933459},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b\"}],\"schema\":\"trnm-retained-from-zero-terminal-readback-v1\",\"scope\":\"Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.\",\"source_tests_executed\":false,\"sources\":{\"source_after\":{\"commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"},\"source_before\":{\"commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}},\"terminal\":{\"acceptance_passed\":false,\"acceptance_stages\":{\"confirmation_report\":{\"before_validation\":{\"bytes\":8160284,\"sha256\":\"c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53\",\"state\":\"present\"},\"error\":\"CONFIRMATION_TARGET\",\"path\":\"confirmation/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":8160284,\"sha256\":\"c40622e680b0d287810a669c9bd80031f4a54c0cea8817f71dc3a9848009fa53\",\"state\":\"present\"},\"status\":\"failed\"},\"service_report\":{\"before_validation\":{\"bytes\":3474581,\"sha256\":\"6aad40ed8aac329180ebef09fb1bce4d401a731dbb5baad8e441d27cf846e0df\",\"state\":\"present\"},\"error\":null,\"path\":\"native/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":3474581,\"sha256\":\"6aad40ed8aac329180ebef09fb1bce4d401a731dbb5baad8e441d27cf846e0df\",\"state\":\"present\"},\"status\":\"passed\"},\"sustained_report\":{\"before_validation\":{\"bytes\":12186252,\"sha256\":\"7ae75984a8fdc8c0a05c03007645b419081611f1f12e5d7c6bbd8da73882b94f\",\"state\":\"present\"},\"error\":null,\"path\":\"native/sustained/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":12186252,\"sha256\":\"7ae75984a8fdc8c0a05c03007645b419081611f1f12e5d7c6bbd8da73882b94f\",\"state\":\"present\"},\"status\":\"passed\"}},\"finalization_completed\":true,\"native_execution_completed\":true,\"native_execution_completed_scope\":\"all planned child invocations returned without timeout; not named-test or business acceptance\",\"native_invocations\":[{\"exit_code\":0,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"status\":\"returned\",\"timed_out\":false}],\"schema\":\"trnm-from-zero-native-terminal-v1\",\"subsequent_ci_steps_observed\":false,\"unexecuted_acceptance_stages\":[],\"unexecuted_native_tests\":[]}}"
+    },
+    {
+      "diagnostic_log_line": 836,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 837,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/child-result.json\",\"member_bytes\":339,\"member_sha256\":\"65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 838,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/controller-result.json\",\"member_bytes\":7641,\"member_sha256\":\"569cc1b6dadae26785b5772ee68c47e616bfae8307269b3f925a177057251a2f\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 839,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/prepare-build.json\",\"member_bytes\":3402,\"member_sha256\":\"4bdf82c15de6c0b531374a8c8efbd01ad420b8b3a54842ca7d6c3bf9cfd653c2\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":266293103000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3068,\"major_faults\":2114,\"max_rss_kib\":1423292,\"minor_faults\":3677584,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"72da36951b0bc334fa0dfd383e9ab999138a2813b54ac9bb11234cfdb315696f\",\"stdout_sha256\":\"c616055f55199598d39d6140551e64abb81afe1f84fc440e41e2340a657dd84b\",\"system_cpu_ns\":10311846000,\"timed_out\":false,\"user_cpu_ns\":255981257000,\"voluntary_switches\":15061,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":135384203674},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 874,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-after.json\",\"member_bytes\":1700,\"member_sha256\":\"0165c15ef556f48955228b65b84015cea69d2d461e5d632a74bf105327994ead\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 875,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"ec7d54d99498e7a80940f4e08a300c934e846fd390d1afb5de1b9d1e9f7dfaae\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 876,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298344954,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622369,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/outside-after.json\",\"member_bytes\":1662,\"member_sha256\":\"9ba20ca00a2af1f627518de24a6754a92054ebacdb11f3e71192eb7acf0738f2\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 960,
+      "raw_json": "{\"artifact\": 13298344954, \"console_lines_omitted\": 10, \"member\": \"from-zero-native-host/systemd-run.log\", \"original_excerpt_and_member_retained\": true}"
+    },
+    {
+      "diagnostic_log_line": 962,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 7304158, \"downloaded_zip_sha256\": \"d301993b7b83d458bcfa65e828d23468996cd226a8ccdd08962aeab5c5979328\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": [], \"selector_log_digest_checks\": [{\"actual\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"expected\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr\", \"status\": \"verified\"}, {\"actual\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"expected\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr\", \"status\": \"verified\"}, {\"actual\": \"2ed8b3f63b8606e0642c5eb5b57aa15b5601eb9fec87be46d4cdcb1e2e6b9d52\", \"expected\": \"2ed8b3f63b8606e0642c5eb5b57aa15b5601eb9fec87be46d4cdcb1e2e6b9d52\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr\", \"status\": \"verified\"}, {\"actual\": \"dc925e6765ba037d6ae8ecce931a3aa8c7bc43dc4c6c33bdf6cfa15e5577d897\", \"expected\": \"dc925e6765ba037d6ae8ecce931a3aa8c7bc43dc4c6c33bdf6cfa15e5577d897\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr\", \"status\": \"verified\"}, {\"actual\": \"b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b\", \"expected\": \"b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr\", \"status\": \"verified\"}]}, \"member_index_sha256\": \"a60238875715210f6539a52f6f42b30a9fe311ad353d538b462edb7f3888b140\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 27, \"schema\": \"trnm-baseline-w1-artifact-readback-v1\", \"selected_text_bytes\": 301336, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:d301993b7b83d458bcfa65e828d23468996cd226a8ccdd08962aeab5c5979328\", \"family\": \"from-zero\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13298344954, \"job\": 126407622369, \"kind\": \"head\", \"name\": \"priority-ubuntu-24.04-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 7304158, \"tested\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 964,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"build\":{\"cpu_ns\":120916000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"9ba21e9ae2f9eaebeb075bb454cb4e4f2f949f247ac35e99e04f280f42ea9df4\",\"stdout_sha256\":\"b7d03a827acb6772abfb06530fd1623ec70e1c933df1cfd01a33bac0bb8a980e\",\"system_cpu_ns\":40305000,\"timed_out\":false,\"user_cpu_ns\":80611000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":497838827},\"confirmation_observation\":{\"original_gate_validated\":false,\"original_gate_validation_error\":\"CONFIRMATION_TARGET\",\"schema\":\"trnm-original-confirmation-observation-v1\",\"sha256\":\"b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f\",\"simulated_control\":false},\"expected_source_kind\":\"prospective-merge\",\"expected_tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"format\":{\"cpu_ns\":12988646000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"system_cpu_ns\":147600000,\"timed_out\":false,\"user_cpu_ns\":12841046000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":52994229428},\"member\":\"from-zero-native/manifest.json\",\"member_bytes\":48891,\"member_sha256\":\"c7590ce3ee92d2d493e9d8171cac3c4880ef2084e2e4ebf91f699579d99ee110\",\"original\":{\"all_named_tests_passed\":true,\"binary_sha256_after\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"binary_sha256_before\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"execution_finished\":false,\"failures\":[\"CONFIRMATION_TARGET\"],\"format_passed\":true,\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"schema\":\"trnm-from-zero-native-execution-v3\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"runs\":[{\"failure\":null,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"},\"passed\":true,\"process\":{\"cpu_ns\":1794000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\",\"system_cpu_ns\":897000,\"timed_out\":false,\"user_cpu_ns\":897000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5586472},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"},{\"failure\":null,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"},\"passed\":true,\"process\":{\"cpu_ns\":3746000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\",\"system_cpu_ns\":1873000,\"timed_out\":false,\"user_cpu_ns\":1873000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5938380},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"},{\"failure\":null,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\"},\"passed\":true,\"process\":{\"cpu_ns\":22882000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"cca1b28d6ff65dea020950d7095361fe6de257c790190afdbc6ad277f9e722c0\",\"system_cpu_ns\":7322000,\"timed_out\":false,\"user_cpu_ns\":15560000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":101886346},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"cca1b28d6ff65dea020950d7095361fe6de257c790190afdbc6ad277f9e722c0\"},{\"failure\":null,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\"},\"passed\":true,\"process\":{\"cpu_ns\":2454166000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"efb0985463c1fcdf46582797a59a9ad759744884b5d522f54c842ef29e9b3ff7\",\"system_cpu_ns\":668302000,\"timed_out\":false,\"user_cpu_ns\":1785864000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":9902108852},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"efb0985463c1fcdf46582797a59a9ad759744884b5d522f54c842ef29e9b3ff7\"},{\"failure\":null,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\"},\"passed\":true,\"process\":{\"cpu_ns\":1959179000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\",\"system_cpu_ns\":876505000,\"timed_out\":false,\"user_cpu_ns\":1082674000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":8685595298},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\"}],\"schema\":\"trnm-retained-from-zero-terminal-readback-v1\",\"scope\":\"Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.\",\"source_tests_executed\":false,\"sources\":{\"source_after\":{\"commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"},\"source_before\":{\"commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}},\"terminal\":{\"acceptance_passed\":false,\"acceptance_stages\":{\"confirmation_report\":{\"before_validation\":{\"bytes\":7317240,\"sha256\":\"b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f\",\"state\":\"present\"},\"error\":\"CONFIRMATION_TARGET\",\"path\":\"confirmation/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":7317240,\"sha256\":\"b491305da95622acd402bb7143fb1085ffab51d5b3e59880b0a2d9075f66bb6f\",\"state\":\"present\"},\"status\":\"failed\"},\"service_report\":{\"before_validation\":{\"bytes\":3478026,\"sha256\":\"7b121d313fbbf510f3c6dcc12e92b00c31a98e9d7384cdf7c57b6d6d9e0448b3\",\"state\":\"present\"},\"error\":null,\"path\":\"native/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":3478026,\"sha256\":\"7b121d313fbbf510f3c6dcc12e92b00c31a98e9d7384cdf7c57b6d6d9e0448b3\",\"state\":\"present\"},\"status\":\"passed\"},\"sustained_report\":{\"before_validation\":{\"bytes\":10707519,\"sha256\":\"b2d78ba9f387d64b9e9a242e91df5e454866e20aa3a2daf2f47c6da15a324fbe\",\"state\":\"present\"},\"error\":null,\"path\":\"native/sustained/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":10707519,\"sha256\":\"b2d78ba9f387d64b9e9a242e91df5e454866e20aa3a2daf2f47c6da15a324fbe\",\"state\":\"present\"},\"status\":\"passed\"}},\"finalization_completed\":true,\"native_execution_completed\":true,\"native_execution_completed_scope\":\"all planned child invocations returned without timeout; not named-test or business acceptance\",\"native_invocations\":[{\"exit_code\":0,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"status\":\"returned\",\"timed_out\":false}],\"schema\":\"trnm-from-zero-native-terminal-v1\",\"subsequent_ci_steps_observed\":false,\"unexecuted_acceptance_stages\":[],\"unexecuted_native_tests\":[]}}"
+    },
+    {
+      "diagnostic_log_line": 965,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 966,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/child-result.json\",\"member_bytes\":339,\"member_sha256\":\"65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 967,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/controller-result.json\",\"member_bytes\":7641,\"member_sha256\":\"7807c219b5f0af3e81d6fbe539c0e1bc2106377fd5cbfa46aadbf70c164fe76b\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 968,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/prepare-build.json\",\"member_bytes\":3402,\"member_sha256\":\"917e5e5c462122226bb505bed3ae4b75cc10a61c4e572e50263221c765224089\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"a6011d3b0e833ecb21470047d11a8adbe45466eb15676266604549c8a8851862\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":331873787000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3188,\"major_faults\":2102,\"max_rss_kib\":1409212,\"minor_faults\":3677141,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"77b26edb01bbf24e04b85c0d026eb837585a56513017469a6c707663bb4c437d\",\"stdout_sha256\":\"823424c209c0a4a2f9c7462d5f5e891efcec6c237d1e82a72acb583e83124902\",\"system_cpu_ns\":12337186000,\"timed_out\":false,\"user_cpu_ns\":319536601000,\"voluntary_switches\":14961,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":170613714828},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1003,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-after.json\",\"member_bytes\":1700,\"member_sha256\":\"dc59fc5179c322d26b0cb1a90455796141e2289c6a72e3a94489945f3cc60e81\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1004,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-before.json\",\"member_bytes\":1688,\"member_sha256\":\"7b4add5eff255749f558a276bb6fe908acea2dd64021f6d2a46f61f7eb7cf21b\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1005,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13298993182,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622314,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/outside-after.json\",\"member_bytes\":1662,\"member_sha256\":\"9eab643c680d8d6a334ff34ccffe8fb22fc8348b563213d8b0e5db027f3aea21\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1088,
+      "raw_json": "{\"artifact\": 13298993182, \"console_lines_omitted\": 11, \"member\": \"from-zero-native-host/systemd-run.log\", \"original_excerpt_and_member_retained\": true}"
+    },
+    {
+      "diagnostic_log_line": 1091,
+      "raw_json": "{\"artifact\": 13298993182, \"console_lines_omitted\": 39, \"member\": \"from-zero-native/build/stdout\", \"original_excerpt_and_member_retained\": true}"
+    },
+    {
+      "diagnostic_log_line": 1093,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 7214082, \"downloaded_zip_sha256\": \"0968962e4f4b9a2185d994bf1f10512a1d5248216d410d5848cbd264068f1bb2\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": [], \"selector_log_digest_checks\": [{\"actual\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"expected\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr\", \"status\": \"verified\"}, {\"actual\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"expected\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr\", \"status\": \"verified\"}, {\"actual\": \"cca1b28d6ff65dea020950d7095361fe6de257c790190afdbc6ad277f9e722c0\", \"expected\": \"cca1b28d6ff65dea020950d7095361fe6de257c790190afdbc6ad277f9e722c0\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr\", \"status\": \"verified\"}, {\"actual\": \"efb0985463c1fcdf46582797a59a9ad759744884b5d522f54c842ef29e9b3ff7\", \"expected\": \"efb0985463c1fcdf46582797a59a9ad759744884b5d522f54c842ef29e9b3ff7\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr\", \"status\": \"verified\"}, {\"actual\": \"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\", \"expected\": \"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr\", \"status\": \"verified\"}]}, \"member_index_sha256\": \"af2f69e41236c8019f1c77fe676bf6ec0183a35894f4a710fd5d44f1c91e609f\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 27, \"schema\": \"trnm-baseline-w1-artifact-readback-v1\", \"selected_text_bytes\": 301337, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:0968962e4f4b9a2185d994bf1f10512a1d5248216d410d5848cbd264068f1bb2\", \"family\": \"from-zero\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13298993182, \"job\": 126407622314, \"kind\": \"prospective-merge\", \"name\": \"priority-ubuntu-24.04-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 7214082, \"tested\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 1095,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"build\":{\"cpu_ns\":104597000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1\",\"stdout_sha256\":\"464fe006f568d72791822f4f6f3c152e154c07452606d639b142d76d48ebf10d\",\"system_cpu_ns\":42034000,\"timed_out\":false,\"user_cpu_ns\":62563000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":405534930},\"confirmation_observation\":{\"original_gate_validated\":false,\"original_gate_validation_error\":\"CONFIRMATION_TARGET\",\"schema\":\"trnm-original-confirmation-observation-v1\",\"sha256\":\"ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85\",\"simulated_control\":false},\"expected_source_kind\":\"head\",\"expected_tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"format\":{\"cpu_ns\":10126417000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"system_cpu_ns\":144270000,\"timed_out\":false,\"user_cpu_ns\":9982147000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":40698131695},\"member\":\"from-zero-native/manifest.json\",\"member_bytes\":48879,\"member_sha256\":\"83d281e9ffd7242ba7d32950a2696eb037c73e93cdd36279f48325c9581ee3d7\",\"original\":{\"all_named_tests_passed\":true,\"binary_sha256_after\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"binary_sha256_before\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"execution_finished\":false,\"failures\":[\"CONFIRMATION_TARGET\"],\"format_passed\":true,\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"schema\":\"trnm-from-zero-native-execution-v3\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"runs\":[{\"failure\":null,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"},\"passed\":true,\"process\":{\"cpu_ns\":1829000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\",\"system_cpu_ns\":1829000,\"timed_out\":false,\"user_cpu_ns\":0,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5591448},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"},{\"failure\":null,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"},\"passed\":true,\"process\":{\"cpu_ns\":3658000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\",\"system_cpu_ns\":1829000,\"timed_out\":false,\"user_cpu_ns\":1829000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5557231},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"},{\"failure\":null,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\"},\"passed\":true,\"process\":{\"cpu_ns\":20574000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"9b8603d44cda8a436323d7f6bf95c2b263bd462d4f6891a1db2228dc1c711ad3\",\"system_cpu_ns\":5367000,\"timed_out\":false,\"user_cpu_ns\":15207000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":96621020},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"9b8603d44cda8a436323d7f6bf95c2b263bd462d4f6891a1db2228dc1c711ad3\"},{\"failure\":null,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\"},\"passed\":true,\"process\":{\"cpu_ns\":2372232000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"ac677e19fc99b595434f1bb8fd7e546985179eb1bfd45dc57d0c455c51bc82de\",\"system_cpu_ns\":715310000,\"timed_out\":false,\"user_cpu_ns\":1656922000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":9607364634},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"ac677e19fc99b595434f1bb8fd7e546985179eb1bfd45dc57d0c455c51bc82de\"},{\"failure\":null,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\"},\"passed\":true,\"process\":{\"cpu_ns\":1615359000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\",\"system_cpu_ns\":704884000,\"timed_out\":false,\"user_cpu_ns\":910475000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":8688063793},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\"}],\"schema\":\"trnm-retained-from-zero-terminal-readback-v1\",\"scope\":\"Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.\",\"source_tests_executed\":false,\"sources\":{\"source_after\":{\"commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"},\"source_before\":{\"commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}},\"terminal\":{\"acceptance_passed\":false,\"acceptance_stages\":{\"confirmation_report\":{\"before_validation\":{\"bytes\":9350282,\"sha256\":\"ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85\",\"state\":\"present\"},\"error\":\"CONFIRMATION_TARGET\",\"path\":\"confirmation/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":9350282,\"sha256\":\"ae09be7780f3613e0f5a5d9fc3b9a44998e23349bd27e9e7c02c658a5097cf85\",\"state\":\"present\"},\"status\":\"failed\"},\"service_report\":{\"before_validation\":{\"bytes\":3475164,\"sha256\":\"ba154bafb50f81e48e5066c519e4679d20adef62985e90cf5657ed02d6c9a53b\",\"state\":\"present\"},\"error\":null,\"path\":\"native/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":3475164,\"sha256\":\"ba154bafb50f81e48e5066c519e4679d20adef62985e90cf5657ed02d6c9a53b\",\"state\":\"present\"},\"status\":\"passed\"},\"sustained_report\":{\"before_validation\":{\"bytes\":14606954,\"sha256\":\"17e84578cd81344ac051b0be58cb4fd231ac74cca4bb05557e518812726deb0f\",\"state\":\"present\"},\"error\":null,\"path\":\"native/sustained/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":14606954,\"sha256\":\"17e84578cd81344ac051b0be58cb4fd231ac74cca4bb05557e518812726deb0f\",\"state\":\"present\"},\"status\":\"passed\"}},\"finalization_completed\":true,\"native_execution_completed\":true,\"native_execution_completed_scope\":\"all planned child invocations returned without timeout; not named-test or business acceptance\",\"native_invocations\":[{\"exit_code\":0,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"status\":\"returned\",\"timed_out\":false}],\"schema\":\"trnm-from-zero-native-terminal-v1\",\"subsequent_ci_steps_observed\":false,\"unexecuted_acceptance_stages\":[],\"unexecuted_native_tests\":[]}}"
+    },
+    {
+      "diagnostic_log_line": 1096,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1097,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/child-result.json\",\"member_bytes\":339,\"member_sha256\":\"65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1098,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/controller-result.json\",\"member_bytes\":7640,\"member_sha256\":\"f8067fc782093c79055a60666f506be48f4b1f9d6779d14526ba1834b061df94\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1099,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/prepare-build.json\",\"member_bytes\":3401,\"member_sha256\":\"890a00999065c8973e692ebaaead7fa8b9356523bb6167075d8080c92ccad6e6\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":353072742000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3149,\"major_faults\":1547,\"max_rss_kib\":1415572,\"minor_faults\":4757416,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"fdaf41ef7d8f8928ee12bdb91784d51a9bd5bbc49b797166b37c0fef6c39a506\",\"stdout_sha256\":\"82db47d3e3a95d7d9041702ac94f94d31b188910b9809ba2e32cf0704b70d9c3\",\"system_cpu_ns\":14039915000,\"timed_out\":false,\"user_cpu_ns\":339032827000,\"voluntary_switches\":8366,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":180411563623},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1134,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-after.json\",\"member_bytes\":1700,\"member_sha256\":\"3b199a6b716c2c4adfd87dfbb7d60297795affd602f3190fd76e0ad2addb0b58\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1135,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"ce158567931002794f0a2baabd946e36c29a198c772411fbc5858daa490bc96c\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1136,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299476462,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622505,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/outside-after.json\",\"member_bytes\":1662,\"member_sha256\":\"c4f6cdced65b2b73ddd54970f6050acb67acbfca002d2125a0e11fc927fd6203\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1220,
+      "raw_json": "{\"artifact\": 13299476462, \"console_lines_omitted\": 10, \"member\": \"from-zero-native-host/systemd-run.log\", \"original_excerpt_and_member_retained\": true}"
+    },
+    {
+      "diagnostic_log_line": 1222,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 7252731, \"downloaded_zip_sha256\": \"a42ac35380682d6cb2c5d63aa0f658441640308ca106bd80a884af7918d67d23\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": [], \"selector_log_digest_checks\": [{\"actual\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"expected\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr\", \"status\": \"verified\"}, {\"actual\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"expected\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr\", \"status\": \"verified\"}, {\"actual\": \"9b8603d44cda8a436323d7f6bf95c2b263bd462d4f6891a1db2228dc1c711ad3\", \"expected\": \"9b8603d44cda8a436323d7f6bf95c2b263bd462d4f6891a1db2228dc1c711ad3\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr\", \"status\": \"verified\"}, {\"actual\": \"ac677e19fc99b595434f1bb8fd7e546985179eb1bfd45dc57d0c455c51bc82de\", \"expected\": \"ac677e19fc99b595434f1bb8fd7e546985179eb1bfd45dc57d0c455c51bc82de\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr\", \"status\": \"verified\"}, {\"actual\": \"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\", \"expected\": \"5df7b90c926cd5b15a4c6ee7683397b8c758a137af4508e14ae65b599779b201\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr\", \"status\": \"verified\"}]}, \"member_index_sha256\": \"15e427d019a4f8d1d638814e47f564aa1fc060bc46c167c359bd101bbf966054\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 27, \"schema\": \"trnm-baseline-w1-artifact-readback-v1\", \"selected_text_bytes\": 304735, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:a42ac35380682d6cb2c5d63aa0f658441640308ca106bd80a884af7918d67d23\", \"family\": \"from-zero\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13299476462, \"job\": 126407622505, \"kind\": \"head\", \"name\": \"priority-ubuntu-24.04-arm-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 7252731, \"tested\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 1224,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"build\":{\"cpu_ns\":94062000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1\",\"stdout_sha256\":\"e220a01fccf1626f4fdd699029fd02b4ccd6c5911f3aff3d1c1c72105881d619\",\"system_cpu_ns\":32970000,\"timed_out\":false,\"user_cpu_ns\":61092000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":394812357},\"confirmation_observation\":{\"original_gate_validated\":false,\"original_gate_validation_error\":\"CONFIRMATION_TARGET\",\"schema\":\"trnm-original-confirmation-observation-v1\",\"sha256\":\"47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f\",\"simulated_control\":false},\"expected_source_kind\":\"prospective-merge\",\"expected_tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"format\":{\"cpu_ns\":10034834000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"system_cpu_ns\":139298000,\"timed_out\":false,\"user_cpu_ns\":9895536000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":40297970900},\"member\":\"from-zero-native/manifest.json\",\"member_bytes\":48893,\"member_sha256\":\"849e7c3f171f96817402f0399592e24ed8c5a76780ad548af95bcb6ca74df749\",\"original\":{\"all_named_tests_passed\":true,\"binary_sha256_after\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"binary_sha256_before\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"execution_finished\":false,\"failures\":[\"CONFIRMATION_TARGET\"],\"format_passed\":true,\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"schema\":\"trnm-from-zero-native-execution-v3\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"runs\":[{\"failure\":null,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"},\"passed\":true,\"process\":{\"cpu_ns\":1841000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\",\"system_cpu_ns\":1841000,\"timed_out\":false,\"user_cpu_ns\":0,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5648085},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"},{\"failure\":null,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"},\"passed\":true,\"process\":{\"cpu_ns\":3320000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\",\"system_cpu_ns\":1660000,\"timed_out\":false,\"user_cpu_ns\":1660000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":5441371},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"},{\"failure\":null,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\"},\"passed\":true,\"process\":{\"cpu_ns\":19210000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"d89bc8511bfb072295468c23c72e498c88859f293e3c23ac62ef217479913697\",\"system_cpu_ns\":3492000,\"timed_out\":false,\"user_cpu_ns\":15718000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":91458557},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"d89bc8511bfb072295468c23c72e498c88859f293e3c23ac62ef217479913697\"},{\"failure\":null,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\"},\"passed\":true,\"process\":{\"cpu_ns\":2374456000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"f50b0881808699de60d6dc609da38eb9dfd974436d5a2e1cb94c6364beccbab0\",\"system_cpu_ns\":623128000,\"timed_out\":false,\"user_cpu_ns\":1751328000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":9611731632},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"f50b0881808699de60d6dc609da38eb9dfd974436d5a2e1cb94c6364beccbab0\"},{\"failure\":null,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":{\"executed_tests\":1,\"result\":\"PASS\",\"scope\":\"named-libtest-execution-only\",\"test\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\"},\"passed\":true,\"process\":{\"cpu_ns\":1591260000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998\",\"system_cpu_ns\":708584000,\"timed_out\":false,\"user_cpu_ns\":882676000,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":8685008615},\"stderr_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"stdout_sha256\":\"f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998\"}],\"schema\":\"trnm-retained-from-zero-terminal-readback-v1\",\"scope\":\"Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.\",\"source_tests_executed\":false,\"sources\":{\"source_after\":{\"commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"},\"source_before\":{\"commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"test_sha256\":\"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\",\"tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}},\"terminal\":{\"acceptance_passed\":false,\"acceptance_stages\":{\"confirmation_report\":{\"before_validation\":{\"bytes\":9672652,\"sha256\":\"47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f\",\"state\":\"present\"},\"error\":\"CONFIRMATION_TARGET\",\"path\":\"confirmation/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":9672652,\"sha256\":\"47a6f00f9656edc2407a55a2cd948b02453657e8b2dd79c8ab5e57ac6272b77f\",\"state\":\"present\"},\"status\":\"failed\"},\"service_report\":{\"before_validation\":{\"bytes\":3474043,\"sha256\":\"f4dc23334c6997dc313de5ca64c0f09a8fe540a367656524cdffffbdb4a1d7f4\",\"state\":\"present\"},\"error\":null,\"path\":\"native/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":3474043,\"sha256\":\"f4dc23334c6997dc313de5ca64c0f09a8fe540a367656524cdffffbdb4a1d7f4\",\"state\":\"present\"},\"status\":\"passed\"},\"sustained_report\":{\"before_validation\":{\"bytes\":15155253,\"sha256\":\"224c32337571c0eb2fb15a346559480182be78e84ec34fe17ead44dac45742f2\",\"state\":\"present\"},\"error\":null,\"path\":\"native/sustained/report.json\",\"retained_matches_before_validation\":true,\"retained_report\":{\"bytes\":15155253,\"sha256\":\"224c32337571c0eb2fb15a346559480182be78e84ec34fe17ead44dac45742f2\",\"state\":\"present\"},\"status\":\"passed\"}},\"finalization_completed\":true,\"native_execution_completed\":true,\"native_execution_completed_scope\":\"all planned child invocations returned without timeout; not named-test or business acceptance\",\"native_invocations\":[{\"exit_code\":0,\"name\":\"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_service_shares_cpu_with_honest_work_and_reopened_owner\",\"status\":\"returned\",\"timed_out\":false},{\"exit_code\":0,\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"status\":\"returned\",\"timed_out\":false}],\"schema\":\"trnm-from-zero-native-terminal-v1\",\"subsequent_ci_steps_observed\":false,\"unexecuted_acceptance_stages\":[],\"unexecuted_native_tests\":[]}}"
+    },
+    {
+      "diagnostic_log_line": 1225,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1226,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/child-result.json\",\"member_bytes\":339,\"member_sha256\":\"65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1227,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/controller-result.json\",\"member_bytes\":7640,\"member_sha256\":\"a8bcc6006467ab1694f1198b4d69f37c68a005531a0fa1ea28cad56a2560c428\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_from_zero_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/from-zero-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1228,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/prepare-build.json\",\"member_bytes\":3401,\"member_sha256\":\"8d21dc0d297e2f93ca5ef2cdfe46dea63b27272b1069eac5e2c141823c8c6760\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"3bda0548ea190d9f4ee39295439af284ed8692320cc7706c6de23f915196e8fe\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":323873850000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3096,\"major_faults\":1540,\"max_rss_kib\":1394132,\"minor_faults\":4736025,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"df4a9d912c7b10e11f0cd60914518f680d8bf6d833415a488649e48e50e5533c\",\"stdout_sha256\":\"19e4f6b28c8d25ec5d637e5c9a008cfbb8f68a886aabafbcd195404bef802cda\",\"system_cpu_ns\":13276131000,\"timed_out\":false,\"user_cpu_ns\":310597719000,\"voluntary_switches\":8068,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":165156158978},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1263,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-after.json\",\"member_bytes\":1700,\"member_sha256\":\"91fb83c7bbca94449e4c55462180bf7ec9054ead05726703ee2ac82111d1df72\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1264,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"e79f984365ab69b3222a7dd190a472ad32df73d229d47010bd75ed49fff305d1\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1265,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13299640686,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622427,\"measured_run\":41778472816,\"member\":\"from-zero-native-host/outside-after.json\",\"member_bytes\":1662,\"member_sha256\":\"e05a26c5d7305ee1f56f121d75fffd98831cf13bb27548a31d3c9256d64bec12\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-baseline-w1-literal-readback-v1\",\"scope\":\"Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1349,
+      "raw_json": "{\"artifact\": 13299640686, \"console_lines_omitted\": 10, \"member\": \"from-zero-native-host/systemd-run.log\", \"original_excerpt_and_member_retained\": true}"
+    },
+    {
+      "diagnostic_log_line": 1351,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 7290852, \"downloaded_zip_sha256\": \"cb57379ee7f3d8a3122a341144712991862d5bd838f3a8236f3ce2032c0d33e3\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": [], \"selector_log_digest_checks\": [{\"actual\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"expected\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr\", \"status\": \"verified\"}, {\"actual\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"expected\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr\", \"status\": \"verified\"}, {\"actual\": \"d89bc8511bfb072295468c23c72e498c88859f293e3c23ac62ef217479913697\", \"expected\": \"d89bc8511bfb072295468c23c72e498c88859f293e3c23ac62ef217479913697\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr\", \"status\": \"verified\"}, {\"actual\": \"f50b0881808699de60d6dc609da38eb9dfd974436d5a2e1cb94c6364beccbab0\", \"expected\": \"f50b0881808699de60d6dc609da38eb9dfd974436d5a2e1cb94c6364beccbab0\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr\", \"status\": \"verified\"}, {\"actual\": \"f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998\", \"expected\": \"f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout\", \"status\": \"verified\"}, {\"actual\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"expected\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"member\": \"from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr\", \"status\": \"verified\"}]}, \"member_index_sha256\": \"a49a7b632eadeb108395cab547fe4d9a3a3e3b1a9b2df127a750d55bdd552478\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 27, \"schema\": \"trnm-baseline-w1-artifact-readback-v1\", \"selected_text_bytes\": 304837, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:cb57379ee7f3d8a3122a341144712991862d5bd838f3a8236f3ce2032c0d33e3\", \"family\": \"from-zero\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13299640686, \"job\": 126407622427, \"kind\": \"prospective-merge\", \"name\": \"priority-ubuntu-24.04-arm-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 7290852, \"tested\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 1374,
+      "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    }
+  ],
+  "literal_original_native_log_excerpts": [
+    {
+      "log_line": 840,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=1 "
+    },
+    {
+      "log_line": 841,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 842,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=3 test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "log_line": 843,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=4 "
+    },
+    {
+      "log_line": 844,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 845,
+      "text": "artifact=13298344954 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=6 "
+    },
+    {
+      "log_line": 846,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=1 "
+    },
+    {
+      "log_line": 847,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 848,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=3 test four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... {\"cases\":[{\"full_verify_cpu_ns\":478571,\"full_verify_wall_ns\":479634,\"native_admission_cpu_ns\":762533,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":67380165,\"nonce\":5,\"proof_identity\":\"385610772c1ac975279e3554dff8a8ff1b8fed96d09134408d78cf8d2f05de61\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"1ff1fee5192bc7ad21fa4834b7727ee67255feb81bbac8b7efdbb02e7af04bc5\",\"trace\":\"1130720d4c87b205cf66b0f9c0867d5dea4d3cb226dd3f30c14d98e4c15f38db\",\"verified_work\":false},{\"full_verify_cpu_ns\":432112,\"full_verify_wall_ns\":433384,\"native_admission_cpu_ns\":484821,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":486084,\"nonce\":14,\"proof_identity\":\"3eb1567855a7c35aeb5383ed3595b625529a79c3aa42a09937e1a8b03b1cf2f0\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6900a9f6d78abcc60ad47de0639a302128432607cc018d6d132b46af15a79f55\",\"trace\":\"fa6f2e2c05ba092b2063116e4b448d6c1245799b68806f57f3069b3dbc29b4d7\",\"verified_work\":false},{\"full_verify_cpu_ns\":431802,\"full_verify_wall_ns\":432833,\"native_admission_cpu_ns\":472783,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":473986,\"nonce\":15,\"proof_identity\":\"298700287ccd69a0040f7382da5467bd72a0eef4702bea328932a966e6e5228a\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"21fb94d90af4e9e651f078ad9e027f622fbbb8144bb9be0c39f17053ed115be2\",\"trace\":\"e386c7e8da947119bd6fb6961f8d40a9e6a824fbe2603e7eb30d712e1d3f4195\",\"verified_work\":false},{\"full_verify_cpu_ns\":428036,\"full_verify_wall_ns\":429148,\"native_admission_cpu_ns\":469818,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":470941,\"nonce\":16,\"proof_identity\":\"0cfc16fb2d1ac3e345cab07503e24f578bef3dbb4f618fcc2db5caab340de8d5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6f84d7fe6a48604428b18d66829a8be68995c7854a48b0c3c6c0e7d211a4ae64\",\"trace\":\"e9376e3189431faeba5887a75744d8611e65cd3d12c538782b37eb278e97c2bf\", [console line truncated; original retained]"
+    },
+    {
+      "log_line": 849,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=4 ok"
+    },
+    {
+      "log_line": 850,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=5 "
+    },
+    {
+      "log_line": 851,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "log_line": 852,
+      "text": "artifact=13298344954 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=7 "
+    },
+    {
+      "log_line": 853,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=1 "
+    },
+    {
+      "log_line": 854,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 855,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=3 test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "log_line": 856,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=4 "
+    },
+    {
+      "log_line": 857,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 858,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=6 "
+    },
+    {
+      "log_line": 859,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=1 "
+    },
+    {
+      "log_line": 860,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 861,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=3 test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {\"finite_target_met\":true,\"public_network_ready\":false,\"schema\":\"public-v3-local-from-zero-service-v2\"}"
+    },
+    {
+      "log_line": 862,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=4 {\"finite_service_target_met\":true,\"phases\":[{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":0,\"reads_on_time\":21,\"records_not_retained\":0,\"requested_reads\":21,\"service_target_met\":true},{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":1,\"reads_on_time\":21,\"records_not_retained\":0,\"requested_reads\":21,\"service_target_met\":true}],\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/native/sustained/report.json\",\"schema\":\"public-v3-sustained-local-from-zero-v1\"}"
+    },
+    {
+      "log_line": 863,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=5 ok"
+    },
+    {
+      "log_line": 864,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=6 "
+    },
+    {
+      "log_line": 865,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=7 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.79s"
+    },
+    {
+      "log_line": 866,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=8 "
+    },
+    {
+      "log_line": 867,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=1 "
+    },
+    {
+      "log_line": 868,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 869,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/confirmation/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}"
+    },
+    {
+      "log_line": 870,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=4 ok"
+    },
+    {
+      "log_line": 871,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=5 "
+    },
+    {
+      "log_line": 872,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.60s"
+    },
+    {
+      "log_line": 873,
+      "text": "artifact=13298344954 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=7 "
+    },
+    {
+      "log_line": 957,
+      "text": "artifact=13298344954 member=from-zero-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-2342.service; invocation ID: 046e1860bd9e4faab7ddba72f8f75b22"
+    },
+    {
+      "log_line": 958,
+      "text": "artifact=13298344954 member=from-zero-native-host/systemd-run.log line=2 {\"name\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-f71c026b204518da\", \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 1630000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 40532, \"minor_faults\": 158, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"system_cpu_ns\": 815000, \"timed_out\": false, \"user_cpu_ns\": 815000, \"voluntary_switches\": 4, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5554482}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"}"
+    },
+    {
+      "log_line": 959,
+      "text": "artifact=13298344954 member=from-zero-native-host/systemd-run.log line=3 {\"name\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-f71c026b204518da\", \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 3361000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 40532, \"minor_faults\": 244, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"system_cpu_ns\": 840000, \"timed_out\": false, \"user_cpu_ns\": 2521000, \"voluntary_switches\": 3, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5416674}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"}"
+    },
+    {
+      "log_line": 969,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=1 "
+    },
+    {
+      "log_line": 970,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 971,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=3 test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "log_line": 972,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=4 "
+    },
+    {
+      "log_line": 973,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 974,
+      "text": "artifact=13298993182 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=6 "
+    },
+    {
+      "log_line": 975,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=1 "
+    },
+    {
+      "log_line": 976,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 977,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=3 test four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... {\"cases\":[{\"full_verify_cpu_ns\":600110,\"full_verify_wall_ns\":601275,\"native_admission_cpu_ns\":624044,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":625460,\"nonce\":1,\"proof_identity\":\"649a740958364fa0d6f9b5f376589cffd92ca2681f8d5e4cb40c378965b675d5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"4eed3a2ae3ed37a9e255308cad8a8940a55f86573c477498d6096cc1fd114ad1\",\"trace\":\"d6386403c15838e90849c5ba55f7a36f54e16838588a8b3dae2292af190cfcbd\",\"verified_work\":false},{\"full_verify_cpu_ns\":565374,\"full_verify_wall_ns\":567112,\"native_admission_cpu_ns\":609537,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":611053,\"nonce\":2,\"proof_identity\":\"efe95713fddc93c86805a188aa24fbe107ca576845082e2136d736f6df78cc6e\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6de4c2180b7b427293d0ff84f44ee8e190a32d44a7a50c678f6820b725b7acf9\",\"trace\":\"db4f83276444287f47e89f3575e83c5b975b37d84de9302adc1f7cead20ed6ce\",\"verified_work\":false},{\"full_verify_cpu_ns\":540619,\"full_verify_wall_ns\":542135,\"native_admission_cpu_ns\":560025,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":561390,\"nonce\":3,\"proof_identity\":\"55de9c348e52f9795310466a535a07a63efc429de404360dda74fe42611f469f\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"62a30cd89c116266244ee42adb5058a6a8207044e5ddc10ca2c723709b202e41\",\"trace\":\"6c73636e1b2b0953e1902820549c1b3ec33805da0c37ec0e9ece5491a87ed179\",\"verified_work\":false},{\"full_verify_cpu_ns\":524859,\"full_verify_wall_ns\":526395,\"native_admission_cpu_ns\":566476,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":567672,\"nonce\":4,\"proof_identity\":\"699957c6d82e2de8414897da4513874a8a5e1ff3847ca295a5db72da363310e5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"72036e973609cc5b54f7e285a9650e8b89c341a4e1f384989da3c2b69d683c4b\",\"trace\":\"49af15e4669485b71676956be6bc73e6e95b2ff6d64f64e9c3b5d00cf6b7c88b\",\"veri [console line truncated; original retained]"
+    },
+    {
+      "log_line": 978,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=4 ok"
+    },
+    {
+      "log_line": 979,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=5 "
+    },
+    {
+      "log_line": 980,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.10s"
+    },
+    {
+      "log_line": 981,
+      "text": "artifact=13298993182 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=7 "
+    },
+    {
+      "log_line": 982,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=1 "
+    },
+    {
+      "log_line": 983,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 984,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=3 test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "log_line": 985,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=4 "
+    },
+    {
+      "log_line": 986,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 987,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=6 "
+    },
+    {
+      "log_line": 988,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=1 "
+    },
+    {
+      "log_line": 989,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 990,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=3 test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {\"finite_target_met\":true,\"public_network_ready\":false,\"schema\":\"public-v3-local-from-zero-service-v2\"}"
+    },
+    {
+      "log_line": 991,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=4 {\"finite_service_target_met\":true,\"phases\":[{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":0,\"reads_on_time\":21,\"records_not_retained\":0,\"requested_reads\":21,\"service_target_met\":true},{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":1,\"reads_on_time\":20,\"records_not_retained\":0,\"requested_reads\":20,\"service_target_met\":true}],\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/native/sustained/report.json\",\"schema\":\"public-v3-sustained-local-from-zero-v1\"}"
+    },
+    {
+      "log_line": 992,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=5 ok"
+    },
+    {
+      "log_line": 993,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=6 "
+    },
+    {
+      "log_line": 994,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=7 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.89s"
+    },
+    {
+      "log_line": 995,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=8 "
+    },
+    {
+      "log_line": 996,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=1 "
+    },
+    {
+      "log_line": 997,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 998,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/confirmation/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}"
+    },
+    {
+      "log_line": 999,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=4 ok"
+    },
+    {
+      "log_line": 1000,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=5 "
+    },
+    {
+      "log_line": 1001,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.61s"
+    },
+    {
+      "log_line": 1002,
+      "text": "artifact=13298993182 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=7 "
+    },
+    {
+      "log_line": 1086,
+      "text": "artifact=13298993182 member=from-zero-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-2587.service"
+    },
+    {
+      "log_line": 1087,
+      "text": "artifact=13298993182 member=from-zero-native-host/systemd-run.log line=2 {\"name\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-f71c026b204518da\", \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 1794000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 40028, \"minor_faults\": 154, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"system_cpu_ns\": 897000, \"timed_out\": false, \"user_cpu_ns\": 897000, \"voluntary_switches\": 4, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5586472}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"}"
+    },
+    {
+      "log_line": 1100,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=1 "
+    },
+    {
+      "log_line": 1101,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1102,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=3 test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "log_line": 1103,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=4 "
+    },
+    {
+      "log_line": 1104,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 1105,
+      "text": "artifact=13299476462 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=6 "
+    },
+    {
+      "log_line": 1106,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=1 "
+    },
+    {
+      "log_line": 1107,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1108,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=3 test four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... {\"cases\":[{\"full_verify_cpu_ns\":730888,\"full_verify_wall_ns\":68400053,\"native_admission_cpu_ns\":667928,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":669315,\"nonce\":1,\"proof_identity\":\"7a011a0ff17a1d59bbe6c16ab42a64eb84b5a5f35486f0c6d796da7f5b779c10\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6baccb30bb0956f6c2ffcb55e9d19d4a75948f5ae9e40a8b83abfeba77dd83c4\",\"trace\":\"3346866c7d475d796e58408ba39a856cf64efe62c0d62990cc9fef5544f7b6d8\",\"verified_work\":false},{\"full_verify_cpu_ns\":676200,\"full_verify_wall_ns\":677667,\"native_admission_cpu_ns\":475776,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":476878,\"nonce\":2,\"proof_identity\":\"80a2e69870d8454fcfd7a0fc28a196799a5b69d6e5f5894cf6f7df3dc927bada\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"16ad7a24d93a0433b95f867091d2e5da85191b13d67cf49e0a7d2147a56650d2\",\"trace\":\"7ea1f089efb2a149308f04e5fa9e98ab7d885b4dd9366e75c2d81c68540fdbd3\",\"verified_work\":false},{\"full_verify_cpu_ns\":668568,\"full_verify_wall_ns\":669611,\"native_admission_cpu_ns\":445496,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":446668,\"nonce\":4,\"proof_identity\":\"f9578616f55752e6aca5bf6d659d84e03d9858284d5b425078a9f5b4a2e73cc5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"2797b6202a4299c2db5c440a89f6d5e2ff74be2fb9419a5ebd9dae9f0b6057a7\",\"trace\":\"bcd3e986e6a81483e3ca28a7d2653b5017599911ff745fd9ebece0a51d70209c\",\"verified_work\":false},{\"full_verify_cpu_ns\":655368,\"full_verify_wall_ns\":656163,\"native_admission_cpu_ns\":438248,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":438973,\"nonce\":6,\"proof_identity\":\"a0d482c88c64defe0c8d86ce9dcf131d8310197a16deecbe0ad72e7379e72507\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"0cd01671b8e8d707da2e4deba761a5a5d1f36b5b477546c9c90000b733e9001f\",\"trace\":\"69bff1e85c4a30d7d5ce27c8e456316e726841b393735cdd13b9808904220503\",\"ve [console line truncated; original retained]"
+    },
+    {
+      "log_line": 1109,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=4 ok"
+    },
+    {
+      "log_line": 1110,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=5 "
+    },
+    {
+      "log_line": 1111,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "log_line": 1112,
+      "text": "artifact=13299476462 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=7 "
+    },
+    {
+      "log_line": 1113,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=1 "
+    },
+    {
+      "log_line": 1114,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1115,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=3 test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "log_line": 1116,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=4 "
+    },
+    {
+      "log_line": 1117,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 1118,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=6 "
+    },
+    {
+      "log_line": 1119,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=1 "
+    },
+    {
+      "log_line": 1120,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1121,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=3 test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {\"finite_target_met\":true,\"public_network_ready\":false,\"schema\":\"public-v3-local-from-zero-service-v2\"}"
+    },
+    {
+      "log_line": 1122,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=4 {\"finite_service_target_met\":true,\"phases\":[{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":0,\"reads_on_time\":24,\"records_not_retained\":0,\"requested_reads\":24,\"service_target_met\":true},{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":1,\"reads_on_time\":27,\"records_not_retained\":0,\"requested_reads\":27,\"service_target_met\":true}],\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/native/sustained/report.json\",\"schema\":\"public-v3-sustained-local-from-zero-v1\"}"
+    },
+    {
+      "log_line": 1123,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=5 ok"
+    },
+    {
+      "log_line": 1124,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=6 "
+    },
+    {
+      "log_line": 1125,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=7 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.60s"
+    },
+    {
+      "log_line": 1126,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=8 "
+    },
+    {
+      "log_line": 1127,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=1 "
+    },
+    {
+      "log_line": 1128,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1129,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/confirmation/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}"
+    },
+    {
+      "log_line": 1130,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=4 ok"
+    },
+    {
+      "log_line": 1131,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=5 "
+    },
+    {
+      "log_line": 1132,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.61s"
+    },
+    {
+      "log_line": 1133,
+      "text": "artifact=13299476462 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=7 "
+    },
+    {
+      "log_line": 1217,
+      "text": "artifact=13299476462 member=from-zero-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-2559.service"
+    },
+    {
+      "log_line": 1218,
+      "text": "artifact=13299476462 member=from-zero-native-host/systemd-run.log line=2 {\"name\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-48f304dc2c2c7c7b\", \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 1829000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 37948, \"minor_faults\": 136, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"system_cpu_ns\": 1829000, \"timed_out\": false, \"user_cpu_ns\": 0, \"voluntary_switches\": 4, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5591448}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"}"
+    },
+    {
+      "log_line": 1219,
+      "text": "artifact=13299476462 member=from-zero-native-host/systemd-run.log line=3 {\"name\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-48f304dc2c2c7c7b\", \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 3658000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 37948, \"minor_faults\": 224, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"system_cpu_ns\": 1829000, \"timed_out\": false, \"user_cpu_ns\": 1829000, \"voluntary_switches\": 3, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5557231}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"}"
+    },
+    {
+      "log_line": 1229,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=1 "
+    },
+    {
+      "log_line": 1230,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1231,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=3 test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "log_line": 1232,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=4 "
+    },
+    {
+      "log_line": 1233,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 1234,
+      "text": "artifact=13299640686 member=from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout line=6 "
+    },
+    {
+      "log_line": 1235,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=1 "
+    },
+    {
+      "log_line": 1236,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1237,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=3 test four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged ... {\"cases\":[{\"full_verify_cpu_ns\":706960,\"full_verify_wall_ns\":707672,\"native_admission_cpu_ns\":496152,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":497631,\"nonce\":0,\"proof_identity\":\"752fe1484b78b3424f92b8f9995922a57e7a19cc11b8cab1581473ded7c208d5\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"6cc49f6659b22baaa501c8151a23941c5a969e4d97abc53662ced59bf5a14d26\",\"trace\":\"34ba6d7dcf2ccd1a6e9d78d35b920f927a78306b0766c6a6cb50efc51c5eb6e9\",\"verified_work\":false},{\"full_verify_cpu_ns\":679256,\"full_verify_wall_ns\":61838873,\"native_admission_cpu_ns\":530952,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":531669,\"nonce\":2,\"proof_identity\":\"4222de36b368b88b83d71bf04debd28173bb50836448b8d134c629b7d4dbbcb7\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"794c80996542376ff4640504f263ce5d6c24de55334c3c1015512130d3db65e5\",\"trace\":\"7096bcd6f7b87e761d1ba793233b00c204d364cf312fcefe4d781824c21fc369\",\"verified_work\":false},{\"full_verify_cpu_ns\":669488,\"full_verify_wall_ns\":670707,\"native_admission_cpu_ns\":437000,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":438098,\"nonce\":3,\"proof_identity\":\"301cc95559d011ea3d51caa832d041bb430b424080775ca9c50da7d30f091ff0\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"356b1f86384b54f46a14145296cb9318de9c7f2c09573dbe5d733190e64481e3\",\"trace\":\"6c4e99764b5d8a33a2f24aa1c5e0de739ea5875d6ce379d3265b32ff5f1251cc\",\"verified_work\":false},{\"full_verify_cpu_ns\":668832,\"full_verify_wall_ns\":669875,\"native_admission_cpu_ns\":446368,\"native_admission_result\":\"WORK:Transcript\",\"native_admission_wall_ns\":448122,\"nonce\":4,\"proof_identity\":\"f2f0ff8f1745987075e58c3910fc68e78e5b6672f29f01b08ea7ee3f4837229f\",\"replayed_tiles\":512,\"state_and_chainwork_unchanged\":true,\"ticket\":\"78925fefd08efc74fc9e4e1125100f89fa2bde96bec98cecae4c5bca2f399676\",\"trace\":\"8dcccf373328f3ece040a3265bbfdafbc8c47921e26bbad4ea6782f5c0749455\",\"ve [console line truncated; original retained]"
+    },
+    {
+      "log_line": 1238,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=4 ok"
+    },
+    {
+      "log_line": 1239,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=5 "
+    },
+    {
+      "log_line": 1240,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "log_line": 1241,
+      "text": "artifact=13299640686 member=from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout line=7 "
+    },
+    {
+      "log_line": 1242,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=1 "
+    },
+    {
+      "log_line": 1243,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1244,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=3 test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "log_line": 1245,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=4 "
+    },
+    {
+      "log_line": 1246,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=5 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "log_line": 1247,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout line=6 "
+    },
+    {
+      "log_line": 1248,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=1 "
+    },
+    {
+      "log_line": 1249,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1250,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=3 test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... {\"finite_target_met\":true,\"public_network_ready\":false,\"schema\":\"public-v3-local-from-zero-service-v2\"}"
+    },
+    {
+      "log_line": 1251,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=4 {\"finite_service_target_met\":true,\"phases\":[{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":0,\"reads_on_time\":26,\"records_not_retained\":0,\"requested_reads\":26,\"service_target_met\":true},{\"accounting_closed\":true,\"full_native_state_equal\":true,\"invariant_target_met\":true,\"measurement_failures\":0,\"phase\":1,\"reads_on_time\":27,\"records_not_retained\":0,\"requested_reads\":27,\"service_target_met\":true}],\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/native/sustained/report.json\",\"schema\":\"public-v3-sustained-local-from-zero-v1\"}"
+    },
+    {
+      "log_line": 1252,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=5 ok"
+    },
+    {
+      "log_line": 1253,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=6 "
+    },
+    {
+      "log_line": 1254,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=7 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.60s"
+    },
+    {
+      "log_line": 1255,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout line=8 "
+    },
+    {
+      "log_line": 1256,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=1 "
+    },
+    {
+      "log_line": 1257,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=2 running 1 test"
+    },
+    {
+      "log_line": 1258,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/priority-observations/from-zero-native/confirmation/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}"
+    },
+    {
+      "log_line": 1259,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=4 ok"
+    },
+    {
+      "log_line": 1260,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=5 "
+    },
+    {
+      "log_line": 1261,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.68s"
+    },
+    {
+      "log_line": 1262,
+      "text": "artifact=13299640686 member=from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout line=7 "
+    },
+    {
+      "log_line": 1346,
+      "text": "artifact=13299640686 member=from-zero-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-2506.service"
+    },
+    {
+      "log_line": 1347,
+      "text": "artifact=13299640686 member=from-zero-native-host/systemd-run.log line=2 {\"name\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-48f304dc2c2c7c7b\", \"caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 1841000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 38084, \"minor_faults\": 135, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\", \"system_cpu_ns\": 1841000, \"timed_out\": false, \"user_cpu_ns\": 0, \"voluntary_switches\": 4, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5648085}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5\"}"
+    },
+    {
+      "log_line": 1348,
+      "text": "artifact=13299640686 member=from-zero-native-host/systemd-run.log line=3 {\"name\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"named_execution\": {\"executed_tests\": 1, \"result\": \"PASS\", \"scope\": \"named-libtest-execution-only\", \"test\": \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\"}, \"passed\": true, \"process\": {\"command\": [\"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-48f304dc2c2c7c7b\", \"from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection\", \"--exact\", \"--nocapture\", \"--test-threads=1\"], \"cpu_ns\": 3320000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 0, \"major_faults\": 0, \"max_rss_kib\": 38084, \"minor_faults\": 225, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\", \"system_cpu_ns\": 1660000, \"timed_out\": false, \"user_cpu_ns\": 1660000, \"voluntary_switches\": 3, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 5441371}, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548\"}"
+    }
+  ],
+  "native_acceptance_granted": false,
+  "public_network_ready": false,
+  "independent_wan_accepted": false,
+  "production_activation": false
+}
