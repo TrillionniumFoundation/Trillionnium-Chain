@@ -1,10 +1,11 @@
 //! Independent, verification-only gate for the frozen full W1 experiment.
 //! No guest build, prover client, remote backend, dev mode, or admission path.
+mod profile;
+
 use anyhow::{ensure, Context, Result};
 use bincode::Options;
-use risc0_zkvm::{
-    sha::Digestible, InnerReceipt, Receipt, ReceiptClaim, SuccinctReceipt, VerifierContext,
-};
+use profile::IMAGE_ID;
+use risc0_zkvm::{InnerReceipt, Receipt, ReceiptClaim, SuccinctReceipt};
 use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::{
@@ -17,14 +18,6 @@ use std::{
 };
 
 const SDK_VERSION: &str = "3.0.6";
-// The frozen full receipt and the upstream 3.0.6 parameter stability test agree
-// on this research profile. It is not a PQ-128 security attestation.
-const PROOF_HASH_SUITE: &str = "poseidon2";
-const VERIFIER_PARAMETERS_DIGEST: &str =
-    "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013";
-const IMAGE_ID: [u32; 8] = [
-    4203990569, 1706128024, 889896351, 2751765305, 3434005897, 1411617246, 870515685, 3215144349,
-];
 const MAX_RECEIPT: u64 = 16 * 1024 * 1024;
 const HEADER_BYTES: usize = 318;
 const JOURNAL_BYTES: usize = 16818;
@@ -56,6 +49,19 @@ fn decode(bytes: &[u8]) -> Result<Receipt> {
         bytes.get(..4) == Some(1u32.to_le_bytes().as_slice()),
         "succinct receipt wire tag required"
     );
+    // The first Succinct field is Vec<u32> seal. Refuse an impossible length
+    // from the bounded slice before serde may reserve or walk the vector.
+    let count = u64::from_le_bytes(
+        bytes
+            .get(4..12)
+            .context("missing seal length")?
+            .try_into()?,
+    );
+    let end = count.checked_mul(4).and_then(|size| size.checked_add(12));
+    ensure!(
+        count != 0 && end.is_some_and(|end| end <= bytes.len() as u64),
+        "impossible seal length"
+    );
     Ok(bincode::DefaultOptions::new()
         .with_fixint_encoding()
         .with_limit(MAX_RECEIPT)
@@ -84,8 +90,8 @@ fn pon_hash(tag: &[u8], parts: &[&[u8]]) -> [u8; 32] {
     h.finalize().into()
 }
 
-/// Independent public-statement decoding. This is called only AFTER proof
-/// verification, and is not itself an implementation of the W1 relation.
+/// Independent public-statement decoding. This can only reject cheaply before
+/// proof verification; successful decoding is never proof of the W1 relation.
 fn journal(header: &[u8], bytes: &[u8]) -> Result<[u8; 32]> {
     ensure!(
         header.len() == HEADER_BYTES
@@ -126,57 +132,12 @@ fn journal(header: &[u8], bytes: &[u8]) -> Result<[u8; 32]> {
     Ok(work_id)
 }
 
-/// Freeze the already measured research configuration instead of accepting
-/// every hash suite in the SDK default registry. The parameter digest commits
-/// the existing control root, inner root, proof-system and circuit identities.
-/// Its allowed segment set is unchanged; the prover's execution limit of 18
-/// must not be mistaken for a verifier restriction to that limit.
-fn frozen_verifier_context() -> Result<VerifierContext> {
-    let mut context = VerifierContext::default();
-    ensure!(!context.dev_mode(), "development proof context refused");
-    let parameters = context
-        .succinct_verifier_parameters
-        .as_ref()
-        .context("succinct verifier parameters required")?;
-    ensure!(
-        parameters.digest().to_string() == VERIFIER_PARAMETERS_DIGEST,
-        "frozen verifier parameters changed"
-    );
-    ensure!(
-        context.suites.contains_key(PROOF_HASH_SUITE),
-        "frozen hash suite unavailable"
-    );
-    context.suites.retain(|name, _| name == PROOF_HASH_SUITE);
-    context.segment_verifier_parameters = None;
-    context.groth16_verifier_parameters = None;
-    Ok(context)
-}
-
-/// These metadata checks only select the frozen profile. Successful
-/// cryptographic verification under the trusted context must still follow.
-fn require_proof_profile(hash_function: &str, parameters: &risc0_zkvm::sha::Digest) -> Result<()> {
-    ensure!(
-        hash_function == PROOF_HASH_SUITE,
-        "frozen proof hash suite required"
-    );
-    ensure!(
-        parameters.to_string() == VERIFIER_PARAMETERS_DIGEST,
-        "frozen proof verifier parameters required"
-    );
-    Ok(())
-}
-
 fn verify(header: &[u8], receipt: &Receipt) -> Result<[u8; 32]> {
-    let succinct = receipt
-        .inner
-        .succinct()
-        .context("recursive STARK required")?;
-    require_proof_profile(&succinct.hashfn, &succinct.verifier_parameters)?;
-    let context = frozen_verifier_context()?;
-    receipt
-        .verify_with_context(&context, IMAGE_ID)
-        .context("full frozen image proof")?;
-    journal(header, &receipt.journal.bytes)
+    // Keep the tentative identity private until the complete cryptographic
+    // check succeeds. A valid public journal cannot manufacture verified work.
+    let identity = journal(header, &receipt.journal.bytes)?;
+    profile::verify(receipt)?;
+    Ok(identity)
 }
 
 fn classify(check: impl FnOnce() -> Result<()>) -> serde_json::Value {
@@ -219,6 +180,44 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
     let mut wrong_header = header.to_vec();
     wrong_header[310] ^= 1;
     cases.push(("wrong_header".into(), wrong_header, bytes.to_vec(), false));
+    for (name, offset) in [
+        ("network", 6),
+        ("parameters", 38),
+        ("parent", 70),
+        ("height", 102),
+        ("timestamp", 110),
+        ("target", 118),
+        ("miner", 150),
+        ("transactions", 182),
+        ("state", 214),
+        ("receipts", 246),
+        ("work_task", 278),
+    ] {
+        let mut bad = header.to_vec();
+        bad[offset] ^= 1;
+        cases.push((format!("wrong_header_{name}"), bad, bytes.to_vec(), false));
+    }
+    for hashfn in ["sha-256", "blake2b"] {
+        let mut bad = original.clone();
+        let InnerReceipt::Succinct(ref mut inner) = bad.inner else {
+            unreachable!()
+        };
+        inner.hashfn = hashfn.into();
+        cases.push((
+            format!("unapproved_supported_hash_{hashfn}"),
+            header.to_vec(),
+            bincode::serialize(&bad)?,
+            false,
+        ));
+    }
+    let mut bad = original.clone();
+    bad.metadata.verifier_parameters = [0u32; 8].into();
+    cases.push((
+        "outer_verifier_parameters".into(),
+        header.to_vec(),
+        bincode::serialize(&bad)?,
+        false,
+    ));
     for offset in [
         0,
         DOMAIN.len(),
@@ -249,6 +248,10 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
         "seal_empty",
         "seal_short",
         "seal_invalid_field",
+        "control_inclusion_noncanonical_digest",
+        "control_inclusion_index_high_bits",
+        "control_inclusion_path_short",
+        "control_inclusion_path_long",
     ] {
         let mut bad = original.clone();
         let InnerReceipt::Succinct(ref mut inner) = bad.inner else {
@@ -277,6 +280,20 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
             "seal_empty" => inner.seal.clear(),
             "seal_short" => inner.seal.truncate(16),
             "seal_invalid_field" => inner.seal[0] = u32::MAX,
+            "control_inclusion_noncanonical_digest" => {
+                let mut words: [u32; 8] = inner.control_inclusion_proof.digests[0].into();
+                words[0] = u32::MAX;
+                inner.control_inclusion_proof.digests[0] = words.into();
+            }
+            "control_inclusion_index_high_bits" => {
+                inner.control_inclusion_proof.index |= 1u32 << profile::CONTROL_MERKLE_DEPTH;
+            }
+            "control_inclusion_path_short" => {
+                inner.control_inclusion_proof.digests.pop();
+            }
+            "control_inclusion_path_long" => {
+                inner.control_inclusion_proof.digests.push([0u32; 8].into());
+            }
             _ => unreachable!(),
         }
         cases.push((
@@ -302,7 +319,8 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
             "receipt_sha256":sha(&proof),"header_sha256":sha(&public)}));
     }
     let all_passed = rows.iter().all(|r| r["passed"] == true);
-    let report = json!({"schema":"TRNM-W1-HARDENED-VERIFIER-CONTROLS1",
+    let report = json!({"schema":"TRNM-W1-HARDENED-VERIFIER-CONTROLS2",
+        "profile_id":profile::PROFILE_ID,
         "sdk":SDK_VERSION,"image_id":IMAGE_ID,"cases":rows,"all_passed":all_passed,
         "fake_proofs_used":false,"consensus_admission":false});
     new_file(
@@ -327,9 +345,33 @@ fn main() -> Result<()> {
         );
     }
     let mut args = std::env::args().skip(1);
-    let command = args
-        .next()
-        .context("verify|benchmark|controls HEADER RECEIPT [NEW_DIR] | verify-recursion RECEIPT")?;
+    let command = args.next().context(
+        "profile | verify|benchmark|controls HEADER RECEIPT [NEW_DIR] | verify-recursion RECEIPT",
+    )?;
+    if command == "profile" {
+        ensure!(args.next().is_none(), "unexpected arguments");
+        let context = profile::context()?;
+        let parameters = context.succinct_verifier_parameters.as_ref().unwrap();
+        println!(
+            "{}",
+            json!({
+                "schema":"TRNM-W1-TRANSPARENT-PROFILE1",
+                "profile_id":profile::PROFILE_ID,"sdk":SDK_VERSION,"image_id":IMAGE_ID,
+                "receipt_kind":"Succinct","hash_function":profile::HASH_SUITE,
+                "final_control_id":profile::CONTROL_ID,"verifier_parameters_digest":profile::PARAMETERS,
+                "control_inclusion_depth":profile::CONTROL_MERKLE_DEPTH,
+                "control_root":parameters.control_root.to_string(),
+                "inner_control_root":parameters.inner_control_root.map(|root| root.to_string()),
+                "effective_inner_control_root":parameters.inner_control_root.unwrap_or(parameters.control_root).to_string(),
+                "proof_system_info_hex":hex::encode(parameters.proof_system_info.0),
+                "circuit_info_hex":hex::encode(parameters.circuit_info.0),
+                "max_receipt_bytes":MAX_RECEIPT,"journal_bytes":JOURNAL_BYTES,
+                "proof_randomness_tickets":0,"quantum_security_bits":null,
+                "quantum_soundness_qualified":false,"consensus_admission":false
+            })
+        );
+        return Ok(());
+    }
     if command == "verify-recursion" {
         let path = args.next().context("recursive receipt")?;
         ensure!(args.next().is_none(), "unexpected arguments");
@@ -337,8 +379,7 @@ fn main() -> Result<()> {
         let started = Instant::now();
         let receipt = decode_recursion(&bytes)?;
         let result = classify(|| {
-            require_proof_profile(&receipt.hashfn, &receipt.verifier_parameters)?;
-            receipt.verify_integrity_with_context(&frozen_verifier_context()?)?;
+            profile::verify_recursion(&receipt)?;
             Ok(())
         });
         println!(
@@ -395,7 +436,8 @@ fn main() -> Result<()> {
     }
     println!(
         "{}",
-        json!({"schema":"TRNM-W1-HARDENED-FULL-VERIFY1", "sdk":SDK_VERSION,
+        json!({"schema":"TRNM-W1-HARDENED-FULL-VERIFY2", "sdk":SDK_VERSION,
+        "profile_id":profile::PROFILE_ID,
         "outcome":"SAVED_FULL_SUCCINCT_STARK_VERIFIED", "image_id":IMAGE_ID,
         "work_id":hex::encode(id), "receipt_sha256":sha(&bytes),"receipt_bytes":bytes.len(),
         "control_id":succinct.control_id.to_string(), "hash_function":succinct.hashfn,
@@ -412,13 +454,29 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use risc0_zkvm::sha::Digestible;
+
+    const SAVED_HEADER: &[u8] = include_bytes!(
+        "../../../../evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin"
+    );
+    const SAVED_RECEIPT: &[u8] = include_bytes!(
+        "../../../../evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin"
+    );
+
+    fn saved() -> Receipt {
+        assert_eq!(
+            sha(SAVED_RECEIPT),
+            "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+        );
+        decode(SAVED_RECEIPT).unwrap()
+    }
 
     #[test]
     fn frozen_context_contains_only_the_measured_succinct_profile() {
-        let context = frozen_verifier_context().unwrap();
+        let context = profile::context().unwrap();
         assert!(!context.dev_mode());
         assert_eq!(context.suites.len(), 1);
-        assert!(context.suites.contains_key(PROOF_HASH_SUITE));
+        assert!(context.suites.contains_key(profile::HASH_SUITE));
         assert!(context.segment_verifier_parameters.is_none());
         assert!(context.groth16_verifier_parameters.is_none());
         assert_eq!(
@@ -427,21 +485,49 @@ mod tests {
                 .unwrap()
                 .digest()
                 .to_string(),
-            VERIFIER_PARAMETERS_DIGEST
+            profile::PARAMETERS
         );
     }
 
     #[test]
     fn profile_selection_refuses_other_suites_and_parameter_sets() {
-        let context = frozen_verifier_context().unwrap();
-        let parameters = context.succinct_verifier_parameters.unwrap().digest();
-        require_proof_profile(PROOF_HASH_SUITE, &parameters).unwrap();
+        let original = saved();
+        profile::verify(&original).unwrap();
+        profile::verify_recursion(original.inner.succinct().unwrap()).unwrap();
         for suite in ["sha-256", "blake2b", "", "Poseidon2"] {
-            assert!(require_proof_profile(suite, &parameters).is_err());
+            let mut receipt = original.clone();
+            let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                unreachable!()
+            };
+            inner.hashfn = suite.into();
+            assert_eq!(
+                profile::verify(&receipt).unwrap_err().to_string(),
+                "proof hash suite outside frozen profile"
+            );
+            assert_eq!(
+                profile::verify_recursion(receipt.inner.succinct().unwrap())
+                    .unwrap_err()
+                    .to_string(),
+                "proof hash suite outside frozen profile"
+            );
         }
-        let mut changed: [u32; 8] = parameters.into();
+        let mut receipt = original;
+        let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+            unreachable!()
+        };
+        let mut changed: [u32; 8] = inner.verifier_parameters.into();
         changed[0] ^= 1;
-        assert!(require_proof_profile(PROOF_HASH_SUITE, &changed.into()).is_err());
+        inner.verifier_parameters = changed.into();
+        assert_eq!(
+            profile::verify(&receipt).unwrap_err().to_string(),
+            "receipt verifier parameters outside frozen profile"
+        );
+        assert_eq!(
+            profile::verify_recursion(receipt.inner.succinct().unwrap())
+                .unwrap_err()
+                .to_string(),
+            "receipt verifier parameters outside frozen profile"
+        );
     }
 
     #[test]
@@ -460,5 +546,220 @@ mod tests {
             assert!(journal(&vec![0; n], &vec![0; JOURNAL_BYTES]).is_err());
         }
         assert_eq!(classify(|| anyhow::bail!("reject"))["outcome"], "REJECT");
+    }
+
+    #[test]
+    fn actual_complete_receipt_verifies_under_the_explicit_profile() {
+        let receipt = saved();
+        assert_eq!(bincode::serialize(&receipt).unwrap(), SAVED_RECEIPT);
+        assert_eq!(
+            hex::encode(verify(SAVED_HEADER, &receipt).unwrap()),
+            "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+        );
+    }
+
+    #[test]
+    fn every_header_field_rejects_before_an_invalid_seal_is_examined() {
+        let mut receipt = saved();
+        let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+            unreachable!()
+        };
+        inner.seal.clear();
+        for offset in [6, 38, 70, 102, 110, 118, 150, 182, 214, 246, 278, 310] {
+            let mut header = SAVED_HEADER.to_vec();
+            header[offset] ^= 1;
+            assert_eq!(
+                verify(&header, &receipt).unwrap_err().to_string(),
+                "public header mismatch",
+                "header offset {offset}"
+            );
+        }
+    }
+
+    #[test]
+    fn sdk_supported_but_unapproved_suites_are_rejected_by_profile() {
+        for hashfn in ["sha-256", "blake2b", "invalid-hash-suite"] {
+            let mut receipt = saved();
+            let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                unreachable!()
+            };
+            inner.hashfn = hashfn.into();
+            inner.seal.clear();
+            assert_eq!(
+                verify(SAVED_HEADER, &receipt).unwrap_err().to_string(),
+                "proof hash suite outside frozen profile"
+            );
+        }
+    }
+
+    #[test]
+    fn control_and_both_parameter_fields_are_checked_before_crypto() {
+        for mutation in 0..3 {
+            let mut receipt = saved();
+            let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                unreachable!()
+            };
+            inner.seal.clear();
+            let expected = match mutation {
+                0 => {
+                    inner.control_id = [0u32; 8].into();
+                    "final recursion control outside frozen profile"
+                }
+                1 => {
+                    inner.verifier_parameters = [0u32; 8].into();
+                    "receipt verifier parameters outside frozen profile"
+                }
+                _ => {
+                    receipt.metadata.verifier_parameters = [0u32; 8].into();
+                    "receipt verifier parameters outside frozen profile"
+                }
+            };
+            assert_eq!(
+                verify(SAVED_HEADER, &receipt).unwrap_err().to_string(),
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn valid_public_bytes_without_a_valid_seal_never_return_work_identity() {
+        let mut receipt = saved();
+        assert!(journal(SAVED_HEADER, &receipt.journal.bytes).is_ok());
+        let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+            unreachable!()
+        };
+        inner.seal.clear();
+        assert_eq!(
+            classify(|| verify(SAVED_HEADER, &receipt).map(|_| ()))["outcome"],
+            "REJECT"
+        );
+    }
+
+    #[test]
+    fn different_valid_claim_encodings_preserve_one_original_work_identity() {
+        use risc0_zkvm::{sha::Digestible, MaybePruned};
+        let original = saved();
+        let mut pruned = original.clone();
+        let InnerReceipt::Succinct(ref mut inner) = pruned.inner else {
+            unreachable!()
+        };
+        inner.claim = MaybePruned::Pruned(inner.claim.digest());
+        let encoded = bincode::serialize(&pruned).unwrap();
+        assert_ne!(encoded, SAVED_RECEIPT);
+        assert_eq!(
+            verify(SAVED_HEADER, &original).unwrap(),
+            verify(SAVED_HEADER, &decode(&encoded).unwrap()).unwrap()
+        );
+        // This changes only a valid claim representation, not proof randomness
+        // or the seal. It is one original work item in both encodings.
+    }
+
+    #[test]
+    fn actual_noncanonical_control_sibling_regression_is_rejected_without_panic() {
+        let mut bytes = SAVED_RECEIPT.to_vec();
+        bytes[239772..239776].copy_from_slice(&u32::MAX.to_le_bytes());
+        assert_eq!(
+            sha(&bytes),
+            "430fd9164e26c6ca58685e3f464672dff163416593eede4f2f074b73a7b02ce2"
+        );
+        assert_eq!(
+            verify(SAVED_HEADER, &decode(&bytes).unwrap())
+                .unwrap_err()
+                .to_string(),
+            "noncanonical control inclusion digest"
+        );
+    }
+
+    #[test]
+    fn every_control_sibling_word_is_checked_at_field_boundaries() {
+        let original = saved();
+        for sibling in 0..profile::CONTROL_MERKLE_DEPTH {
+            for word in 0..8 {
+                for value in [2013265921, u32::MAX] {
+                    let mut receipt = original.clone();
+                    let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                        unreachable!()
+                    };
+                    let mut words: [u32; 8] = inner.control_inclusion_proof.digests[sibling].into();
+                    words[word] = value;
+                    inner.control_inclusion_proof.digests[sibling] = words.into();
+                    assert_eq!(
+                        verify(SAVED_HEADER, &receipt).unwrap_err().to_string(),
+                        "noncanonical control inclusion digest",
+                        "sibling {sibling}, word {word}, value {value}"
+                    );
+                    assert_eq!(
+                        profile::verify_recursion(receipt.inner.succinct().unwrap())
+                            .unwrap_err()
+                            .to_string(),
+                        "noncanonical control inclusion digest"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn control_path_length_and_unused_index_bits_are_not_alternate_encodings() {
+        for mode in 0..3 {
+            let mut receipt = saved();
+            let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                unreachable!()
+            };
+            match mode {
+                0 => inner.control_inclusion_proof.index |= 1u32 << profile::CONTROL_MERKLE_DEPTH,
+                1 => {
+                    inner.control_inclusion_proof.digests.pop();
+                }
+                _ => inner.control_inclusion_proof.digests.push([0u32; 8].into()),
+            }
+            assert_eq!(
+                verify(SAVED_HEADER, &receipt).unwrap_err().to_string(),
+                "noncanonical control inclusion path"
+            );
+        }
+    }
+
+    #[test]
+    fn recursion_diagnostic_also_rejects_noncanonical_control_leaf() {
+        let mut receipt = saved();
+        let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+            unreachable!()
+        };
+        inner.control_id = [u32::MAX; 8].into();
+        assert_eq!(
+            profile::verify_recursion(inner).unwrap_err().to_string(),
+            "noncanonical control inclusion digest"
+        );
+    }
+
+    #[test]
+    fn impossible_seal_lengths_fail_before_deserialization() {
+        for count in [0, 1, u64::MAX / 4, u64::MAX] {
+            let mut bytes = 1u32.to_le_bytes().to_vec();
+            bytes.extend_from_slice(&count.to_le_bytes());
+            assert_eq!(
+                decode(&bytes).unwrap_err().to_string(),
+                "impossible seal length"
+            );
+        }
+        let mut bytes = SAVED_RECEIPT.to_vec();
+        bytes[4..12].copy_from_slice(&u64::MAX.to_le_bytes());
+        assert_eq!(
+            decode(&bytes).unwrap_err().to_string(),
+            "impossible seal length"
+        );
+    }
+
+    #[test]
+    fn a_real_prefix_receipt_cannot_satisfy_the_full_w1_profile() {
+        const PREFIX: &[u8] = include_bytes!(
+            "../../../../evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin"
+        );
+        let inner = decode_recursion(PREFIX).unwrap();
+        // Establish that this is an actual, cryptographically valid prefix.
+        profile::verify_recursion(&inner).unwrap();
+        let receipt = Receipt::new(InnerReceipt::Succinct(inner), saved().journal.bytes);
+        assert!(verify(SAVED_HEADER, &receipt).is_err());
     }
 }

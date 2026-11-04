@@ -2,7 +2,8 @@
  * A genuine client/server TLS 1.3 mutual authentication + hybrid key share
  * experiment. No consensus, signing-key authority or model Final-use issued.
  *
- * Build: cc -std=c11 -Wall -Wextra -Werror -O2 pq_mtls_probe.c -o pq_mtls_probe -lssl -lcrypto
+ * Build: test_pq_mtls_probe.py binds headers/static archives to the declared
+ * OPENSSL_DIR and builds in its temporary directory; never use system -lssl.
  * Usage: pq_mtls_probe server|client port cert.pem key.pem ca.pem expected_peer_key_id_hex peer_hostname network_hex genesis_hex profile_hex [X25519MLKEM768|X25519]
  */
 #define _POSIX_C_SOURCE 200809L
@@ -13,6 +14,7 @@
 #include <openssl/crypto.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -66,6 +68,10 @@ int main(int argc,char **argv){
     char peer_hex[65],tag_hex[65];
     static const char label[]="EXPORTER-TRNM-PQ-P2P-v1";
     static const char tag_domain[]="TRNM/PQPeerChannelTag/v1";
+    if(argc==2 && strcmp(argv[1],"--backend-version")==0){
+       printf("%s\n%s\n",OPENSSL_VERSION_TEXT,OpenSSL_version(OPENSSL_VERSION));
+       return strcmp(OPENSSL_VERSION_TEXT,OpenSSL_version(OPENSSL_VERSION))!=0;
+    }
     if(argc!=12){fprintf(stderr,"REFUSED arguments\n");return 2;}
     int is_server=strcmp(argv[1],"server")==0;
     if(!is_server && strcmp(argv[1],"client")!=0) return 2;
@@ -107,7 +113,7 @@ int main(int argc,char **argv){
     FAIL_IF((is_server?SSL_accept(ssl):SSL_connect(ssl))!=1,"handshake");
     FAIL_IF(SSL_version(ssl)!=TLS1_3_VERSION,"protocol_downgrade");
     const char *group=SSL_get0_group_name(ssl);
-    FAIL_IF(!group||strcmp(group,"X25519MLKEM768")!=0,"classical_group_downgrade");
+    FAIL_IF(!group||strcmp(group,"X25519MLKEM768")!=0,"group_outside_profile");
     FAIL_IF(SSL_get_verify_result(ssl)!=X509_V_OK,"certificate_validation");
     peer=SSL_get1_peer_certificate(ssl);FAIL_IF(!peer,"mutual_certificate_required");
     FAIL_IF(!peer_key_id(peer,actual_peer),"peer_not_mldsa65");

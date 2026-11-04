@@ -42,7 +42,18 @@ PQ_SOURCE_DIRS = (
     # This crate currently keeps tests under src; scan the existing crate root
     # so later integration tests cannot bypass coverage or require a fake dir.
     "trillionnium/crates/trnm-service-settlement",
+    # Release roles now perform real ML-DSA verification. Include the entire
+    # small crate so nested role/rotation controls cannot escape source pins.
+    "trillionnium/crates/trnm-release-bundle",
+    "trillionnium/crates/trnm-checkpoint-store",
 )
+
+# Every implementation file in these dedicated security owners participates in
+# the boundary, including recovery helpers without a PQ-prefixed filename.
+COMPLETE_OWNER_SOURCE_DIRS = frozenset((
+    "trillionnium/crates/trnm-release-bundle",
+    "trillionnium/crates/trnm-checkpoint-store",
+))
 
 # This is a newly reconstructed source contract. The old, lost checker bytes
 # are not recreated by claiming their historical Git object identity. The
@@ -296,7 +307,68 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
 ))
+# The complete Cell model-storage composition is part of this candidate even
+# when no path contains a PQ marker. Pins cover the actual codecs, payload
+# readers, protocol versions and negative controls. This adds no publisher,
+# CURRENT/FinalUse, independent-retention or production qualification claim.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+    "docs/development/specs/pon/CELL_RETENTION_V1.md",
+    "formal/pon-nakamoto-v1/model_release_root.py",
+    "formal/pon-nakamoto-v1/test_model_release_root.py",
+    "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json",
+    "trillionnium/crates/trnm-data-availability/src/lib.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_residency_observer.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/dedup_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_reader.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
+RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+    "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+    "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+    "trillionnium/crates/trnm-checkpoint-store/src/node_commit_ledger_v1.rs",
+    "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+    "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+    "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+    "formal/pon-nakamoto-v1/pq_mtls_probe.c",
+    "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+    "formal/pon-nakamoto-v1/test_pq_tls.py",
+    "formal/pon-nakamoto-v1/pq_openssl_backend.py",
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+))
+NATIVE_REQUIRED_PATHS |= RECOVERY_RELEASE_REQUIRED_PATHS
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
@@ -460,7 +532,9 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
                 # Nested Rust/C/Python files inside a PQ-named module are
                 # implementations too, even when called native.rs or mod.rs.
                 parts = source.relative_to(parent).parts
-                if source.suffix not in (".py", ".c", ".rs") or not is_pq_source(parts):
+                if source.suffix not in (".py", ".c", ".rs") or (
+                    directory not in COMPLETE_OWNER_SOURCE_DIRS and not is_pq_source(parts)
+                ):
                     continue
                 if relative not in pins:
                     raise IntegrityError("unpinned PQ source: " + relative)

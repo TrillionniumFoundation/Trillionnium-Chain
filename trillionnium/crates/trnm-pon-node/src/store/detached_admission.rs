@@ -84,7 +84,7 @@ pub(crate) struct HeldPreparedAdmission {
     owner: Arc<std::sync::atomic::AtomicBool>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 enum SnapshotPayload {
     Fits(usize),
     HeldRequired { observed_bytes: usize },
@@ -117,18 +117,44 @@ pub(crate) struct ExecutedSharedAdmission {
     _measurement: Option<native_authenticated::StageObservation>,
 }
 
+/// Count the original serde_json wire without retaining a per-cell output Vec.
+/// Keep serializing after count overflow so a serialization error still wins,
+/// just as canonical(value) completed before the original checked size sums.
+struct CanonicalPayloadLength(Option<usize>);
+impl std::io::Write for CanonicalPayloadLength {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.0 = self.0.and_then(|count| count.checked_add(bytes.len()));
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+fn canonical_payload_length<T: Serialize>(value: &T) -> Result<usize> {
+    let mut length = CanonicalPayloadLength(Some(0));
+    // Same serializer and Value/map ordering as super::canonical. Do not use
+    // source text length: escaping, UTF-8 and number formatting all count.
+    serde_json::to_writer(&mut length, value)?;
+    length
+        .0
+        .ok_or_else(|| "PUBLIC_EXECUTION_SNAPSHOT_CAPACITY".into())
+}
+
 fn payload_bytes(state: &State, control: &ExecutionControl<'_, Error>) -> Result<SnapshotPayload> {
     let mut total = 0usize;
     for (index, (key, value)) in state.iter().enumerate() {
         if index.is_multiple_of(256) {
             (control.progress)(ExecutionProgress::BeforeParentBinding)?;
         }
-        // Each canonical cell is already bounded by the original native State
-        // reader. Do not allocate a second serialized full-State buffer.
-        let cell = canonical(value)?;
+        // The native reader already bounds each canonical cell. Retain the
+        // original complete per-cell serialization and checkpoint order while
+        // counting its wire bytes without constructing an unused output Vec.
+        let cell = canonical_payload_length(value)?;
         total = total
             .checked_add(key.len())
-            .and_then(|sum| sum.checked_add(cell.len()))
+            .and_then(|sum| sum.checked_add(cell))
             .ok_or("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY")?;
         if total > MAX_SNAPSHOT_PAYLOAD {
             return Ok(SnapshotPayload::HeldRequired {

@@ -52,6 +52,78 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Joint source, native admission and reversible-artifact continuation — 2026-11-04
+
+Continue the existing PR #688 candidate from
+`d0737cf5434894ce47fad8082376fc417313c2cb`, preserving the concurrent
+`bd2777f9cc74df10ba07ae8202584ed0fb90a519` Legacy reorganization observations
+and source-pin refresh, followed by `245146c7d2e6f7dfcda463f6a7dd342d4d7ca818`
+complete-journal recovery pins, PQ release roles and fixed-provider TLS controls.
+Measurements made before those updates retain their original component scope;
+they do not qualify the combined source. The runtime counterpart is
+`TrillionniumFoundation/hepta-private-ci` PR #4696; the separate Hepta language
+repository is not the CURRENT/FinalUse execution authority. Its published V8
+source `e0b4c82e129d42d98cb9a98bf97fe41d1e3b1b53` selects the older Chain
+`73ab6e9a83bcc836e261d93f9bb23ceafe556758`. A new closed V9 must select the
+final reviewed Chain commit/tree and actual ordered merge in every ordinary,
+installed and native lane. Existing profiles and their failed observations keep
+their original identities. In particular, the V8 source checker omitted the
+runtime-material release helper and accepted an ignored package that shadows a
+pinned module. The successor must bind the complete inspected 43-file closure
+and reject hidden index flags and extra ignored execution inputs before imports.
+
+The existing detached-admission owner now counts the same canonical JSON
+serialization through a checked writer instead of allocating one output buffer
+per state value. It retains the full parent traversal, original 8 MiB decision,
+error ordering, cancellation points and the held-parent fallback. Separate
+allocation and timing observations retain every paired sample; allocation
+elimination in this scan is not a touched-set or business-confirmation result.
+
+The existing reversible-component decoder now validates the declared
+compute/copy/exact-inverse structure before executing basis samples. Inputs
+remain read-only, computation cannot use outputs, and copying cannot mutate
+scratch. Legitimate constant, direct-input and all-zero outputs remain supported.
+The actual modular-multiply and SHA-256 netlist bytes are unchanged. The decoder
+now rejects arbitrary reversible circuits that do not follow its declared
+construction; this is not a general external-format compatibility claim. This closes
+a research-artifact decoder defect, not the complete W1 oracle or quantum DAA.
+
+The [small reproduction record](../../evidence/joint-source-closure-20261104/README.md)
+separates the original four stale PQ source pins from this increment, and records
+all source controls and native outcomes. Current PQ authority, normal migration,
+whole-effect rollback, PQ-compatible GrowthV2, the original four-second/16-worker
+business gate, complete work-cost assumptions and independent model/WAN
+acceptance remain required. No budget, original failing predicate, signed domain,
+consensus weight or activation flag is relaxed by these changes.
+
+#### Quantum winner costs and stochastic DAA research — 2026-11-04
+
+Continue work package 2C on the existing PR #688 integration lineage from
+`a4a0e2b561f057cfa3189979c5bf11f3a0eb2353`. Add separate executable resource
+accounting and bounded event simulation to the retained quantum DAA package.
+Charge public-task preprocessing at its reuse scope, compute/uncompute and
+diffusion per coherent iteration, candidate checking after every measurement,
+and valid proof production and propagation after a winner. Missing complete W1
+circuits remain unknown. Conditional logical
+and physical resource budgets must retain their register, data-access, error,
+factory and hardware assumptions rather than infer QPU costs from classical time.
+
+The event experiment must preserve the exact current branch target, timestamp,
+integer chainwork, profile and equal-work tie rules while modeling independent
+classical arrivals, finite Grover trials, public-tip interruption, private-fork
+continuation, participation changes and network delay. Retain failed and censored
+work and finite-run fork/liveness observations. ASERT remains isolated research
+arithmetic. The CRYPTO 2026 parallel-chain Fast DAA backend remains unavailable
+until its complete protocol and theorem assumptions are mapped; a simple target
+aggregator must not impersonate that construction. Multi-resource weight results
+remain conditional theory, not a new chain score.
+
+The [research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) and
+[source-bound reproduction manifest](../../evidence/pon-quantum-event-resources-20261104/README.md)
+specify these boundaries. Native pure-PoN consensus and all original capacity,
+cryptographic, independent-review and activation obligations remain unchanged.
+No finite simulation or source check closes the quantum mining/DAA security gate.
+
 #### Evaluation integrity and weight-loading continuation — 2026-11-04
 
 Continue the PR #688 lineage from `93e207c8d2ccb8509f78566223abc371b9d8118b`.
@@ -6029,3 +6101,150 @@ complete effect-history retention. Append consistency, atomic expected-old
 checkpoint advancement and an independently fresh failure domain remain required;
 unavailability may stop new effects. These witnesses gain no fork-choice or
 business-grant authority. All six whole-chain PQ qualification gates remain HOLD.
+
+### 2026-11-04 complete model storage, tensor admission and retained-root GC
+
+The [M09 model-storage contract](specs/pon/CELL_MODEL_STORAGE_V1.md) integrates
+the byte-verified TMR1/TCX1 work previously present only in archival PR #692
+into this existing integration candidate. Current cache writer deadlines and
+original TCM1/TCR1/TCD1 identities remain. A fresh TCA2 namespace replaces no
+live store and does not claim that the historical TCA1 archive was already the
+new implementation. [Source provenance and observations](../../evidence/cell-storage-continuation-20261104/README.md)
+preserve the original hashes, actual failed retirement regression and
+intermediate compiler diagnostics.
+
+TMR1 binds the declared closure, router roster and bounded direct parents.
+TCX1 reuses exact content chunks and verifies the complete target. TMT1 declares
+an exact, bounded F32/F16/BF16 dense tensor roster; TMA1 contains the complete
+root and tensor plan. Actual container validation rejects wrong dtype/shape,
+duplicate JSON keys, holes/overlap/trailing bytes and complete-hash mismatch
+before a create-only TMA1 marker can be published. The ordinary CLI requires
+independent root/closure/context/profile/generation inputs. It still has no
+CURRENT or FinalUse authority.
+
+Transfer adds explicit bounded rarity hints and TCQ2/TCS2 sequential connection
+reuse. All release members and manifest preflight share the original session's
+requests, dials, response bytes and absolute deadline. Repeated payload chunks
+are fetched once while original V1 manifest-position report accounting is
+preserved. Discovery balances actually observed bootstrap sources and IP
+prefixes under the existing signed TTL/replay/query owner; these are diversity
+heuristics, not evidence of independent custodians or an eclipse-proof DHT.
+
+TCA2 preserves complete immutable roots, optional exact TMA1 validation plans
+and the original physical obligations. Pending reservations and expired but
+unretired roots remain collection roots. Catalog and physical writer contention
+spend the caller's original deadline. Collection audits every root under the
+catalog writer transaction and refuses an unsettled repair before reclaiming
+physical capacity. Cold recovery and two-version shared base/tokenizer controls
+exercise those actual local owners.
+
+The local catalog binds funding/replica/repair declarations; it does not supply
+M12 payment admission, current heights, automatic funded lease extension,
+independent replica evidence or erasure coding. Cross-context physical aliases,
+expert ABI/quantization, ordinary selected-model consumption and the original
+independent PN5 WAN/failure campaign remain explicit gates. No activation,
+public-WAN, performance, model-efficacy or whole-chain-security claim advances
+from this source continuation alone.
+
+### 2026-11-04 independently pinned recovery, PQ release roles and fixed hybrid TLS
+
+Continue the existing integration candidate with the
+[recovery/release/transport boundary contract](../security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md).
+The checkpoint daemon separates new registration from cold recovery and requires
+an independently retained complete journal count/root before accepting an existing
+namespace. A genuine old-code counterexample restores the complete journal and
+sibling head; structural validity alone does not establish freshness. The new
+recovery expectation must be checked before local anchor repair or service binding.
+
+M15's existing release-bundle verification gains a bounded ML-DSA-65 role kernel:
+independently pinned offline-root thresholds, separate software/configuration/Cell
+manifest/Cell activation roles, old-and-new root quorums, retained retired-key
+identities, exact prior checkpoint and increasing role versions. Selecting old
+content requires fresh signed rollback approval. The kernel uses a distinct binary
+profile; complete TUF/TAP21 SDK conformance, durable installer ownership and live
+FinalUse composition retain their existing independent acceptance requirements.
+
+The real TLS/mTLS tests bind CLI, headers and libraries to the declared frozen
+OpenSSL provider. Standard hybrid-group support and ML-DSA identity are checked
+with actual handshakes and application bytes; the established peer profile keeps
+its own exact group, signature, exporter, pin and application-authority policy.
+Original wrong-provider failures remain evidence. Missing PQ capability cannot be
+silently replaced by a system crypto library or an accepted classical identity.
+
+These component changes preserve the separate effect-state obligations: durable
+intent, one stable operation ID, atomic current-revocation-aware claim, exact effect
+dispatch and same-ID reconciliation of unknown outcomes. PqWitnessV4 remains
+three-table protection. No component test or checkpoint export qualifies full
+FinalUse/effect anti-rollback, physical independent fault domains, arbitrary external
+exactly-once, whole-chain PQ, public WAN or production activation.
+
+The [compact local reproduction record](../../evidence/pq-recovery-release-transport-20261104/REPRODUCE.md)
+retains both actual recovery counterexamples and the original wrong-provider
+failures. Current controls pass 16 release tests, 11 cold-recovery tests, three
+actual CLI rejection tests, 15 retained ledger tests, 30 TLS/mTLS/backend tests
+and 35 source-integrity tests. The final checkpoint all-targets invocation records
+nine passing library tests and one Unix-bind `EPERM` failure; it is not a complete
+transport acceptance. Scoped Clippy and formatting pass. No historical observation
+or successful source check is promoted to production qualification.
+
+
+### 2026-11-04 frozen transparent W1 profile and independent cost control
+
+Continue the existing integration candidate with measured implementation
+`b13211ccf356fe16624da66d970ce71d77a5c51f`, preserving concurrent model, Cell,
+Legacy and source-inventory changes. The [transparent profile evidence](../../evidence/pon-w1-transparent-profile-20261104/README.md)
+freezes the original guest/image and an explicit Poseidon2/final-join verifier
+context. Native complete W1 and ordinary Node admission remain the engineering
+baseline; no pairing wrapper, alternate lottery identity or proof-only Node
+acceptance is introduced.
+
+The candidate now rejects noncanonical control inclusion digests before SDK
+hashing. A real saved-receipt mutation previously exited 101 with an assertion;
+the same input now returns a controlled rejection. Exact path depth/index checks
+also reject a previously accepted high-index alias that retained the same work
+ID. Fifteen verifier tests, six complete-relation tests and 42 actual input
+controls pass; the latter contain one acceptance, 41 rejections and no panic.
+Twenty-four cost-observer and seven source-map controls pass. The observer keeps
+late-observed exits and final validation beyond its shared deadline incomplete.
+The portable source map verifies seven locked archives and 37 selected files;
+it does not constitute a full QROM reduction or whole-graph audit.
+
+The source-bound saved-proof comparison retains all 1,000 native and 100
+candidate decode/verify samples. Medians are 0.544418 ms and 20.1955265 ms,
+a descriptive 37.0956 ratio on one shared-host input. The 256,886-byte receipt
+is 5.2225 times the 49,188-byte native witness. Zero new proofs were generated;
+proving, post-find publication, propagation, confirmation and stale-block costs
+remain unobserved in this run. Historical proving failures and failed benefit
+results are preserved. Finite scalar controls do not prove all-input equivalence
+between the old Transposed guest and the current FullLimb native implementation.
+
+Strict Clippy and formatting pass for both isolated packages, alongside the
+retained source-boundary/integrity controls and main graph at the measured
+source. The final composition preserves concurrent `245146c7` recovery/release
+changes, including their separate main-lock dependency edges; they do not alter
+either independent W1 lock or its measured source closure.
+The independent workflow carries these checks to exact PR head and prospective
+merge sources and retains failures; its creation is not a hosted CI pass.
+Concrete quantum soundness, equivalent Node parent-state/A/B artifact binding,
+end-to-end benefit and production admission remain HOLD. Any new complete
+statement/image or accepted cryptographic profile requires its own actual proof,
+security argument and complete-cost evidence before the original path can change.
+
+The same continuation additionally composes the owner's late
+`e94781d2323f5dc8987e1eb7ed2bef23ee8745c3` storage, checkpoint, release-role and
+transparent-profile work. Keep those sources and their original observations.
+The frozen verifier uses the upstream profile owner with the same SDK, suite
+and parameter pins, retains every original test and both additional suite
+controls, and preserves the current complete-image and canonical-control checks.
+The actual TLS negative reuses the upstream explicitly pinned fixture. Rebuild
+and validate the affected composed packages at their new commit identity; the
+completed `7eba9107` and `04be4748` observations remain historical observations
+of their exact inputs, not executions of this later complete tree.
+
+A lease check then observes concurrent #698 head
+`885b6e82a1470f6a35b55fa8d3c95af44d2afea8`. Compose that complete profile/CPQ1
+history with `4cc3bd974339b50ceaae47aaf7d652d5b5602d7d`, preserving cumulative
+verification budgets, historical/current type separation and the unactivated
+ML-DSA-87 candidate. The ML-DSA-65 release baseline and all 49 required native
+selectors remain. Keep every earlier component observation under its original
+source identity and validate the resulting composition separately.

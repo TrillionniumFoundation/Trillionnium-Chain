@@ -1,11 +1,17 @@
-# Current Cell authority and the TAP 21 ML-DSA-65 adapter
+# Current Cell authority, release roles and the TAP 21 ML-DSA-65 adapter
 
 Status: component implementation and local verification; **HOLD_NO_GO** for a
-complete updater, deployment, or autonomous activation. The base is Chain
+complete updater, deployment, or autonomous activation. The initial base is Chain
 `5a5ddbd4577207af7f7771a4a50c76620f32940f` (PR #698). This work closes a cached
 publisher-observation gap and adds an interoperable signature construction using
 the existing RustCrypto acceptance path. It does not install new roots, select a
 Cell, authorize FinalUse, or change PoN fork choice.
+
+The late composition with owner base
+`e94781d2323f5dc8987e1eb7ed2bef23ee8745c3` also retains its M15 release-role
+kernel, Cell storage/transport work and pinned TLS research harness. Their
+boundaries are described below; earlier test counts remain historical
+observations on their recorded source, not results for this later composition.
 
 ## Cached observations require current authority
 
@@ -75,6 +81,43 @@ root rotation, expiry/freeze checks, snapshot/timestamp checks, delegated target
 scope or persistent rollback protection. `VerifiedTufMetadataV1` is a signature
 observation and carries no root, release or FinalUse authority.
 
+## Preserved M15 release-role kernel
+
+The upstream [M15 PQ release kernel](../../trillionnium/crates/trnm-release-bundle/src/pq_release.rs)
+adds actual ML-DSA-65 quorum verification for distinct node-software,
+protocol-configuration, Cell-manifest and Cell-activation roles. Its offline-root
+keys and every online role's keys must be disjoint. Root rotation requires both
+the old and new root quorums, the previous root digest and the next consecutive
+generation. Removed key IDs enter retained retirement history and cannot be
+introduced again.
+
+Each accepted release binds the current root generation, complete expected old
+checkpoint, previous content, expiry and the next consecutive role version.
+Revisiting historical content requires an explicit signed rollback approval;
+the role version still increases. Cell activation has its own quorum and must
+name the currently published Cell-manifest digest. `accept_bundle` composes these
+checks with the existing source/SBOM/provenance declaration contract. A candidate
+Cell cannot supply a replacement root pin or count its own output as a root
+quorum.
+
+This is a bounded in-memory authorization component using a project-specific
+binary signing domain. It does not consume the TAP 21 JSON adapter, implement a
+TUF client, provision offline devices, install software or prove model quality.
+The actual owner must atomically persist accepted signed events and their new
+checkpoints before publishing effects. Recovery replays the events against an
+independently fresh expected checkpoint; the kernel supplies neither that fresh
+state nor a storage/witness implementation. A checkpoint hash alone is not an
+append-consistency proof, and complete rollback of every owner remains outside
+what local state can detect.
+
+The [Cell acquisition caller](../../trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs)
+still performs its independent closure/model pins and CPR2 publisher check before
+cache opening or network acquisition. M15 role versions, CPR2 sequences, TCD1
+loader generations and local residency revisions are distinct values; this
+composition does not automatically bind them into a durable CURRENT/FinalUse
+commit. New tensor readbacks and release-retention catalogs remain byte/format
+and physical-storage observations under their existing owners.
+
 ## Independent public fixture and repeatability
 
 `tests/fixtures/pq/tuf_tap21_mldsa65_v1.json` contains Unicode, quotation marks,
@@ -134,10 +177,10 @@ its own signature observation into any of these authority roles.
 
 | Authority or asset | Existing repository surface | Required owner/deployment boundary |
 | --- | --- | --- |
-| Offline update root and recovery root | New TAP 21 adapter; M15 `trnm-release-bundle` candidate build/SBOM/provenance contract | Provision offline threshold roots, authorize each root transition with old/new policies, retain versions outside restorable target state; this adapter does not provision them |
-| Node software and protocol configuration targets | M15 build/provenance contract | Separate delegated scopes, authenticated target hashes and versions, current expiry and rollback checks before installation |
-| Cell manifest publisher | `CellPqReleaseAuthorizationV2`, current `CellPqReleaseExpectationV2`, `trnm-cell` | Independent host pin and current publisher sequence; content verification never establishes model quality or execution permission |
-| Cell evaluation and activation | Existing acquisition/release declarations and separate runtime/FinalUse owners | Separate evaluation approval and activation metadata; activation sequence advances even when selecting historical content; serialize selection and revocation against fresh durable authority |
+| Offline update root and recovery root | M15 pinned bootstrap, old/new root quorums, retired-key history and checkpoint-bound recovery; separate TAP 21 signature adapter | Provision independent offline keys and fresh recovery pins; atomically persist accepted events/checkpoints outside restorable target state; neither component provisions custody or a witness |
+| Node software and protocol configuration targets | Distinct M15 role quorums/versions; software `accept_bundle` composes the existing source/SBOM/provenance contract | Bind actual artifacts, installer policy and authenticated delegated scopes to the durable current owner before installation; full TUF download policy remains separate |
+| Cell manifest publisher | M15 `CellManifest` role; `CellPqReleaseAuthorizationV2`, current `CellPqReleaseExpectationV2`, `trnm-cell` | Independently pin and bind the publisher's current digest/sequence across these separate interfaces; content verification does not establish model quality or execution permission |
+| Cell evaluation and activation | M15 distinct `CellActivation` quorum and increasing role version; separate runtime/FinalUse owners | Supply evaluation approval and durable activation integration; bind historical-content rollback approval, current published manifest and revocation at the actual owner commit |
 | ML-DSA signing seed and expanded key | `PqNativeSigningKey::from_owned_seed`, zeroizing memory, CLI seed-file adapter | Qualified entropy/provisioning, inventory owner and role, protected generation/backup/restore, device/HSM interface and retirement controls; memory zeroization is not a custody or side-channel proof |
 | Public identity roster | Strict SPKI/key-id parser and `CellPqKeyPinsV2` | Versioned authenticated distribution, independent rotation authority and persistent retired-key history; public roster data must not introduce signing secrets |
 | Transport exchange and identity keys | Existing PQ/native peer research and canonical identity verifier | Explicit standard group negotiation plus PQ identity authentication, downgrade rejection and key rotation; no direct TLS-to-chain permission mapping |
@@ -161,6 +204,16 @@ by this probe's accepted profile. A new negative test supplies a valid, trusted
 Ed25519 client identity and the accepted hybrid group: the peer is still refused
 with `peer_not_mldsa65`. Hybrid key exchange alone does not pass the identity gate.
 
+The late upstream TLS harness binds CLI execution to the declared executable
+hash and module path, selects headers and static archives from that provider's
+prefix, builds the C probe in a temporary directory and checks header/library
+versions against the declared provider. Its primitive TLS
+controls exercise the other two RFC 10024 groups, while the PPH1 probe retains
+its original X25519MLKEM768-only policy. Wrong-algorithm identities, alternate
+groups, exporter scope and cross-purpose peer proofs have distinct refusal
+controls. The retained classical-identity test reuses this harness's exact
+certificate and DER pin instead of regenerating a shared fixture.
+
 The installed `trnm-pon-node/src/ingress/public_v3.rs` path uses `TcpStream` and
 `TcpListener` directly. Its `pq_identity.rs` layer verifies pinned ML-DSA history
 messages, but the path does not wrap these sockets in TLS or enforce an RFC 10024
@@ -180,6 +233,14 @@ group refusal, cross-session signed-hello replay refusal and the classical peer
 identity negative. The fixture's independent signature generator used OpenSSL
 4.0.3 through cryptography; it is distinct from that TLS provider. These are
 local component results, not a full TUF conformance, CI, ARM, or deployment claim.
+
+The later `04be4748` record passed 225 data-availability tests, nine compile-fail
+examples and scoped strict Clippy. Its TAP 21 and six TLS results were mapped
+from `7eba9107` through the isolated fuzz-lock/source-pin correction. Those
+receipts remain historical: the `e94781d2` composition changes data-availability
+dependencies, release/transport code, M15 authorization and the TLS harness.
+Fresh source-bound package, TAP 21, TLS and strict Clippy results must be recorded
+for the resulting committed source before claiming coverage of that composition.
 
 ## Current external standards boundaries
 
