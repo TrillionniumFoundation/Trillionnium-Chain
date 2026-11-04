@@ -5609,3 +5609,24 @@ both reject a known subtotal above the measured complete denominator; unknown
 values stay unknown. The original fixed historical receipt fixture and all
 existing reader controls remain. This is cost-accounting correctness, not
 measured quantum throughput, a W1 cost lower bound or a changed chainwork rule.
+
+### 2026-11-04 recorded PQ component execution
+
+The [retained execution evidence](../../evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md)
+now records terminal results: X230 executes the composed `60dae3` source with
+45/45 required native controls, strict Node Clippy, four frozen-verifier release
+controls and one existing complete W1 receipt. The original 250 ms witness
+budget is unchanged. Local 99 source/provider controls and strict workspace
+Clippy used an identical complete tree; the later `30e0cd59` cost reader passes
+21 original controls at its exact source. The three changed offline paths do
+not change native inputs, and native attribution remains `60dae3`.
+
+Hepta's original `5fa90c21` and pinned composition `2f04ecfd` each execute the
+original contracts package with 198 passed, zero skipped, and strict scoped
+Clippy exit 0. Existing configuration warnings remain recorded. The published
+`ef5723af` preserves the owner's later macOS-only fixtures and the four tested
+PR blobs; it is not claimed as a third complete-tree native run. Archive hashes,
+full source comparisons and retained failures make these scopes reviewable.
+All six whole-chain PQ domains remain UNQUALIFIED, with full Node/service,
+precise proof and quantum-work arguments, whole-state migration, and independent
+composed deployment acceptance still outstanding.
