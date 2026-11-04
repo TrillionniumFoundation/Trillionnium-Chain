@@ -18,9 +18,7 @@
       "source-after.json"
     ],
     "project_json": [
-      "fresh-service/manifest.json",
-      "fresh-service/original/report.json",
-      "fresh-service/fresh/report.json"
+      "fresh-service/manifest.json"
     ]
   },
   {

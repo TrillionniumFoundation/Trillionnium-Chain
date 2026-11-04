@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-fresh-readback-input-scope-negative-v1",
+  "source": "66b0336ff786eaac0a719cd11f44a6c2688efa82",
+  "tree": "674409f5e07000231e7bfd352a6987b597215ab8",
+  "run_id": 41787706458,
+  "job_id": 126433554465,
+  "conclusion": "failure",
+  "actual_error": "PHASE_MODE",
+  "native_executed": false,
+  "reader_blob": "d5e9513b0bedbdf356cdd22bbcdecfc558ae03ca",
+  "before_inputs_blob": "0fa7a50499e3753b835472c5302972ba2e17be3e",
+  "decoded_log": {
+    "bytes": 26096,
+    "sha256": "66b595bca3a32224cfa792380be2777afc22e1bf9d33218af331ac40dc1a37a8"
+  },
+  "change": "Project only the already-supported fresh manifest; raw fresh reports use another phase schema and are no longer requested for phase-summary parsing. Every original ZIP member is still read to EOF and CRC/SHA256 checked. All original source receipts, budgets, archive identities and failure status remain required. No reader-code or native gate change.",
+  "scope": "This readback relies on the exact original producer's bounded manifest diagnostic; it is not an independent raw native acceptance check."
+}
