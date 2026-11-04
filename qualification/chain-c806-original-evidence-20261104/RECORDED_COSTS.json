@@ -1,0 +1,2498 @@
+{
+  "schema": "trnm-c806-recorded-client-costs-v1",
+  "source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+  "campaign": {
+    "planned_rounds": 27,
+    "recorded_rounds": 12,
+    "confirmed_rounds": 3,
+    "planned_pressure_rounds": 18,
+    "recorded_pressure_rounds": 6,
+    "confirmed_pressure_rounds": 0,
+    "all_pressure_actors_24_ready": true,
+    "qualified": false
+  },
+  "f0": {
+    "planned_confirmations": 6,
+    "planned_business_packet_exposures": 42,
+    "fixed_original_6_round_42_packet_identity_and_hash_validation_passed": true,
+    "four_second_slo_successes": 0,
+    "rounds": [
+      {
+        "actual_ended_ns": 21108796865,
+        "actual_started_ns": 1001804454,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 20108796865,
+        "end_lateness_from_four_second_deadline_ns": 16108796865,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 1804454
+      },
+      {
+        "actual_ended_ns": 30001422054,
+        "actual_started_ns": 21108809053,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25001422054,
+        "end_lateness_from_four_second_deadline_ns": 21001422054,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 16108809053
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": 30069101658,
+        "actual_started_ns": 1000463083,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29069101658,
+        "end_lateness_from_four_second_deadline_ns": 25069101658,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 463083
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ],
+    "all_services_known_empty": true,
+    "controller_resources_complete": true,
+    "native_complete_success": false,
+    "qualified": false,
+    "scope": "Identity/count/hash agreement of original receipts; complete fixed original denominator. Original F0 binary not independently bound by this reader. No new Host/native run."
+  },
+  "costs": [
+    {
+      "artifact": 13297780117,
+      "report": "run-1-raw/report.json",
+      "phase": "baseline",
+      "recorded_history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2038151279,
+          "min": 561322736,
+          "sum": 5476334197,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9091044388,
+          "min": 2490807573,
+          "sum": 24723380668,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1649764735,
+          "min": 479376789,
+          "sum": 4571323836,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2733563169,
+          "min": 634945693,
+          "sum": 7126969031,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2037829809,
+          "min": 560996757,
+          "sum": 5472813759,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9090721705,
+          "min": 2490480181,
+          "sum": 24719850999,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-1-raw/report.json",
+      "phase": "from-zero",
+      "recorded_history_calls": 4,
+      "client_import": {
+        "observed_stamps": 4,
+        "succeeded": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 725965564,
+          "min": 75038930,
+          "sum": 2172948056,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 8292390098,
+          "min": 886264996,
+          "sum": 23577826806,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 4,
+          "max": 9146,
+          "min": 1060,
+          "sum": 27689,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 4,
+          "max": 9146,
+          "min": 1060,
+          "sum": 27689,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 4,
+          "max": 9146,
+          "min": 1060,
+          "sum": 27689,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 4,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 607568860,
+          "min": 69563067,
+          "sum": 1831549795,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 1328977453,
+          "min": 71774252,
+          "sum": 3663047910,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "observed_slots": 4,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 725586788,
+          "min": 74623516,
+          "sum": 2171380114,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 8292008795,
+          "min": 885847506,
+          "sum": 23576250710,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-1-raw/report.json",
+      "phase": "late-product",
+      "recorded_history_calls": 3,
+      "client_import": {
+        "observed_stamps": 3,
+        "succeeded": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 720690480,
+          "min": 669798589,
+          "sum": 2076294409,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8797524375,
+          "min": 7193310278,
+          "sum": 23383357892,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 3,
+          "max": 9110,
+          "min": 8706,
+          "sum": 26555,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 3,
+          "max": 9110,
+          "min": 8706,
+          "sum": 26555,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 3,
+          "max": 9110,
+          "min": 8706,
+          "sum": 26555,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 3,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 604578248,
+          "min": 564882036,
+          "sum": 1743954346,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 1832774969,
+          "min": 1204724894,
+          "sum": 4446095957,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "observed_slots": 3,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 720084679,
+          "min": 669451140,
+          "sum": 2074886972,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8796912712,
+          "min": 7192960815,
+          "sum": 23381940412,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-2-raw/report.json",
+      "phase": "baseline",
+      "recorded_history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2056342110,
+          "min": 562929028,
+          "sum": 5498883602,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9182314241,
+          "min": 2494610265,
+          "sum": 24811736298,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1662685803,
+          "min": 480511937,
+          "sum": 4583286419,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 3058582087,
+          "min": 716482723,
+          "sum": 8071377985,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2055804357,
+          "min": 562479360,
+          "sum": 5494742034,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9181774883,
+          "min": 2494272293,
+          "sum": 24807584766,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-2-raw/report.json",
+      "phase": "from-zero",
+      "recorded_history_calls": 4,
+      "client_import": {
+        "observed_stamps": 4,
+        "succeeded": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 725754469,
+          "min": 78261781,
+          "sum": 2204366761,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 7803052066,
+          "min": 891269715,
+          "sum": 23582108041,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 4,
+          "max": 9117,
+          "min": 1079,
+          "sum": 27679,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 4,
+          "max": 9117,
+          "min": 1079,
+          "sum": 27679,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 4,
+          "max": 9117,
+          "min": 1079,
+          "sum": 27679,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 4,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 612014160,
+          "min": 72299964,
+          "sum": 1857994947,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 1594624627,
+          "min": 76768284,
+          "sum": 4239193668,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "observed_slots": 4,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 725443309,
+          "min": 77828523,
+          "sum": 2202370497,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 7802739051,
+          "min": 890834321,
+          "sum": 23401511308,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-2-raw/report.json",
+      "phase": "late-product",
+      "recorded_history_calls": 3,
+      "client_import": {
+        "observed_stamps": 3,
+        "succeeded": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 735993953,
+          "min": 642092885,
+          "sum": 2063399324,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8201296989,
+          "min": 7296637251,
+          "sum": 23301292516,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 3,
+          "max": 9135,
+          "min": 8335,
+          "sum": 26209,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 3,
+          "max": 9135,
+          "min": 8335,
+          "sum": 26209,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 3,
+          "max": 9135,
+          "min": 8335,
+          "sum": 26209,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 3,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 613793768,
+          "min": 561145973,
+          "sum": 1746153336,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 1498111385,
+          "min": 1225726891,
+          "sum": 4139835142,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "observed_slots": 3,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 735441091,
+          "min": 641317277,
+          "sum": 2061656682,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8200742362,
+          "min": 7295859998,
+          "sum": 23299544738,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-3-raw/report.json",
+      "phase": "baseline",
+      "recorded_history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2048986613,
+          "min": 564208243,
+          "sum": 5498997660,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9104326461,
+          "min": 2496515463,
+          "sum": 24830271967,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1654730067,
+          "min": 480820169,
+          "sum": 4580295838,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2503491724,
+          "min": 557616990,
+          "sum": 7053617075,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2048640508,
+          "min": 563580843,
+          "sum": 5494867664,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9103978641,
+          "min": 2496216415,
+          "sum": 24826131940,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-3-raw/report.json",
+      "phase": "from-zero",
+      "recorded_history_calls": 4,
+      "client_import": {
+        "observed_stamps": 4,
+        "succeeded": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 725029779,
+          "min": 52787714,
+          "sum": 2176670953,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 7991505881,
+          "min": 685058775,
+          "sum": 23575984627,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 4,
+          "max": 9124,
+          "min": 735,
+          "sum": 27342,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 4,
+          "max": 9124,
+          "min": 735,
+          "sum": 27342,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 4,
+          "max": 9124,
+          "min": 735,
+          "sum": 27342,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 4,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 609944370,
+          "min": 47659574,
+          "sum": 1832370877,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 1704993756,
+          "min": 50561842,
+          "sum": 4131905129,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "observed_slots": 4,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 724621238,
+          "min": 52378200,
+          "sum": 2174587366,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 7900927390,
+          "min": 684647496,
+          "sum": 23483725075,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13297780117,
+      "report": "run-3-raw/report.json",
+      "phase": "late-product",
+      "recorded_history_calls": 3,
+      "client_import": {
+        "observed_stamps": 3,
+        "succeeded": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 719052418,
+          "min": 688208723,
+          "sum": 2096936864,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8303010232,
+          "min": 7398441594,
+          "sum": 23193321814,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 3,
+          "max": 9102,
+          "min": 8706,
+          "sum": 26547,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 3,
+          "max": 9102,
+          "min": 8706,
+          "sum": 26547,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 3,
+          "max": 9102,
+          "min": 8706,
+          "sum": 26547,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 3,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 600866262,
+          "min": 576391260,
+          "sum": 1759740649,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 3,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 1715174749,
+          "min": 1242161957,
+          "sum": 4464775193,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 2,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "observed_slots": 3,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 3,
+          "max": 718623066,
+          "min": 687230247,
+          "sum": 2094935468,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 3,
+          "max": 8302578986,
+          "min": 7397461462,
+          "sum": 23098732111,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13296648897,
+      "report": "execution/raw/report.json",
+      "phase": "baseline",
+      "recorded_history_calls": 11,
+      "client_import": {
+        "observed_stamps": 11,
+        "succeeded": {
+          "false": 1,
+          "true": 10,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 11,
+          "max": 1561779993,
+          "min": 323428458,
+          "sum": 5882476471,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 11,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 11,
+          "max": 6683273532,
+          "min": 1386622760,
+          "sum": 25572253489,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 11,
+          "max": 29928,
+          "min": 6356,
+          "sum": 116022,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 11,
+          "max": 29928,
+          "min": 6356,
+          "sum": 116022,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 11,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 11,
+          "max": 29928,
+          "min": 6356,
+          "sum": 116022,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 11,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 11,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 11,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 11,
+          "max": 1308702416,
+          "min": 285396266,
+          "sum": 5074406931,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 11,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 11,
+          "max": 1693193126,
+          "min": 285714876,
+          "sum": 6610578286,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 10,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 11,
+          "unknown": 0
+        },
+        "observed_slots": 11,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 11,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 11,
+          "max": 1561520633,
+          "min": 323017650,
+          "sum": 5877832247,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 11,
+          "max": 6683012974,
+          "min": 1386210456,
+          "sum": 25567594713,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    },
+    {
+      "artifact": 13296648897,
+      "report": "execution/raw/report.json",
+      "phase": "valid-work-root",
+      "recorded_history_calls": 4,
+      "client_import": {
+        "observed_stamps": 4,
+        "succeeded": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 527046805,
+          "min": 114741472,
+          "sum": 1622769337,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 5206784930,
+          "min": 1095004776,
+          "sum": 15308264429,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 4,
+          "max": 9150,
+          "min": 2142,
+          "sum": 28775,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 4,
+          "max": 9150,
+          "min": 2142,
+          "sum": 28775,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 4,
+          "max": 9150,
+          "min": 2142,
+          "sum": 28775,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 4,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 449813547,
+          "min": 101012935,
+          "sum": 1397642812,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 4,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 984636698,
+          "min": 101176478,
+          "sum": 2120398995,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 1,
+          "true": 3,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "observed_slots": 4,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 4,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 4,
+          "max": 526691892,
+          "min": 114392047,
+          "sum": 1621454022,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 4,
+          "max": 5206428459,
+          "min": 1094653563,
+          "sum": 15306942681,
+          "unknown_samples": 0
+        }
+      },
+      "scope": "All recorded per-call stamps, with completion/success/unknown counts preserved. Calling-thread CPU only. Host phase is nested within importer and is not additive."
+    }
+  ],
+  "sql_endpoints": [
+    {
+      "path": "0.run-1-raw/report.json.phases.0.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 15,
+          "returned": 15,
+          "cpu_ns": 14218199,
+          "wall_ns": 177164626,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 15,
+          "returned": 15,
+          "cpu_ns": 3138100,
+          "wall_ns": 12338269,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-1-raw/report.json.phases.0.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 4311113,
+          "wall_ns": 82999312,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1460744,
+          "wall_ns": 6013450,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-1-raw/report.json.phases.1.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 12039070,
+          "wall_ns": 21670926,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2558363,
+          "wall_ns": 8765051,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-1-raw/report.json.phases.1.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 4018986,
+          "wall_ns": 7222639,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1389543,
+          "wall_ns": 4079846,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-1-raw/report.json.phases.2.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 11445449,
+          "wall_ns": 21519113,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2584741,
+          "wall_ns": 82499528,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-1-raw/report.json.phases.2.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3797425,
+          "wall_ns": 6663105,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1400543,
+          "wall_ns": 78097873,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.0.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 15,
+          "returned": 15,
+          "cpu_ns": 13397521,
+          "wall_ns": 100301920,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 15,
+          "returned": 15,
+          "cpu_ns": 3076985,
+          "wall_ns": 9167715,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.0.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 4021945,
+          "wall_ns": 6814938,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1392933,
+          "wall_ns": 3348969,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.1.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 11655146,
+          "wall_ns": 19820026,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2493138,
+          "wall_ns": 7043040,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.1.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3971831,
+          "wall_ns": 6828092,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1335924,
+          "wall_ns": 3181877,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.2.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 11813719,
+          "wall_ns": 171307591,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2562121,
+          "wall_ns": 7472278,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-2-raw/report.json.phases.2.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 4081368,
+          "wall_ns": 80788975,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1464873,
+          "wall_ns": 3279250,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-3-raw/report.json.phases.0.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 15,
+          "returned": 15,
+          "cpu_ns": 13466285,
+          "wall_ns": 25281163,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 14,
+          "returned": 14,
+          "cpu_ns": 2918485,
+          "wall_ns": 8158591,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-3-raw/report.json.phases.0.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3861699,
+          "wall_ns": 6462869,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1377049,
+          "wall_ns": 3003083,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-3-raw/report.json.phases.1.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 12005438,
+          "wall_ns": 22168805,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2571354,
+          "wall_ns": 7030359,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "0.run-3-raw/report.json.phases.1.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 4081737,
+          "wall_ns": 8552897,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1379566,
+          "wall_ns": 3098139,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/baseline.json.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 18,
+          "returned": 18,
+          "cpu_ns": 12042879,
+          "wall_ns": 125598044,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 18,
+          "returned": 18,
+          "cpu_ns": 2596135,
+          "wall_ns": 83618968,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/baseline.json.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3259912,
+          "wall_ns": 5436347,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1107294,
+          "wall_ns": 77184068,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/report.json.phases.0.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 18,
+          "returned": 18,
+          "cpu_ns": 12042879,
+          "wall_ns": 125598044,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 18,
+          "returned": 18,
+          "cpu_ns": 2596135,
+          "wall_ns": 83618968,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/report.json.phases.0.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3259912,
+          "wall_ns": 5436347,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1107294,
+          "wall_ns": 77184068,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/report.json.phases.1.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 10266074,
+          "wall_ns": 24600982,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2468736,
+          "wall_ns": 7011019,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/report.json.phases.1.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3469708,
+          "wall_ns": 6436737,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1294842,
+          "wall_ns": 3057690,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/valid-work-root.json.native_history_arithmetic_after.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 10266074,
+          "wall_ns": 24600982,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 11,
+          "returned": 11,
+          "cpu_ns": 2468736,
+          "wall_ns": 7011019,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    },
+    {
+      "path": "1.execution/raw/valid-work-root.json.native_history_arithmetic_before.sql_commit",
+      "failed": false,
+      "sites": [
+        {
+          "site": "admission_persistence",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 3469708,
+          "wall_ns": 6436737,
+          "inflight": 0
+        },
+        {
+          "site": "atomic",
+          "started": 4,
+          "returned": 4,
+          "cpu_ns": 1294842,
+          "wall_ns": 3057690,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_step",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        },
+        {
+          "site": "reorg_termination",
+          "started": 0,
+          "returned": 0,
+          "cpu_ns": null,
+          "wall_ns": null,
+          "inflight": 0
+        }
+      ]
+    }
+  ],
+  "native_executed": 0,
+  "performance_qualified": false,
+  "production_activation": false
+}

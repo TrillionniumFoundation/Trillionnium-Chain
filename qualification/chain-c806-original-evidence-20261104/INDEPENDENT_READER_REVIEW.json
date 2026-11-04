@@ -1,0 +1,43 @@
+{
+  "schema": "chain.original-f0-sql-reader.static-review.v1",
+  "reviewed_utc": "2026-11-04T05:13:49.231Z",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "baseline": {
+    "git_blob_sha": "f81cf081b20cd0b652b4b09f4591aa05305c050e",
+    "sha256": "f2093a5f940fd9ac3d2dfe3fc19439a9ca32f5a1cb5b1ce1cc40bef97ac2d0c3",
+    "bytes": 55732
+  },
+  "first_candidate": {
+    "git_blob_sha": "2c57088e50663ca453abd44bb5faa3857ddd9275",
+    "sha256": "563c7a66617e1b1bd8c4e41460e05dbcb519df58696c1994c1b599e475f4a106",
+    "bytes": 68523
+  },
+  "final_candidate": {
+    "git_blob_sha": "d5e9513b0bedbdf356cdd22bbcdecfc558ae03ca",
+    "sha256": "9178517e5f15dd3e188d3b9c400810d82fd3e2d51ee2222e8216844a86acb186",
+    "bytes": 68615
+  },
+  "manifest": {
+    "git_blob_sha": "8cf20d27d9b1c19f108c49c53512374d691ecd28",
+    "sha256": "482e050ee4f41ada6b3d0214844d4e57d15df45db4a449977bf520c0fca808e2",
+    "bytes": 1769
+  },
+  "scope": "Exact source delta review of original F0 receipt/denominator binding and closed SQL projection; no original archive or native execution.",
+  "observations": [
+    "F0 prepared, execution and finalization receipts must have the fixed schemas and exact source/tree. The fixed workload is compared through canonical JSON so boolean/numeric substitutions do not compare equal.",
+    "The planned denominator remains exactly six phase/round identities at the fixed scheduled offsets and 42 phase/packet identities. Boolean observation flags, nonnegative integer attempts and recorded SLO count are checked; execution and finalization denominator records must agree.",
+    "Prepared/execution/report payload hashes are tied to the inspected files, and the original finalization complete_success must remain false. This does not independently recalculate original SLO physics or qualify the native binary.",
+    "SQL additions use closed field and literal sets. Unknown strings, fields and error values still go through the unchanged opaque projection. The raw download, archive validation, common projection and output-budget functions are byte-identical to the baseline.",
+    "Review identified that calls_started would remain opaque in SQL projection because its fixed label was missing. The exact 92-byte follow-up adds that label and an explicit synthetic equality check; no other final-candidate byte differs from the first candidate."
+  ],
+  "confirmed_new_blocker_in_reviewed_delta": false,
+  "limitations": [
+    "No Python controls, artifact downloads, native binaries or archived source were executed in this review.",
+    "Recorded SQL values are diagnostic observations; this review does not independently remeasure SQL CPU or validate all producer arithmetic.",
+    "The original common network/ZIP code was compared for unchanged bytes, not fully re-audited.",
+    "The manifest's campaign/F0 source bindings are explicit; original_binary_verified remains false for F0.",
+    "The 51 planned synthetic controls are not reported here as executed."
+  ],
+  "original_failed_acceptance_promoted": false,
+  "original_workload_budgets_changed": false
+}
