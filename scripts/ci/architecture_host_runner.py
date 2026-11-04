@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Cargo runner for the unchanged, complete native architecture comparison.
+"""Cargo runner for the original complete architecture and sync observations.
 
-Only this original integration target enters the fixed protected Host parent.
+Only the two explicitly admitted original targets enter the protected Host parent.
 Every other Cargo executable keeps its exact argv, environment and working
 directory. No test is skipped, renamed, ignored or replaced with a receipt.
 """
@@ -188,6 +188,12 @@ def main():
     command = sys.argv[1:]
     if selected(command):
         return run_selected(command)
+    # Keep the second original integration target separately selected and
+    # validated. No other Cargo executable acquires a privileged Host profile.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import evaluation_host_runner
+    if evaluation_host_runner.selected(command):
+        return evaluation_host_runner.run_selected(command)
     os.execv(command[0], command)
     raise AssertionError('exec returned')
 
