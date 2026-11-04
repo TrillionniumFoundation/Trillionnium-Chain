@@ -25,6 +25,9 @@ pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
 mod post_write_readback;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
 
+#[cfg(test)]
+mod initial_root_tests;
+
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
 const MAX_RECORD_BYTES: usize = 16 * 1024;
@@ -86,6 +89,15 @@ struct NativeBlock {
     root: Hash,
     packet_digest: Option<Hash>,
 }
+// One pure initial-root result from this history walk. It is created only
+// after the first genesis record has passed every original check. The whole
+// Settings (including initial State and root configuration) stays immutably
+// borrowed, and the value is consumed at most once. It carries no SQL verdict.
+struct InitialRootCalculation<'a> {
+    settings: &'a Settings,
+    value: Hash,
+}
+
 type StoredBlockRow = (Option<Vec<u8>>, u64, Vec<u8>, Option<Vec<u8>>, Vec<u8>);
 
 // An exact bounded row identity for a process-local, previously checked query.
@@ -131,6 +143,16 @@ fn native_block_with_cache(
     id: Hash,
     cache: Option<&ArithmeticCache>,
 ) -> Result<NativeBlock> {
+    native_block_with_initial_root(db, settings, id, cache, None).map(|(native, _)| native)
+}
+
+fn native_block_with_initial_root(
+    db: &Connection,
+    settings: &Settings,
+    id: Hash,
+    cache: Option<&ArithmeticCache>,
+    initial_root: Option<InitialRootCalculation<'_>>,
+) -> Result<(NativeBlock, Option<Hash>)> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Packet));
     local((|| {
         let (parent, height, work, packet, state): StoredBlockRow = db
@@ -148,24 +170,42 @@ fn native_block_with_cache(
         let state = bytes32(state)?;
         let work = consensus::Work::from_bytes(bytes64(work)?);
         if id == settings.genesis() {
+            let mut calculated_initial = None;
             ensure(
                 parent.is_none()
                     && height == 0
                     && packet.is_none()
                     && work == consensus::Work::from_bytes([0; 64])
                     && state
-                        == match cache {
-                            Some(cache) => cache.state_root(settings, &settings.initial)?,
-                            None => root(&settings.initial)?,
+                        == match (cache, initial_root) {
+                            (Some(cache), Some(calculation))
+                                if std::ptr::eq(calculation.settings, settings) =>
+                            {
+                                cache.observe_initial_root_reuse();
+                                calculation.value
+                            }
+                            (Some(cache), calculation) => {
+                                let value = cache.state_root(settings, &settings.initial)?;
+                                // A consumed or mismatched value never produces a
+                                // replacement. Only the first calculation is offered.
+                                if calculation.is_none() {
+                                    calculated_initial = Some(value);
+                                }
+                                value
+                            }
+                            (None, _) => root(&settings.initial)?,
                         },
                 "NATIVE_STATE_GENESIS",
             )?;
-            return Ok(NativeBlock {
-                parent,
-                height,
-                root: state,
-                packet_digest: None,
-            });
+            return Ok((
+                NativeBlock {
+                    parent,
+                    height,
+                    root: state,
+                    packet_digest: None,
+                },
+                calculated_initial,
+            ));
         }
         let raw = packet.ok_or("NATIVE_STATE_PACKET")?;
         let cached = cache.and_then(|cache| cache.history.packet(settings, id, &raw));
@@ -227,12 +267,15 @@ fn native_block_with_cache(
                 },
             );
         }
-        Ok(NativeBlock {
-            parent,
-            height,
-            root: state,
-            packet_digest: Some(digest),
-        })
+        Ok((
+            NativeBlock {
+                parent,
+                height,
+                root: state,
+                packet_digest: Some(digest),
+            },
+            None,
+        ))
     })())
 }
 
@@ -599,7 +642,19 @@ fn verify_record(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
-    let native = native_block_with_cache(db, settings, record.block, cache)?;
+    verify_record_with_initial_root(db, settings, record, progress, cache, None).map(|_| ())
+}
+
+fn verify_record_with_initial_root(
+    db: &Connection,
+    settings: &Settings,
+    record: &Record,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+    initial_root: Option<InitialRootCalculation<'_>>,
+) -> Result<Option<Hash>> {
+    let (native, calculated_initial) =
+        native_block_with_initial_root(db, settings, record.block, cache, initial_root)?;
     let (delta_count, delta_root) = stored_delta_root_observed(
         db,
         record.block,
@@ -633,7 +688,8 @@ fn verify_record(
                 "NATIVE_STATE_PARENT",
             ))
         }
-    }
+    }?;
+    Ok(calculated_initial)
 }
 
 pub(crate) fn verify_state(
@@ -679,8 +735,33 @@ pub(super) fn verify_state_with_readback_and_calculation(
     state: &State,
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
+    readback: Option<&mut PostWriteReadback<'_>>,
+    calculation: Option<FullRootCalculation<'_>>,
+) -> Result<()> {
+    verify_state_with_readback_and_calculations(
+        db,
+        settings,
+        block,
+        state,
+        progress,
+        cache,
+        readback,
+        calculation,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn verify_state_with_readback_and_calculations(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
     mut readback: Option<&mut PostWriteReadback<'_>>,
     calculation: Option<FullRootCalculation<'_>>,
+    initial_root: Option<InitialRootCalculation<'_>>,
 ) -> Result<()> {
     let result = (|| {
         let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
@@ -689,7 +770,19 @@ pub(super) fn verify_state_with_readback_and_calculation(
             scope.current(db)?;
         }
         let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
-        verify_record(db, settings, &record, progress, cache)?;
+        match initial_root {
+            Some(calculation) => {
+                verify_record_with_initial_root(
+                    db,
+                    settings,
+                    &record,
+                    progress,
+                    cache,
+                    Some(calculation),
+                )?;
+            }
+            None => verify_record(db, settings, &record, progress, cache)?,
+        }
         local(ensure(
             record.state
                 == match cache {
@@ -775,7 +868,8 @@ pub(super) fn verify_history_with_readback(
     loop {
         progress()?;
         let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
-        verify_record(db, settings, &record, progress, cache)?;
+        let calculated_initial =
+            verify_record_with_initial_root(db, settings, &record, progress, cache, None)?;
         local(ensure(
             expected_height.is_none_or(|height| record.height == height),
             "NATIVE_STATE_HISTORY",
@@ -786,6 +880,8 @@ pub(super) fn verify_history_with_readback(
                 current = parent;
             }
             None => {
+                let initial_root =
+                    calculated_initial.map(|value| InitialRootCalculation { settings, value });
                 let bytes: Vec<u8> = db
                     .prepare_cached("SELECT state FROM snapshots WHERE block=?")
                     .map_err(|error| Error::from(error).local_integrity())?
@@ -797,8 +893,16 @@ pub(super) fn verify_history_with_readback(
                     canonical(&state)? == bytes && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
-                return verify_state_with_readback(
-                    db, settings, current, &state, progress, cache, readback,
+                return verify_state_with_readback_and_calculations(
+                    db,
+                    settings,
+                    current,
+                    &state,
+                    progress,
+                    cache,
+                    readback,
+                    None,
+                    initial_root,
                 );
             }
         }

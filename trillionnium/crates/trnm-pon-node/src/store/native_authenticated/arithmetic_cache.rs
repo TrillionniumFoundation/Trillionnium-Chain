@@ -154,6 +154,15 @@ impl ArithmeticCache {
         self.state_root_inner(settings, state, None)
     }
 
+    /// Account only for a one-use result consumed by the private history walk.
+    /// This accepts no digest and changes neither retained material nor hash counts.
+    pub(super) fn observe_initial_root_reuse(&self) {
+        let _measurement = self
+            .history
+            .observe(super::HistoryStage::PersistedStateRoot);
+        self.root_arithmetic.operation_initial_root_reuse();
+    }
+
     /// Produce optional one-use arithmetic only from this successful complete
     /// input. Existing exact-byte hits and fallback paths publish no calculation.
     pub(crate) fn state_root_with_calculation<'a>(
