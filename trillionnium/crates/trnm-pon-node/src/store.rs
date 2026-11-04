@@ -27,6 +27,7 @@ mod reorg_readback_tests;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
+mod state_merge;
 pub mod storage_service;
 mod task_observation;
 use crate::{
@@ -4273,8 +4274,6 @@ impl Node {
         let work = parent
             .work
             .checked_add(consensus::required_work(h.target)?)?;
-        let mut keys: std::collections::BTreeSet<_> = prior.keys().collect();
-        keys.extend(output.state.keys());
         let index_context = self.ancestry_context()?;
         progress(ExecutionProgress::BeforePersistence)?;
         let tx = rusqlite::Transaction::new_unchecked(
@@ -4317,10 +4316,13 @@ impl Node {
             let mut expected_deltas = Vec::new();
             {
                 let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
-                for (index, key) in keys.into_iter().enumerate() {
+                for (index, entry) in state_merge::entries(&prior, &output.state).enumerate() {
                     progress(ExecutionProgress::PersistenceDelta { index })?;
-                    let before_value = prior.get(key);
-                    let after_value = output.state.get(key);
+                    let state_merge::Entry {
+                        key,
+                        before: before_value,
+                        after: after_value,
+                    } = entry;
                     // Both complete States have already passed the original
                     // canonical root/execution checks. Equal JSON values have
                     // identical canonical bytes, so unchanged cells need no

@@ -5400,3 +5400,45 @@ three-campaign cohort remains 3/27. Original failed/unknown outcomes and nested
 timing boundaries remain. Work economics, independent hardware/operators/review,
 evaluation, quantum/DAA, useful model releases, custody, external effects,
 whole-chain PQ, release and activation retain their existing HOLD exit conditions.
+
+### 2026-11-04 complete-validation throughput continuation
+
+The next candidate removes three repeated component costs while retaining each
+original complete validation boundary. Persistence walks both ordered State maps
+directly, preserving the exact union order, every per-key cancellation checkpoint,
+canonical delta bytes, SQL writes and complete transactional readback. This removes
+the temporary borrowed-key union tree and repeated map searches; the walk still
+visits all N keys and is not a touched-key O(k) implementation.
+
+Generic History reads the same complete CTE rows and checks every ancestor using
+inline fixed-width parent/work/root values. SQL conversion and shape-error order,
+local-integrity attribution, foreign-writer corruption detection, progress calls,
+page bounds and packet checks remain. No cross-request storage verdict is reused.
+Its O(H) per-page and O(H^2/p) full-pagination bounds remain. The indexed public/PQ
+History path is a separate implementation and receives no claimed benefit from
+this generic decoder change.
+
+Explicit PQ History caller authentication may retain at most eight canonical
+ML-DSA public-key expansions in the existing volatile intake budget. A hit requires
+both the complete SPKI bytes and expected key ID. Every new message/signature is
+verified and charged within the original attempt/byte/actual-CPU accounting.
+No cookie, authority, epoch, signature verdict or W1 result is cached. Optional
+material-lock contention or poison takes the original full charged verification
+path; original budget-lock errors still fail closed.
+
+Differential tests compare the earlier algorithms, including absent versus null
+values, complete progress/order, malformed SQL values, a foreign SQLite writer,
+fresh signatures, key churn and optional-cache lock contention. Explicit paired
+complete History/caller-auth observations run in the existing four-lane Node
+workflow using its unchanged compiler, test profile, CPU/attempt budgets and
+90-minute job cap. Delta discovery also has a paired observation inside the Node
+suite. Timing observations have no speed-ratio acceptance gate and are not
+end-to-end throughput, owner-release or business-confirmation evidence.
+
+Preflight and both locked Linux metadata graphs passed on base 362fbebe before
+the local executor became unavailable. New source requires its own hosted compile,
+format, strict Clippy, all retained Node controls, source-negative checks and
+terminal measurements; no unexecuted check is recorded as successful. The original
+four-second/F0/campaign failures remain. Operation-local account projection,
+committed-read ownership, resource fairness and complete client import still need
+separate evidence. Existing HOLD conditions and all activation flags remain.

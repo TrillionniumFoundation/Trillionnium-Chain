@@ -5,6 +5,9 @@ use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
 use trnm_protocol::pq_frame::{ML_DSA_65_SIGNATURE_BYTES, ML_DSA_65_SPKI_BYTES};
 use zeroize::Zeroizing;
 
+mod verifier_cache;
+use verifier_cache::VerifierCache;
+
 pub const PQ_HISTORY_PROFILE: &str = "public-protected-pq-history-development-v4";
 pub(super) const PQ_SOLUTION_BYTES: usize = 44 + ML_DSA_65_SPKI_BYTES + ML_DSA_65_SIGNATURE_BYTES;
 const MAX_AUTHENTICATIONS: u64 = 8192;
@@ -135,7 +138,10 @@ pub(super) struct AuthenticationUsage {
 /// Failure, replay and cache hits never refund reservations. A CPU overrun is
 /// charged and disables subsequent work; one nonpreemptible crypto call may tail.
 #[derive(Default)]
-pub(super) struct AuthenticationBudget(Mutex<AuthenticationUsage>);
+pub(super) struct AuthenticationBudget {
+    usage: Mutex<AuthenticationUsage>,
+    verifiers: VerifierCache,
+}
 struct AuthenticationInterval<'a> {
     budget: &'a AuthenticationBudget,
     settled: bool,
@@ -143,7 +149,7 @@ struct AuthenticationInterval<'a> {
 impl Drop for AuthenticationInterval<'_> {
     fn drop(&mut self) {
         if !self.settled {
-            if let Ok(mut state) = self.budget.0.lock() {
+            if let Ok(mut state) = self.budget.usage.lock() {
                 state.unavailable = true;
             }
         }
@@ -157,7 +163,7 @@ impl AuthenticationBudget {
     ) -> Result<T> {
         {
             let mut state = self
-                .0
+                .usage
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
             ensure(
@@ -176,7 +182,7 @@ impl AuthenticationBudget {
         }
         let stamp = ThreadCpuStamp::start();
         if stamp.is_none() {
-            self.0
+            self.usage
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
                 .unavailable = true;
@@ -189,7 +195,7 @@ impl AuthenticationBudget {
         let result = operation();
         let elapsed = stamp.and_then(ThreadCpuStamp::finish);
         let mut state = self
-            .0
+            .usage
             .lock()
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         match elapsed.and_then(|n| state.actual_thread_cpu_ns.checked_add(n)) {
@@ -206,7 +212,7 @@ impl AuthenticationBudget {
     }
     pub(super) fn usage(&self) -> Result<AuthenticationUsage> {
         Ok(self
-            .0
+            .usage
             .lock()
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
             .clone())
@@ -246,16 +252,18 @@ impl PublicServer {
     pub(super) fn verify_caller(&self, cookie: &Cookie, nonce: u64, bytes: &[u8]) -> Result<()> {
         let message = caller_message(cookie, nonce, self.identity.is_pq())?;
         if self.identity.is_pq() {
-            self.listener_intake()?
+            let intake = self.listener_intake()?;
+            intake
                 .pq_authentication
                 .perform(bytes.len() + message.len(), || {
                     ensure(bytes.len() == PQ_SOLUTION_BYTES, "PUBLIC_SOLUTION")?;
                     let spki = &bytes[44..44 + ML_DSA_65_SPKI_BYTES];
-                    PqNativeVerifier::from_pinned_spki(spki, digest(&cookie.caller)?)
-                        .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?
-                        .verify_exact_message(&message, &bytes[44 + ML_DSA_65_SPKI_BYTES..])
-                        .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?;
-                    Ok(())
+                    intake.pq_authentication.verifiers.verify(
+                        spki,
+                        digest(&cookie.caller)?,
+                        &message,
+                        &bytes[44 + ML_DSA_65_SPKI_BYTES..],
+                    )
                 })
         } else {
             verify_hex_strict(&cookie.caller, &message, &hex::encode(&bytes[44..108]))
