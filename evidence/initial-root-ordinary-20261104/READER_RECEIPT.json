@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/qian-qi/work/trnm-pq-initial-root-evidence-archive-a09-20261104/verify_payloads.py"
+  ],
+  "cargo_or_native_tests": 0,
+  "embedded_code_or_elf_execution": false,
+  "exit_code": 0,
+  "reader_sha256": "e8ba0df198fcabbcd332e4118473eddf795dc3fdd8fabfb035b5be57bbf3a6fa",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "3c8e414323b38274227d88bd82ece2b0b357c318e3695eedf4b924c9e99e66db"
+}

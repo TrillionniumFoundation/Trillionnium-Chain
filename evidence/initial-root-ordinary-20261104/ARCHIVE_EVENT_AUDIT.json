@@ -1,0 +1,233 @@
+{
+  "schema": "chain-initial-root-evidence-archive-event-audit-v1",
+  "result": "PASS_NO_MATCHING_PUSH_CREATE_OR_WORKFLOW_RUN",
+  "exact_archive_branch": "archive/chain-initial-root-evidence-20261104",
+  "head_commit": "4c46eca89a006616e9240d983c66919071f79b41",
+  "default_branch": "main",
+  "default_commit": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "head_workflow_count": 15,
+  "default_workflow_count": 1,
+  "scope": "Only 15 immutable H workflow files and the one current default workflow were read; no whole-repository scan, dispatch or native execution.",
+  "basis": "All 16 source workflow files lack create and workflow_run. The only push declaration at each source is trnm-required-baseline.yml with branches exactly [main]; the exact archive branch differs from main. Pull-request and explicit manual events do not result from branch creation/push alone.",
+  "workflows": [
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "git_blob_sha": "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc",
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "size": 3293,
+      "event_block": "on:\n  pull_request:\n  workflow_dispatch:\n    inputs:\n      pr_number:\n        description: Same-repository open PR whose current source should be exported\n        required: true\n        type: string",
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "git_blob_sha": "c180734f658c032d74da048b84e131f21acdee34",
+      "sha256": "a295d2c9a79f4ed03a559ce6592be5af3ed9331ef8b7eedea6630232373a668b",
+      "size": 8695,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-baseline-diagnostic-readback.yml\n      - trillionnium/**",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "git_blob_sha": "3c0aeb12ef740b61e8759d77ba10456f0164aa32",
+      "sha256": "49e4326ebbcd8464672aaca305105b26e575257c7239e202f16e2fe69a0ff1b0",
+      "size": 13688,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/crates/trnm-protocol/src/pon_wire.rs\n      - trillionnium/crates/trnm-pon-node/src/consensus.rs\n      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**\n      - .github/workflows/pon-branch-encoding-acceptance.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-cloud-build-inputs.yml",
+      "git_blob_sha": "36d0cdef797a21aca7e6884082ffb2a8d861b8a6",
+      "sha256": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+      "size": 3991,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-cloud-build-inputs.yml\n      - rust-toolchain.toml\n      - trillionnium/Cargo.lock\n      - trillionnium/**/Cargo.toml\n  workflow_dispatch:",
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "git_blob_sha": "733184b54aba30ab56c5a076bcfefdea31e1e2b1",
+      "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+      "size": 17173,
+      "event_block": "on:\n  # Bootstrap only this separately reviewed route from a same-repository PR.\n  # A new dispatch-only workflow is unavailable before it reaches default branch.\n  pull_request:\n    paths:\n      - .github/workflows/pon-fixed-host-root-f0.yml\n      - scripts/run_fixed_host_root_f0.py\n      - scripts/ci/run_fixed_root_phase_host.py\n      - scripts/ci/fixed_root_f0_ownership.py\n      - scripts/ci/fixed_root_f0_resources.py\n      - scripts/ci/finalize_fixed_root_f0.py\n      - scripts/ci/test_fixed_root_f0.py\n      - scripts/ci/test_fixed_root_phase_host.py\n      - scripts/ci/test_fixed_root_resources.py\n      - scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs\n      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs\n      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs\n      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs\n      - docs/security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md\n  workflow_dispatch:",
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "git_blob_sha": "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c",
+      "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+      "size": 3948,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - .github/workflows/pon-model-parent-acceptance.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "git_blob_sha": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+      "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      "size": 22343,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/**\n      - config/**\n      - .cargo/**\n      - rust-toolchain.toml\n      - formal/pon-nakamoto-v1/bounded_process*.py\n      - scripts/run_pon_w1_native_campaign.py\n      - scripts/pon_public_v3_phase_read.py\n      - scripts/pon_public_v3_policy_read.py\n      - scripts/ci/test_pon_public_v3_policy_read.py\n      - scripts/ci/test_pon_public_v3_phase_read.py\n      - scripts/project-preflight.sh\n      - scripts/ci/verify_ci_source.py\n      - scripts/ci/run_native_phase_host.py\n      - scripts/ci/test_native_phase_host.py\n      - scripts/ci/public_host_ci_observation.py\n      - .github/workflows/pon-native-campaign-qualification.yml\n  workflow_dispatch:",
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "git_blob_sha": "a1be1f095683f90ff6ee0c4d6d14bb7b95aaa364",
+      "sha256": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+      "size": 9649,
+      "event_block": "\"on\":\n  \"pull_request\": {}",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "git_blob_sha": "6dcdb0efd3a304d1b7e0c6dc00f354b0cdffef30",
+      "sha256": "1b464ecc28443625928cc0962bd493a98e2ca87dacb1e89777efa7f339194b9e",
+      "size": 25296,
+      "event_block": "'on':\n  pull_request: {}",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "git_blob_sha": "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5",
+      "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      "size": 12058,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - scripts/**\n      - .github/workflows/pon-owned-process-cleanup.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "git_blob_sha": "4f1e551850e4654c0a798735f7529d2de6bcac46",
+      "sha256": "c6fa31485bb18fd8eea426efc2f120007c3e64534c1d7c62e318499919df52e3",
+      "size": 16270,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/**\n      - formal/pon-nakamoto-v1/w1_hardened_verifier/**\n      - evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin\n      - evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin\n      - evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin\n      - config/pon/pq-cross-branch-corpus-v1.json\n      - config/pon/pq-system-required-tests-v1.json\n      - scripts/ci/record_pq_native_command.py\n      - scripts/ci/test_record_pq_native_command.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/ci/check_required_native_test.py\n      - .github/workflows/pon-pq-system-continuation.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "git_blob_sha": "7d8140ed66c87b45efade39de231b2e99a3413a6",
+      "sha256": "952b04018117478c7badf0eeec4f977beb50833dcf25051c052eb3f53fb232b5",
+      "size": 27863,
+      "event_block": "on:\n  pull_request:",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "git_blob_sha": "a718876cc2a572fdffd7899ae76c240f1306c3e3",
+      "sha256": "46430ff3193c08589ed318347b832cd011868fb6e9ceeca03bb06d08f5a5771e",
+      "size": 29264,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/crates/trnm-pon-node/src/store.rs\n      - trillionnium/crates/trnm-pon-node/src/store/history_page.rs\n      - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs\n      - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs\n      - trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs\n      - formal/pon-nakamoto-v1/work_query_bound.py\n      - formal/pon-nakamoto-v1/test_work_query_bound.py\n      - scripts/ci/read_native_cache_observation.py\n      - scripts/ci/test_read_native_cache_observation.py\n      - .github/workflows/pon-recent-batch-acceptance.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "git_blob_sha": "b8436de9ad3c58d545b0badfc99d0329adc2a819",
+      "sha256": "5b90700d4d0ac685ed2874540a394ede3afc8fc453a508718a7ac24df8b50f40",
+      "size": 7450,
+      "event_block": "on:\n  pull_request:\n    paths:\n      - formal/release-finality-v2/**\n      - config/finality-profile-v1.json\n      - config/release-finality-v2.json\n      - scripts/ci/test_finality_profile.py\n      - scripts/ci/check_required_native_test.py\n      - docs/protocol/release-finality-v2/**\n      - trillionnium/crates/trnm-pon-node/**\n      - trillionnium/crates/trnm-crypto-primitives/**\n      - trillionnium/Cargo.toml\n      - trillionnium/Cargo.lock\n      - .github/workflows/release-finality-reference.yml",
+      "events": [
+        "pull_request"
+      ],
+      "push_block": null
+    },
+    {
+      "source": "head",
+      "ref": "4c46eca89a006616e9240d983c66919071f79b41",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "git_blob_sha": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "size": 34136,
+      "event_block": "on:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:",
+      "events": [
+        "pull_request",
+        "push",
+        "workflow_dispatch"
+      ],
+      "push_block": "  push:\n    branches: [main]"
+    },
+    {
+      "source": "default",
+      "ref": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "git_blob_sha": "80dbd94aa41328b95b893074706cb3ab1bac137f",
+      "sha256": "bb407ebb197fc7eae9bbf24d165732f5b16937241d3430745506568cec1fe1c9",
+      "size": 6341,
+      "event_block": "on:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:",
+      "events": [
+        "pull_request",
+        "push",
+        "workflow_dispatch"
+      ],
+      "push_block": "  push:\n    branches: [main]"
+    }
+  ],
+  "parsing_scope": "Top-level on block and immediate event keys, accepting both quoted and unquoted YAML keys; each actual push block manually checked as the literal two-line mapping push / branches: [main].",
+  "skip_ci_not_used_as_trigger_audit_substitute": true,
+  "mutation_or_native_invocations": 0
+}

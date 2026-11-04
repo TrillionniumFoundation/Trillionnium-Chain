@@ -1,0 +1,128 @@
+{
+  "schema": "chain-initial-root-final-binding-child-review-v1",
+  "result": "PASS",
+  "reviewer": "/root/chain_regression",
+  "actual_remote_harness_commit": "01404de030c0d560e32a4b86620cea027878d2df",
+  "actual_remote_workflow_path": ".github/workflows/pon-pinned-history-initial-root-normal.yml",
+  "git_blob_sha": "35e04855d248d39a0a609ae928e91a597604c503",
+  "utf8_size": 36507,
+  "sha256": "af6f66151bba9dc3d7d58218b2dbf84b570e75cd2acc2eec86b165200f8d5983",
+  "reviewed_unbound_sha256": "fff49162921cc657749e1309315dfa4aa3e2589d8d656e166728589705720b27",
+  "original_workflow_sha256": "972cdadff5202205eb40036b971906ad666c5b086f5d64738dcd3bf408816f25",
+  "actual_Main_bytes_equal_GitHub_S_bytes": true,
+  "exact_changes": [
+    {
+      "line": 32,
+      "before": "      EXPECTED_HEAD: UNBOUND_HEAD",
+      "after": "      EXPECTED_HEAD: 4c46eca89a006616e9240d983c66919071f79b41"
+    },
+    {
+      "line": 34,
+      "before": "      EXPECTED_MERGE: UNBOUND_ACTUAL_MERGE",
+      "after": "      EXPECTED_MERGE: e0f831d0af21cc9eea69b5ec84788ef66e0b025c"
+    },
+    {
+      "line": 35,
+      "before": "      EXPECTED_HEAD_TREE: UNBOUND_TREE",
+      "after": "      EXPECTED_HEAD_TREE: a32c5e3b169370b1c923bb9a6ef7094a3d3ef041"
+    },
+    {
+      "line": 36,
+      "before": "      EXPECTED_MERGE_TREE: UNBOUND_TREE",
+      "after": "      EXPECTED_MERGE_TREE: a32c5e3b169370b1c923bb9a6ef7094a3d3ef041"
+    }
+  ],
+  "pins": {
+    "head": "4c46eca89a006616e9240d983c66919071f79b41",
+    "base": "2e72a989d001cf51bd0aed0e1401526e45db31f1",
+    "merge": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+    "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+    "branch": "test/chain-history-initial-root-normal-20261103",
+    "merge_retention_branch": "test/chain-history-initial-root-merge-20261103",
+    "workflow_path": ".github/workflows/pon-pinned-history-initial-root-normal.yml"
+  },
+  "prior_review_preserved": "All bytes outside the four explicit final source pin replacements equal the previously reviewed unbound workflow, including all build, CPU, lifetime, semantic, protocol, source and artifact logic.",
+  "expected_per_lane": {
+    "node": 46,
+    "m06": 18,
+    "protocol": 8,
+    "original_cpu": 2,
+    "lifetime": 2,
+    "total": 76
+  },
+  "expected_lanes": 4,
+  "expected_native_executions": 304,
+  "these_counts_are_plan_not_results": true,
+  "ignored_parser_observation_excluded": true,
+  "source_attempt_guard": "1",
+  "native_tests_or_builds_invoked_by_this_review": 0,
+  "publication_by_this_review": false,
+  "main_file_versions": [
+    {
+      "path": "/home/qian-qi/work/chain-initial-root-cloud-harness-recovery-20261104/previous-normal-harness.yml",
+      "size": 36708,
+      "sha256": "972cdadff5202205eb40036b971906ad666c5b086f5d64738dcd3bf408816f25",
+      "version": "2050:3160360:36708:1793752673639913928:1793752673639913928"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-initial-root-cloud-harness-recovery-20261104/reviewed-unbound.yml",
+      "size": 36403,
+      "sha256": "fff49162921cc657749e1309315dfa4aa3e2589d8d656e166728589705720b27",
+      "version": "2050:3160361:36403:1793752673640059681:1793752673640059681"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-initial-root-cloud-harness-recovery-20261104/chain_initial_root_normal_20261103.final.yml",
+      "size": 36507,
+      "sha256": "af6f66151bba9dc3d7d58218b2dbf84b570e75cd2acc2eec86b165200f8d5983",
+      "version": "2050:3160362:36507:1793752673640183647:1793752673640183647"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-initial-root-cloud-harness-recovery-20261104/pins.bound.json",
+      "size": 444,
+      "sha256": "3b7ae181d07082f55119849585fcf804f6a67673fcd405024121d856425d8ffb",
+      "version": "2050:3160363:444:1793752673640296271:1793752673640296271"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-initial-root-cloud-harness-recovery-20261104/RECOVERY_RECEIPT.json",
+      "size": 938,
+      "sha256": "4aa74da4f687c1bf1a9f61d45ea6b9ba6f009eba70cfe75496733274ad191ab8",
+      "version": "2050:3160364:938:1793752673640948323:1793752673640948323"
+    }
+  ],
+  "limitations": [
+    "This final review reuses the completed full unbound static review and checks only its exact final bindings; it does not rerun syntax suites or any native tests.",
+    "Main per-file reads are not an atomic snapshot; complete final content is independently equal to the immutable GitHub S object."
+  ],
+  "raw_git_object_checks": [
+    {
+      "sha": "4c46eca89a006616e9240d983c66919071f79b41",
+      "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "ordered_parents": [
+        "264049e359caad8c4bc1bb54c9a63bac26bfa86f"
+      ],
+      "endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/4c46eca89a006616e9240d983c66919071f79b41",
+      "raw_response_sha256": "32621ca056a2eeb84907fbe00b886402863aa99dd5c6e9cbb577ab899815c5d0"
+    },
+    {
+      "sha": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+      "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "ordered_parents": [
+        "2e72a989d001cf51bd0aed0e1401526e45db31f1",
+        "4c46eca89a006616e9240d983c66919071f79b41"
+      ],
+      "endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+      "raw_response_sha256": "c6c54e337eca7ff12943038b7a9ae2d221955df4d48a2c2aafaacceae02a2c90"
+    },
+    {
+      "sha": "01404de030c0d560e32a4b86620cea027878d2df",
+      "tree": "66cf0419c2b654ebf77ff655fc3342588e1ddb83",
+      "ordered_parents": [
+        "4c46eca89a006616e9240d983c66919071f79b41"
+      ],
+      "endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/01404de030c0d560e32a4b86620cea027878d2df",
+      "raw_response_sha256": "9c1f3f0c3f2660afce8038dc7fb9ee25c8434b11d6b45ba40f2e686b4f5f2adf"
+    }
+  ],
+  "actual_merge_payload_order_matches_raw_object": true,
+  "not_a_commit_signature_or_new_tree_reconstruction_claim": true
+}

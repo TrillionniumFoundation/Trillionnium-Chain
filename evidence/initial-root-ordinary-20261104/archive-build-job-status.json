@@ -1,0 +1,28 @@
+{
+  "at_unix_ms": 1793753263255,
+  "audit_recorded": true,
+  "cancelled": false,
+  "exit_code": 0,
+  "job_id": "1a1a406a8f3-96a-77f9",
+  "log_bytes": {
+    "stderr": {
+      "seen": 0,
+      "stored": 0
+    },
+    "stdout": {
+      "seen": 651,
+      "stored": 651
+    }
+  },
+  "log_errors": {
+    "stderr": null,
+    "stdout": null
+  },
+  "log_truncated": {
+    "stderr": false,
+    "stdout": false
+  },
+  "output_complete": true,
+  "state": "succeeded",
+  "timed_out": false
+}

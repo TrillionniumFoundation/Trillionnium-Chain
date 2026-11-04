@@ -1,0 +1,93 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pq-history-initial-root-fixture-20261103", "remote_policy_mutated": false}
+{"label": "initial-root-node-build", "recorder_exit": 0}
+CHECKPOINT {"head": "a09d2e3d70a89c69422583d020a732b9fd5a4011", "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041", "build_receipt": "initial-root-node-build.json", "artifact": {"reason": "compiler-artifact", "package_id": "path+file:///home/qian-qi/worktrees/trnm-pq-history-initial-root-20261103/trillionnium/crates/trnm-pon-node#0.1.0", "manifest_path": "/home/qian-qi/worktrees/trnm-pq-history-initial-root-20261103/trillionnium/crates/trnm-pon-node/Cargo.toml", "target": {"kind": ["lib"], "crate_types": ["lib"], "name": "trnm_pon_node", "src_path": "/home/qian-qi/worktrees/trnm-pq-history-initial-root-20261103/trillionnium/crates/trnm-pon-node/src/lib.rs", "edition": "2021", "doc": true, "doctest": true, "test": true}, "profile": {"opt_level": "3", "debuginfo": 2, "debug_assertions": true, "overflow_checks": true, "test": true}, "features": ["default"], "filenames": ["/home/qian-qi/work/trnm-pq-large-parent-cpu-target-20261103/debug/deps/trnm_pon_node-5223e827f20d8f09"], "executable": "/home/qian-qi/work/trnm-pq-large-parent-cpu-target-20261103/debug/deps/trnm_pon_node-5223e827f20d8f09", "fresh": false}, "original_path": "/home/qian-qi/work/trnm-pq-large-parent-cpu-target-20261103/debug/deps/trnm_pon_node-5223e827f20d8f09", "copy_path": "/home/qian-qi/work/trnm-pq-history-initial-root-fixture-evidence-20261103/initial-root-node-a09d2e3d70a8.elf", "source_sha256": "107cf5c8589f5ce516d7d19ac9f786641ef9b17c1d57a70476b8615b13d2ddab", "copied_sha256": "107cf5c8589f5ce516d7d19ac9f786641ef9b17c1d57a70476b8615b13d2ddab", "execution_path_remains_original_artifact": true}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pq-history-initial-root-fixture-20261103", "remote_policy_mutated": false}
+START initial-root-control-1
+DONE initial-root-control-1 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 3.97s
+START initial-root-control-2
+DONE initial-root-control-2 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 22.70s
+START initial-root-control-3
+DONE initial-root-control-3 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 2.19s
+START initial-root-control-4
+DONE initial-root-control-4 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 5.44s
+START initial-root-control-5
+DONE initial-root-control-5 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 10.27s
+START initial-root-control-6
+DONE initial-root-control-6 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 10.14s
+START initial-root-history-control-1
+DONE initial-root-history-control-1 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 11.60s
+START initial-root-history-control-2
+DONE initial-root-history-control-2 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.13s
+START initial-root-history-control-3
+DONE initial-root-history-control-3 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.08s
+START initial-root-history-control-4
+DONE initial-root-history-control-4 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.23s
+START initial-root-history-control-5
+DONE initial-root-history-control-5 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.10s
+START initial-root-history-control-6
+DONE initial-root-history-control-6 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.11s
+START initial-root-history-control-7
+DONE initial-root-history-control-7 exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.21s
+START initial-root-large-cache
+DONE initial-root-large-cache exit 0 reader None
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 920 filtered out; finished in 36.62s
+START initial-root-parser
+DONE initial-root-parser exit 0 reader None
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 917 filtered out; finished in 0.23s
+START initial-root-codec
+DONE initial-root-codec exit 0 reader None
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 920 filtered out; finished in 0.01s
+START initial-root-live-state
+DONE initial-root-live-state exit 0 reader None
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 919 filtered out; finished in 1.32s
+START initial-root-byte-error
+DONE initial-root-byte-error exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.06s
+START initial-root-current-sql-root
+DONE initial-root-current-sql-root exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 21.35s
+START initial-root-trigger-readback
+DONE initial-root-trigger-readback exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 1.30s
+START initial-root-reorg-tail
+DONE initial-root-reorg-tail exit 0 reader None
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 916 filtered out; finished in 10.37s
+START initial-root-postwrite
+DONE initial-root-postwrite exit 0 reader None
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 907 filtered out; finished in 2.55s
+START initial-root-history-current
+DONE initial-root-history-current exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.54s
+START initial-root-history-schema
+DONE initial-root-history-schema exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 1.88s
+START initial-root-history-damage
+DONE initial-root-history-damage exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.91s
+START initial-root-reactor-internal
+DONE initial-root-reactor-internal exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.49s
+START initial-root-reactor-external
+DONE initial-root-reactor-external exit 0 reader 0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 921 filtered out; finished in 0.22s
+ALL_NATIVE_COMMANDS_TERMINAL exit 0
+START initial-root-clippy
+{"label": "initial-root-clippy", "recorder_exit": 0, "status": "command_succeeded", "exit_code": 0}
+START initial-root-host-cargo-graph
+{"label": "initial-root-host-cargo-graph", "recorder_exit": 0, "status": "command_succeeded", "exit_code": 0}
+REMAINING_NORMAL_CHECKS_PASS
+NORMAL_VALIDATION_COMPLETE_NO_CPU
+FIXTURE_SOURCE_NORMAL_VALIDATION_COMPLETE_NO_CPU

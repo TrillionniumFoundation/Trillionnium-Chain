@@ -1,0 +1,53 @@
+{
+  "result": "PASS",
+  "scope": "lossless data and original source-bound result verification; no native execution",
+  "files": 479,
+  "raw_bytes": 2659050,
+  "sources": [
+    {
+      "source": "0878ee2b630c64ac67e742165c3f20df718c537a",
+      "build_exit": 101,
+      "native_commands": 0
+    },
+    {
+      "source": "ecb54d9c7b1e3fe98b7889f5c89a8b06c27c0b71",
+      "build_exit": 0,
+      "normal_native_commands": 27,
+      "passed": 52,
+      "failed": 1,
+      "ignored": 1
+    },
+    {
+      "source": "a09d2e3d70a89c69422583d020a732b9fd5a4011",
+      "build_exit": 0,
+      "normal_native_commands": 27,
+      "passed": 53,
+      "failed": 0,
+      "ignored": 1
+    }
+  ],
+  "cpu_tests_passed": 2,
+  "cpu_tests_failed": 0,
+  "cpu_observations": [
+    {
+      "label": "initial-root-large-genesis",
+      "authenticated_backend": false,
+      "paid_cpu_ns": 1049385006,
+      "remaining_credit_ns": 1212894916
+    },
+    {
+      "label": "initial-root-large-genesis",
+      "authenticated_backend": true,
+      "paid_cpu_ns": 2513975787,
+      "remaining_credit_ns": 123165199
+    },
+    {
+      "label": "initial-root-auth-parent",
+      "authenticated_backend": true,
+      "paid_cpu_ns": 2479645219,
+      "remaining_credit_ns": 145541811
+    }
+  ],
+  "cloud_results_claimed": false,
+  "whole_chain_qualification_claimed": false
+}

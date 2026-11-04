@@ -1,0 +1,1284 @@
+{
+  "actual_merge": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+  "actual_merge_ordered_parents": [
+    "2e72a989d001cf51bd0aed0e1401526e45db31f1",
+    "4c46eca89a006616e9240d983c66919071f79b41"
+  ],
+  "canonical_parent": "264049e359caad8c4bc1bb54c9a63bac26bfa86f",
+  "cloud_executed_results_not_in_this_archive": true,
+  "cloud_expected_lanes": 4,
+  "cloud_expected_per_lane": 76,
+  "cpu": [
+    {
+      "authenticated_backend": false,
+      "counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 0,
+        "cold_roots": 0,
+        "complete_computations": 0,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 0,
+        "offers": 0,
+        "offers_absent_or_refused": 0,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 0,
+        "offers_retained": 0,
+        "operation_full_root_reuses": 0,
+        "operation_initial_root_reuses": 0,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 0,
+        "partition_projection_compared_keys": 0,
+        "partition_projection_uses": 0,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 0,
+        "partition_roots_reused": 0
+      },
+      "credited_refill_ns": 262279922,
+      "dispatch_wall_ns": 1066072278,
+      "label": "initial-root-large-genesis",
+      "log_sha256": "8cde66a71e716409842d238f8c4abda66768bf48959087b2bb21aea068e952cd",
+      "native_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 1049385006,
+      "remaining_paid_credit_ns": 1212894916,
+      "stage_deltas": [
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "record",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "packet",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "delta",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_state",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_history",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "publish",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "read_active",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "state_at",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "execute",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "admission",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "activation",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_commitment",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "account_graph",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "persisted_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        },
+        {
+          "calls": 0,
+          "cpu_known_calls": 0,
+          "cpu_ns": 0,
+          "cpu_unknown_calls": 0,
+          "stage": "execution_parent_binding",
+          "unwinding_calls": 0,
+          "wall_ns": 0
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 25,
+        "cold_roots": 0,
+        "complete_computations": 11,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 25,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "operation_full_root_reuses": 2,
+        "operation_initial_root_reuses": 3,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 29534,
+        "partition_projection_compared_keys": 23145,
+        "partition_projection_uses": 11,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 96,
+        "partition_roots_reused": 40765
+      },
+      "credited_refill_ns": 637140986,
+      "dispatch_wall_ns": 2563387823,
+      "label": "initial-root-large-genesis",
+      "log_sha256": "8cde66a71e716409842d238f8c4abda66768bf48959087b2bb21aea068e952cd",
+      "native_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 2513975787,
+      "remaining_paid_credit_ns": 123165199,
+      "stage_deltas": [
+        {
+          "calls": 31,
+          "cpu_known_calls": 31,
+          "cpu_ns": 1189408,
+          "cpu_unknown_calls": 0,
+          "stage": "record",
+          "unwinding_calls": 0,
+          "wall_ns": 1224869
+        },
+        {
+          "calls": 19,
+          "cpu_known_calls": 19,
+          "cpu_ns": 209218051,
+          "cpu_unknown_calls": 0,
+          "stage": "packet",
+          "unwinding_calls": 0,
+          "wall_ns": 209271939
+        },
+        {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 1437665,
+          "cpu_unknown_calls": 0,
+          "stage": "delta",
+          "unwinding_calls": 0,
+          "wall_ns": 1450739
+        },
+        {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 780801601,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_state",
+          "unwinding_calls": 0,
+          "wall_ns": 781021950
+        },
+        {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 875590111,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_history",
+          "unwinding_calls": 0,
+          "wall_ns": 875704474
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 612715805,
+          "cpu_unknown_calls": 0,
+          "stage": "publish",
+          "unwinding_calls": 0,
+          "wall_ns": 612777799
+        },
+        {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 390545010,
+          "cpu_unknown_calls": 0,
+          "stage": "read_active",
+          "unwinding_calls": 0,
+          "wall_ns": 390666725
+        },
+        {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 701024625,
+          "cpu_unknown_calls": 0,
+          "stage": "state_at",
+          "unwinding_calls": 0,
+          "wall_ns": 701226947
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 214758622,
+          "cpu_unknown_calls": 0,
+          "stage": "execute",
+          "unwinding_calls": 0,
+          "wall_ns": 215517521
+        },
+        {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 2010015935,
+          "cpu_unknown_calls": 0,
+          "stage": "admission",
+          "unwinding_calls": 0,
+          "wall_ns": 2044208389
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 497092035,
+          "cpu_unknown_calls": 0,
+          "stage": "activation",
+          "unwinding_calls": 0,
+          "wall_ns": 511931864
+        },
+        {
+          "calls": 11,
+          "cpu_known_calls": 11,
+          "cpu_ns": 868997024,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_commitment",
+          "unwinding_calls": 0,
+          "wall_ns": 869255896
+        },
+        {
+          "calls": 11,
+          "cpu_known_calls": 11,
+          "cpu_ns": 632174818,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 632382373
+        },
+        {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 1638791,
+          "cpu_unknown_calls": 0,
+          "stage": "account_graph",
+          "unwinding_calls": 0,
+          "wall_ns": 1649724
+        },
+        {
+          "calls": 8,
+          "cpu_known_calls": 8,
+          "cpu_ns": 348258305,
+          "cpu_unknown_calls": 0,
+          "stage": "persisted_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 348351680
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 93622272,
+          "cpu_unknown_calls": 0,
+          "stage": "execution_parent_binding",
+          "unwinding_calls": 0,
+          "wall_ns": 93622832
+        }
+      ]
+    },
+    {
+      "authenticated_backend": true,
+      "counters_delta": {
+        "actual_changed_keys": 0,
+        "calculations": 25,
+        "cold_roots": 0,
+        "complete_computations": 11,
+        "complete_hits": 0,
+        "context_misses": 0,
+        "derived_checked_apply": 0,
+        "derived_full_root": 0,
+        "derived_rebuilt_tree": 0,
+        "exact_root_hits": 0,
+        "material_uses": 25,
+        "offers": 5,
+        "offers_absent_or_refused": 5,
+        "offers_borrow_conflicts": 0,
+        "offers_preserved_partitions": 5,
+        "offers_retained": 0,
+        "operation_full_root_reuses": 2,
+        "operation_initial_root_reuses": 3,
+        "original_error_fallbacks": 0,
+        "partition_inputs_hashed": 29534,
+        "partition_projection_compared_keys": 23145,
+        "partition_projection_uses": 11,
+        "partition_retention_refusals": 0,
+        "partition_roots_computed": 96,
+        "partition_roots_reused": 40765
+      },
+      "credited_refill_ns": 625187030,
+      "dispatch_wall_ns": 2518575026,
+      "label": "initial-root-auth-parent",
+      "log_sha256": "b0fc2608a81c13a5e390d5d8b2555477412fa5249fa84dd6a697a38b5074407e",
+      "native_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 2479645219,
+      "remaining_paid_credit_ns": 145541811,
+      "stage_deltas": [
+        {
+          "calls": 31,
+          "cpu_known_calls": 31,
+          "cpu_ns": 1169327,
+          "cpu_unknown_calls": 0,
+          "stage": "record",
+          "unwinding_calls": 0,
+          "wall_ns": 1205494
+        },
+        {
+          "calls": 19,
+          "cpu_known_calls": 19,
+          "cpu_ns": 208359364,
+          "cpu_unknown_calls": 0,
+          "stage": "packet",
+          "unwinding_calls": 0,
+          "wall_ns": 208489911
+        },
+        {
+          "calls": 18,
+          "cpu_known_calls": 18,
+          "cpu_ns": 1385660,
+          "cpu_unknown_calls": 0,
+          "stage": "delta",
+          "unwinding_calls": 0,
+          "wall_ns": 1399621
+        },
+        {
+          "calls": 10,
+          "cpu_known_calls": 10,
+          "cpu_ns": 769384415,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_state",
+          "unwinding_calls": 0,
+          "wall_ns": 769721957
+        },
+        {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 881174506,
+          "cpu_unknown_calls": 0,
+          "stage": "verify_history",
+          "unwinding_calls": 0,
+          "wall_ns": 881592255
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 589372658,
+          "cpu_unknown_calls": 0,
+          "stage": "publish",
+          "unwinding_calls": 0,
+          "wall_ns": 589524577
+        },
+        {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 368480115,
+          "cpu_unknown_calls": 0,
+          "stage": "read_active",
+          "unwinding_calls": 0,
+          "wall_ns": 368612795
+        },
+        {
+          "calls": 3,
+          "cpu_known_calls": 3,
+          "cpu_ns": 682900991,
+          "cpu_unknown_calls": 0,
+          "stage": "state_at",
+          "unwinding_calls": 0,
+          "wall_ns": 683215774
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 201311136,
+          "cpu_unknown_calls": 0,
+          "stage": "execute",
+          "unwinding_calls": 0,
+          "wall_ns": 202221675
+        },
+        {
+          "calls": 2,
+          "cpu_known_calls": 2,
+          "cpu_ns": 1950192228,
+          "cpu_unknown_calls": 0,
+          "stage": "admission",
+          "unwinding_calls": 0,
+          "wall_ns": 1986008070
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 522795053,
+          "cpu_unknown_calls": 0,
+          "stage": "activation",
+          "unwinding_calls": 0,
+          "wall_ns": 525605341
+        },
+        {
+          "calls": 11,
+          "cpu_known_calls": 11,
+          "cpu_ns": 855052310,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_commitment",
+          "unwinding_calls": 0,
+          "wall_ns": 855390415
+        },
+        {
+          "calls": 11,
+          "cpu_known_calls": 11,
+          "cpu_ns": 619935560,
+          "cpu_unknown_calls": 0,
+          "stage": "complete_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 620169421
+        },
+        {
+          "calls": 7,
+          "cpu_known_calls": 7,
+          "cpu_ns": 1310589,
+          "cpu_unknown_calls": 0,
+          "stage": "account_graph",
+          "unwinding_calls": 0,
+          "wall_ns": 1318337
+        },
+        {
+          "calls": 8,
+          "cpu_known_calls": 8,
+          "cpu_ns": 352680004,
+          "cpu_unknown_calls": 0,
+          "stage": "persisted_state_root",
+          "unwinding_calls": 0,
+          "wall_ns": 352837219
+        },
+        {
+          "calls": 1,
+          "cpu_known_calls": 1,
+          "cpu_ns": 89374226,
+          "cpu_unknown_calls": 0,
+          "stage": "execution_parent_binding",
+          "unwinding_calls": 0,
+          "wall_ns": 89394908
+        }
+      ]
+    }
+  ],
+  "cpu_failed": 0,
+  "cpu_ignored": 0,
+  "cpu_native_commands": 2,
+  "cpu_passed": 2,
+  "cpu_retries": 0,
+  "host_exclusive": false,
+  "limitations": [
+    "Overlapping stage CPU intervals must not be added.",
+    "Prior b73 standalone Auth failed after 10 complete calls; a09 passed after 11, so these are different stopping points.",
+    "The successful b73 first Auth and current a09 first Auth both complete 11 calls; actual root calculations 28 to 25 and hashed rows 35855 to 29534 are directly observed.",
+    "Each original CPU selector ran once; this is not a repeated benchmark or whole-host exclusivity claim.",
+    "Local tests executed a09 with default features, not the separate canonical H commit or future PQ-enabled cloud lanes.",
+    "Original source-upload CPU=false metadata remains historical: the package was created before the separately recorded CPU admission.",
+    "All original ELF files remain protected on Main; this text archive includes actual identity receipts and no executable bytes."
+  ],
+  "native_or_cargo_invocations_by_packaging": 0,
+  "same_tree_published_commit": "4c46eca89a006616e9240d983c66919071f79b41",
+  "schema": "trnm-initial-root-original-evidence-summary-v1",
+  "source_results": [
+    {
+      "build_elapsed_ns": 85349337020,
+      "build_exit": 101,
+      "build_log_sha256": "723e3f53f7c8916a46f16f6d93ef94866983f96e1ef30eed2342995d4bb5502a",
+      "cpu_commands": 0,
+      "diagnosis": "Five E0382 ownership errors in newly added test comparisons; no native test executed.",
+      "head": "0878ee2b630c64ac67e742165c3f20df718c537a",
+      "native_commands": 0,
+      "prefix": "failed-0878",
+      "tree": "d92a896ce181ff473dc64b9ea49f7d9906594011"
+    },
+    {
+      "build_elapsed_ns": 393722336808,
+      "build_exit": 0,
+      "build_log_sha256": "bd314be840966ae5538be7afd8fcc7e6efb45bdee5497a63d6a90f34d49c0c71",
+      "commands": [
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-1",
+          "log_sha256": "7c78da1b1e7653147740c8cee3f3031856b0012624e937c35f97bbbe79cf5d0a",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-2",
+          "log_sha256": "5feebd750d596526fd840fe5a94afa9039f41741863dc910c9bb4cfed19a06ea",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-3",
+          "log_sha256": "e3baae051d434c2d2aa4b86797150e8a609e581c52c553403d8e019b8944df80",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-4",
+          "log_sha256": "bc4df3e67f52541a1b11d45bfa5002f66c20db5fdfd88f76ddac2abe1e6641e9",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-5",
+          "log_sha256": "e89e9f75fcef1724cacd14ec71e9376a8c76c2cafebcf71cde6467eb000e20f8",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-6",
+          "log_sha256": "70455c2584181ae1360f14cb08f040786b32c067ab222de87b36c0c50409386b",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-1",
+          "log_sha256": "0ca5083d352066824d2603fc4b06f4b15bf14020c16c5a801dcde05c00bb43db",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-2",
+          "log_sha256": "7938aaaab4cad8fddea6be98f330050eeca1a0b91b516a81ffceedc6be80923e",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-3",
+          "log_sha256": "1f2760e5275f6fd96783bbecbf57fe1a6db1fd23a7de2f29670cd9d0b4db5039",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-4",
+          "log_sha256": "dc20ec8153331cc5022332a37e12fe289f03d37b9c1bf88865462cc37a1c5e97",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-5",
+          "log_sha256": "05da178122660652491e932e2394dbe6769bf39277c23dd1b4dff34bfc36102a",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "exit": 101,
+          "label": "initial-root-history-control-6",
+          "log_sha256": "4278f23b88fbdbce26f46fdeffc2aae1899d634d1481489cc0377001d78e8464",
+          "reader_exit": 1
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-7",
+          "log_sha256": "b5027aad9b4636f7e6c57739e753ac91553314b15baca7e24b9f5506d0302439",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            2,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-large-cache",
+          "log_sha256": "4c8af959428fb20e0ca5caa99c2956e12c8e204777607a7bfa8a369dcc60a3a5",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            4,
+            0,
+            1,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-parser",
+          "log_sha256": "661512b8f9f30d0b576c3a6e184ddf6a63960ae3cf3d10483d5febfa7f008ff5",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            2,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-codec",
+          "log_sha256": "887fcceafd3571c480bc5f90f5ae3fa1bc74811946273cd7d41aad7106cf209c",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            3,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-live-state",
+          "log_sha256": "a8abb812ddc6ef9d0f55f0d1dfc12f5e0fba0d8348f11a09c2a7cae424971ea4",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-byte-error",
+          "log_sha256": "4ce94ff9a0960da695f45d34296a4f7ff0b24bea017b1a741ec4a1da53040a1b",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-current-sql-root",
+          "log_sha256": "987535f58201b9f7dbe577f449f3fcaceada6be27c20dfd46774fba06e7525da",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-trigger-readback",
+          "log_sha256": "469af6e432cd38936b9acb9f62fb6e3bd8802c28260152c131489c80602bdd2a",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            6,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reorg-tail",
+          "log_sha256": "c59cafa21f0a4d0aa7c6b3e1fb200a034b48eec2741b7defed4d304beeb1a20f",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            15,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-postwrite",
+          "log_sha256": "f95693e939a64595ffdba56ad22ee83c1654121076622e6b16d79dc0ab370c12",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-current",
+          "log_sha256": "835ed2b00dcc3b88956e5a639ed1e83c8911075e8f194c4bf49fb13822a5144a",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-schema",
+          "log_sha256": "7376a0f4daa93b53c424a75f14ad133cbc0f1d6c8b9413370e4624ca569263d9",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-damage",
+          "log_sha256": "0908d996142cfb61d2e5e6423e8963c230149e45faf76ff6b6244116fed1a74e",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reactor-internal",
+          "log_sha256": "15903144829990ee23c1c822146b8da83438a1ba5342b71ea5245c5bf8677ddd",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reactor-external",
+          "log_sha256": "6d256af54e3bc9b452ab4fa4c728d4a9723b495d1838de576682905cc998f86d",
+          "reader_exit": 0
+        }
+      ],
+      "elf_sha256": "1a8b097a3ee4dd4f3ffbd0d66b282c0d3e217d3cf977ecc6b079cdd778e28dba",
+      "failed": 1,
+      "head": "ecb54d9c7b1e3fe98b7889f5c89a8b06c27c0b71",
+      "ignored": 1,
+      "measured": 0,
+      "native_commands": 27,
+      "passed": 52,
+      "prefix": "failed-ecb",
+      "registered_members": 54,
+      "tree": "105715b984a76b5e389298d35fac5ff2c6554e5b"
+    },
+    {
+      "build_elapsed_ns": 384575279501,
+      "build_exit": 0,
+      "build_log_sha256": "4e041dcd42e9fd0a75fd11c03ed16b6e1c781cf3306e6c1694e54a54ac45a0b5",
+      "commands": [
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-1",
+          "log_sha256": "27eb35372e1fdc94f21699fab96e487281b21dc387c3957a1d8534d55c43c5ed",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-2",
+          "log_sha256": "5705d5f197e1fbbc767caef14031746d3d146866d786de283b728ff64c4e5e85",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-3",
+          "log_sha256": "05c9dd0e4a30d1575507f01dc0f567f0d55b858313f3e86f43efcc0b1fb86d97",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-4",
+          "log_sha256": "dfc57390559c7e2820d4aa656c3a9c35bb69906986783dd2a08f75d27a29175f",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-5",
+          "log_sha256": "1056526df112389173eeb6c6c171777d6962fd4462b624e8dc5d9f5330952c36",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-control-6",
+          "log_sha256": "daf00d8fc063a86e96662aaf6c8f3715a18642ce4c8a967eeb8e80716f7f06b0",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-1",
+          "log_sha256": "5126c911dae7194a1a962994d3257aa8ad9468d002b14921816c0c5068225fd7",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-2",
+          "log_sha256": "6dadfeb9656664e6094feebb5cd723a616be3bd3d2fada8f84f2b949d2990904",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-3",
+          "log_sha256": "61a0749ac0d0ce7286cc4aec5e626c99d6805b535f9b797ab10b56cb414e8ebc",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-4",
+          "log_sha256": "cf975ee83adbe133b3521c3c35fca2699ef01e2d85dbbda02ff4efd3131426be",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-5",
+          "log_sha256": "08784c562326aeab47bef8ab4ee41a3bdaf570f84cb61dbe9c2c47b683116268",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-6",
+          "log_sha256": "1f83df7342f357dd08fb1a25a70db718190f721f3d4bdffebb7552b068c8ae00",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-control-7",
+          "log_sha256": "2ee51bdffc99c63f9d262f44c490119e5acfdc89b56e5f5a49383163dfbe691d",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            2,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-large-cache",
+          "log_sha256": "663fc3b92aff149dbd11a0873f50cf9c5b458bd5049ea509e41580a9520b3ee1",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            4,
+            0,
+            1,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-parser",
+          "log_sha256": "da7d600f3ce10e2807989ebe206a763c6246685a4168c24c85b8082e251fcb32",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            2,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-codec",
+          "log_sha256": "887fcceafd3571c480bc5f90f5ae3fa1bc74811946273cd7d41aad7106cf209c",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            3,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-live-state",
+          "log_sha256": "62a4b50c7824643fceac290134d8af65598675136845e2584f6b30dc4a23cd48",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-byte-error",
+          "log_sha256": "3afe19030d2161ae2e6bcca11b23afa7bf25aa3c283c3d34c960ad564eee2348",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-current-sql-root",
+          "log_sha256": "b8247d5f5953d8ee372e33b1eb4918a6c682df2815fb482718591c23491a7b38",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-trigger-readback",
+          "log_sha256": "a44b24547b2c078766c3aea082a8ffbd8bb9aa34558bd57a376c76cd3e85096a",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            6,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reorg-tail",
+          "log_sha256": "259599d368407469e9be14d3b9ee302e2eb6904e0430e979aa2b006773b2dbb0",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            15,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-postwrite",
+          "log_sha256": "ad668c8927672d24b0af7024fc0a88131c933da29cd3bb601edf8ab6549eafd5",
+          "reader_exit": null
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-current",
+          "log_sha256": "f4d847515f8c52bfbab44a577539a99af17a3f2c3976beb496a9a7258a2d9262",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-schema",
+          "log_sha256": "64f262ab720858ca78314c2eae416e05fd9cde193e4b7f73f7d1504ff68c8fd6",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-history-damage",
+          "log_sha256": "f4de4c268fe8bd621c3cfc06d6798c35f05d4ffdf05524779c18538fd19a0200",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reactor-internal",
+          "log_sha256": "d0838cd14692ce4b9d4bf6773d9a496837f03c1a30aaa3079708982d9bab0057",
+          "reader_exit": 0
+        },
+        {
+          "counts": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "exit": 0,
+          "label": "initial-root-reactor-external",
+          "log_sha256": "701d9e9e2d81a6d3ac55146218c6afb7f1ab01d2d5d909606b2f0ddade5cfb96",
+          "reader_exit": 0
+        }
+      ],
+      "elf_sha256": "107cf5c8589f5ce516d7d19ac9f786641ef9b17c1d57a70476b8615b13d2ddab",
+      "failed": 0,
+      "head": "a09d2e3d70a89c69422583d020a732b9fd5a4011",
+      "ignored": 1,
+      "measured": 0,
+      "native_commands": 27,
+      "passed": 53,
+      "prefix": "passed-a09",
+      "registered_members": 54,
+      "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041"
+    }
+  ],
+  "tested_local_commit": "a09d2e3d70a89c69422583d020a732b9fd5a4011",
+  "tested_tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+  "whole_chain_qualification_claimed": false
+}
