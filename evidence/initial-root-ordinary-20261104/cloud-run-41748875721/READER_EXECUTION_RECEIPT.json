@@ -1,0 +1,26 @@
+{
+  "artifact_code_executions": 0,
+  "cwd": "/home/qian-qi/work/chain-initial-root-cloud-archive-41748875721-20261104",
+  "exit_code": 0,
+  "native_test_invocations": 0,
+  "original_479_file_package_untouched": true,
+  "original_reader_unchanged": true,
+  "reader_argv": [
+    "/usr/bin/python3",
+    "/home/qian-qi/work/chain-initial-root-cloud-archive-41748875721-20261104/verify_payloads.py"
+  ],
+  "stderr": {
+    "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "mode": "100644",
+    "path": "READER_STDERR.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0
+  },
+  "stdout": {
+    "git_blob_sha": "92287bf86478ac1452337730a1c339bef45b5459",
+    "mode": "100644",
+    "path": "READER_RESULT.json",
+    "sha256": "cbfb90b22256681d7dc37b52d3281c94885d1764f8afe001776827d75d3bb629",
+    "size": 11678
+  }
+}

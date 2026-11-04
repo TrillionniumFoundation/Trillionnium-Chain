@@ -1,0 +1,347 @@
+{
+  "actual_native_passed": 304,
+  "artifact_code_executions": 0,
+  "binary_identity_limit": "Recorded CI before/after ELF hashes only; no executables are stored in the original ZIPs.",
+  "failed": 0,
+  "harness": "01404de030c0d560e32a4b86620cea027878d2df",
+  "head": "4c46eca89a006616e9240d983c66919071f79b41",
+  "ignored": 0,
+  "lanes": [
+    {
+      "actual_native_passed": 76,
+      "all_member_crc_verified": true,
+      "artifact_id": 13285312643,
+      "counts": {
+        "cpu": 2,
+        "lifetime": 2,
+        "m06": 18,
+        "node": 46,
+        "protocol": 8
+      },
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "member_count": 433,
+      "recorded_elf_sha256": {
+        "m06": "6a8345130f7373f4181f40127c18aa6cbe2b0b98174029ab3224d9f447c04b66",
+        "node": "74078b259cd322b3cc5cb65ae9a361ce79c0425ca5efa3a6d3d80d437adda18d",
+        "protocol": "814e086ca184875b34c37dc62a09c960e84a99f9f667af6369c6b05660fcaee3"
+      },
+      "runner": "ubuntu-24.04",
+      "source_kind": "head",
+      "tested_commit": "4c46eca89a006616e9240d983c66919071f79b41",
+      "tested_tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "zip_sha256": "db3c36eeb85f3d25d4c3c265c12e5c19233722388d25126fc1970d4ee6da40a0",
+      "zip_size": 302305
+    },
+    {
+      "actual_native_passed": 76,
+      "all_member_crc_verified": true,
+      "artifact_id": 13285398555,
+      "counts": {
+        "cpu": 2,
+        "lifetime": 2,
+        "m06": 18,
+        "node": 46,
+        "protocol": 8
+      },
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "member_count": 433,
+      "recorded_elf_sha256": {
+        "m06": "6a8345130f7373f4181f40127c18aa6cbe2b0b98174029ab3224d9f447c04b66",
+        "node": "2ddfaeec8e0431625b1bde6de4548751491ec7525d87fbb5ebb29f65013652dd",
+        "protocol": "814e086ca184875b34c37dc62a09c960e84a99f9f667af6369c6b05660fcaee3"
+      },
+      "runner": "ubuntu-24.04",
+      "source_kind": "prospective-merge",
+      "tested_commit": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+      "tested_tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "zip_sha256": "0ed10048afd1a9eb5a6c985972f544e31f78318d3d98b92f290913e6b68b708a",
+      "zip_size": 302532
+    },
+    {
+      "actual_native_passed": 76,
+      "all_member_crc_verified": true,
+      "artifact_id": 13285472881,
+      "counts": {
+        "cpu": 2,
+        "lifetime": 2,
+        "m06": 18,
+        "node": 46,
+        "protocol": 8
+      },
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "member_count": 433,
+      "recorded_elf_sha256": {
+        "m06": "89d18e1f1babafe9c31a7884d51f852246ab59ee7680ee6f63124d0a4179f862",
+        "node": "6d0f29bff8384ba64ac16d944989e5caad1b80e623eff5724cd624683847fbab",
+        "protocol": "72aa2bae5829009b72bf5ead2d10393e16ff0fbcf3743afd67df7fb8b58aa158"
+      },
+      "runner": "ubuntu-24.04-arm",
+      "source_kind": "head",
+      "tested_commit": "4c46eca89a006616e9240d983c66919071f79b41",
+      "tested_tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "zip_sha256": "528fdcd6627a7d73fdc5c9e6a8a0a0346bd34e27bf1071eb7542a60ebb800ca4",
+      "zip_size": 302055
+    },
+    {
+      "actual_native_passed": 76,
+      "all_member_crc_verified": true,
+      "artifact_id": 13285614471,
+      "counts": {
+        "cpu": 2,
+        "lifetime": 2,
+        "m06": 18,
+        "node": 46,
+        "protocol": 8
+      },
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "member_count": 433,
+      "recorded_elf_sha256": {
+        "m06": "89d18e1f1babafe9c31a7884d51f852246ab59ee7680ee6f63124d0a4179f862",
+        "node": "0c5123fa8ab4057f14f054f05e487a3df4c30e5d8ceeead4a64119b9338b969f",
+        "protocol": "72aa2bae5829009b72bf5ead2d10393e16ff0fbcf3743afd67df7fb8b58aa158"
+      },
+      "runner": "ubuntu-24.04-arm",
+      "source_kind": "prospective-merge",
+      "tested_commit": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+      "tested_tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+      "zip_sha256": "0723ed3296af00718bc2d84f7575a3adbb75be11aefa49c170814c2f561a5e61",
+      "zip_size": 302200
+    }
+  ],
+  "measured": 0,
+  "merge": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+  "native_invocations": 0,
+  "original_budget_and_initial_credit_supplement": [
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285312643,
+      "backend": "Legacy",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 103028764,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 411583630,
+      "remaining_credit_ns": 1691445134,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285312643,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 241389191,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 961120736,
+      "remaining_credit_ns": 1280268455,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285312643,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 240345581,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 956685086,
+      "remaining_credit_ns": 1283660495,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285398555,
+      "backend": "Legacy",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 85809567,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 343280302,
+      "remaining_credit_ns": 1742529265,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285398555,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 216829772,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 799835475,
+      "remaining_credit_ns": 1416994297,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285398555,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 216934522,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 800549004,
+      "remaining_credit_ns": 1416385518,
+      "runner": "ubuntu-24.04",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285472881,
+      "backend": "Legacy",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 131703180,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 526240648,
+      "remaining_credit_ns": 1605462532,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285472881,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 323290499,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 1259215960,
+      "remaining_credit_ns": 1064074539,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285472881,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 325220531,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 1260377888,
+      "remaining_credit_ns": 1064842643,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "source_kind": "head"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285614471,
+      "backend": "Legacy",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 129438585,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 517682664,
+      "remaining_credit_ns": 1611755921,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285614471,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 328786158,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 1258346544,
+      "remaining_credit_ns": 1070439614,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "after_initial_credit_ns": 2000000000,
+      "artifact_id": 13285614471,
+      "backend": "Authenticated",
+      "before_initial_credit_ns": 2000000000,
+      "credited_refill_ns": 321694896,
+      "inner_result": {
+        "Ok": "ok"
+      },
+      "outer_result": {
+        "Ok": "ok"
+      },
+      "paid_cpu_ns": 1245642712,
+      "remaining_credit_ns": 1076052184,
+      "runner": "ubuntu-24.04-arm",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "source_kind": "prospective-merge"
+    }
+  ],
+  "result": "PASS",
+  "run_attempt": 1,
+  "run_id": 41748875721,
+  "schema": "chain-initial-root-portable-data-verification-v1",
+  "scope_limit": "Original selected ordinary controls; not full runtime, V5, DAG, pressure, or whole-chain PQ release qualification.",
+  "tree": "a32c5e3b169370b1c923bb9a6ef7094a3d3ef041",
+  "zip_extraction": false
+}

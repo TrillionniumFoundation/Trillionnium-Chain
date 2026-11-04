@@ -1,0 +1,10 @@
+{
+  "artifact_code_execution": false,
+  "native_invocations": 0,
+  "report": {
+    "path": "/home/qian-qi/work/chain-initial-root-cloud-41748875721-audit/FOUR_LANE_INDEPENDENT_AUDIT_V1.json",
+    "sha256": "7b21e65999fb7b1c646fe1fcb1ae57958c8a5435a30f14811cccf4fa67d89d05",
+    "size": 25311
+  },
+  "result": "PASS"
+}
