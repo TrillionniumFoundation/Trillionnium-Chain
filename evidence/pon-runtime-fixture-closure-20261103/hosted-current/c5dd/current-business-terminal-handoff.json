@@ -1,0 +1,62 @@
+{
+  "schema": "c5dd-current-business-terminal-handoff-v1",
+  "observed_utc": "2026-11-03T22:50:39.102811+00:00",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "actual_merge": "7a3e125cb343bd85fb806aba87a21f99eac082de",
+  "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-binding.json",
+      "bytes": 6701,
+      "sha256": "87c48a4bc8e240ab88d87477bd9c834a7577589a9d61b02257a6dd47d9103b81"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-terminal-readback.json",
+      "bytes": 26283,
+      "sha256": "5ddbe69482b7f73bf356dc686cd30bf85aeec35a2ae10752588b2e7f8e7d6994"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/w1-history-four-lane-original-job-logs.json.gz",
+      "bytes": 153596,
+      "sha256": "e80d46c15d6f8d24fe5d1f74d6e069490288be0e02bc4c61f8b6741843a794c7"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-compact-terminal-readback.json",
+      "bytes": 39725,
+      "sha256": "1b8a0f24294a8d66377b34d99c8063ad59e430b855a43b1f12deafcaeb74bf69"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/original-three-campaign-selected-records.json.gz",
+      "bytes": 6069186,
+      "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-two-phase-terminal-readback.json",
+      "bytes": 32980,
+      "sha256": "fa6f486400e6745ecc6f418e242a32559cbbd9c608af25e2ead28a2855aa609f"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/f0-selected-original-records.json.gz",
+      "bytes": 1835912,
+      "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-fromzero-terminal-readback.json",
+      "bytes": 46841,
+      "sha256": "00e523f20dc26a018ce2116220ab3a2e5a943e140d348010b863b0c37b305019"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/protocol-merge-selected-original-records.json.gz",
+      "bytes": 876521,
+      "sha256": "c2965e0d0fc2e15b0cbb9367545c57a6d639679535de5ef12817a865c7425438"
+    }
+  ],
+  "qualifications": {
+    "W1_History": "four actual lanes each25PASS0FAIL1originalignored932filtered/default-feature denominator958; artifact zip digest and ELF not locally verified; actual full job log source+commands+named counts verified",
+    "original_campaign": "three actual invocations each0PASS1FAIL; baseline1/3,fromzero0/3,lateproduct0/3 confirmations per run; original30sphase; Host resource and cleanup verified",
+    "F0": "native0PASS1FAIL; original30s baseline1/3 (2observed),ROOT0/3 (1observed); total1/6; scheduled4sSLO0/6;42packets; all services known empty; BASELINE_MUST_PASS does not imply zero baseline confirmations",
+    "protocol_actual_merge": "five actual named nativePASS, original4s baseline1/1 pressure0/1; overall reader CONFIRMATION_TARGET; realHostresourcesandcleanupverified"
+  },
+  "excluded": "No C2, b280 or local974 results inherited; runtime and full Node lanes unresolved at latest22:46metadata; pending/cancelled not native outcomes",
+  "local_packager_error": "protocol selection initially included9SQLite records; UTF8 packager refused and wrote no bundle; new explicit text selection succeeded while original ZIP and each excluded hash remain in protocol-merge-packager-recovery.json"
+}

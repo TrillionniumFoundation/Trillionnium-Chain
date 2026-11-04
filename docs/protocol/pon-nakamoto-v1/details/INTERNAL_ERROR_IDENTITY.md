@@ -73,8 +73,13 @@ None acquires local database-corruption or owner-stop authority, and these categ
 do not grant a generic retry. Earlier profile codes and their wire strings are retained.
 
 Remote business failures are marked `RemoteRefusal` at the existing validated
-reply boundary. A remote message can retain a known code for the narrowly
-permitted client response, but cannot become a local database/owner failure.
+reply boundary and retain no local `ErrorCode`. Submit recovery recognizes only
+the exact authenticated response fields `UNKNOWN_PARENT` and
+`PUBLIC_MUTATION_CPU_BUDGET`, using a private response-recovery enum after the
+existing signature and request-context verification. Those two existing business
+responses permit bounded parent restoration or membership observation; they do
+not turn remote text into local EOF, database, owner or generic retry authority.
+Prefixes, suffixes and other signed labels remain ordinary remote refusals.
 The existing authenticated session constructor derives terminal/retryable
 identity from the already verified terminal flag, independently of error text.
 Its `REMOTE_TERMINAL:` and `REMOTE_RETRYABLE:` display strings remain unchanged.

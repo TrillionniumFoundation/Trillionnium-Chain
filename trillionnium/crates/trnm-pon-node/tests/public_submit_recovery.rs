@@ -104,20 +104,45 @@ impl Server {
                 PublicServer::new(identity(101), policy()).unwrap(),
             )
         });
-        Self {
+        let server = Self {
             address,
             node,
             stop,
             join: Some(join),
             public,
-        }
+        };
+        // A real pinned Head completes startup before any scripted local
+        // mutation. A bound socket alone does not prove the Node CPU owner is
+        // installed, and racing it must not select an unmetered setup path.
+        let ready = public_v3::call_public_protected_v3(
+            server.address,
+            &Request::Head,
+            settings,
+            &server.public,
+            &identity(100),
+            policy(),
+        )
+        .unwrap();
+        assert!(ready.ok);
+        assert_eq!(ready.value["tip"], hex::encode(settings.genesis()));
+        assert!(ready.solve_trials > 0 && ready.body_bytes_sent > 0);
+        server
     }
 }
 impl Drop for Server {
     fn drop(&mut self) {
         self.stop.store(true, Ordering::Release);
         if let Some(join) = self.join.take() {
-            join.join().unwrap().unwrap();
+            let result = join.join();
+            if thread::panicking() {
+                // Join even after an original assertion failure, but retain
+                // that failure instead of aborting the remaining test registry.
+                if !matches!(&result, Ok(Ok(_))) {
+                    eprintln!("public recovery server join during test panic: {result:?}");
+                }
+            } else {
+                result.unwrap().unwrap();
+            }
         }
     }
 }
@@ -218,11 +243,58 @@ fn scripted_response(cookie_raw: &[u8], ok: bool, value: Value, signer: u8) -> V
     frame
 }
 
+// Scripted forks still execute ordinary full Native admission and activation.
+// Once a listener owns the Node they must pay that SAME CPU domain, including
+// the reorganization termination reserve; no standalone allowance is created.
+fn submit_scripted_packet(owner: &Arc<Mutex<Node>>, packet: &Packet) {
+    let id = packet.id().unwrap();
+    let bytes = packet.encode().unwrap();
+    let (domain, stored, existing) = {
+        let node = owner.lock().unwrap();
+        (
+            node.public_service_cpu_domain().unwrap(),
+            node.stats().unwrap()["stored_blocks"].as_u64().unwrap(),
+            node.packet(id).is_ok(),
+        )
+    };
+    let before = domain.observe_actual_flow().unwrap().unwrap();
+    let outcome = ingress::dispatch_shared_with_metered_w1(
+        owner,
+        ingress::Request::Submit {
+            packet: hex::encode(&bytes),
+        },
+        &domain,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert!(!outcome.cpu.accounting_unavailable, "{:?}", outcome.cpu);
+    assert!(outcome.cpu.total_cpu_ns.is_some_and(|cpu| cpu > 0));
+    let submitted = outcome.native.unwrap();
+    assert_eq!(submitted["block"], hex::encode(id));
+    // The existing reply field is not a W1-replay flag; both ordinary and
+    // duplicate Native submissions retain physical_execution=false.
+    assert_eq!(submitted["physical_execution"], false);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&domain));
+    assert_eq!(node.packet(id).unwrap().encode().unwrap(), bytes);
+    assert_eq!(
+        node.stats().unwrap()["stored_blocks"],
+        stored + u64::from(!existing)
+    );
+    let active = node.active().unwrap();
+    assert_eq!(submitted["active"], hex::encode(active.0));
+    assert_eq!(submitted["generation"], active.1);
+    let after = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(after.initial_credit_ns, before.initial_credit_ns);
+    assert!(after.paid_cpu_debit_ns > before.paid_cpu_debit_ns);
+    assert_eq!(after.live_owners, 0);
+}
 fn activate_scripted_fork(packets: Vec<Packet>, owner: Arc<Mutex<Node>>) {
-    let mut node = owner.lock().unwrap();
     for packet in packets {
-        let id = node.admit(&packet, ingress::now().unwrap()).unwrap();
-        node.activate_observed(id, ingress::now().unwrap()).unwrap();
+        submit_scripted_packet(&owner, &packet);
     }
 }
 struct Proxy {
@@ -378,7 +450,14 @@ impl Proxy {
 impl Drop for Proxy {
     fn drop(&mut self) {
         self.stop.store(true, Ordering::Release);
-        self.join.take().unwrap().join().unwrap();
+        let result = self.join.take().unwrap().join();
+        if thread::panicking() {
+            if result.is_err() {
+                eprintln!("public recovery proxy join during test panic: {result:?}");
+            }
+        } else {
+            result.unwrap();
+        }
     }
 }
 
@@ -887,6 +966,12 @@ fn actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identit
         "FRAME_EOF:challenge",
         "PUBLIC_CLIENT_DEADLINE",
         "SUBMIT_RECOVERY_STALE_HEAD",
+        "UNKNOWN_PARENT:diagnostic",
+        "UNKNOWN_PARENT_EXTRA",
+        "PUBLIC_MUTATION_CPU_BUDGET:retry",
+        "PUBLIC_MUTATION_CPU_BUDGET_EXTRA",
+        "OWNER_REORG_TERMINATION_CPU_REQUIRED",
+        "STATE",
     ] {
         let proxy = Proxy::start(
             server.address,
@@ -1055,13 +1140,7 @@ fn actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advanc
         .unwrap();
     node.admit(&equal, ingress::now().unwrap()).unwrap();
     let server = Server::start(&dir.path().join("equal-receiver"), &settings);
-    {
-        let mut owner = server.node.lock().unwrap();
-        let id = owner.admit(&packets[0], ingress::now().unwrap()).unwrap();
-        owner
-            .activate_observed(id, ingress::now().unwrap())
-            .unwrap();
-    }
+    submit_scripted_packet(&server.node, &packets[0]);
     let proxy = Proxy::start(server.address, Interruption::BudgetAfterNativeAck);
     let guest = identity(120);
     let outcome = submit_with_verified_parent_recovery(
@@ -1192,13 +1271,7 @@ fn actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies(
     node.activate_observed(second_id, ingress::now().unwrap())
         .unwrap();
     let server = Server::start(&dir.path().join("receiver"), &settings);
-    {
-        let mut owner = server.node.lock().unwrap();
-        let old_id = owner.admit(&packets[0], ingress::now().unwrap()).unwrap();
-        owner
-            .activate_observed(old_id, ingress::now().unwrap())
-            .unwrap();
-    }
+    submit_scripted_packet(&server.node, &packets[0]);
     let guest = identity(105);
     let equal = submit_with_verified_parent_recovery(
         &node,

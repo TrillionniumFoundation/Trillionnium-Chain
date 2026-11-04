@@ -5350,3 +5350,53 @@ independent-acceptance exit conditions remain unchanged. New hosted outcomes
 continue to bind their own exact head/actual merge, source, ELF and complete
 terminal evidence. No all-blocker, performance qualification or activation
 statement follows from these local functional and CI wiring corrections.
+
+### 2026-11-04 original hosted closure and authenticated Submit recovery
+
+The [complete hosted continuation](../../evidence/pon-runtime-fixture-closure-20261103/hosted-current/README.md)
+retains independent C1 `c5dd7c` and C2 `b4bdf` source/actual-merge observations.
+Each cohort's four x64/ARM Node lanes actually completes the original 974-name
+registry with 951 PASS, zero failures and 23 original ignored, plus strict Node
+Clippy. Each cohort's four original workspace CPU lanes separately compiles the
+full workspace with `--no-run` and executes the same 50 named native selectors
+successfully. Repeated lane executions do not add unique tests or establish a
+full workspace run. All eight original W1 History lanes pass 25 names with one
+original ignored; both actual C2 fresh-service lanes pass the canonical source
+receipt and genuine fixed-Host preparation while their business gates still fail.
+
+Both C1 runtime lanes execute all nine original fixed-Host selectors successfully,
+including the full evaluation sync in 623.11 and 584.11 seconds. Their subsequent
+workspace invocation fails in `public_submit_recovery`: six observed PASS, three
+explicit FAILED, one entered selector interrupted by worker panic followed by
+destructor SIGABRT, and fourteen without observed execution. All raw streams,
+original resource limits, empty-child cleanup and absent final summary remain.
+
+The actual local reproduction identifies two separate defects. Scripted fork
+activation on an already public-bound Node omits its original CPU scope. The
+production recovery branch tests local ErrorCode values even though the correct
+remote constructor deliberately retains no local code. Restore the two documented
+authenticated Submit actions through a private enum for exact UNKNOWN_PARENT and
+PUBLIC_MUTATION_CPU_BUDGET response fields after the existing signature/context
+checks. Keep local EOF/stage identity, owner-fatal policy, full retained-parent
+and Head-History-Head verification, original caps and absolute epoch unchanged.
+The fixture uses the same metered Node CPU domain after a real pinned Head;
+normal join errors still fail, while unwind cleanup preserves the original error
+without a second panic aborting the registry.
+
+The original 24 TCP test names and 194 test-body assertions remain. Six additional
+signed label lookalikes strengthen an existing negative matrix. The final original
+profile run completes 24 PASS, zero failures and zero ignored in 16.21 seconds.
+The original abort and intermediate 21/3 attempt remain in the evidence; that
+intermediate failure was a new fixture assertion confusing the always-false
+physical-execution qualification field with W1 execution. Correcting that check
+does not waive work or CPU accounting. Formatter, strict complete-workspace
+Clippy and final-source 68 source-integrity negative controls pass. Further
+bounded native and exact-commit checks retain their own actual records; this
+local correction does not inherit whole-workspace or Host success for new source.
+
+The original four-second pressure result remains 0/1, F0 remains 1/6 within the
+original 30-second windows and 0/6 under the scheduled four-second SLO, and each
+three-campaign cohort remains 3/27. Original failed/unknown outcomes and nested
+timing boundaries remain. Work economics, independent hardware/operators/review,
+evaluation, quantum/DAA, useful model releases, custody, external effects,
+whole-chain PQ, release and activation retain their existing HOLD exit conditions.
