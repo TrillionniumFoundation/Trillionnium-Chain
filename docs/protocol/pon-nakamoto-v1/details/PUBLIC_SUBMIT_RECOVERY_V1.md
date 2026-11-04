@@ -43,7 +43,11 @@ guarantee, an SLA, a fastest-producer bound, or a combined physical-memory bound
 
 Every call is recorded, including every transport failure and authenticated
 business refusal. Decisions use [typed internal error identities](INTERNAL_ERROR_IDENTITY.md)
-at the existing local or authenticated remote boundary. Exact local `FRAME_EOF` observed in `challenge` or
+at the existing local boundary and a separate private recovery enum for the two
+explicit authenticated remote responses below. A remote refusal keeps no local
+`ErrorCode`; only its exact validated response field can select those existing
+business actions. Display text and prefix lookalikes cannot select local error
+authority. Exact local `FRAME_EOF` observed in `challenge` or
 `solution-body-response` permits a bounded transport retry. A generic CLI exit2, IO string,
 external timeout, signature/context failure, clock deferral, or unknown error
 does not. Retrying retains the original complete packet bytes; transport cookies

@@ -1,0 +1,410 @@
+{
+  "schema": "trnm-error-diagnostics-independent-review-v1",
+  "reviewed_utc": "2026-11-03T20:38:01.444349+00:00",
+  "reviewer": "/root/cache_scope_review",
+  "scope": "Independent read-only source, frozen patch, metadata and retained observation review. Only this report is written; no Cargo, Rust compilation, native test, Python test suite, control probe, source edit, GitHub or external action is performed by this reviewer.",
+  "base_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "main_head_observed": "af570eaef44870ba3ec1f3d5be2cbdde2981931d",
+  "reviewed_candidate": "candidate-v2",
+  "v1_patch": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/error-diagnostics.patch",
+    "sha256": "30fdd669e5de6acf929b8e62cfe9f80cd70672abd9e45b9b9f582287442a4503",
+    "bytes": 23501
+  },
+  "v2_patch": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/error-diagnostics-v2.patch",
+    "sha256": "45c21442c0ccf4254533c1f2b208a47626945f70d7295251590758042e5395fe",
+    "bytes": 26562
+  },
+  "candidate_v2_manifest": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/candidate-v2.json",
+    "sha256": "fbc2418157821ea32c0e26b7cd971f07e5992d9d29ae01c9c60d0cfbeba3e13c",
+    "bytes": 1813
+  },
+  "candidate_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "base_sha256": "201844a3dcd51fc837d9c4e69dcf008a76cb98349f1685fabd0159cb7f72e076",
+      "current_source_matches_b280": true,
+      "v1_sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+      "v2_sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+      "v2_bytes": 64625,
+      "v1_and_v2_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+      "base_sha256": "02486164a4e45cb72c83aaf0bd5dd17820c12cd6e841395ed84413416003e288",
+      "current_source_matches_b280": true,
+      "v1_sha256": "7e4263668c449aef922a4da5490ad8d70b9e7295ec0e2a355bf9acafbd143612",
+      "v2_sha256": "7e4263668c449aef922a4da5490ad8d70b9e7295ec0e2a355bf9acafbd143612",
+      "v2_bytes": 19651,
+      "v1_and_v2_identical": true
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "base_sha256": "d135137255eb9b4b55c47547b341f65049b85774fd5d24e14d90e0948c93dc19",
+      "current_source_matches_b280": true,
+      "v1_sha256": "1333851e0b550ca16d0368aaae09a7d878ea4c666f4ddc4a8cb1aaad5e0096b1",
+      "v2_sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+      "v2_bytes": 49098,
+      "v1_and_v2_identical": false
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "base_sha256": "5c97503bfc319b551e6d6880c4551f45638189f4c02e1e6b1b6c4182b8c71b03",
+      "current_source_matches_b280": true,
+      "v1_sha256": "8cb4d13506342d6e1391ffccb1baaae56e7587c1dc63b1049a38058ca4a2562e",
+      "v2_sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+      "v2_bytes": 48636,
+      "v1_and_v2_identical": false
+    }
+  ],
+  "unchanged_control_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+      "current_source_matches_b280": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "sha256": "2f695c8b6a28315c52ab1a198399b4f1fdf235fc1881621023cec62ddcb3c41e",
+      "current_source_matches_b280": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "sha256": "bcb8fd081fcb7e73712ba057aa8015a4e99756f8f24bd47af088719d3a713ce4",
+      "current_source_matches_b280": true
+    }
+  ],
+  "verdict": {
+    "static_control_path_regression_found": false,
+    "new_reachable_authorization_or_retry_vulnerability_found": false,
+    "initial_reader_consistency_findings_closed_in_v2": true,
+    "recommendation": "Worth incorporating as a narrowly scoped future-observation improvement, subject to exact candidate source compilation/lints/native controls and unchanged resource budgets. It exposes actual legacy dispatch messages without granting them typed identity. It does not close historical attribution, source-specific native execution or service-performance acceptance.",
+    "native_candidate_qualified": false,
+    "actual_host_qualified": false,
+    "performance_benefit_measured": false,
+    "all_blockers_closed": false
+  },
+  "findings": [
+    {
+      "id": "ED-01",
+      "status": "closed_by_candidate_v2",
+      "severity": "diagnostic-evidence consistency; not production authorization",
+      "v1_problem": "The v1 reader validated code syntax and kind membership independently and would accept typed ROOT, typed PUBLIC_EOF with cancelled kind, or REMOTE_TERMINAL with transport kind. This was established by reading its predicate, not by running a new probe.",
+      "v2_resolution": "Reject typed ROOT and all non-null typed codes with unclassified kind; remote_refusal permits only no code or REMOTE_TERMINAL/REMOTE_RETRYABLE; those controlled remote codes permit remote_refusal/local_structure; PUBLIC_EOF permits transport/local_structure. Validation never derives code or origin from Display text.",
+      "v2_reference": "scripts/pon_public_v3_phase_read.py:241-261",
+      "limit": "This deliberately narrow set of relations is not a complete ErrorCode-to-ErrorKind registry. Unknown uppercase code spellings with otherwise allowed kinds are not universally rejected. Neither text nor ErrorKind authenticates control origin."
+    },
+    {
+      "id": "ED-02",
+      "status": "bounded_cost_unmeasured",
+      "severity": "resource accounting and qualification limit",
+      "finding": "Capture adds no new heap-allocation call or lock acquisition, but optional observer records become materially larger and formatting/copying/serialization have nonzero cost. Existing optional try_lock scopes become longer by bounded capture work.",
+      "action": "Measure size_of/deltas and observed memory under the original profile before making a resource-cost claim; do not raise capacity or Host limits to hide the overhead."
+    },
+    {
+      "id": "ED-03",
+      "status": "retained_unknown",
+      "severity": "historical attribution limit",
+      "finding": "Original source-116 F0 has 406 request records, 295 rejected dispatches with typed code null, and no new attachments. 294 have terminal response/null and one has work/PUBLIC_EOF. These facts cannot identify all 295 as ROOT or establish their causal relation to EOF.",
+      "action": "Retain all original nulls and source binding. Only future actual captures may carry new diagnostic text."
+    },
+    {
+      "id": "ED-04",
+      "status": "awaiting_exact_source_native_validation",
+      "severity": "candidate qualification",
+      "finding": "The two Rust candidate files have not been compiled or executed in this review. b280 native results and the final current-ELF registry belong to a different source/ELF and cannot be promoted into candidate results.",
+      "action": "After adoption, build the exact combined source under the original profile and execute the existing observer/error/paid-TCP ROOT controls plus the added meaningful controls. Preserve original assertions, registry entries, ignored tests, deadlines and resource budgets."
+    }
+  ],
+  "control_and_boundary_review": [
+    {
+      "check": "Legacy ROOT does not acquire typed identity",
+      "result": "pass_static",
+      "evidence": [
+        "error.rs:392-401 parses only the pre-existing ErrorCode registry; ROOT remains absent",
+        "candidate request_observation.rs:26-54 copies kind and formats only the actual borrowed Error",
+        "candidate request_observation.rs:657-673 and 787-791 still get typed code solely from Error::code",
+        "The patch does not modify error.rs, public_v3.rs, History import, policy, owner, generation, cache or ledger logic."
+      ],
+      "limit": "Kind itself is a diagnostic category. The private request_history_budget flag can change owner-stop behavior without changing kind/code/text and is intentionally not reconstructed."
+    },
+    {
+      "check": "Original nineteen stages, acceptance, cancellation, deadline and cache boundaries",
+      "result": "pass_static",
+      "evidence": [
+        "Five source regions are byte-identical and separately fingerprinted below.",
+        "Only diagnostic fields, serialization, capture inside existing callbacks and snapshot projection are added to production observation code.",
+        "The same Result is returned/consumed; no Error conversion, task_alive/Host check removal, retry decision, cache key, phase slot, reservation or live deadline is changed."
+      ],
+      "timing_limit": "Capture is extra work. In terminal_error it executes before existing wait.finish calls, so actual ended_ns/CPU/wall values can include its cost. Original finish call sites, clocks and deadline rules remain; numerical measurements are not claimed identical."
+    },
+    {
+      "check": "Pre-dispatch real Err remains legal",
+      "result": "pass_static",
+      "evidence": [
+        "public_v3.rs:2022-2056 output BufferPermit or mutation CPU reservation may fail before dispatch_started is set",
+        "public_v3.rs:2172-2175 still records the real Err; 2213-2217 records dispatch outcome only when dispatch started",
+        "v2 reader allows diagnostic with dispatch_started=false and dispatch_accepted=null"
+      ],
+      "withdrawn_initial_suggestion": "Requiring dispatch_started=true would incorrectly reject real existing failures and was explicitly withdrawn."
+    },
+    {
+      "check": "Display text remains independent of typed identity",
+      "result": "pass_static",
+      "evidence": [
+        "error.rs:503 display_changes_cannot_change_typed_retry_or_owner_stop_identity keeps typed code/kind authority independent from prose",
+        "error.rs:273-275 local_integrity can override kind to local_structure while retaining code",
+        "error.rs:339-359 distinguishes untyped remote text from controlled RemoteTerminal/RemoteRetryable",
+        "v2 reader controls preserve changed Display including ROOT while retaining the independently supplied typed code"
+      ],
+      "withdrawn_initial_suggestion": "Requiring Display to equal a typed code, or deriving EOF/ROOT origin from text, would violate existing semantics and was explicitly withdrawn."
+    },
+    {
+      "check": "UTF-8 and retention bound",
+      "result": "pass_static",
+      "evidence": [
+        "ObservedErrorDiagnostic has a private 96-byte fixed buffer, private length and truncation state.",
+        "write_str takes min(input byte length, remaining capacity), backs up only to a UTF-8 boundary, copies only that prefix, then refuses further text once truncated.",
+        "Because input is str, boundary retreat is at most three bytes; length remains <=96 and no full-message scan is introduced.",
+        "Error Display at error.rs:375-378 is only f.write_str(&self.message), not recursive source formatting or allocation.",
+        "Serialization reads only bytes[..len], and no Error/source object is retained in the new data."
+      ],
+      "limit": "The 96-byte limit is decoded UTF-8 message bytes. JSON escaping can expand those bytes (up to six output bytes for an ASCII control character), so it is not a 96-byte serialized-object limit. This is bounded raw diagnostic retention, not text sanitization or origin authentication."
+    },
+    {
+      "check": "No added wait or capture allocation",
+      "result": "pass_static",
+      "evidence": [
+        "Existing Handle::update and update_task remain byte-identical and use try_lock.",
+        "Capture occurs inside the already successful try_lock callback, not before acquisition or in a blocking retry.",
+        "write! targets the fixed writer; it does not construct a String, Vec, Box or source chain.",
+        "Snapshot retains the existing blocking lock behavior. coverage_complete is intended after service/worker joins; a live snapshot is not atomic. No new snapshot lock is added or turned into an authorization or timing exemption."
+      ],
+      "limit": "The existing Arc<Cell> allocation is larger and snapshots/output carry larger data. Lock hold duration and measured cost are not zero."
+    },
+    {
+      "check": "No observer path",
+      "result": "pass_static",
+      "evidence": [
+        "public_v3.rs:1839 passes observer=None for default metrics service",
+        "public_v3.rs:2264-2266 does not call connection() with None",
+        "public_v3.rs:2689-2692 does not create TaskObservation when no connection observation exists",
+        "public_v3.rs:2173-2175 and 2785-2786 only call diagnostic methods when records exist",
+        "TaskObservation::local sets network=None; update_task does not run the capture closure"
+      ],
+      "conclusion": "With no request observer, no new Cell/diagnostic field construction or clearing, message formatting, added diagnostic allocation or added diagnostic lock is executed. This is a source-path conclusion, not a measured zero-cycle or identical-binary claim."
+    },
+    {
+      "check": "Reader version, shape, bounds and association",
+      "result": "pass_static_with_explicit_scope",
+      "evidence": [
+        "Exact attachment schema, six top-level keys, three detail keys, no-control-authority=false and untrusted=true flags, integer byte capacity exactly96",
+        "Known ErrorKind spelling, string message and exact boolean truncation; UTF-8 size<=96 and truncated prefix>=93",
+        "Typed slots must exist; a missing detail cannot accompany known typed cause; an accepted dispatch cannot carry Err detail; terminal Err must have a string phase",
+        "v2 rejects the specific impossible code/kind combinations in ED-01 and preserves local_integrity exceptions",
+        "Dispatch and terminal summaries remain separate; neither infers that ROOT caused EOF nor that EOF is the dispatch cause",
+        "Attachments require v4 observer scope; a missing historical attachment returns without synthesizing data"
+      ],
+      "limits": [
+        "No complete ErrorCode policy table is duplicated.",
+        "No global inference of private budget origin or requires_owner_stop is made.",
+        "The terminal phase is checked as a string, not authenticated as a causal producer.",
+        "This reader is local evidence-consistency checking, not Host authentication, consensus or release acceptance."
+      ]
+    }
+  ],
+  "unchanged_regions": [
+    {
+      "name": "19_stage_definitions",
+      "start_marker": "/// Fixed local phases.",
+      "end_marker_exclusive": "pub struct PublicRequestObservation {",
+      "identical": true,
+      "bytes": 4766,
+      "sha256": "8b5a636cb31e536780bdd6a3587a7538ab2a63bb636197b42e75f95fe09240bb"
+    },
+    {
+      "name": "original_nonblocking_handles",
+      "start_marker": "struct Handle {",
+      "end_marker_exclusive": "pub(super) struct ConnectionObservation {",
+      "identical": true,
+      "bytes": 803,
+      "sha256": "d2f748405ec25ec176ea2986a10b3b58c0e71ccfb2f15ad4f2a71ba0cc00aded"
+    },
+    {
+      "name": "phase_recorder_guard_and_cpu_stamp",
+      "start_marker": "#[derive(Clone)]\nstruct PhaseRecorder",
+      "end_marker_exclusive": "#[cfg(test)]\nmod tests {",
+      "identical": true,
+      "bytes": 5906,
+      "sha256": "83ee1c96258db42f2cfa8e52aa2e8aeef839a8f2b8dce7fdef7fd7e1f98b071b"
+    },
+    {
+      "name": "queue_and_dispatch_outcomes",
+      "start_marker": "    pub(super) fn queue_started",
+      "end_marker_exclusive": "    pub(super) fn dispatch_error",
+      "identical": true,
+      "bytes": 1133,
+      "sha256": "c08be23b56ffddf6a1539d6b5b45e09d05e3190c78871ba668bfac97e75a849a"
+    },
+    {
+      "name": "local_network_gate",
+      "start_marker": "pub(in crate::ingress) struct TaskObservation {",
+      "end_marker_exclusive": "    pub(super) fn queue_started",
+      "identical": true,
+      "bytes": 820,
+      "sha256": "0bc01c2c8cb45b252f0805a34e34d5deea85effcdd092b706e73fc89ab50ed85"
+    }
+  ],
+  "python_ast_comparison": [
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "unchanged_function_count": 21,
+      "changed_original_functions": [
+        "validate_v4_record",
+        "execution_summary"
+      ],
+      "removed_original_functions": [],
+      "added_functions": [
+        "validate_request_error_diagnostics",
+        "request_error_diagnostic_summary",
+        "counts"
+      ]
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "unchanged_function_count": 41,
+      "changed_original_functions": [],
+      "removed_original_functions": [],
+      "added_functions": [
+        "diagnostic_record",
+        "test_request_error_diagnostic_extension_retains_legacy_unknown_and_typed_separation",
+        "test_request_error_diagnostic_keeps_distinct_terminal_cause_and_truncation",
+        "test_request_error_diagnostic_keeps_predispatch_errors_and_legal_kind_overrides",
+        "test_request_error_diagnostic_rejects_bad_scope_unbounded_or_reclassified_data"
+      ]
+    }
+  ],
+  "memory_estimate": {
+    "measured": false,
+    "target_assumption": "x86_64, 8-byte pointer/usize alignment, typical rustc niche layout; Rust repr(Rust) aggregate layout is not guaranteed and these are estimates, not measured bounds.",
+    "message_capacity_bytes": 96,
+    "max_retained_records": 16384,
+    "raw_inline_message_buffers_per_retained_cell": 3,
+    "raw_inline_message_capacity_at_max_bytes": 4718592,
+    "raw_inline_message_capacity_at_max_mib": 4.5,
+    "typical_observed_error_diagnostic_bytes": 128,
+    "typical_option_diagnostic_bytes": 128,
+    "typical_request_error_diagnostics_bytes": 288,
+    "typical_increment_per_cell_bytes": 416,
+    "typical_retained_increment_at_max_bytes": 6815744,
+    "typical_retained_increment_at_max_mib": 6.5,
+    "typical_snapshot_increment_at_max_bytes": 4718592,
+    "typical_snapshot_increment_at_max_mib": 4.5,
+    "typical_simultaneous_retained_plus_one_snapshot_increment_mib": 11.0,
+    "alternate_non_niche_option_estimate": {
+      "option_diagnostic_bytes": 136,
+      "request_attachment_bytes": 304,
+      "cell_increment_bytes": 440,
+      "retained_at_max_mib": 6.875,
+      "one_snapshot_at_max_mib": 4.75
+    },
+    "allocation_timing": "Cells are allocated only for retained accepted connections, up to observer capacity; they retain space even when diagnostics are None. Creating an observer preallocates its unchanged slot registry. None initialization does not guarantee that Rust clears all inactive payload bytes; actual capture explicitly clears its 96-byte buffer.",
+    "not_included": [
+      "allocator size-class/header effects",
+      "existing row padding or layout reordering",
+      "serialized JSON output and Python objects",
+      "multiple concurrent snapshots",
+      "cache effects and elapsed CPU/wall cost"
+    ],
+    "minimal_followup_measurement": [
+      "size_of::<ObservedErrorDiagnostic>()",
+      "size_of::<Option<ObservedErrorDiagnostic>>()",
+      "size_of::<RequestErrorDiagnostics>()",
+      "base/candidate size_of::<PublicRequestObservation>() and TaskProgress and Cell",
+      "original-profile observed memory/CPU with and without observer; no budget relaxation"
+    ]
+  },
+  "existing_validation_inspected": {
+    "executed_by_this_reviewer": false,
+    "v2_python_controls": {
+      "started_utc": "2026-11-03T20:32:49.018540+00:00",
+      "tests_run": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "successful": true,
+      "elapsed_seconds": 0.2907325249980204,
+      "source_sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+      "controls_sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+      "scope": "v2 Python reader controls; synthetic diagnostic data not native evidence; v1 prior results retained; no Rust compilation/native or performance evidence"
+    },
+    "v2_controls_receipt": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/reader-controls-v2.json",
+      "sha256": "6b719c670e67e39d7852ed0e14bae61374e25eccbbbd39e2a7a561d219f9e65f",
+      "bytes": 528
+    },
+    "v2_controls_log": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/reader-controls-v2.log",
+      "sha256": "5a13816ba7b7fb550121911821b99ffc43f5afa3f870bf0b540c3fcf9f1e9108",
+      "bytes": 6979
+    },
+    "preserved_prior_attempts": [
+      {
+        "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/reader-controls.json",
+        "sha256": "78c7d583d94f0c5745eaf0c5997e8f21c559b61603a65069d1acbf232c642d43",
+        "bytes": 504
+      },
+      {
+        "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/reader-controls-complete-fixtures.json",
+        "sha256": "16eb9ab05151b48be0361696ec7758b0b9a9c9219ba825ae9c813540c8bc4222",
+        "bytes": 575
+      }
+    ],
+    "original_python_functions_and_tests": "41 original functions in the reader test file are AST-identical, none removed; four new test methods and one fixture helper are added. Reader original functions only validate_v4_record and execution_summary change, with additive attachment validation/projection.",
+    "rust_source_test_delta": "Three new observation tests plus five additional assertions in six added lines of the existing paid-TCP ROOT rejection cache test; original request deadlines, full Work and paid CPU assertions remain. These candidate Rust tests have not been executed here."
+  },
+  "historical_evidence": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/continuation-review/f0/execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+    "sha256": "9ccdc68d503c872a666cd1db7a89afdf1891dc6ca4727f00ad495d8bf21778e0",
+    "bytes": 4923704,
+    "observed_source": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "record_count": 406,
+    "untyped_rejected_dispatches": 295,
+    "new_attachment_count": 0,
+    "unknown_terminal_response_count": 294,
+    "unknown_terminal_work_eof_count": 1,
+    "all_295_are_root": null,
+    "backfill_performed": false,
+    "author_raw_gap_receipt": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/raw-gap-readback.json",
+      "sha256": "4bf499a9f4bd3f8d1a37cef20dc3517e906a509bb2913ce0ed158dd19b2fdfaf",
+      "bytes": 8519
+    },
+    "compatibility_reason": "Old records have no extension, so the new validator returns immediately and execution_summary adds no diagnostic key. Existing v4 phase validation and all other reader functions are unchanged. Author controls report exact original/candidate output equality; this reviewer independently confirmed raw counts and absence, not reran derivation."
+  },
+  "smaller_reliable_options": [
+    {
+      "option": "Keep v2 as the generic two-boundary attachment",
+      "assessment": "Recommended if both dispatch and terminal legacy causes are required. The separate slots preserve an actual dispatch ROOT together with later EOF/cancellation without reclassification; one combined error slot would lose that distinction."
+    },
+    {
+      "option": "Narrow to dispatch-only bounded diagnostics",
+      "assessment": "A smaller scope can address the specific 295 untyped-dispatch observation gap while retaining the original terminal typed code. It would deliberately leave legacy terminal text unknown and needs a clear schema. This is a scope tradeoff, not required for safety; no edit is proposed in this review."
+    },
+    {
+      "option": "Compact internal fields after actual size measurement",
+      "assessment": "If original memory budget is materially affected, a u8 length and compact stored kind with string mapping only during serialization, plus constant metadata emitted at serialization, can reduce redundant bytes. Do not start a broad Cell/storage refactor or add per-error allocation before measurement."
+    },
+    {
+      "option": "Promote ROOT text into ErrorCode or route through a formatted logger",
+      "assessment": "Rejected. It changes semantic/control identity or adds logging/formatting/locking cost and does not preserve the explicit original Error boundary."
+    }
+  ],
+  "completion_limits": [
+    "This is a read-only candidate review, not adoption approval, native PASS or performance qualification.",
+    "No existing deadline, Host budget, capacity, cache boundary or test expectation is relaxed.",
+    "Future candidate source and ELF require their own evidence; previous b280/116 measurements retain their original identity."
+  ]
+}

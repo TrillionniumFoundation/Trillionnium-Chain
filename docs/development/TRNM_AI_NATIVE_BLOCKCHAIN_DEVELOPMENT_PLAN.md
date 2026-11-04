@@ -5337,3 +5337,247 @@ server root cause or public amplification. Calling-thread and nested timing
 scopes remain separate. Work security, original public service, independent
 operators/evaluators, quantum/DAA, model benefit, custody, economics, external
 effects, whole-chain PQ, release and activation remain HOLD.
+
+
+### 2026-11-03 complete original-source readback and paid evaluation activation
+
+Preserve the concurrent `af570eae`, `12171edc` and `8ebded73` evidence additions
+on the existing integration branch. The
+[runtime continuation record](../../evidence/pon-runtime-fixture-closure-20261103/README.md)
+now accounts for b280's complete original-profile local run: 947 passed, one
+UnixListener EPERM failure before witness ready, and 23 original ignored,
+covering all 971 registered identities. Four actual hosted head/merge and
+x64/ARM lanes each complete 948 passed, zero failed and the same 23 ignored.
+The original 43 PQ names pass in all four lanes. Repeated selectors, nested
+child harnesses and separate release-profile results do not add unique coverage.
+
+Both actual b280 runtime lanes pass the original 18-sample architecture fixture
+and then fail the evaluation fixture at its direct fork activation with
+`OWNER_REORG_TERMINATION_CPU_REQUIRED`. Their actual fixed Host checks and empty
+owned-child cleanup pass; the remaining seven Host selectors were not executed.
+The later retirement activation has the same missing scope but is not a second
+observed failure. Both calls now use the same Node's original CPU domain and the
+existing metered Submit path to activate an exact already-admitted packet. The
+helper checks unchanged stored-block count, exact packet bytes, active tip and
+generation, known positive CPU settlement and zero live owners. It neither
+replays W1 for the durable duplicate nor creates a fresh CPU allowance. The
+original offline construction, assertions, listener leases, request policy and
+three 64-page retirement chunks remain. A new real TCP control checks the old
+unmetered refusal and both same-domain paid activations; actual pinned Head
+responses establish listener readiness before stop/join and reconstruction.
+
+The public request observer now has a separately versioned bounded diagnostic
+attachment. Dispatch and terminal errors retain their actual existing kind and
+at most 96 UTF-8 bytes of display text. Typed error identity and owner-stop/retry
+behavior remain separate: legacy ROOT still has no typed code, peer text grants
+no control authority, and historical missing values are not backfilled. The
+three new native controls and the original paid TCP ROOT replay control pass.
+Reader validation passes 35 controls; the full applied Python set passes 201.
+Measured public-record layout grows from 2,376 to 2,664 bytes. The 4.5 MiB
+capacity product is not RSS, and capture is not claimed to be free.
+
+The diagnostic-only source completes all 974 Node identities: 950 passed,
+one original UnixListener EPERM failure and 23 original ignored, with native
+exit 101 and no timeout. Its original-profile build, formatter and strict
+workspace/all-target/all-feature Clippy pass. The final fixture composition has
+its own source manifest `545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82`
+and Node ELF `34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf`.
+That composition's build, formatter, strict Clippy, new Cargo integration control,
+25 meaningful History controls and 56 of 57 selected library controls pass;
+the selected witness listener retains the same actual EPERM refusal. Its full
+974 run is in progress at this publication snapshot and must not inherit the
+prior ELF's complete result. Actual final-source Host acceptance is separate.
+
+The W1 workflow's exact History reader changes only its stale expected result
+from 22 passed/one ignored to the actual 25 passed/one ignored. Its original
+command, native assertions, ignored child and all five other counts remain.
+The cancelled b280 W1 job is not represented as an observed reader failure.
+All incomplete executor attempts, the initial reader fixture errors, the new
+fixture's first readiness failure and its intermediate compile error are retained.
+
+The original four-second pressure gate still confirms zero of one; F0 remains
+one of six in thirty seconds and zero of six in four seconds; three campaigns
+confirm three of 27. In the measured four-second Legacy path the first History
+returns at 2.600084369 seconds, its only completed import ends at 3.903518011,
+and the next response misses the original cutoff. Cold History's zero-credit
+start and 100 ms reservation at 0.25 CPU-second/second require 400 ms from cold
+epoch creation before that credit can be earned; no warm-up exception is granted. The separate F0 ROOT
+client fails in admission before any publication or activation. A proposed
+AuthenticatedV1 append-tail graph reuse does not cover these observed paths and
+also introduces unqualified callback/schema-fence behavior; retain its rejected
+scope analysis without applying the patch. Nested timing scopes are not summed.
+
+Original service completion, cheapest-work/rejection economics, independent
+hardware/operators/review/evaluation, quantum/DAA, model benefit, custody,
+external effects, whole-chain PQ, release and activation remain HOLD under the
+existing exit conditions. Source coverage, functional corrections and an
+explicitly failed business observation cannot promote those qualifications.
+
+
+### 2026-11-03 final composed registry and W1 source-receipt continuation
+
+The final fixture/diagnostics composition now has its own complete actual
+974-entry terminal: 950 passed, one original UnixListener EPERM failure before
+witness ready, and 23 original ignored. Native exit remains 101, no timeout,
+all original 971 names plus the three diagnostics names are accounted for, and
+the original 2700-second supervisor remains. Manifest `545222b5...` and ELF
+`34bd6631...` are unchanged through terminal. The earlier PENDING snapshot and
+separate diagnostic-only result remain untouched; the
+[complete terminal record](../../evidence/pon-runtime-fixture-closure-20261103/fixture-composed-terminal/terminal-summary.json)
+and original raw log are appended.
+
+The clean c5dd source gate finished at 22:10:08 UTC while that native invocation
+was still running; the native driver recorded completion at 22:16:52 UTC with
+its terminal manifest again matching. The invocation retains its actual 8ebded
+base; there was no second full native run in the clean checkout. Exact c5dd
+source, all 7723 tracked entries, preflight, repository links, 376 pins, inventory
+and the three actual locked Linux graphs pass with unchanged locks. The
+[complete source-gate archive](../../evidence/pon-runtime-fixture-closure-20261103/c5dd-exact-commit-gates.json)
+retains all original command streams and graph bytes.
+
+The next actual hosted failure is the W1 fresh source gate: head job126239416973
+and actual-merge job126239417154 independently fail because the producer
+writes source-before.json but the existing Host lease verifier requires
+source.json. It fails before native preparation or Host acceptance, so none of
+the unexecuted service/History checks becomes a failed native observation or a
+pass. Change only that workflow producer's output basename to source.json; keep
+the event-bound source arguments, complete current tracked-tree comparison,
+Host resources, original native commands and budgets. Real clean-source controls
+reproduce the old missing-file refusal, accept the corrected producer and reject
+three wrong/stale receipts. The applied 98 CI-contract controls and all 376 pins
+pass; these source-gate controls do not qualify repaired real-Host execution.
+The [source-receipt continuation](../../evidence/pon-runtime-fixture-closure-20261103/README.md#w1-fresh-service-source-receipt-path)
+retains the actual hosted failure, unchanged source guards and separate
+review/application evidence.
+
+The original four-second, F0, three-campaign, cheapest-work economics and
+independent-acceptance exit conditions remain unchanged. New hosted outcomes
+continue to bind their own exact head/actual merge, source, ELF and complete
+terminal evidence. No all-blocker, performance qualification or activation
+statement follows from these local functional and CI wiring corrections.
+
+### 2026-11-04 original hosted closure and authenticated Submit recovery
+
+The [complete hosted continuation](../../evidence/pon-runtime-fixture-closure-20261103/hosted-current/README.md)
+retains independent C1 `c5dd7c` and C2 `b4bdf` source/actual-merge observations.
+Each cohort's four x64/ARM Node lanes actually completes the original 974-name
+registry with 951 PASS, zero failures and 23 original ignored, plus strict Node
+Clippy. Each cohort's four original workspace CPU lanes separately compiles the
+full workspace with `--no-run` and executes the same 50 named native selectors
+successfully. Repeated lane executions do not add unique tests or establish a
+full workspace run. All eight original W1 History lanes pass 25 names with one
+original ignored; both actual C2 fresh-service lanes pass the canonical source
+receipt and genuine fixed-Host preparation while their business gates still fail.
+
+Both C1 runtime lanes execute all nine original fixed-Host selectors successfully,
+including the full evaluation sync in 623.11 and 584.11 seconds. Their subsequent
+workspace invocation fails in `public_submit_recovery`: six observed PASS, three
+explicit FAILED, one entered selector interrupted by worker panic followed by
+destructor SIGABRT, and fourteen without observed execution. All raw streams,
+original resource limits, empty-child cleanup and absent final summary remain.
+
+The actual local reproduction identifies two separate defects. Scripted fork
+activation on an already public-bound Node omits its original CPU scope. The
+production recovery branch tests local ErrorCode values even though the correct
+remote constructor deliberately retains no local code. Restore the two documented
+authenticated Submit actions through a private enum for exact UNKNOWN_PARENT and
+PUBLIC_MUTATION_CPU_BUDGET response fields after the existing signature/context
+checks. Keep local EOF/stage identity, owner-fatal policy, full retained-parent
+and Head-History-Head verification, original caps and absolute epoch unchanged.
+The fixture uses the same metered Node CPU domain after a real pinned Head;
+normal join errors still fail, while unwind cleanup preserves the original error
+without a second panic aborting the registry.
+
+The original 24 TCP test names and 194 test-body assertions remain. Six additional
+signed label lookalikes strengthen an existing negative matrix. The final original
+profile run completes 24 PASS, zero failures and zero ignored in 16.21 seconds.
+The original abort and intermediate 21/3 attempt remain in the evidence; that
+intermediate failure was a new fixture assertion confusing the always-false
+physical-execution qualification field with W1 execution. Correcting that check
+does not waive work or CPU accounting. Formatter, strict complete-workspace
+Clippy and final-source 68 source-integrity negative controls pass. Further
+bounded native and exact-commit checks retain their own actual records; this
+local correction does not inherit whole-workspace or Host success for new source.
+
+The original four-second pressure result remains 0/1, F0 remains 1/6 within the
+original 30-second windows and 0/6 under the scheduled four-second SLO, and each
+three-campaign cohort remains 3/27. Original failed/unknown outcomes and nested
+timing boundaries remain. Work economics, independent hardware/operators/review,
+evaluation, quantum/DAA, useful model releases, custody, external effects,
+whole-chain PQ, release and activation retain their existing HOLD exit conditions.
+
+### 2026-11-04 complete-validation throughput continuation
+
+The next candidate removes three repeated component costs while retaining each
+original complete validation boundary. Persistence walks both ordered State maps
+directly, preserving the exact union order, every per-key cancellation checkpoint,
+canonical delta bytes, SQL writes and complete transactional readback. This removes
+the temporary borrowed-key union tree and repeated map searches; the walk still
+visits all N keys and is not a touched-key O(k) implementation.
+
+Generic History reads the same complete CTE rows and checks every ancestor using
+inline fixed-width parent/work/root values. SQL conversion and shape-error order,
+local-integrity attribution, foreign-writer corruption detection, progress calls,
+page bounds and packet checks remain. No cross-request storage verdict is reused.
+Its O(H) per-page and O(H^2/p) full-pagination bounds remain. The indexed public/PQ
+History path is a separate implementation and receives no claimed benefit from
+this generic decoder change.
+
+Explicit PQ History caller authentication may retain at most eight canonical
+ML-DSA public-key expansions in the existing volatile intake budget. A hit requires
+both the complete SPKI bytes and expected key ID. Every new message/signature is
+verified and charged within the original attempt/byte/actual-CPU accounting.
+No cookie, authority, epoch, signature verdict or W1 result is cached. Optional
+material-lock contention or poison takes the original full charged verification
+path; original budget-lock errors still fail closed.
+
+Differential tests compare the earlier algorithms, including absent versus null
+values, complete progress/order, malformed SQL values, a foreign SQLite writer,
+fresh signatures, key churn and optional-cache lock contention. Explicit paired
+complete History/caller-auth observations run in the existing four-lane Node
+workflow using its unchanged compiler, test profile, CPU/attempt budgets and
+90-minute job cap. Delta discovery also has a paired observation inside the Node
+suite. Timing observations have no speed-ratio acceptance gate and are not
+end-to-end throughput, owner-release or business-confirmation evidence.
+
+Preflight and both locked Linux metadata graphs passed on base 362fbebe before
+the local executor became unavailable. New source requires its own hosted compile,
+format, strict Clippy, all retained Node controls, source-negative checks and
+terminal measurements; no unexecuted check is recorded as successful. The original
+four-second/F0/campaign failures remain. Operation-local account projection,
+committed-read ownership, resource fairness and complete client import still need
+separate evidence. Existing HOLD conditions and all activation flags remain.
+
+
+### 2026-11-04 readiness Draft preserves the current complete owner
+
+The isolated readiness Draft retains its own published `8543bd9f` ancestry and
+combines exact owner `bbcb3804576b9eb0b908eb3054bedccc189fb7ef`. The owner now
+contains the paid evaluation/Submit fixture corrections, canonical W1 source
+receipt, 25/1 History registry, ordered delta walk, inline generic History
+records, bounded PQ key expansion and exact W1 probe prefilter. Preserve every
+owner source, workflow, lock and 381 exact source pin without rewriting its
+measurements or promoting its pending hosted checks.
+
+The owner still has the original Cell rendezvous fixture; retain the already
+published readiness implementation byte-for-byte as blob
+`6a9660b4cd43fcb480a6f6859b01f60eff766312`. It is the sole workspace Rust
+difference from the owner. Preserve all historical qualification records and
+both complete plan histories. The new composition record binds the complete
+owner tree and exact retained overlays, including all current production
+inputs; no earlier binary qualifies this combined source.
+
+Original `8543bd9f` hosted runtime independently passed all 174 DA tests before
+its later evaluation CPU-owner failure. The owner's subsequent C1 evaluation
+success belongs to its own C1 source. These separate observations explain the
+composition; they are not a new combined native run. The current local execution
+environment is unavailable. Shell preflight, formatting, strict Clippy and
+native gates therefore require the original Actions on this exact new head
+and actual merge; only remote source/blob/pin and mechanical merge checks have
+been performed here.
+
+Retain original 200/250 ms request limits, 10-second setup wait, 30-second
+rendezvous lifetime, all Host/source checks, CPU budgets and service selectors.
+The newer owner's three original campaigns and two fresh-service jobs remain
+failed at their own exact source. Original four-second/16-hostile, F0, complete
+workspace, independent security/PQ and activation conditions remain OPEN.

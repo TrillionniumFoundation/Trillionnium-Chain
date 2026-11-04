@@ -61,6 +61,8 @@ struct ComputedArithmetic {
 }
 struct Fact {
     challenge: Hash,
+    // Derived from the complete checked input; never sufficient for a hit.
+    input_task: Hash,
     inputs: [u8; INPUT_BYTES],
     arithmetic: ComputedArithmetic,
 }
@@ -152,13 +154,14 @@ impl ArithmeticFactCache {
         // Current grammar, fields, task and target precede all cache access and
         // callbacks, exactly as in the retained original production verifier.
         let checked = checked_proof_statement(challenge, task, target, bytes)?;
+        let input_task = checked.actual_task;
         let inputs: &[u8; INPUT_BYTES] = bytes[4..4 + INPUT_BYTES]
             .try_into()
             .map_err(|_| FactError::Relation(WorkError::Length))?;
         let trace_claim = &bytes[PROOF_BYTES - 32..];
         let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
         progress(VerificationProgress::BeforeReplay).map_err(FactError::Cancelled)?;
-        if let Some(arithmetic) = self.lookup(challenge, inputs, observation)? {
+        if let Some(arithmetic) = self.lookup(challenge, input_task, inputs, observation)? {
             observation.exact_fact_found = true;
             if arithmetic.trace.as_slice() != trace_claim {
                 observation.trace_reused = true;
@@ -195,6 +198,7 @@ impl ArithmeticFactCache {
         if trace.as_slice() != trace_claim {
             self.publish(
                 challenge,
+                input_task,
                 inputs,
                 ComputedArithmetic {
                     trace,
@@ -218,6 +222,7 @@ impl ArithmeticFactCache {
             .map_err(|_| FactError::Unavailable)?;
         self.publish(
             challenge,
+            input_task,
             inputs,
             ComputedArithmetic {
                 trace,
@@ -238,6 +243,7 @@ impl ArithmeticFactCache {
     fn lookup<E>(
         &self,
         challenge: Hash,
+        input_task: Hash,
         inputs: &[u8; INPUT_BYTES],
         observation: &mut ArithmeticObservation,
     ) -> Result<Option<ComputedArithmetic>, FactError<E>> {
@@ -254,7 +260,10 @@ impl ArithmeticFactCache {
             if let Some(entry) = entry {
                 // No digest alone grants a hit: compare the exact canonical A/B
                 // bytes after the current call's field/task validation.
-                if entry.challenge == challenge && entry.inputs == *inputs {
+                if entry.challenge == challenge
+                    && entry.input_task == input_task
+                    && entry.inputs == *inputs
+                {
                     return Ok(Some(entry.arithmetic));
                 }
             }
@@ -264,6 +273,7 @@ impl ArithmeticFactCache {
     fn publish<E>(
         &self,
         challenge: Hash,
+        input_task: Hash,
         inputs: &[u8; INPUT_BYTES],
         arithmetic: ComputedArithmetic,
         observation: &mut ArithmeticObservation,
@@ -283,7 +293,10 @@ impl ArithmeticFactCache {
                 vacant.get_or_insert(index);
                 continue;
             };
-            if entry.challenge != challenge || entry.inputs != *inputs {
+            if entry.challenge != challenge
+                || entry.input_task != input_task
+                || entry.inputs != *inputs
+            {
                 continue;
             }
             if entry.arithmetic.trace != arithmetic.trace {
@@ -304,6 +317,7 @@ impl ArithmeticFactCache {
         let index = vacant.unwrap_or(state.replacement);
         state.entries[index] = Some(Fact {
             challenge,
+            input_task,
             inputs: *inputs,
             arithmetic,
         });

@@ -1,0 +1,107 @@
+{
+  "schema": "c2-two-x64-node-terminal-handoff-v1",
+  "observed_utc": "2026-11-03T23:19:16.844853+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "run_id": 41732369827,
+  "records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-head-13279576440-readback.json",
+      "bytes": 288846,
+      "sha256": "7e11a880ee502b1b1bd3f263e58ad25303defa82e0b31111d2772450387b5070"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-head-13279576440-original-records.json.gz",
+      "bytes": 956347,
+      "sha256": "889635fe9d54a4eb035704e8429e68bfa791031b2756a417e343a1c3ca47c02c"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-merge-13280436185-readback.json",
+      "bytes": 289305,
+      "sha256": "9d9121237013ffbcedac81716c47170275a3f98615c7e1fdc192c999fc4c85bf"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-merge-13280436185-original-records.json.gz",
+      "bytes": 957398,
+      "sha256": "2b68488ca0dc40cc95a7ff40ec5b769aa1a3c1398c59c2d379a474460a5970b7"
+    }
+  ],
+  "lanes": [
+    {
+      "lane": "x64-head",
+      "job_id": 126252724264,
+      "artifact_id": 13279576440,
+      "artifact_sha256": "5870776b82b3cba0394e5651251c5f821af1f4431898311250cee9f376d1a106",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1379.80s",
+      "source": {
+        "base": null,
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "strict_clippy_exit": 0,
+      "original_control_count": 43
+    },
+    {
+      "lane": "x64-merge",
+      "job_id": 126252724063,
+      "artifact_id": 13280436185,
+      "artifact_sha256": "3509ed48489a58cbc7f14374dc241c5257384e5c2d98742a509376a06cbb01d3",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1384.25s",
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "prospective-merge",
+        "prospective_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "strict_clippy_exit": 0,
+      "original_control_count": 43
+    }
+  ],
+  "same_951_unique_pass_names": true,
+  "same_23_original_ignored_names_and_reasons": true,
+  "scope": "Only C2 x64 head and actual merge lanes are terminal and independently verified here. Original43 controls and strict Clippy pass in both. Two ARM lanes remain in progress at the23:18 snapshot. No C1, local974 or b280 result is inherited; no whole workspace, nine Host selectors, business performance or activation qualification."
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/b5a148b09b11/next-validation/c5dd-workspace-cpu-four-lane-readback/collect-workspace-cpu.py", line 338, in <module>
+    main()
+  File "/workspace/scratch/b5a148b09b11/next-validation/c5dd-workspace-cpu-four-lane-readback/collect-workspace-cpu.py", line 140, in main
+    assert git("rev-parse", c["merge"] + "^{tree}").decode().strip() == c["tree"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/b5a148b09b11/next-validation/c5dd-workspace-cpu-four-lane-readback/collect-workspace-cpu.py", line 138, in git
+    return subprocess.run(["git", *argv], cwd=args.repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'rev-parse', '7a3e125cb343bd85fb806aba87a21f99eac082de^{tree}']' returned non-zero exit status 128.

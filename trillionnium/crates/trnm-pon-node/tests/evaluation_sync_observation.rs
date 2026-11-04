@@ -148,6 +148,52 @@ fn append(
         .unwrap();
     node.admit(&packet, now).unwrap()
 }
+// This is the existing local, offline construction phase after the preceding
+// listener has stopped and joined. It uses the SAME bound CPU owner and the
+// exact durable packet; it neither creates another service lease nor repeats
+// full W1 for an already admitted tip. No public latency or crash-fence claim.
+fn activate_prepared_tip_with_original_cpu(node: &Arc<Mutex<Node>>, tip: Hash) {
+    let (domain, packet, before, stored_blocks) = {
+        let owner = node.lock().unwrap();
+        let packet = owner.packet(tip).unwrap();
+        assert_eq!(packet.id().unwrap(), tip);
+        (
+            owner.public_service_cpu_domain().unwrap(),
+            packet.encode().unwrap(),
+            owner.active().unwrap(),
+            owner.stats().unwrap()["stored_blocks"].clone(),
+        )
+    };
+    assert_ne!(before.0, tip);
+    let outcome = ingress::dispatch_shared_with_metered_w1(
+        node,
+        ingress::Request::Submit {
+            packet: hex::encode(&packet),
+        },
+        &domain,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert!(!outcome.cpu.accounting_unavailable, "{:?}", outcome.cpu);
+    assert!(outcome.cpu.total_cpu_ns.is_some_and(|cpu| cpu > 0));
+    let submitted = outcome.native.unwrap();
+    assert_eq!(submitted["block"], hex::encode(tip));
+    assert_eq!(submitted["active"], hex::encode(tip));
+    assert_eq!(submitted["physical_execution"], false);
+    assert_eq!(submitted["generation"], before.1.checked_add(1).unwrap());
+    let owner = node.lock().unwrap();
+    assert!(owner
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&domain));
+    assert_eq!(owner.active().unwrap(), (tip, before.1 + 1));
+    assert_eq!(owner.packet(tip).unwrap().encode().unwrap(), packet);
+    assert_eq!(owner.stats().unwrap()["stored_blocks"], stored_blocks);
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert!(flow.balance_identity_verified);
+    assert_eq!(flow.live_owners, 0);
+}
+
 struct Server {
     address: SocketAddr,
     public: String,
@@ -548,8 +594,8 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         for height in 1..=65 {
             parent = append(&mut owner, parent, height, genesis, now, vec![]);
         }
-        owner.activate_observed(parent, now).unwrap();
     }
+    activate_prepared_tip_with_original_cpu(&shared, parent);
     let refused = refusal(
         sync_client(&shared, "reorganization", &receiver, genesis, &key, parent)
             .args(["--evaluation-candidate", &hex::encode(cid)])
@@ -598,8 +644,8 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
             retired = append(&mut owner, previous, height, genesis, now, vec![]);
             retirement_branch.push((retired, previous));
         }
-        owner.activate_observed(retired, now).unwrap();
     }
+    activate_prepared_tip_with_original_cpu(&shared, retired);
     // Hosted job 110682210746 exhausted the unchanged 120-second lease after
     // 150 real history responses in one 241-successor retirement sync. Exercise
     // the explicit page-budget/resume contract instead: these are planned,
@@ -687,4 +733,100 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         .2
         .contains_key(&format!("evaluation-archive:{}", hex::encode(cid))));
     drop(local);
+}
+
+#[test]
+fn prepared_forks_keep_original_public_cpu_after_listener_join_and_restart() {
+    let dir = tempfile::tempdir().unwrap();
+    let now = ingress::now().unwrap();
+    let genesis = now - 5000;
+    let settings =
+        Settings::development_with_evaluation_policy(Some(genesis), evaluation::PROFILE).unwrap();
+    let cfg = Config::installed_with_evaluation_policy(evaluation::PROFILE).unwrap();
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    let (_, raw) = candidate(&cfg, settings.network());
+    let root = node.settings().genesis();
+    let first = append(&mut node, root, 1, genesis, now, vec![raw]);
+    let original_tip = append(&mut node, first, 2, genesis, now, vec![]);
+    node.activate_observed(original_tip, now).unwrap();
+    node.enable_local_mempool(PoolLimits {
+        max_records: 8,
+        max_bytes: 16384,
+        max_group_members: 8,
+        critical_reserve: 0,
+        max_removals: 16,
+        preview_miner: development_public(0).unwrap(),
+    })
+    .unwrap();
+    let shared = Arc::new(Mutex::new(node));
+    let mut server = Server::start(shared.clone());
+    let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([93; 32])).unwrap();
+    let policy = public_v3::PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+    let read_actual_head = |server: &Server, tip: Hash| {
+        let (reply, metrics) = public_v3::call_public_protected_v3_with_deadline(
+            server.address,
+            &public_v3::Request::Head,
+            &settings,
+            &server.public,
+            &caller,
+            policy,
+            Some(Instant::now() + Duration::from_secs(2)),
+        );
+        let reply = reply.unwrap_or_else(|error| panic!("actual Head: {error}; {metrics:?}"));
+        assert!(reply.ok);
+        assert_eq!(reply.value["tip"], hex::encode(tip));
+        assert!(reply.solve_trials > 0);
+        assert!(reply.body_bytes_sent > 0);
+    };
+    // A real pinned reply proves the listener completed startup. A retained
+    // domain alone cannot do that when reconstructing a later listener.
+    read_actual_head(&server, original_tip);
+    let original_domain = shared.lock().unwrap().public_service_cpu_domain().unwrap();
+    server.stop.store(true, Ordering::Release);
+    server.worker.take().unwrap().join().unwrap().unwrap();
+    let mut fork = root;
+    {
+        let mut owner = shared.lock().unwrap();
+        for height in 1..=3 {
+            fork = append(&mut owner, fork, height, genesis, now, vec![]);
+        }
+        let before = owner.active().unwrap();
+        assert_eq!(
+            owner.activate_observed(fork, now).unwrap_err().to_string(),
+            "OWNER_REORG_TERMINATION_CPU_REQUIRED"
+        );
+        assert_eq!(owner.active().unwrap(), before);
+    }
+    let before = original_domain.observe_actual_flow().unwrap().unwrap();
+    activate_prepared_tip_with_original_cpu(&shared, fork);
+    let after_first = original_domain.observe_actual_flow().unwrap().unwrap();
+    assert!(after_first.paid_cpu_debit_ns > before.paid_cpu_debit_ns);
+    let mut restarted = Server::start(shared.clone());
+    read_actual_head(&restarted, fork);
+    assert!(shared
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original_domain));
+    restarted.stop.store(true, Ordering::Release);
+    restarted.worker.take().unwrap().join().unwrap().unwrap();
+    let mut later = original_tip;
+    {
+        let mut owner = shared.lock().unwrap();
+        for height in 3..=4 {
+            later = append(&mut owner, later, height, genesis, now, vec![]);
+        }
+    }
+    activate_prepared_tip_with_original_cpu(&shared, later);
+    let after_second = original_domain.observe_actual_flow().unwrap().unwrap();
+    assert!(after_second.paid_cpu_debit_ns > after_first.paid_cpu_debit_ns);
+    assert_eq!(after_second.initial_credit_ns, before.initial_credit_ns);
+    assert_eq!(after_second.live_owners, 0);
+    assert!(shared
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original_domain));
 }

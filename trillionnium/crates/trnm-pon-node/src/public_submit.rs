@@ -475,9 +475,17 @@ impl Session<'_, '_> {
                 }
                 Ok(reply) => {
                     let error = remote_error(&reply)?;
-                    if error.is(ErrorCode::UnknownParent) && allow_parent_repair {
+                    // call() already verified this exact Submit response's
+                    // signature and request context. Only these two explicit
+                    // remote business labels select the existing recovery
+                    // contract; Error::remote keeps no local ErrorCode. In
+                    // particular, peer text cannot acquire local EOF, owner
+                    // failure, or generic capacity-retry authority.
+                    let recovery = submit_refusal_recovery(&reply);
+                    if recovery == Some(SubmitRefusalRecovery::RestoreParent) && allow_parent_repair
+                    {
                         self.restore_parent(packet.header.parent)?;
-                    } else if error.is(ErrorCode::PublicMutationCpuBudget) {
+                    } else if recovery == Some(SubmitRefusalRecovery::ObserveMembership) {
                         // This signed Submit refusal remains in attempts. An
                         // earlier admission may already have placed the exact
                         // retained packet on the current remote active branch;
@@ -511,6 +519,22 @@ impl Session<'_, '_> {
                 }
             }
         }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum SubmitRefusalRecovery {
+    RestoreParent,
+    ObserveMembership,
+}
+
+// Private to the authenticated Submit-response branch above. This does not
+// authenticate a response or give its diagnostic text a typed local identity.
+fn submit_refusal_recovery(reply: &PublicReply) -> Option<SubmitRefusalRecovery> {
+    match reply.value.get("error").and_then(Value::as_str) {
+        Some("UNKNOWN_PARENT") => Some(SubmitRefusalRecovery::RestoreParent),
+        Some("PUBLIC_MUTATION_CPU_BUDGET") => Some(SubmitRefusalRecovery::ObserveMembership),
+        _ => None,
     }
 }
 

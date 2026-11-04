@@ -322,7 +322,7 @@ jobs:
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
           expected = {"factorial-kernel-tests": (6, 0), "factorial-example-tests": (6, 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (22, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (25, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
@@ -395,7 +395,7 @@ jobs:
           if test "$SOURCE_KIND" = prospective-merge; then
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
           fi
-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
       - name: Install original pinned compiler
         run: rustup toolchain install 1.95.0 --profile minimal
