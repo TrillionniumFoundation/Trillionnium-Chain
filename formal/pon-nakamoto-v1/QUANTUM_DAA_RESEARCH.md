@@ -5,6 +5,201 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## Constructed oracle, adversarial strategies and complete bounded protocol model
+
+The next continuation preserves integration source `03163dcb849a15cd267fcaf704a533a88cd54131`
+and the concurrent Cell/model work through `d4816ca5d1375347d8ed341a434158e350c29bbc`.
+The [construction reproduction record](../../evidence/pon-quantum-construction-20261104/README.md)
+pins the later tested research source and lists retained failures and remaining
+security gates. Native target, chainwork, fork choice and activation rules are
+unchanged by this continuation. Earlier observations below retain their original
+source scope; new research evidence does not qualify unrelated native changes.
+
+### A concrete complete winner predicate for a fixed public context
+
+[The hierarchical oracle](w1_quantum_oracle.py) now constructs the complete W1
+winner predicate for a fixed canonical PNH1 or PGH2 header template and public
+matrices. Its search variable is the header's actual nonce, with up to 64 bits.
+The challenge is computed from the exact domain-framed header; it is not a free
+256-bit search input. Task commitment and canonical matrix values are checked.
+Native task eligibility, timestamp/target requirements, state execution and
+other block-admission conditions remain checked classical preconditions.
+
+The construction consists of actual clean-XOR
+[X/CNOT/Toffoli leaf circuits](w1_quantum_primitives.py), static input-copy
+wiring, persistent intermediate registers, phase marking and the complete
+reverse schedule. Leaf outputs map directly to their external destination;
+input/output aliases are rejected. Every leaf restores its input workspace.
+The outer reverse restores all intermediate registers, including the failure
+flags. H preparation, Z phase marking and a clean AND-ladder diffusion circuit
+are accounted separately. This is one deliberately conservative construction,
+not a proof of minimum work or an optimized quantum miner.
+
+Noise sampling always covers all 128 counters for each of four labels, preserves
+rejection order and selects the first 512 accepted field elements. Static scans
+visit every destination, so no QRAM, dynamic addressing or coherent loading
+oracle is hidden in a unit-cost operation. Insufficient accepted words yield an
+unmarked candidate even when its ticket otherwise passes. Reduced-field controls
+force rejections and exhaustion; the tiny probability of those branches at the
+native field width is not used to omit them.
+
+The five fixed initial SHA compression blocks of the header challenge can be
+precomputed classically. The remaining calls and exact transcript order are
+part of the coherent predicate:
+
+| Component | PNH1 fixed template | PGH2 fixed template |
+| --- | ---: | ---: |
+| Complete framed header challenge input | 343 bytes | 407 bytes |
+| Coherent header-challenge SHA compressions after fixed prefix | 1 | 2 |
+| Noise SHA compressions, including every bounded rejection branch | 1,024 | 1,024 |
+| Low-rank field multiplications | 65,536 | 65,536 |
+| Ordered transcript field multiplications | 262,144 | 262,144 |
+| Transcript SHA input / compressions | 131,120 bytes / 2,049 | 131,120 bytes / 2,049 |
+| Ticket SHA compressions | 2 | 2 |
+
+The PGH2 challenge tag is 37 bytes. A previous intermediate test expectation of
+405 framed bytes was wrong; the actual native framing gives 407. The compression
+count remains two coherent blocks after the five fixed blocks.
+
+For the declared 64-bit nonce schedule, the resulting constructive census is:
+
+| Resource | PNH1 | PGH2 |
+| --- | ---: | ---: |
+| Reserved logical qubits | 22,253,173 | 22,253,429 |
+| Forward winner-compute gates | 8,859,008,357 | 8,859,397,919 |
+| Compute–Z–uncompute gates | 17,718,016,715 | 17,718,795,839 |
+| Compute–Z–uncompute depth upper bound | 1,969,835,151 | 1,969,864,925 |
+| Additional diffusion gates / depth upper bound | 383 / 131 | 383 / 131 |
+
+All intermediate outputs are retained until the global reverse, making the space
+cost large. Better pebbling, recomputation, constant folding, alternative arithmetic,
+data layouts or variable-time search may improve it. **A large upper bound cannot
+establish that a quantum attacker must pay that cost.** The exact leaf netlist
+hashes, call counts and wire schedule make this particular construction auditable.
+They do not supply a physical QPU, a hardware compiler, or an adversarial lower bound.
+
+The [oracle campaign](experiments/w1_quantum_oracle_campaign.py) distinguishes
+three kinds of evidence: whole reduced-shape phase execution with actual leaf
+gates; native-size hierarchical macro execution against a separate scalar W1
+relation; and optional comparison to a historically admitted native PNW1 packet.
+The native-size run does not execute billions of leaf gates. The historical packet
+does not constitute a fresh native-node execution on the current integration tree.
+Winning-candidate proof construction, public `A B` reuse and full PNW1 materialization
+remain classical work after a winner, not an invented cost on every coherent query.
+
+### Unknown marked counts, paid restarts and bounded attacker choices
+
+[Adversarial search](quantum_adversarial_search.py) adds an explicit finite domain.
+Its marked count is sampled once using exact integer inclusive ticket comparisons,
+or supplied as a clearly conditional control. The evaluator keeps that count
+hidden from the strategy. Failed retries and independent parallel processors share
+the same domain; an `M=0` domain does not acquire a solution on the next attempt.
+Changing a domain changes an explicit template salt and incurs setup cost. Actual
+W1 realizability and independence of these modeled fresh domains are not proved.
+
+For a known conditional fraction `M/N`, a batch of `P` independent processors
+has success `1-(1-sin((2*q+1)*asin(sqrt(M/N)))**2)**P`. For an unknown count,
+the expectation is taken **after** conditioning all processors on the shared
+count. It is not obtained by inserting the mean fraction into Grover's formula
+or by independently resampling a count for each processor. Exact binomial weights
+are used only on a bounded small support; amplitudes and rates use float64.
+
+The optional optimizer maximizes renewal throughput over a declared finite
+iteration grid at one fixed target, using the same paid processors and clocks
+for every candidate. All measurements pay preparation, readout and classical
+candidate checks; winning batches additionally pay proof construction. Its finite
+binomial mode requires a fresh domain after every measured batch. Persistent-domain
+strategies do not obtain a fictitious independent geometric completion time.
+This is not BBHT, an optimal posterior strategy, a global profit optimizer, or a
+proof that the best real attacker was searched exhaustively.
+
+The event model also adds MTP-minimum, future-bound and retarget-boundary timestamp
+strategies, including valid regressions relative to a parent timestamp. Adaptive
+private release reads the miner's separately delayed public view, never the global
+observer's current tip. New finite experiments retain all prior default scenarios
+and add source-bound adversarial campaign replay. Proof/candidate-check time,
+cancelled work, future-parent delays and right-censored observations remain paid
+and visible.
+
+### Circuit-derived event clocks with a whole-campaign error envelope
+
+[The resource-clock adapter](quantum_resource_clock.py) uses a single code distance
+for the whole bounded campaign. The trial-start envelope is
+`1 + max_events * max_blocks` per processor: a deferred delivery can adopt several
+competing tips and restart more than once within one event. Each possible start
+is charged a full preparation and the largest allowed iteration count, even if
+interrupted. Error estimates include all processors and every allocated logical
+patch/cycle plus the declared magic-state residual error. An unsatisfied error
+budget or insufficient physical qubits refuses the binding.
+
+Only the explicitly serialized stage/magic-delivery schedule becomes an event
+clock. Ideal overlap is not promoted to an achievable speed. Quantum speed factors
+must be on/off for a resource-bound run. Per-stage clocks, complete search deadlines
+and quantum proof deadlines are rounded upward; exact binary-rational summation
+avoids the downward rounding that can reappear after individually rounding clock
+fields. Classical preprocessing and search setup are conservatively repeated on
+every trial in this schedule. This overcharge is explicit; a negative attack result
+cannot be interpreted as resistance to an attacker who optimizes reuse.
+
+The [coupled campaign](experiments/quantum_resource_clock_campaign.py) accepts an
+oracle specification and regenerates every circuit-stage budget from the construction.
+Replay rederives those budgets, the whole-campaign distance, clocks and full event
+trace digests. This binds a circuit cost shape, not the fixed header's actual marked
+set to the evolving synthetic network targets. In particular, a reduced nonce
+specification does not become a matching finite-domain mining experiment merely
+by supplying its circuit budget. The physical parameters, factory model, routing factors, classical
+times and uniform-ticket probability premise remain supplied assumptions. Source
+hashes and reproducible arithmetic are not physical calibration or authenticated
+hardware execution evidence.
+
+The serialized per-T service premise includes production, delivery, immediate
+injection and feedforward, with a live service/buffer patch paid inside the
+factory footprint. It cannot silently mean production alone while assuming free
+storage for a large batch of magic states. No fault-tolerant layout is verified.
+The error union covers coherent stage cycles and the declared T-service errors;
+initialization/reset/readout and the classical controller are assumed ideal or
+outside its scope. Removing coherent idle time during classical waits does not
+turn this conditional union into an end-to-end machine failure bound.
+
+### A separately identified complete bounded parallel-chain candidate
+
+[The OHIE text-profile model](parallel_variable_ohie.py) and its
+[campaign](experiments/parallel_variable_ohie_campaign.py) use the complete
+[Wang et al. arXiv v2 source](https://arxiv.org/html/2105.02927v2), including
+Sections 4.2/6.3 and Appendix G. The model has actual common-parent commitments,
+post-hash chain sortition, pivot references, branch-local target computation,
+exact rational cumulative difficulty, delayed imports, private withholding,
+cross-chain confirmation barriers and deterministic synthetic transaction-ledger
+formation. It is a complete bounded state machine under its named profile, not
+just a different target formula.
+
+Several distinctions are part of that identity. The selected rank rule is the
+body's `max(rank + difficulty, trailing.next_rank)`; Appendix G's conditional
+increment differs on a concrete counterexample. The source also has inconsistent
+environment-window notation. Targets use exclusive `ticket < T` and rational
+`2**k/T` work, unlike native PoN's inclusive target and integer u512 chainwork.
+The model transmits the entire committed parent vector, and its timestamp/finite
+resource rules and confirmation lag are explicit experimental premises. The
+literal same-hash low-bit sortition has finite-width bias; tiny target controls
+show unreachable chains, which must not be presented as deployed-protocol attacks.
+
+The candidate's classical random-oracle proofs are not inherited by these finite
+parameters, the engineering encodings, or a quantum-resource overlay. The complete
+Fast DAA 2026 PDF and the author-linked official slides remained unavailable during
+the public-source retry. `fast-daa-2026` therefore still fails explicitly. This OHIE
+profile is a separately identified candidate and does not close that fidelity gate.
+
+### Remaining scientific exit conditions
+
+Implemented constructions and passing replay close the specifically declared
+engineering checks. They leave these distinct obligations open: adversarial W1
+cost minimization or an appropriate lower bound; physically calibrated fault-tolerant
+resource and data-access assumptions; a justified mapping from legal W1 search
+domains to winning probabilities; full Fast DAA source-to-protocol reproduction;
+and a mixed classical/quantum consensus argument for common prefix, growth, quality
+and transaction liveness under a concrete deployed profile. Neither `sqrt(D)`
+chainweight nor a new multi-resource score is activated by these experiments.
+
 ## Resource accounting and event scheduling continuation, 2026-11-04
 
 The continuation starts from integration PR #688 at
@@ -147,8 +342,9 @@ selfish-mining economics and implementation-specific network losses have their
 own boundaries. This is a theoretical comparison, not a proposal to sum arbitrary
 scores or replace current required work with `sqrt(D)`.
 
-Full W1 reversible synthesis and adversarial cost minimization, a complete Fast
-DAA protocol reproduction, and a proved mixed-resource PoN security model remain
+The original milestone left full W1 reversible synthesis open. The construction
+above now supplies a specific upper bound. Adversarial cost minimization, a complete
+Fast DAA reproduction and a proved mixed-resource PoN security model remain
 separate research exit conditions. The native pure-PoN engineering line retains
 its present consensus and original acceptance budgets.
 

@@ -52,6 +52,36 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Constructive W1 predicate and adversarial DAA closure checks — 2026-11-04
+
+The quantum/DAA research continuation is implemented at
+`ba9cf57c1ff615a854cf93accf4e153614de3548`, preserving concurrent Cell/model/
+throughput integration work. The fixed-template PNH1/PGH2 compiler binds the real
+nonce to challenge, covers all bounded noise rejection/exhaustion branches,
+charges static data access, and provides a clean complete phase schedule. This
+is a constructive upper bound; it does not establish attacker-minimal cost.
+Finite marked domains, paid refresh, bounded throughput choices, delayed-view
+private release and admissible backward timestamps are executable controls.
+The resource bridge derives clocks and one code distance for the whole bounded
+campaign. A separately identified OHIE text profile implements a complete bounded
+parallel-chain state machine and synthetic ledger; it is not Fast DAA 2026.
+
+At the exact committed research source, 173 distinct tests passed; 45 expanded
+and 30 retained network runs, 18 OHIE runs and five oracle cases passed their
+declared replay controls. Fifteen admitted circuit-cost/event runs replayed;
+two physical settings were correctly refused within their declared distance
+range. Source/hash receipts, retained environment failures and all limitations
+are in the [construction record](../../evidence/pon-quantum-construction-20261104/README.md).
+
+Keep adversarial cost minimization/lower bounds, actual W1 marked-domain
+probabilities, physical calibration, complete Fast DAA fidelity, OHIE source
+ambiguities and a mixed-resource consensus proof open. Exact-source research
+checks do not close whole-native Clippy/runtime or public-network qualification.
+Do not change native pure-PoN target/chainwork/fork-choice rules, activate sqrt(D)
+weights, equate upper-bound cost with resistance, or promote finite observations
+to a common-prefix/growth/quality/liveness theorem.
+
+
 #### Native request liveness and bounded namespace access — 2026-11-04
 
 Continue the existing PR #688 integration candidate with the original #639
