@@ -18,6 +18,11 @@ import run_native_pq_tasks_v4 as tasks4
 import run_native_pq_tasks_v5 as retained
 import run_native_pq_tasks_v5_migration_v1 as runner
 
+SHA2_KNOWN_ANSWERS = (
+    'sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams',
+    'sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams',
+)
+
 
 def identity(value: str) -> str:
     return hashlib.sha256(('synthetic-reader-control:' + value).encode()).hexdigest()
@@ -174,6 +179,18 @@ def make_baseline(directory: Path, root: Path) -> dict:
     return report
 
 
+def replace_m00_log(directory: Path, report: dict, outcomes: dict[str, str]) -> None:
+    # Forge internally consistent raw counts and hashes, without using the
+    # exact unit-roster reader whose refusal this fixture must exercise.
+    text = rust_log(outcomes)
+    log = directory / 'm00.log'
+    log.write_text(text)
+    report['artifact_sha256'][log.name] = reader.digest(log)
+    report['tests']['m00'] = retained.test_result(
+        text, {name for name, status in outcomes.items() if status == 'ok'})
+    (directory / 'manifest.json').write_text(json.dumps(report))
+
+
 class MigrationReaderTests(unittest.TestCase):
     def test_complete_synthetic_control_is_only_parser_evidence(self):
         result = reader.native_result(native_text())
@@ -228,10 +245,80 @@ class MigrationReaderTests(unittest.TestCase):
             path = Path(temporary)
             report = make_baseline(path / 'run', path / 'source')
             result = reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')
-            self.assertEqual((result['passed'], result['integration_passed'], result['original_ignored']), (205,68,8))
+            # Keep the original 205 cases and both reviewed SHA-2 known answers.
+            self.assertEqual((result['passed'], result['integration_passed'], result['original_ignored']), (207,68,8))
+            self.assertEqual(result['executed_commands'], 18)
+            self.assertEqual((report['tests']['m00']['passed'], report['tests']['m06']['passed']), (49,90))
+            for name in SHA2_KNOWN_ANSWERS:
+                self.assertEqual(report['tests']['m00']['test_outcomes'][name], 'ok')
             self.assertFalse(report['p1_complete'])
             self.assertFalse(report['migration_supported'])
             self.assertFalse(result['historical_report_flags_rewritten'])
+
+    def test_sha2_omissions_and_same_count_substitutions_refuse(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)
+            original = make_baseline(path / 'run', path / 'source')
+            self.assertEqual(reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')['passed'], 207)
+            for missing in ((SHA2_KNOWN_ANSWERS[0],), (SHA2_KNOWN_ANSWERS[1],), SHA2_KNOWN_ANSWERS):
+                for substitute in (False, True):
+                    with self.subTest(missing=missing, substitute=substitute):
+                        outcomes = dict(retained.EXPECTED_OUTCOMES['m00'])
+                        for index, name in enumerate(missing):
+                            del outcomes[name]
+                            if substitute:
+                                outcomes[f'forged_sha2_known_answer_{index}'] = 'ok'
+                        report = copy.deepcopy(original)
+                        replace_m00_log(path / 'run', report, outcomes)
+                        self.assertEqual(sum(row['passed'] for row in report['tests'].values()),
+                                         207 if substitute else 207 - len(missing))
+                        self.assertEqual(sum(row['ignored'] for row in report['tests'].values()), 8)
+                        with self.assertRaisesRegex(ValueError, 'required native test did not execute successfully'):
+                            reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')
+
+    def test_forged_205_report_and_raw_summary_refuse(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)
+            original = make_baseline(path / 'run', path / 'source')
+            self.assertEqual(reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')['passed'], 207)
+            log = path / 'run/m00.log'
+            original_text = log.read_text()
+            for forge_raw, reason in ((False, 'retained report/raw test mismatch'),
+                                      (True, 'test names do not match actual summary counts')):
+                with self.subTest(forge_raw=forge_raw):
+                    report = copy.deepcopy(original)
+                    report['tests']['m00']['passed'] = 47
+                    self.assertEqual(sum(row['passed'] for row in report['tests'].values()), 205)
+                    if forge_raw:
+                        self.assertIn('49 passed;', original_text)
+                        log.write_text(original_text.replace('49 passed;', '47 passed;'))
+                        report['artifact_sha256'][log.name] = reader.digest(log)
+                    (path / 'run/manifest.json').write_text(json.dumps(report))
+                    with self.assertRaisesRegex(ValueError, reason):
+                        reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')
+
+    def test_newly_ignored_sha2_and_replaced_original_ignores_refuse(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)
+            original = make_baseline(path / 'run', path / 'source')
+            self.assertEqual(reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')['passed'], 207)
+            original_ignore = next(name for name, status in retained.EXPECTED_OUTCOMES['m00'].items()
+                                   if status == 'ignored')
+            for name in SHA2_KNOWN_ANSWERS:
+                for exchange_ignore in (False, True):
+                    with self.subTest(name=name, exchange_ignore=exchange_ignore):
+                        outcomes = dict(retained.EXPECTED_OUTCOMES['m00'])
+                        outcomes[name] = 'ignored'
+                        if exchange_ignore:
+                            outcomes[original_ignore] = 'ok'
+                        report = copy.deepcopy(original)
+                        replace_m00_log(path / 'run', report, outcomes)
+                        self.assertEqual(sum(row['passed'] for row in report['tests'].values()),
+                                         207 if exchange_ignore else 206)
+                        self.assertEqual(sum(row['ignored'] for row in report['tests'].values()),
+                                         8 if exchange_ignore else 9)
+                        with self.assertRaisesRegex(ValueError, 'required native test did not execute successfully'):
+                            reader.baseline_result(path / 'run', 'a' * 40, 'b' * 40, path / 'source')
 
     def test_same_source_requires_every_actual_original_command_and_execution_guard(self):
         with tempfile.TemporaryDirectory() as temporary:
