@@ -109,12 +109,24 @@ impl LiftCache {
     }
 
     pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
+        self.lift_parts(node.path, node.digest, node.depth, depth)
+    }
+
+    // These are exactly the original mathematical inputs. A commitment-only
+    // subtree has no stored record or ID; neither enters a lift computation.
+    pub(super) fn lift_parts(
+        &self,
+        path: Hash,
+        digest: Hash,
+        source_depth: usize,
+        depth: usize,
+    ) -> Hash {
         // The original lift performs no branch hashes at this exact depth.
         // Do not occupy or evict arithmetic entries for an identity result.
-        if depth == node.depth {
-            return node.digest;
+        if depth == source_depth {
+            return digest;
         }
-        let key = (node.path, node.digest, node.depth, depth);
+        let key = (path, digest, source_depth, depth);
         if let Ok(entries) = self.0.try_borrow() {
             if let Some(value) = entries.get(&key) {
                 return *value;
@@ -122,7 +134,7 @@ impl LiftCache {
         }
         // The omitted empty table is the immutable compiled grammar, never an
         // input supplied by a caller, database, record or selected block.
-        let value = node.lift(depth, &empty_hashes());
+        let value = super::lift_digest(&path, digest, source_depth, depth, &empty_hashes());
         if let Ok(mut entries) = self.0.try_borrow_mut() {
             entries.insert(key, value);
         }

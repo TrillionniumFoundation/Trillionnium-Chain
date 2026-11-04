@@ -181,16 +181,20 @@ for a disallowed floating value remains an error after a successful integer read
 The same owner also retains at most 8,192 compressed-path hash results. A key
 contains every variable mathematical input: node path, node digest, source depth
 and target depth. The omitted empty-tree table is the immutable compiled hash
-grammar. Capacity exhaustion clears these optional entries. Complete account-root
+grammar. Fixed eight-way buckets replace only bounded optional arithmetic entries
+after checking every input field; capacity does not clear the entire cache.
+Complete account-root
 construction still parses, orders and rebuilds every supplied account; it can
 reuse only the lift arithmetic for unchanged inputs. Stored-tree verification
-still reads and decodes each actual SQL node, checks its content identity and
+still reads each actual SQL node, checks its content identity and
 parent path/depth/hash relation, and compares every leaf, count and balance with
 the complete State. The complete-root calculation takes accounts from actual
 State and never substitutes account values retained from the stored tree.
 
-Neither cache retains a database validity verdict, a parsed stored record, a
-history prefix, a selected block or execution authority. Current KV, records,
+The separate bounded decode pool may reuse a parsed node only after matching its
+complete freshly read SQL bytes and expected content ID. It supplies no row or
+graph-validity result. These pools retain no database validity verdict, history
+prefix, selected block or execution authority. Current KV, records,
 deltas, packet bytes, required archive nodes and all historical links are read
 and checked as before, including after transaction triggers and during recovery.
 Consequently a cache hit requires no claim that SQLite `data_version` detects
@@ -199,6 +203,25 @@ actual rows through a second connection and require the same local-integrity
 error as a cold cache. Existing late-trigger, old-delta, cancellation, branch and
 reopen regressions remain required. This change reduces repeated hash arithmetic;
 the State and history scans remain linear in their respective sizes.
+
+### Account commitment without storage-record construction
+
+The complete account-root arithmetic entry now builds a private `RootDigest`
+containing only path, depth and digest. These are the same mathematical inputs
+used by the original Patricia construction and exact-input lift cache. Each leaf
+reuses its path from the current call's complete account ordering. Fork shape,
+child lift order and branch hashes retain the original rules. A commitment-only
+calculation therefore avoids creating encoded storage records and their content
+IDs, which do not contribute to the final account digest.
+
+Actual persistence and graph verification continue to construct or decode full
+`Node` records and check their IDs, child links and all original progress points.
+The new type has no placeholder ID, database handle or stored-node authority.
+The original record-building root and an independent full sparse-tree relation
+remain differential references. Exact-value, owner/nonce changes, malformed
+internal shape, collision, cancellation order and lift-depth controls accompany
+the paired complete-account-root observation. Its cost excludes State parsing,
+SQL graph verification, Host checks, PQ authorization and client confirmation.
 
 ### Exact strings in the existing complete-root arithmetic pool
 

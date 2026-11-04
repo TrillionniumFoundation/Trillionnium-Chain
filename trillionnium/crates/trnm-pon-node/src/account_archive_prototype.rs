@@ -19,6 +19,7 @@ use trnm_protocol::pon_wire::{hash, Hash};
 pub mod multiproof;
 #[cfg(test)]
 mod native_primitive_tests;
+mod native_root_digest;
 pub(crate) mod native_store;
 
 pub const SCHEMA: &str = "pon-account-archive-prototype-v1";
@@ -235,6 +236,23 @@ fn branch(left: Hash, right: Hash) -> Hash {
     // moves no stored-node, current-state, cancellation or authority decision.
     trnm_protocol::pon_wire::account_archive_branch_hash(left, right)
 }
+fn lift_digest(
+    path: &Hash,
+    digest: Hash,
+    source_depth: usize,
+    depth: usize,
+    empty: &[Hash; 257],
+) -> Hash {
+    let mut value = digest;
+    for d in (depth..source_depth).rev() {
+        value = if bit(path, d) {
+            branch(empty[d + 1], value)
+        } else {
+            branch(value, empty[d + 1])
+        };
+    }
+    value
+}
 fn empty_hashes() -> [Hash; 257] {
     let mut out = [[0; 32]; 257];
     out[256] = hash(b"account-archive-empty-v1", &[]);
@@ -309,15 +327,7 @@ impl Node {
         Ok(result)
     }
     fn lift(&self, depth: usize, empty: &[Hash; 257]) -> Hash {
-        let mut value = self.digest;
-        for d in (depth..self.depth).rev() {
-            value = if bit(&self.path, d) {
-                branch(empty[d + 1], value)
-            } else {
-                branch(value, empty[d + 1])
-            };
-        }
-        value
+        lift_digest(&self.path, self.digest, self.depth, depth, empty)
     }
     fn encode(&self) -> Vec<u8> {
         match self.kind {
@@ -1038,11 +1048,7 @@ pub(crate) fn account_root_with_lifts(
     values: &BTreeMap<Hash, Account>,
     lifts: &native_store::LiftCache,
 ) -> Result<Hash> {
-    let lift = |node: &Node, depth| lifts.lift(node, depth);
-    Ok(
-        build_with_lift(None, &ordered_accounts(values)?, &mut || Ok(()), &lift)?
-            .map_or_else(|| empty_hashes()[0], |node| lift(&node, 0)),
-    )
+    native_root_digest::root(values, lifts)
 }
 fn make_checkpoint(
     context: Context,

@@ -153,10 +153,12 @@ jobs:
         run: |
           set -euo pipefail
           export TRNM_PQ_AUTH_COST_DIRECTORY="$PQ_OUT/pq-authentication-cost"
+          export TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT="$PQ_OUT/native-root-digest-cost.jsonl"
           failed=0
           for selector in \
             store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost \
-            ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost; do
+            ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost \
+            account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation; do
             label="cost-${selector##*::}"
             if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --ignored --show-output --test-threads=1; then
               failed=1
@@ -164,6 +166,13 @@ jobs:
               failed=1
             fi
           done
+          selector=pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost
+          label="cost-${selector##*::}"
+          if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --lib "$selector" -- --exact --ignored --show-output --test-threads=1; then
+            failed=1
+          elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+            failed=1
+          fi
           test "$failed" = 0
       - name: Preserve complete records including failures
         if: always()

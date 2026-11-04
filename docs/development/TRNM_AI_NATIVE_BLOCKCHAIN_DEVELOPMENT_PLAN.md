@@ -5647,3 +5647,37 @@ three locked graphs with exact before/after source guards. All 134 selected
 source/driver/applicability controls and both applicability/maturity contracts
 pass. The initial generated-table drift errors remain recorded alongside the
 subsequent correction; full public and scientific acceptance remains open.
+
+
+### 2026-11-04 complete-input calculation without redundant materialization
+
+Continue the same PR #688 after the concurrent `a10c3902` registration repair.
+The retained [throughput evidence](../../evidence/pon-throughput-continuation-20261104/README.md)
+now distinguishes the earlier `f35ee6dc` paired component observations from the
+`44d3def3` original F0/campaign and complete regression source. On `44d3def3`,
+F0 remains 1/6 in the original window and 0/6 under the unchanged four-second
+schedule; the original three-run campaign remains 3/27. The public receiver and
+independent verifier share the original 0.25-CPU parent. Baseline account-graph
+work is approximately 18 seconds wall / 4 seconds calling-thread CPU, with over
+82,900 fresh Host checkpoints. These nested intervals cannot be added. Actual
+SQL transaction-commit API intervals are milliseconds, and these business probes
+make zero PQ caller-authentication attempts. Component gains do not close them.
+
+The next implementation removes two kinds of redundant materialization. A
+complete account commitment now uses a private path/depth/digest subtree, while
+actual stored-node creation, content IDs, SQL graph checks and every original
+callback remain. Independent full sparse-tree and original record-building roots
+are differential references. M06's unchanged checked-snapshot preparation may
+share its prior canonical-map Arc only after checking all actual current bytes,
+the original cache/workspace limits, empty-delta tree application and expected
+root. A first candidate mismatch returns to the complete original preparation;
+late canonical errors and wire limits retain their original precedence. The
+existing general full-comparison helper is unchanged. Neither change is O(k),
+a retained validity verdict, a new database snapshot contract or a protocol edit.
+
+Exact native controls and paired observations are registered in the existing
+workspace CPU/PQ workflows with the original profiles and budgets. Observations
+include misleading same-root hints and cold/over-capacity account roots; retained
+negative samples must accompany warm-path gains. Original full Node, SQL damage,
+cancellation, reorganization, W1, Host, F0 and independent-client confirmation
+requirements remain. No consensus, security, service or release flag is promoted.
