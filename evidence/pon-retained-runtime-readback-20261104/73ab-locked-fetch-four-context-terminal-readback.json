@@ -1,0 +1,1806 @@
+{
+  "schema": "trnm-retained-locked-fetch-four-context-terminal-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "workflow_trigger": {
+    "source": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+    "tree": "f26f26bde359a4878f8be10abd88cf6627712d13",
+    "parent": [
+      "5c09e132ad5b55c07b6222b2c8ffeff9b3135adc"
+    ],
+    "run_id": 41795067492,
+    "run_attempt": 1,
+    "event": "push",
+    "branch": "fix/chain-retained-failure-readback-20261104",
+    "workflow": {
+      "source": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+      "path": ".github/workflows/pon-retained-locked-fetch-validation.yml",
+      "bytes": 9753,
+      "sha256": "616e63b3be0538ec005f9f8d72175f2079a1f1214f55661bc7c741ae2d9a0093",
+      "git_blob_sha": "4f30db382861c1467f1be53d05685ba0bd7b20a1",
+      "exact_candidate_equal": true
+    },
+    "actual_run_metadata": {
+      "id": 41795067492,
+      "name": "Retained original locked fuzz-graph fetch",
+      "node_id": "WFR_kwLOTty1_c8AAAAJuy4eZA",
+      "head_branch": "fix/chain-retained-failure-readback-20261104",
+      "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+      "path": ".github/workflows/pon-retained-locked-fetch-validation.yml",
+      "display_title": "ci(evidence): verify the original locked fetch in all four retained c…",
+      "run_number": 1,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "workflow_id": 406650407,
+      "check_suite_id": 113252764723,
+      "check_suite_node_id": "CS_kwDOTty1_c8AAAAaXmQMMw",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+      "pull_requests": [],
+      "created_at": "2026-11-04T07:50:34Z",
+      "updated_at": "2026-11-04T07:51:31Z",
+      "actor": {
+        "login": "Tomasrgbsf",
+        "id": 273673612,
+        "node_id": "U_kgDOEE_tjA",
+        "avatar_url": "https://avatars.githubusercontent.com/u/273673612?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/Tomasrgbsf",
+        "html_url": "https://github.com/Tomasrgbsf",
+        "followers_url": "https://api.github.com/users/Tomasrgbsf/followers",
+        "following_url": "https://api.github.com/users/Tomasrgbsf/following{/other_user}",
+        "gists_url": "https://api.github.com/users/Tomasrgbsf/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/Tomasrgbsf/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/Tomasrgbsf/subscriptions",
+        "organizations_url": "https://api.github.com/users/Tomasrgbsf/orgs",
+        "repos_url": "https://api.github.com/users/Tomasrgbsf/repos",
+        "events_url": "https://api.github.com/users/Tomasrgbsf/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/Tomasrgbsf/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "run_attempt": 1,
+      "referenced_workflows": [],
+      "run_started_at": "2026-11-04T07:50:34Z",
+      "triggering_actor": {
+        "login": "Tomasrgbsf",
+        "id": 273673612,
+        "node_id": "U_kgDOEE_tjA",
+        "avatar_url": "https://avatars.githubusercontent.com/u/273673612?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/Tomasrgbsf",
+        "html_url": "https://github.com/Tomasrgbsf",
+        "followers_url": "https://api.github.com/users/Tomasrgbsf/followers",
+        "following_url": "https://api.github.com/users/Tomasrgbsf/following{/other_user}",
+        "gists_url": "https://api.github.com/users/Tomasrgbsf/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/Tomasrgbsf/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/Tomasrgbsf/subscriptions",
+        "organizations_url": "https://api.github.com/users/Tomasrgbsf/orgs",
+        "repos_url": "https://api.github.com/users/Tomasrgbsf/repos",
+        "events_url": "https://api.github.com/users/Tomasrgbsf/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/Tomasrgbsf/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/logs",
+      "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/113252764723",
+      "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/artifacts",
+      "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/cancel",
+      "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/rerun",
+      "previous_attempt_url": null,
+      "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/406650407",
+      "head_commit": {
+        "id": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+        "tree_id": "f26f26bde359a4878f8be10abd88cf6627712d13",
+        "message": "ci(evidence): verify the original locked fetch in all four retained contexts\n\nRetain the measured 73ab release repair, complete 40a fetch refusals and Legacy History operation boundaries. Verify only the failed fetch subgate at the fixed 73ab head and actual merge, under both original stable quality and nightly fuzz toolchains, using the unchanged command owner and timeouts.\n\nPreserve all original failures, cancellations, source distinctions and acceptance limits.",
+        "timestamp": "2026-11-04T07:50:19Z",
+        "author": {
+          "name": "Tomasrgbsf",
+          "email": "273673612+Tomasrgbsf@users.noreply.github.com"
+        },
+        "committer": {
+          "name": "Tomasrgbsf",
+          "email": "273673612+Tomasrgbsf@users.noreply.github.com"
+        }
+      },
+      "repository": {
+        "id": 1323087357,
+        "node_id": "R_kgDOTty1_Q",
+        "name": "Trillionnium-Chain",
+        "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "private": false,
+        "owner": {
+          "login": "TrillionniumFoundation",
+          "id": 262513357,
+          "node_id": "O_kgDOD6WizQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/TrillionniumFoundation",
+          "html_url": "https://github.com/TrillionniumFoundation",
+          "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+          "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+          "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+          "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+          "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+          "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+          "type": "Organization",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+        "fork": false,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+        "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+        "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+        "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+        "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+        "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+        "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+        "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+        "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+        "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+        "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+        "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+        "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+        "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+        "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+        "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+        "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+        "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+        "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+        "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+        "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+        "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+        "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+        "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+        "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+        "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+        "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+        "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+        "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+        "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+        "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+        "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+        "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+        "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+        "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+      },
+      "head_repository": {
+        "id": 1323087357,
+        "node_id": "R_kgDOTty1_Q",
+        "name": "Trillionnium-Chain",
+        "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "private": false,
+        "owner": {
+          "login": "TrillionniumFoundation",
+          "id": 262513357,
+          "node_id": "O_kgDOD6WizQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/TrillionniumFoundation",
+          "html_url": "https://github.com/TrillionniumFoundation",
+          "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+          "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+          "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+          "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+          "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+          "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+          "type": "Organization",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+        "fork": false,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+        "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+        "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+        "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+        "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+        "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+        "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+        "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+        "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+        "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+        "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+        "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+        "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+        "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+        "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+        "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+        "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+        "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+        "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+        "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+        "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+        "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+        "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+        "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+        "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+        "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+        "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+        "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+        "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+        "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+        "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+        "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+        "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+        "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+        "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+      }
+    },
+    "metadata_received_utc": "2026-11-04 07:56:46 UTC"
+  },
+  "measured_source": {
+    "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "actual_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+    "tracked_entries": 8120,
+    "tracked_bytes": 933034956,
+    "merge_git_api_binding": {
+      "sha": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+      "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+      "parents": [
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "73ab6e9a83bcc836e261d93f9bb23ceafe556758"
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+      "received_utc": "2026-11-04 07:18:30 UTC",
+      "raw_key": "73ab-release-merge-20261104071830-raw"
+    }
+  },
+  "original_command": [
+    "cargo",
+    "fetch",
+    "--locked",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml"
+  ],
+  "original_process_owner": {
+    "source_path": "scripts/ci/ci_observation.py",
+    "git_blob_sha": "9ee54850767a1fce3848483660860dd8d976c777",
+    "timeout_seconds": 900,
+    "term_grace_seconds": 10,
+    "original_owned_process_group_cleanup_reused": true,
+    "no_new_retry": true
+  },
+  "original_contexts": {
+    "quality": {
+      "toolchain": "1.95.0",
+      "components": [
+        "rustfmt",
+        "clippy"
+      ],
+      "original_job_timeout_minutes": 180
+    },
+    "fuzz": {
+      "toolchain": "nightly-2026-10-01",
+      "components": [
+        "rust-src"
+      ],
+      "original_job_timeout_minutes": 45
+    }
+  },
+  "fixed_source_lockfile": {
+    "source": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "path": "tests/fuzz/Cargo.lock",
+    "bytes": 33605,
+    "sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+    "git_blob_sha": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/73ab6e9a83bcc836e261d93f9bb23ceafe556758/tests/fuzz/Cargo.lock"
+  },
+  "lanes": [
+    {
+      "job": {
+        "id": 126457112337,
+        "run_id": 41795067492,
+        "workflow_name": "Retained original locked fuzz-graph fetch",
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcW5nEQ",
+        "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112337",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/job/126457112337",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:50:35Z",
+        "started_at": "2026-11-04T07:50:38Z",
+        "completed_at": "2026-11-04T07:51:28Z",
+        "name": "Original locked fetch (head, quality)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:50:38Z",
+            "completed_at": "2026-11-04T07:50:39Z"
+          },
+          {
+            "name": "Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:50:39Z",
+            "completed_at": "2026-11-04T07:51:07Z"
+          },
+          {
+            "name": "Verify exact source and execute unchanged preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:51:07Z",
+            "completed_at": "2026-11-04T07:51:09Z"
+          },
+          {
+            "name": "Install only the original context toolchain in fresh private homes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:51:09Z",
+            "completed_at": "2026-11-04T07:51:18Z"
+          },
+          {
+            "name": "Execute only the original locked fetch with the original process owner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:51:18Z",
+            "completed_at": "2026-11-04T07:51:24Z"
+          },
+          {
+            "name": "Recheck the fixed source even after failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:51:24Z",
+            "completed_at": "2026-11-04T07:51:25Z"
+          },
+          {
+            "name": "Preserve source, toolchain, exact fetch output and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:51:25Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          },
+          {
+            "name": "Post Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T07:51:26Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T07:51:26Z",
+            "completed_at": "2026-11-04T07:51:27Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126457112337",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340105,
+        "runner_name": "GitHub Actions 1000340105",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "first_line": 880,
+          "last_line": 892,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:09.3554199Z {\n2026-11-04T07:51:09.3554460Z   \"base\": null,\n2026-11-04T07:51:09.3554815Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:09.3555223Z   \"kind\": \"head\",\n2026-11-04T07:51:09.3555504Z   \"prospective_merge\": null,\n2026-11-04T07:51:09.3555811Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:09.3556195Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:09.3556667Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:09.3557076Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:09.3557412Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:09.3557697Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:09.3557990Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:09.3558304Z }"
+        },
+        {
+          "first_line": 1193,
+          "last_line": 1205,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:25.4891411Z {\n2026-11-04T07:51:25.4891719Z   \"base\": null,\n2026-11-04T07:51:25.4892104Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:25.4892526Z   \"kind\": \"head\",\n2026-11-04T07:51:25.4892803Z   \"prospective_merge\": null,\n2026-11-04T07:51:25.4893134Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:25.4893581Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:25.4894086Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:25.4894550Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:25.4894917Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:25.4895222Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:25.4895537Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:25.4895853Z }"
+        }
+      ],
+      "source_pair_equal": true,
+      "audit": {
+        "line": 893,
+        "value": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal_json_text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "original_timestamped_log_line": "2026-11-04T07:51:09.4068369Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      "complete_original_result": {
+        "first_line": 1032,
+        "last_line": 1032,
+        "literal_json_text": "{\"acceptance_granted\": false, \"artifact_sha256\": {\"cargo-version.log\": \"bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e\", \"compiler.log\": \"4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad\", \"components.log\": \"e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b\", \"fetch.log\": \"b6d5b832fc63c435f68b4bdbf70e736a51a81708ef433bcd0d8e183203159c71\", \"preflight.log\": \"a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0\", \"source-before.json\": \"9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4\", \"source-before.log\": \"9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4\", \"toolchain-install.log\": \"b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe\"}, \"cargo_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-cargo\", \"command_timeout_seconds\": 900, \"context\": \"quality\", \"dependency_policy_checks_executed\": false, \"full_quality_or_fuzz_executed\": false, \"fuzz_targets_executed\": false, \"input_sha256\": {\"rust-toolchain.toml\": \"24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a\", \"scripts/ci/ci_observation.py\": \"389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a\", \"scripts/ci/run_fuzz_smoke.py\": \"7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9\", \"scripts/ci/run_supply_chain.py\": \"3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6\", \"scripts/ci/tool-versions.env\": \"b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408\", \"tests/fuzz/Cargo.lock\": \"8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d\", \"tests/fuzz/Cargo.toml\": \"4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321\"}, \"observations\": [{\"command\": [\"cargo\", \"fetch\", \"--locked\", \"--manifest-path\", \"tests/fuzz/Cargo.toml\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 4076358626, \"executed\": true, \"exit_code\": 0, \"expected_source\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"log\": \"fetch.log\", \"process_exit_code\": 0, \"source_after_verified\": true, \"source_before_verified\": true, \"source_verified\": true, \"timed_out\": false}], \"original_term_grace_seconds\": 10, \"requested_head\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"requested_kind\": \"head\", \"requested_tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"result\": \"PASS\", \"rustup_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-rustup\", \"rustup_toolchain\": \"1.95.0\", \"schema\": \"trnm-retained-locked-fetch-only-v1\", \"source\": {\"commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"source_state\": \"committed-clean\", \"tracked_bytes\": 933034956, \"tracked_entries\": 8120, \"tracked_worktree_verified\": true, \"tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\"}, \"source_consistent\": true, \"source_expected\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\"}",
+        "value": {
+          "acceptance_granted": false,
+          "artifact_sha256": {
+            "cargo-version.log": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+            "compiler.log": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+            "components.log": "e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b",
+            "fetch.log": "b6d5b832fc63c435f68b4bdbf70e736a51a81708ef433bcd0d8e183203159c71",
+            "preflight.log": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+            "source-before.json": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+            "source-before.log": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+            "toolchain-install.log": "b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe"
+          },
+          "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-cargo",
+          "command_timeout_seconds": 900,
+          "context": "quality",
+          "dependency_policy_checks_executed": false,
+          "full_quality_or_fuzz_executed": false,
+          "fuzz_targets_executed": false,
+          "input_sha256": {
+            "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+            "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+            "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+            "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+            "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+            "tests/fuzz/Cargo.lock": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+            "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+          },
+          "observations": [
+            {
+              "command": [
+                "cargo",
+                "fetch",
+                "--locked",
+                "--manifest-path",
+                "tests/fuzz/Cargo.toml"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 4076358626,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+              "log": "fetch.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            }
+          ],
+          "original_term_grace_seconds": 10,
+          "requested_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "requested_kind": "head",
+          "requested_tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "result": "PASS",
+          "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-rustup",
+          "rustup_toolchain": "1.95.0",
+          "schema": "trnm-retained-locked-fetch-only-v1",
+          "source": {
+            "commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "source_state": "committed-clean",
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true,
+            "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2"
+          },
+          "source_consistent": true,
+          "source_expected": "73ab6e9a83bcc836e261d93f9bb23ceafe556758"
+        }
+      },
+      "complete_hash_verified_original_members": [
+        {
+          "path": "toolchain-install.log",
+          "bytes": 320,
+          "sha256": "b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe",
+          "first_line": 925,
+          "last_line": 931,
+          "text": "info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu\ninfo: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)\ninfo: downloading 5 components\n\n  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)\n\ninfo: default toolchain set to 1.95.0-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "compiler.log",
+          "bytes": 196,
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+          "first_line": 932,
+          "last_line": 938,
+          "text": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "cargo-version.log",
+          "bytes": 336,
+          "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+          "first_line": 939,
+          "last_line": 947,
+          "text": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 24.4.0 (noble) [64-bit]\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "components.log",
+          "bytes": 161,
+          "sha256": "e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b",
+          "first_line": 948,
+          "last_line": 952,
+          "text": "cargo-x86_64-unknown-linux-gnu\nclippy-x86_64-unknown-linux-gnu\nrust-std-x86_64-unknown-linux-gnu\nrustc-x86_64-unknown-linux-gnu\nrustfmt-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "fetch.log",
+          "bytes": 4366,
+          "sha256": "b6d5b832fc63c435f68b4bdbf70e736a51a81708ef433bcd0d8e183203159c71",
+          "first_line": 1033,
+          "last_line": 1169,
+          "text": "    Updating crates.io index\n Downloading crates ...\n  Downloaded sha2-asm v0.6.4\n  Downloaded wasm-bindgen-shared v0.2.129\n  Downloaded sha2 v0.10.9\n  Downloaded generic-array v0.14.7\n  Downloaded hybrid-array v0.4.15\n  Downloaded toml_parser v1.1.3+spec-1.1.0\n  Downloaded crypto-common v0.2.2\n  Downloaded autocfg v1.5.1\n  Downloaded windows-link v0.2.1\n  Downloaded fastrand v2.3.0\n  Downloaded arbitrary v1.4.2\n  Downloaded pkcs8 v0.11.0\n  Downloaded num-traits v0.2.19\n  Downloaded getrandom v0.2.17\n  Downloaded bytes v1.12.1\n  Downloaded der v0.8.3\n  Downloaded libfuzzer-sys v0.4.10\n  Downloaded winnow v1.0.4\n  Downloaded hashbrown v0.15.5\n  Downloaded js-sys v0.3.106\n  Downloaded rusqlite v0.39.0\n  Downloaded wit-parser v0.244.0\n  Downloaded vcpkg v0.2.15\n  Downloaded wasmparser v0.244.0\n  Downloaded shake v0.1.0\n  Downloaded curve25519-dalek v4.1.3\n  Downloaded wit-component v0.244.0\n  Downloaded wasm-bindgen-macro-support v0.2.129\n  Downloaded syn v3.0.9\n  Downloaded indexmap v2.13.1\n  Downloaded wasip3 v0.4.0+wasi-0.3.0-rc-2026-01-06\n  Downloaded bumpalo v3.20.3\n  Downloaded rustix v1.1.4\n  Downloaded serde_json v1.0.149\n  Downloaded serde v1.0.228\n  Downloaded borsh v1.8.0\n  Downloaded der v0.7.10\n  Downloaded wasm-bindgen v0.2.129\n  Downloaded fiat-crypto v0.2.9\n  Downloaded prettyplease v0.2.37\n  Downloaded memchr v2.8.0\n  Downloaded r-efi v6.0.0\n  Downloaded log v0.4.29\n  Downloaded serde_derive v1.0.228\n  Downloaded wit-bindgen v0.51.0\n  Downloaded getrandom v0.4.2\n  Downloaded const-oid v0.10.2\n  Downloaded ctutils v0.4.6\n  Downloaded borsh-derive v1.8.0\n  Downloaded const-oid v0.9.6\n  Downloaded wasi v0.11.1+wasi-snapshot-preview1\n  Downloaded ed25519 v2.2.3\n  Downloaded smallvec v1.15.1\n  Downloaded once_cell v1.21.4\n  Downloaded libc v0.2.184\n  Downloaded digest v0.10.7\n  Downloaded semver v1.0.27\n  Downloaded cmov v0.5.4\n  Downloaded proc-macro-crate v3.5.0\n  Downloaded curve25519-dalek-derive v0.1.1\n  Downloaded spki v0.7.3\n  Downloaded pkcs8 v0.10.2\n  Downloaded rand_core v0.6.4\n  Downloaded signature v2.2.0\n  Downloaded ed25519-dalek v2.2.0\n  Downloaded fallible-iterator v0.3.0\n  Downloaded rsqlite-vfs v0.1.1\n  Downloaded rustversion v1.0.23\n  Downloaded zmij v1.0.21\n  Downloaded tempfile v3.27.0\n  Downloaded module-lattice v0.2.3\n  Downloaded spki v0.8.1\n  Downloaded cfg_aliases v0.2.2\n  Downloaded base64ct v1.8.3\n  Downloaded fallible-streaming-iterator v0.1.9\n  Downloaded winapi v0.3.9\n  Downloaded pkg-config v0.3.32\n  Downloaded thiserror-impl v2.0.21\n  Downloaded wasm-bindgen-macro v0.2.129\n  Downloaded cfg-if v1.0.4\n  Downloaded itoa v1.0.18\n  Downloaded jobserver v0.1.35\n  Downloaded fs2 v0.4.3\n  Downloaded errno v0.3.14\n  Downloaded keccak v0.2.2\n  Downloaded signature v3.0.0\n  Downloaded cpufeatures v0.3.1\n  Downloaded sponge-cursor v0.1.0\n  Downloaded subtle v2.6.1\n  Downloaded hex v0.4.3\n  Downloaded unicode-xid v0.2.6\n  Downloaded ml-dsa v0.1.1\n  Downloaded bitflags v2.11.0\n  Downloaded foldhash v0.1.5\n  Downloaded equivalent v1.0.2\n  Downloaded serde_core v1.0.228\n  Downloaded wit-bindgen-rust v0.51.0\n  Downloaded wit-bindgen-rust-macro v0.51.0\n  Downloaded toml_edit v0.25.13+spec-1.1.0\n  Downloaded rustc_version v0.4.1\n  Downloaded hashlink v0.11.1\n  Downloaded zeroize v1.8.2\n  Downloaded cpufeatures v0.2.17\n  Downloaded block-buffer v0.10.4\n  Downloaded version_check v0.9.5\n  Downloaded typenum v1.20.1\n  Downloaded crypto-common v0.1.7\n  Downloaded find-msvc-tools v0.1.9\n  Downloaded heck v0.5.0\n  Downloaded wasm-metadata v0.244.0\n  Downloaded anyhow v1.0.103\n  Downloaded id-arena v2.3.0\n  Downloaded digest v0.11.3\n  Downloaded toml_datetime v1.1.1+spec-1.1.0\n  Downloaded thiserror v2.0.21\n  Downloaded wasip2 v1.0.2+wasi-0.2.9\n  Downloaded wit-bindgen-core v0.51.0\n  Downloaded foldhash v0.2.0\n  Downloaded hashbrown v0.16.1\n  Downloaded leb128fmt v0.1.0\n  Downloaded wasm-encoder v0.244.0\n  Downloaded cc v1.2.59\n  Downloaded proc-macro2 v1.0.106\n  Downloaded unicode-ident v1.0.24\n  Downloaded syn v2.0.117\n  Downloaded thiserror v1.0.69\n  Downloaded thiserror-impl v1.0.69\n  Downloaded shlex v1.3.0\n  Downloaded quote v1.0.45\n  Downloaded windows-sys v0.61.2\n  Downloaded winapi-i686-pc-windows-gnu v0.4.0\n  Downloaded winapi-x86_64-pc-windows-gnu v0.4.0\n  Downloaded linux-raw-sys v0.12.1\n  Downloaded libsqlite3-sys v0.37.0\n  Downloaded sqlite-wasm-rs v0.5.5\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+          "first_line": 893,
+          "last_line": 893,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 421,
+          "sha256": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+          "first_line": 880,
+          "last_line": 892,
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.log",
+          "bytes": 421,
+          "sha256": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+          "first_line": 880,
+          "last_line": 892,
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        }
+      ],
+      "actual_toolchain": {
+        "requested": "1.95.0",
+        "rustc_version_line": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "cargo_version_line": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+        "installed_components": [
+          "cargo-x86_64-unknown-linux-gnu",
+          "clippy-x86_64-unknown-linux-gnu",
+          "rust-std-x86_64-unknown-linux-gnu",
+          "rustc-x86_64-unknown-linux-gnu",
+          "rustfmt-x86_64-unknown-linux-gnu"
+        ],
+        "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-rustup",
+        "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-quality-cargo"
+      },
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112337/logs",
+        "bytes": 145665,
+        "sha256": "08ce5a9784b351ffcad7783a436f93d1104542cd605ac1ba4684d8cd19e0f63c",
+        "full_text_external": true,
+        "session_raw_store": "73ab-locked-fetch-terminal-log-126457112337"
+      },
+      "artifact": {
+        "id": 13305420509,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwNTQyMDUwOQ==",
+        "name": "retained-locked-fetch-head-quality-73ab6e9a83bcc836e261d93f9bb23ceafe556758-1",
+        "size_in_bytes": 5704,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305420509",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305420509/zip",
+        "expired": false,
+        "digest": "sha256:336e209b10ba8b3a8a3371f5fce8fbcf1e468ba7031bba3a90f48a6440d89cd8",
+        "created_at": "2026-11-04T07:51:26Z",
+        "updated_at": "2026-11-04T07:51:26Z",
+        "expires_at": "2026-12-04T07:51:25Z",
+        "workflow_run": {
+          "id": 41795067492,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-retained-failure-readback-20261104",
+          "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad"
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/artifacts/13305420509",
+        "api_and_original_console_match": true,
+        "zip_downloaded": false
+      },
+      "checks": {
+        "one_original_argv_executed": true,
+        "source_flags_all_true": true,
+        "unchanged_fixed_lock_sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+        "original_timeout_and_grace": true,
+        "full_quality_or_fuzz_qualification": false,
+        "native_test_qualification": false
+      }
+    },
+    {
+      "job": {
+        "id": 126457112575,
+        "run_id": 41795067492,
+        "workflow_name": "Retained original locked fuzz-graph fetch",
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcW5n_w",
+        "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112575",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/job/126457112575",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:50:35Z",
+        "started_at": "2026-11-04T07:50:38Z",
+        "completed_at": "2026-11-04T07:51:28Z",
+        "name": "Original locked fetch (head, fuzz)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:50:39Z",
+            "completed_at": "2026-11-04T07:50:40Z"
+          },
+          {
+            "name": "Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:50:40Z",
+            "completed_at": "2026-11-04T07:51:06Z"
+          },
+          {
+            "name": "Verify exact source and execute unchanged preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:51:06Z",
+            "completed_at": "2026-11-04T07:51:08Z"
+          },
+          {
+            "name": "Install only the original context toolchain in fresh private homes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:51:08Z",
+            "completed_at": "2026-11-04T07:51:17Z"
+          },
+          {
+            "name": "Execute only the original locked fetch with the original process owner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:51:17Z",
+            "completed_at": "2026-11-04T07:51:23Z"
+          },
+          {
+            "name": "Recheck the fixed source even after failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:51:23Z",
+            "completed_at": "2026-11-04T07:51:24Z"
+          },
+          {
+            "name": "Preserve source, toolchain, exact fetch output and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:51:24Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          },
+          {
+            "name": "Post Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T07:51:26Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T07:51:26Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126457112575",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340107,
+        "runner_name": "GitHub Actions 1000340107",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "first_line": 880,
+          "last_line": 892,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:08.3611582Z {\n2026-11-04T07:51:08.3611988Z   \"base\": null,\n2026-11-04T07:51:08.3612427Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:08.3612938Z   \"kind\": \"head\",\n2026-11-04T07:51:08.3613308Z   \"prospective_merge\": null,\n2026-11-04T07:51:08.3613979Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:08.3614476Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:08.3615194Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:08.3615778Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:08.3616275Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:08.3616684Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:08.3617093Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:08.3617509Z }"
+        },
+        {
+          "first_line": 1192,
+          "last_line": 1204,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:24.7478581Z {\n2026-11-04T07:51:24.7478917Z   \"base\": null,\n2026-11-04T07:51:24.7479367Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:24.7479879Z   \"kind\": \"head\",\n2026-11-04T07:51:24.7480208Z   \"prospective_merge\": null,\n2026-11-04T07:51:24.7480598Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:24.7481274Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:24.7482066Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:24.7482698Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:24.7483216Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:24.7483860Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:24.7484300Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:24.7484754Z }"
+        }
+      ],
+      "source_pair_equal": true,
+      "audit": {
+        "line": 893,
+        "value": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal_json_text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "original_timestamped_log_line": "2026-11-04T07:51:08.4243222Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      "complete_original_result": {
+        "first_line": 1031,
+        "last_line": 1031,
+        "literal_json_text": "{\"acceptance_granted\": false, \"artifact_sha256\": {\"cargo-version.log\": \"138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427\", \"compiler.log\": \"78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a\", \"components.log\": \"9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d\", \"fetch.log\": \"1c8dc82a9203ad9b7576231a54337ada91f3a322362e6c67e8c4b5ac618b02a4\", \"preflight.log\": \"a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0\", \"source-before.json\": \"9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4\", \"source-before.log\": \"9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4\", \"toolchain-install.log\": \"720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0\"}, \"cargo_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-cargo\", \"command_timeout_seconds\": 900, \"context\": \"fuzz\", \"dependency_policy_checks_executed\": false, \"full_quality_or_fuzz_executed\": false, \"fuzz_targets_executed\": false, \"input_sha256\": {\"rust-toolchain.toml\": \"24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a\", \"scripts/ci/ci_observation.py\": \"389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a\", \"scripts/ci/run_fuzz_smoke.py\": \"7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9\", \"scripts/ci/run_supply_chain.py\": \"3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6\", \"scripts/ci/tool-versions.env\": \"b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408\", \"tests/fuzz/Cargo.lock\": \"8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d\", \"tests/fuzz/Cargo.toml\": \"4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321\"}, \"observations\": [{\"command\": [\"cargo\", \"fetch\", \"--locked\", \"--manifest-path\", \"tests/fuzz/Cargo.toml\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 3912126140, \"executed\": true, \"exit_code\": 0, \"expected_source\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"log\": \"fetch.log\", \"process_exit_code\": 0, \"source_after_verified\": true, \"source_before_verified\": true, \"source_verified\": true, \"timed_out\": false}], \"original_term_grace_seconds\": 10, \"requested_head\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"requested_kind\": \"head\", \"requested_tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"result\": \"PASS\", \"rustup_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-rustup\", \"rustup_toolchain\": \"nightly-2026-10-01\", \"schema\": \"trnm-retained-locked-fetch-only-v1\", \"source\": {\"commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"source_state\": \"committed-clean\", \"tracked_bytes\": 933034956, \"tracked_entries\": 8120, \"tracked_worktree_verified\": true, \"tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\"}, \"source_consistent\": true, \"source_expected\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\"}",
+        "value": {
+          "acceptance_granted": false,
+          "artifact_sha256": {
+            "cargo-version.log": "138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427",
+            "compiler.log": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+            "components.log": "9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d",
+            "fetch.log": "1c8dc82a9203ad9b7576231a54337ada91f3a322362e6c67e8c4b5ac618b02a4",
+            "preflight.log": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+            "source-before.json": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+            "source-before.log": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+            "toolchain-install.log": "720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0"
+          },
+          "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-cargo",
+          "command_timeout_seconds": 900,
+          "context": "fuzz",
+          "dependency_policy_checks_executed": false,
+          "full_quality_or_fuzz_executed": false,
+          "fuzz_targets_executed": false,
+          "input_sha256": {
+            "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+            "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+            "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+            "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+            "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+            "tests/fuzz/Cargo.lock": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+            "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+          },
+          "observations": [
+            {
+              "command": [
+                "cargo",
+                "fetch",
+                "--locked",
+                "--manifest-path",
+                "tests/fuzz/Cargo.toml"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 3912126140,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+              "log": "fetch.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            }
+          ],
+          "original_term_grace_seconds": 10,
+          "requested_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "requested_kind": "head",
+          "requested_tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "result": "PASS",
+          "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-rustup",
+          "rustup_toolchain": "nightly-2026-10-01",
+          "schema": "trnm-retained-locked-fetch-only-v1",
+          "source": {
+            "commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "source_state": "committed-clean",
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true,
+            "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2"
+          },
+          "source_consistent": true,
+          "source_expected": "73ab6e9a83bcc836e261d93f9bb23ceafe556758"
+        }
+      },
+      "complete_hash_verified_original_members": [
+        {
+          "path": "toolchain-install.log",
+          "bytes": 374,
+          "sha256": "720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0",
+          "first_line": 925,
+          "last_line": 931,
+          "text": "info: syncing channel updates for nightly-2026-10-01-x86_64-unknown-linux-gnu\ninfo: latest update on 2026-10-01 for version 1.101.0-nightly (21b707e3f 2026-09-30)\ninfo: downloading 4 components\n\n  nightly-2026-10-01-x86_64-unknown-linux-gnu installed - rustc 1.101.0-nightly (21b707e3f 2026-09-30)\n\ninfo: default toolchain set to nightly-2026-10-01-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "compiler.log",
+          "bytes": 214,
+          "sha256": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+          "first_line": 932,
+          "last_line": 938,
+          "text": "rustc 1.101.0-nightly (21b707e3f 2026-09-30)\nbinary: rustc\ncommit-hash: 21b707e3f97e0b522ebd2f277a862339625ad83f\ncommit-date: 2026-09-30\nhost: x86_64-unknown-linux-gnu\nrelease: 1.101.0-nightly\nLLVM version: 23.1.1\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "cargo-version.log",
+          "bytes": 353,
+          "sha256": "138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427",
+          "first_line": 939,
+          "last_line": 947,
+          "text": "cargo 1.101.0-nightly (f3865b2a4 2026-09-29)\nrelease: 1.101.0-nightly\ncommit-hash: f3865b2a4d1acc5276f6b3c67d0e057f4dab3928\ncommit-date: 2026-09-29\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.6 (sys:0.21.0 vendored)\nlibcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:OpenSSL/3.6.3)\nssl: OpenSSL 3.6.3 9 Jun 2026\nos: Ubuntu 24.4.0 (noble) [64-bit]\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "components.log",
+          "bytes": 105,
+          "sha256": "9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d",
+          "first_line": 948,
+          "last_line": 951,
+          "text": "cargo-x86_64-unknown-linux-gnu\nrust-src\nrust-std-x86_64-unknown-linux-gnu\nrustc-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "fetch.log",
+          "bytes": 4366,
+          "sha256": "1c8dc82a9203ad9b7576231a54337ada91f3a322362e6c67e8c4b5ac618b02a4",
+          "first_line": 1032,
+          "last_line": 1168,
+          "text": "    Updating crates.io index\n Downloading crates ...\n  Downloaded thiserror v1.0.69\n  Downloaded unicode-ident v1.0.24\n  Downloaded wit-bindgen-rust-macro v0.51.0\n  Downloaded sha2-asm v0.6.4\n  Downloaded heck v0.5.0\n  Downloaded signature v3.0.0\n  Downloaded windows-link v0.2.1\n  Downloaded crypto-common v0.1.7\n  Downloaded unicode-xid v0.2.6\n  Downloaded id-arena v2.3.0\n  Downloaded equivalent v1.0.2\n  Downloaded wasm-bindgen-shared v0.2.129\n  Downloaded cfg-if v1.0.4\n  Downloaded generic-array v0.14.7\n  Downloaded rustc_version v0.4.1\n  Downloaded cfg_aliases v0.2.2\n  Downloaded proc-macro-crate v3.5.0\n  Downloaded version_check v0.9.5\n  Downloaded cpufeatures v0.2.17\n  Downloaded digest v0.11.3\n  Downloaded autocfg v1.5.1\n  Downloaded wasm-bindgen-macro v0.2.129\n  Downloaded hex v0.4.3\n  Downloaded block-buffer v0.10.4\n  Downloaded signature v2.2.0\n  Downloaded thiserror-impl v1.0.69\n  Downloaded shlex v1.3.0\n  Downloaded crypto-common v0.2.2\n  Downloaded jobserver v0.1.35\n  Downloaded sha2 v0.10.9\n  Downloaded fallible-streaming-iterator v0.1.9\n  Downloaded curve25519-dalek-derive v0.1.1\n  Downloaded foldhash v0.2.0\n  Downloaded itoa v1.0.18\n  Downloaded find-msvc-tools v0.1.9\n  Downloaded subtle v2.6.1\n  Downloaded thiserror v2.0.21\n  Downloaded foldhash v0.1.5\n  Downloaded wasm-metadata v0.244.0\n  Downloaded leb128fmt v0.1.0\n  Downloaded digest v0.10.7\n  Downloaded zeroize v1.8.2\n  Downloaded rustversion v1.0.23\n  Downloaded rsqlite-vfs v0.1.1\n  Downloaded thiserror-impl v2.0.21\n  Downloaded hashlink v0.11.1\n  Downloaded fallible-iterator v0.3.0\n  Downloaded rand_core v0.6.4\n  Downloaded wasi v0.11.1+wasi-snapshot-preview1\n  Downloaded getrandom v0.4.2\n  Downloaded pkg-config v0.3.32\n  Downloaded pkcs8 v0.10.2\n  Downloaded spki v0.7.3\n  Downloaded quote v1.0.45\n  Downloaded proc-macro2 v1.0.106\n  Downloaded semver v1.0.27\n  Downloaded zmij v1.0.21\n  Downloaded once_cell v1.21.4\n  Downloaded borsh-derive v1.8.0\n  Downloaded sponge-cursor v0.1.0\n  Downloaded wit-bindgen-core v0.51.0\n  Downloaded smallvec v1.15.1\n  Downloaded anyhow v1.0.103\n  Downloaded ed25519 v2.2.3\n  Downloaded getrandom v0.2.17\n  Downloaded const-oid v0.9.6\n  Downloaded base64ct v1.8.3\n  Downloaded cmov v0.5.4\n  Downloaded cpufeatures v0.3.1\n  Downloaded errno v0.3.14\n  Downloaded fs2 v0.4.3\n  Downloaded fastrand v2.3.0\n  Downloaded wit-bindgen-rust v0.51.0\n  Downloaded serde_core v1.0.228\n  Downloaded serde_derive v1.0.228\n  Downloaded bitflags v2.11.0\n  Downloaded log v0.4.29\n  Downloaded prettyplease v0.2.37\n  Downloaded r-efi v6.0.0\n  Downloaded wasm-bindgen v0.2.129\n  Downloaded bytes v1.12.1\n  Downloaded keccak v0.2.2\n  Downloaded spki v0.8.1\n  Downloaded module-lattice v0.2.3\n  Downloaded cc v1.2.59\n  Downloaded wit-bindgen v0.51.0\n  Downloaded serde v1.0.228\n  Downloaded wasm-encoder v0.244.0\n  Downloaded ed25519-dalek v2.2.0\n  Downloaded der v0.7.10\n  Downloaded borsh v1.8.0\n  Downloaded toml_datetime v1.1.1+spec-1.1.0\n  Downloaded memchr v2.8.0\n  Downloaded typenum v1.20.1\n  Downloaded bumpalo v3.20.3\n  Downloaded js-sys v0.3.106\n  Downloaded hybrid-array v0.4.15\n  Downloaded indexmap v2.13.1\n  Downloaded wasm-bindgen-macro-support v0.2.129\n  Downloaded ctutils v0.4.6\n  Downloaded pkcs8 v0.11.0\n  Downloaded const-oid v0.10.2\n  Downloaded num-traits v0.2.19\n  Downloaded wasip3 v0.4.0+wasi-0.3.0-rc-2026-01-06\n  Downloaded hashbrown v0.16.1\n  Downloaded hashbrown v0.15.5\n  Downloaded wasip2 v1.0.2+wasi-0.2.9\n  Downloaded serde_json v1.0.149\n  Downloaded tempfile v3.27.0\n  Downloaded wit-parser v0.244.0\n  Downloaded rusqlite v0.39.0\n  Downloaded winnow v1.0.4\n  Downloaded vcpkg v0.2.15\n  Downloaded toml_parser v1.1.3+spec-1.1.0\n  Downloaded arbitrary v1.4.2\n  Downloaded toml_edit v0.25.13+spec-1.1.0\n  Downloaded ml-dsa v0.1.1\n  Downloaded wit-component v0.244.0\n  Downloaded wasmparser v0.244.0\n  Downloaded curve25519-dalek v4.1.3\n  Downloaded der v0.8.3\n  Downloaded libfuzzer-sys v0.4.10\n  Downloaded syn v2.0.117\n  Downloaded syn v3.0.9\n  Downloaded fiat-crypto v0.2.9\n  Downloaded shake v0.1.0\n  Downloaded rustix v1.1.4\n  Downloaded libc v0.2.184\n  Downloaded winapi v0.3.9\n  Downloaded windows-sys v0.61.2\n  Downloaded winapi-i686-pc-windows-gnu v0.4.0\n  Downloaded winapi-x86_64-pc-windows-gnu v0.4.0\n  Downloaded linux-raw-sys v0.12.1\n  Downloaded libsqlite3-sys v0.37.0\n  Downloaded sqlite-wasm-rs v0.5.5\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+          "first_line": 893,
+          "last_line": 893,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 421,
+          "sha256": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+          "first_line": 880,
+          "last_line": 892,
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.log",
+          "bytes": 421,
+          "sha256": "9daf8b5ad3d88792642ec5d4971b84cce184971286983b75dfbc894da40dd1a4",
+          "first_line": 880,
+          "last_line": 892,
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        }
+      ],
+      "actual_toolchain": {
+        "requested": "nightly-2026-10-01",
+        "rustc_version_line": "rustc 1.101.0-nightly (21b707e3f 2026-09-30)",
+        "cargo_version_line": "cargo 1.101.0-nightly (f3865b2a4 2026-09-29)",
+        "installed_components": [
+          "cargo-x86_64-unknown-linux-gnu",
+          "rust-src",
+          "rust-std-x86_64-unknown-linux-gnu",
+          "rustc-x86_64-unknown-linux-gnu"
+        ],
+        "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-rustup",
+        "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-head-fuzz-cargo"
+      },
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112575/logs",
+        "bytes": 145631,
+        "sha256": "6fe76121abfa388f0ccc6151add065b130e35ea6d451fc6246b4f6025c9c180c",
+        "full_text_external": true,
+        "session_raw_store": "73ab-locked-fetch-terminal-log-126457112575"
+      },
+      "artifact": {
+        "id": 13304154465,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwNDE1NDQ2NQ==",
+        "name": "retained-locked-fetch-head-fuzz-73ab6e9a83bcc836e261d93f9bb23ceafe556758-1",
+        "size_in_bytes": 5713,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13304154465",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13304154465/zip",
+        "expired": false,
+        "digest": "sha256:97289489e5473d299fd5fce70e062917a458a42307c5cbc283e98af8b0182d38",
+        "created_at": "2026-11-04T07:51:25Z",
+        "updated_at": "2026-11-04T07:51:25Z",
+        "expires_at": "2026-12-04T07:51:24Z",
+        "workflow_run": {
+          "id": 41795067492,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-retained-failure-readback-20261104",
+          "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad"
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/artifacts/13304154465",
+        "api_and_original_console_match": true,
+        "zip_downloaded": false
+      },
+      "checks": {
+        "one_original_argv_executed": true,
+        "source_flags_all_true": true,
+        "unchanged_fixed_lock_sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+        "original_timeout_and_grace": true,
+        "full_quality_or_fuzz_qualification": false,
+        "native_test_qualification": false
+      }
+    },
+    {
+      "job": {
+        "id": 126457112594,
+        "run_id": 41795067492,
+        "workflow_name": "Retained original locked fuzz-graph fetch",
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcW5oEg",
+        "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112594",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/job/126457112594",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:50:35Z",
+        "started_at": "2026-11-04T07:50:38Z",
+        "completed_at": "2026-11-04T07:51:25Z",
+        "name": "Original locked fetch (prospective-merge, fuzz)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:50:39Z",
+            "completed_at": "2026-11-04T07:50:39Z"
+          },
+          {
+            "name": "Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:50:39Z",
+            "completed_at": "2026-11-04T07:51:04Z"
+          },
+          {
+            "name": "Verify exact source and execute unchanged preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:51:04Z",
+            "completed_at": "2026-11-04T07:51:06Z"
+          },
+          {
+            "name": "Install only the original context toolchain in fresh private homes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:51:06Z",
+            "completed_at": "2026-11-04T07:51:15Z"
+          },
+          {
+            "name": "Execute only the original locked fetch with the original process owner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:51:15Z",
+            "completed_at": "2026-11-04T07:51:22Z"
+          },
+          {
+            "name": "Recheck the fixed source even after failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:51:22Z",
+            "completed_at": "2026-11-04T07:51:23Z"
+          },
+          {
+            "name": "Preserve source, toolchain, exact fetch output and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:51:23Z",
+            "completed_at": "2026-11-04T07:51:24Z"
+          },
+          {
+            "name": "Post Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T07:51:24Z",
+            "completed_at": "2026-11-04T07:51:24Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T07:51:24Z",
+            "completed_at": "2026-11-04T07:51:24Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126457112594",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340106,
+        "runner_name": "GitHub Actions 1000340106",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "first_line": 883,
+          "last_line": 895,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:06.5265178Z {\n2026-11-04T07:51:06.5265618Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:51:06.5266239Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:06.5266825Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:51:06.5267604Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:06.5268203Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:06.5268698Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:06.5269501Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:06.5270046Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:06.5270417Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:06.5270727Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:06.5271032Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:06.5271349Z }"
+        },
+        {
+          "first_line": 1195,
+          "last_line": 1207,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:23.1317255Z {\n2026-11-04T07:51:23.1317753Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:51:23.1318349Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:23.1318876Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:51:23.1319401Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:23.1320085Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:23.1320635Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:23.1321279Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:23.1321857Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:23.1322297Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:23.1322676Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:23.1323072Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:23.1323489Z }"
+        }
+      ],
+      "source_pair_equal": true,
+      "audit": {
+        "line": 896,
+        "value": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal_json_text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "original_timestamped_log_line": "2026-11-04T07:51:06.5840071Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      "complete_original_result": {
+        "first_line": 1034,
+        "last_line": 1034,
+        "literal_json_text": "{\"acceptance_granted\": false, \"artifact_sha256\": {\"cargo-version.log\": \"138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427\", \"compiler.log\": \"78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a\", \"components.log\": \"9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d\", \"fetch.log\": \"af0cd4bcecad25f013ee4a3e61f6fbb0b8a650d7d96bacc67172c38e1a105b06\", \"preflight.log\": \"a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0\", \"source-before.json\": \"f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c\", \"source-before.log\": \"f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c\", \"toolchain-install.log\": \"720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0\"}, \"cargo_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-cargo\", \"command_timeout_seconds\": 900, \"context\": \"fuzz\", \"dependency_policy_checks_executed\": false, \"full_quality_or_fuzz_executed\": false, \"fuzz_targets_executed\": false, \"input_sha256\": {\"rust-toolchain.toml\": \"24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a\", \"scripts/ci/ci_observation.py\": \"389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a\", \"scripts/ci/run_fuzz_smoke.py\": \"7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9\", \"scripts/ci/run_supply_chain.py\": \"3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6\", \"scripts/ci/tool-versions.env\": \"b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408\", \"tests/fuzz/Cargo.lock\": \"8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d\", \"tests/fuzz/Cargo.toml\": \"4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321\"}, \"observations\": [{\"command\": [\"cargo\", \"fetch\", \"--locked\", \"--manifest-path\", \"tests/fuzz/Cargo.toml\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 4080117716, \"executed\": true, \"exit_code\": 0, \"expected_source\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"log\": \"fetch.log\", \"process_exit_code\": 0, \"source_after_verified\": true, \"source_before_verified\": true, \"source_verified\": true, \"timed_out\": false}], \"original_term_grace_seconds\": 10, \"requested_head\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"requested_kind\": \"prospective-merge\", \"requested_tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"result\": \"PASS\", \"rustup_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-rustup\", \"rustup_toolchain\": \"nightly-2026-10-01\", \"schema\": \"trnm-retained-locked-fetch-only-v1\", \"source\": {\"commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"source_state\": \"committed-clean\", \"tracked_bytes\": 933034956, \"tracked_entries\": 8120, \"tracked_worktree_verified\": true, \"tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\"}, \"source_consistent\": true, \"source_expected\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\"}",
+        "value": {
+          "acceptance_granted": false,
+          "artifact_sha256": {
+            "cargo-version.log": "138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427",
+            "compiler.log": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+            "components.log": "9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d",
+            "fetch.log": "af0cd4bcecad25f013ee4a3e61f6fbb0b8a650d7d96bacc67172c38e1a105b06",
+            "preflight.log": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+            "source-before.json": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+            "source-before.log": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+            "toolchain-install.log": "720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0"
+          },
+          "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-cargo",
+          "command_timeout_seconds": 900,
+          "context": "fuzz",
+          "dependency_policy_checks_executed": false,
+          "full_quality_or_fuzz_executed": false,
+          "fuzz_targets_executed": false,
+          "input_sha256": {
+            "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+            "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+            "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+            "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+            "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+            "tests/fuzz/Cargo.lock": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+            "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+          },
+          "observations": [
+            {
+              "command": [
+                "cargo",
+                "fetch",
+                "--locked",
+                "--manifest-path",
+                "tests/fuzz/Cargo.toml"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 4080117716,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+              "log": "fetch.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            }
+          ],
+          "original_term_grace_seconds": 10,
+          "requested_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "requested_kind": "prospective-merge",
+          "requested_tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+          "result": "PASS",
+          "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-rustup",
+          "rustup_toolchain": "nightly-2026-10-01",
+          "schema": "trnm-retained-locked-fetch-only-v1",
+          "source": {
+            "commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "source_state": "committed-clean",
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true,
+            "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2"
+          },
+          "source_consistent": true,
+          "source_expected": "88f899241b1050b1be5bc55f2c1b077b1afa1c10"
+        }
+      },
+      "complete_hash_verified_original_members": [
+        {
+          "path": "toolchain-install.log",
+          "bytes": 374,
+          "sha256": "720b8b6d9f5f40da336f59b55e0b9402404644eae715ae4fb522e124ea6f67e0",
+          "first_line": 928,
+          "last_line": 934,
+          "text": "info: syncing channel updates for nightly-2026-10-01-x86_64-unknown-linux-gnu\ninfo: latest update on 2026-10-01 for version 1.101.0-nightly (21b707e3f 2026-09-30)\ninfo: downloading 4 components\n\n  nightly-2026-10-01-x86_64-unknown-linux-gnu installed - rustc 1.101.0-nightly (21b707e3f 2026-09-30)\n\ninfo: default toolchain set to nightly-2026-10-01-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "compiler.log",
+          "bytes": 214,
+          "sha256": "78918a82c9e6588fc2530813e1abfffadceaa6a358efd7321e1a99d4705c4d9a",
+          "first_line": 935,
+          "last_line": 941,
+          "text": "rustc 1.101.0-nightly (21b707e3f 2026-09-30)\nbinary: rustc\ncommit-hash: 21b707e3f97e0b522ebd2f277a862339625ad83f\ncommit-date: 2026-09-30\nhost: x86_64-unknown-linux-gnu\nrelease: 1.101.0-nightly\nLLVM version: 23.1.1\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "cargo-version.log",
+          "bytes": 353,
+          "sha256": "138b8b6f1ef056b7ad3bc38947f7c13c3eeed2cfacecc4b3e67a8fefe331d427",
+          "first_line": 942,
+          "last_line": 950,
+          "text": "cargo 1.101.0-nightly (f3865b2a4 2026-09-29)\nrelease: 1.101.0-nightly\ncommit-hash: f3865b2a4d1acc5276f6b3c67d0e057f4dab3928\ncommit-date: 2026-09-29\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.6 (sys:0.21.0 vendored)\nlibcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:OpenSSL/3.6.3)\nssl: OpenSSL 3.6.3 9 Jun 2026\nos: Ubuntu 24.4.0 (noble) [64-bit]\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "components.log",
+          "bytes": 105,
+          "sha256": "9b0565b34db3fac68dd9a7978c48375a254d37c6d2290da13107c9b963ffea2d",
+          "first_line": 951,
+          "last_line": 954,
+          "text": "cargo-x86_64-unknown-linux-gnu\nrust-src\nrust-std-x86_64-unknown-linux-gnu\nrustc-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "fetch.log",
+          "bytes": 4366,
+          "sha256": "af0cd4bcecad25f013ee4a3e61f6fbb0b8a650d7d96bacc67172c38e1a105b06",
+          "first_line": 1035,
+          "last_line": 1171,
+          "text": "    Updating crates.io index\n Downloading crates ...\n  Downloaded thiserror v1.0.69\n  Downloaded unicode-ident v1.0.24\n  Downloaded thiserror-impl v1.0.69\n  Downloaded quote v1.0.45\n  Downloaded semver v1.0.27\n  Downloaded foldhash v0.2.0\n  Downloaded syn v2.0.117\n  Downloaded getrandom v0.4.2\n  Downloaded hashbrown v0.16.1\n  Downloaded cpufeatures v0.3.1\n  Downloaded bitflags v2.11.0\n  Downloaded toml_parser v1.1.3+spec-1.1.0\n  Downloaded wit-bindgen v0.51.0\n  Downloaded hybrid-array v0.4.15\n  Downloaded serde_derive v1.0.228\n  Downloaded winnow v1.0.4\n  Downloaded wit-parser v0.244.0\n  Downloaded foldhash v0.1.5\n  Downloaded cmov v0.5.4\n  Downloaded arbitrary v1.4.2\n  Downloaded indexmap v2.13.1\n  Downloaded ml-dsa v0.1.1\n  Downloaded serde_core v1.0.228\n  Downloaded anyhow v1.0.103\n  Downloaded wasi v0.11.1+wasi-snapshot-preview1\n  Downloaded errno v0.3.14\n  Downloaded fs2 v0.4.3\n  Downloaded wasip3 v0.4.0+wasi-0.3.0-rc-2026-01-06\n  Downloaded wit-bindgen-rust v0.51.0\n  Downloaded wit-component v0.244.0\n  Downloaded wasmparser v0.244.0\n  Downloaded serde v1.0.228\n  Downloaded hashbrown v0.15.5\n  Downloaded serde_json v1.0.149\n  Downloaded crypto-common v0.1.7\n  Downloaded block-buffer v0.10.4\n  Downloaded fiat-crypto v0.2.9\n  Downloaded sponge-cursor v0.1.0\n  Downloaded num-traits v0.2.19\n  Downloaded autocfg v1.5.1\n  Downloaded fastrand v2.3.0\n  Downloaded equivalent v1.0.2\n  Downloaded unicode-xid v0.2.6\n  Downloaded heck v0.5.0\n  Downloaded digest v0.10.7\n  Downloaded version_check v0.9.5\n  Downloaded wasm-bindgen-macro-support v0.2.129\n  Downloaded subtle v2.6.1\n  Downloaded toml_edit v0.25.13+spec-1.1.0\n  Downloaded toml_datetime v1.1.1+spec-1.1.0\n  Downloaded digest v0.11.3\n  Downloaded ctutils v0.4.6\n  Downloaded pkcs8 v0.11.0\n  Downloaded spki v0.8.1\n  Downloaded id-arena v2.3.0\n  Downloaded der v0.8.3\n  Downloaded const-oid v0.10.2\n  Downloaded zeroize v1.8.2\n  Downloaded wasm-bindgen-macro v0.2.129\n  Downloaded cfg_aliases v0.2.2\n  Downloaded shake v0.1.0\n  Downloaded libfuzzer-sys v0.4.10\n  Downloaded rustc_version v0.4.1\n  Downloaded crypto-common v0.2.2\n  Downloaded keccak v0.2.2\n  Downloaded rustix v1.1.4\n  Downloaded windows-link v0.2.1\n  Downloaded module-lattice v0.2.3\n  Downloaded tempfile v3.27.0\n  Downloaded signature v3.0.0\n  Downloaded find-msvc-tools v0.1.9\n  Downloaded rustversion v1.0.23\n  Downloaded rsqlite-vfs v0.1.1\n  Downloaded fallible-streaming-iterator v0.1.9\n  Downloaded zmij v1.0.21\n  Downloaded itoa v1.0.18\n  Downloaded leb128fmt v0.1.0\n  Downloaded cpufeatures v0.2.17\n  Downloaded wasm-bindgen-shared v0.2.129\n  Downloaded ed25519 v2.2.3\n  Downloaded signature v2.2.0\n  Downloaded generic-array v0.14.7\n  Downloaded thiserror v2.0.21\n  Downloaded pkg-config v0.3.32\n  Downloaded fallible-iterator v0.3.0\n  Downloaded curve25519-dalek-derive v0.1.1\n  Downloaded proc-macro-crate v3.5.0\n  Downloaded sha2-asm v0.6.4\n  Downloaded shlex v1.3.0\n  Downloaded wit-bindgen-rust-macro v0.51.0\n  Downloaded wasm-metadata v0.244.0\n  Downloaded hex v0.4.3\n  Downloaded once_cell v1.21.4\n  Downloaded thiserror-impl v2.0.21\n  Downloaded hashlink v0.11.1\n  Downloaded rand_core v0.6.4\n  Downloaded pkcs8 v0.10.2\n  Downloaded spki v0.7.3\n  Downloaded sha2 v0.10.9\n  Downloaded jobserver v0.1.35\n  Downloaded cfg-if v1.0.4\n  Downloaded smallvec v1.15.1\n  Downloaded getrandom v0.2.17\n  Downloaded borsh-derive v1.8.0\n  Downloaded proc-macro2 v1.0.106\n  Downloaded wit-bindgen-core v0.51.0\n  Downloaded const-oid v0.9.6\n  Downloaded base64ct v1.8.3\n  Downloaded bytes v1.12.1\n  Downloaded log v0.4.29\n  Downloaded prettyplease v0.2.37\n  Downloaded r-efi v6.0.0\n  Downloaded wasm-bindgen v0.2.129\n  Downloaded borsh v1.8.0\n  Downloaded wasm-encoder v0.244.0\n  Downloaded bumpalo v3.20.3\n  Downloaded js-sys v0.3.106\n  Downloaded ed25519-dalek v2.2.0\n  Downloaded der v0.7.10\n  Downloaded cc v1.2.59\n  Downloaded memchr v2.8.0\n  Downloaded typenum v1.20.1\n  Downloaded wasip2 v1.0.2+wasi-0.2.9\n  Downloaded rusqlite v0.39.0\n  Downloaded vcpkg v0.2.15\n  Downloaded winapi v0.3.9\n  Downloaded curve25519-dalek v4.1.3\n  Downloaded syn v3.0.9\n  Downloaded libc v0.2.184\n  Downloaded windows-sys v0.61.2\n  Downloaded winapi-i686-pc-windows-gnu v0.4.0\n  Downloaded winapi-x86_64-pc-windows-gnu v0.4.0\n  Downloaded linux-raw-sys v0.12.1\n  Downloaded libsqlite3-sys v0.37.0\n  Downloaded sqlite-wasm-rs v0.5.5\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+          "first_line": 896,
+          "last_line": 896,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 510,
+          "sha256": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+          "first_line": 883,
+          "last_line": 895,
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.log",
+          "bytes": 510,
+          "sha256": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+          "first_line": 883,
+          "last_line": 895,
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        }
+      ],
+      "actual_toolchain": {
+        "requested": "nightly-2026-10-01",
+        "rustc_version_line": "rustc 1.101.0-nightly (21b707e3f 2026-09-30)",
+        "cargo_version_line": "cargo 1.101.0-nightly (f3865b2a4 2026-09-29)",
+        "installed_components": [
+          "cargo-x86_64-unknown-linux-gnu",
+          "rust-src",
+          "rust-std-x86_64-unknown-linux-gnu",
+          "rustc-x86_64-unknown-linux-gnu"
+        ],
+        "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-rustup",
+        "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-fuzz-cargo"
+      },
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112594/logs",
+        "bytes": 146530,
+        "sha256": "b488a1444b8f462b18130ed83c8cba23e6de0ee3d3dea30c9e6a8b6df5842202",
+        "full_text_external": true,
+        "session_raw_store": "73ab-locked-fetch-terminal-log-126457112594"
+      },
+      "artifact": {
+        "id": 13305022402,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwNTAyMjQwMg==",
+        "name": "retained-locked-fetch-prospective-merge-fuzz-73ab6e9a83bcc836e261d93f9bb23ceafe556758-1",
+        "size_in_bytes": 5945,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305022402",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305022402/zip",
+        "expired": false,
+        "digest": "sha256:565ee4b58d4ba849594e8b5dae712ffcc346b8d73131885b461c3c176c039358",
+        "created_at": "2026-11-04T07:51:23Z",
+        "updated_at": "2026-11-04T07:51:23Z",
+        "expires_at": "2026-12-04T07:51:23Z",
+        "workflow_run": {
+          "id": 41795067492,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-retained-failure-readback-20261104",
+          "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad"
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/artifacts/13305022402",
+        "api_and_original_console_match": true,
+        "zip_downloaded": false
+      },
+      "checks": {
+        "one_original_argv_executed": true,
+        "source_flags_all_true": true,
+        "unchanged_fixed_lock_sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+        "original_timeout_and_grace": true,
+        "full_quality_or_fuzz_qualification": false,
+        "native_test_qualification": false
+      }
+    },
+    {
+      "job": {
+        "id": 126457112672,
+        "run_id": 41795067492,
+        "workflow_name": "Retained original locked fuzz-graph fetch",
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcW5oYA",
+        "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112672",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/job/126457112672",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:50:35Z",
+        "started_at": "2026-11-04T07:50:38Z",
+        "completed_at": "2026-11-04T07:51:30Z",
+        "name": "Original locked fetch (prospective-merge, quality)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:50:38Z",
+            "completed_at": "2026-11-04T07:50:39Z"
+          },
+          {
+            "name": "Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:50:39Z",
+            "completed_at": "2026-11-04T07:51:09Z"
+          },
+          {
+            "name": "Verify exact source and execute unchanged preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:51:09Z",
+            "completed_at": "2026-11-04T07:51:10Z"
+          },
+          {
+            "name": "Install only the original context toolchain in fresh private homes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:51:10Z",
+            "completed_at": "2026-11-04T07:51:20Z"
+          },
+          {
+            "name": "Execute only the original locked fetch with the original process owner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:51:20Z",
+            "completed_at": "2026-11-04T07:51:26Z"
+          },
+          {
+            "name": "Recheck the fixed source even after failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:51:26Z",
+            "completed_at": "2026-11-04T07:51:27Z"
+          },
+          {
+            "name": "Preserve source, toolchain, exact fetch output and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:51:27Z",
+            "completed_at": "2026-11-04T07:51:28Z"
+          },
+          {
+            "name": "Post Checkout the fixed original head or actual merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T07:51:28Z",
+            "completed_at": "2026-11-04T07:51:28Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T07:51:28Z",
+            "completed_at": "2026-11-04T07:51:28Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126457112672",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340108,
+        "runner_name": "GitHub Actions 1000340108",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "first_line": 884,
+          "last_line": 896,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:10.6308951Z {\n2026-11-04T07:51:10.6309581Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:51:10.6310283Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:10.6310826Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:51:10.6311327Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:10.6311790Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:10.6312220Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:10.6312731Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:10.6313165Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:10.6313572Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:10.6314001Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:10.6314356Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:10.6314715Z }"
+        },
+        {
+          "first_line": 1197,
+          "last_line": 1209,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_text": "2026-11-04T07:51:27.3617511Z {\n2026-11-04T07:51:27.3618419Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:51:27.3619298Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:51:27.3619834Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:51:27.3620339Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:27.3620804Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:51:27.3621264Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:51:27.3621755Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:51:27.3622184Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:51:27.3622553Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:51:27.3622932Z   \"tracked_entries\": 8120,\n2026-11-04T07:51:27.3623309Z   \"tracked_worktree_verified\": true\n2026-11-04T07:51:27.3623657Z }"
+        }
+      ],
+      "source_pair_equal": true,
+      "audit": {
+        "line": 897,
+        "value": {
+          "result": "PASS",
+          "mode": "--audit",
+          "project": "trillionnium-chain",
+          "packages": 26,
+          "branch": "",
+          "remote_policy_mutated": false
+        },
+        "literal_json_text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "original_timestamped_log_line": "2026-11-04T07:51:10.6826174Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      "complete_original_result": {
+        "first_line": 1036,
+        "last_line": 1036,
+        "literal_json_text": "{\"acceptance_granted\": false, \"artifact_sha256\": {\"cargo-version.log\": \"bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e\", \"compiler.log\": \"4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad\", \"components.log\": \"e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b\", \"fetch.log\": \"449a354bb00cc884975aa79644315543c637392cf187b66f244db703053d2e17\", \"preflight.log\": \"a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0\", \"source-before.json\": \"f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c\", \"source-before.log\": \"f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c\", \"toolchain-install.log\": \"b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe\"}, \"cargo_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-cargo\", \"command_timeout_seconds\": 900, \"context\": \"quality\", \"dependency_policy_checks_executed\": false, \"full_quality_or_fuzz_executed\": false, \"fuzz_targets_executed\": false, \"input_sha256\": {\"rust-toolchain.toml\": \"24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a\", \"scripts/ci/ci_observation.py\": \"389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a\", \"scripts/ci/run_fuzz_smoke.py\": \"7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9\", \"scripts/ci/run_supply_chain.py\": \"3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6\", \"scripts/ci/tool-versions.env\": \"b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408\", \"tests/fuzz/Cargo.lock\": \"8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d\", \"tests/fuzz/Cargo.toml\": \"4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321\"}, \"observations\": [{\"command\": [\"cargo\", \"fetch\", \"--locked\", \"--manifest-path\", \"tests/fuzz/Cargo.toml\"], \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 3599100694, \"executed\": true, \"exit_code\": 0, \"expected_source\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"log\": \"fetch.log\", \"process_exit_code\": 0, \"source_after_verified\": true, \"source_before_verified\": true, \"source_verified\": true, \"timed_out\": false}], \"original_term_grace_seconds\": 10, \"requested_head\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\", \"requested_kind\": \"prospective-merge\", \"requested_tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"result\": \"PASS\", \"rustup_home\": \"/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-rustup\", \"rustup_toolchain\": \"1.95.0\", \"schema\": \"trnm-retained-locked-fetch-only-v1\", \"source\": {\"commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\", \"source_state\": \"committed-clean\", \"tracked_bytes\": 933034956, \"tracked_entries\": 8120, \"tracked_worktree_verified\": true, \"tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\"}, \"source_consistent\": true, \"source_expected\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\"}",
+        "value": {
+          "acceptance_granted": false,
+          "artifact_sha256": {
+            "cargo-version.log": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+            "compiler.log": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+            "components.log": "e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b",
+            "fetch.log": "449a354bb00cc884975aa79644315543c637392cf187b66f244db703053d2e17",
+            "preflight.log": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+            "source-before.json": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+            "source-before.log": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+            "toolchain-install.log": "b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe"
+          },
+          "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-cargo",
+          "command_timeout_seconds": 900,
+          "context": "quality",
+          "dependency_policy_checks_executed": false,
+          "full_quality_or_fuzz_executed": false,
+          "fuzz_targets_executed": false,
+          "input_sha256": {
+            "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+            "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+            "scripts/ci/run_fuzz_smoke.py": "7de4c8111796eb5cde023fb4cbd699d610daab543cd90d4209ada44b8d3921d9",
+            "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+            "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+            "tests/fuzz/Cargo.lock": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+            "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321"
+          },
+          "observations": [
+            {
+              "command": [
+                "cargo",
+                "fetch",
+                "--locked",
+                "--manifest-path",
+                "tests/fuzz/Cargo.toml"
+              ],
+              "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+              "elapsed_ns": 3599100694,
+              "executed": true,
+              "exit_code": 0,
+              "expected_source": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+              "log": "fetch.log",
+              "process_exit_code": 0,
+              "source_after_verified": true,
+              "source_before_verified": true,
+              "source_verified": true,
+              "timed_out": false
+            }
+          ],
+          "original_term_grace_seconds": 10,
+          "requested_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+          "requested_kind": "prospective-merge",
+          "requested_tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+          "result": "PASS",
+          "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-rustup",
+          "rustup_toolchain": "1.95.0",
+          "schema": "trnm-retained-locked-fetch-only-v1",
+          "source": {
+            "commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "source_state": "committed-clean",
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true,
+            "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2"
+          },
+          "source_consistent": true,
+          "source_expected": "88f899241b1050b1be5bc55f2c1b077b1afa1c10"
+        }
+      },
+      "complete_hash_verified_original_members": [
+        {
+          "path": "toolchain-install.log",
+          "bytes": 320,
+          "sha256": "b5ac9507feb8e870eac4b8c4ce2b480af04c57d5976939d32239dc43e9cbadfe",
+          "first_line": 929,
+          "last_line": 935,
+          "text": "info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu\ninfo: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)\ninfo: downloading 5 components\n\n  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)\n\ninfo: default toolchain set to 1.95.0-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "compiler.log",
+          "bytes": 196,
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+          "first_line": 936,
+          "last_line": 942,
+          "text": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "cargo-version.log",
+          "bytes": 336,
+          "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+          "first_line": 943,
+          "last_line": 951,
+          "text": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 24.4.0 (noble) [64-bit]\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "components.log",
+          "bytes": 161,
+          "sha256": "e8831f6eab33b6dd0f72364237d8f7a00d762711a08608010877e0ce0b7f667b",
+          "first_line": 952,
+          "last_line": 956,
+          "text": "cargo-x86_64-unknown-linux-gnu\nclippy-x86_64-unknown-linux-gnu\nrust-std-x86_64-unknown-linux-gnu\nrustc-x86_64-unknown-linux-gnu\nrustfmt-x86_64-unknown-linux-gnu\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "fetch.log",
+          "bytes": 4366,
+          "sha256": "449a354bb00cc884975aa79644315543c637392cf187b66f244db703053d2e17",
+          "first_line": 1037,
+          "last_line": 1173,
+          "text": "    Updating crates.io index\n Downloading crates ...\n  Downloaded thiserror v1.0.69\n  Downloaded unicode-ident v1.0.24\n  Downloaded thiserror-impl v1.0.69\n  Downloaded sha2-asm v0.6.4\n  Downloaded sha2 v0.10.9\n  Downloaded signature v3.0.0\n  Downloaded equivalent v1.0.2\n  Downloaded quote v1.0.45\n  Downloaded heck v0.5.0\n  Downloaded unicode-xid v0.2.6\n  Downloaded itoa v1.0.18\n  Downloaded curve25519-dalek-derive v0.1.1\n  Downloaded block-buffer v0.10.4\n  Downloaded wasm-bindgen-shared v0.2.129\n  Downloaded version_check v0.9.5\n  Downloaded fallible-streaming-iterator v0.1.9\n  Downloaded toml_datetime v1.1.1+spec-1.1.0\n  Downloaded signature v2.2.0\n  Downloaded ml-dsa v0.1.1\n  Downloaded crypto-common v0.2.2\n  Downloaded cpufeatures v0.3.1\n  Downloaded generic-array v0.14.7\n  Downloaded hashlink v0.11.1\n  Downloaded rustversion v1.0.23\n  Downloaded spki v0.7.3\n  Downloaded jobserver v0.1.35\n  Downloaded fastrand v2.3.0\n  Downloaded digest v0.11.3\n  Downloaded errno v0.3.14\n  Downloaded const-oid v0.9.6\n  Downloaded serde_derive v1.0.228\n  Downloaded thiserror-impl v2.0.21\n  Downloaded bytes v1.12.1\n  Downloaded autocfg v1.5.1\n  Downloaded cmov v0.5.4\n  Downloaded typenum v1.20.1\n  Downloaded hybrid-array v0.4.15\n  Downloaded spki v0.8.1\n  Downloaded arbitrary v1.4.2\n  Downloaded tempfile v3.27.0\n  Downloaded const-oid v0.10.2\n  Downloaded vcpkg v0.2.15\n  Downloaded wasmparser v0.244.0\n  Downloaded libfuzzer-sys v0.4.10\n  Downloaded syn v3.0.9\n  Downloaded der v0.8.3\n  Downloaded curve25519-dalek v4.1.3\n  Downloaded wit-component v0.244.0\n  Downloaded syn v2.0.117\n  Downloaded toml_edit v0.25.13+spec-1.1.0\n  Downloaded num-traits v0.2.19\n  Downloaded serde_json v1.0.149\n  Downloaded winnow v1.0.4\n  Downloaded rusqlite v0.39.0\n  Downloaded pkcs8 v0.11.0\n  Downloaded fiat-crypto v0.2.9\n  Downloaded toml_parser v1.1.3+spec-1.1.0\n  Downloaded shake v0.1.0\n  Downloaded wasm-bindgen-macro-support v0.2.129\n  Downloaded wit-parser v0.244.0\n  Downloaded rustix v1.1.4\n  Downloaded hashbrown v0.15.5\n  Downloaded hashbrown v0.16.1\n  Downloaded wasip3 v0.4.0+wasi-0.3.0-rc-2026-01-06\n  Downloaded wasip2 v1.0.2+wasi-0.2.9\n  Downloaded ed25519-dalek v2.2.0\n  Downloaded indexmap v2.13.1\n  Downloaded module-lattice v0.2.3\n  Downloaded keccak v0.2.2\n  Downloaded ctutils v0.4.6\n  Downloaded libc v0.2.184\n  Downloaded borsh v1.8.0\n  Downloaded der v0.7.10\n  Downloaded js-sys v0.3.106\n  Downloaded bumpalo v3.20.3\n  Downloaded wasm-encoder v0.244.0\n  Downloaded memchr v2.8.0\n  Downloaded serde v1.0.228\n  Downloaded wit-bindgen v0.51.0\n  Downloaded cc v1.2.59\n  Downloaded wasm-bindgen v0.2.129\n  Downloaded r-efi v6.0.0\n  Downloaded prettyplease v0.2.37\n  Downloaded getrandom v0.4.2\n  Downloaded log v0.4.29\n  Downloaded serde_core v1.0.228\n  Downloaded wasm-metadata v0.244.0\n  Downloaded anyhow v1.0.103\n  Downloaded windows-link v0.2.1\n  Downloaded sponge-cursor v0.1.0\n  Downloaded borsh-derive v1.8.0\n  Downloaded base64ct v1.8.3\n  Downloaded smallvec v1.15.1\n  Downloaded thiserror v2.0.21\n  Downloaded wit-bindgen-core v0.51.0\n  Downloaded wit-bindgen-rust v0.51.0\n  Downloaded getrandom v0.2.17\n  Downloaded zmij v1.0.21\n  Downloaded bitflags v2.11.0\n  Downloaded fs2 v0.4.3\n  Downloaded proc-macro-crate v3.5.0\n  Downloaded pkcs8 v0.10.2\n  Downloaded winapi v0.3.9\n  Downloaded wasi v0.11.1+wasi-snapshot-preview1\n  Downloaded ed25519 v2.2.3\n  Downloaded pkg-config v0.3.32\n  Downloaded rsqlite-vfs v0.1.1\n  Downloaded once_cell v1.21.4\n  Downloaded wasm-bindgen-macro v0.2.129\n  Downloaded zeroize v1.8.2\n  Downloaded find-msvc-tools v0.1.9\n  Downloaded cfg-if v1.0.4\n  Downloaded proc-macro2 v1.0.106\n  Downloaded rand_core v0.6.4\n  Downloaded fallible-iterator v0.3.0\n  Downloaded foldhash v0.1.5\n  Downloaded hex v0.4.3\n  Downloaded digest v0.10.7\n  Downloaded cfg_aliases v0.2.2\n  Downloaded rustc_version v0.4.1\n  Downloaded crypto-common v0.1.7\n  Downloaded subtle v2.6.1\n  Downloaded cpufeatures v0.2.17\n  Downloaded id-arena v2.3.0\n  Downloaded wit-bindgen-rust-macro v0.51.0\n  Downloaded leb128fmt v0.1.0\n  Downloaded foldhash v0.2.0\n  Downloaded semver v1.0.27\n  Downloaded shlex v1.3.0\n  Downloaded windows-sys v0.61.2\n  Downloaded winapi-x86_64-pc-windows-gnu v0.4.0\n  Downloaded winapi-i686-pc-windows-gnu v0.4.0\n  Downloaded linux-raw-sys v0.12.1\n  Downloaded libsqlite3-sys v0.37.0\n  Downloaded sqlite-wasm-rs v0.5.5\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "preflight.log",
+          "bytes": 133,
+          "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+          "first_line": 897,
+          "last_line": 897,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.json",
+          "bytes": 510,
+          "sha256": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+          "first_line": 884,
+          "last_line": 896,
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        },
+        {
+          "path": "source-before.log",
+          "bytes": 510,
+          "sha256": "f1e6c8ff6dda636d644706d4353d83c9f38409c3eca6b0fcd7e50adde03bbc2c",
+          "first_line": 884,
+          "last_line": 896,
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}\n",
+          "complete_member_recovered_from_full_console": true,
+          "matched_original_manifest_sha256": true
+        }
+      ],
+      "actual_toolchain": {
+        "requested": "1.95.0",
+        "rustc_version_line": "rustc 1.95.0 (59807616e 2026-04-14)",
+        "cargo_version_line": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+        "installed_components": [
+          "cargo-x86_64-unknown-linux-gnu",
+          "clippy-x86_64-unknown-linux-gnu",
+          "rust-std-x86_64-unknown-linux-gnu",
+          "rustc-x86_64-unknown-linux-gnu",
+          "rustfmt-x86_64-unknown-linux-gnu"
+        ],
+        "rustup_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-rustup",
+        "cargo_home": "/home/runner/work/_temp/retained-locked-fetch-41795067492-1-prospective-merge-quality-cargo"
+      },
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126457112672/logs",
+        "bytes": 146630,
+        "sha256": "a66373d0d88783b5232e8b88871a733906a695fa6cfe773ce14fa5115700fdd9",
+        "full_text_external": true,
+        "session_raw_store": "73ab-locked-fetch-terminal-log-126457112672"
+      },
+      "artifact": {
+        "id": 13305715358,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwNTcxNTM1OA==",
+        "name": "retained-locked-fetch-prospective-merge-quality-73ab6e9a83bcc836e261d93f9bb23ceafe556758-1",
+        "size_in_bytes": 5931,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305715358",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13305715358/zip",
+        "expired": false,
+        "digest": "sha256:c739ebbba48e0553f9f4580b241321a904c5c2320d46fa19e5241d2cc025b367",
+        "created_at": "2026-11-04T07:51:28Z",
+        "updated_at": "2026-11-04T07:51:28Z",
+        "expires_at": "2026-12-04T07:51:27Z",
+        "workflow_run": {
+          "id": 41795067492,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-retained-failure-readback-20261104",
+          "head_sha": "6e016e7e5672f7eb5e1d72dab384defeb0b726ad"
+        },
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492/artifacts/13305715358",
+        "api_and_original_console_match": true,
+        "zip_downloaded": false
+      },
+      "checks": {
+        "one_original_argv_executed": true,
+        "source_flags_all_true": true,
+        "unchanged_fixed_lock_sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+        "original_timeout_and_grace": true,
+        "full_quality_or_fuzz_qualification": false,
+        "native_test_qualification": false
+      }
+    }
+  ],
+  "outcome": {
+    "original_fetch_executions": 4,
+    "executed_true": 4,
+    "exit_zero": 4,
+    "process_exit_zero": 4,
+    "timed_out": 0,
+    "inner_source_flags_true": 4,
+    "outer_source_pairs_equal": 4,
+    "actual_audit_pass_count": 4,
+    "audits_per_lane": 1,
+    "complete_original_member_records_hash_verified": 32,
+    "distinct_rustup_homes": 4,
+    "distinct_cargo_homes": 4,
+    "locked_fetch_subgate_passed_all_four_contexts": true
+  },
+  "prior_failure_preserved": {
+    "source": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "durable_git_blob": "4fce7cb257a2b96e29ee4cc5df23a149f681438f",
+    "path": "evidence/pon-retained-runtime-readback-20261104/original-40a-quality-fuzz-fetch-failures.json",
+    "original_failed_workflows_not_relabelled": true
+  },
+  "qualifications": {
+    "full_quality_passed": false,
+    "full_fuzz_passed": false,
+    "native_tests_executed": false,
+    "native_tests_passed": false,
+    "business_acceptance": false,
+    "performance_acceptance": false,
+    "controlled_speedup_claimed": false,
+    "other_source_results_inherited": false
+  },
+  "evidence_scope": {
+    "all_four_original_terminal_job_logs_read_once": true,
+    "all_four_complete_result_json_lines_preserved": true,
+    "all_original_fetch_file_bytes_recovered_and_matched_to_original_manifest_sha256": true,
+    "source_after_receipts_preserved_from_original_console": true,
+    "artifact_zip_downloaded": false,
+    "full_native_or_fuzz_target_suite_executed": false,
+    "not_a_replacement_for_original_baseline_jobs": true,
+    "observed_elapsed_ns_is_original_command_owner_measurement_not_controlled_performance_comparison": true
+  },
+  "published_workflow_text": "name: Retained original locked fuzz-graph fetch\non:\n  push:\n    branches: [fix/chain-retained-failure-readback-20261104]\n    paths:\n      - .github/workflows/pon-retained-locked-fetch-validation.yml\npermissions:\n  contents: read\nenv:\n  CI: \"true\"\n  CARGO_INCREMENTAL: \"0\"\n  CARGO_BUILD_JOBS: \"2\"\n  RUST_TEST_THREADS: \"1\"\n  CARGO_TERM_COLOR: never\n  PYTHONDONTWRITEBYTECODE: \"1\"\njobs:\n  locked-fetch:\n    name: Original locked fetch (${{ matrix.kind }}, ${{ matrix.context }})\n    runs-on: ubuntu-24.04\n    timeout-minutes: ${{ matrix.job_minutes }}\n    strategy:\n      fail-fast: false\n      matrix:\n        include:\n          - kind: head\n            context: quality\n            tested: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n            toolchain: 1.95.0\n            job_minutes: 180\n          - kind: head\n            context: fuzz\n            tested: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n            toolchain: nightly-2026-10-01\n            job_minutes: 45\n          - kind: prospective-merge\n            context: quality\n            tested: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n            toolchain: 1.95.0\n            job_minutes: 180\n          - kind: prospective-merge\n            context: fuzz\n            tested: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n            toolchain: nightly-2026-10-01\n            job_minutes: 45\n    env:\n      MEASURED_HEAD: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n      MEASURED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n      MEASURED_TESTED: ${{ matrix.tested }}\n      MEASURED_KIND: ${{ matrix.kind }}\n      MEASURED_CONTEXT: ${{ matrix.context }}\n    steps:\n      - name: Checkout the fixed original head or actual merge\n        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n        with:\n          ref: ${{ matrix.tested }}\n          fetch-depth: 0\n          persist-credentials: false\n      - name: Verify exact source and execute unchanged preflight\n        env:\n          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          mkdir \"$FETCH_OUT\"\n          args=(--kind \"$MEASURED_KIND\" --expected-head \"$MEASURED_HEAD\")\n          if test \"$MEASURED_KIND\" = prospective-merge; then\n            args+=(--expected-base \"$MEASURED_BASE\" --expected-merge \"$MEASURED_TESTED\")\n          fi\n          python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$FETCH_OUT/source-before.json\" 2>&1 | tee \"$FETCH_OUT/source-before.log\"\n          bash scripts/project-preflight.sh --audit 2>&1 | tee \"$FETCH_OUT/preflight.log\"\n      - name: Install only the original context toolchain in fresh private homes\n        env:\n          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}\n          RUSTUP_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-rustup\n          CARGO_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-cargo\n          CARGO_TARGET_DIR: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-target\n          RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          mkdir \"$RUSTUP_HOME\" \"$CARGO_HOME\"\n          case \"$MEASURED_CONTEXT\" in\n            quality) command=(rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy) ;;\n            fuzz) command=(rustup toolchain install nightly-2026-10-01 --profile minimal --component rust-src) ;;\n            *) exit 2 ;;\n          esac\n          \"${command[@]}\" 2>&1 | tee \"$FETCH_OUT/toolchain-install.log\"\n          rustc --version --verbose 2>&1 | tee \"$FETCH_OUT/compiler.log\"\n          cargo --version --verbose 2>&1 | tee \"$FETCH_OUT/cargo-version.log\"\n          rustup component list --installed 2>&1 | tee \"$FETCH_OUT/components.log\"\n      - name: Execute only the original locked fetch with the original process owner\n        env:\n          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}\n          RUSTUP_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-rustup\n          CARGO_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-cargo\n          CARGO_TARGET_DIR: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-target\n          RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          python3 - <<'PY'\n          import json\n          import os\n          import sys\n          from pathlib import Path\n          sys.path.insert(0, 'scripts/ci')\n          from ci_observation import finish, pin_source, run, tool_root, tool_versions\n          output = Path(os.environ['FETCH_OUT'])\n          environment = dict(os.environ)\n          context = environment['MEASURED_CONTEXT']\n          versions = tool_versions()\n          if context == 'fuzz':\n              binary_dir = tool_root() / ('fuzz-' + versions['TRNM_CARGO_FUZZ_VERSION']) / 'bin'\n              environment['PATH'] = str(binary_dir) + os.pathsep + environment.get('PATH', '')\n              environment['RUSTUP_TOOLCHAIN'] = versions['TRNM_FUZZ_TOOLCHAIN']\n              environment['CARGO_TARGET_DIR'] = str(Path(environment['CARGO_TARGET_DIR']) / 'fuzz')\n          if environment['RUSTUP_TOOLCHAIN'] != os.environ['RUSTUP_TOOLCHAIN']:\n              raise ValueError('ORIGINAL_FETCH_TOOLCHAIN_MISMATCH')\n          observations = []\n          report = {'schema': 'trnm-retained-locked-fetch-only-v1', 'result': 'FAIL',\n                    'context': context, 'observations': observations,\n                    'requested_head': environment['MEASURED_HEAD'],\n                    'requested_kind': environment['MEASURED_KIND'],\n                    'requested_tested_commit': environment['MEASURED_TESTED'],\n                    'rustup_toolchain': environment['RUSTUP_TOOLCHAIN'],\n                    'rustup_home': environment['RUSTUP_HOME'], 'cargo_home': environment['CARGO_HOME'],\n                    'command_timeout_seconds': 900, 'original_term_grace_seconds': 10,\n                    'acceptance_granted': False, 'full_quality_or_fuzz_executed': False,\n                    'fuzz_targets_executed': False, 'dependency_policy_checks_executed': False}\n          code = 1\n          try:\n              expected = pin_source()\n              report['source_expected'] = expected\n              if expected != environment['MEASURED_TESTED']:\n                  raise ValueError('ORIGINAL_FETCH_SOURCE_MISMATCH')\n              # This is exactly the failed argv in both retained original producers.\n              # Omitting timeout reuses ci_observation.run's original 900s/TERM10s owner.\n              observed = run(['cargo', 'fetch', '--locked', '--manifest-path', 'tests/fuzz/Cargo.toml'],\n                             output / 'fetch.log', env=environment, expected_source=expected)\n              observations.append(observed)\n              code = observed['exit_code']\n              report['result'] = 'PASS' if code == 0 else 'FAIL'\n          except (OSError, ValueError, RuntimeError) as error:\n              report['error'] = str(error)\n              print(str(error), file=sys.stderr)\n          finally:\n              finish(output, report, ['tests/fuzz/Cargo.toml', 'tests/fuzz/Cargo.lock',\n                                     'rust-toolchain.toml', 'scripts/ci/tool-versions.env',\n                                     'scripts/ci/run_supply_chain.py', 'scripts/ci/run_fuzz_smoke.py',\n                                     'scripts/ci/ci_observation.py'])\n              print(json.dumps(report, sort_keys=True), flush=True)\n              log = output / 'fetch.log'\n              if log.is_file():\n                  sys.stdout.buffer.write(log.read_bytes())\n                  sys.stdout.buffer.flush()\n          raise SystemExit(code if code != 0 or report['result'] == 'PASS' else 125)\n          PY\n      - name: Recheck the fixed source even after failure\n        if: always()\n        env:\n          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          mkdir -p \"$FETCH_OUT\"\n          args=(--kind \"$MEASURED_KIND\" --expected-head \"$MEASURED_HEAD\")\n          if test \"$MEASURED_KIND\" = prospective-merge; then\n            args+=(--expected-base \"$MEASURED_BASE\" --expected-merge \"$MEASURED_TESTED\")\n          fi\n          python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$FETCH_OUT/source-after.json\" 2>&1 | tee \"$FETCH_OUT/source-after.log\"\n      - name: Preserve source, toolchain, exact fetch output and failures\n        if: always()\n        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n        with:\n          name: retained-locked-fetch-${{ matrix.kind }}-${{ matrix.context }}-73ab6e9a83bcc836e261d93f9bb23ceafe556758-${{ github.run_attempt }}\n          path: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}/\n          if-no-files-found: error\n          retention-days: 30\n",
+  "collector_note": {
+    "initial_pretty_object_parser_did_not_include_single_line_json": true,
+    "resolved_by_separately_parsing_complete_original_json_lines": true,
+    "original_logs_and_native_results_unchanged": true
+  }
+}

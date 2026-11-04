@@ -1,0 +1,1829 @@
+{
+  "schema": "trnm-73ab-workflow-and-open-acceptance-status-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "observed_utc": "2026-11-04 07:51:22 UTC",
+  "source": {
+    "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "actual_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+    "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "pr": 688,
+    "draft": true
+  },
+  "scope": "A time-stamped workflow/job metadata observation, distinct from complete native log or artifact readback. Running/pending outcomes and original failure denominators are not dropped. The full release lanes have a separate actual terminal record; the other workflows do not inherit it.",
+  "workflows": [
+    {
+      "id": 41791243015,
+      "name": "PoN parent-bound model evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 607,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243015/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243015/logs",
+      "workflow_id": 381968354
+    },
+    {
+      "id": 41791243020,
+      "name": "PoN isolated cloud build inputs",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 156,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243020/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243020/logs",
+      "workflow_id": 394876294
+    },
+    {
+      "id": 41791242796,
+      "name": "PoN owned process cleanup",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 823,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242796/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242796/logs",
+      "workflow_id": 381802523
+    },
+    {
+      "id": 41791243030,
+      "name": "Release finality reference and native baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 762,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/logs",
+      "workflow_id": 384076239
+    },
+    {
+      "id": 41791242911,
+      "name": "trnm-required-baseline",
+      "status": "pending",
+      "conclusion": null,
+      "run_number": 2581,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242911/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242911/logs",
+      "workflow_id": 345677268
+    },
+    {
+      "id": 41791242683,
+      "name": "PoN PQ network and rollback witness",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 68,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242683/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242683/logs",
+      "workflow_id": 403755130
+    },
+    {
+      "id": 41791243013,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_number": 45,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243013/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243013/logs",
+      "workflow_id": 399731485
+    },
+    {
+      "id": 41791242722,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 75,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242722/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242722/logs",
+      "workflow_id": 403449877
+    },
+    {
+      "id": 41791242663,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 915,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242663/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242663/logs",
+      "workflow_id": 379262275
+    },
+    {
+      "id": 41791242964,
+      "name": "PoN priority acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 1196,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242964/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242964/logs",
+      "workflow_id": 378180520
+    },
+    {
+      "id": 41791242738,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_number": 73,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242738/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242738/logs",
+      "workflow_id": 403747290
+    },
+    {
+      "id": 41791242776,
+      "name": "PoN branch encoding exact-source acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 364,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242776/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242776/logs",
+      "workflow_id": 379587106
+    },
+    {
+      "id": 41791242840,
+      "name": "PoN recent batch exact-source acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 378,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242840/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242840/logs",
+      "workflow_id": 379339707
+    },
+    {
+      "id": 41791242816,
+      "name": "PoN original native campaign",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_number": 803,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242816/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242816/logs",
+      "workflow_id": 391170410
+    },
+    {
+      "id": 41791242831,
+      "name": "CodeQL exact-source analysis export",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 1047,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242831/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242831/logs",
+      "workflow_id": 391170411
+    },
+    {
+      "id": 41791242629,
+      "name": "PoN W1 work security observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_number": 83,
+      "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242629/jobs",
+      "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791242629/logs",
+      "workflow_id": 403419146
+    }
+  ],
+  "metadata_counts": {
+    "success": 9,
+    "failure": 3,
+    "in_progress": 3,
+    "pending": 1
+  },
+  "failed_workflow_job_observations": [
+    {
+      "run": 41791243013,
+      "jobs": [
+        {
+          "id": 126444877647,
+          "name": "F0 (x64, head, one baseline and one ROOT phase)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 41791243013,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Freeze all denominators before checkout or preparation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout exactly the event head without retained credentials",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify the exact source and all independent parser controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install source-pinned compiler and fetch the locked graph",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Arm a previously absent exact controller service",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run exactly one pair in the declared controller and public Host",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 8
+            },
+            {
+              "name": "Always retain denominators and inspect only exact owned services",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 9
+            },
+            {
+              "name": "Retain final source, workflow outcomes and every regular partial artifact",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Upload all available success, failure and unobserved evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Checkout exactly the event head without retained credentials",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 41791242816,
+      "jobs": [
+        {
+          "id": 126445632027,
+          "name": "original native campaign (x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 41791242816,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 7
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 41791242629,
+      "jobs": [
+        {
+          "id": 126449847259,
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact observed source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install original pinned compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run refusal controls for original Host and fresh successor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 6
+            },
+            {
+              "name": "Verify observed source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain both service outcomes and original Host evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact observed source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847584,
+          "name": "W1 fresh challenge service (x64, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact observed source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install original pinned compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run refusal controls for original Host and fresh successor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute original and fresh service with original Host resources",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 6
+            },
+            {
+              "name": "Verify observed source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain both service outcomes and original Host evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact observed source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847595,
+          "name": "W1 false trace reuse (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Execute reader rejection controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run complete W1 module tests and strict primitive lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Execute complete false trace reuse campaign",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Execute additional complete full-limb comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        },
+        {
+          "id": 126449847625,
+          "name": "W1 factorial legal strategies v3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify retained and factorial readers and command-owner failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and original formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Execute native producer, header, History and CPU cancellation controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Prepare pinned provider required by native all-feature controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run strict native lint for all affected owners",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            }
+          ]
+        },
+        {
+          "id": 126449847640,
+          "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847670,
+          "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847707,
+          "name": "W1 complete legal strategies (v1, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847713,
+          "name": "W1 false trace reuse (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Execute reader rejection controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run complete W1 module tests and strict primitive lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Execute complete false trace reuse campaign",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Execute additional complete full-limb comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        },
+        {
+          "id": 126449847734,
+          "name": "W1 false trace reuse (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Execute reader rejection controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run complete W1 module tests and strict primitive lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Execute complete false trace reuse campaign",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Execute additional complete full-limb comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        },
+        {
+          "id": 126449847735,
+          "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847741,
+          "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847742,
+          "name": "W1 false trace reuse (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Execute reader rejection controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run complete W1 module tests and strict primitive lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Execute complete false trace reuse campaign",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Execute additional complete full-limb comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        },
+        {
+          "id": 126449847743,
+          "name": "W1 factorial legal strategies v3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify retained and factorial readers and command-owner failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and original formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Execute native producer, header, History and CPU cancellation controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Prepare pinned provider required by native all-feature controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run strict native lint for all affected owners",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            }
+          ]
+        },
+        {
+          "id": 126449847746,
+          "name": "W1 complete legal strategies (v1, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847781,
+          "name": "W1 complete legal strategies (v2, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 126449847803,
+          "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify retained and factorial readers and command-owner failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and original formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Execute native producer, header, History and CPU cancellation controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Prepare pinned provider required by native all-feature controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run strict native lint for all affected owners",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            }
+          ]
+        },
+        {
+          "id": 126449847813,
+          "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify retained and factorial readers and command-owner failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify actual locked graph and original formatting",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Execute native producer, header, History and CPU cancellation controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Prepare pinned provider required by native all-feature controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run strict native lint for all affected owners",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            }
+          ]
+        },
+        {
+          "id": 126449847869,
+          "name": "W1 complete legal strategies (v2, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 41791242629,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve observations and verify ordered source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install exact original compiler and tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify complete legal-cost readers and native controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Execute all thirty original-budget legal strategy shards",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Verify measured source after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain costs, binaries and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout exact measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "unread_inner_results": {
+    "f0_native_exit": null,
+    "f0_native_failure_cause": null,
+    "f0_four_second_confirmations": null,
+    "campaign_confirmation_counts": null,
+    "campaign_native_returncodes": null,
+    "w1_fresh_native_counts": null,
+    "w1_fresh_failure_causes": null,
+    "note": "These exact 73ab inner fields were not extracted for this observation. Frozen 40a figures remain attached to 40a only."
+  },
+  "open_acceptance_issues": [
+    {
+      "number": 639,
+      "title": "P0: retain native 4s signed confirmation under 16 hostile W1 producers",
+      "state": "open",
+      "updated_at": "2026-11-03T08:14:45Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639",
+      "body": "## Exact P0 evidence — native business completion fails under hostile W1 calls\n**HOLD / NO PRODUCTION ACTIVATION / not a claim of PQ-128.** Captured from exact tested candidate SHA `4aee60b75d87b974b1d82bd1694d2eb3159c29fd` in [required baseline run 41182805121](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41182805121) `protocol-contract` job 124483513589, native artifact [head-protocol-contract](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41182805121/artifacts/13035259479), paths `from-zero-native/confirmation/report.json`, `from-zero-native/manifest.json`, and `from-zero-native-host/systemd-run.log`.\n\n**This is not a systemd setup failure.** The reviewed unit was installed, source build/preparation succeeded, Host errors were empty, and all five named native Rust tests ran and passed with exit code 0. The aggregate original business gate correctly failed with `CONFIRMATION_TARGET`, so native service exit=1. Do not reclassify passing individual tests as meeting the actual deadline/concurrency requirement.\n\n### Paired original, unchanged four-second window\n- Attack-free: seven signed honest submissions finish at ~208 ms; independent cross-node history/replay and six-block-deep transaction confirmation finish at ~2,681 ms, with `client_confirmed_transactions=1` and `finite_business_target_met=true`.\n- 16 from-zero attackers: seven signed submissions still accepted but finish at ~1,462 ms. Three History queries were accepted at ~1,561, 2,859 and 3,660 ms; the native replay/confirmation path reported `PUBLIC_REQUEST_DEADLINE` and did **not** produce independent confirmation before 4,000 ms. `client_confirmed_transactions=0`, `finite_business_target_met=false`, `full_native_state_equal=false`. No invalid W1 attack was accepted.\n- Under pressure service metrics: `work_started=300`, `work_finished=300`, `executor_refusals=293`, `queue_backpressure_events=619`, `pending_grant_wait_ns=18520483411` cumulative across waiters, `queue_wait_ns=4159440905` cumulative, `mutation_cpu_charged_ns=495619251`, `abandoned_tasks=3`, `mutation_cpu_clock_failures=0`. Those aggregate wait times are NOT single-request p99 or physical CPU hardness.\n- No pressure callback or threshold may be removed; passing the original five named tests is *insufficient*.\n\n### Required closure\n1. Preserve original source, native W1 validation, independent client re-execution, 4s business deadline, 16 attacker workers, CPU/cgroup budgets, packet bytes, signed transaction, and false-trace rejection. No artificial prioritization by identity, no widening/refill, no new grace period, no bypassed proof/state verification.\n2. Trace time from signed submits → original per-connection admission/grant queue → durable state/W1 validation → History response → independent page-by-page native replay → final chainwork/confirmation; capture per-stage wall and CPU with complete samples, including failures.\n3. Fix **actual** fair scheduling / expensive validation or independently verified replay costs without violating producer-neutral PoN semantics. Show resource-weighted net benefit and counterexamples against malicious adaptation.\n4. Repeat exact original test and prospective-merge native job on pinned hardware. Require both baseline and pressure confirmation **inside original window**; compare p95/p99, RSS, CPU, queue pressure, invalid full-replay costs, end-to-end signed business.\n5. Only after reproducible CI and independent adversarial review close this issue. Does **not** establish network TPS, absolute physical work hardness, quantum security, or public WAN fairness.\n\nParent blocker: #629. The narrow Clippy blocker was separately addressed by [Draft #638](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/638), which cannot solve this runtime failure.",
+      "unchecked_items": 0
+    },
+    {
+      "number": 629,
+      "title": "P0 security: qualify full-chain post-quantum trust, W1 proof, mining economics and recovery",
+      "state": "open",
+      "updated_at": "2026-11-01T01:15:30Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/629",
+      "body": "## Security determination — 2026-10-31\n\n**Whole-chain post-quantum security is NOT qualified**. No source-only test, ML-DSA primitive conformance, STARK label, or successful launch script may promote `production_consensus_activation` or `PQ-128`.\n\nRelated staged implementation:\n- #627 hardens classical Ed25519 authenticated session creation under PQ account settings (Draft; Rust execution not observed).\n- #628 adds explicit negative whole-chain PQ claim guard, 12 adversarial fixtures, and six-domain acceptance matrix (Draft; isolated Python fixtures only).\n\n### P0: acceptance obligations / independently falsifiable exit conditions\n\n- [ ] **Trust-root inventory and downgrade resistance.** Inventory *every effect-authorizing entry point* (transaction/accounts, keys/nonce, task sources/evaluators, operator, governance/release, Hepta admission and cross-repository FinalUse, Cell provider discovery, recovery, light clients and software upgrades) with source/function/production reachability, authority pin, signed domain, revocation and last-use recheck. In PQ-only profiles, classical-only authentication must be rejected, not used as OR fallback. Keep classical research artifacts explicitly isolated. Separate signing authentication from semantic authorization.\n- [ ] **W1 PQ-128 proof security.** Freeze precise relation, guest/compiler/backend hashes, hash commitments, quantum Fiat–Shamir model, FRI soundness, composition/recursion, circuit and worst-case invalid-verification cost. Independently establish target PQ security. Existing RISC Zero 3.0 published 96/99-bit component estimates and Groth16 do not establish the desired whole-chain PQ-128.\n- [ ] **Quantum mining/chain selection.** Model **complete legal W1** work per attempt: witness material, reversible oracle, uncomputation, challenge/setup amortization, quantum memory, power/time/success probability, actual proof production, propagation and reorg. Compare cheapest legitimate classical/quantum adversaries with frozen equal-cost hardware assumptions. Stress current retarget window/factor, timestamp manipulation, stale blocks, selfish mining and cumulative-work selection. Record threat-model bounds rather than unproven unconditional quantum hardness.\n- [ ] **Pre-exposure PQ ownership and no-rollback.** Bind PQ claims *before* classical compromise can counterfeit migration. Native migration must retain old nonce floors, liabilities, key generation, evidence and fork/reorg semantics; secure dual possession at migration when meaningful. Define external monotonic anchor / recovery policy for total self-consistent database rollback. Cold crash/power-loss, old/new key, branch conflict and replica divergence negatives required.\n- [ ] **Actual wire/network/cost acceptance.** Evaluate 3,309-byte ML-DSA-65 signature and full NPQ6 authenticated tx vs legacy 2,048-byte ceiling; test valid/invalid bounded verification CPU, queueing, spam-amplification, memory RSS, disk/WAL, bandwidth, p95/p99 and reorg on target hosts; no arbitrary cap lift.\n- [ ] **Independent end-to-end authorization and activation.** Pin SHA/toolchain/dependencies, rerun preflight, full Rust test/Clippy/format, source-integrity negatives, independent cryptographic/security review, WAN/eclipsing/fault tests, auditable release governance, separately verified public chain work. Activation remains explicit and false until every above gate is accepted by its proper authority.\n\n### Evidence ledger format\n\nFor each gate, retain exact commit SHA, affected source entries/identity format, frozen threat model, positive/negative attack cases, independent verifier/test implementation, exact commands and environment, raw outcomes including failures, reviewer, residual assumptions and rejection criteria. Do **not** mark this issue complete based on a checklist alone. Preserve current mainline and existing project boundary: no force-push, self-approval or activation.\n\nThe immediate focus is source-level authorization reachability and real NPQ6 integration; quantum W1 and proof system require separate cryptographic research and independent qualifications.",
+      "unchecked_items": 6
+    }
+  ],
+  "qualification": {
+    "all_blockers_closed": false,
+    "full_current_source_acceptance": false,
+    "business_deadline_acceptance": false,
+    "whole_chain_pq_acceptance": false,
+    "independent_external_signoff": false,
+    "production_activation": false
+  }
+}

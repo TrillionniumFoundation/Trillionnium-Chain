@@ -1,6 +1,6 @@
 # Retained runtime failures, native follow-up and complete cost readback
 
-This directory records already executed work on exact frozen sources. It is evidence under the sole development plan, not a new plan or a release qualification. The integration branch later advanced to `056303b5193809597d4b5ec1f075dfc5109fe888`; it does not inherit these results.
+This directory records already executed work on exact frozen sources. It is evidence under the sole development plan, not a new plan or a release qualification. The integration branch has continued to advance; each section below names its exact measured source and observation time. Later revisions do not inherit earlier results.
 
 ## Two concrete engineering closures
 
@@ -309,4 +309,28 @@ The source comparison identifies the missing sha2-to-sha2-asm edge and sha2-asm 
 
 Reader source 5c09e132 / tree 71f5328e has 8,019 files / 931,985,269 bytes, with both actual audits PASS. [Output artifact 13303794145](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140/artifacts/13303794145) is 117,038 bytes, SHA-256 189d42f44310dbae8fd98c158da676631f6dfa6c096c0af68da70509e5e321ba. It preserves all four complete original ZIPs and selected members; the durable JSON retains all 14 original console JSON lines.
 
-A separate fixed-source fetch verification targets 73ab head and actual merge 88f899 under both original contexts: quality Rust 1.95.0 and fuzz nightly-2026-10-01. It must actually execute the original cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml command with the original 900-second command owner and ten-second termination grace. Its scope is this fetch subgate; complete quality checks, fuzz target execution and business/PQ acceptance remain separate.
+## Original locked-fetch subgate repaired and verified in all four contexts
+
+[The complete four-context terminal readback](73ab-locked-fetch-four-context-terminal-readback.json) records actual SUCCESS [run 41795067492](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41795067492), attempt 1. The workflow originates from diagnostic commit 6e016e7e; measured code is fixed 73ab head and actual merge 88f899, both tree 65a2100f, 8,120 files / 933,034,956 bytes.
+
+| Measured context | Original job | Original command result |
+| --- | ---: | --- |
+| head / quality, Rust 1.95.0 | 126457112337 | Executed, exit 0, process exit 0, no timeout |
+| head / fuzz, nightly-2026-10-01 | 126457112575 | Executed, exit 0, process exit 0, no timeout |
+| actual merge / fuzz, nightly-2026-10-01 | 126457112594 | Executed, exit 0, process exit 0, no timeout |
+| actual merge / quality, Rust 1.95.0 | 126457112672 | Executed, exit 0, process exit 0, no timeout |
+
+Every lane actually runs the unchanged `cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml` under the original 900-second command owner, ten-second TERM grace and owned-process-group cleanup. No retry or native test is introduced. Requested stable/nightly compilers and their original required components remain. Each context has fresh distinct RUSTUP_HOME and CARGO_HOME. Inner source-before/after/verified and source-consistency flags are all true; every outer before/after pair exactly agrees, and each lane has one actual preflight audit PASS with 26 packages.
+
+All four original lock-file observations equal SHA-256 `8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d`, matching the fixed source lock. The durable document retains all four complete original manifest strings, eight source receipts and 32 complete original members, including all four fetch logs. Root independently matched every manifest/source/audit literal to its full original job log and rehashed all 32 members plus all four complete job logs, 584,456 bytes. All four artifact identities, byte sizes and SHA-256 upload receipts agree with the API.
+
+This closes the shared locked-fetch refusal on the measured 73ab source. The four original 40a failures remain failed. Full quality checks, fuzz targets, native suites, public-business and performance qualifications are not executed or granted by this fetch-only observation. Later source revisions do not inherit its result.
+
+## Frozen 73ab workflow and open acceptance snapshot
+
+[The timestamped 07:51:22 UTC snapshot](73ab-workflow-and-open-acceptance-status.json) retains all 16 original 73ab workflow observations: nine success, three failure, three in progress and one pending. F0 run 41791243013 fails in original pair execution/finalization; campaign run 41791242816 fails its original three-campaign step; W1 run 41791242629 has two failed fresh-service jobs. Their inner native counts and failure causes were unread in that snapshot and remain null there. The detailed 40a results above are not assigned to 73ab.
+
+The snapshot preserves the then-running PQ, priority and workspace jobs and the pending required baseline. Later terminal results require separate source-bound evidence. At 08:05 UTC the integration branch and PR had advanced concurrently to b8116f65789a85148254f870c678a44f895316de, actual merge 91e2363714964709206f595787b32c55547ec729. That advance does not modify any frozen observation here.
+
+Issues [#639](https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639) and [#629](https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/629) remain open in the recorded snapshot. Original public confirmation under pressure and independently evaluated PQ/W1/economic, recovery, WAN and governed-activation requirements still need their own evidence. Diagnostic reader success, source review and narrow CI repair grant none of those qualifications.
+

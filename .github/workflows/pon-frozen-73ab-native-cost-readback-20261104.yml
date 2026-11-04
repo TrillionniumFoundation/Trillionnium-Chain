@@ -1,0 +1,60 @@
+name: Frozen 73ab native cost evidence (read only)
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-frozen-73ab-native-cost-readback-20261104.yml
+      - scripts/ci/frozen_73ab_native_cost_readback.py
+      - scripts/ci/current_native_sql_delta.py
+      - scripts/ci/current_native_decode_delta.py
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: frozen-73ab-native-cost-readback-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify diagnostic source and original project boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export READBACK_OUT="$RUNNER_TEMP/frozen-73ab-native-cost-readback-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$READBACK_OUT"
+          echo "READBACK_OUT=$READBACK_OUT" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Validate reader controls and read two exact original archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/frozen_73ab_native_cost_readback.py
+      - name: Recheck unchanged diagnostic source and project boundary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-after.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Retain original ZIP bytes and all reader outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frozen-73ab-native-cost-readback-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/frozen-73ab-native-cost-readback-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
