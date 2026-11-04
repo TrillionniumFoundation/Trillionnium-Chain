@@ -208,6 +208,98 @@ def large_original_report(name, spec):
                     "execution/raw/valid-work-root.json"}
 
 
+F0_INPUTS = {
+    "seed_transfers": 1024, "seed_blocks": 4, "business_blocks": 21,
+    "phase_seconds": 30, "actor_call_cap": 480, "planned_complete_runs": 1,
+    "attackers": 24, "m06_workers": 1, "confirmation_depth": 6,
+    "round_start_seconds": [1, 5, 9], "cpu_burst_ns": 2_000_000_000,
+    "cpu_refill_ns_per_second": 250_000_000, "start_reserve_ns": 100_000_000,
+    "phase_profile": "fixed-public-root-phase-external-actors-v1",
+    "planned_phases": ["baseline", "valid-work-root"],
+    "planned_confirmations": 6, "planned_business_packets": 42,
+    "four_second_slo_ns": 4_000_000_000,
+    "slo_starts_at_scheduled_offset": True,
+    "legacy_four_second_from_zero_epoch_changed": False, "f1_implemented": False,
+    "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+    "controller_resource_boundary_samples": 6,
+}
+
+
+def verify_fixed_f0(documents, files, spec):
+    """Bind original receipts and their full 6/42 denominator, never qualify it."""
+    for name, schema in (
+            ("finalization/result.json", "fixed-host-root-f0-finalization-v1"),
+            ("execution/results.json", "pon-fixed-host-root-f0-execution-v1"),
+            ("prepared/prepared.json", "pon-fixed-host-root-f0-prepared-v1")):
+        value = documents[name]
+        require(type(value) is dict and value.get("schema") == schema
+                and value.get("head") == spec["source"]
+                and value.get("tree") == spec["tree"], "ORIGINAL_F0_SCHEMA_SOURCE")
+    final = documents["finalization/result.json"]
+    execution = documents["execution/results.json"]
+    prepared = documents["prepared/prepared.json"]
+    require(final.get("complete_success") is False
+            and type(execution.get("complete_success")) is bool,
+            "ORIGINAL_F0_FAILED_FINALIZATION")
+    # Canonical JSON equality preserves numeric/boolean types in the workload.
+    require(encode_json(prepared.get("inputs")) == encode_json(F0_INPUTS)
+            and encode_json(execution.get("inputs")) == encode_json(F0_INPUTS),
+            "ORIGINAL_F0_INPUTS")
+    denominator = final.get("denominator")
+    require(type(denominator) is dict, "ORIGINAL_F0_DENOMINATOR")
+    require(execution.get("prepared_sha256") == files["prepared/prepared.json"]["sha256"]
+            and denominator.get("native_result_observed") is True
+            and denominator.get("native_result_sha256")
+                == files["execution/results.json"]["sha256"],
+            "ORIGINAL_F0_RECEIPT_HASHES")
+    for value in (denominator, execution):
+        require(type(value.get("planned_confirmations")) is int
+                and value["planned_confirmations"] == 6
+                and type(value.get("planned_business_packet_exposures")) is int
+                and value["planned_business_packet_exposures"] == 42,
+                "ORIGINAL_F0_PLANNED_DENOMINATOR")
+        rounds = value.get("all_planned_rounds")
+        packets = value.get("all_planned_business_packets")
+        require(type(rounds) is list and len(rounds) == 6
+                and type(packets) is list and len(packets) == 42,
+                "ORIGINAL_F0_COMPLETE_DENOMINATOR")
+        for index, row in enumerate(rounds):
+            require(type(row) is dict
+                    and row.get("phase") == ("baseline", "valid-work-root")[index // 3]
+                    and type(row.get("round")) is int and row["round"] == index % 3
+                    and type(row.get("scheduled_offset_ns")) is int
+                    and row["scheduled_offset_ns"] == (1 + 4 * (index % 3)) * 1_000_000_000,
+                    "ORIGINAL_F0_ROUND_IDENTITIES")
+            require(all(type(row.get(key)) is bool for key in (
+                        "observed_exactly_once", "confirmed_inside_original_window",
+                        "four_second_slo_met")), "ORIGINAL_F0_ROUND_FLAGS")
+        for index, row in enumerate(packets):
+            require(type(row) is dict
+                    and row.get("phase") == ("baseline", "valid-work-root")[index // 21]
+                    and type(row.get("packet_index")) is int and row["packet_index"] == index % 21
+                    and type(row.get("observed_attempts")) is int
+                    and row["observed_attempts"] >= 0
+                    and type(row.get("timely_network_ack")) is bool
+                    and row.get("ack_is_not_confirmation") is True,
+                    "ORIGINAL_F0_PACKET_IDENTITIES")
+        require(type(value.get("four_second_slo_successes")) is int
+                and value["four_second_slo_successes"]
+                    == sum(row["four_second_slo_met"] for row in rounds),
+                "ORIGINAL_F0_SLO_COUNT")
+    require(execution["all_planned_rounds"] == denominator["all_planned_rounds"]
+            and execution["all_planned_business_packets"] == denominator["all_planned_business_packets"],
+            "ORIGINAL_F0_RECEIPT_DENOMINATOR_AGREEMENT")
+    require(type(denominator.get("report_observed")) is bool, "ORIGINAL_F0_REPORT_FLAG")
+    if denominator["report_observed"]:
+        report = files.get("execution/raw/report.json")
+        require(type(report) is dict
+                and denominator.get("report_sha256") == report["sha256"]
+                and execution.get("report_sha256") == report["sha256"],
+                "ORIGINAL_F0_REPORT_HASH")
+    # This validates original recorded identities/counts and bytes only. It does
+    # not rerun the report producer, Host checks, native binary, or SLO physics.
+
+
 def inspect_zip(path, spec, budget):
     files, documents, projected, summaries, client_costs = {}, {}, {}, {}, {}
     seen_documents = set()
@@ -303,6 +395,8 @@ def inspect_zip(path, spec, budget):
             require(attempt["number"] == ordinal
                     and attempt["report_sha256"] == files[report_name]["sha256"],
                     "ORIGINAL_REPORT_HASH")
+    elif spec["kind"] == "fixed-root-f0":
+        verify_fixed_f0(documents, files, spec)
     return files, documents, declared, projected, summaries, client_costs
 
 
@@ -425,6 +519,36 @@ SAFE_STRINGS.update({
     "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
     "attack-free-baseline", "from-zero-pressure", "unknown",
 })
+# Fixed original F0 receipt and authenticated SQL-observer labels. Unknown
+# values remain opaque; these fields grant no execution or consensus authority.
+SAFE_FIELDS.update("""
+denominator planned_confirmations planned_business_packet_exposures
+all_planned_rounds all_planned_business_packets four_second_slo_successes
+report_observed native_result_observed native_complete_success
+controller_resources_complete controller_resource_summary controller_resource_failure
+report_failure native_result_failure native_result_sha256 report_sha256 head tree inputs
+all_services_known_empty services ownership_validated cleanup_attempted known_empty remaining
+observed_empty_at_readback controller_terminal_before_phase_observation
+native_execution_observed prepared_sha256 post_observations workflow_outcomes
+scheduled_offset_ns actual_started_ns actual_ended_ns elapsed_from_scheduled_ns
+start_lateness_from_schedule_ns end_lateness_from_four_second_deadline_ns
+observed_exactly_once confirmed_inside_original_window four_second_slo_met
+observed_attempts timely_network_ack ack_is_not_confirmation packet_index
+sql_commit sites site totals calls_started calls_returned calls_succeeded calls_failed
+calls_abandoned calls_unwinding calls_in_flight cpu_ns_known_sum wall_unknown_calls
+cpu_known_calls cpu_unknown_calls observation_failed has_consensus_authority
+pre_commit_refusals cpu_scope prepared
+""".split())
+SAFE_STRINGS.update({
+    "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+    "c54881d952d4836f9c7763482e5f3c338b38663b",
+    "fixed-host-root-f0-finalization-v1", "pon-fixed-host-root-f0-execution-v1",
+    "pon-fixed-host-root-f0-prepared-v1", "native-public-v3-fixed-host-root-f0-v1",
+    "fixed-public-root-phase-external-actors-v1",
+    "fixed-host-root-controller-resources-v1",
+    "pon-native-sql-commit-call-observation-v1",
+    "admission_persistence", "atomic", "reorg_step", "reorg_termination",
+})
 ERROR_FIELDS = re.compile(r"error|failure|reason|refusal", re.IGNORECASE)
 KNOWN_CODES = {
     "PUBLIC_REQUEST_DEADLINE", "PUBLIC_MUTATION_CPU_BUDGET", "ROOT",
@@ -432,6 +556,9 @@ KNOWN_CODES = {
     "FRESH_NATIVE_PROCESS_REQUIRED", "CONFIRMATION_TARGET",
     "WouldBlock", "TimedOut", "ConnectionRefused", "BROKEN_PIPE",
     "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "BASELINE_MUST_PASS", "NATIVE_F0_FAILED", "F0_REPORT_OR_SERVICE_CRITERIA_FAILED",
+    "EXACT_OWNED_STOP_FAILED_OR_TIMED_OUT", "RAW_SOURCE_IDENTITY_FAILED",
+    "F0_SYSTEM_SERVICE_OBSERVATION_FAILED", "F0_EXPLICIT_PLACEMENT_REQUIRED",
 }
 
 
@@ -998,6 +1125,88 @@ def self_test():
             "FIXED_FRESH_OUTER_RUNS_PROJECTION")
     count += 1
 
+    # Synthetic readback consistency controls, not native or Host tests.
+    f0_spec = {"source": "a" * 40, "tree": "b" * 40}
+    f0_rounds = [
+        {"phase": phase, "round": ordinal,
+         "scheduled_offset_ns": (1 + 4 * ordinal) * 1_000_000_000,
+         "observed_exactly_once": False,
+         "confirmed_inside_original_window": False, "four_second_slo_met": False}
+        for phase in ("baseline", "valid-work-root") for ordinal in range(3)]
+    f0_packets = [
+        {"phase": phase, "packet_index": ordinal, "observed_attempts": 0,
+         "timely_network_ack": False, "ack_is_not_confirmation": True}
+        for phase in ("baseline", "valid-work-root") for ordinal in range(21)]
+    f0_denominator = {
+        "planned_confirmations": 6, "planned_business_packet_exposures": 42,
+        "all_planned_rounds": f0_rounds, "all_planned_business_packets": f0_packets,
+        "four_second_slo_successes": 0, "report_observed": True,
+        "report_sha256": "c" * 64, "native_result_observed": True,
+        "native_result_sha256": "d" * 64}
+    f0_documents = {
+        "prepared/prepared.json": {
+            "schema": "pon-fixed-host-root-f0-prepared-v1",
+            "head": f0_spec["source"], "tree": f0_spec["tree"], "inputs": F0_INPUTS},
+        "execution/results.json": {
+            **f0_denominator, "schema": "pon-fixed-host-root-f0-execution-v1",
+            "head": f0_spec["source"], "tree": f0_spec["tree"],
+            "inputs": F0_INPUTS, "prepared_sha256": "e" * 64, "complete_success": False},
+        "finalization/result.json": {
+            "schema": "fixed-host-root-f0-finalization-v1",
+            "head": f0_spec["source"], "tree": f0_spec["tree"],
+            "complete_success": False, "denominator": f0_denominator}}
+    f0_files = {name: {"sha256": digest * 64} for name, digest in (
+        ("prepared/prepared.json", "e"), ("execution/results.json", "d"),
+        ("execution/raw/report.json", "c"))}
+    verify_fixed_f0(f0_documents, f0_files, f0_spec)
+    count += 1
+    def f0_changed(name, key, value):
+        copy = parse_json(encode_json(f0_documents))
+        copy[name][key] = value
+        return copy
+    rejects(lambda: verify_fixed_f0(
+        f0_changed("prepared/prepared.json", "head", "f" * 40), f0_files, f0_spec),
+        "ORIGINAL_F0_SCHEMA_SOURCE")
+    rejects(lambda: verify_fixed_f0(
+        f0_changed("execution/results.json", "prepared_sha256", "f" * 64),
+        f0_files, f0_spec), "ORIGINAL_F0_RECEIPT_HASHES")
+    changed = parse_json(encode_json(f0_documents))
+    changed["finalization/result.json"]["denominator"]["native_result_sha256"] = "f" * 64
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_RECEIPT_HASHES")
+    changed = parse_json(encode_json(f0_documents))
+    changed["finalization/result.json"]["denominator"]["all_planned_rounds"].pop()
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_COMPLETE_DENOMINATOR")
+    changed = parse_json(encode_json(f0_documents))
+    changed["finalization/result.json"]["denominator"]["all_planned_business_packets"][1]["packet_index"] = 0
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_PACKET_IDENTITIES")
+    changed = parse_json(encode_json(f0_documents))
+    changed["execution/results.json"]["report_sha256"] = "f" * 64
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_REPORT_HASH")
+    changed = parse_json(encode_json(f0_documents))
+    changed["execution/results.json"]["inputs"]["phase_seconds"] = 31
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_INPUTS")
+    changed = parse_json(encode_json(f0_documents))
+    changed["finalization/result.json"]["denominator"]["all_planned_rounds"][0]["four_second_slo_met"] = "SYNTHETIC_UNREVIEWED_SENTINEL"
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_ROUND_FLAGS")
+    changed = parse_json(encode_json(f0_documents))
+    changed["finalization/result.json"]["denominator"]["four_second_slo_successes"] = 1
+    rejects(lambda: verify_fixed_f0(changed, f0_files, f0_spec), "ORIGINAL_F0_SLO_COUNT")
+    sql = projection({"sql_commit": {
+        "schema": "pon-native-sql-commit-call-observation-v1",
+        "observation_failed": True, "has_consensus_authority": False,
+        "sites": [{"site": "atomic", "totals": {"calls_started": 2,
+                   "calls_returned": 1, "cpu_ns": None, "cpu_ns_known_sum": 5}}],
+        "cpu_scope": "SYNTHETIC_UNREVIEWED_SENTINEL",
+        "SYNTHETIC_UNREVIEWED_SENTINEL": "secret"}})
+    require(sql["sql_commit"]["sites"][0]["totals"]["calls_started"] == 2
+            and sql["sql_commit"]["sites"][0]["totals"]["cpu_ns"] is None
+            and sql["sql_commit"]["sites"][0]["totals"]["cpu_ns_known_sum"] == 5
+            and sql["sql_commit"]["observation_failed"] is True
+            and sql["sql_commit"]["has_consensus_authority"] is False
+            and "SYNTHETIC_UNREVIEWED_SENTINEL" not in json.dumps(sql),
+            "F0_SQL_UNKNOWN_AND_FAILURE_PRESERVED")
+    count += 1
+
     print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
                       "native_tests_executed": 0, "artifact_members_executed": 0}))
 
@@ -1044,6 +1253,7 @@ def main():
                 "declared_decoded_bytes": declared,
                 "source_receipts_verified": spec["source_json"],
                 "original_binary_verified": spec["kind"] == "campaign",
+                "original_f0_receipt_denominator_bound": spec["kind"] == "fixed-root-f0",
                 "phase_summaries": summaries,
                 "client_cost_summaries": client_costs,
                 "reader_address_space_cap_bytes": address_cap,

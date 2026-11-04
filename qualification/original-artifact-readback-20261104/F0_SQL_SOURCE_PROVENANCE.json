@@ -1,0 +1,183 @@
+{
+  "schema": "trnm-frozen-c806-f0-sql-readback-proposal-v1",
+  "research_parent": "fa2fca6cf2aede38a60b5f39c67f12b3fefb7fcb",
+  "research_base_tree": "018ecdddc29d6e0fe2375001cd47e21234c759ff",
+  "original_source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+  "original_tree": "c54881d952d4836f9c7763482e5f3c338b38663b",
+  "reader_prior_blob": "f81cf081b20cd0b652b4b09f4591aa05305c050e",
+  "inputs": [
+    {
+      "kind": "campaign",
+      "artifact_id": 13297780117,
+      "run_id": 41775721200,
+      "artifact_name": "pon-native-campaign-x64-head-release-c806dd9ab640e87ca3fc507a8aeada53c2053990-1",
+      "bytes": 56634881,
+      "sha256": "09150c320464cf952aedbda922a08e8bcf13246bfb1a02ccf73d8826fb0fd936",
+      "source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+      "tree": "c54881d952d4836f9c7763482e5f3c338b38663b",
+      "required_json": [
+        "source-before.json",
+        "source-after.json",
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ],
+      "source_json": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "project_json": [
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ]
+    },
+    {
+      "kind": "fixed-root-f0",
+      "artifact_id": 13296648897,
+      "run_id": 41775721326,
+      "artifact_name": "pon-fixed-host-root-f0-x64-head-c806dd9ab640e87ca3fc507a8aeada53c2053990-1",
+      "bytes": 17334604,
+      "sha256": "b225b711d8778d6dbec51e63bf967e5a37fb6b5abf5795a13154bcf7950cde33",
+      "source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+      "tree": "c54881d952d4836f9c7763482e5f3c338b38663b",
+      "required_json": [
+        "finalization/result.json",
+        "execution/results.json",
+        "prepared/prepared.json",
+        "source-after.json",
+        "workflow-outcomes.json"
+      ],
+      "source_json": [
+        "source-after.json"
+      ],
+      "project_json": [
+        "finalization/result.json",
+        "execution/results.json",
+        "prepared/prepared.json",
+        "workflow-outcomes.json",
+        "execution/raw/report.json",
+        "execution/raw/baseline.json",
+        "execution/raw/valid-work-root.json"
+      ]
+    }
+  ],
+  "producer_inputs": [
+    {
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "blob": "2b2454cf6ffee6959e0402c52a77e7722e181f3a",
+      "sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca"
+    },
+    {
+      "path": "scripts/ci/finalize_fixed_root_f0.py",
+      "blob": "c5deebcd734b57e5ef63b1e51797328db6551a1f",
+      "sha256": "608ba877822f706b82427398c5f90d5811be47ab02f37f7ae09a59b8c1771866"
+    },
+    {
+      "path": "scripts/ci/fixed_root_f0_resources.py",
+      "blob": "3a67816123a423ca39beccdcc5d1adee637288fb",
+      "sha256": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "scope": "Actual immutable SQL observer source read; four API call interval sites, observational only."
+    }
+  ],
+  "new_source_and_evidence": [
+    {
+      "path": "qualification/original-artifact-readback-20261104/readback.py",
+      "git_blob": "d5e9513b0bedbdf356cdd22bbcdecfc558ae03ca",
+      "bytes": 68615,
+      "sha256": "9178517e5f15dd3e188d3b9c400810d82fd3e2d51ee2222e8216844a86acb186"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/inputs.json",
+      "git_blob": "8cf20d27d9b1c19f108c49c53512374d691ecd28",
+      "bytes": 1769,
+      "sha256": "482e050ee4f41ada6b3d0214844d4e57d15df45db4a449977bf520c0fca808e2"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/c806-original-failures/job-126395483006.decoded.log",
+      "git_blob": "dd3fa064d6f7d03081804033480a29fc33a5b099",
+      "bytes": 176745,
+      "sha256": "5c2039e62f382c60201854174c8c5787dfd4a10c559598ee7e524ff96e3543d0"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/c806-original-failures/job-126395483096.decoded.log",
+      "git_blob": "7b390a7f09a1377c8540be1adf27ae816314e435",
+      "bytes": 221705,
+      "sha256": "f4c108061e3d63f3098851f4aac8cd95ff3d1fd33b7263c3cccc6b2bfa06ecc7"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/c806-original-failures/CAMPAIGN_RESULT_FROM_ORIGINAL_LOG.json",
+      "git_blob": "1a4c9a629c778a7128d7dd1d3be6e580ca648534",
+      "bytes": 8558,
+      "sha256": "fa08d4cb257166721d61734726c66566f1d7060a60ae4b8d7a26520bcb7b9535"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/c8-native-success/job-126397534003.decoded.log",
+      "git_blob": "ebdd9863ceb9a5abd247b4f5493087dd472b9f06",
+      "bytes": 37792,
+      "sha256": "b6d4e6e9297dc730df18b7e3c1ff10ebbb315716673f5e185a6f67fb4d4bfab9"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/c8-native-success/ORIGINAL_RECEIPT.json",
+      "git_blob": "479a69cb0280732e08ff6c5990ac60e031802e7d",
+      "bytes": 9690,
+      "sha256": "3d8e39ac1eafa570534c6a2c6bce85bfcc19c96c8a6cb2fd9edbe9bef15f4df0"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/c8-native-success/INDEPENDENT_PARSER_REVIEW.json",
+      "git_blob": "0b643bfa92ee851ced9f91cc010aa937fe54d56f",
+      "bytes": 1714,
+      "sha256": "a3f4de2cce69b7944461a5e12f0eb6c34688b458d185de0abcf6526875928e1a"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/c806-source/OWNER_6F_IDENTITY_LIFT_INDEPENDENT_REVIEW.json",
+      "git_blob": "86957ee0ae2821b5739234be37f59daaf2a47655",
+      "bytes": 2561,
+      "sha256": "3ac233f6dada5d947ee8872ac4e7de0e542006f860fdb49a5ae4fae2cae9caaa"
+    },
+    {
+      "path": "qualification/original-artifact-readback-20261104/c806-source/PUBLISHED_READBACK.json",
+      "git_blob": "ab8ca25a8b3b29514f2d12862c9091ffd08e546b",
+      "bytes": 25662,
+      "sha256": "0d2e6bc27216b7676b80672ad6ec01ab8fbf4cc0a5f1a769402f12f04b3f89df"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/c8-native-success/VERIFIED.json",
+      "git_blob": "06f48bb758ec3fdb9786371f4997bbf0f1756d28",
+      "bytes": 1308,
+      "sha256": "9efb4dd80cec2eb5e09e97c3a2d57eec6a7df5b32a25a310f18e735770d06df9"
+    }
+  ],
+  "f0_binding_scope": "Original 6 round identities / 42 packet identities and full workload; source/tree, execution/preparation/report original-byte hashes and original receipt agreement. No rerun of original report producer, Host, SLO physics or native binary.",
+  "sql_scope": "Four actual Transaction::commit API intervals only; includes the observer clock/recording overhead and failed API rollback-on-drop. Not isolated SQL/fsync. Calling-thread CPU, unknown totals and failed observation retained. Snapshots are cumulative; do not sum before/after or nested costs. No consensus or execution authority.",
+  "unchanged_budgets": {
+    "compressed": 100663296,
+    "returned_decoded": 536870912,
+    "member": 268435456,
+    "small_json": 16777216,
+    "large_report": 134217728,
+    "retained_small_json": 67108864,
+    "derived": 8388608,
+    "stdout": 2097152,
+    "address_space": 4294967296,
+    "workflow_timeout_minutes": 15
+  },
+  "controls": {
+    "old_synthetic": 40,
+    "new_synthetic": 11,
+    "expected_total": 51,
+    "prior_reader_negatives": 9,
+    "local_executed": 0,
+    "hosted_status": "PENDING"
+  },
+  "native_executed_by_reader": false,
+  "performance_qualified": false,
+  "production_activation": false,
+  "no_library_operations": true
+}

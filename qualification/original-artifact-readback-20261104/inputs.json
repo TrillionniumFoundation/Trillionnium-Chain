@@ -1,13 +1,13 @@
 [
   {
     "kind": "campaign",
-    "artifact_id": 13294462549,
-    "run_id": 41768503393,
-    "artifact_name": "pon-native-campaign-x64-head-release-1bac21f81fc8be67a566dddfed4da6b2fd87ad30-1",
-    "bytes": 57494539,
-    "sha256": "aaa8fa7c4eb49301e07ba2f150e86739da6527c32dcb46b72bddeaab457f8bcb",
-    "source": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
-    "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+    "artifact_id": 13297780117,
+    "run_id": 41775721200,
+    "artifact_name": "pon-native-campaign-x64-head-release-c806dd9ab640e87ca3fc507a8aeada53c2053990-1",
+    "bytes": 56634881,
+    "sha256": "09150c320464cf952aedbda922a08e8bcf13246bfb1a02ccf73d8826fb0fd936",
+    "source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+    "tree": "c54881d952d4836f9c7763482e5f3c338b38663b",
     "required_json": [
       "source-before.json",
       "source-after.json",
@@ -28,25 +28,32 @@
     ]
   },
   {
-    "kind": "fresh-manifest",
-    "artifact_id": 13293474977,
-    "run_id": 41768503400,
-    "artifact_name": "w1-fresh-service-head-1bac21f81fc8be67a566dddfed4da6b2fd87ad30-1",
-    "bytes": 5303214,
-    "sha256": "0c522374ded7a1a96b79a920939be7dbdec4127af28e28f43e603875723e92c5",
-    "source": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
-    "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+    "kind": "fixed-root-f0",
+    "artifact_id": 13296648897,
+    "run_id": 41775721326,
+    "artifact_name": "pon-fixed-host-root-f0-x64-head-c806dd9ab640e87ca3fc507a8aeada53c2053990-1",
+    "bytes": 17334604,
+    "sha256": "b225b711d8778d6dbec51e63bf967e5a37fb6b5abf5795a13154bcf7950cde33",
+    "source": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+    "tree": "c54881d952d4836f9c7763482e5f3c338b38663b",
     "required_json": [
-      "source.json",
+      "finalization/result.json",
+      "execution/results.json",
+      "prepared/prepared.json",
       "source-after.json",
-      "fresh-service/manifest.json"
+      "workflow-outcomes.json"
     ],
     "source_json": [
-      "source.json",
       "source-after.json"
     ],
     "project_json": [
-      "fresh-service/manifest.json"
+      "finalization/result.json",
+      "execution/results.json",
+      "prepared/prepared.json",
+      "workflow-outcomes.json",
+      "execution/raw/report.json",
+      "execution/raw/baseline.json",
+      "execution/raw/valid-work-root.json"
     ]
   }
 ]

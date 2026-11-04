@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-da-c8-hosted-observation-binding-v1",
+  "head": "c8c095bb2eee9272dcc77421f055897e6806da12",
+  "tree": "b445af2055e549d4bbdfd2bd4e5ca3a77f2b5c93",
+  "run_id": 41776356487,
+  "job_id": 126397534003,
+  "original_job_conclusion": "success",
+  "decoded_log": {
+    "bytes": 37792,
+    "sha256": "b6d4e6e9297dc730df18b7e3c1ff10ebbb315716673f5e185a6f67fb4d4bfab9"
+  },
+  "source_before_after_equal": true,
+  "registered_cases": 174,
+  "module": {
+    "passed": 174,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "original_selected_sequence_executions": 3,
+  "each_selected_sequence": {
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 173
+  },
+  "synthetic_parser_controls": 16,
+  "binary": {
+    "bytes": 59852608,
+    "sha256": "fb2957f936ee2d6a52168494bd2fe1dbb5e203583b8f1191445ff1f03b56a060"
+  },
+  "binary_before_after_equal": true,
+  "original_full_workspace_qualified": false,
+  "host_qualified": false,
+  "performance_qualified": false,
+  "production_activation": false,
+  "scope": "Package-selected test-profile diagnostic only. Fixed original retention child-output normalization; no Rust source or timing/selector/deadline changes. Independent source review is static and separate. This is not a rerun of #699 whole-workspace feature unification."
+}

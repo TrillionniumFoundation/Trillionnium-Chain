@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "41dd661222285728720b97519da1f5a024c7716b",
+  "source": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "review_kind": "static source comparison",
+  "execution_count": 0,
+  "inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "role": "before",
+      "git_blob": "c30d01e4b6cbb11434539b82229ccca41d11a051",
+      "bytes": 30645,
+      "sha256": "f7ca2ce8aea9ff1afbc2e832d6a900f67923485688668e8a084c82913523baa7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "role": "after",
+      "git_blob": "d137e38fc08738f4e6d6b81712f7c7423624a8c2",
+      "bytes": 31870,
+      "sha256": "3af5e48fcd8084fd687265a5f3407aaa0258de6453d252597de03ff58efe0889"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "role": "exact Node::lift implementation",
+      "git_blob": "45c458780452e82c2e59ac34ae8a200a167a6647",
+      "bytes": 47683,
+      "sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f"
+    }
+  ],
+  "findings": [
+    "The full native_store.rs difference is five production lines and nineteen test lines; no original line was removed.",
+    "At depth == node.depth the original Node::lift initializes value from self.digest, iterates an empty range and returns that digest. It has no validation, failure or Host check to preserve in that empty range. The direct return is equal.",
+    "The change avoids storing or evicting identity results in LiftCache. All nonidentity cache inputs, bounded insertion and verification calls remain byte-identical.",
+    "The original identity loop remains and now checks unchanged entry count. A separate 8193-input loop uses depth=node.depth-1 and compares each real one-branch hash to Node::lift, checks the 8192 capacity boundary and final one-entry post-clear state.",
+    "The fixture creates depth256 and changes it once to255 before subtracting one, so the new test's depth subtraction does not underflow.",
+    "No confirmed blocking issue in this exact narrow static scope."
+  ],
+  "boundaries": [
+    "No Cargo, Rust, native test, performance or full workflow was executed by this review.",
+    "No preexisting 41dd or other source qualification is transferred to 6f.",
+    "This review covers the native_store.rs diff and the exact Node::lift context, not the other formatter-only files or the full owner change set."
+  ]
+}
