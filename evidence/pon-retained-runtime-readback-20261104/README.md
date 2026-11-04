@@ -1,6 +1,6 @@
 # Retained runtime failures, native follow-up and complete cost readback
 
-> **Dated source/status observation, 2026-11-04 10:25:54 UTC:** integration is 93e207c8. Its four original Node/PQ lanes each pass 992/0/27; original F0, campaign and W1 workflows still fail, with priority/baseline running. [Current source and metadata](93e-current-source-workflow-status.json), [complete Node/PQ scope](93e-pq-four-lane-terminal-readback.json), [current business outer failures](original-93e-business-outer-terminal-readback.json) and [the completed generic-bound DB refusal](original-69d-arm-retained-database-readback.json) are retained separately. Overall HOLD remains.
+> **Dated source/status observation, 2026-11-04 10:44:39 UTC:** integration results below remain bound to 93e207c8. Its four original Node/PQ lanes each pass 992/0/27. Original F0, campaign, W1 and priority workflows fail; the required-baseline run remains in progress. [Complete Node/PQ scope](93e-pq-four-lane-terminal-readback.json), [current business outer failures](original-93e-business-outer-terminal-readback.json), [the original generic-bound DB refusal](original-69d-arm-retained-database-readback.json) and [the separate successful fixed-DB query](original-69d-arm-fixed-database-snapshot.json) preserve their own source/time boundaries. Overall HOLD remains.
 
 
 This directory records already executed work on exact frozen sources. It is evidence under the sole development plan, not a new plan or a release qualification. The integration branch has continued to advance; each section below names its exact measured source and observation time. Later revisions do not inherit earlier results.
@@ -541,3 +541,33 @@ The reader authenticates both original ZIPs / 122,282,461 bytes and all 12 small
 A separate diagnostic revision adds only a fixed main-database allocation for these two already authenticated original archives and their exact path/observed sizes: 220,749,824 and 220,811,264 bytes, 441,561,088 combined. It streams at most 1 MiB per read, checks complete length/EOF/CRC and hashes every copied byte. Generic 32 MiB/member and 160 MiB/selected bounds continue to cover all non-main-DB members, including sidecars; database and non-database totals are reported separately. No generic 256 MiB allowance is introduced.
 
 The revision keeps all original source/ZIP checks, fixed read-only SQL/schema/authorizer checks, immutable handling only for sidecar-free frozen copies, input and directory rechecks, the approximate five-second/200k callback thresholds and ten-minute diagnostic workflow. This is a separately declared evidence-reading allocation, not a changed native performance budget or an accepted speedup. The original bound refusal above remains unchanged. The follow-up's SQL availability and any post-cleanup cursor require its own actual terminal evidence.
+
+## Fixed 69d ARM database snapshots now expose partial staging cancellation
+
+[The separately budgeted fixed-main-database reader](original-69d-arm-fixed-database-snapshot.json) completes actual run 41814841999 / job 126522878902 on source 2fab1611, tree 0febfbbb, 8,054 entries / 935,565,979 bytes. Both complete source receipts are identical and both actual audits pass. Both snapshots are observed, with no unavailable reason. Each of the two already pinned main files is streamed under its own exact limit, then queried with the unchanged read-only/schema/authorizer constraints.
+
+| Retained original 69d state | ARM head | ARM actual merge |
+| --- | --- | --- |
+| Original artifact | 13311000045 | 13311101182 |
+| reorg.cursor / lifecycle.cancelled_cursor | 3427 / 3427 | 3393 / 3393 |
+| reorg.done / lifecycle.outcome | 2 / 2 | 2 / 2 |
+| cancellation reason | PUBLIC_REQUEST_DEADLINE | PUBLIC_REQUEST_DEADLINE |
+| new_tip | Matches the original pinned tip | Matches the original pinned tip |
+| active tip / generation / state_slot | Original genesis / 0 / 0 | Original genesis / 0 / 0 |
+| planned steps | 4105 attach rows, ordinal 0..4104 | 4105 attach rows, ordinal 0..4104 |
+
+The queried height-4105 target block exists in each archive and its parent is the queried original height-4104 last successful import. Exact 69d Store and cancellation source excerpts show that each staging delta/cursor increment commits together; cancellation reads the committed cursor, records it with outcome=2 and done=2, and requires the old active generation/slot. Together, these directly read rows and source semantics support partial committed staging progress followed by cancellation before final active publication.
+
+The row snapshots were retained after the original call returned, Node drop and Host cleanup. They do not identify the precise last failing checkpoint, uncommitted step phase or original SQL/JSON/root/COMMIT cost share. Original failure-time activation_cursor and durable_committed_blocks remain null, separate from 4104 successful import returns and these staging cursor observations. The reader does not rerun Node recovery, recompute roots, revalidate every block or qualify physical-fault durability.
+
+Both main-file SHA256 values match the stream, before-query and after-query hashes: head 5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6; merge e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d. All 14 selected files total 441,582,851 bytes: the two fixed databases total 441,561,088 and the original 12 small members total 21,763. The latter match the earlier generic-bound readback byte-for-byte by their complete digests. Both original ZIP digests and retained directory contents remain unchanged.
+
+The two fixed query sets each complete seven statements in the diagnostic SQLite process, with 82,000 approximate progress-callback units. Its roughly two-millisecond SQL time measures this later readback only. It does not measure or explain the original 30-second import. Root independently checks the complete 55,385-byte log, four original JSON literals, complete rows/queries/schema, all fourteen before/after digests, original diagnostics, six exact source excerpts and output artifact API/upload identity. The original 32 MiB refusal remains its separate unavailable result.
+
+## Later 93e priority terminal, before inner current-source readback
+
+At 10:38:30 UTC root reads the actual terminal of [original 93e priority run 41806693207](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693207): completed/failure, original terminal update 10:27:36. All 13 jobs are terminal. Four History jobs fail only original step 20; four service-model jobs fail original step 6; four state jobs and the retained-pressure job have successful metadata conclusions. Native scope/counts for the state and service jobs are not inferred from that metadata.
+
+Root reads all four complete original History outer logs. The head/actual-merge source pairs are identical, all actual audits pass and all original builds, source-after checks and artifact uploads succeed; original execution fails. Those outer logs do not print the inner failure-location object or native terminal. They bind four original ZIPs totaling 224,077,518 bytes. A clone of the already successful twelve-member History reader is changed only in nine name/identity lines for these four 93e archives; the other 543 lines, selected members, generic 32/160 MiB bounds and ten-minute workflow remain unchanged. It does not execute archived code or SQL.
+
+The new reader is needed to report 93e's own internal failure results. The 69d page counts, cancellation cursors and causes are not assigned to 93e. The separate original required-baseline run 41806693078 remains in progress at root's 10:44:39 metadata observation; no terminal or native counts are invented.

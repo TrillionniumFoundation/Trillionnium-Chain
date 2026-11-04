@@ -1,0 +1,1264 @@
+{
+  "schema": "trnm-retained-69d-arm-fixed-database-snapshot-readback-v1",
+  "generated_utc": "2026-11-04T10:36:42Z",
+  "scope": "Read-only observation of two exact original 69d ARM History databases retained after the original call returned, Node drop and Host cleanup. The fixed database-specific streaming budget is distinct from unchanged generic member limits and every original native acceptance budget.",
+  "measured_source": {
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+    "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+    "tracked_entries": 8127,
+    "tracked_bytes": 933472602,
+    "original_run": 41799271270,
+    "original_attempt": 1
+  },
+  "reader": {
+    "run": {
+      "id": 41814841999,
+      "name": "69d retained History SQLite evidence (read only)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41814841999",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+      "run_attempt": 1,
+      "created_at": "2026-11-04T10:32:23Z",
+      "updated_at": "2026-11-04T10:32:58Z",
+      "path": ".github/workflows/pon-retained-69d-history-db-readback-20261104.yml"
+    },
+    "run_api_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41814841999",
+    "job_metadata_from_run_jobs_tool": {
+      "id": 126522878902,
+      "name": "readback",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41814841999,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Verify diagnostic source and project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Read two fixed post-cleanup databases without executing archived code",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Recheck unchanged diagnostic source and project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Retain original ZIPs, selected bytes, queries and unavailable outcomes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    "source": {
+      "base": null,
+      "candidate": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+      "tested_tree": "0febfbbbc1935ae51c84aa23f7bd4d4caba3dcb8",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 935565979,
+      "tracked_entries": 8054,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "reader_log_first_line": 207,
+      "reader_log_last_line": 219,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n  \"tested_tree\": \"0febfbbbc1935ae51c84aa23f7bd4d4caba3dcb8\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 935565979,\n  \"tracked_entries\": 8054,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_after": {
+      "reader_log_first_line": 245,
+      "reader_log_last_line": 257,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n  \"tested_tree\": \"0febfbbbc1935ae51c84aa23f7bd4d4caba3dcb8\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 935565979,\n  \"tracked_entries\": 8054,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_before_after_literal_equal": true,
+    "actual_audits": [
+      {
+        "reader_log_line": 220,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      {
+        "reader_log_line": 258,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      }
+    ],
+    "source_files": [
+      {
+        "path": "scripts/ci/retained_69d_history_db_readback.py",
+        "commit": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+        "git_blob": "7517ef5be903a886a7015b0a589092699dcb7503",
+        "utf8_bytes": 39421,
+        "sha256": "9c79cb9121160b77f2e22d2ad8d4e8da19e7d011b871b152f740a996c3bbad26"
+      },
+      {
+        "path": ".github/workflows/pon-retained-69d-history-db-readback-20261104.yml",
+        "commit": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+        "git_blob": "4af3fa5032217273623a00bb1f7d49b3f8ea5afe",
+        "utf8_bytes": 2538,
+        "sha256": "71187190c4caa9c610d27dc0e660af8809ee60307e0acd328ae673760fbdf796"
+      }
+    ],
+    "bound_source_files_independently_fetched_from_reader_commit": true,
+    "workflow_timeout_minutes": 10,
+    "original_generic_limits": {
+      "metadata_bytes": 2097152,
+      "member_bytes": 33554432,
+      "selected_bytes": 167772160,
+      "members": 25000,
+      "json_nodes": 200000,
+      "stdout_characters_per_artifact": 70000
+    },
+    "fixed_database_budget_scope": "Only the exact DB_NAME under each fixed original artifact receives its separately pinned uncompressed and compressed size; non-database members retain the generic 32 MiB and combined 160 MiB limits.",
+    "sqlite_callback_budget": {
+      "callback_interval": 1000,
+      "callback_units_threshold": 200000,
+      "elapsed_seconds_threshold": 5,
+      "scope": "Approximate callback accounting and elapsed checks, not hard preemption or original native cost."
+    },
+    "output_artifact": {
+      "id": 13313429601,
+      "name": "69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1",
+      "size_in_bytes": 153107950,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313429601",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313429601/zip",
+      "expired": false,
+      "created_at": "2026-11-04T10:32:56Z",
+      "expires_at": "2026-12-04T10:32:48Z",
+      "updated_at": "2026-11-04T10:32:56Z",
+      "digest": "sha256:21c36112f404de8eb60414aff57f93a2961820a974b20c3202f122d71e784cd5",
+      "workflow_run": {
+        "id": 41814841999,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997"
+      }
+    },
+    "output_upload_literal": {
+      "reader_log_first_line": 298,
+      "reader_log_last_line": 302,
+      "text": "SHA256 digest of uploaded artifact zip is 21c36112f404de8eb60414aff57f93a2961820a974b20c3202f122d71e784cd5\nFinalizing artifact upload\nArtifact 69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1.zip successfully finalized. Artifact ID 13313429601\nArtifact 69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1 has been successfully uploaded! Final size is 153107950 bytes. Artifact ID is 13313429601\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41814841999/artifacts/13313429601"
+    },
+    "upload_file_count_literal": {
+      "reader_log_line": 273,
+      "text": "With the provided path, there will be 29 files uploaded"
+    },
+    "source_tests_executed": false,
+    "archive_code_executed": false,
+    "acceptance_granted": false,
+    "production_activation": false
+  },
+  "findings": [
+    "Both exact retained main databases were streamed, fully hashed, queried read-only, and retained. Both snapshot_status values are observed; there are no unavailable reasons.",
+    "The head snapshot records reorg.cursor=3427 and the merge snapshot records reorg.cursor=3393. Both have reorg.done=2, lifecycle.outcome=2, matching cancelled_cursor, and reason PUBLIC_REQUEST_DEADLINE.",
+    "Both cancellation records match the respective original pinned target tip. Both active rows remain at the original genesis, generation 0, state_slot 0.",
+    "Each steps table has 4105 kind=1 planned attach rows covering ordinals 0..4104. The queried target record at height 4105 exists and has the queried height-4104 record as parent. These observations do not revalidate all blocks or staging roots.",
+    "The exact source advances a staging delta and cursor in one transaction and records the committed cursor when cancelling. Thus these snapshots support entry into reorg staging with partial committed progress and cancellation before final active publication.",
+    "The original failure-time activation_cursor and durable_committed_blocks stay null. The original 4104 successful import returns and this retained staging cursor describe different observations and are not interchangeable.",
+    "The reader's approximately two-millisecond query times and SQLite 3.45.1 version belong to this diagnostic process. They do not measure the original thirty-second import or establish which internal stage consumed it.",
+    "The earlier generic 32 MiB readback remains a completed reader with unavailable snapshots and no SQL execution; this new scoped run does not reclassify that earlier result.",
+    "No native test was rerun and no acceptance, recovery, full database integrity, or physical-fault durability qualification was granted."
+  ],
+  "totals": {
+    "fixed_archives": 2,
+    "snapshots_observed": 2,
+    "snapshots_unavailable": 0,
+    "original_zip_bytes": 122282461,
+    "materialized_main_database_bytes": 441561088,
+    "selected_small_member_count": 12,
+    "selected_small_member_bytes": 21763,
+    "selected_member_count": 14,
+    "selected_total_bytes": 441582851,
+    "fixed_queries_executed_per_snapshot": 7,
+    "sql_rows_semantically_revalidated_as_node_state": false,
+    "all_fourteen_file_before_after_digests_equal": true,
+    "both_original_zip_before_after_digests_equal": true
+  },
+  "summaries": [
+    {
+      "target": {
+        "digest": "sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5",
+        "family": "history",
+        "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "id": 13311000045,
+        "job": 126471217803,
+        "kind": "head",
+        "last_successful_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "name": "priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+        "pinned_tip": "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598",
+        "run": 41799271270,
+        "size": 61135040,
+        "tested": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b"
+      },
+      "reader_log_line": 231,
+      "reader_status": "completed",
+      "snapshot_status": "observed",
+      "unavailable_reasons": [],
+      "database_member": "history-native/long-history/confirmer/native.sqlite",
+      "database_main_file_sha256": "5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6",
+      "database_bytes_materialized": 220749824,
+      "database_compressed_bytes": 22920177,
+      "database_crc32_expected": 643231945,
+      "database_crc32_observed": 643231945,
+      "database_crc32_verified": true,
+      "stream_chunk_max_bytes": 1048576,
+      "diagnostic_budget_scope": {
+        "combined_selected_cap": 388521984,
+        "database_exact_budget": {
+          "bytes": 220749824,
+          "compressed_bytes": 22920177
+        },
+        "database_member": "history-native/long-history/confirmer/native.sqlite",
+        "generic_member_limit_unchanged": 33554432,
+        "non_database_selected_limit_unchanged": 167772160,
+        "original_native_budgets_changed": false,
+        "original_reader_refusal_reclassified": false,
+        "prior_generic_bound_refusal": {
+          "evidence_blob": "4a82c6a726841179196204ac1ae0ca419fb60a54",
+          "job": 126515293786,
+          "reason": "Both exact main databases exceeded the unchanged generic member bound.",
+          "run": 41812595146,
+          "snapshot_status": "unavailable"
+        },
+        "stream_chunk_max_bytes": 1048576
+      },
+      "selected_small_member_count": 6,
+      "selected_small_member_bytes": 10748,
+      "selected_total_bytes": 220760572,
+      "original_small_member_hashes_match_prior_generic_refusal": true,
+      "selected_members": [
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 421,
+          "member": "source.json",
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 4880,
+          "member": "history-native/manifest.json",
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 4056,
+          "member": "history-native/history.log",
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 632,
+          "member": "history-native/long-history/config.json",
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 514,
+          "member": "history-native/long-history/source.json",
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 245,
+          "member": "history-native/long-history/summary.json",
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        {
+          "budget_scope": "explicit-fixed-main-database-diagnostic",
+          "bytes": 220749824,
+          "compressed_bytes": 22920177,
+          "crc32_expected": 643231945,
+          "crc32_observed": 643231945,
+          "crc32_verified": true,
+          "member": "history-native/long-history/confirmer/native.sqlite",
+          "sha256": "5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6",
+          "stream_chunk_max_bytes": 1048576
+        }
+      ],
+      "files_before_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        "history-native/long-history/confirmer/native.sqlite": {
+          "bytes": 220749824,
+          "sha256": "5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 4880,
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        "source.json": {
+          "bytes": 421,
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        }
+      },
+      "files_after_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        "history-native/long-history/confirmer/native.sqlite": {
+          "bytes": 220749824,
+          "sha256": "5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 4880,
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        "source.json": {
+          "bytes": 421,
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        }
+      },
+      "retained_zip_after_query": {
+        "bytes": 61135040,
+        "sha256": "21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5"
+      },
+      "all_retained_input_digests_unchanged": true,
+      "member_index_sha256": "63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25",
+      "sidecar_index": [
+        {
+          "bytes": 220749824,
+          "compressed_bytes": 22920177,
+          "name": "history-native/long-history/confirmer/native.sqlite",
+          "present": true
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-wal",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-shm",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-journal",
+          "present": false
+        }
+      ],
+      "directory_before": [
+        "native.sqlite"
+      ],
+      "directory_after": [
+        "native.sqlite"
+      ],
+      "original_source": {
+        "base": null,
+        "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 933472602,
+        "tracked_entries": 8127,
+        "tracked_worktree_verified": true
+      },
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "original_manifest_passed": false,
+      "original_native_execution_authenticated": false,
+      "original_failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6273684,
+        "last_history_rpc_elapsed_ns": 7754563,
+        "last_import_call_expression_elapsed_ns": 30000693324,
+        "last_requested_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "last_successful_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "pinned_tip": "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "original_sync_json_literal": "{\"elapsed_ns\":3236381521398,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}",
+      "sql_observations": {
+        "scope": "Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.",
+        "post_cleanup_snapshot": true,
+        "sqlite_engine_version": "3.45.1",
+        "sqlite_engine_scope": "Python readback process; not the original native Node SQLite version.",
+        "sqlite_open_mode": "read-only-immutable-no-sidecars",
+        "queries_executed": [
+          {
+            "name": "fixed_table_schema",
+            "sql": "SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name"
+          },
+          {
+            "name": "metadata",
+            "parameters": [],
+            "row_count": 2,
+            "sql": "SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key"
+          },
+          {
+            "name": "active",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2"
+          },
+          {
+            "name": "reorg",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2"
+          },
+          {
+            "name": "lifecycle_latest",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3"
+          },
+          {
+            "name": "steps_summary",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3"
+          },
+          {
+            "name": "lineage_records",
+            "parameters": [
+              "2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae",
+              "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+              "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598"
+            ],
+            "row_count": 3,
+            "sql": "SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id"
+          }
+        ],
+        "schema_rows": [
+          [
+            "table",
+            "active",
+            "active",
+            "CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)"
+          ],
+          [
+            "table",
+            "blocks",
+            "blocks",
+            "CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)"
+          ],
+          [
+            "table",
+            "metadata",
+            "metadata",
+            "CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)"
+          ],
+          [
+            "table",
+            "reorg",
+            "reorg",
+            "CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)"
+          ],
+          [
+            "table",
+            "reorg_lifecycle_v1",
+            "reorg_lifecycle_v1",
+            "CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))"
+          ],
+          [
+            "table",
+            "steps",
+            "steps",
+            "CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)"
+          ]
+        ],
+        "rows": {
+          "active": [
+            {
+              "generation": "0",
+              "singleton": "1",
+              "state_slot": "0",
+              "tip": "2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE"
+            }
+          ],
+          "lifecycle_latest": [
+            {
+              "cancelled_cursor": "3427",
+              "generation": "1",
+              "new_tip": "4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598",
+              "old_root": "4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE",
+              "old_slot": "0",
+              "old_tip": "2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE",
+              "operation": "1",
+              "outcome": "2",
+              "owner_context": "CCBCEB5B4BF4BDC06CFFD6B05C62461B80CBE64E599A76C7B6A0EC46896C43EB",
+              "reason": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ],
+          "lineage_records": [
+            {
+              "height": "0",
+              "id": "2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE",
+              "parent": null,
+              "state_root": "4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE"
+            },
+            {
+              "height": "4104",
+              "id": "2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C",
+              "parent": "E451716C3AD6A74AD14BCB42738B87BFFA41F71273F4862AF5179D0A10585068",
+              "state_root": "055BEC29DCEB5D79BBDA02098FEBB1118A1E123A253C2FAE0AFB4946FF927C66"
+            },
+            {
+              "height": "4105",
+              "id": "4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598",
+              "parent": "2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C",
+              "state_root": "B9EC76BB0877FF52AD1A7B498ADFB4AFB9F1073B073D0FE0C3C5E2E94FB038EE"
+            }
+          ],
+          "metadata": [
+            {
+              "key": "genesis",
+              "value": "2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE"
+            },
+            {
+              "key": "parameters",
+              "value": "FBB7F5FA9BCEC0EED74F91639A46C56B3007C51E4588676E28016B4753F1EC96"
+            }
+          ],
+          "reorg": [
+            {
+              "cursor": "3427",
+              "done": "2",
+              "generation": "1",
+              "new_tip": "4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598",
+              "old_tip": "2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE",
+              "singleton": "1"
+            }
+          ],
+          "steps_summary": [
+            {
+              "first_ordinal": "0",
+              "kind": "1",
+              "last_ordinal": "4104",
+              "step_rows": "4105"
+            }
+          ]
+        },
+        "tip_binding": {
+          "absence_does_not_prove_activation_not_entered": true,
+          "expected_genesis": "2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae",
+          "expected_pinned_tip": "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598",
+          "latest_lifecycle_new_tip_matches": true,
+          "reorg_new_tip_matches": true
+        },
+        "readback_elapsed_ns": 1961863,
+        "readback_timing_is_not_original_native_cost": true,
+        "sqlite_progress_callback_units": 82000,
+        "sqlite_progress_limit_scope": "Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement."
+      },
+      "source_supported_interpretation": {
+        "classification": "Matching retained cancellation records support partial committed staging progress before final active publication.",
+        "evidence_kind": "Inference from directly observed post-cleanup SQL rows plus the exact original 69d Store and cancellation implementation.",
+        "matching_cancelled_operation": "1",
+        "recorded_cancelled_cursor": "3427",
+        "recorded_reorg_cursor": "3427",
+        "recorded_reason": "PUBLIC_REQUEST_DEADLINE",
+        "retained_active_matches_original_genesis": true,
+        "retained_active_generation": "0",
+        "retained_active_state_slot": "0",
+        "target_block_record_present": true,
+        "target_block_record_parent_matches_original_last_successful_after": true,
+        "planned_attach_step_rows": "4105",
+        "distinction": "The retained cursor is a staging-step position for this reorg. It is not the original successful-import count, a whole-chain acceptance count, a physical-fault durability verdict, or a replacement for failure-time telemetry.",
+        "exact_failure_checkpoint_or_in_progress_step_phase": null,
+        "root_sql_json_commit_cost_breakdown": null,
+        "state_root_recomputed_by_reader": false,
+        "complete_database_integrity_validated_by_reader": false,
+        "all_block_records_revalidated_by_reader": false,
+        "original_failure_location_rewritten": false,
+        "original_failure_time_activation_cursor": null,
+        "original_failure_time_durable_committed_blocks": null
+      },
+      "source_tests_executed": false,
+      "archive_code_executed": false,
+      "acceptance_granted": false,
+      "production_activation": false
+    },
+    {
+      "target": {
+        "digest": "sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26",
+        "family": "history",
+        "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "id": 13311101182,
+        "job": 126471218057,
+        "kind": "prospective-merge",
+        "last_successful_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+        "pinned_tip": "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc",
+        "run": 41799271270,
+        "size": 61147421,
+        "tested": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b"
+      },
+      "reader_log_line": 234,
+      "reader_status": "completed",
+      "snapshot_status": "observed",
+      "unavailable_reasons": [],
+      "database_member": "history-native/long-history/confirmer/native.sqlite",
+      "database_main_file_sha256": "e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d",
+      "database_bytes_materialized": 220811264,
+      "database_compressed_bytes": 22931478,
+      "database_crc32_expected": 4239560604,
+      "database_crc32_observed": 4239560604,
+      "database_crc32_verified": true,
+      "stream_chunk_max_bytes": 1048576,
+      "diagnostic_budget_scope": {
+        "combined_selected_cap": 388583424,
+        "database_exact_budget": {
+          "bytes": 220811264,
+          "compressed_bytes": 22931478
+        },
+        "database_member": "history-native/long-history/confirmer/native.sqlite",
+        "generic_member_limit_unchanged": 33554432,
+        "non_database_selected_limit_unchanged": 167772160,
+        "original_native_budgets_changed": false,
+        "original_reader_refusal_reclassified": false,
+        "prior_generic_bound_refusal": {
+          "evidence_blob": "4a82c6a726841179196204ac1ae0ca419fb60a54",
+          "job": 126515293786,
+          "reason": "Both exact main databases exceeded the unchanged generic member bound.",
+          "run": 41812595146,
+          "snapshot_status": "unavailable"
+        },
+        "stream_chunk_max_bytes": 1048576
+      },
+      "selected_small_member_count": 6,
+      "selected_small_member_bytes": 11015,
+      "selected_total_bytes": 220822279,
+      "original_small_member_hashes_match_prior_generic_refusal": true,
+      "selected_members": [
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 510,
+          "member": "source.json",
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 5058,
+          "member": "history-native/manifest.json",
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 4056,
+          "member": "history-native/history.log",
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 632,
+          "member": "history-native/long-history/config.json",
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 514,
+          "member": "history-native/long-history/source.json",
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        {
+          "budget_scope": "unchanged-generic-member",
+          "bytes": 245,
+          "member": "history-native/long-history/summary.json",
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        {
+          "budget_scope": "explicit-fixed-main-database-diagnostic",
+          "bytes": 220811264,
+          "compressed_bytes": 22931478,
+          "crc32_expected": 4239560604,
+          "crc32_observed": 4239560604,
+          "crc32_verified": true,
+          "member": "history-native/long-history/confirmer/native.sqlite",
+          "sha256": "e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d",
+          "stream_chunk_max_bytes": 1048576
+        }
+      ],
+      "files_before_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        "history-native/long-history/confirmer/native.sqlite": {
+          "bytes": 220811264,
+          "sha256": "e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 5058,
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        "source.json": {
+          "bytes": 510,
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        }
+      },
+      "files_after_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        "history-native/long-history/confirmer/native.sqlite": {
+          "bytes": 220811264,
+          "sha256": "e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 5058,
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        "source.json": {
+          "bytes": 510,
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        }
+      },
+      "retained_zip_after_query": {
+        "bytes": 61147421,
+        "sha256": "7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26"
+      },
+      "all_retained_input_digests_unchanged": true,
+      "member_index_sha256": "781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6",
+      "sidecar_index": [
+        {
+          "bytes": 220811264,
+          "compressed_bytes": 22931478,
+          "name": "history-native/long-history/confirmer/native.sqlite",
+          "present": true
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-wal",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-shm",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-journal",
+          "present": false
+        }
+      ],
+      "directory_before": [
+        "native.sqlite"
+      ],
+      "directory_after": [
+        "native.sqlite"
+      ],
+      "original_source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "kind": "prospective-merge",
+        "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 933472602,
+        "tracked_entries": 8127,
+        "tracked_worktree_verified": true
+      },
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "original_manifest_passed": false,
+      "original_native_execution_authenticated": false,
+      "original_failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6608022,
+        "last_history_rpc_elapsed_ns": 8627527,
+        "last_import_call_expression_elapsed_ns": 30069217869,
+        "last_requested_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "last_successful_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "pinned_tip": "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "original_sync_json_literal": "{\"elapsed_ns\":3288035731126,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}",
+      "sql_observations": {
+        "scope": "Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.",
+        "post_cleanup_snapshot": true,
+        "sqlite_engine_version": "3.45.1",
+        "sqlite_engine_scope": "Python readback process; not the original native Node SQLite version.",
+        "sqlite_open_mode": "read-only-immutable-no-sidecars",
+        "queries_executed": [
+          {
+            "name": "fixed_table_schema",
+            "sql": "SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name"
+          },
+          {
+            "name": "metadata",
+            "parameters": [],
+            "row_count": 2,
+            "sql": "SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key"
+          },
+          {
+            "name": "active",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2"
+          },
+          {
+            "name": "reorg",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2"
+          },
+          {
+            "name": "lifecycle_latest",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3"
+          },
+          {
+            "name": "steps_summary",
+            "parameters": [],
+            "row_count": 1,
+            "sql": "SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3"
+          },
+          {
+            "name": "lineage_records",
+            "parameters": [
+              "c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3",
+              "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+              "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc"
+            ],
+            "row_count": 3,
+            "sql": "SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id"
+          }
+        ],
+        "schema_rows": [
+          [
+            "table",
+            "active",
+            "active",
+            "CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)"
+          ],
+          [
+            "table",
+            "blocks",
+            "blocks",
+            "CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)"
+          ],
+          [
+            "table",
+            "metadata",
+            "metadata",
+            "CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)"
+          ],
+          [
+            "table",
+            "reorg",
+            "reorg",
+            "CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)"
+          ],
+          [
+            "table",
+            "reorg_lifecycle_v1",
+            "reorg_lifecycle_v1",
+            "CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))"
+          ],
+          [
+            "table",
+            "steps",
+            "steps",
+            "CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)"
+          ]
+        ],
+        "rows": {
+          "active": [
+            {
+              "generation": "0",
+              "singleton": "1",
+              "state_slot": "0",
+              "tip": "C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3"
+            }
+          ],
+          "lifecycle_latest": [
+            {
+              "cancelled_cursor": "3393",
+              "generation": "1",
+              "new_tip": "A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC",
+              "old_root": "63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95",
+              "old_slot": "0",
+              "old_tip": "C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3",
+              "operation": "1",
+              "outcome": "2",
+              "owner_context": "EBA669445985992785FDCC1B3612EF62BA80F19771863581B8C86FD0B596F8D4",
+              "reason": "PUBLIC_REQUEST_DEADLINE"
+            }
+          ],
+          "lineage_records": [
+            {
+              "height": "0",
+              "id": "C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3",
+              "parent": null,
+              "state_root": "63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95"
+            },
+            {
+              "height": "4104",
+              "id": "2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE",
+              "parent": "38F7382B1196EB5C4FDBF9BE9D61F3D470CFF01804BD4D3A5B3FE85038D0A065",
+              "state_root": "03DD7008E52D673C07F054C91321F458E47FC3B0BFCE3CF77179CA8DBCDD0772"
+            },
+            {
+              "height": "4105",
+              "id": "A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC",
+              "parent": "2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE",
+              "state_root": "DC6773B94B22AF238F103F410B34AFBFC613B3B2003CFB5A7E074E5BFF21924F"
+            }
+          ],
+          "metadata": [
+            {
+              "key": "genesis",
+              "value": "C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3"
+            },
+            {
+              "key": "parameters",
+              "value": "1173BECA40643EF1F4CD3ACB5FC8BE6FAB3A6507CC88E4C14263A22D9E62A799"
+            }
+          ],
+          "reorg": [
+            {
+              "cursor": "3393",
+              "done": "2",
+              "generation": "1",
+              "new_tip": "A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC",
+              "old_tip": "C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3",
+              "singleton": "1"
+            }
+          ],
+          "steps_summary": [
+            {
+              "first_ordinal": "0",
+              "kind": "1",
+              "last_ordinal": "4104",
+              "step_rows": "4105"
+            }
+          ]
+        },
+        "tip_binding": {
+          "absence_does_not_prove_activation_not_entered": true,
+          "expected_genesis": "c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3",
+          "expected_pinned_tip": "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc",
+          "latest_lifecycle_new_tip_matches": true,
+          "reorg_new_tip_matches": true
+        },
+        "readback_elapsed_ns": 1918238,
+        "readback_timing_is_not_original_native_cost": true,
+        "sqlite_progress_callback_units": 82000,
+        "sqlite_progress_limit_scope": "Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement."
+      },
+      "source_supported_interpretation": {
+        "classification": "Matching retained cancellation records support partial committed staging progress before final active publication.",
+        "evidence_kind": "Inference from directly observed post-cleanup SQL rows plus the exact original 69d Store and cancellation implementation.",
+        "matching_cancelled_operation": "1",
+        "recorded_cancelled_cursor": "3393",
+        "recorded_reorg_cursor": "3393",
+        "recorded_reason": "PUBLIC_REQUEST_DEADLINE",
+        "retained_active_matches_original_genesis": true,
+        "retained_active_generation": "0",
+        "retained_active_state_slot": "0",
+        "target_block_record_present": true,
+        "target_block_record_parent_matches_original_last_successful_after": true,
+        "planned_attach_step_rows": "4105",
+        "distinction": "The retained cursor is a staging-step position for this reorg. It is not the original successful-import count, a whole-chain acceptance count, a physical-fault durability verdict, or a replacement for failure-time telemetry.",
+        "exact_failure_checkpoint_or_in_progress_step_phase": null,
+        "root_sql_json_commit_cost_breakdown": null,
+        "state_root_recomputed_by_reader": false,
+        "complete_database_integrity_validated_by_reader": false,
+        "all_block_records_revalidated_by_reader": false,
+        "original_failure_location_rewritten": false,
+        "original_failure_time_activation_cursor": null,
+        "original_failure_time_durable_committed_blocks": null
+      },
+      "source_tests_executed": false,
+      "archive_code_executed": false,
+      "acceptance_granted": false,
+      "production_activation": false
+    }
+  ],
+  "prior_generic_refusal": {
+    "path": "evidence/pon-retained-runtime-readback-20261104/original-69d-arm-retained-database-readback.json",
+    "git_blob": "4a82c6a726841179196204ac1ae0ca419fb60a54",
+    "utf8_bytes": 93552,
+    "sha256": "a897f4dcac308c8033716b17a840463259d31611e79b52c811fe535938319be5",
+    "preserved_in_commit": "2fab1611e5051ecea3eb552bb9a9d1bc54e3f997",
+    "run_id": 41812595146,
+    "job_id": 126515293786,
+    "reader_status": "completed",
+    "snapshot_status": "unavailable",
+    "sqlite_entered": false,
+    "original_script_blob": "9fdb92952eee1565a1df4ae70a7857ef2fe8a089",
+    "original_output_artifact": {
+      "id": 13313576367,
+      "name": "69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1",
+      "size_in_bytes": 107247807,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313576367",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313576367/zip",
+      "expired": false,
+      "created_at": "2026-11-04T10:17:03Z",
+      "expires_at": "2026-12-04T10:16:58Z",
+      "updated_at": "2026-11-04T10:17:03Z",
+      "digest": "sha256:9f57f695487676ed781e21f9f0089aeeea3a558602cc8762ee808d649ede25d5",
+      "workflow_run": {
+        "id": 41812595146,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "7a85995c8376f18e391449230885310c2f52f8f7"
+      }
+    },
+    "conclusion": "Correct bounded refusal remains unchanged. This document adds a separately authorized, exact-main-file streaming observation.",
+    "same_original_two_archives": true,
+    "same_original_twelve_small_file_bytes_and_hashes": true
+  },
+  "prior_exact_failure_evidence": {
+    "path": "evidence/pon-retained-runtime-readback-20261104/original-69d-four-lane-history-failures.json",
+    "git_blob": "b102509377bd4b99adf5eb8f34d8a0cedac739ce",
+    "original_failure_location_rewritten": false,
+    "use": "The original failure-time fields are retained verbatim through original_sync_json_literal and the original reader result strings below; the new post-cleanup SQL rows remain a separate observation."
+  },
+  "original_console_json_lines": [
+    {
+      "reader_log_line": 220,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    },
+    {
+      "reader_log_line": 231,
+      "original_json": "{\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"database_selected_bytes\":220749824,\"diagnostic_budget_scope\":{\"combined_selected_cap\":388521984,\"database_exact_budget\":{\"bytes\":220749824,\"compressed_bytes\":22920177},\"database_member\":\"history-native/long-history/confirmer/native.sqlite\",\"generic_member_limit_unchanged\":33554432,\"non_database_selected_limit_unchanged\":167772160,\"original_native_budgets_changed\":false,\"original_reader_refusal_reclassified\":false,\"prior_generic_bound_refusal\":{\"evidence_blob\":\"4a82c6a726841179196204ac1ae0ca419fb60a54\",\"job\":126515293786,\"reason\":\"Both exact main databases exceeded the unchanged generic member bound.\",\"run\":41812595146,\"snapshot_status\":\"unavailable\"},\"stream_chunk_max_bytes\":1048576},\"downloaded_zip_bytes\":61135040,\"downloaded_zip_sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220749824,\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220749824,\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"fixed_database_members\":[{\"bytes\":220749824,\"compressed_bytes\":22920177,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25\",\"non_database_selected_bytes\":10748,\"origin\":{\"genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3236381521398,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6273684,\\\"last_history_rpc_elapsed_ns\\\":7754563,\\\"last_import_call_expression_elapsed_ns\\\":30000693324,\\\"last_requested_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"last_successful_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"pinned_tip\\\":\\\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":null,\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61135040,\"sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v2\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":220760572,\"selected_members\":[{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":421,\"member\":\"source.json\",\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4880,\"member\":\"history-native/manifest.json\",\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},{\"budget_scope\":\"explicit-fixed-main-database-diagnostic\",\"bytes\":220749824,\"compressed_bytes\":22920177,\"crc32_expected\":643231945,\"crc32_observed\":643231945,\"crc32_verified\":true,\"member\":\"history-native/long-history/confirmer/native.sqlite\",\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\",\"stream_chunk_max_bytes\":1048576}],\"snapshot\":{\"activation_entry_at_failure\":null,\"original_failure_location_rewritten\":false,\"post_cleanup_snapshot\":true,\"queries_executed\":[{\"name\":\"fixed_table_schema\",\"sql\":\"SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name\"},{\"name\":\"metadata\",\"parameters\":[],\"row_count\":2,\"sql\":\"SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key\"},{\"name\":\"active\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2\"},{\"name\":\"reorg\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2\"},{\"name\":\"lifecycle_latest\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3\"},{\"name\":\"steps_summary\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3\"},{\"name\":\"lineage_records\",\"parameters\":[\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\"],\"row_count\":3,\"sql\":\"SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id\"}],\"readback_elapsed_ns\":1961863,\"readback_timing_is_not_original_native_cost\":true,\"rows\":{\"active\":[{\"generation\":\"0\",\"singleton\":\"1\",\"state_slot\":\"0\",\"tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\"}],\"lifecycle_latest\":[{\"cancelled_cursor\":\"3427\",\"generation\":\"1\",\"new_tip\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"old_root\":\"4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE\",\"old_slot\":\"0\",\"old_tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"operation\":\"1\",\"outcome\":\"2\",\"owner_context\":\"CCBCEB5B4BF4BDC06CFFD6B05C62461B80CBE64E599A76C7B6A0EC46896C43EB\",\"reason\":\"PUBLIC_REQUEST_DEADLINE\"}],\"lineage_records\":[{\"height\":\"0\",\"id\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"parent\":null,\"state_root\":\"4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE\"},{\"height\":\"4104\",\"id\":\"2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C\",\"parent\":\"E451716C3AD6A74AD14BCB42738B87BFFA41F71273F4862AF5179D0A10585068\",\"state_root\":\"055BEC29DCEB5D79BBDA02098FEBB1118A1E123A253C2FAE0AFB4946FF927C66\"},{\"height\":\"4105\",\"id\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"parent\":\"2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C\",\"state_root\":\"B9EC76BB0877FF52AD1A7B498ADFB4AFB9F1073B073D0FE0C3C5E2E94FB038EE\"}],\"metadata\":[{\"key\":\"genesis\",\"value\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\"},{\"key\":\"parameters\",\"value\":\"FBB7F5FA9BCEC0EED74F91639A46C56B3007C51E4588676E28016B4753F1EC96\"}],\"reorg\":[{\"cursor\":\"3427\",\"done\":\"2\",\"generation\":\"1\",\"new_tip\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"old_tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"singleton\":\"1\"}],\"steps_summary\":[{\"first_ordinal\":\"0\",\"kind\":\"1\",\"last_ordinal\":\"4104\",\"step_rows\":\"4105\"}]},\"schema_rows\":[[\"table\",\"active\",\"active\",\"CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)\"],[\"table\",\"blocks\",\"blocks\",\"CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)\"],[\"table\",\"metadata\",\"metadata\",\"CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)\"],[\"table\",\"reorg\",\"reorg\",\"CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)\"],[\"table\",\"reorg_lifecycle_v1\",\"reorg_lifecycle_v1\",\"CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))\"],[\"table\",\"steps\",\"steps\",\"CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)\"]],\"sqlite_open_mode\":\"read-only-immutable-no-sidecars\",\"sqlite_progress_callback_units\":82000,\"sqlite_progress_limit_scope\":\"Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement.\",\"sqlite_version\":\"3.45.1\",\"status\":\"observed\",\"tip_binding\":{\"absence_does_not_prove_activation_not_entered\":true,\"expected_genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"expected_pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"latest_lifecycle_new_tip_matches\":true,\"reorg_new_tip_matches\":true}},\"snapshot_directory_entries_after\":[\"native.sqlite\"],\"snapshot_directory_entries_before\":[\"native.sqlite\"],\"snapshot_status\":\"observed\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311000045,\"job\":126471217803,\"kind\":\"head\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"name\":\"priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"run\":41799271270,\"size\":61135040,\"tested\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[]}"
+    },
+    {
+      "reader_log_line": 234,
+      "original_json": "{\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"database_selected_bytes\":220811264,\"diagnostic_budget_scope\":{\"combined_selected_cap\":388583424,\"database_exact_budget\":{\"bytes\":220811264,\"compressed_bytes\":22931478},\"database_member\":\"history-native/long-history/confirmer/native.sqlite\",\"generic_member_limit_unchanged\":33554432,\"non_database_selected_limit_unchanged\":167772160,\"original_native_budgets_changed\":false,\"original_reader_refusal_reclassified\":false,\"prior_generic_bound_refusal\":{\"evidence_blob\":\"4a82c6a726841179196204ac1ae0ca419fb60a54\",\"job\":126515293786,\"reason\":\"Both exact main databases exceeded the unchanged generic member bound.\",\"run\":41812595146,\"snapshot_status\":\"unavailable\"},\"stream_chunk_max_bytes\":1048576},\"downloaded_zip_bytes\":61147421,\"downloaded_zip_sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220811264,\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220811264,\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"fixed_database_members\":[{\"bytes\":220811264,\"compressed_bytes\":22931478,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6\",\"non_database_selected_bytes\":11015,\"origin\":{\"genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3288035731126,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6608022,\\\"last_history_rpc_elapsed_ns\\\":8627527,\\\"last_import_call_expression_elapsed_ns\\\":30069217869,\\\"last_requested_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"last_successful_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"pinned_tip\\\":\\\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61147421,\"sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v2\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":220822279,\"selected_members\":[{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":510,\"member\":\"source.json\",\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":5058,\"member\":\"history-native/manifest.json\",\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},{\"budget_scope\":\"explicit-fixed-main-database-diagnostic\",\"bytes\":220811264,\"compressed_bytes\":22931478,\"crc32_expected\":4239560604,\"crc32_observed\":4239560604,\"crc32_verified\":true,\"member\":\"history-native/long-history/confirmer/native.sqlite\",\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\",\"stream_chunk_max_bytes\":1048576}],\"snapshot\":{\"activation_entry_at_failure\":null,\"original_failure_location_rewritten\":false,\"post_cleanup_snapshot\":true,\"queries_executed\":[{\"name\":\"fixed_table_schema\",\"sql\":\"SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name\"},{\"name\":\"metadata\",\"parameters\":[],\"row_count\":2,\"sql\":\"SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key\"},{\"name\":\"active\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2\"},{\"name\":\"reorg\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2\"},{\"name\":\"lifecycle_latest\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3\"},{\"name\":\"steps_summary\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3\"},{\"name\":\"lineage_records\",\"parameters\":[\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\"],\"row_count\":3,\"sql\":\"SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id\"}],\"readback_elapsed_ns\":1918238,\"readback_timing_is_not_original_native_cost\":true,\"rows\":{\"active\":[{\"generation\":\"0\",\"singleton\":\"1\",\"state_slot\":\"0\",\"tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\"}],\"lifecycle_latest\":[{\"cancelled_cursor\":\"3393\",\"generation\":\"1\",\"new_tip\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"old_root\":\"63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95\",\"old_slot\":\"0\",\"old_tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"operation\":\"1\",\"outcome\":\"2\",\"owner_context\":\"EBA669445985992785FDCC1B3612EF62BA80F19771863581B8C86FD0B596F8D4\",\"reason\":\"PUBLIC_REQUEST_DEADLINE\"}],\"lineage_records\":[{\"height\":\"0\",\"id\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"parent\":null,\"state_root\":\"63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95\"},{\"height\":\"4104\",\"id\":\"2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE\",\"parent\":\"38F7382B1196EB5C4FDBF9BE9D61F3D470CFF01804BD4D3A5B3FE85038D0A065\",\"state_root\":\"03DD7008E52D673C07F054C91321F458E47FC3B0BFCE3CF77179CA8DBCDD0772\"},{\"height\":\"4105\",\"id\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"parent\":\"2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE\",\"state_root\":\"DC6773B94B22AF238F103F410B34AFBFC613B3B2003CFB5A7E074E5BFF21924F\"}],\"metadata\":[{\"key\":\"genesis\",\"value\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\"},{\"key\":\"parameters\",\"value\":\"1173BECA40643EF1F4CD3ACB5FC8BE6FAB3A6507CC88E4C14263A22D9E62A799\"}],\"reorg\":[{\"cursor\":\"3393\",\"done\":\"2\",\"generation\":\"1\",\"new_tip\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"old_tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"singleton\":\"1\"}],\"steps_summary\":[{\"first_ordinal\":\"0\",\"kind\":\"1\",\"last_ordinal\":\"4104\",\"step_rows\":\"4105\"}]},\"schema_rows\":[[\"table\",\"active\",\"active\",\"CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)\"],[\"table\",\"blocks\",\"blocks\",\"CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)\"],[\"table\",\"metadata\",\"metadata\",\"CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)\"],[\"table\",\"reorg\",\"reorg\",\"CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)\"],[\"table\",\"reorg_lifecycle_v1\",\"reorg_lifecycle_v1\",\"CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))\"],[\"table\",\"steps\",\"steps\",\"CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)\"]],\"sqlite_open_mode\":\"read-only-immutable-no-sidecars\",\"sqlite_progress_callback_units\":82000,\"sqlite_progress_limit_scope\":\"Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement.\",\"sqlite_version\":\"3.45.1\",\"status\":\"observed\",\"tip_binding\":{\"absence_does_not_prove_activation_not_entered\":true,\"expected_genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"expected_pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"latest_lifecycle_new_tip_matches\":true,\"reorg_new_tip_matches\":true}},\"snapshot_directory_entries_after\":[\"native.sqlite\"],\"snapshot_directory_entries_before\":[\"native.sqlite\"],\"snapshot_status\":\"observed\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311101182,\"job\":126471218057,\"kind\":\"prospective-merge\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"name\":\"priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"run\":41799271270,\"size\":61147421,\"tested\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[]}"
+    },
+    {
+      "reader_log_line": 258,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    }
+  ],
+  "original_job_log": {
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41814841999/job/126522878902",
+    "job_id": 126522878902,
+    "utf8_bytes": 55385,
+    "sha256": "b1e8e1c2c519670c4cf24afb287158ced45dc45bab5fddf6d854fc6cb45cfe63",
+    "cleaned_splitlines": 317,
+    "cleaning_scope": "Source/result line references count split lines after stripping one Actions timestamp prefix and ANSI colour escapes; original_text is the complete unmodified tool-returned log, including its BOM and original newlines.",
+    "original_text": "﻿2026-11-04T10:32:28.3655756Z Current runner version: '2.338.2'\n2026-11-04T10:32:28.3680958Z ##[group]Runner Image Provisioner\n2026-11-04T10:32:28.3681935Z Hosted Compute Agent\n2026-11-04T10:32:28.3682595Z Version: 20261021.618\n2026-11-04T10:32:28.3683245Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e\n2026-11-04T10:32:28.3684446Z Build Date: 2026-10-21T00:45:21Z\n2026-11-04T10:32:28.3685276Z Worker ID: {5a8ca7e1-502f-42b0-ae35-e31ea83deb49}\n2026-11-04T10:32:28.3686108Z Region: northcentralus\n2026-11-04T10:32:28.3686770Z Cloud: Azure\n2026-11-04T10:32:28.3687746Z ##[endgroup]\n2026-11-04T10:32:28.3689458Z ##[group]Operating System\n2026-11-04T10:32:28.3690178Z Ubuntu\n2026-11-04T10:32:28.3690814Z 24.04.5\n2026-11-04T10:32:28.3691412Z LTS\n2026-11-04T10:32:28.3691977Z ##[endgroup]\n2026-11-04T10:32:28.3692638Z ##[group]Runner Image\n2026-11-04T10:32:28.3693322Z Image: ubuntu-24.04\n2026-11-04T10:32:28.3693924Z Version: 20261025.353.1\n2026-11-04T10:32:28.3695287Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md\n2026-11-04T10:32:28.3696924Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353\n2026-11-04T10:32:28.3698337Z ##[endgroup]\n2026-11-04T10:32:28.3699672Z ##[group]GITHUB_TOKEN Permissions\n2026-11-04T10:32:28.3701851Z Actions: read\n2026-11-04T10:32:28.3702501Z Contents: read\n2026-11-04T10:32:28.3703393Z Metadata: read\n2026-11-04T10:32:28.3704002Z ##[endgroup]\n2026-11-04T10:32:28.3706169Z Secret source: Actions\n2026-11-04T10:32:28.3707448Z Cache mode: write\n2026-11-04T10:32:28.3708608Z Prepare workflow directory\n2026-11-04T10:32:28.4109529Z Prepare all required actions\n2026-11-04T10:32:28.4158058Z Getting action download info\n2026-11-04T10:32:28.6503681Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)\n2026-11-04T10:32:28.7416841Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)\n2026-11-04T10:32:28.9544732Z Complete job name: readback\n2026-11-04T10:32:29.0416089Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n2026-11-04T10:32:29.0417425Z with:\n2026-11-04T10:32:29.0417932Z   ref: 2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\n2026-11-04T10:32:29.0418526Z   fetch-depth: 1\n2026-11-04T10:32:29.0418978Z   persist-credentials: false\n2026-11-04T10:32:29.0419574Z   repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:32:29.0423273Z   token: ***\n2026-11-04T10:32:29.0423709Z   ssh-strict: true\n2026-11-04T10:32:29.0424142Z   ssh-user: git\n2026-11-04T10:32:29.0424561Z   clean: true\n2026-11-04T10:32:29.0425008Z   sparse-checkout-cone-mode: true\n2026-11-04T10:32:29.0425593Z   fetch-tags: false\n2026-11-04T10:32:29.0426043Z   show-progress: true\n2026-11-04T10:32:29.0426548Z   lfs: false\n2026-11-04T10:32:29.0426961Z   submodules: false\n2026-11-04T10:32:29.0427549Z   set-safe-directory: true\n2026-11-04T10:32:29.0428076Z   allow-unsafe-pr-checkout: false\n2026-11-04T10:32:29.0428920Z env:\n2026-11-04T10:32:29.0429393Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:32:29.0429893Z ##[endgroup]\n2026-11-04T10:32:29.3346349Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:32:29.3348993Z ##[group]Getting Git version info\n2026-11-04T10:32:29.3350187Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T10:32:29.3352476Z [command]/usr/bin/git version\n2026-11-04T10:32:29.3472013Z git version 2.56.0\n2026-11-04T10:32:29.3498193Z ##[endgroup]\n2026-11-04T10:32:29.3514764Z Temporarily overriding HOME='/home/runner/work/_temp/807b0dea-93a0-4213-b69b-4650e700813a' before making global git config changes\n2026-11-04T10:32:29.3517479Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T10:32:29.3520833Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:32:29.3579875Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T10:32:29.3583232Z ##[group]Initializing the repository\n2026-11-04T10:32:29.3588693Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:32:29.3726619Z hint: Using 'master' as the name for the initial branch. This default branch name\n2026-11-04T10:32:29.3728699Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name\n2026-11-04T10:32:29.3729756Z hint: to use in all of your new repositories, which will suppress this warning,\n2026-11-04T10:32:29.3730586Z hint: call:\n2026-11-04T10:32:29.3731029Z hint:\n2026-11-04T10:32:29.3731619Z hint: \tgit config --global init.defaultBranch <name>\n2026-11-04T10:32:29.3732288Z hint:\n2026-11-04T10:32:29.3732927Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\n2026-11-04T10:32:29.3733927Z hint: 'development'. The just-created branch can be renamed via this command:\n2026-11-04T10:32:29.3734739Z hint:\n2026-11-04T10:32:29.3735221Z hint: \tgit branch -m <name>\n2026-11-04T10:32:29.3735785Z hint:\n2026-11-04T10:32:29.3736479Z hint: Disable this message with \"git config set advice.defaultBranchName false\"\n2026-11-04T10:32:29.3750880Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/\n2026-11-04T10:32:29.3763631Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:32:29.3823322Z ##[endgroup]\n2026-11-04T10:32:29.3825191Z ##[group]Disabling automatic garbage collection\n2026-11-04T10:32:29.3828904Z [command]/usr/bin/git config --local gc.auto 0\n2026-11-04T10:32:29.3873168Z ##[endgroup]\n2026-11-04T10:32:29.3874994Z ##[group]Setting up auth\n2026-11-04T10:32:29.3880048Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:32:29.3922825Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:32:29.4452998Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:32:29.4494714Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:32:29.4761830Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:32:29.4807581Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:32:29.5050161Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***\n2026-11-04T10:32:29.5097744Z ##[endgroup]\n2026-11-04T10:32:29.5098675Z ##[group]Fetching the repository\n2026-11-04T10:32:29.5111392Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\n2026-11-04T10:32:36.3033158Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:32:36.3035749Z  * branch            2fab1611e5051ecea3eb552bb9a9d1bc54e3f997 -> FETCH_HEAD\n2026-11-04T10:32:36.3039739Z ##[endgroup]\n2026-11-04T10:32:36.3041310Z ##[group]Determining the checkout info\n2026-11-04T10:32:36.3042707Z ##[endgroup]\n2026-11-04T10:32:36.3046640Z [command]/usr/bin/git sparse-checkout disable\n2026-11-04T10:32:36.3109536Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig\n2026-11-04T10:32:36.3150385Z ##[group]Checking out the ref\n2026-11-04T10:32:36.3153507Z [command]/usr/bin/git checkout --progress --force 2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\n2026-11-04T10:32:37.4080337Z Updating files:  42% (3401/8054)\n2026-11-04T10:32:37.4285277Z Updating files:  43% (3464/8054)\n2026-11-04T10:32:37.4478146Z Updating files:  44% (3544/8054)\n2026-11-04T10:32:37.4776874Z Updating files:  45% (3625/8054)\n2026-11-04T10:32:37.5809704Z Updating files:  46% (3705/8054)\n2026-11-04T10:32:37.6167772Z Updating files:  47% (3786/8054)\n2026-11-04T10:32:37.6277853Z Updating files:  48% (3866/8054)\n2026-11-04T10:32:37.6338505Z Updating files:  49% (3947/8054)\n2026-11-04T10:32:37.6405037Z Updating files:  50% (4027/8054)\n2026-11-04T10:32:37.6569129Z Updating files:  51% (4108/8054)\n2026-11-04T10:32:37.6950807Z Updating files:  52% (4189/8054)\n2026-11-04T10:32:37.7064004Z Updating files:  53% (4269/8054)\n2026-11-04T10:32:37.7116279Z Updating files:  54% (4350/8054)\n2026-11-04T10:32:37.7156695Z Updating files:  55% (4430/8054)\n2026-11-04T10:32:37.7605225Z Updating files:  56% (4511/8054)\n2026-11-04T10:32:37.7943811Z Updating files:  57% (4591/8054)\n2026-11-04T10:32:37.8010224Z Updating files:  58% (4672/8054)\n2026-11-04T10:32:37.8039539Z Updating files:  59% (4752/8054)\n2026-11-04T10:32:37.8168188Z Updating files:  60% (4833/8054)\n2026-11-04T10:32:37.8204422Z Updating files:  61% (4913/8054)\n2026-11-04T10:32:37.8242569Z Updating files:  62% (4994/8054)\n2026-11-04T10:32:37.8314031Z Updating files:  63% (5075/8054)\n2026-11-04T10:32:37.8407703Z Updating files:  64% (5155/8054)\n2026-11-04T10:32:37.8703284Z Updating files:  65% (5236/8054)\n2026-11-04T10:32:37.8740507Z Updating files:  66% (5316/8054)\n2026-11-04T10:32:37.8777655Z Updating files:  67% (5397/8054)\n2026-11-04T10:32:37.8875741Z Updating files:  68% (5477/8054)\n2026-11-04T10:32:37.9841451Z Updating files:  69% (5558/8054)\n2026-11-04T10:32:37.9896914Z Updating files:  70% (5638/8054)\n2026-11-04T10:32:37.9937866Z Updating files:  71% (5719/8054)\n2026-11-04T10:32:38.0020125Z Updating files:  72% (5799/8054)\n2026-11-04T10:32:38.0189684Z Updating files:  73% (5880/8054)\n2026-11-04T10:32:38.0246926Z Updating files:  74% (5960/8054)\n2026-11-04T10:32:38.0319225Z Updating files:  75% (6041/8054)\n2026-11-04T10:32:38.0348295Z Updating files:  76% (6122/8054)\n2026-11-04T10:32:38.0411480Z Updating files:  77% (6202/8054)\n2026-11-04T10:32:38.0478676Z Updating files:  78% (6283/8054)\n2026-11-04T10:32:38.0550725Z Updating files:  79% (6363/8054)\n2026-11-04T10:32:38.0603964Z Updating files:  80% (6444/8054)\n2026-11-04T10:32:38.0667873Z Updating files:  81% (6524/8054)\n2026-11-04T10:32:38.0744260Z Updating files:  82% (6605/8054)\n2026-11-04T10:32:38.0821575Z Updating files:  83% (6685/8054)\n2026-11-04T10:32:38.0903654Z Updating files:  84% (6766/8054)\n2026-11-04T10:32:38.0954961Z Updating files:  85% (6846/8054)\n2026-11-04T10:32:38.1081775Z Updating files:  86% (6927/8054)\n2026-11-04T10:32:38.1156555Z Updating files:  87% (7007/8054)\n2026-11-04T10:32:38.1195283Z Updating files:  88% (7088/8054)\n2026-11-04T10:32:38.1229112Z Updating files:  89% (7169/8054)\n2026-11-04T10:32:38.1304689Z Updating files:  90% (7249/8054)\n2026-11-04T10:32:38.1386844Z Updating files:  91% (7330/8054)\n2026-11-04T10:32:38.1489368Z Updating files:  92% (7410/8054)\n2026-11-04T10:32:38.1593626Z Updating files:  93% (7491/8054)\n2026-11-04T10:32:38.1678947Z Updating files:  94% (7571/8054)\n2026-11-04T10:32:38.1747594Z Updating files:  95% (7652/8054)\n2026-11-04T10:32:38.1813372Z Updating files:  96% (7732/8054)\n2026-11-04T10:32:38.1856398Z Updating files:  97% (7813/8054)\n2026-11-04T10:32:38.1902008Z Updating files:  98% (7893/8054)\n2026-11-04T10:32:38.1937868Z Updating files:  99% (7974/8054)\n2026-11-04T10:32:38.1938504Z Updating files: 100% (8054/8054)\n2026-11-04T10:32:38.1938859Z Updating files: 100% (8054/8054), done.\n2026-11-04T10:32:38.2024242Z Note: switching to '2fab1611e5051ecea3eb552bb9a9d1bc54e3f997'.\n2026-11-04T10:32:38.2024782Z \n2026-11-04T10:32:38.2025035Z You are in 'detached HEAD' state. You can look around, make experimental\n2026-11-04T10:32:38.2025830Z changes and commit them, and you can discard any commits you make in this\n2026-11-04T10:32:38.2026775Z state without impacting any branches by switching back to a branch.\n2026-11-04T10:32:38.2027631Z \n2026-11-04T10:32:38.2028021Z If you want to create a new branch to retain commits you create, you may\n2026-11-04T10:32:38.2028926Z do so (now or later) by using -c with the switch command. Example:\n2026-11-04T10:32:38.2029562Z \n2026-11-04T10:32:38.2029902Z   git switch -c <new-branch-name>\n2026-11-04T10:32:38.2030286Z \n2026-11-04T10:32:38.2030511Z Or undo this operation with:\n2026-11-04T10:32:38.2030866Z \n2026-11-04T10:32:38.2031063Z   git switch -\n2026-11-04T10:32:38.2031323Z \n2026-11-04T10:32:38.2031792Z Turn off this advice by setting config variable advice.detachedHead to false\n2026-11-04T10:32:38.2032480Z \n2026-11-04T10:32:38.2033118Z HEAD is now at 2fab161 ci: stream two exact retained databases and preserve current source terminals\n2026-11-04T10:32:38.2162254Z ##[endgroup]\n2026-11-04T10:32:38.2218950Z [command]/usr/bin/git log -1 --format=%H\n2026-11-04T10:32:38.2255102Z 2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\n2026-11-04T10:32:38.2269510Z ##[group]Removing auth\n2026-11-04T10:32:38.2278274Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:32:38.2311174Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:32:38.2567050Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:32:38.2604669Z http.https://github.com/.extraheader\n2026-11-04T10:32:38.2613193Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader\n2026-11-04T10:32:38.2656567Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:32:38.2908135Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:32:38.2946695Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:32:38.3191505Z ##[endgroup]\n2026-11-04T10:32:38.3426053Z ##[group]Run set -euo pipefail\n2026-11-04T10:32:38.3426438Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:32:38.3426711Z \u001b[36;1mmkdir \"$READBACK_OUT\"\u001b[0m\n2026-11-04T10:32:38.3427631Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$GITHUB_SHA\" --output \"$READBACK_OUT/source-before.json\"\u001b[0m\n2026-11-04T10:32:38.3428289Z \u001b[36;1mbash scripts/project-preflight.sh --audit\u001b[0m\n2026-11-04T10:32:38.3452570Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:32:38.3452922Z env:\n2026-11-04T10:32:38.3453131Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:32:38.3453512Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41814841999-1\n2026-11-04T10:32:38.3453902Z ##[endgroup]\n2026-11-04T10:32:39.7117458Z {\n2026-11-04T10:32:39.7117981Z   \"base\": null,\n2026-11-04T10:32:39.7118471Z   \"candidate\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n2026-11-04T10:32:39.7119018Z   \"kind\": \"head\",\n2026-11-04T10:32:39.7119468Z   \"prospective_merge\": null,\n2026-11-04T10:32:39.7119898Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T10:32:39.7120455Z   \"tested_commit\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n2026-11-04T10:32:39.7121118Z   \"tested_tree\": \"0febfbbbc1935ae51c84aa23f7bd4d4caba3dcb8\",\n2026-11-04T10:32:39.7121488Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T10:32:39.7121778Z   \"tracked_bytes\": 935565979,\n2026-11-04T10:32:39.7122018Z   \"tracked_entries\": 8054,\n2026-11-04T10:32:39.7122261Z   \"tracked_worktree_verified\": true\n2026-11-04T10:32:39.7122505Z }\n2026-11-04T10:32:39.7685971Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T10:32:39.7788048Z ##[group]Run set -euo pipefail\n2026-11-04T10:32:39.7788403Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:32:39.7788756Z \u001b[36;1mpython3 -B scripts/ci/retained_69d_history_db_readback.py\u001b[0m\n2026-11-04T10:32:39.7809715Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:32:39.7810057Z env:\n2026-11-04T10:32:39.7810294Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:32:39.7810846Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41814841999-1\n2026-11-04T10:32:39.7813557Z   GH_TOKEN: ***\n2026-11-04T10:32:39.7813776Z ##[endgroup]\n2026-11-04T10:32:43.1561446Z ::stop-commands::***\n2026-11-04T10:32:43.1630858Z {\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"database_selected_bytes\":220749824,\"diagnostic_budget_scope\":{\"combined_selected_cap\":388521984,\"database_exact_budget\":{\"bytes\":220749824,\"compressed_bytes\":22920177},\"database_member\":\"history-native/long-history/confirmer/native.sqlite\",\"generic_member_limit_unchanged\":33554432,\"non_database_selected_limit_unchanged\":167772160,\"original_native_budgets_changed\":false,\"original_reader_refusal_reclassified\":false,\"prior_generic_bound_refusal\":{\"evidence_blob\":\"4a82c6a726841179196204ac1ae0ca419fb60a54\",\"job\":126515293786,\"reason\":\"Both exact main databases exceeded the unchanged generic member bound.\",\"run\":41812595146,\"snapshot_status\":\"unavailable\"},\"stream_chunk_max_bytes\":1048576},\"downloaded_zip_bytes\":61135040,\"downloaded_zip_sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220749824,\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220749824,\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"fixed_database_members\":[{\"bytes\":220749824,\"compressed_bytes\":22920177,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25\",\"non_database_selected_bytes\":10748,\"origin\":{\"genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3236381521398,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6273684,\\\"last_history_rpc_elapsed_ns\\\":7754563,\\\"last_import_call_expression_elapsed_ns\\\":30000693324,\\\"last_requested_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"last_successful_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"pinned_tip\\\":\\\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":null,\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61135040,\"sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v2\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":220760572,\"selected_members\":[{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":421,\"member\":\"source.json\",\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4880,\"member\":\"history-native/manifest.json\",\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},{\"budget_scope\":\"explicit-fixed-main-database-diagnostic\",\"bytes\":220749824,\"compressed_bytes\":22920177,\"crc32_expected\":643231945,\"crc32_observed\":643231945,\"crc32_verified\":true,\"member\":\"history-native/long-history/confirmer/native.sqlite\",\"sha256\":\"5f677fe67ea3bab3fae678e1e1a7c763e7da0e01aa3a5441bb4ba6d594a69fb6\",\"stream_chunk_max_bytes\":1048576}],\"snapshot\":{\"activation_entry_at_failure\":null,\"original_failure_location_rewritten\":false,\"post_cleanup_snapshot\":true,\"queries_executed\":[{\"name\":\"fixed_table_schema\",\"sql\":\"SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name\"},{\"name\":\"metadata\",\"parameters\":[],\"row_count\":2,\"sql\":\"SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key\"},{\"name\":\"active\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2\"},{\"name\":\"reorg\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2\"},{\"name\":\"lifecycle_latest\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3\"},{\"name\":\"steps_summary\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3\"},{\"name\":\"lineage_records\",\"parameters\":[\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\"],\"row_count\":3,\"sql\":\"SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id\"}],\"readback_elapsed_ns\":1961863,\"readback_timing_is_not_original_native_cost\":true,\"rows\":{\"active\":[{\"generation\":\"0\",\"singleton\":\"1\",\"state_slot\":\"0\",\"tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\"}],\"lifecycle_latest\":[{\"cancelled_cursor\":\"3427\",\"generation\":\"1\",\"new_tip\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"old_root\":\"4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE\",\"old_slot\":\"0\",\"old_tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"operation\":\"1\",\"outcome\":\"2\",\"owner_context\":\"CCBCEB5B4BF4BDC06CFFD6B05C62461B80CBE64E599A76C7B6A0EC46896C43EB\",\"reason\":\"PUBLIC_REQUEST_DEADLINE\"}],\"lineage_records\":[{\"height\":\"0\",\"id\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"parent\":null,\"state_root\":\"4DB55C1B006BED96D02DFA6FBD1DCD92CCC6F6B1B6F4A9FCCCAC13FAB308F0BE\"},{\"height\":\"4104\",\"id\":\"2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C\",\"parent\":\"E451716C3AD6A74AD14BCB42738B87BFFA41F71273F4862AF5179D0A10585068\",\"state_root\":\"055BEC29DCEB5D79BBDA02098FEBB1118A1E123A253C2FAE0AFB4946FF927C66\"},{\"height\":\"4105\",\"id\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"parent\":\"2F381967B64813BDC9B37DD4F41A84199BAAE3F038AF334F68E1FA10766D298C\",\"state_root\":\"B9EC76BB0877FF52AD1A7B498ADFB4AFB9F1073B073D0FE0C3C5E2E94FB038EE\"}],\"metadata\":[{\"key\":\"genesis\",\"value\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\"},{\"key\":\"parameters\",\"value\":\"FBB7F5FA9BCEC0EED74F91639A46C56B3007C51E4588676E28016B4753F1EC96\"}],\"reorg\":[{\"cursor\":\"3427\",\"done\":\"2\",\"generation\":\"1\",\"new_tip\":\"4EC7CEACFAB64F69595EDEDEABE5D664E2C2F637F283BD6BD1A5E15D4005D598\",\"old_tip\":\"2B11BA4644063288966013DD93E03078EFAFC8311CD5D9E6CE12E707F642A4AE\",\"singleton\":\"1\"}],\"steps_summary\":[{\"first_ordinal\":\"0\",\"kind\":\"1\",\"last_ordinal\":\"4104\",\"step_rows\":\"4105\"}]},\"schema_rows\":[[\"table\",\"active\",\"active\",\"CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)\"],[\"table\",\"blocks\",\"blocks\",\"CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)\"],[\"table\",\"metadata\",\"metadata\",\"CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)\"],[\"table\",\"reorg\",\"reorg\",\"CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)\"],[\"table\",\"reorg_lifecycle_v1\",\"reorg_lifecycle_v1\",\"CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))\"],[\"table\",\"steps\",\"steps\",\"CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)\"]],\"sqlite_open_mode\":\"read-only-immutable-no-sidecars\",\"sqlite_progress_callback_units\":82000,\"sqlite_progress_limit_scope\":\"Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement.\",\"sqlite_version\":\"3.45.1\",\"status\":\"observed\",\"tip_binding\":{\"absence_does_not_prove_activation_not_entered\":true,\"expected_genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"expected_pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"latest_lifecycle_new_tip_matches\":true,\"reorg_new_tip_matches\":true}},\"snapshot_directory_entries_after\":[\"native.sqlite\"],\"snapshot_directory_entries_before\":[\"native.sqlite\"],\"snapshot_status\":\"observed\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311000045,\"job\":126471217803,\"kind\":\"head\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"name\":\"priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"run\":41799271270,\"size\":61135040,\"tested\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[]}\n2026-11-04T10:32:43.1694238Z ::***::\n2026-11-04T10:32:46.6753729Z ::stop-commands::***\n2026-11-04T10:32:46.6822979Z {\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"database_selected_bytes\":220811264,\"diagnostic_budget_scope\":{\"combined_selected_cap\":388583424,\"database_exact_budget\":{\"bytes\":220811264,\"compressed_bytes\":22931478},\"database_member\":\"history-native/long-history/confirmer/native.sqlite\",\"generic_member_limit_unchanged\":33554432,\"non_database_selected_limit_unchanged\":167772160,\"original_native_budgets_changed\":false,\"original_reader_refusal_reclassified\":false,\"prior_generic_bound_refusal\":{\"evidence_blob\":\"4a82c6a726841179196204ac1ae0ca419fb60a54\",\"job\":126515293786,\"reason\":\"Both exact main databases exceeded the unchanged generic member bound.\",\"run\":41812595146,\"snapshot_status\":\"unavailable\"},\"stream_chunk_max_bytes\":1048576},\"downloaded_zip_bytes\":61147421,\"downloaded_zip_sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220811264,\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/confirmer/native.sqlite\":{\"bytes\":220811264,\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"fixed_database_members\":[{\"bytes\":220811264,\"compressed_bytes\":22931478,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6\",\"non_database_selected_bytes\":11015,\"origin\":{\"genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3288035731126,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6608022,\\\"last_history_rpc_elapsed_ns\\\":8627527,\\\"last_import_call_expression_elapsed_ns\\\":30069217869,\\\"last_requested_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"last_successful_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"pinned_tip\\\":\\\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61147421,\"sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v2\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":220822279,\"selected_members\":[{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":510,\"member\":\"source.json\",\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":5058,\"member\":\"history-native/manifest.json\",\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"budget_scope\":\"unchanged-generic-member\",\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},{\"budget_scope\":\"explicit-fixed-main-database-diagnostic\",\"bytes\":220811264,\"compressed_bytes\":22931478,\"crc32_expected\":4239560604,\"crc32_observed\":4239560604,\"crc32_verified\":true,\"member\":\"history-native/long-history/confirmer/native.sqlite\",\"sha256\":\"e2ea1627ac06ac711cb1586baae1e1557d93c5ea77123e033a4bb9b5c497407d\",\"stream_chunk_max_bytes\":1048576}],\"snapshot\":{\"activation_entry_at_failure\":null,\"original_failure_location_rewritten\":false,\"post_cleanup_snapshot\":true,\"queries_executed\":[{\"name\":\"fixed_table_schema\",\"sql\":\"SELECT type,name,tbl_name,sql FROM main.sqlite_schema WHERE name IN (?,?,?,?,?,?) ORDER BY name\"},{\"name\":\"metadata\",\"parameters\":[],\"row_count\":2,\"sql\":\"SELECT key,hex(value) AS value FROM main.metadata WHERE key IN ('genesis','parameters') ORDER BY key\"},{\"name\":\"active\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(tip) AS tip,generation,state_slot FROM main.active ORDER BY singleton LIMIT 2\"},{\"name\":\"reorg\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT singleton,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,cursor,done FROM main.reorg ORDER BY singleton LIMIT 2\"},{\"name\":\"lifecycle_latest\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT operation,hex(old_tip) AS old_tip,hex(new_tip) AS new_tip,generation,old_slot,hex(old_root) AS old_root,hex(owner_context) AS owner_context,outcome,cancelled_cursor,reason FROM main.reorg_lifecycle_v1 ORDER BY operation DESC LIMIT 3\"},{\"name\":\"steps_summary\",\"parameters\":[],\"row_count\":1,\"sql\":\"SELECT kind,count(*) AS step_rows,min(ordinal) AS first_ordinal,max(ordinal) AS last_ordinal FROM main.steps GROUP BY kind ORDER BY kind LIMIT 3\"},{\"name\":\"lineage_records\",\"parameters\":[\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\"],\"row_count\":3,\"sql\":\"SELECT hex(id) AS id,CASE WHEN parent IS NULL THEN NULL ELSE hex(parent) END AS parent,height,hex(state_root) AS state_root FROM main.blocks WHERE id IN (?,?,?) ORDER BY height,id\"}],\"readback_elapsed_ns\":1918238,\"readback_timing_is_not_original_native_cost\":true,\"rows\":{\"active\":[{\"generation\":\"0\",\"singleton\":\"1\",\"state_slot\":\"0\",\"tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\"}],\"lifecycle_latest\":[{\"cancelled_cursor\":\"3393\",\"generation\":\"1\",\"new_tip\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"old_root\":\"63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95\",\"old_slot\":\"0\",\"old_tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"operation\":\"1\",\"outcome\":\"2\",\"owner_context\":\"EBA669445985992785FDCC1B3612EF62BA80F19771863581B8C86FD0B596F8D4\",\"reason\":\"PUBLIC_REQUEST_DEADLINE\"}],\"lineage_records\":[{\"height\":\"0\",\"id\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"parent\":null,\"state_root\":\"63347655C96966D7900647E0AA06E3429DE3BB63DE71450479F662170676ED95\"},{\"height\":\"4104\",\"id\":\"2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE\",\"parent\":\"38F7382B1196EB5C4FDBF9BE9D61F3D470CFF01804BD4D3A5B3FE85038D0A065\",\"state_root\":\"03DD7008E52D673C07F054C91321F458E47FC3B0BFCE3CF77179CA8DBCDD0772\"},{\"height\":\"4105\",\"id\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"parent\":\"2173B7C7D191D68644AA9DD436BEA615FF2D51D5689F34395F8FA14B1C7692EE\",\"state_root\":\"DC6773B94B22AF238F103F410B34AFBFC613B3B2003CFB5A7E074E5BFF21924F\"}],\"metadata\":[{\"key\":\"genesis\",\"value\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\"},{\"key\":\"parameters\",\"value\":\"1173BECA40643EF1F4CD3ACB5FC8BE6FAB3A6507CC88E4C14263A22D9E62A799\"}],\"reorg\":[{\"cursor\":\"3393\",\"done\":\"2\",\"generation\":\"1\",\"new_tip\":\"A865F5AB93295F1EAA30353BB8259F8DA3485540E7535721680A2654394E5FBC\",\"old_tip\":\"C461DE6F1C2F135BF9033313BD10B3046BB0A225964B08D649DC405A395082A3\",\"singleton\":\"1\"}],\"steps_summary\":[{\"first_ordinal\":\"0\",\"kind\":\"1\",\"last_ordinal\":\"4104\",\"step_rows\":\"4105\"}]},\"schema_rows\":[[\"table\",\"active\",\"active\",\"CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL)\"],[\"table\",\"blocks\",\"blocks\",\"CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL)\"],[\"table\",\"metadata\",\"metadata\",\"CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL)\"],[\"table\",\"reorg\",\"reorg\",\"CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL)\"],[\"table\",\"reorg_lifecycle_v1\",\"reorg_lifecycle_v1\",\"CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)))\"],[\"table\",\"steps\",\"steps\",\"CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL)\"]],\"sqlite_open_mode\":\"read-only-immutable-no-sidecars\",\"sqlite_progress_callback_units\":82000,\"sqlite_progress_limit_scope\":\"Approximate 1000-unit progress callbacks check the configured VM and elapsed thresholds; these checks are not hard preemption or an original native cost measurement.\",\"sqlite_version\":\"3.45.1\",\"status\":\"observed\",\"tip_binding\":{\"absence_does_not_prove_activation_not_entered\":true,\"expected_genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"expected_pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"latest_lifecycle_new_tip_matches\":true,\"reorg_new_tip_matches\":true}},\"snapshot_directory_entries_after\":[\"native.sqlite\"],\"snapshot_directory_entries_before\":[\"native.sqlite\"],\"snapshot_status\":\"observed\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311101182,\"job\":126471218057,\"kind\":\"prospective-merge\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"name\":\"priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"run\":41799271270,\"size\":61147421,\"tested\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[]}\n2026-11-04T10:32:46.6882427Z ::***::\n2026-11-04T10:32:46.6917077Z ##[group]Run set -euo pipefail\n2026-11-04T10:32:46.6917709Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:32:46.6918269Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$GITHUB_SHA\" --output \"$READBACK_OUT/source-after.json\"\u001b[0m\n2026-11-04T10:32:46.6918909Z \u001b[36;1mbash scripts/project-preflight.sh --audit\u001b[0m\n2026-11-04T10:32:46.6938657Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:32:46.6938998Z env:\n2026-11-04T10:32:46.6939209Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:32:46.6939587Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41814841999-1\n2026-11-04T10:32:46.6939999Z ##[endgroup]\n2026-11-04T10:32:47.7746983Z {\n2026-11-04T10:32:47.7747600Z   \"base\": null,\n2026-11-04T10:32:47.7748430Z   \"candidate\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n2026-11-04T10:32:47.7748775Z   \"kind\": \"head\",\n2026-11-04T10:32:47.7749007Z   \"prospective_merge\": null,\n2026-11-04T10:32:47.7749280Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T10:32:47.7749686Z   \"tested_commit\": \"2fab1611e5051ecea3eb552bb9a9d1bc54e3f997\",\n2026-11-04T10:32:47.7750098Z   \"tested_tree\": \"0febfbbbc1935ae51c84aa23f7bd4d4caba3dcb8\",\n2026-11-04T10:32:47.7750448Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T10:32:47.7750747Z   \"tracked_bytes\": 935565979,\n2026-11-04T10:32:47.7750987Z   \"tracked_entries\": 8054,\n2026-11-04T10:32:47.7751229Z   \"tracked_worktree_verified\": true\n2026-11-04T10:32:47.7751473Z }\n2026-11-04T10:32:47.8294812Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T10:32:47.8416845Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n2026-11-04T10:32:47.8417620Z with:\n2026-11-04T10:32:47.8418044Z   name: 69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1\n2026-11-04T10:32:47.8418557Z   path: /home/runner/work/_temp/69d-history-db-readback-41814841999-1/\n2026-11-04T10:32:47.8418932Z   if-no-files-found: error\n2026-11-04T10:32:47.8419173Z   retention-days: 30\n2026-11-04T10:32:47.8419392Z   compression-level: 6\n2026-11-04T10:32:47.8419611Z   overwrite: false\n2026-11-04T10:32:47.8419830Z   include-hidden-files: false\n2026-11-04T10:32:47.8420069Z env:\n2026-11-04T10:32:47.8420266Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:32:47.8420517Z ##[endgroup]\n2026-11-04T10:32:48.0184382Z (node:2430) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n2026-11-04T10:32:48.0185122Z (Use `node --trace-deprecation ...` to show where the warning was created)\n2026-11-04T10:32:48.0339194Z With the provided path, there will be 29 files uploaded\n2026-11-04T10:32:48.0344782Z Artifact name is valid!\n2026-11-04T10:32:48.0345314Z Root directory input is valid!\n2026-11-04T10:32:48.2938481Z Beginning upload of artifact content to blob storage\n2026-11-04T10:32:49.0183715Z (node:2430) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n2026-11-04T10:32:49.4538042Z Uploaded bytes 8388608\n2026-11-04T10:32:49.8991351Z Uploaded bytes 16777216\n2026-11-04T10:32:50.5481828Z Uploaded bytes 25165824\n2026-11-04T10:32:50.7853816Z Uploaded bytes 33554432\n2026-11-04T10:32:51.1005827Z Uploaded bytes 41943040\n2026-11-04T10:32:51.3180520Z Uploaded bytes 50331648\n2026-11-04T10:32:51.6869793Z Uploaded bytes 58720256\n2026-11-04T10:32:52.1721469Z Uploaded bytes 67108864\n2026-11-04T10:32:52.1761279Z Uploaded bytes 75497472\n2026-11-04T10:32:52.7992982Z Uploaded bytes 83886080\n2026-11-04T10:32:53.6855605Z Uploaded bytes 92274688\n2026-11-04T10:32:54.1901186Z Uploaded bytes 100663296\n2026-11-04T10:32:54.4732226Z Uploaded bytes 109051904\n2026-11-04T10:32:54.8636703Z Uploaded bytes 117440512\n2026-11-04T10:32:55.0743220Z Uploaded bytes 125829120\n2026-11-04T10:32:55.4497984Z Uploaded bytes 134217728\n2026-11-04T10:32:55.7520195Z Uploaded bytes 142606336\n2026-11-04T10:32:55.9961539Z Uploaded bytes 150994944\n2026-11-04T10:32:56.0984052Z Uploaded bytes 153107950\n2026-11-04T10:32:56.1382472Z Finished uploading artifact content to blob storage!\n2026-11-04T10:32:56.1386183Z SHA256 digest of uploaded artifact zip is 21c36112f404de8eb60414aff57f93a2961820a974b20c3202f122d71e784cd5\n2026-11-04T10:32:56.1388851Z Finalizing artifact upload\n2026-11-04T10:32:56.5994868Z Artifact 69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1.zip successfully finalized. Artifact ID 13313429601\n2026-11-04T10:32:56.5997053Z Artifact 69d-history-db-readback-2fab1611e5051ecea3eb552bb9a9d1bc54e3f997-1 has been successfully uploaded! Final size is 153107950 bytes. Artifact ID is 13313429601\n2026-11-04T10:32:56.6003533Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41814841999/artifacts/13313429601\n2026-11-04T10:32:56.6306120Z Post job cleanup.\n2026-11-04T10:32:56.7220125Z [command]/usr/bin/git version\n2026-11-04T10:32:56.7277797Z git version 2.56.0\n2026-11-04T10:32:56.7338600Z Temporarily overriding HOME='/home/runner/work/_temp/aa8f15ae-9266-4c75-bf05-448ce7e16158' before making global git config changes\n2026-11-04T10:32:56.7358203Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T10:32:56.7359662Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:32:56.7373561Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:32:56.7426234Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:32:56.7819012Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:32:56.7858845Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:32:56.8221162Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:32:56.8279027Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:32:56.8752013Z Cleaning up orphan processes\n2026-11-04T10:32:56.9207026Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\n"
+  },
+  "source_references": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "e4c01b37441886f1359c016efb30f190eda98aa0",
+      "lines": "275; 337-408; 428-453",
+      "scope": "Confirmer namespace, original returned-call diagnostic and retained output directory."
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "lines": "282-341",
+      "scope": "Original runner fixes long-history evidence directory and retains failure observations."
+    },
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "560efaa34806ca4687f8ffc8c540bc462536b458",
+      "lines": "288-312",
+      "scope": "Original invocation and upload root."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+      "scope": "Exact original staging transaction, intent, attach-step position and final active publication semantics. References were read from this original frozen source; no newer integration semantics are inherited.",
+      "excerpts": [
+        {
+          "first_line": 5052,
+          "last_line": 5110,
+          "original_source": "    fn atomic_reorg_with_readback<'db>(\n        &'db self,\n        progress: &mut dyn FnMut() -> Result<()>,\n        run: impl FnOnce(\n            &mut dyn FnMut() -> Result<()>,\n            Option<&trnm_sqlite_io_boundary::TransactionScope<'db>>,\n        ) -> Result<Option<native_authenticated::PostWriteReadback<'db>>>,\n    ) -> Result<()> {\n        progress()?;\n        let tx = rusqlite::Transaction::new_unchecked(\n            &self.db,\n            rusqlite::TransactionBehavior::Immediate,\n        )?;\n        let original_owner = (self.state_backend == StateBackend::AuthenticatedV1)\n            .then(|| {\n                trnm_sqlite_io_boundary::TransactionScope::capture(&self.db)\n                    .map_err(native_authenticated::readback_scope_error)\n            })\n            .transpose()?;\n        let transaction_result: Result<()> = (|| {\n            let mut readback = run(progress, original_owner.as_ref())?;\n            self.check_active_before_commit_with_readback(progress, readback.as_mut())?;\n            self.continuous_scope_checkpoint()?;\n            self.mining_scope_checkpoint()?;\n            progress()?;\n            if let Some(scope) = readback.as_mut() {\n                // No legitimate write remains after the closure's explicit\n                // boundary. This must follow the LAST caller callback, even\n                // when no duplicate graph was consumed by the atomic tail.\n                scope.require_unchanged_after_last_write(&self.db)?;\n            }\n            Ok(())\n        })();\n        // As in admission, a callback's transaction replacement cannot hide\n        // behind an ordinary error/cancellation. Preserve that first error as\n        // the source; a write alone does not override a failing callback.\n        let transaction_result = match original_owner\n            .as_ref()\n            .map(|owner| owner.same_write_snapshot(&self.db))\n            .transpose()\n        {\n            Ok(_) => transaction_result,\n            Err(error) => Err(match transaction_result {\n                Ok(()) => native_authenticated::readback_scope_error(error),\n                Err(first) => Error::local_replay_source(\"NATIVE_POST_WRITE_SCOPE\", first),\n            }),\n        };\n        transaction_result?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgStep)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);\n        }\n        commit_result?;\n        Ok(())",
+          "function": "atomic_reorg_with_readback",
+          "meaning": "Immediate transaction encloses the supplied staging mutation, active/readback checks and original progress callbacks; commit occurs only after those checks."
+        },
+        {
+          "first_line": 5280,
+          "last_line": 5325,
+          "original_source": "            let mut detached = 0i64;\n            let mut attached = 0i64;\n            while left != right {\n                progress()?;\n                if self.record(left)?.height >= self.record(right)?.height {\n                    self.db.execute(\n                        \"INSERT INTO steps VALUES(?,0,?)\",\n                        params![detached, left.as_slice()],\n                    )?;\n                    detached = detached.checked_add(1).ok_or(\"ANCESTRY_LIMIT\")?;\n                    left = self.parent(left)?;\n                } else {\n                    attached = attached.checked_add(1).ok_or(\"ANCESTRY_LIMIT\")?;\n                    self.db.execute(\n                        \"INSERT INTO steps VALUES(?,1,?)\",\n                        params![-attached, right.as_slice()],\n                    )?;\n                    right = self.parent(right)?;\n                }\n            }\n            let count = detached.checked_add(attached).ok_or(\"ANCESTRY_LIMIT\")?;\n            self.db.execute(\n                \"UPDATE steps SET ordinal=?+ordinal WHERE ordinal<0\",\n                [count],\n            )?;\n            self.db.execute(\n                \"INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,0,0)\",\n                params![old.as_slice(), target.as_slice(), next],\n            )?;\n            self.insert_reorg_lifecycle(&mut cancellation)?;\n            ensure(\n                self.active()? == (old, g)\n                    && self.check_steps_with_progress(old, target, 0, progress)? == count as u64,\n                \"REORG_STEPS\",\n            )\n            .map_err(Error::local_integrity)?;\n            self.check_reorg_row(old, target, next, 0, 0)?;\n            let mut readback = self.reorg_post_write_readback(old, original_owner)?;\n            self.check_persisted_state_with_readback(\n                old,\n                &self.slot_state_with_progress(next, progress)?,\n                progress,\n                readback.as_mut(),\n            )?;\n            Ok(readback)\n        })?;",
+          "function": "activate_with_fault_and_progress",
+          "meaning": "Build planned detach/attach rows, insert cursor-zero intent and lifecycle, and validate before the intent transaction commits."
+        },
+        {
+          "first_line": 5508,
+          "last_line": 5540,
+          "original_source": "        let count = self.check_steps_with_progress(old, target, position, progress)?;\n        for index in position..count {\n            progress()?;\n            let (kind, bytes) = self.db.query_row(\n                \"SELECT kind,block FROM steps WHERE ordinal=?\",\n                [index],\n                |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),\n            )?;\n            let id = bytes32(bytes)?;\n            self.atomic_reorg_with_readback(progress, |progress, original_owner| {\n                self.apply_delta_with_progress(id, g, kind == 0, progress)?;\n                ensure(\n                    self.db\n                        .execute(\"UPDATE reorg SET cursor=? WHERE singleton=1\", [index + 1])?\n                        == 1,\n                    \"STORAGE_WRITE\",\n                )\n                .map_err(Error::local_integrity)?;\n                self.check_reorg_row(old, target, g, index + 1, 0)?;\n                let resulting = if kind == 0 { self.parent(id)? } else { id };\n                let mut readback = self.reorg_post_write_readback(resulting, original_owner)?;\n                self.check_persisted_state_with_readback(\n                    resulting,\n                    &self.slot_state_with_progress(g, progress)?,\n                    progress,\n                    readback.as_mut(),\n                )?;\n                Ok(readback)\n            })?;\n            cut(\n                hook,\n                &format!(\"{}:{index}\", if kind == 0 { \"detach\" } else { \"attach\" }),\n            )?;",
+          "function": "resume_intent_with_progress",
+          "meaning": "Apply each planned delta and set cursor=index+1 inside the same staging transaction; attach/detach cut follows the successful transaction return."
+        },
+        {
+          "first_line": 5570,
+          "last_line": 5612,
+          "original_source": "            ensure(\n                self.db.execute(\n                    \"UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1\",\n                    params![target.as_slice(), g, g],\n                )? == 1,\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            ensure(\n                self.db.execute(\n                    \"INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal\",\n                    [g],\n                )? == expected.len(),\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            ensure(\n                self.db\n                    .execute(\"UPDATE reorg SET done=1 WHERE singleton=1\", [])?\n                    == 1,\n                \"STORAGE_WRITE\",\n            )\n            .map_err(Error::local_integrity)?;\n            self.finish_reorg_lifecycle(old, target, g)?;\n            self.db.execute(\"DELETE FROM kv WHERE slot!=?\", [g])?;\n            ensure(\n                self.active()? == (target, g) && self.slot()? == g,\n                \"GENERATION\",\n            )\n            .map_err(Error::local_integrity)?;\n            self.check_reorg_row(old, target, g, count, 1)?;\n            self.check_events_with_progress(g, &expected, progress)?;\n            let mut readback = self.reorg_post_write_readback(target, original_owner)?;\n            self.check_persisted_state_with_readback(\n                target,\n                &self.slot_state_with_progress(g, progress)?,\n                progress,\n                readback.as_mut(),\n            )?;\n            Ok(readback)\n        })?;\n        cut(hook, \"published\")?;\n        Ok(target)",
+          "function": "resume_intent_with_progress",
+          "meaning": "Final active generation/slot publication and done=1 are a later atomic step."
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+      "excerpts": [
+        {
+          "first_line": 355,
+          "last_line": 377,
+          "original_source": "    pub(super) fn finish_or_cancel_reorg(\n        &self,\n        reservation: &Reservation,\n        outcome: Result<Hash>,\n        hook: &mut Option<&mut Hook<'_>>,\n    ) -> Result<Hash> {\n        let Err(error) = outcome else {\n            return outcome;\n        };\n        if error.kind() != crate::ErrorKind::Cancelled\n            && !error.is(crate::ErrorCode::PublicMutationCpuBudget)\n            && !error.is(crate::ErrorCode::OwnerContinuousCpuBudget)\n        {\n            return Err(error);\n        }\n        let reason = error\n            .code()\n            .map_or(\"LOCAL_CANCELLED\", crate::ErrorCode::as_str);\n        self.cancel_unpublished_reorg(reservation, reason, hook)\n            .map_err(Error::local_integrity)?;\n        // Keep the original nonterminal local outcome. No terminal peer ACK,\n        // nonce advancement or completed activation is fabricated by cleanup.\n        Err(error)",
+          "function": "finish_or_cancel_reorg",
+          "meaning": "Controlled cancellation records termination then returns the original error without inventing completed activation."
+        },
+        {
+          "first_line": 444,
+          "last_line": 492,
+          "original_source": "        let cursor: u64 =\n            self.db\n                .query_row(\"SELECT cursor FROM reorg WHERE singleton=1\", [], |row| {\n                    row.get(0)\n                })?;\n        self.check_reorg_row(\n            reservation.old,\n            reservation.target,\n            reservation.generation,\n            cursor,\n            0,\n        )?;\n        let before = self.db.total_changes();\n        ensure(self.db.execute(\n            \"UPDATE reorg_lifecycle_v1 SET outcome=2,cancelled_cursor=?,reason=? WHERE operation=? AND outcome=0\",\n            params![cursor, reason, reservation.operation.ok_or(\"REORG_LIFECYCLE\")?],\n        )? == 1, \"REORG_LIFECYCLE\").map_err(Error::local_integrity)?;\n        cut(hook, \"cancel-lifecycle-written\")?;\n        ensure(self.db.execute(\n            \"UPDATE reorg SET done=2 WHERE singleton=1 AND done=0 AND old_tip=? AND new_tip=? AND generation=? AND cursor=?\",\n            params![reservation.old.as_slice(), reservation.target.as_slice(), reservation.generation, cursor],\n        )? == 1, \"REORG_LIFECYCLE\").map_err(Error::local_integrity)?;\n        ensure(\n            self.db.total_changes() == before + 2\n                && self.active()? == (reservation.old, reservation.generation - 1)\n                && self.slot()? == reservation.old_slot,\n            \"REORG_LIFECYCLE\",\n        )\n        .map_err(Error::local_integrity)?;\n        self.check_reserved_reorg_lifecycle(reservation, 2, Some(cursor), reason)?;\n        self.check_reorg_row(\n            reservation.old,\n            reservation.target,\n            reservation.generation,\n            cursor,\n            2,\n        )?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);\n        }\n        commit_result?;\n        cut(hook, \"cancel-committed\")?;\n        Ok(())",
+          "function": "cancel_unpublished_reorg",
+          "meaning": "Read the retained cursor, write outcome=2/cancelled_cursor/reason and done=2, require unchanged original active generation/slot, and commit termination."
+        }
+      ]
+    }
+  ],
+  "mechanical_readback_checks": {
+    "checks_performed": 74,
+    "issues": [],
+    "scope": "Comparisons of the original console records, source literals, API/upload identity, original small-file hashes and the earlier refusal observation; not new native tests."
+  },
+  "collector_actions": {
+    "original_reader_log_reads": 1,
+    "original_output_zip_downloaded_by_collector": false,
+    "original_archives_downloaded_by_reader": true,
+    "selected_main_databases_streamed_by_reader": true,
+    "sql_executed_only_by_readonly_reader": true,
+    "original_native_rerun": false,
+    "new_runtime_or_benchmark": false,
+    "native_source_or_gate_changes": false,
+    "generic_diagnostic_limits_changed": false,
+    "explicit_fixed_main_database_diagnostic_budget_added": true,
+    "native_budgets_changed": false,
+    "ref_or_pr_updates_by_collector": false,
+    "observation_limit": "This collector read the complete reader console and API metadata. The output artifact retains original ZIPs, full selected files and query results; its ZIP was not separately downloaded by this collector."
+  }
+}
