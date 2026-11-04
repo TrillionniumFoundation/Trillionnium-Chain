@@ -1,0 +1,1923 @@
+{
+  "schema": "pon-retained-runtime-confirmation-fresh-readback-v1",
+  "scope": "Additive readback of original frozen-source failures. No source-native execution or acceptance is granted by this reader.",
+  "recorded_utc": "2026-11-04T04:00:02Z",
+  "supersession_policy": "The initial v4 observation left the F0 count null because its bounded console omitted original rows. That historical incomplete observation is retained unchanged. This supplementary v5 readback reads both original small F0 reports completely and independently records all six planned rows.",
+  "reader": {
+    "commit": "e1ef368ab304d9bb8ef177184b98b8d2d29ed835",
+    "tree": "3eb26dec9a647be74a57f515715e42e15e94d39b",
+    "run": 41768377123,
+    "job": 126372027338,
+    "attempt": 1,
+    "conclusion": "success",
+    "artifact": {
+      "id": 13293922589,
+      "bytes": 326730178,
+      "sha256": "5f4d53f210040fd9c870b17ba88bc7d2631ac80243675064c63210427adf3a0c"
+    }
+  },
+  "original_f0_summary": {
+    "run": 41760812979,
+    "job": 126353223160,
+    "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+    "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+    "native_returncode": 101,
+    "planned_confirmations": 6,
+    "confirmed": 0,
+    "observed_unconfirmed": 2,
+    "unobserved": 4,
+    "four_second_slo_successes": 0,
+    "native_result_failure": "NATIVE_F0_FAILED",
+    "report_validation_failure": "BASELINE_MUST_PASS",
+    "all_services_known_empty": true,
+    "complete_success": false,
+    "cleanup_failure": false
+  },
+  "original_w1_fresh_summary": {
+    "run": 41760812907,
+    "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+    "prospective_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+    "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+    "jobs": [
+      126358234949,
+      126358235097
+    ],
+    "requested_window_ns": 4000000000,
+    "attack_workers": 16,
+    "each_original_selector": {
+      "native_returncode": 0,
+      "native_passed": 1,
+      "native_failed": 0,
+      "finite_target_met": false,
+      "runner_failure": "CONFIRMATION_TARGET"
+    },
+    "each_fresh_selector": {
+      "native_returncode": 101,
+      "native_passed": 0,
+      "native_failed": 1,
+      "finite_target_met": false,
+      "runner_failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+    },
+    "all_four_last_replays": {
+      "phase": "from-zero-pressure",
+      "history_call_index": 0,
+      "replay_accepted": false,
+      "replay_error": "PUBLIC_REQUEST_DEADLINE"
+    },
+    "source_recompiled": true,
+    "execution_finished": true,
+    "all_named_tests_passed": false,
+    "binary_sha256_before_and_after": "781bf9524336dc6ba5a74150c3b4088b2470048216e1b84a803ad7c23c8ee1cb"
+  },
+  "acceptance_granted": false,
+  "production_activation": false,
+  "adds_unique_native_tests": false,
+  "source_tests_executed_by_reader": false,
+  "readback": {
+    "run": 41768377123,
+    "job": 126372027338,
+    "log_chars": 769983,
+    "source_guards": [
+      {
+        "base": null,
+        "candidate": "e1ef368ab304d9bb8ef177184b98b8d2d29ed835",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e1ef368ab304d9bb8ef177184b98b8d2d29ed835",
+        "tested_tree": "3eb26dec9a647be74a57f515715e42e15e94d39b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 926973975,
+        "tracked_entries": 7963,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "e1ef368ab304d9bb8ef177184b98b8d2d29ed835",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e1ef368ab304d9bb8ef177184b98b8d2d29ed835",
+        "tested_tree": "3eb26dec9a647be74a57f515715e42e15e94d39b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 926973975,
+        "tracked_entries": 7963,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "preflight": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ],
+    "summaries": [
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 1053225,
+        "downloaded_zip_sha256": "a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+        "member_index_sha256": "aaf0db6df1943530527986039de20115e73aec10c500a7fe2933453ef4aa4cc9",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 4,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 7296784,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13284469302,
+          "job": 126300605830,
+          "name": "pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463373,
+          "size": 1053225
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 19665544,
+        "downloaded_zip_sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+        "member_index_sha256": "0849cbc26a90a0b196c31c0d2bf85fff2bad3e05f27d1b031fd3f00268a345f5",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 261527,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+          "head": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+          "id": 13287122967,
+          "job": 126322033940,
+          "name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+          "run": 41752900351,
+          "size": 19665544
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 60835230,
+        "downloaded_zip_sha256": "fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+        "member_index_sha256": "4e848b787cc48f70f6363d0da2ec75c13a6daf9c3c2ead1d1b0a3f6350cb3cde",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 12,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 2515927,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13283953563,
+          "job": 126300603089,
+          "name": "pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463223,
+          "size": 60835230
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 53187443,
+        "downloaded_zip_sha256": "e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+        "member_index_sha256": "c4c105fb2592035795be52826d6965b70ed91f829264c6140cada313b7d3e251",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 17072,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284616264,
+          "job": 126277462314,
+          "name": "priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 53187443
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 52915730,
+        "downloaded_zip_sha256": "c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+        "member_index_sha256": "55afb8811d02ce040ea70ae507f10d8d8de2e1ae94d3ec5e6124d6955f2f5e9e",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 17340,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284611411,
+          "job": 126277462527,
+          "name": "priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 52915730
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15946259,
+        "downloaded_zip_sha256": "90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+        "member_index_sha256": "1425eccd381ea4179d0c454eea91f02105802f50f1c4e20238548c8d0282ba1c",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 261553,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13286673364,
+          "job": 126323929045,
+          "name": "pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071420,
+          "size": 15946259
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 59518668,
+        "downloaded_zip_sha256": "06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+        "member_index_sha256": "c95c11aa1f538c16dd941033270faefed6b72d85148ffa445564e45cfa419c37",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 76224612,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13288600275,
+          "job": 126326178742,
+          "name": "pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071468,
+          "size": 59518668
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 56503959,
+        "downloaded_zip_sha256": "7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+        "member_index_sha256": "47cab6dfcf307804975a3a4a20161c7391aa3dfe79b261b9ede01138651b7058",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 67248983,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13290599543,
+          "job": 126349481887,
+          "name": "pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813065,
+          "size": 56503959
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15793484,
+        "downloaded_zip_sha256": "c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+        "member_index_sha256": "d1b3e472c41a3351fa29da78ce45b1dfabbc6f2e13899e4df0d1874f29e8db1b",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 261442,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13291962180,
+          "job": 126353223160,
+          "name": "pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760812979,
+          "size": 15793484
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 5292126,
+        "downloaded_zip_sha256": "57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932",
+        "member_index_sha256": "82fd3b9ad268aec9262c14f84081b97f25dc19d70b6b0bfb7d8a1092710901df",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 152015,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293036116,
+          "job": 126358234949,
+          "name": "w1-fresh-service-prospective-merge-554a76fb8e21f160806692c753ca3ea6ad53a42f-1",
+          "run": 41760812907,
+          "size": 5292126
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 5289751,
+        "downloaded_zip_sha256": "586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9",
+        "member_index_sha256": "a085d0a5b0091fa85cb0f8fc690ba3461366e4f76ef19373bc68f251e220e6ae",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v5",
+        "selected_text_bytes": 151785,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293036964,
+          "job": 126358235097,
+          "name": "w1-fresh-service-head-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760812907,
+          "size": 5289751
+        }
+      }
+    ],
+    "f0": [
+      {
+        "acceptance_granted": false,
+        "all_planned_rounds": [
+          {
+            "actual_ended_ns": 30001996243,
+            "actual_started_ns": 1001508610,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29001996243,
+            "end_lateness_from_four_second_deadline_ns": 25001996243,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "baseline",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 1508610
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": 30059899379,
+            "actual_started_ns": 1000645332,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29059899379,
+            "end_lateness_from_four_second_deadline_ns": 25059899379,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "valid-work-root",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 645332
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          }
+        ],
+        "artifact": 13291962180,
+        "denominator_fields": {
+          "controller_resource_failure": null,
+          "controller_resources_complete": true,
+          "four_second_slo_successes": 0,
+          "native_complete_success": null,
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "native_result_observed": null,
+          "planned_business_packet_exposures": 42,
+          "planned_confirmations": 6,
+          "report_failure": null,
+          "report_observed": null
+        },
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126353223160,
+        "measured_run": 41760812979,
+        "member": "execution/results.json",
+        "member_bytes": 73770,
+        "member_sha256": "83cdabadbb9bff9b67c3d30b19fd467aa75c58b07003f18bf43dc4f734ee8c24",
+        "original_fields": {
+          "all_services_known_empty": null,
+          "complete_success": false,
+          "controller_resources_complete": true,
+          "failure": "NATIVE_F0_FAILED",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "report_validation_failure": "BASELINE_MUST_PASS",
+          "schema": "pon-fixed-host-root-f0-execution-v1",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        },
+        "production_activation": false,
+        "rounds_available": true,
+        "schema": "trnm-retained-f0-terminal-readback-v1",
+        "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+        "services": null,
+        "services_available": false,
+        "source_tests_executed": false,
+        "step_returncode": 101
+      },
+      {
+        "acceptance_granted": false,
+        "all_planned_rounds": [
+          {
+            "actual_ended_ns": 30001996243,
+            "actual_started_ns": 1001508610,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29001996243,
+            "end_lateness_from_four_second_deadline_ns": 25001996243,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "baseline",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 1508610
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": 30059899379,
+            "actual_started_ns": 1000645332,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29059899379,
+            "end_lateness_from_four_second_deadline_ns": 25059899379,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "valid-work-root",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 645332
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          }
+        ],
+        "artifact": 13291962180,
+        "denominator_fields": {
+          "controller_resource_failure": null,
+          "controller_resources_complete": true,
+          "four_second_slo_successes": 0,
+          "native_complete_success": false,
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "native_result_observed": true,
+          "planned_business_packet_exposures": 42,
+          "planned_confirmations": 6,
+          "report_failure": null,
+          "report_observed": true
+        },
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126353223160,
+        "measured_run": 41760812979,
+        "member": "finalization/result.json",
+        "member_bytes": 21435,
+        "member_sha256": "304e99e5d3fe63277180e83109e0a87e9ac4e4294a25f0e75e1b794e79a98144",
+        "original_fields": {
+          "all_services_known_empty": true,
+          "complete_success": false,
+          "controller_resources_complete": null,
+          "failure": null,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "native_result_failure": null,
+          "report_validation_failure": null,
+          "schema": "fixed-host-root-f0-finalization-v1",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        },
+        "production_activation": false,
+        "rounds_available": true,
+        "schema": "trnm-retained-f0-terminal-readback-v1",
+        "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+        "services": [
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": null,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "controller",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-f0-41760812979-1-fixed-host-root-f0.service"
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": true,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "baseline",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-41760812979-1-fixed-host-root-f0-baseline-5387.service"
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": true,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "valid-work-root",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-41760812979-1-fixed-host-root-f0-valid-work-root-5479.service"
+          }
+        ],
+        "services_available": true,
+        "source_tests_executed": false,
+        "step_returncode": null
+      }
+    ],
+    "w1": [
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-child-v1"
+          }
+        ],
+        "member": "fresh-service-host/child-result.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/failure",
+            "value": null
+          },
+          {
+            "pointer": "/preparation/failure_type",
+            "value": null
+          },
+          {
+            "pointer": "/preparation/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/cleanup",
+            "value": "already-collected"
+          },
+          {
+            "pointer": "/passed",
+            "value": false
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-controller-v2"
+          },
+          {
+            "pointer": "/systemd_run_exit",
+            "value": 1
+          },
+          {
+            "pointer": "/final_parent_lease/schema",
+            "value": "trnm-ci-public-fixture-parent-binding-v1"
+          },
+          {
+            "pointer": "/parent_lease/schema",
+            "value": "trnm-ci-public-fixture-parent-binding-v1"
+          },
+          {
+            "pointer": "/preparation/schema",
+            "value": "trnm-ci-original-native-build-preparation-v1"
+          },
+          {
+            "pointer": "/preparation/source_after/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/preparation/source_before/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/final_parent_lease/parent_identity/parent/mode",
+            "value": 493
+          },
+          {
+            "pointer": "/parent_lease/parent_identity/parent/mode",
+            "value": 493
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "fresh-service-host/controller-result.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/build/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/build/process_exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure",
+            "value": "CONFIRMATION_TARGET"
+          },
+          {
+            "pointer": "/runs/1/failure",
+            "value": "FRESH_NATIVE_PROCESS_REQUIRED"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/finite_target_met",
+            "value": false
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/native_returncode",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/schema",
+            "value": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          {
+            "pointer": "/runs/0/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/process/process_exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/finite_target_met",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/native_returncode",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/schema",
+            "value": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          {
+            "pointer": "/runs/1/process/exit_code",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/1/process/process_exit_code",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/history_call_index",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/phase",
+            "value": "from-zero-pressure"
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/replay_accepted",
+            "value": false
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/replay_error",
+            "value": "PUBLIC_REQUEST_DEADLINE"
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/history_call_index",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/phase",
+            "value": "from-zero-pressure"
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/replay_accepted",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/replay_error",
+            "value": "PUBLIC_REQUEST_DEADLINE"
+          },
+          {
+            "pointer": "/all_named_tests_passed",
+            "value": false
+          },
+          {
+            "pointer": "/attack_workers",
+            "value": 16
+          },
+          {
+            "pointer": "/binary_sha256_after",
+            "value": "781bf9524336dc6ba5a74150c3b4088b2470048216e1b84a803ad7c23c8ee1cb"
+          },
+          {
+            "pointer": "/binary_sha256_before",
+            "value": "781bf9524336dc6ba5a74150c3b4088b2470048216e1b84a803ad7c23c8ee1cb"
+          },
+          {
+            "pointer": "/execution_finished",
+            "value": true
+          },
+          {
+            "pointer": "/passed",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "value": false
+          },
+          {
+            "pointer": "/requested_window_ns",
+            "value": 4000000000
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-w1-fresh-service-execution-v1"
+          },
+          {
+            "pointer": "/source_expected",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_recompiled",
+            "value": true
+          },
+          {
+            "pointer": "/build/elapsed_ns",
+            "value": 9019683394
+          },
+          {
+            "pointer": "/build/source_verified",
+            "value": true
+          },
+          {
+            "pointer": "/source_after/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_before/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/runs/0/name",
+            "value": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+          },
+          {
+            "pointer": "/runs/0/passed",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/name",
+            "value": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget"
+          },
+          {
+            "pointer": "/runs/1/passed",
+            "value": false
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/runs/0/process/elapsed_ns",
+            "value": 17203445411
+          },
+          {
+            "pointer": "/runs/0/process/source_verified",
+            "value": true
+          },
+          {
+            "pointer": "/runs/1/process/elapsed_ns",
+            "value": 17195984814
+          },
+          {
+            "pointer": "/runs/1/process/source_verified",
+            "value": true
+          }
+        ],
+        "member": "fresh-service/manifest.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:16:06.078195+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "inside-after-native"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/inside-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:15:12.877626+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "inside-before-native"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/inside-before.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:16:06.101388+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "outside-after-child"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/outside-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/failure_type",
+            "value": null
+          },
+          {
+            "pointer": "/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-native-build-preparation-v1"
+          },
+          {
+            "pointer": "/source_after/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_before/commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "fresh-service-host/prepare-build.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/kind",
+            "value": "prospective-merge"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "source-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036116,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/tested_commit",
+            "value": "554a76fb8e21f160806692c753ca3ea6ad53a42f"
+          },
+          {
+            "pointer": "/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/kind",
+            "value": "prospective-merge"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "source.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-child-v1"
+          }
+        ],
+        "member": "fresh-service-host/child-result.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/failure",
+            "value": null
+          },
+          {
+            "pointer": "/preparation/failure_type",
+            "value": null
+          },
+          {
+            "pointer": "/preparation/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/cleanup",
+            "value": "already-collected"
+          },
+          {
+            "pointer": "/passed",
+            "value": false
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-controller-v2"
+          },
+          {
+            "pointer": "/systemd_run_exit",
+            "value": 1
+          },
+          {
+            "pointer": "/final_parent_lease/schema",
+            "value": "trnm-ci-public-fixture-parent-binding-v1"
+          },
+          {
+            "pointer": "/parent_lease/schema",
+            "value": "trnm-ci-public-fixture-parent-binding-v1"
+          },
+          {
+            "pointer": "/preparation/schema",
+            "value": "trnm-ci-original-native-build-preparation-v1"
+          },
+          {
+            "pointer": "/preparation/source_after/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/preparation/source_before/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/final_parent_lease/parent_identity/parent/mode",
+            "value": 493
+          },
+          {
+            "pointer": "/parent_lease/parent_identity/parent/mode",
+            "value": 493
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/preparation/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/preparation/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "fresh-service-host/controller-result.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/build/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/build/process_exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure",
+            "value": "CONFIRMATION_TARGET"
+          },
+          {
+            "pointer": "/runs/1/failure",
+            "value": "FRESH_NATIVE_PROCESS_REQUIRED"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/finite_target_met",
+            "value": false
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/native_returncode",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/schema",
+            "value": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          {
+            "pointer": "/runs/0/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/process/process_exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/finite_target_met",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/native_returncode",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/schema",
+            "value": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          {
+            "pointer": "/runs/1/process/exit_code",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/1/process/process_exit_code",
+            "value": 101
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/history_call_index",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/phase",
+            "value": "from-zero-pressure"
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/replay_accepted",
+            "value": false
+          },
+          {
+            "pointer": "/runs/0/failure_diagnostic/last_history_replay/replay_error",
+            "value": "PUBLIC_REQUEST_DEADLINE"
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/history_call_index",
+            "value": 0
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/phase",
+            "value": "from-zero-pressure"
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/replay_accepted",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/failure_diagnostic/last_history_replay/replay_error",
+            "value": "PUBLIC_REQUEST_DEADLINE"
+          },
+          {
+            "pointer": "/all_named_tests_passed",
+            "value": false
+          },
+          {
+            "pointer": "/attack_workers",
+            "value": 16
+          },
+          {
+            "pointer": "/binary_sha256_after",
+            "value": "781bf9524336dc6ba5a74150c3b4088b2470048216e1b84a803ad7c23c8ee1cb"
+          },
+          {
+            "pointer": "/binary_sha256_before",
+            "value": "781bf9524336dc6ba5a74150c3b4088b2470048216e1b84a803ad7c23c8ee1cb"
+          },
+          {
+            "pointer": "/execution_finished",
+            "value": true
+          },
+          {
+            "pointer": "/passed",
+            "value": false
+          },
+          {
+            "pointer": "/production_activation",
+            "value": false
+          },
+          {
+            "pointer": "/requested_window_ns",
+            "value": 4000000000
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-w1-fresh-service-execution-v1"
+          },
+          {
+            "pointer": "/source_expected",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_recompiled",
+            "value": true
+          },
+          {
+            "pointer": "/build/elapsed_ns",
+            "value": 9099385777
+          },
+          {
+            "pointer": "/build/source_verified",
+            "value": true
+          },
+          {
+            "pointer": "/source_after/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_before/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/runs/0/name",
+            "value": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+          },
+          {
+            "pointer": "/runs/0/passed",
+            "value": false
+          },
+          {
+            "pointer": "/runs/1/name",
+            "value": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget"
+          },
+          {
+            "pointer": "/runs/1/passed",
+            "value": false
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/runs/0/process/elapsed_ns",
+            "value": 17398444814
+          },
+          {
+            "pointer": "/runs/0/process/source_verified",
+            "value": true
+          },
+          {
+            "pointer": "/runs/1/process/elapsed_ns",
+            "value": 17295569092
+          },
+          {
+            "pointer": "/runs/1/process/source_verified",
+            "value": true
+          }
+        ],
+        "member": "fresh-service/manifest.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:21:49.716780+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "inside-after-native"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/inside-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:20:56.207118+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "inside-before-native"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/inside-before.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/observed_utc",
+            "value": "2026-11-04T03:21:49.740166+00:00"
+          },
+          {
+            "pointer": "/phase",
+            "value": "outside-after-child"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-public-host-observation-v1"
+          },
+          {
+            "pointer": "/parent/mode",
+            "value": 493
+          }
+        ],
+        "member": "fresh-service-host/outside-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/failure_type",
+            "value": null
+          },
+          {
+            "pointer": "/process/exit_code",
+            "value": 0
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-original-native-build-preparation-v1"
+          },
+          {
+            "pointer": "/source_after/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_before/commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_after/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/source_before/tracked_source_identity/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "fresh-service-host/prepare-build.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "source-after.json",
+        "original_member_retained": true
+      },
+      {
+        "artifact": 13293036964,
+        "console_depth_limit": 6,
+        "console_fields_omitted": 0,
+        "fields": [
+          {
+            "pointer": "/tested_commit",
+            "value": "01627151f3ab50750eac2adeb46d8883a601265f"
+          },
+          {
+            "pointer": "/tested_tree",
+            "value": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          {
+            "pointer": "/kind",
+            "value": "head"
+          },
+          {
+            "pointer": "/schema",
+            "value": "trnm-ci-source-v1"
+          }
+        ],
+        "member": "source.json",
+        "original_member_retained": true
+      }
+    ],
+    "w1_logs": [
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41760812907-1-fresh-challenge-service-2742.service",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=2 {\"passed\": false, \"failures\": [\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET\", \"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED\"]}",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=3 Finished with result: exit-code",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=5 Service runtime: 53.562s",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=6 CPU time consumed: 12.970s",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=7 Memory peak: 4.0M",
+      "artifact=13293036116 member=fresh-service-host/systemd-run.log line=8 Memory swap peak: 0B",
+      "artifact=13293036116 member=fresh-service/fresh.log line=5 thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5442) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:220:5:",
+      "artifact=13293036116 member=fresh-service/fresh.log line=10 failures:",
+      "artifact=13293036116 member=fresh-service/fresh.log line=12 failures:",
+      "artifact=13293036116 member=fresh-service/fresh.log line=15 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.61s",
+      "artifact=13293036116 member=fresh-service/fresh.log line=1 ",
+      "artifact=13293036116 member=fresh-service/fresh.log line=2 running 1 test",
+      "artifact=13293036116 member=fresh-service/fresh.log line=3 test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41760812907-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}",
+      "artifact=13293036116 member=fresh-service/fresh.log line=4 ",
+      "artifact=13293036116 member=fresh-service/fresh.log line=6 fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+      "artifact=13293036116 member=fresh-service/fresh.log line=7 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "artifact=13293036116 member=fresh-service/fresh.log line=8 FAILED",
+      "artifact=13293036116 member=fresh-service/fresh.log line=9 ",
+      "artifact=13293036116 member=fresh-service/fresh.log line=11 ",
+      "artifact=13293036116 member=fresh-service/fresh.log line=13     fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "artifact=13293036116 member=fresh-service/fresh.log line=14 ",
+      "artifact=13293036116 member=fresh-service/fresh.log line=16 ",
+      "artifact=13293036116 member=fresh-service/original.log line=1 ",
+      "artifact=13293036116 member=fresh-service/original.log line=2 running 1 test",
+      "artifact=13293036116 member=fresh-service/original.log line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41760812907-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}",
+      "artifact=13293036116 member=fresh-service/original.log line=4 ok",
+      "artifact=13293036116 member=fresh-service/original.log line=5 ",
+      "artifact=13293036116 member=fresh-service/original.log line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.70s",
+      "artifact=13293036116 member=fresh-service/original.log line=7 ",
+      "artifact=13293036116 member=fresh-service-controls.log line=1 ....................",
+      "artifact=13293036116 member=fresh-service-controls.log line=2 ----------------------------------------------------------------------",
+      "artifact=13293036116 member=fresh-service-controls.log line=3 Ran 20 tests in 0.990s",
+      "artifact=13293036116 member=fresh-service-controls.log line=4 ",
+      "artifact=13293036116 member=fresh-service-controls.log line=5 OK",
+      "artifact=13293036116 member=fresh-service/build.log line=99 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#module-lattice@0.2.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/module-lattice-0.2.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"module_lattice\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/module-lattice-0.2.3/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"ctutils\",\"zeroize\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmodule_lattice-037f054212d49448.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmodule_lattice-037f054212d49448.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=100 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.21\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.21/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"zmij\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.21/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libzmij-bbbc791201f28b98.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libzmij-bbbc791201f28b98.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=101 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#signature@3.0.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/signature-3.0.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"signature\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/signature-3.0.0/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"digest\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsignature-eda0ef27ec847ff9.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsignature-eda0ef27ec847ff9.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=102 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"memchr\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.0/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmemchr-6f850bf5a6044055.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmemchr-6f850bf5a6044055.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=103 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"itoa\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libitoa-11462d32dd4f4b62.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libitoa-11462d32dd4f4b62.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=104 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"event\",\"fs\",\"net\",\"process\",\"std\",\"time\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/rustix-51fa48eab52c10bf/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=105 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"cfg_if\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcfg_if-c5a670ea38c3355f.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcfg_if-c5a670ea38c3355f.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=106 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/hex-0.4.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"hex\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/hex-0.4.3/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libhex-51762e6a7918e424.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libhex-51762e6a7918e424.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=107 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"cpufeatures\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcpufeatures-c1d5a8873195acba.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcpufeatures-c1d5a8873195acba.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=108 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_protocol\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_protocol-dad9fd94cb3dc419.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_protocol-dad9fd94cb3dc419.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=109 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"sha2\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsha2-c9f2a43dcabaa79e.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsha2-c9f2a43dcabaa79e.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=110 {\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"static_assertions\",\"lower_upper_exp_for_non_zero\",\"rustc_diagnostics\",\"linux_raw_dep\",\"linux_raw\",\"linux_like\",\"linux_kernel\"],\"env\":[],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/rustix-2842f0cde069873a/out\"}",
+      "artifact=13293036116 member=fresh-service/build.log line=111 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"serde_json\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libserde_json-d2848616289ccf19.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libserde_json-d2848616289ccf19.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=112 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#ml-dsa@0.1.1\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/ml-dsa-0.1.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"ml_dsa\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/ml-dsa-0.1.1/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"zeroize\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libml_dsa-376dccc28f48ffad.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libml_dsa-376dccc28f48ffad.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=113 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.103\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/anyhow-1.0.103/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"anyhow\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/anyhow-1.0.103/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libanyhow-ccb9393a3e3665fe.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libanyhow-ccb9393a3e3665fe.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=114 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/build.rs\",\"edition\":\"2024\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/getrandom-9417a5b6b34e22e7/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=115 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#linux-raw-sys@0.12.1\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/linux-raw-sys-0.12.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"linux_raw_sys\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/linux-raw-sys-0.12.1/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"auxvec\",\"elf\",\"errno\",\"general\",\"if_ether\",\"ioctl\",\"net\",\"netlink\",\"no_std\",\"prctl\",\"xdp\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/liblinux_raw_sys-3ec88344ada7c9be.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/liblinux_raw_sys-3ec88344ada7c9be.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=116 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"rustix\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"event\",\"fs\",\"net\",\"process\",\"std\",\"time\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/librustix-8e11bfe2aea06206.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/librustix-8e11bfe2aea06206.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=117 {\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/getrandom-c9e82ce73944a7bc/out\"}",
+      "artifact=13293036116 member=fresh-service/build.log line=118 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_crypto_primitives\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_crypto_primitives-691031b2212816e3.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_crypto_primitives-691031b2212816e3.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=119 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-57d99548479b0d08/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=120 {\"reason\":\"build-script-executed\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"linked_libs\":[\"static=trnm_sqlite_layout_witness\"],\"linked_paths\":[\"native=/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out\"],\"cfgs\":[\"trnm_sqlite_layout_witness\"],\"env\":[[\"TRNM_SQLITE3_BUILD_FENCE\",\"sqlite-3.51.3-normal-native-linux-layout-v3\"],[\"TRNM_SQLITE3_AMALGAMATION_SHA256\",\"9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5\"]],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out\"}",
+      "artifact=13293036116 member=fresh-service/build.log line=121 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"getrandom\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libgetrandom-8d5ef345c9ab7dfb.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libgetrandom-8d5ef345c9ab7dfb.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=122 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_task_kernel\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_task_kernel-a50f6442c3af6e3e.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_task_kernel-a50f6442c3af6e3e.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=123 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#fs2@0.4.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fs2-0.4.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"fs2\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fs2-0.4.3/src/lib.rs\",\"edition\":\"2015\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfs2-2bc63fafa724eddc.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfs2-2bc63fafa724eddc.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=124 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_verification_profiles\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_verification_profiles-6ea1905a23ad6319.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_verification_profiles-6ea1905a23ad6319.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=125 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"once_cell\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"race\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libonce_cell-c80e3d5204a17efb.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libonce_cell-c80e3d5204a17efb.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=126 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#fastrand@2.3.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fastrand-2.3.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"fastrand\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fastrand-2.3.0/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfastrand-1edce8d100c98a1b.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfastrand-1edce8d100c98a1b.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=127 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_mvcc_fee\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mvcc_fee-467094a487de6b26.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mvcc_fee-467094a487de6b26.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=128 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/tempfile-3.27.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"tempfile\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/tempfile-3.27.0/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"getrandom\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtempfile-cc3f901c44f444d5.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtempfile-cc3f901c44f444d5.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=129 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_service_settlement\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_service_settlement-3543838d3d9cde4a.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_service_settlement-3543838d3d9cde4a.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=130 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_data_availability\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_data_availability-e3bc435e6c644dfe.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_data_availability-e3bc435e6c644dfe.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=131 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_sqlite_io_boundary\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_sqlite_io_boundary-71f9878fb977c84d.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_sqlite_io_boundary-71f9878fb977c84d.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=132 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_mempool\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mempool-d646131c1f27a45f.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mempool-d646131c1f27a45f.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=133 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_transport\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_transport-0646d557aa06f7a2.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_transport-0646d557aa06f7a2.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=134 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_pon_node\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_pon_node-d5dd30fe8c753d3c.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_pon_node-d5dd30fe8c753d3c.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=135 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"bin\"],\"crate_types\":[\"bin\"],\"name\":\"trnm-pon-node\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/main.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":false,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/trnm-pon-node\"],\"executable\":\"/home/runner/work/_temp/target-w1-fresh/release/trnm-pon-node\",\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=136 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"test\"],\"crate_types\":[\"bin\"],\"name\":\"public_v3_from_zero\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":true},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\"],\"executable\":\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"fresh\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=137 {\"reason\":\"build-finished\",\"success\":true}",
+      "artifact=13293036116 member=fresh-service/build.log line=138     Finished `release` profile [optimized] target(s) in 0.30s",
+      "artifact=13293036116 member=original-host-controls.log line=1 ..............................................................................",
+      "artifact=13293036116 member=original-host-controls.log line=2 ----------------------------------------------------------------------",
+      "artifact=13293036116 member=original-host-controls.log line=3 Ran 78 tests in 0.992s",
+      "artifact=13293036116 member=original-host-controls.log line=4 ",
+      "artifact=13293036116 member=original-host-controls.log line=5 OK",
+      "artifact=13293036116 member=original-native-controls.log line=75 test_report_identity_is_bounded_and_does_not_parse_or_accept_raw_bytes (__main__.ExecutionBoundaryTests.test_report_identity_is_bounded_and_does_not_parse_or_accept_raw_bytes) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=76 test_returned_native_status_survives_a_later_log_read_error (__main__.ExecutionBoundaryTests.test_returned_native_status_survives_a_later_log_read_error) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=77 test_scope_promotion_refused (__main__.ExecutionBoundaryTests.test_scope_promotion_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=78 test_source_moved_after_build_cannot_pass (__main__.ExecutionBoundaryTests.test_source_moved_after_build_cannot_pass) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=79 test_sustained_accepted_attack_and_early_only_refusals_rejected (__main__.ExecutionBoundaryTests.test_sustained_accepted_attack_and_early_only_refusals_rejected) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=80 test_sustained_deadline_boolean_must_match_actual_elapsed_interval (__main__.ExecutionBoundaryTests.test_sustained_deadline_boolean_must_match_actual_elapsed_interval) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=81 test_sustained_double_ack_is_not_two_honest_blocks (__main__.ExecutionBoundaryTests.test_sustained_double_ack_is_not_two_honest_blocks) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=82 test_sustained_exhaustion_cannot_dispatch (__main__.ExecutionBoundaryTests.test_sustained_exhaustion_cannot_dispatch) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=83 test_sustained_fabricated_depletion_and_changed_budget_refused (__main__.ExecutionBoundaryTests.test_sustained_fabricated_depletion_and_changed_budget_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=84 test_sustained_finite_non_depletion_remains_a_valid_observation (__main__.ExecutionBoundaryTests.test_sustained_finite_non_depletion_remains_a_valid_observation) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=85 test_sustained_honest_deadline_and_missing_reads_refused (__main__.ExecutionBoundaryTests.test_sustained_honest_deadline_and_missing_reads_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=86 test_sustained_missing_duplicate_or_incomplete_observer_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_duplicate_or_incomplete_observer_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=87 test_sustained_missing_or_duplicate_phase_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_or_duplicate_phase_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=88 test_sustained_missing_worker_and_attempt_cap_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_worker_and_attempt_cap_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=89 test_sustained_omitted_search_miss_and_false_winner_refused (__main__.ExecutionBoundaryTests.test_sustained_omitted_search_miss_and_false_winner_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=90 test_sustained_reopen_must_preserve_actual_meter_not_only_boolean (__main__.ExecutionBoundaryTests.test_sustained_reopen_must_preserve_actual_meter_not_only_boolean) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=91 test_sustained_report_change_after_validation_refused (__main__.ExecutionBoundaryTests.test_sustained_report_change_after_validation_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=92 test_sustained_report_is_mandatory_even_with_three_native_names (__main__.ExecutionBoundaryTests.test_sustained_report_is_mandatory_even_with_three_native_names) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=93 test_sustained_report_reader_rejects_oversize_symlink_and_bad_json (__main__.ExecutionBoundaryTests.test_sustained_report_reader_rejects_oversize_symlink_and_bad_json) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=94 test_sustained_scope_promotion_and_boolean_number_refused (__main__.ExecutionBoundaryTests.test_sustained_scope_promotion_and_boolean_number_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=95 test_sustained_shortened_window_refused (__main__.ExecutionBoundaryTests.test_sustained_shortened_window_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=96 test_sustained_unjoined_work_and_unknown_settlement_refused (__main__.ExecutionBoundaryTests.test_sustained_unjoined_work_and_unknown_settlement_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=97 test_sustained_unknown_and_double_counted_cpu_refused (__main__.ExecutionBoundaryTests.test_sustained_unknown_and_double_counted_cpu_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=98 test_sustained_valid_exhaustion_is_retained_without_fabricated_connection (__main__.ExecutionBoundaryTests.test_sustained_valid_exhaustion_is_retained_without_fabricated_connection) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=99 test_sustained_valid_packet_cannot_be_relabelled_as_exhausted (__main__.ExecutionBoundaryTests.test_sustained_valid_packet_cannot_be_relabelled_as_exhausted) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=100 test_timeout_cannot_be_overridden_by_success_text (__main__.ExecutionBoundaryTests.test_timeout_cannot_be_overridden_by_success_text) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=101 test_unjoined_receiver_work_refused (__main__.ExecutionBoundaryTests.test_unjoined_receiver_work_refused) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=102 test_unknown_cpu_cannot_become_zero (__main__.ExecutionBoundaryTests.test_unknown_cpu_cannot_become_zero) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=103 test_validated_log_must_remain_unchanged (__main__.ExecutionBoundaryTests.test_validated_log_must_remain_unchanged) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=104 test_validated_report_must_remain_unchanged (__main__.ExecutionBoundaryTests.test_validated_report_must_remain_unchanged) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=105 test_zero_match_exit_zero_is_still_failure (__main__.ExecutionBoundaryTests.test_zero_match_exit_zero_is_still_failure) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=106 test_failed_import_is_retained_without_changing_its_native_or_host_outcome (__main__.HistoryImportObservationTests.test_failed_import_is_retained_without_changing_its_native_or_host_outcome) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=107 test_host_and_packet_times_cannot_escape_known_native_parent (__main__.HistoryImportObservationTests.test_host_and_packet_times_cannot_escape_known_native_parent) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=108 test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected (__main__.HistoryImportObservationTests.test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=109 test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit (__main__.HistoryImportObservationTests.test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit) ... ok",
+      "artifact=13293036116 member=original-native-controls.log line=110 ",
+      "artifact=13293036116 member=original-native-controls.log line=111 ----------------------------------------------------------------------",
+      "artifact=13293036116 member=original-native-controls.log line=112 Ran 109 tests in 13.105s",
+      "artifact=13293036116 member=original-native-controls.log line=113 ",
+      "artifact=13293036116 member=original-native-controls.log line=114 OK",
+      "artifact=13293036116 member=preflight.log line=1 {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41760812907-1-fresh-challenge-service-2579.service",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=2 {\"passed\": false, \"failures\": [\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET\", \"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED\"]}",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=3 Finished with result: exit-code",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=5 Service runtime: 53.873s",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=6 CPU time consumed: 13.043s",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=7 Memory peak: 3.7M",
+      "artifact=13293036964 member=fresh-service-host/systemd-run.log line=8 Memory swap peak: 0B",
+      "artifact=13293036964 member=fresh-service/fresh.log line=5 thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5245) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:220:5:",
+      "artifact=13293036964 member=fresh-service/fresh.log line=10 failures:",
+      "artifact=13293036964 member=fresh-service/fresh.log line=12 failures:",
+      "artifact=13293036964 member=fresh-service/fresh.log line=15 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.69s",
+      "artifact=13293036964 member=fresh-service/fresh.log line=1 ",
+      "artifact=13293036964 member=fresh-service/fresh.log line=2 running 1 test",
+      "artifact=13293036964 member=fresh-service/fresh.log line=3 test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-41760812907-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}",
+      "artifact=13293036964 member=fresh-service/fresh.log line=4 ",
+      "artifact=13293036964 member=fresh-service/fresh.log line=6 fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+      "artifact=13293036964 member=fresh-service/fresh.log line=7 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "artifact=13293036964 member=fresh-service/fresh.log line=8 FAILED",
+      "artifact=13293036964 member=fresh-service/fresh.log line=9 ",
+      "artifact=13293036964 member=fresh-service/fresh.log line=11 ",
+      "artifact=13293036964 member=fresh-service/fresh.log line=13     fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "artifact=13293036964 member=fresh-service/fresh.log line=14 ",
+      "artifact=13293036964 member=fresh-service/fresh.log line=16 ",
+      "artifact=13293036964 member=fresh-service/original.log line=1 ",
+      "artifact=13293036964 member=fresh-service/original.log line=2 running 1 test",
+      "artifact=13293036964 member=fresh-service/original.log line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-41760812907-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}",
+      "artifact=13293036964 member=fresh-service/original.log line=4 ok",
+      "artifact=13293036964 member=fresh-service/original.log line=5 ",
+      "artifact=13293036964 member=fresh-service/original.log line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.71s",
+      "artifact=13293036964 member=fresh-service/original.log line=7 ",
+      "artifact=13293036964 member=fresh-service-controls.log line=1 ....................",
+      "artifact=13293036964 member=fresh-service-controls.log line=2 ----------------------------------------------------------------------",
+      "artifact=13293036964 member=fresh-service-controls.log line=3 Ran 20 tests in 0.978s",
+      "artifact=13293036964 member=fresh-service-controls.log line=4 ",
+      "artifact=13293036964 member=fresh-service-controls.log line=5 OK",
+      "artifact=13293036964 member=fresh-service/build.log line=99 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#module-lattice@0.2.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/module-lattice-0.2.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"module_lattice\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/module-lattice-0.2.3/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"ctutils\",\"zeroize\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmodule_lattice-037f054212d49448.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmodule_lattice-037f054212d49448.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=100 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.21\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.21/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"zmij\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.21/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libzmij-bbbc791201f28b98.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libzmij-bbbc791201f28b98.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=101 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#signature@3.0.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/signature-3.0.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"signature\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/signature-3.0.0/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"digest\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsignature-eda0ef27ec847ff9.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsignature-eda0ef27ec847ff9.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=102 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"memchr\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.0/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmemchr-6f850bf5a6044055.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libmemchr-6f850bf5a6044055.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=103 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"cfg_if\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcfg_if-c5a670ea38c3355f.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcfg_if-c5a670ea38c3355f.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=104 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"itoa\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libitoa-11462d32dd4f4b62.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libitoa-11462d32dd4f4b62.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=105 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/hex-0.4.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"hex\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/hex-0.4.3/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libhex-51762e6a7918e424.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libhex-51762e6a7918e424.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=106 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"event\",\"fs\",\"net\",\"process\",\"std\",\"time\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/rustix-51fa48eab52c10bf/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=107 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"cpufeatures\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcpufeatures-c1d5a8873195acba.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libcpufeatures-c1d5a8873195acba.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=108 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"sha2\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsha2-c9f2a43dcabaa79e.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libsha2-c9f2a43dcabaa79e.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=109 {\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"static_assertions\",\"lower_upper_exp_for_non_zero\",\"rustc_diagnostics\",\"linux_raw_dep\",\"linux_raw\",\"linux_like\",\"linux_kernel\"],\"env\":[],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/rustix-2842f0cde069873a/out\"}",
+      "artifact=13293036964 member=fresh-service/build.log line=110 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_protocol\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_protocol-dad9fd94cb3dc419.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_protocol-dad9fd94cb3dc419.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=111 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"serde_json\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libserde_json-d2848616289ccf19.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libserde_json-d2848616289ccf19.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=112 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#ml-dsa@0.1.1\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/ml-dsa-0.1.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"ml_dsa\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/ml-dsa-0.1.1/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"zeroize\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libml_dsa-376dccc28f48ffad.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libml_dsa-376dccc28f48ffad.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=113 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.103\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/anyhow-1.0.103/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"anyhow\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/anyhow-1.0.103/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libanyhow-ccb9393a3e3665fe.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libanyhow-ccb9393a3e3665fe.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=114 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#linux-raw-sys@0.12.1\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/linux-raw-sys-0.12.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"linux_raw_sys\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/linux-raw-sys-0.12.1/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"auxvec\",\"elf\",\"errno\",\"general\",\"if_ether\",\"ioctl\",\"net\",\"netlink\",\"no_std\",\"prctl\",\"xdp\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/liblinux_raw_sys-3ec88344ada7c9be.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/liblinux_raw_sys-3ec88344ada7c9be.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=115 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/build.rs\",\"edition\":\"2024\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/getrandom-9417a5b6b34e22e7/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=116 {\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/getrandom-c9e82ce73944a7bc/out\"}",
+      "artifact=13293036964 member=fresh-service/build.log line=117 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"rustix\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"event\",\"fs\",\"net\",\"process\",\"std\",\"time\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/librustix-8e11bfe2aea06206.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/librustix-8e11bfe2aea06206.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=118 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_crypto_primitives\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_crypto_primitives-691031b2212816e3.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_crypto_primitives-691031b2212816e3.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=119 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-57d99548479b0d08/build-script-build\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=120 {\"reason\":\"build-script-executed\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"linked_libs\":[\"static=trnm_sqlite_layout_witness\"],\"linked_paths\":[\"native=/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out\"],\"cfgs\":[\"trnm_sqlite_layout_witness\"],\"env\":[[\"TRNM_SQLITE3_BUILD_FENCE\",\"sqlite-3.51.3-normal-native-linux-layout-v3\"],[\"TRNM_SQLITE3_AMALGAMATION_SHA256\",\"9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5\"]],\"out_dir\":\"/home/runner/work/_temp/target-w1-fresh/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out\"}",
+      "artifact=13293036964 member=fresh-service/build.log line=121 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"getrandom\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.2/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libgetrandom-8d5ef345c9ab7dfb.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libgetrandom-8d5ef345c9ab7dfb.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=122 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_task_kernel\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_task_kernel-a50f6442c3af6e3e.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_task_kernel-a50f6442c3af6e3e.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=123 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#fs2@0.4.3\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fs2-0.4.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"fs2\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fs2-0.4.3/src/lib.rs\",\"edition\":\"2015\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfs2-2bc63fafa724eddc.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfs2-2bc63fafa724eddc.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=124 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_verification_profiles\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_verification_profiles-6ea1905a23ad6319.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_verification_profiles-6ea1905a23ad6319.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=125 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#fastrand@2.3.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fastrand-2.3.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"fastrand\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/fastrand-2.3.0/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfastrand-1edce8d100c98a1b.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libfastrand-1edce8d100c98a1b.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=126 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"once_cell\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"alloc\",\"race\",\"std\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libonce_cell-c80e3d5204a17efb.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libonce_cell-c80e3d5204a17efb.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=127 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_mvcc_fee\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mvcc_fee-467094a487de6b26.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mvcc_fee-467094a487de6b26.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=128 {\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0\",\"manifest_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/tempfile-3.27.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"tempfile\",\"src_path\":\"/home/runner/work/_temp/cargo-w1-fresh/registry/src/index.crates.io-1949cf8c6b5b557f/tempfile-3.27.0/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\",\"getrandom\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtempfile-cc3f901c44f444d5.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtempfile-cc3f901c44f444d5.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=129 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_service_settlement\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_service_settlement-3543838d3d9cde4a.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_service_settlement-3543838d3d9cde4a.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=130 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_data_availability\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_data_availability-e3bc435e6c644dfe.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_data_availability-e3bc435e6c644dfe.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=131 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_sqlite_io_boundary\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_sqlite_io_boundary-71f9878fb977c84d.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_sqlite_io_boundary-71f9878fb977c84d.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=132 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_transport\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_transport-0646d557aa06f7a2.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_transport-0646d557aa06f7a2.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=133 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_mempool\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mempool-d646131c1f27a45f.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_mempool-d646131c1f27a45f.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=134 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"trnm_pon_node\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_pon_node-d5dd30fe8c753d3c.rlib\",\"/home/runner/work/_temp/target-w1-fresh/release/deps/libtrnm_pon_node-d5dd30fe8c753d3c.rmeta\"],\"executable\":null,\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=135 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"bin\"],\"crate_types\":[\"bin\"],\"name\":\"trnm-pon-node\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/main.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":false,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/trnm-pon-node\"],\"executable\":\"/home/runner/work/_temp/target-w1-fresh/release/trnm-pon-node\",\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=136 {\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node#0.1.0\",\"manifest_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/Cargo.toml\",\"target\":{\"kind\":[\"test\"],\"crate_types\":[\"bin\"],\"name\":\"public_v3_from_zero\",\"src_path\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":true},\"profile\":{\"opt_level\":\"3\",\"debuginfo\":0,\"debug_assertions\":false,\"overflow_checks\":false,\"test\":true},\"features\":[\"default\"],\"filenames\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\"],\"executable\":\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"fresh\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=137 {\"reason\":\"build-finished\",\"success\":true}",
+      "artifact=13293036964 member=fresh-service/build.log line=138     Finished `release` profile [optimized] target(s) in 0.30s",
+      "artifact=13293036964 member=original-host-controls.log line=1 ..............................................................................",
+      "artifact=13293036964 member=original-host-controls.log line=2 ----------------------------------------------------------------------",
+      "artifact=13293036964 member=original-host-controls.log line=3 Ran 78 tests in 0.995s",
+      "artifact=13293036964 member=original-host-controls.log line=4 ",
+      "artifact=13293036964 member=original-host-controls.log line=5 OK",
+      "artifact=13293036964 member=original-native-controls.log line=75 test_report_identity_is_bounded_and_does_not_parse_or_accept_raw_bytes (__main__.ExecutionBoundaryTests.test_report_identity_is_bounded_and_does_not_parse_or_accept_raw_bytes) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=76 test_returned_native_status_survives_a_later_log_read_error (__main__.ExecutionBoundaryTests.test_returned_native_status_survives_a_later_log_read_error) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=77 test_scope_promotion_refused (__main__.ExecutionBoundaryTests.test_scope_promotion_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=78 test_source_moved_after_build_cannot_pass (__main__.ExecutionBoundaryTests.test_source_moved_after_build_cannot_pass) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=79 test_sustained_accepted_attack_and_early_only_refusals_rejected (__main__.ExecutionBoundaryTests.test_sustained_accepted_attack_and_early_only_refusals_rejected) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=80 test_sustained_deadline_boolean_must_match_actual_elapsed_interval (__main__.ExecutionBoundaryTests.test_sustained_deadline_boolean_must_match_actual_elapsed_interval) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=81 test_sustained_double_ack_is_not_two_honest_blocks (__main__.ExecutionBoundaryTests.test_sustained_double_ack_is_not_two_honest_blocks) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=82 test_sustained_exhaustion_cannot_dispatch (__main__.ExecutionBoundaryTests.test_sustained_exhaustion_cannot_dispatch) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=83 test_sustained_fabricated_depletion_and_changed_budget_refused (__main__.ExecutionBoundaryTests.test_sustained_fabricated_depletion_and_changed_budget_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=84 test_sustained_finite_non_depletion_remains_a_valid_observation (__main__.ExecutionBoundaryTests.test_sustained_finite_non_depletion_remains_a_valid_observation) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=85 test_sustained_honest_deadline_and_missing_reads_refused (__main__.ExecutionBoundaryTests.test_sustained_honest_deadline_and_missing_reads_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=86 test_sustained_missing_duplicate_or_incomplete_observer_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_duplicate_or_incomplete_observer_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=87 test_sustained_missing_or_duplicate_phase_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_or_duplicate_phase_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=88 test_sustained_missing_worker_and_attempt_cap_refused (__main__.ExecutionBoundaryTests.test_sustained_missing_worker_and_attempt_cap_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=89 test_sustained_omitted_search_miss_and_false_winner_refused (__main__.ExecutionBoundaryTests.test_sustained_omitted_search_miss_and_false_winner_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=90 test_sustained_reopen_must_preserve_actual_meter_not_only_boolean (__main__.ExecutionBoundaryTests.test_sustained_reopen_must_preserve_actual_meter_not_only_boolean) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=91 test_sustained_report_change_after_validation_refused (__main__.ExecutionBoundaryTests.test_sustained_report_change_after_validation_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=92 test_sustained_report_is_mandatory_even_with_three_native_names (__main__.ExecutionBoundaryTests.test_sustained_report_is_mandatory_even_with_three_native_names) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=93 test_sustained_report_reader_rejects_oversize_symlink_and_bad_json (__main__.ExecutionBoundaryTests.test_sustained_report_reader_rejects_oversize_symlink_and_bad_json) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=94 test_sustained_scope_promotion_and_boolean_number_refused (__main__.ExecutionBoundaryTests.test_sustained_scope_promotion_and_boolean_number_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=95 test_sustained_shortened_window_refused (__main__.ExecutionBoundaryTests.test_sustained_shortened_window_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=96 test_sustained_unjoined_work_and_unknown_settlement_refused (__main__.ExecutionBoundaryTests.test_sustained_unjoined_work_and_unknown_settlement_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=97 test_sustained_unknown_and_double_counted_cpu_refused (__main__.ExecutionBoundaryTests.test_sustained_unknown_and_double_counted_cpu_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=98 test_sustained_valid_exhaustion_is_retained_without_fabricated_connection (__main__.ExecutionBoundaryTests.test_sustained_valid_exhaustion_is_retained_without_fabricated_connection) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=99 test_sustained_valid_packet_cannot_be_relabelled_as_exhausted (__main__.ExecutionBoundaryTests.test_sustained_valid_packet_cannot_be_relabelled_as_exhausted) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=100 test_timeout_cannot_be_overridden_by_success_text (__main__.ExecutionBoundaryTests.test_timeout_cannot_be_overridden_by_success_text) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=101 test_unjoined_receiver_work_refused (__main__.ExecutionBoundaryTests.test_unjoined_receiver_work_refused) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=102 test_unknown_cpu_cannot_become_zero (__main__.ExecutionBoundaryTests.test_unknown_cpu_cannot_become_zero) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=103 test_validated_log_must_remain_unchanged (__main__.ExecutionBoundaryTests.test_validated_log_must_remain_unchanged) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=104 test_validated_report_must_remain_unchanged (__main__.ExecutionBoundaryTests.test_validated_report_must_remain_unchanged) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=105 test_zero_match_exit_zero_is_still_failure (__main__.ExecutionBoundaryTests.test_zero_match_exit_zero_is_still_failure) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=106 test_failed_import_is_retained_without_changing_its_native_or_host_outcome (__main__.HistoryImportObservationTests.test_failed_import_is_retained_without_changing_its_native_or_host_outcome) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=107 test_host_and_packet_times_cannot_escape_known_native_parent (__main__.HistoryImportObservationTests.test_host_and_packet_times_cannot_escape_known_native_parent) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=108 test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected (__main__.HistoryImportObservationTests.test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=109 test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit (__main__.HistoryImportObservationTests.test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit) ... ok",
+      "artifact=13293036964 member=original-native-controls.log line=110 ",
+      "artifact=13293036964 member=original-native-controls.log line=111 ----------------------------------------------------------------------",
+      "artifact=13293036964 member=original-native-controls.log line=112 Ran 109 tests in 12.625s",
+      "artifact=13293036964 member=original-native-controls.log line=113 ",
+      "artifact=13293036964 member=original-native-controls.log line=114 OK",
+      "artifact=13293036964 member=preflight.log line=1 {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    ]
+  }
+}
