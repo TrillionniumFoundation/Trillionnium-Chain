@@ -94,13 +94,9 @@ fn graph(
             lifts,
             current_accounts,
         ),
-        None => native_store::verify_with_lifts(
-            &node.db,
-            account_root,
-            state,
-            &mut progress,
-            lifts,
-        ),
+        None => {
+            native_store::verify_with_lifts(&node.db, account_root, state, &mut progress, lifts)
+        }
     }
     .map_err(|error| error.to_string());
     (result, checkpoints)

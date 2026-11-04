@@ -182,12 +182,19 @@ fn task_discriminator_alias_keeps_full_inputs_at_lookup_and_publication() {
                 assert_eq!(saved.input_task, current_task);
                 assert_eq!(saved.inputs.as_slice(), &proof[4..4 + INPUT_BYTES]);
                 assert_eq!(
-                    saved.arithmetic.product.as_ref().map(|value| value.as_slice()),
+                    saved
+                        .arithmetic
+                        .product
+                        .as_ref()
+                        .map(|value| value.as_slice()),
                     Some(original.product())
                 );
                 let inserted = state.entries[1].as_ref().unwrap();
                 assert_eq!(inserted.input_task, current_task);
-                assert_eq!(inserted.inputs.as_slice(), &current_proof[4..4 + INPUT_BYTES]);
+                assert_eq!(
+                    inserted.inputs.as_slice(),
+                    &current_proof[4..4 + INPUT_BYTES]
+                );
             }
             let (warm, hit) = observed(&cache, challenge, current_task, [255; 32], &current_proof);
             assert_exact(&warm.unwrap(), &expected);
