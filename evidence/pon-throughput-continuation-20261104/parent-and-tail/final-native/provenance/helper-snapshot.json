@@ -1,0 +1,6 @@
+{
+  "captured_utc": "2026-11-04T09:00:43.270315+00:00",
+  "scope": "post-run helper snapshots for interpreting and adapting recorded commands; no assertion that every historical action executed this exact helper version",
+  "production_source": false,
+  "historical_execution_authority": "per-command argv/cwd plus raw stdout/stderr/result and recorded native manifest/ELF identities"
+}

@@ -1,0 +1,18 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.62s
+     Running unittests src/lib.rs (/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_mvcc_fee-649d89314223ac39)
+
+running 3 tests
+test pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features ... ok
+test pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch ... ok
+test pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind ... ok
+
+successes:
+
+successes:
+    pon_executor::canonical_comparison_tests::canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features
+    pon_executor::canonical_comparison_tests::canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch
+    pon_executor::canonical_comparison_tests::canonical_comparison_matches_independent_serde_bytes_and_every_json_kind
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 122 filtered out; finished in 0.00s
+

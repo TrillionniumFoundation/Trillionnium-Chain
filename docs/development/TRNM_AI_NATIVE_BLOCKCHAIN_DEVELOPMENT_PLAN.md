@@ -5753,3 +5753,65 @@ workspace strict Clippy pass on the frozen source. Local linking selects the two
 affected libraries; full original-workspace head/merge CI remains its own gate.
 Original four-second service, 4,105-block recovery, independent operation and
 whole-chain PQ/effect qualification remain HOLD with unchanged budgets and flags.
+
+### 2026-11-04 final-write readback and complete-input cancellation
+
+Continue PR #688 on the concurrent `b8116f65` source, preserving its cold-ledger,
+Cell deadline, W1 collision, isolated release-toolchain and complete-return-cost
+corrections. The [throughput continuation evidence](../../evidence/pon-throughput-continuation-20261104/README.md)
+keeps every earlier failed service cohort bound to its original source.
+
+Direct append joins the existing final transactional readback helper after its
+last event write. It retains complete current State, graph, ancestry and event
+validation, original cancellation, unchanged-write fences where a qualified
+scope is available, and its `Atomic` commit-site attribution. The unqualified
+fallback retains complete validation and original-writer identity checks without
+claiming a strict write-epoch fence. No graph proof crosses COMMIT.
+
+The parent-graph carry through INSERTs remains an archived experimental
+candidate. Twelve ordinary Node controls and its paired-cost selector passed on
+the stated dirty source, but the small changed-state fixture still showed a
+10.79 percent descriptive CPU regression after removing repeated catalog reads.
+The catalog checks also do not independently establish physical page ownership;
+that review reproduced no bypass and leaves the required justification open.
+The default publisher and SQLite scope API are restored to the concurrent
+committed implementation. Full candidate patches and negative observations stay
+available; no performance or storage-safety gate is relaxed.
+
+The independent M06 same-borrow canonical comparison/prefix candidate also stays
+archived. Its single preregistered three-arm run retains all 2,592 returned
+bindings: sixteen of eighteen comparisons pass, including all six improvement
+targets, but two p95 comparisons exceed the unchanged ten-percent bound. Relative
+to the original full-map reference, the 128-key first mismatch regresses 13.1501
+percent and the 4,096-key last mismatch 16.4210 percent at the specified p95 order
+statistic. The candidate's native test succeeding is not performance acceptance.
+All three default source files return to the concurrent committed bytes; the two
+new candidate test files are retained in the experiment, not the default graph.
+No samples are removed or repeated to replace the failed decision. These are
+finite component samples, not a service p95 or hardware qualification.
+
+A complete public V3 request rejects additional input observed during Enqueue or
+Await and sets the original cancellation flag. Pending challenge/grant phases
+continue to permit the legitimate body to arrive early. This prevents a buffered
+tail from hiding a later FIN during those waits. Work that already committed
+remains factual; later transport failure or suppressed acknowledgement does not
+prove rollback, and an already queued Output may still be delivered.
+
+Retained native controls, exact source and corpus checks, strict Clippy, the
+original complete Node suites and original Host/business gates remain required.
+Component results do not establish touched-key complexity, four-second
+confirmation, whole-chain PQ or activation.
+
+The concurrent `69d2e06c` History failure-page diagnostic is preserved verbatim.
+The final composition's [native evidence](../../evidence/pon-throughput-continuation-20261104/parent-and-tail/final-native/README.md)
+binds 1,190 native inputs to manifest `ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c`.
+Its actual selected Node controls pass 127 distinct tests, the complete M06
+library passes 113 with seven ignored, and all 13 original SQLite transaction
+scope controls pass. The original workspace's 40 Node plus 18 M06 selectors map
+to actual passing records; these 58 are a subset, not additional tests. The Node
+ELF registers 1,019 tests with 27 ignored; selected execution is not a complete
+Node-suite pass. Strict Clippy passes for all three affected components with
+their original profiles and all features. Source and ELF guards remain unchanged
+through these local observations. The original complete Node, exact committed
+head and actual merge, service, history and independent qualification gates stay
+open until their own evidence passes.

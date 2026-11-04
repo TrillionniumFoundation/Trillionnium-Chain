@@ -1,0 +1,110 @@
+{
+  "scope": "Byte-copy and decompression checks made while packaging; source-after is deduplicated because its complete bytes equal source-before.",
+  "copies": [
+    {
+      "key": "registry_all_stdout",
+      "source": "root-provided final-b811-native/registry-all.stdout",
+      "destination": "raw/registry-all.stdout.gz",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-all.stdout.gz",
+      "compression": "gzip",
+      "original_bytes": 114182,
+      "original_sha256": "e68e056d703230abd8928979a0b4e206b5ed34bef9aff8b7d873393bc8c6bddb",
+      "stored_sha256": "c3eefc295751dfc8f96e1a2777ee4a896237f0fca74206378c4c0b09c3d98cc7"
+    },
+    {
+      "key": "registry_all_stderr",
+      "source": "root-provided final-b811-native/registry-all.stderr",
+      "destination": "raw/registry-all.stderr",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-all.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "key": "registry_all_receipt",
+      "source": "root-provided final-b811-native/registry-all.json",
+      "destination": "raw/registry-all.json",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-all.json",
+      "compression": "none",
+      "original_bytes": 732,
+      "original_sha256": "4d1c720c6d94b64820c623bc465efd7a6d78a01820fa47b06a9ac5a1fff4180d",
+      "stored_sha256": "4d1c720c6d94b64820c623bc465efd7a6d78a01820fa47b06a9ac5a1fff4180d"
+    },
+    {
+      "key": "registry_ignored_stdout",
+      "source": "root-provided final-b811-native/registry-ignored.stdout",
+      "destination": "raw/registry-ignored.stdout.gz",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-ignored.stdout.gz",
+      "compression": "gzip",
+      "original_bytes": 2691,
+      "original_sha256": "dda33d1617b05e9f47f63690fa7aa55a7eed9b5ba8a486e3a53dd2865d660b1d",
+      "stored_sha256": "e1d94ef8dac9b05a7f70f5198a7594c3ba4dee190cda818891a19b6d6072317c"
+    },
+    {
+      "key": "registry_ignored_stderr",
+      "source": "root-provided final-b811-native/registry-ignored.stderr",
+      "destination": "raw/registry-ignored.stderr",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-ignored.stderr",
+      "compression": "none",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "key": "registry_ignored_receipt",
+      "source": "root-provided final-b811-native/registry-ignored.json",
+      "destination": "raw/registry-ignored.json",
+      "actual_bytes_equal": true,
+      "path": "raw/registry-ignored.json",
+      "compression": "none",
+      "original_bytes": 766,
+      "original_sha256": "bdadbaa5932c6d3f7298379894fcf81daef7fb5a9b63d7ae94bf32c630fbb3ad",
+      "stored_sha256": "bdadbaa5932c6d3f7298379894fcf81daef7fb5a9b63d7ae94bf32c630fbb3ad"
+    },
+    {
+      "key": "source_before",
+      "source": "root-provided final-b811-native/source-before.json",
+      "destination": "raw/source-before.json.gz",
+      "actual_bytes_equal": true,
+      "path": "raw/source-before.json.gz",
+      "compression": "gzip",
+      "original_bytes": 176577,
+      "original_sha256": "250b3f64f9a355753a4bde67500e8d65afda9a4acbaf10ff2d2063e352f0e9ba",
+      "stored_sha256": "5d9f79cea8fa00b19c91f163379f77707c2131a13bf98316a8ed01d7a7b45a3f"
+    },
+    {
+      "key": "native_observation",
+      "source": "root-provided final-b811-native/result.json",
+      "destination": "raw/native-result.json",
+      "actual_bytes_equal": true,
+      "path": "raw/native-result.json",
+      "compression": "none",
+      "original_bytes": 16157,
+      "original_sha256": "ac57651d94dc49bb6831e2b4ac518578816415e82808eff264d4881dd19de64c",
+      "stored_sha256": "ac57651d94dc49bb6831e2b4ac518578816415e82808eff264d4881dd19de64c"
+    },
+    {
+      "key": "base_workspace_workflow",
+      "source": "git object b8116f65789a85148254f870c678a44f895316de:.github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "destination": "raw/workspace-b811.yml.gz",
+      "actual_bytes_equal": true,
+      "path": "raw/workspace-b811.yml.gz",
+      "compression": "gzip",
+      "original_bytes": 29385,
+      "original_sha256": "5fc4762309966c7222eb85607d31a4f0addef2792516c6996a5bbc74a4300c1e",
+      "stored_sha256": "bcaa82527662f471c8a43102ff96f30c6b6c3dee6e7338b7609af77cb00f95eb"
+    }
+  ],
+  "source_after_deduplication": {
+    "original_sha256": "250b3f64f9a355753a4bde67500e8d65afda9a4acbaf10ff2d2063e352f0e9ba",
+    "same_as": "raw/source-before.json.gz",
+    "actual_bytes_equal": true
+  },
+  "existing_parent_sha256sums_unchanged": true
+}

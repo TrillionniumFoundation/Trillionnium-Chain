@@ -1,0 +1,132 @@
+{
+  "validated_utc": "2026-11-04T08:35:45.354166+00:00",
+  "scope": "auxiliary archival copy, Markdown link, decision and default-source validation only; no compilation or native execution",
+  "copy_files_verified": 43,
+  "patch_sha256": "6c61fcfa73c993db1a64a6b9b2771fb960d9066ca33b917cbccd38a2c4eb314f",
+  "comparison_reader_and_registration_sha_verified": true,
+  "markdown_links_verified": [
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/measurement.stdout"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/measurement-result.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/decision.stdout"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/decision-result.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "comparison-preregistration.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "candidate-tested/checked_prefix_three_arm_tests.rs.txt"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "reference-provenance-before-format.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "pre-run-peer-review.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/timed-attempt.started.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/build-result.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "raw/compiler-environment.stdout"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "copy-integrity.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "candidate-tested-integrity.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "candidate-tested.patch"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "default-restoration.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "../README.md"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "archive-reader-replay.stdout"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/README.md",
+      "target": "copy-integrity.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "prefix-three-arm/README.md"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-canonical.log"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-canonical.run.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-commitment.log"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-commitment.run.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-binding-cost.log"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-binding-cost.run.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "../../local-components/state-final-unchanged-binding-cost-summary.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "state-prefix-binding-cost-summary.json"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "../ci/README.md"
+    },
+    {
+      "document": "evidence/pon-throughput-continuation-20261104/parent-and-tail/state/README.md",
+      "target": "copy-integrity.json"
+    }
+  ],
+  "restored_default_sources_still_equal": true,
+  "candidate_new_test_files_absent": true,
+  "decision": "HOLD",
+  "comparisons_passed": 16,
+  "comparisons_failed": 2,
+  "failure_basis": "two p95 regressions exceed the original 10% maximum",
+  "no_new_native_execution": true
+}

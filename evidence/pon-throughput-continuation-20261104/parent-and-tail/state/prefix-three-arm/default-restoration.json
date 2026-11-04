@@ -1,0 +1,29 @@
+{
+  "completed_utc": "2026-11-04T08:31:49.959383+00:00",
+  "default_ref": "b8116f65789a85148254f870c678a44f895316de",
+  "equal_historical_ref": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "restored_files": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "default_sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+      "matches_40a5_and_b811_worktree_and_index": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "default_sha256": "f7f8aea894d0aec0d9612abc5c7e1a0cef69ccd0e2ca992e3300205d9824e67c",
+      "matches_40a5_and_b811_worktree_and_index": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+      "default_sha256": "109ee5f1194df9b78d7fd39f667ab8965a35247b761502be72bac0c2295b0be8",
+      "matches_40a5_and_b811_worktree_and_index": true
+    }
+  ],
+  "removed_candidate_only_files": [
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/checked_prefix_three_arm_tests.rs"
+  ],
+  "five_path_git_status": "",
+  "archive_integrity": "candidate-tested-integrity.json",
+  "no_rerun": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "native-functional-observation-v1",
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "readback_tests::",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "compiled_native_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "compiled_manifest_file_sha256": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b",
+  "binary_before_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "scope": "First functional append/reorg checks on the previously built dirty73ab ELF. Not a test of later source edits or performance qualification.",
+  "exit_code": 0,
+  "elapsed_ns": 4615618885,
+  "binary_after_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "stdout_sha256": "c6f4e43de2a22678b25e43b17a3189676a7c36893910eece6a1cfac731a5f111",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

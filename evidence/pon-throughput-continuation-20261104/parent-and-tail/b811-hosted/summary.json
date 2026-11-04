@@ -1,0 +1,1107 @@
+{
+  "campaign": {
+    "additional_four_second_confirmations": {
+      "denominator": 27,
+      "not_the_original_campaign_gate": true,
+      "numerator": 0
+    },
+    "completed_native_runs": 3,
+    "completed_utc": "2026-11-04T08:05:59.288565+00:00",
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "finalization_failures": [],
+    "native_exits": [
+      101,
+      101,
+      101
+    ],
+    "observed_rounds": 12,
+    "original_confirmations": {
+      "denominator": 27,
+      "numerator": 3
+    },
+    "original_criteria": [
+      false,
+      false,
+      false
+    ],
+    "phase_startup_errors": [
+      [],
+      [],
+      []
+    ],
+    "planned_runs": 3,
+    "report_validation_failures": [
+      null,
+      null,
+      null
+    ],
+    "started_utc": "2026-11-04T07:58:28.905945+00:00",
+    "unobserved_planned_rounds": 15
+  },
+  "f0": {
+    "all_services_known_empty": true,
+    "cleanup_failures": [],
+    "completed_utc": "2026-11-04T08:02:48.105513+00:00",
+    "finalization_complete_success": false,
+    "four_second_confirmations": {
+      "denominator": 6,
+      "numerator": 0
+    },
+    "native_exit": 101,
+    "native_failure": "NATIVE_F0_FAILED",
+    "observed_rounds": 3,
+    "original_confirmations": {
+      "denominator": 6,
+      "numerator": 1
+    },
+    "planned_business_packet_exposures": 42,
+    "reader_failure": "BASELINE_MUST_PASS",
+    "started_utc": "2026-11-04T08:01:32.654194+00:00",
+    "unobserved_planned_rounds": 3
+  },
+  "measured_resource_scope": {
+    "controller_cpu_max": "400000 100000",
+    "controller_memory_max": "17179869184",
+    "controller_nice": 10,
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "independent_operator_or_WAN_qualified": false,
+    "limits_are_ceilings_not_physical_reservations": true,
+    "m06_workers": 1,
+    "phase_seconds": 30,
+    "receiver_and_verifier_pids_max": "256",
+    "receiver_and_verifier_shared_cpu_max": "25000 100000",
+    "receiver_and_verifier_shared_memory_max": "2147483648",
+    "receiver_and_verifier_swap_max": "0",
+    "same_host_loopback": true,
+    "scheduled_round_seconds": [
+      1,
+      5,
+      9
+    ]
+  },
+  "readback_at": "2026-11-04T08:32:21.653976+00:00",
+  "reports": [
+    {
+      "additional_four_second_confirmations": 0,
+      "artifact_id": 13305647421,
+      "confirmed_in_original_window": 1,
+      "derived_readback": "f0/report-derived-readback.json.gz",
+      "full_raw_report_retained_in_artifact": true,
+      "label": "F0",
+      "observed_rounds": 3,
+      "phases": [
+        {
+          "client_account_graph_delta": {
+            "calls": 73,
+            "cpu_known_calls": 73,
+            "cpu_ns": 4189860107,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17874610559
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 9,
+            "atomic": 0,
+            "reorg_step": 9,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 153973978,
+          "confirmed": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 115786519,
+          "host_check_totals": {
+            "calls_accepted": 101536,
+            "calls_completed": 101536,
+            "calls_rejected": 0,
+            "calls_started": 101536,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 4822922012,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 6197946310
+          },
+          "late_submission_attempts": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 10,
+          "replay_failed": 1,
+          "replay_succeeded": 9,
+          "replay_thread_cpu_ns_known_sum": 5666386777,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 24968629351,
+          "rounds": [
+            {
+              "confirmed_depth": 6,
+              "confirmed_in_original_window": true,
+              "ended_ns": 23676603567,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000555073
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30070614616,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": 23676615294
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 14,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 14,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 0,
+            "cpu_known_calls": 0,
+            "cpu_ns": 0,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 0
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 0,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 0,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 0,
+          "host_check_totals": {},
+          "late_submission_attempts": 1,
+          "mode": "valid-work-root",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 0,
+          "replay_failed": 0,
+          "replay_succeeded": 0,
+          "replay_thread_cpu_ns_known_sum": 0,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 0,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30028648348,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1027482034
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 15,
+          "submission_errors": {
+            "FRAME_DEADLINE": 3,
+            "IO: Resource temporarily unavailable (os error 11)": 8
+          },
+          "successful_network_ack_attempts": 4,
+          "verifier_errors": []
+        }
+      ],
+      "planned_confirmations": 6,
+      "projection": "f0/report-raw-projection.json.gz",
+      "raw_member": "execution/raw/report.json",
+      "raw_report_sha256": "475a4453ec7cb21bf790a2054726e203bbb2eb74d25cf755e8f41d05b0cc9bc9"
+    },
+    {
+      "additional_four_second_confirmations": 0,
+      "artifact_id": 13304684338,
+      "confirmed_in_original_window": 1,
+      "derived_readback": "campaign/run-1-derived-readback.json.gz",
+      "full_raw_report_retained_in_artifact": true,
+      "label": "campaign-run-1",
+      "observed_rounds": 4,
+      "phases": [
+        {
+          "client_account_graph_delta": {
+            "calls": 80,
+            "cpu_known_calls": 80,
+            "cpu_ns": 4368571795,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18636087293
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 10,
+            "atomic": 0,
+            "reorg_step": 9,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 20730763,
+          "confirmed": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 198538905,
+          "host_check_totals": {
+            "calls_accepted": 116007,
+            "calls_completed": 116007,
+            "calls_rejected": 0,
+            "calls_started": 116007,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 5172773463,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 6209654993
+          },
+          "late_submission_attempts": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 11,
+          "replay_failed": 1,
+          "replay_succeeded": 10,
+          "replay_thread_cpu_ns_known_sum": 5929366658,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25607791298,
+          "rounds": [
+            {
+              "confirmed_depth": 6,
+              "confirmed_in_original_window": true,
+              "ended_ns": 21306569696,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000704097
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30001270255,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": 21306610127
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 14,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 14,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 24,
+            "cpu_known_calls": 24,
+            "cpu_ns": 1753201072,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17411542217
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 4,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 93553292,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 501131765,
+          "host_check_totals": {
+            "calls_accepted": 42881,
+            "calls_completed": 42881,
+            "calls_rejected": 0,
+            "calls_started": 42881,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2141291905,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 4969099637
+          },
+          "late_submission_attempts": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observer_complete": false,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 1,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 5,
+          "replay_failed": 1,
+          "replay_succeeded": 4,
+          "replay_thread_cpu_ns_known_sum": 2465867098,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25198619610,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30002902167,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000164327
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 26,
+            "cpu_known_calls": 26,
+            "cpu_ns": 1702941145,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17004999945
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 5,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 5556164,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 595696857,
+          "host_check_totals": {
+            "calls_accepted": 45014,
+            "calls_completed": 45014,
+            "calls_rejected": 0,
+            "calls_started": 45014,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2120086381,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 4937467531
+          },
+          "late_submission_attempts": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 6,
+          "replay_failed": 1,
+          "replay_succeeded": 5,
+          "replay_thread_cpu_ns_known_sum": 2457808356,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 24994284624,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30081008496,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1080225578
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "planned_confirmations": 9,
+      "projection": "campaign/run-1-raw-projection.json.gz",
+      "raw_member": "run-1-raw/report.json",
+      "raw_report_sha256": "dd5b9462e1d8437396a0059af181226b3d20cd8f4f3f4c5ec8a20ca489ac4ecd"
+    },
+    {
+      "additional_four_second_confirmations": 0,
+      "artifact_id": 13304684338,
+      "confirmed_in_original_window": 1,
+      "derived_readback": "campaign/run-2-derived-readback.json.gz",
+      "full_raw_report_retained_in_artifact": true,
+      "label": "campaign-run-2",
+      "observed_rounds": 4,
+      "phases": [
+        {
+          "client_account_graph_delta": {
+            "calls": 82,
+            "cpu_known_calls": 82,
+            "cpu_ns": 4356712085,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18696013092
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 10,
+            "atomic": 0,
+            "reorg_step": 9,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 21654618,
+          "confirmed": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 188472765,
+          "host_check_totals": {
+            "calls_accepted": 118162,
+            "calls_completed": 118162,
+            "calls_rejected": 0,
+            "calls_started": 118162,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 5112427286,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 6717148811
+          },
+          "late_submission_attempts": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 11,
+          "replay_failed": 1,
+          "replay_succeeded": 10,
+          "replay_thread_cpu_ns_known_sum": 5881522752,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25414632527,
+          "rounds": [
+            {
+              "confirmed_depth": 6,
+              "confirmed_in_original_window": true,
+              "ended_ns": 20798218949,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1001283609
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30001973661,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": 20798261904
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 14,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 14,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 25,
+            "cpu_known_calls": 25,
+            "cpu_ns": 1773145836,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17496001167
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 4,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 4397273,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 500270123,
+          "host_check_totals": {
+            "calls_accepted": 43803,
+            "calls_completed": 43803,
+            "calls_rejected": 0,
+            "calls_started": 43803,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2157439616,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 5086289584
+          },
+          "late_submission_attempts": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 5,
+          "replay_failed": 1,
+          "replay_succeeded": 4,
+          "replay_thread_cpu_ns_known_sum": 2501318732,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25483385037,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30051035945,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000901711
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 24,
+            "cpu_known_calls": 24,
+            "cpu_ns": 1746085867,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17479265820
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 4,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 4988093,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 594925974,
+          "host_check_totals": {
+            "calls_accepted": 43433,
+            "calls_completed": 43433,
+            "calls_rejected": 0,
+            "calls_started": 43433,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2125536264,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 4216224700
+          },
+          "late_submission_attempts": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 5,
+          "replay_failed": 1,
+          "replay_succeeded": 4,
+          "replay_thread_cpu_ns_known_sum": 2449598400,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 24996149207,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30055886300,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1054027367
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "planned_confirmations": 9,
+      "projection": "campaign/run-2-raw-projection.json.gz",
+      "raw_member": "run-2-raw/report.json",
+      "raw_report_sha256": "3ba612fe93c7e9e3f6209683fa4112ba7d96e32acf8c0e0489b92fb459f54dab"
+    },
+    {
+      "additional_four_second_confirmations": 0,
+      "artifact_id": 13304684338,
+      "confirmed_in_original_window": 1,
+      "derived_readback": "campaign/run-3-derived-readback.json.gz",
+      "full_raw_report_retained_in_artifact": true,
+      "label": "campaign-run-3",
+      "observed_rounds": 4,
+      "phases": [
+        {
+          "client_account_graph_delta": {
+            "calls": 81,
+            "cpu_known_calls": 81,
+            "cpu_ns": 4289377424,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18479003183
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 10,
+            "atomic": 0,
+            "reorg_step": 9,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 19561360,
+          "confirmed": 1,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 127482302,
+          "host_check_totals": {
+            "calls_accepted": 116033,
+            "calls_completed": 116033,
+            "calls_rejected": 0,
+            "calls_started": 116033,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 5047698647,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 6582371504
+          },
+          "late_submission_attempts": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 11,
+          "replay_failed": 1,
+          "replay_succeeded": 10,
+          "replay_thread_cpu_ns_known_sum": 5828795464,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25367554204,
+          "rounds": [
+            {
+              "confirmed_depth": 6,
+              "confirmed_in_original_window": true,
+              "ended_ns": 21299854247,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000248771
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30001179195,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": 21299897442
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 14,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 14,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 24,
+            "cpu_known_calls": 24,
+            "cpu_ns": 1779366103,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 18074290928
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 4,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 5332084,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 499414956,
+          "host_check_totals": {
+            "calls_accepted": 43155,
+            "calls_completed": 43155,
+            "calls_rejected": 0,
+            "calls_started": 43155,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2162836474,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 4263206183
+          },
+          "late_submission_attempts": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 5,
+          "replay_failed": 1,
+          "replay_succeeded": 4,
+          "replay_thread_cpu_ns_known_sum": 2495461728,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25394548837,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30003242789,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1000753696
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "client_account_graph_delta": {
+            "calls": 24,
+            "cpu_known_calls": 24,
+            "cpu_ns": 1724016719,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "wall_ns": 17512188741
+          },
+          "client_sql_commit_calls": {
+            "admission_persistence": 4,
+            "atomic": 0,
+            "reorg_step": 0,
+            "reorg_termination": 0
+          },
+          "client_sql_commit_wall_ns": 6313637,
+          "confirmed": 0,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "history_fetch_wall_ns": 485993910,
+          "host_check_totals": {
+            "calls_accepted": 43277,
+            "calls_completed": 43277,
+            "calls_rejected": 0,
+            "calls_started": 43277,
+            "calls_unfinished": 0,
+            "cpu_clock_unknown_calls": 0,
+            "thread_cpu_ns": 2104033348,
+            "wall_clock_unknown_calls": 0,
+            "wall_ns": 4655543382
+          },
+          "late_submission_attempts": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observer_complete": true,
+          "planned_packet_exposures": 21,
+          "planned_rounds": 3,
+          "receiver_client_state_equal": false,
+          "receiver_counter_overflow": false,
+          "receiver_measurement_failures": 0,
+          "receiver_records_not_retained": 0,
+          "replay_calls": 5,
+          "replay_failed": 1,
+          "replay_succeeded": 4,
+          "replay_thread_cpu_ns_known_sum": 2436076806,
+          "replay_unknown_cpu_calls": 0,
+          "replay_wall_ns": 25293145440,
+          "rounds": [
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": 30089154246,
+              "four_seconds_from_schedule_met": false,
+              "observed": true,
+              "round": 0,
+              "scheduled_offset_ns": 1000000000,
+              "started_ns": 1001773318
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 1,
+              "scheduled_offset_ns": 5000000000,
+              "started_ns": null
+            },
+            {
+              "confirmed_depth": null,
+              "confirmed_in_original_window": false,
+              "ended_ns": null,
+              "four_seconds_from_schedule_met": false,
+              "observed": false,
+              "round": 2,
+              "scheduled_offset_ns": 9000000000,
+              "started_ns": null
+            }
+          ],
+          "submission_attempts": 7,
+          "submission_errors": {},
+          "successful_network_ack_attempts": 7,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ],
+      "planned_confirmations": 9,
+      "projection": "campaign/run-3-raw-projection.json.gz",
+      "raw_member": "run-3-raw/report.json",
+      "raw_report_sha256": "434aa8af034b8766ec1ed0bf3227ab71e83cac2ab6e318fe8597d82860153588"
+    }
+  ],
+  "schema": "b811-hosted-original-service-readback-v1",
+  "scope": "Hosted clean b811 head results only, not the locally dirty final candidate. No new native or Cargo run was performed to prepare this evidence.",
+  "source": {
+    "base": null,
+    "candidate": "b8116f65789a85148254f870c678a44f895316de",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "b8116f65789a85148254f870c678a44f895316de",
+    "tested_tree": "fba28b3870da952db979d4a7ea2ba1b0ee207134",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 933469533,
+    "tracked_entries": 8127,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_all_identical": true,
+  "timing_readback": {
+    "host_cpu": "recorded invoking-thread Host spans, not complete scoped-worker CPU",
+    "native_counters": "after minus before within the same phase",
+    "nested_costs_are_not_additive": true,
+    "no_cross_host_abba_or_causal_attribution": true,
+    "sql_commit": "actual Transaction::commit API interval, not all storage cost or isolated fsync",
+    "unit": "integer nanoseconds"
+  }
+}

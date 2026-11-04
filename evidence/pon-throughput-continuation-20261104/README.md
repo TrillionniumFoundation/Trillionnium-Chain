@@ -261,3 +261,48 @@ and storage boundaries. They are not execution of the complete Node suite on
 this new source, the original fixed-Host service campaigns, an independent
 operator test or a public throughput result. The existing head/actual-merge
 workflows retain those original obligations and the failed historical reports.
+
+## Parent readback and TCP-tail continuation: qualification remains open
+
+The [parent-and-tail evidence index](parent-and-tail/README.md) records the next
+continuation on b811. Its retained runtime changes are cancellation when additional
+TCP input is observed after a complete request during Enqueue/Await, and
+DirectAppend participation in the existing final-write transactional readback.
+Complete State/W1 validation and final writer/generation checks remain; transaction
+replacement follows the existing reorg scope-error escalation, so universal error
+identity equivalence is not claimed. The two historical TCP runs and first append
+controls keep their own source/ELF identities in that index.
+
+The [parent-graph candidate](parent-and-tail/graph-candidate/README.md) is archived
+and disabled after an unresolved physical-page ownership justification and a
+10.79% small-account changed-state CPU regression. The independent
+[M06 three-arm candidate](parent-and-tail/state/prefix-three-arm/README.md) is also
+archived and disabled: its sole run passed sixteen of eighteen comparisons, but
+two p95 regressions exceeded the original 10% rule. Defaults were restored and
+negative samples retained. The [final CI wiring](parent-and-tail/ci-final/README.md)
+declares 58 workspace selections; static wiring is not native execution. Final
+default-source native qualification remains pending at this checkpoint and will
+be recorded separately from these historical candidates.
+
+The separate [clean b811 hosted readback](parent-and-tail/b811-hosted/README.md)
+retains F0 1/6 and campaign 3/27 confirmations in their original windows, with
+scheduled four-second results of 0/6 and 0/27. Baseline replay/commit deadlines
+and the ROOT pressure phase with zero History/replay calls are distinct blocking
+points. The [remaining conditions](parent-and-tail/README.md) preserve issue #639's
+original four-second/16-worker gate, 4,105-block History, complete-state O(N) work,
+and independent security/operator qualification. No full closure or activation
+is inferred from this continuation.
+
+### Final local composition after the concurrent History diagnostic
+
+The subsequent [final native record](parent-and-tail/final-native/README.md)
+supersedes the pending local-validation checkpoint above. It preserves the
+concurrent `69d2e06c` diagnostic and binds 1,190 native inputs to manifest
+`ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c`.
+Actual passing execution comprises 127 selected Node tests, the complete M06
+library's 113 ordinary tests, and 13 original SQLite scope tests: 253 distinct
+tests in total. The 58 workspace selections map to this execution as a subset.
+Strict Clippy passes for the three components. Input and actual ELF hashes stay
+unchanged before and after each recorded batch. The complete Node library and
+the original head/actual-merge business gates are separate remaining obligations;
+these local records do not supersede the failed b811 service observations.

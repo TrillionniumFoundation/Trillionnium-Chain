@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+"""Source-bound local native observations; no public-service acceptance claim."""
+from pathlib import Path
+import argparse, datetime, hashlib, json, resource, subprocess, sys, time
+
+ROOT = Path('/workspace/scratch/7318d5f890d1/chain-throughput')
+WRAPPER = '/workspace/scratch/7318d5f890d1/run-throughput.sh'
+PRIOR = Path('/workspace/scratch/7318d5f890d1/throughput-readback/prewrite-73ab-trimmed-schema-build-attempt-1/source-before.json')
+
+def digest(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+def write(path, value):
+    path.write_text(json.dumps(value, indent=2, sort_keys=True) + '\n')
+
+def source():
+    paths = {name for name in json.loads(PRIOR.read_text())['native_input_files']
+             if not name.startswith('trillionnium/')}
+    paths.update(str(p.relative_to(ROOT)) for p in (ROOT / 'trillionnium').rglob('*')
+                 if p.is_file() and not {'target', '__pycache__', '.git'} & set(p.parts))
+    files = {name: digest(ROOT / name) for name in sorted(paths)}
+    return {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+            'native_input_files': files,
+            'manifest_sha256': hashlib.sha256(json.dumps(files, sort_keys=True, separators=(',', ':')).encode()).hexdigest(),
+            'scope': 'All current workspace files and the retained external literal src/build includes; dirty composed source, not a clean-commit or whole-repository verdict.'}
+
+def execute(out, label, argv, *, cwd=ROOT):
+    start = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    tick = time.monotonic_ns()
+    usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+    stdout, stderr = out / (label + '.stdout'), out / (label + '.stderr')
+    with stdout.open('wb') as so, stderr.open('wb') as se:
+        result = subprocess.run(argv, cwd=cwd, stdout=so, stderr=se)
+    end = resource.getrusage(resource.RUSAGE_CHILDREN)
+    record = {'label': label, 'argv': argv, 'cwd': str(cwd), 'started_at': start,
+              'finished_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'wall_ns': time.monotonic_ns() - tick, 'exit_code': result.returncode,
+              'child_user_seconds': end.ru_utime - usage.ru_utime,
+              'child_system_seconds': end.ru_stime - usage.ru_stime,
+              'max_child_rss_kib': end.ru_maxrss,
+              'stdout_sha256': digest(stdout), 'stderr_sha256': digest(stderr)}
+    write(out / (label + '.json'), record)
+    print(json.dumps({'label': label, 'exit_code': result.returncode, 'wall_ns': record['wall_ns']}), flush=True)
+    return record
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument('action', choices=['build', 'selected', 'lint', 'components'])
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--build-record', type=Path)
+    args = p.parse_args()
+    out = args.output.resolve(); out.mkdir(parents=True, exist_ok=False)
+    before = source(); write(out / 'source-before.json', before)
+    print(json.dumps({'action': args.action, 'manifest': before['manifest_sha256'], 'files': len(before['native_input_files'])}), flush=True)
+    records = []
+    binary = None
+    binary_before = None
+    component_artifacts = {}
+    if args.action == 'build':
+        records.append(execute(out, 'preflight', ['bash', 'scripts/project-preflight.sh']))
+        if records[-1]['exit_code'] == 0:
+            records.append(execute(out, 'build', ['bash', WRAPPER, 'cargo', 'test', '--locked', '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib', '--all-features', '--no-run', '--message-format=json']))
+        if records[-1]['exit_code'] == 0:
+            artifacts = []
+            for line in (out / 'build.stdout').read_text().splitlines():
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if row.get('reason') == 'compiler-artifact' and row.get('target', {}).get('name') == 'trnm_pon_node' and row.get('executable'):
+                    artifacts.append(row)
+            assert len(artifacts) == 1, len(artifacts)
+            binary = Path(artifacts[0]['executable']); binary_before = digest(binary)
+            write(out / 'compiler-artifact.json', artifacts[0])
+    elif args.action == 'selected':
+        assert args.build_record
+        build = json.loads(args.build_record.read_text())
+        assert before['manifest_sha256'] == build['source_manifest_sha256'], 'build source drift'
+        binary = Path(build['binary']); binary_before = digest(binary)
+        assert binary_before == build['binary_sha256'], 'build ELF drift'
+        records.append(execute(out, 'registry-all', ['bash', WRAPPER, str(binary), '--list', '--format', 'terse']))
+        records.append(execute(out, 'registry-ignored', ['bash', WRAPPER, str(binary), '--list', '--ignored', '--format', 'terse']))
+        groups = [('append-reorg', 'readback_tests::'), ('authenticated', 'store::native_authenticated::'), ('archive-store', 'account_archive_prototype::native_store::')]
+        for label, selector in groups:
+            records.append(execute(out, label, ['bash', WRAPPER, str(binary), selector, '--show-output', '--test-threads=1']))
+        prior = json.loads(Path('/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-trimmed-schema-attempt-1/test-results.json').read_text())
+        selectors = [r['selector'] for r in prior]
+        selectors.append('ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation')
+        for index, selector in enumerate(selectors):
+            label = 'tcp-' + str(index + 1)
+            records.append(execute(out, label, ['bash', WRAPPER, str(binary), selector, '--exact', '--show-output', '--test-threads=1']))
+            records.append(execute(out, label + '-reader', ['python3', 'scripts/ci/check_required_native_test.py', str(out / (label + '.stdout')), '--test', selector]))
+    elif args.action == 'components':
+        records.append(execute(out, 'preflight', ['bash', 'scripts/project-preflight.sh']))
+        if records[-1]['exit_code'] == 0:
+            records.append(execute(out, 'build-components', ['bash', WRAPPER, 'cargo', 'test', '--locked', '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-mvcc-fee', '-p', 'trnm-sqlite-io-boundary', '--lib', '--all-features', '--no-run', '--message-format=json']))
+        if records[-1]['exit_code'] == 0:
+            for line in (out / 'build-components.stdout').read_text().splitlines():
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                name = row.get('target', {}).get('name')
+                if row.get('reason') == 'compiler-artifact' and name in ('trnm_mvcc_fee', 'trnm_sqlite_io_boundary') and row.get('executable'):
+                    assert name not in component_artifacts
+                    component_artifacts[name] = {'artifact': row, 'binary_sha256': digest(row['executable'])}
+            assert set(component_artifacts) == {'trnm_mvcc_fee', 'trnm_sqlite_io_boundary'}
+            m06 = component_artifacts['trnm_mvcc_fee']['artifact']['executable']
+            sql = component_artifacts['trnm_sqlite_io_boundary']['artifact']['executable']
+            records.append(execute(out, 'm06-registry-all', ['bash', WRAPPER, m06, '--list', '--format', 'terse']))
+            records.append(execute(out, 'm06-registry-ignored', ['bash', WRAPPER, m06, '--list', '--ignored', '--format', 'terse']))
+            records.append(execute(out, 'm06-complete-library', ['bash', WRAPPER, m06, '--show-output', '--test-threads=1']))
+            records.append(execute(out, 'sqlite-original-transaction-scopes', ['bash', WRAPPER, sql, 'transaction_scope::tests::', '--show-output', '--test-threads=1']))
+            for item in component_artifacts.values():
+                item['binary_after_sha256'] = digest(item['artifact']['executable'])
+                assert item['binary_after_sha256'] == item['binary_sha256']
+    else:
+        records.append(execute(out, 'preflight', ['bash', 'scripts/project-preflight.sh']))
+        if records[-1]['exit_code'] == 0:
+            records.append(execute(out, 'clippy', ['bash', WRAPPER, 'cargo', 'clippy', '--locked', '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '-p', 'trnm-mvcc-fee', '-p', 'trnm-sqlite-io-boundary', '--lib', '--tests', '--all-features', '--', '-D', 'warnings']))
+    after = source(); write(out / 'source-after.json', after)
+    report = {'schema': 'final-composed-local-native-observation-v1', 'action': args.action,
+              'source_manifest_sha256': before['manifest_sha256'], 'source_unchanged': before == after,
+              'all_commands_succeeded': all(r['exit_code'] == 0 for r in records), 'commands': records,
+              'full_node_suite_executed': False, 'public_confirmation_measured': False,
+              'component_artifacts': component_artifacts}
+    if binary:
+        report.update(binary=str(binary), binary_sha256=binary_before, binary_after_sha256=digest(binary), binary_bytes=binary.stat().st_size)
+    write(out / 'result.json', report)
+    assert before == after, 'native source changed during observation'
+    assert not binary or digest(binary) == binary_before, 'ELF changed during observation'
+    return 0 if report['all_commands_succeeded'] else 1
+
+if __name__ == '__main__':
+    sys.exit(main())

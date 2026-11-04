@@ -1,0 +1,34 @@
+{
+  "historical_node_registry_source_manifest": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+  "historical_node_elf_sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+  "node_selectors": [
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::callback_damage_to_certified_untouched_nodes_keeps_original_error",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::callback_no_row_write_after_parent_seal_cannot_continue_its_frontier",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::conflicting_node_inserts_abandon_parent_proof_and_keep_original_publication",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::delete_restore_callback_keeps_bytes_but_cannot_restore_parent_proof",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::native_publish_continuation_paired_real_sql_cost_observation",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::publication_cancellation_preserves_parent_and_final_real_checkpoints",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::publish_continuation_preserves_real_sql_and_reduces_graph_callbacks",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_final_catalog_fence_rejects_readonly_configuration_and_attachment_drift",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_prepare_only_resets_keep_only_normalized_unchanged_graphs",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_resets_preexisting_catalog_and_prepared_vm_divergence",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::trigger_during_native_append_cannot_inherit_parent_graph",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::working_only_publication_reuses_only_the_fully_checked_parent_root",
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::writer_aba_after_parent_seal_retains_original_callback_failure"
+  ],
+  "node_ignored_selectors": [
+    "store::native_authenticated::post_write_readback::tests::frontier::pre_write::native_publish_continuation_paired_real_sql_cost_observation"
+  ],
+  "boundary_new_source_functions": [
+    "exact_known_insert_and_actual_readback_continue_only_original_scope",
+    "missing_execution_and_abandoned_tokens_disable_without_reset",
+    "earlier_unknown_write_cannot_be_absorbed_by_begin",
+    "failed_and_no_row_application_writes_drop_their_pending_scope",
+    "extra_callback_or_trigger_writes_refuse_even_with_expected_row_bytes",
+    "known_write_cannot_cross_control_aba_savepoint_or_failed_begin",
+    "foreign_connection_or_replaced_tracer_cannot_complete_transition",
+    "counter_overflow_cannot_wrap_into_a_known_write",
+    "unwinding_a_known_write_never_rearms_original_scope"
+  ],
+  "boundary_exact_archived_source_execution": null
+}

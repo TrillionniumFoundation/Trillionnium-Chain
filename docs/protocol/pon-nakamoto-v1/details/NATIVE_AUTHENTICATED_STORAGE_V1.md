@@ -627,6 +627,31 @@ backends. These fixtures do not constitute permanent-account growth beyond the
 old ledger cap, physical power-loss acceptance, or public throughput measurement.
 
 
+## Direct append final readback
+
+Ordinary direct append returns an existing post-write scope after its final event
+insertion, using the same final readback helper as reorganization. All actual
+active State, ancestry, event and history checks remain, followed by the original
+last callback and unchanged-write fence. Direct append retains its `Atomic` SQL
+commit observation; reorganization retains `ReorgStep`. Cancellation before
+COMMIT rolls back that transaction. A later transport cancellation does not
+reverse a committed result. An unqualified optional scope retains the original
+complete checks, without promising the strict write-epoch fence of a qualified
+scope. Transaction replacement now uses the existing reorganization scope error:
+`NATIVE_POST_WRITE_SCOPE`, preserving the earlier callback error as its source.
+The observer refuses a result; it cannot undo a callback's own COMMIT. No graph
+proof survives a transaction boundary.
+
+The separately studied parent-graph continuation through native INSERTs is
+**not enabled**. Its exact source, native controls and both paired cost runs are
+retained in the [candidate record](../../../../evidence/pon-throughput-continuation-20261104/parent-and-tail/graph-candidate/README.md).
+A small changed-state fixture still regresses after the first correction, and
+the reviewed catalog checks alone do not establish physical SQLite page
+ownership. No bypass was reproduced by that review; the missing justification
+remains unresolved. The default publisher retains the complete parent and
+post-write child checks. A future candidate must establish its actual storage
+boundary and pass the original complete-cost criteria before default use.
+
 ## Growth reservation readback boundary
 
 `store/growth_reservation_io.rs` is an operation-local reader within the existing

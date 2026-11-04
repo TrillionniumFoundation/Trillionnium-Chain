@@ -353,6 +353,10 @@ jobs:
             "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
         ])
         prefix("node", "reorg-tail", "store::reorg_readback_tests::", 6)
+        exact("node", "direct-append-readback", [
+            "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+            "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+        ])
         exact("node", "current-sql-root", [
             "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
         ])

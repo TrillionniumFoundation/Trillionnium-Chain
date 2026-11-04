@@ -1,0 +1,107 @@
+{
+  "operation": "restore only the authorized ten parent-carry / known-write paths after validated archive",
+  "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+  "time_utc": "2026-11-04T08:19:51.016916+00:00",
+  "preflight_exit": 0,
+  "git_restore_command": [
+    "git",
+    "restore",
+    "--source=b8116f65789a85148254f870c678a44f895316de",
+    "--staged",
+    "--worktree",
+    "--",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs"
+  ],
+  "git_restore_exit": 0,
+  "restored_existing_files": 7,
+  "removed_untracked_candidate_files": [
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/known_write_scope_tests.rs"
+  ],
+  "checks": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "base_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+      "working_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+      "index_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "base_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+      "working_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+      "index_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "base_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "working_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "index_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "base_sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "working_sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "index_sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "base_sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "working_sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "index_sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs",
+      "expected_absent": true,
+      "actual_absent": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+      "expected_absent": true,
+      "actual_absent": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+      "base_sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "working_sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "index_sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "base_sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "working_sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "index_sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "exact_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/known_write_scope_tests.rs",
+      "expected_absent": true,
+      "actual_absent": true
+    }
+  ],
+  "protected_neighbor_files_unchanged": true,
+  "protected_neighbor_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "e097b9e8cb972187333c56854f8cfc55c0e27bd608ea596e454ecb7eeb9f62b4",
+    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "93054fdbb3f32e2df9ee76fb0f8adbfe5812383d9b99121739e99f1f651d9930",
+    "trillionnium/crates/trnm-pon-node/src/error.rs": "260ec57946cc5268bf916f95547ebdf70b2ed70cfd01696f2caf8d601736830e",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "605435c5454913edc8faad4666252a5ab035bd0a87fe74dff93bee16db733bd3",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "d330e462e793ea187ccb525ac7e2c03c6009135860f09417b5dc74f348f0e832",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": "4609b72cb03de234fa2f87119a1a5f4288d02c41b43f8cecfec2df15199df72c",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "aa8ce1e89aa23a18fa5563b46fc9d43e9d834899a8301a8f70819c07e60d88b0",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/canonical_comparison_tests.rs": "2a9c7130fc264b670e2b2041f99a2d51cf6f26faa4eb1200df04ce8a127bc29c"
+  },
+  "native_build_or_tests_run": false,
+  "default_parent_carry_enabled": false
+}

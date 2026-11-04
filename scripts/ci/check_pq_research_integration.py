@@ -171,6 +171,7 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
     "config/systemd/trnmponpublic.slice",
     "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
