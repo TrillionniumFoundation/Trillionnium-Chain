@@ -1,0 +1,87 @@
+{
+  "schema": "trnm-e62-original-failure-inputs-v1",
+  "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+  "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+  "fixed_artifacts": [
+    {
+      "kind": "campaign",
+      "artifact_id": 13300411373,
+      "run_id": 41782247117,
+      "artifact_name": "pon-native-campaign-x64-head-release-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
+      "bytes": 56043903,
+      "sha256": "0633a88b2e76142687ad208ef0e0201ab6035dbe59074d1cac002d50de66842c",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+      "required_json": [
+        "source-before.json",
+        "source-after.json",
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ],
+      "source_json": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "project_json": [
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ]
+    },
+    {
+      "kind": "fixed-root-f0",
+      "artifact_id": 13299503217,
+      "run_id": 41782247033,
+      "artifact_name": "pon-fixed-host-root-f0-x64-head-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
+      "bytes": 16300398,
+      "sha256": "50fbb85012a2885f16f7ad4a247a0a735b71854821473022920df5c743a504d3",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+      "required_json": [
+        "finalization/result.json",
+        "execution/results.json",
+        "prepared/prepared.json",
+        "source-after.json",
+        "workflow-outcomes.json"
+      ],
+      "source_json": [
+        "source-after.json"
+      ],
+      "project_json": [
+        "finalization/result.json",
+        "execution/results.json",
+        "prepared/prepared.json",
+        "workflow-outcomes.json",
+        "execution/raw/report.json",
+        "execution/raw/baseline.json",
+        "execution/raw/valid-work-root.json"
+      ]
+    }
+  ],
+  "original_jobs": [
+    {
+      "run": 41782247117,
+      "job": 126416239899,
+      "conclusion": "failure"
+    },
+    {
+      "run": 41782247033,
+      "job": 126416239125,
+      "conclusion": "failure"
+    }
+  ],
+  "unchanged_reader_blob": "d5e9513b0bedbdf356cdd22bbcdecfc558ae03ca",
+  "original_campaign_result_complete": false,
+  "original_campaign_execution_returns": [
+    101,
+    101,
+    101
+  ],
+  "archive_members_executed": 0,
+  "artifacts_parsed_at_commit_time": false,
+  "performance_qualified": false,
+  "production_activation": false
+}

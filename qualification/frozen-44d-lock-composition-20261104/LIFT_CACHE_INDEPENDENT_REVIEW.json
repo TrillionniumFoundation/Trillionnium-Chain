@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "review": "independent full-byte source review of 44d eight-way lift cache",
+  "reviewer": "root",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "parent": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "owner_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "composed_source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+  "review_kind": "source only; no runtime pass claimed",
+  "inputs": [
+    {
+      "role": "before",
+      "git_blob": "d137e38fc08738f4e6d6b81712f7c7423624a8c2",
+      "bytes": 31870,
+      "sha256": "3af5e48fcd8084fd687265a5f3407aaa0258de6453d252597de03ff58efe0889"
+    },
+    {
+      "role": "after",
+      "git_blob": "add62202c8038776d0db254c066c619dd8fe4620",
+      "bytes": 44516,
+      "sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a"
+    },
+    {
+      "role": "node",
+      "git_blob": "45c458780452e82c2e59ac34ae8a200a167a6647",
+      "bytes": 47683,
+      "sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f"
+    },
+    {
+      "role": "scoped",
+      "git_blob": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
+      "bytes": 12380,
+      "sha256": "29fc9dfa3adfeff27c2daa134fdcf237255331d1cef1e6b6f025620dacd975ea"
+    },
+    {
+      "role": "reader",
+      "git_blob": "b4e9974f6ef99cb7b8aa88a509d3afd56e1bd4a8",
+      "bytes": 2658,
+      "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554"
+    },
+    {
+      "role": "owner",
+      "git_blob": "050d48c7828cf555cee0aaca7c24e7763ee115d7",
+      "bytes": 32270,
+      "sha256": "254043412730d700ef819521e4312269eae6bd87cd7bc13c25d00598a6504020"
+    }
+  ],
+  "production_region_after_Root_through_test_module_byte_identical": true,
+  "checks": [
+    {
+      "subject": "Arithmetic input identity",
+      "result": "pass",
+      "evidence": "LiftInput retains the full (path[32], digest[32], original usize depth, target usize depth) tuple. Node::lift reads precisely these inputs plus the immutable compiled empty hash grammar. Every lookup compares all tuple fields; the truncated 16-bit bucket lane controls indexing only."
+    },
+    {
+      "subject": "Bounded table and replacement",
+      "result": "pass",
+      "evidence": "A lazily allocated fixed 8192-slot boxed slice is divided into 1024 eight-way buckets. Empty insertion increments retained; matching input replaces only its output; a full bucket replaces one slot and never grows. Explicit wrapping LCG operations prevent overflow panics. Replacement choice is not used as an authority, cryptographic random source, or acceptance predicate."
+    },
+    {
+      "subject": "Borrow collision and identity lift",
+      "result": "pass",
+      "evidence": "An unavailable immutable or mutable RefCell borrow falls back to original Node::lift without an insert. Target depth equal to node depth returns the original digest without allocating. Neither path changes the mathematical result."
+    },
+    {
+      "subject": "Fresh storage and error order",
+      "result": "pass",
+      "evidence": "The entire production region from Root to the test module is byte-identical to the parent. Each NodeReader load executes the real SQL SELECT and passes the actual blob with expected node ID into the existing decoder. Root, child depth/prefix/side/lift, duplicate graph, account equality, count/balance, and progress/error checks are retained."
+    },
+    {
+      "subject": "Existing scoped frontier",
+      "result": "bounded interpretation",
+      "evidence": "native_scoped_readback has its own existing transaction-owned sealed-frontier contract and can skip already certified descendants. This review does not claim every scoped call traverses the whole graph. The cache patch does not modify that contract or promote an arithmetic result into a graph/ancestry/commit verdict."
+    },
+    {
+      "subject": "Memory charge",
+      "result": "bounded interpretation",
+      "evidence": "The compile-time <= 1 MiB assertion charges all fixed lift slots plus RefCell<LiftEntries>. It does not charge NodeDecodeArithmetic, allocator bookkeeping, other cache instances, database memory, or process RSS. Empty and identity-only caches remain unallocated."
+    },
+    {
+      "subject": "Original tests",
+      "result": "retained with representation assertion",
+      "evidence": "The original all-input mutation, identity-no-insert, exact-math, and fixed-capacity controls remain. The final retained-count expectation changes from clear-all's 1 entry to the table's 8192 entries. The added nonignored collision test exercises nine exact inputs in one eight-way bucket, another bucket, repeated over-capacity scans, borrow collision fallback, and independent empty caches."
+    },
+    {
+      "subject": "Ignored diagnostic",
+      "result": "not a qualification gate",
+      "evidence": "The new explicit ignored diagnostic uses real SQLite account graphs at 1024, 9216 and 32768 accounts, plus unrelated-prefill cases. It takes two initial passes and 100 warm traversals per size, requires one SQL read and one progress visit per graph node, and reports nearest-rank warm p50/p99. Prefilled initial passes are not wholly empty caches. Recorded memory is process-wide; business confirmation, network, Host/PQ and full State commitment are explicitly outside scope."
+    }
+  ],
+  "new_production_correctness_blockers": [],
+  "runtime_status": "Unassessed by this source review. Original e62 full native, fuzz and business performance gates remain authoritative and cannot borrow a parent success.",
+  "changes_not_authorized_by_review": [
+    "No timeout/budget increase",
+    "No removal of tests, SQL reads, progress calls or corruption checks",
+    "No synthetic sample promoted to a business SLO",
+    "No global <=1 MiB process-memory claim"
+  ]
+}

@@ -1,0 +1,644 @@
+{
+  "schema": "trnm-frozen-44d-original-failure-observations-v1",
+  "native_source": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "reader_source": "f3e77e925cdef075f80b62247b81cba2820008b0",
+  "readback_run": 41783105202,
+  "readback_job": 126418974965,
+  "campaign": {
+    "planned": 27,
+    "observed": 12,
+    "confirmed": 3,
+    "planned_pressure": 18,
+    "pressure_confirmed": 0,
+    "pressure_actors_24_ready": true
+  },
+  "f0": {
+    "planned": 6,
+    "planned_business_packet_exposures": 42,
+    "four_second_slo_successes": 0,
+    "all_planned_rounds": [
+      {
+        "actual_ended_ns": 28297656297,
+        "actual_started_ns": 1000058233,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 27297656297,
+        "end_lateness_from_four_second_deadline_ns": 23297656297,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 58233
+      },
+      {
+        "actual_ended_ns": 30006562525,
+        "actual_started_ns": 28297671556,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25006562525,
+        "end_lateness_from_four_second_deadline_ns": 21006562525,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 23297671556
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": 30041178861,
+        "actual_started_ns": 1033567364,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29041178861,
+        "end_lateness_from_four_second_deadline_ns": 25041178861,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 33567364
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ],
+    "controller_resources_complete": true,
+    "native_complete_success": false,
+    "all_services_known_empty": true
+  },
+  "baseline_costs": [
+    {
+      "artifact": 13297768757,
+      "report": "run-1-raw/report.json",
+      "phase": "baseline",
+      "history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2064323218,
+          "min": 566576098,
+          "sum": 5536867753,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9202252137,
+          "min": 2503066443,
+          "sum": 24935915725,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1661046563,
+          "min": 482758643,
+          "sum": 4602467924,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2360741949,
+          "min": 485641650,
+          "sum": 6156657666,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2063695247,
+          "min": 566031944,
+          "sum": 5532025906,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9201622480,
+          "min": 2502249706,
+          "sum": 24931063451,
+          "unknown_samples": 0
+        }
+      }
+    },
+    {
+      "artifact": 13297768757,
+      "report": "run-2-raw/report.json",
+      "phase": "baseline",
+      "history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2003696181,
+          "min": 557957073,
+          "sum": 5436551162,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 8888301249,
+          "min": 2490496545,
+          "sum": 24505508223,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82935,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1645918050,
+          "min": 478848757,
+          "sum": 4569368482,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2186020597,
+          "min": 486471498,
+          "sum": 5960845433,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2003267782,
+          "min": 557487506,
+          "sum": 5432918404,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 8887871156,
+          "min": 2490025445,
+          "sum": 24501864494,
+          "unknown_samples": 0
+        }
+      }
+    },
+    {
+      "artifact": 13297768757,
+      "report": "run-3-raw/report.json",
+      "phase": "baseline",
+      "history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2020004361,
+          "min": 557274395,
+          "sum": 5421880549,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9002214115,
+          "min": 2484135535,
+          "sum": 24355024741,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82904,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82904,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82904,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1647186709,
+          "min": 477262359,
+          "sum": 4546044413,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2732227897,
+          "min": 553946652,
+          "sum": 6481129227,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2019701357,
+          "min": 556936395,
+          "sum": 5418292222,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9001909296,
+          "min": 2407476628,
+          "sum": 24275107225,
+          "unknown_samples": 0
+        }
+      }
+    },
+    {
+      "artifact": 13298581298,
+      "report": "execution/raw/report.json",
+      "phase": "baseline",
+      "history_calls": 7,
+      "client_import": {
+        "observed_stamps": 7,
+        "succeeded": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2045993329,
+          "min": 561545644,
+          "sum": 5482619565,
+          "unknown_samples": 0
+        },
+        "thread_cpu_observation_available": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9091665427,
+          "min": 2494521822,
+          "sum": 24563711969,
+          "unknown_samples": 0
+        }
+      },
+      "host_checkpoint": {
+        "calls_accepted": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_completed": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_rejected": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "calls_started": {
+          "known_samples": 7,
+          "max": 29928,
+          "min": 8739,
+          "sum": 82936,
+          "unknown_samples": 0
+        },
+        "calls_unfinished": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "cpu_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "observed_slots": 7,
+        "phase": "checkpoint",
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 1656056190,
+          "min": 478805301,
+          "sum": 4580522920,
+          "unknown_samples": 0
+        },
+        "wall_clock_unknown_calls": {
+          "known_samples": 7,
+          "max": 0,
+          "min": 0,
+          "sum": 0,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 2739419778,
+          "min": 559680223,
+          "sum": 6748297275,
+          "unknown_samples": 0
+        }
+      },
+      "history_import": {
+        "accepted": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "completed": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "observed_slots": 7,
+        "phase": "history_import",
+        "started": {
+          "false": 0,
+          "true": 7,
+          "unknown": 0
+        },
+        "thread_cpu_ns": {
+          "known_samples": 7,
+          "max": 2045468719,
+          "min": 560911140,
+          "sum": 5478299963,
+          "unknown_samples": 0
+        },
+        "wall_ns": {
+          "known_samples": 7,
+          "max": 9091138666,
+          "min": 2493947231,
+          "sum": 24559380106,
+          "unknown_samples": 0
+        }
+      }
+    }
+  ],
+  "inference": "Nested Host checkpoint CPU remains the dominant measured portion of baseline History-import calling-thread CPU in this original run. This observation is not causal isolation, a full business-cost total, or permission to omit any checkpoint.",
+  "qualification": {
+    "new_native_execution": false,
+    "performance": false,
+    "production": false,
+    "e62_results_transferred": false
+  }
+}
