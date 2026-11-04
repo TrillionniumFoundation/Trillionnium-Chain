@@ -19,8 +19,6 @@ jobs:
       CARGO_INCREMENTAL: '0'
       CARGO_BUILD_JOBS: '2'
       RUST_TEST_THREADS: '1'
-      CARGO_HOME: ${{ runner.temp }}/exact-e62-da-cargo
-      CARGO_TARGET_DIR: ${{ runner.temp }}/exact-e62-da-target
     steps:
       - name: Checkout immutable qualification recipe
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -52,6 +50,11 @@ jobs:
             python3 scripts/ci/verify_ci_source.py --kind head --expected-head e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29 --output "$RUNNER_TEMP/exact-e62-da-candidate-before.json"
             bash scripts/project-preflight.sh --audit
           )
+      - name: Set isolated Cargo paths on the runner
+        shell: bash
+        run: |
+          printf 'CARGO_HOME=%s\n' "$RUNNER_TEMP/exact-e62-da-cargo" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s\n' "$RUNNER_TEMP/exact-e62-da-target" >> "$GITHUB_ENV"
       - name: Install exact original Rust and lint components
         shell: bash
         run: rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt

@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-da-workflow-pre-execution-negative-v1",
+  "source": "36c55a1245a2135a630f3f6da7742b12752604b7",
+  "tree": "1c3d92afc930653a7a4505d611d04e2ed3cc11d6",
+  "workflow_blob": "fa73617624f87e94def2791c7075ace7a5a71c41",
+  "observed": {
+    "run_id": 41786235163,
+    "head_sha": "36c55a1245a2135a630f3f6da7742b12752604b7",
+    "status": "completed",
+    "conclusion": "failure",
+    "jobs": [],
+    "check_runs": [],
+    "native_executions": 0
+  },
+  "source_diagnosis": {
+    "unsupported_keys": [
+      "jobs.exact-da.env.CARGO_HOME",
+      "jobs.exact-da.env.CARGO_TARGET_DIR"
+    ],
+    "expression_context": "runner.temp",
+    "official_reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+    "allowed_contexts_at_job_env": [
+      "github",
+      "needs",
+      "strategy",
+      "matrix",
+      "vars",
+      "secrets",
+      "inputs"
+    ],
+    "platform_annotation_retrieved": false,
+    "diagnosis_is_inference_from_source_and_official_context_table": true
+  },
+  "fix": "Set exact isolated Cargo paths in a runner shell step through GITHUB_ENV; preserve all native commands, source bindings and timeouts.",
+  "native_result": "NOT_EXECUTED"
+}
