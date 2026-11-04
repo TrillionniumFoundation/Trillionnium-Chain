@@ -1,0 +1,7014 @@
+{
+  "schema": "pon-retained-native-cost-comparison-readback-v1",
+  "scope": "Frozen raw report projections, not a controlled speedup or exclusive-stage comparison. AccountGraph includes complete and scoped frontier walks; calls are not a count of full graph traversals. Nested costs must not be summed. Calling-thread CPU excludes scoped workers. No isolated Transaction::commit or fsync measurement.",
+  "historical_be0d": {
+    "reader_run": 41763088374,
+    "reader_job": 126355064254,
+    "raw_report_projections": [
+      {
+        "acceptance_granted": false,
+        "artifact": 13288600275,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "measured_job": 126326178742,
+        "measured_run": 41753071468,
+        "member": "run-1-raw/report.json",
+        "member_bytes": 24004285,
+        "member_sha256": "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  436,
+                  159918969,
+                  436,
+                  0,
+                  4179454,
+                  0,
+                  4179454,
+                  "observed_calls"
+                ],
+                [
+                  245,
+                  10773499,
+                  245,
+                  0,
+                  10541757,
+                  0,
+                  10541757,
+                  "observed_calls"
+                ],
+                [
+                  237,
+                  317182795,
+                  237,
+                  0,
+                  86017366,
+                  0,
+                  86017366,
+                  "observed_calls"
+                ],
+                [
+                  87,
+                  18125624781,
+                  87,
+                  0,
+                  4177734612,
+                  0,
+                  4177734612,
+                  "observed_calls"
+                ],
+                [
+                  23,
+                  640569219,
+                  23,
+                  0,
+                  102028259,
+                  0,
+                  102028259,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  8115861658,
+                  8,
+                  0,
+                  1872697131,
+                  0,
+                  1872697131,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  1307887329,
+                  4,
+                  0,
+                  308240748,
+                  0,
+                  308240748,
+                  "observed_calls"
+                ],
+                [
+                  22,
+                  4360318695,
+                  22,
+                  0,
+                  1048328063,
+                  0,
+                  1048328063,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  20036795,
+                  8,
+                  0,
+                  20027609,
+                  0,
+                  20027609,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  15791099848,
+                  8,
+                  0,
+                  3601240452,
+                  0,
+                  3601240452,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  6000987527,
+                  1,
+                  0,
+                  1374625425,
+                  0,
+                  1374625425,
+                  "observed_calls"
+                ],
+                [
+                  95,
+                  415623944,
+                  95,
+                  0,
+                  108160466,
+                  0,
+                  108160466,
+                  "observed_calls"
+                ],
+                [
+                  37,
+                  168077708,
+                  37,
+                  0,
+                  13586800,
+                  0,
+                  13586800,
+                  "observed_calls"
+                ],
+                [
+                  65,
+                  17288039679,
+                  65,
+                  0,
+                  4032587822,
+                  0,
+                  4032587822,
+                  "observed_calls"
+                ],
+                [
+                  71,
+                  173282868,
+                  71,
+                  0,
+                  19545088,
+                  0,
+                  19545088,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  6491007,
+                  8,
+                  0,
+                  6479774,
+                  0,
+                  6479774,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  1232,
+                  7042590,
+                  1232,
+                  0,
+                  5956689,
+                  0,
+                  5956689,
+                  "observed_calls"
+                ],
+                [
+                  665,
+                  16908581,
+                  665,
+                  0,
+                  16281473,
+                  0,
+                  16281473,
+                  "observed_calls"
+                ],
+                [
+                  651,
+                  362724513,
+                  651,
+                  0,
+                  61838802,
+                  0,
+                  61838802,
+                  "observed_calls"
+                ],
+                [
+                  140,
+                  2319619238,
+                  140,
+                  0,
+                  557620330,
+                  0,
+                  557620330,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  386484201,
+                  42,
+                  0,
+                  86058514,
+                  0,
+                  86058514,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  1146189381,
+                  14,
+                  0,
+                  301851306,
+                  0,
+                  301851306,
+                  "observed_calls"
+                ],
+                [
+                  28,
+                  1093168408,
+                  28,
+                  0,
+                  260198009,
+                  0,
+                  260198009,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  1115871603,
+                  42,
+                  0,
+                  282865819,
+                  0,
+                  282865819,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  90133424,
+                  14,
+                  0,
+                  23530250,
+                  0,
+                  23530250,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  3016484097,
+                  14,
+                  0,
+                  771536132,
+                  0,
+                  771536132,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  1305313705,
+                  14,
+                  0,
+                  236097897,
+                  0,
+                  236097897,
+                  "observed_calls"
+                ],
+                [
+                  154,
+                  131386901,
+                  154,
+                  0,
+                  65140568,
+                  0,
+                  65140568,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  4782784,
+                  19,
+                  0,
+                  4755290,
+                  0,
+                  4755290,
+                  "observed_calls"
+                ],
+                [
+                  88,
+                  2127088366,
+                  88,
+                  0,
+                  507151351,
+                  0,
+                  507151351,
+                  "observed_calls"
+                ],
+                [
+                  112,
+                  7537872,
+                  112,
+                  0,
+                  7416743,
+                  0,
+                  7416743,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  5109078,
+                  14,
+                  0,
+                  5091069,
+                  0,
+                  5091069,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  118,
+                  1670382,
+                  118,
+                  0,
+                  1525896,
+                  0,
+                  1525896,
+                  "observed_calls"
+                ],
+                [
+                  67,
+                  3973887,
+                  67,
+                  0,
+                  3907964,
+                  0,
+                  3907964,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  483132080,
+                  63,
+                  0,
+                  29469441,
+                  0,
+                  29469441,
+                  "observed_calls"
+                ],
+                [
+                  27,
+                  16804138161,
+                  27,
+                  0,
+                  1649217425,
+                  0,
+                  1649217425,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  390729413,
+                  6,
+                  0,
+                  31076006,
+                  0,
+                  31076006,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  10598211252,
+                  4,
+                  0,
+                  1053969794,
+                  0,
+                  1053969794,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1612143591,
+                  2,
+                  0,
+                  163276775,
+                  0,
+                  163276775,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  6202756159,
+                  10,
+                  0,
+                  601580830,
+                  0,
+                  601580830,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  98992834,
+                  4,
+                  0,
+                  11344757,
+                  0,
+                  11344757,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  20784934943,
+                  4,
+                  0,
+                  2018271200,
+                  0,
+                  2018271200,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  31,
+                  301406993,
+                  31,
+                  0,
+                  31755148,
+                  0,
+                  31755148,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  95799392,
+                  8,
+                  0,
+                  3678321,
+                  0,
+                  3678321,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16214916146,
+                  19,
+                  0,
+                  1608616438,
+                  0,
+                  1608616438,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  1671189,
+                  15,
+                  0,
+                  1652913,
+                  0,
+                  1652913,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  3297527,
+                  4,
+                  0,
+                  3291961,
+                  0,
+                  3291961,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2953707,
+                  469,
+                  0,
+                  2545414,
+                  0,
+                  2545414,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  86895940,
+                  259,
+                  0,
+                  7534619,
+                  0,
+                  7534619,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  265010514,
+                  252,
+                  0,
+                  31317743,
+                  0,
+                  31317743,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1060923655,
+                  70,
+                  0,
+                  277947330,
+                  0,
+                  277947330,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  353534539,
+                  21,
+                  0,
+                  40913177,
+                  0,
+                  40913177,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  617965695,
+                  7,
+                  0,
+                  148905535,
+                  0,
+                  148905535,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  539599870,
+                  14,
+                  0,
+                  134393768,
+                  0,
+                  134393768,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  551034995,
+                  21,
+                  0,
+                  145822684,
+                  0,
+                  145822684,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  92042592,
+                  7,
+                  0,
+                  12313834,
+                  0,
+                  12313834,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1826243049,
+                  7,
+                  0,
+                  388851200,
+                  0,
+                  388851200,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  575850308,
+                  7,
+                  0,
+                  114862575,
+                  0,
+                  114862575,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  273428744,
+                  77,
+                  0,
+                  32285671,
+                  0,
+                  32285671,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  80699082,
+                  9,
+                  0,
+                  2805249,
+                  0,
+                  2805249,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  951799236,
+                  44,
+                  0,
+                  252002726,
+                  0,
+                  252002726,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3418407,
+                  56,
+                  0,
+                  3357101,
+                  0,
+                  3357101,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2631574,
+                  7,
+                  0,
+                  2622348,
+                  0,
+                  2622348,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  118,
+                  1593264,
+                  118,
+                  0,
+                  1465208,
+                  0,
+                  1465208,
+                  "observed_calls"
+                ],
+                [
+                  67,
+                  188103336,
+                  67,
+                  0,
+                  3651303,
+                  0,
+                  3651303,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  117863325,
+                  63,
+                  0,
+                  28153969,
+                  0,
+                  28153969,
+                  "observed_calls"
+                ],
+                [
+                  27,
+                  16235295052,
+                  27,
+                  0,
+                  1566124341,
+                  0,
+                  1566124341,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  394288017,
+                  6,
+                  0,
+                  30518120,
+                  0,
+                  30518120,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  10295392804,
+                  4,
+                  0,
+                  979471492,
+                  0,
+                  979471492,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1889455726,
+                  2,
+                  0,
+                  164614897,
+                  0,
+                  164614897,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  6205713075,
+                  10,
+                  0,
+                  589432337,
+                  0,
+                  589432337,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  102026234,
+                  4,
+                  0,
+                  12234164,
+                  0,
+                  12234164,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  20587972563,
+                  4,
+                  0,
+                  1934140342,
+                  0,
+                  1934140342,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  31,
+                  400455338,
+                  31,
+                  0,
+                  30662576,
+                  0,
+                  30662576,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  94768511,
+                  8,
+                  0,
+                  4167008,
+                  0,
+                  4167008,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16008432961,
+                  19,
+                  0,
+                  1528839464,
+                  0,
+                  1528839464,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  186276104,
+                  15,
+                  0,
+                  1915228,
+                  0,
+                  1915228,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  93279057,
+                  4,
+                  0,
+                  3476975,
+                  0,
+                  3476975,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2895563,
+                  469,
+                  0,
+                  2491152,
+                  0,
+                  2491152,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7997763,
+                  259,
+                  0,
+                  7750013,
+                  0,
+                  7750013,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  110178797,
+                  252,
+                  0,
+                  31297700,
+                  0,
+                  31297700,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1643970785,
+                  70,
+                  0,
+                  283157131,
+                  0,
+                  283157131,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  196618821,
+                  21,
+                  0,
+                  40327337,
+                  0,
+                  40327337,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  704396740,
+                  7,
+                  0,
+                  153986865,
+                  0,
+                  153986865,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  874792839,
+                  14,
+                  0,
+                  136608143,
+                  0,
+                  136608143,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  963902397,
+                  21,
+                  0,
+                  148098789,
+                  0,
+                  148098789,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  12957891,
+                  7,
+                  0,
+                  12950265,
+                  0,
+                  12950265,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1855165057,
+                  7,
+                  0,
+                  392628188,
+                  0,
+                  392628188,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  650870521,
+                  7,
+                  0,
+                  118099949,
+                  0,
+                  118099949,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  113463192,
+                  77,
+                  0,
+                  34338262,
+                  0,
+                  34338262,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2971817,
+                  9,
+                  0,
+                  2958497,
+                  0,
+                  2958497,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1218214559,
+                  44,
+                  0,
+                  254423984,
+                  0,
+                  254423984,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3401384,
+                  56,
+                  0,
+                  3343826,
+                  0,
+                  3343826,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2808029,
+                  7,
+                  0,
+                  2799190,
+                  0,
+                  2799190,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v1",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13288600275,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "measured_job": 126326178742,
+        "measured_run": 41753071468,
+        "member": "run-2-raw/report.json",
+        "member_bytes": 24941889,
+        "member_sha256": "d6099b55cc3ff1c378475f5707188a72ad5649fe2940fafe46d22a58c73b6755",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  494,
+                  4409528,
+                  494,
+                  0,
+                  3951632,
+                  0,
+                  3951632,
+                  "observed_calls"
+                ],
+                [
+                  276,
+                  87679273,
+                  276,
+                  0,
+                  10346229,
+                  0,
+                  10346229,
+                  "observed_calls"
+                ],
+                [
+                  268,
+                  166900327,
+                  268,
+                  0,
+                  89682141,
+                  0,
+                  89682141,
+                  "observed_calls"
+                ],
+                [
+                  93,
+                  18677625337,
+                  93,
+                  0,
+                  4196768046,
+                  0,
+                  4196768046,
+                  "observed_calls"
+                ],
+                [
+                  25,
+                  260511048,
+                  25,
+                  0,
+                  106333185,
+                  0,
+                  106333185,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  8097878447,
+                  8,
+                  0,
+                  1858256865,
+                  0,
+                  1858256865,
+                  "observed_calls"
+                ],
+                [
+                  5,
+                  1476889917,
+                  5,
+                  0,
+                  321478942,
+                  0,
+                  321478942,
+                  "observed_calls"
+                ],
+                [
+                  25,
+                  5234216666,
+                  25,
+                  0,
+                  1148293982,
+                  0,
+                  1148293982,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  18848819,
+                  8,
+                  0,
+                  18840657,
+                  0,
+                  18840657,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  16112762179,
+                  9,
+                  0,
+                  3695535322,
+                  0,
+                  3695535322,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  5610545195,
+                  1,
+                  0,
+                  1296699538,
+                  0,
+                  1296699538,
+                  "observed_calls"
+                ],
+                [
+                  101,
+                  179409212,
+                  101,
+                  0,
+                  101550145,
+                  0,
+                  101550145,
+                  "observed_calls"
+                ],
+                [
+                  37,
+                  12486240,
+                  37,
+                  0,
+                  12431699,
+                  0,
+                  12431699,
+                  "observed_calls"
+                ],
+                [
+                  69,
+                  18151641918,
+                  69,
+                  0,
+                  4056563251,
+                  0,
+                  4056563251,
+                  "observed_calls"
+                ],
+                [
+                  76,
+                  95042208,
+                  76,
+                  0,
+                  18235479,
+                  0,
+                  18235479,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  6346880,
+                  8,
+                  0,
+                  6336823,
+                  0,
+                  6336823,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  1232,
+                  82865627,
+                  1232,
+                  0,
+                  5627178,
+                  0,
+                  5627178,
+                  "observed_calls"
+                ],
+                [
+                  665,
+                  16611802,
+                  665,
+                  0,
+                  15990879,
+                  0,
+                  15990879,
+                  "observed_calls"
+                ],
+                [
+                  651,
+                  288760720,
+                  651,
+                  0,
+                  59120579,
+                  0,
+                  59120579,
+                  "observed_calls"
+                ],
+                [
+                  140,
+                  2302933108,
+                  140,
+                  0,
+                  534460616,
+                  0,
+                  534460616,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  312163948,
+                  42,
+                  0,
+                  82121786,
+                  0,
+                  82121786,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  1274091091,
+                  14,
+                  0,
+                  294447412,
+                  0,
+                  294447412,
+                  "observed_calls"
+                ],
+                [
+                  28,
+                  736776956,
+                  28,
+                  0,
+                  246064601,
+                  0,
+                  246064601,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  912990065,
+                  42,
+                  0,
+                  269357692,
+                  0,
+                  269357692,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  20978356,
+                  14,
+                  0,
+                  20964416,
+                  0,
+                  20964416,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  2954700490,
+                  14,
+                  0,
+                  740762544,
+                  0,
+                  740762544,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  833383783,
+                  14,
+                  0,
+                  222407806,
+                  0,
+                  222407806,
+                  "observed_calls"
+                ],
+                [
+                  154,
+                  293760005,
+                  154,
+                  0,
+                  65079032,
+                  0,
+                  65079032,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  5667931,
+                  19,
+                  0,
+                  5641484,
+                  0,
+                  5641484,
+                  "observed_calls"
+                ],
+                [
+                  88,
+                  1793863526,
+                  88,
+                  0,
+                  484880855,
+                  0,
+                  484880855,
+                  "observed_calls"
+                ],
+                [
+                  112,
+                  6443617,
+                  112,
+                  0,
+                  6327258,
+                  0,
+                  6327258,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  4759924,
+                  14,
+                  0,
+                  4741648,
+                  0,
+                  4741648,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  152,
+                  93292689,
+                  152,
+                  0,
+                  1707675,
+                  0,
+                  1707675,
+                  "observed_calls"
+                ],
+                [
+                  86,
+                  4474832,
+                  86,
+                  0,
+                  4387653,
+                  0,
+                  4387653,
+                  "observed_calls"
+                ],
+                [
+                  82,
+                  395565560,
+                  82,
+                  0,
+                  35206484,
+                  0,
+                  35206484,
+                  "observed_calls"
+                ],
+                [
+                  32,
+                  17099427611,
+                  32,
+                  0,
+                  1678284675,
+                  0,
+                  1678284675,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  399741513,
+                  8,
+                  0,
+                  39436318,
+                  0,
+                  39436318,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  10899921712,
+                  4,
+                  0,
+                  1066895140,
+                  0,
+                  1066895140,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1692252200,
+                  2,
+                  0,
+                  161491048,
+                  0,
+                  161491048,
+                  "observed_calls"
+                ],
+                [
+                  12,
+                  6094997091,
+                  12,
+                  0,
+                  601383504,
+                  0,
+                  601383504,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  99702319,
+                  4,
+                  0,
+                  11964846,
+                  0,
+                  11964846,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  21086447525,
+                  4,
+                  0,
+                  2056484053,
+                  0,
+                  2056484053,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  36,
+                  393131567,
+                  36,
+                  0,
+                  37266727,
+                  0,
+                  37266727,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  6197836,
+                  11,
+                  0,
+                  5214220,
+                  0,
+                  5214220,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  16510362108,
+                  21,
+                  0,
+                  1628898479,
+                  0,
+                  1628898479,
+                  "observed_calls"
+                ],
+                [
+                  20,
+                  2987159,
+                  20,
+                  0,
+                  2951646,
+                  0,
+                  2951646,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  3808478,
+                  4,
+                  0,
+                  3803397,
+                  0,
+                  3803397,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2756434,
+                  469,
+                  0,
+                  2358800,
+                  0,
+                  2358800,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  87416952,
+                  259,
+                  0,
+                  7519737,
+                  0,
+                  7519737,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  109866459,
+                  252,
+                  0,
+                  31062261,
+                  0,
+                  31062261,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1460173648,
+                  70,
+                  0,
+                  271720503,
+                  0,
+                  271720503,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  198715568,
+                  21,
+                  0,
+                  40424425,
+                  0,
+                  40424425,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  695170620,
+                  7,
+                  0,
+                  148167049,
+                  0,
+                  148167049,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  790188320,
+                  14,
+                  0,
+                  129470214,
+                  0,
+                  129470214,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  880430840,
+                  21,
+                  0,
+                  140713722,
+                  0,
+                  140713722,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  12579412,
+                  7,
+                  0,
+                  12550833,
+                  0,
+                  12550833,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1922356580,
+                  7,
+                  0,
+                  379960759,
+                  0,
+                  379960759,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  410374491,
+                  7,
+                  0,
+                  109971059,
+                  0,
+                  109971059,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  190167599,
+                  77,
+                  0,
+                  32064507,
+                  0,
+                  32064507,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  80618933,
+                  9,
+                  0,
+                  2730326,
+                  0,
+                  2730326,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1274892898,
+                  44,
+                  0,
+                  245597651,
+                  0,
+                  245597651,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3245700,
+                  56,
+                  0,
+                  3189204,
+                  0,
+                  3189204,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2847310,
+                  7,
+                  0,
+                  2838267,
+                  0,
+                  2838267,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  118,
+                  1475673,
+                  118,
+                  0,
+                  1348355,
+                  0,
+                  1348355,
+                  "observed_calls"
+                ],
+                [
+                  67,
+                  3604718,
+                  67,
+                  0,
+                  3530587,
+                  0,
+                  3530587,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  477382900,
+                  63,
+                  0,
+                  27122411,
+                  0,
+                  27122411,
+                  "observed_calls"
+                ],
+                [
+                  27,
+                  16986251231,
+                  27,
+                  0,
+                  1603527647,
+                  0,
+                  1603527647,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  297760206,
+                  6,
+                  0,
+                  29412290,
+                  0,
+                  29412290,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  10599410368,
+                  4,
+                  0,
+                  1024829997,
+                  0,
+                  1024829997,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1793502059,
+                  2,
+                  0,
+                  158126667,
+                  0,
+                  158126667,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  6390784296,
+                  10,
+                  0,
+                  579678902,
+                  0,
+                  579678902,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  11517510,
+                  4,
+                  0,
+                  11492346,
+                  0,
+                  11492346,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  20595438254,
+                  4,
+                  0,
+                  1953009062,
+                  0,
+                  1953009062,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  31,
+                  302245562,
+                  31,
+                  0,
+                  30069356,
+                  0,
+                  30069356,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  91353738,
+                  8,
+                  0,
+                  3573726,
+                  0,
+                  3573726,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16676476244,
+                  19,
+                  0,
+                  1567291264,
+                  0,
+                  1567291264,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  1438518,
+                  15,
+                  0,
+                  1421426,
+                  0,
+                  1421426,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  3869152,
+                  4,
+                  0,
+                  3847814,
+                  0,
+                  3847814,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2669754,
+                  469,
+                  0,
+                  2277057,
+                  0,
+                  2277057,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  19569844,
+                  259,
+                  0,
+                  7259238,
+                  0,
+                  7259238,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  185869492,
+                  252,
+                  0,
+                  29615632,
+                  0,
+                  29615632,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1247789114,
+                  70,
+                  0,
+                  269124880,
+                  0,
+                  269124880,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  283674394,
+                  21,
+                  0,
+                  38708550,
+                  0,
+                  38708550,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  612467673,
+                  7,
+                  0,
+                  141920029,
+                  0,
+                  141920029,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  790064678,
+                  14,
+                  0,
+                  131007051,
+                  0,
+                  131007051,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  800822018,
+                  21,
+                  0,
+                  141752658,
+                  0,
+                  141752658,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  12444179,
+                  7,
+                  0,
+                  12436955,
+                  0,
+                  12436955,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1810170626,
+                  7,
+                  0,
+                  369440847,
+                  0,
+                  369440847,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  514133945,
+                  7,
+                  0,
+                  110619701,
+                  0,
+                  110619701,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  107760237,
+                  77,
+                  0,
+                  31072600,
+                  0,
+                  31072600,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2142240,
+                  9,
+                  0,
+                  2129909,
+                  0,
+                  2129909,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1131757833,
+                  44,
+                  0,
+                  243142682,
+                  0,
+                  243142682,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  92805204,
+                  56,
+                  0,
+                  3129971,
+                  0,
+                  3129971,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2560741,
+                  7,
+                  0,
+                  2552274,
+                  0,
+                  2552274,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v1",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13288600275,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "be0d5f978dc86008115524a6be85c38e03982b33",
+        "measured_job": 126326178742,
+        "measured_run": 41753071468,
+        "member": "run-3-raw/report.json",
+        "member_bytes": 24864185,
+        "member_sha256": "4e0ed8293440c60edefac30a9dbf7f864620810ac89dd9fb8a2e5bb5d02c3fec",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  494,
+                  158693349,
+                  494,
+                  0,
+                  4029921,
+                  0,
+                  4029921,
+                  "observed_calls"
+                ],
+                [
+                  276,
+                  87867813,
+                  276,
+                  0,
+                  10485586,
+                  0,
+                  10485586,
+                  "observed_calls"
+                ],
+                [
+                  268,
+                  474809990,
+                  268,
+                  0,
+                  90621149,
+                  0,
+                  90621149,
+                  "observed_calls"
+                ],
+                [
+                  93,
+                  18303059685,
+                  93,
+                  0,
+                  4211774787,
+                  0,
+                  4211774787,
+                  "observed_calls"
+                ],
+                [
+                  25,
+                  646564978,
+                  25,
+                  0,
+                  108309607,
+                  0,
+                  108309607,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  8108344398,
+                  8,
+                  0,
+                  1867877620,
+                  0,
+                  1867877620,
+                  "observed_calls"
+                ],
+                [
+                  5,
+                  1401925371,
+                  5,
+                  0,
+                  323254464,
+                  0,
+                  323254464,
+                  "observed_calls"
+                ],
+                [
+                  25,
+                  4996783769,
+                  25,
+                  0,
+                  1148910162,
+                  0,
+                  1148910162,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  22415728,
+                  9,
+                  0,
+                  22406513,
+                  0,
+                  22406513,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  16192388685,
+                  9,
+                  0,
+                  3715953582,
+                  0,
+                  3715953582,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  5610280627,
+                  1,
+                  0,
+                  1298342555,
+                  0,
+                  1298342555,
+                  "observed_calls"
+                ],
+                [
+                  101,
+                  408211561,
+                  101,
+                  0,
+                  100681171,
+                  0,
+                  100681171,
+                  "observed_calls"
+                ],
+                [
+                  37,
+                  165529185,
+                  37,
+                  0,
+                  11725538,
+                  0,
+                  11725538,
+                  "observed_calls"
+                ],
+                [
+                  69,
+                  17626117468,
+                  69,
+                  0,
+                  4073508755,
+                  0,
+                  4073508755,
+                  "observed_calls"
+                ],
+                [
+                  76,
+                  172714178,
+                  76,
+                  0,
+                  18363219,
+                  0,
+                  18363219,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  7422544,
+                  9,
+                  0,
+                  7411915,
+                  0,
+                  7411915,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  1232,
+                  83919066,
+                  1232,
+                  0,
+                  5564269,
+                  0,
+                  5564269,
+                  "observed_calls"
+                ],
+                [
+                  665,
+                  93335133,
+                  665,
+                  0,
+                  16137215,
+                  0,
+                  16137215,
+                  "observed_calls"
+                ],
+                [
+                  651,
+                  287939979,
+                  651,
+                  0,
+                  57977819,
+                  0,
+                  57977819,
+                  "observed_calls"
+                ],
+                [
+                  140,
+                  2074018865,
+                  140,
+                  0,
+                  523247129,
+                  0,
+                  523247129,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  387524145,
+                  42,
+                  0,
+                  81432379,
+                  0,
+                  81432379,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  885815273,
+                  14,
+                  0,
+                  280824345,
+                  0,
+                  280824345,
+                  "observed_calls"
+                ],
+                [
+                  28,
+                  1044534667,
+                  28,
+                  0,
+                  245196294,
+                  0,
+                  245196294,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  1220617154,
+                  42,
+                  0,
+                  268091478,
+                  0,
+                  268091478,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  155051216,
+                  14,
+                  0,
+                  20666513,
+                  0,
+                  20666513,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  2830215922,
+                  14,
+                  0,
+                  720970145,
+                  0,
+                  720970145,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  905776167,
+                  14,
+                  0,
+                  219024476,
+                  0,
+                  219024476,
+                  "observed_calls"
+                ],
+                [
+                  154,
+                  139587990,
+                  154,
+                  0,
+                  62853456,
+                  0,
+                  62853456,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  4543393,
+                  19,
+                  0,
+                  4517738,
+                  0,
+                  4517738,
+                  "observed_calls"
+                ],
+                [
+                  88,
+                  1718511696,
+                  88,
+                  0,
+                  473954021,
+                  0,
+                  473954021,
+                  "observed_calls"
+                ],
+                [
+                  112,
+                  6393490,
+                  112,
+                  0,
+                  6280782,
+                  0,
+                  6280782,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  71112150,
+                  14,
+                  0,
+                  4751895,
+                  0,
+                  4751895,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  118,
+                  1709988,
+                  118,
+                  0,
+                  1540058,
+                  0,
+                  1540058,
+                  "observed_calls"
+                ],
+                [
+                  67,
+                  3636908,
+                  67,
+                  0,
+                  3548901,
+                  0,
+                  3548901,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  296254749,
+                  63,
+                  0,
+                  26749415,
+                  0,
+                  26749415,
+                  "observed_calls"
+                ],
+                [
+                  27,
+                  17378255284,
+                  27,
+                  0,
+                  1631394304,
+                  0,
+                  1631394304,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  481731064,
+                  6,
+                  0,
+                  29400642,
+                  0,
+                  29400642,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  11195537627,
+                  4,
+                  0,
+                  1045926151,
+                  0,
+                  1045926151,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1691398092,
+                  2,
+                  0,
+                  162448275,
+                  0,
+                  162448275,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  6187825932,
+                  10,
+                  0,
+                  591379166,
+                  0,
+                  591379166,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  105388001,
+                  4,
+                  0,
+                  11845207,
+                  0,
+                  11845207,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  20994110657,
+                  4,
+                  0,
+                  1989012476,
+                  0,
+                  1989012476,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  31,
+                  209244623,
+                  31,
+                  0,
+                  30514917,
+                  0,
+                  30514917,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  93045027,
+                  8,
+                  0,
+                  4062812,
+                  0,
+                  4062812,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16712120496,
+                  19,
+                  0,
+                  1594865709,
+                  0,
+                  1594865709,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  1998113,
+                  15,
+                  0,
+                  1980636,
+                  0,
+                  1980636,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  3878094,
+                  4,
+                  0,
+                  3859311,
+                  0,
+                  3859311,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2825304,
+                  469,
+                  0,
+                  2425453,
+                  0,
+                  2425453,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7837088,
+                  259,
+                  0,
+                  7609776,
+                  0,
+                  7609776,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  187677772,
+                  252,
+                  0,
+                  30610179,
+                  0,
+                  30610179,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1209195806,
+                  70,
+                  0,
+                  273562534,
+                  0,
+                  273562534,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  118399874,
+                  21,
+                  0,
+                  39797069,
+                  0,
+                  39797069,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  697712778,
+                  7,
+                  0,
+                  147504226,
+                  0,
+                  147504226,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  792880725,
+                  14,
+                  0,
+                  131627675,
+                  0,
+                  131627675,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  804004926,
+                  21,
+                  0,
+                  142746152,
+                  0,
+                  142746152,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  90502423,
+                  7,
+                  0,
+                  12243651,
+                  0,
+                  12243651,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1859436934,
+                  7,
+                  0,
+                  378061965,
+                  0,
+                  378061965,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  562602442,
+                  7,
+                  0,
+                  114405164,
+                  0,
+                  114405164,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  266644365,
+                  77,
+                  0,
+                  31859335,
+                  0,
+                  31859335,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  80532512,
+                  9,
+                  0,
+                  2517132,
+                  0,
+                  2517132,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1104795137,
+                  44,
+                  0,
+                  247486324,
+                  0,
+                  247486324,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3662547,
+                  56,
+                  0,
+                  3604875,
+                  0,
+                  3604875,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2427557,
+                  7,
+                  0,
+                  2419076,
+                  0,
+                  2419076,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  136,
+                  1825332,
+                  136,
+                  0,
+                  1557613,
+                  0,
+                  1557613,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  5973209,
+                  77,
+                  0,
+                  3952457,
+                  0,
+                  3952457,
+                  "observed_calls"
+                ],
+                [
+                  73,
+                  308592431,
+                  73,
+                  0,
+                  32421639,
+                  0,
+                  32421639,
+                  "observed_calls"
+                ],
+                [
+                  29,
+                  16816750402,
+                  29,
+                  0,
+                  1643855601,
+                  0,
+                  1643855601,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  225815172,
+                  7,
+                  0,
+                  36423511,
+                  0,
+                  36423511,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  10909044140,
+                  4,
+                  0,
+                  1066559515,
+                  0,
+                  1066559515,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  1700861440,
+                  2,
+                  0,
+                  161919288,
+                  0,
+                  161919288,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  6108958691,
+                  11,
+                  0,
+                  586884580,
+                  0,
+                  586884580,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  190585004,
+                  4,
+                  0,
+                  12136902,
+                  0,
+                  12136902,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  20986421526,
+                  4,
+                  0,
+                  2008312998,
+                  0,
+                  2008312998,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  32,
+                  488003711,
+                  32,
+                  0,
+                  30412872,
+                  0,
+                  30412872,
+                  "observed_calls"
+                ],
+                [
+                  8,
+                  93772393,
+                  8,
+                  0,
+                  3953471,
+                  0,
+                  3953471,
+                  "observed_calls"
+                ],
+                [
+                  20,
+                  16317255569,
+                  20,
+                  0,
+                  1606233301,
+                  0,
+                  1606233301,
+                  "observed_calls"
+                ],
+                [
+                  17,
+                  1578359,
+                  17,
+                  0,
+                  1474545,
+                  0,
+                  1474545,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  182065578,
+                  4,
+                  0,
+                  3618165,
+                  0,
+                  3618165,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  2723490,
+                  469,
+                  0,
+                  2322116,
+                  0,
+                  2322116,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7214289,
+                  259,
+                  0,
+                  6971762,
+                  0,
+                  6971762,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  29321449,
+                  252,
+                  0,
+                  29126405,
+                  0,
+                  29126405,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1295445024,
+                  70,
+                  0,
+                  267722156,
+                  0,
+                  267722156,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  194375686,
+                  21,
+                  0,
+                  38125582,
+                  0,
+                  38125582,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  616100446,
+                  7,
+                  0,
+                  141635868,
+                  0,
+                  141635868,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  534996303,
+                  14,
+                  0,
+                  128252017,
+                  0,
+                  128252017,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  545784012,
+                  21,
+                  0,
+                  139032276,
+                  0,
+                  139032276,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  91571960,
+                  7,
+                  0,
+                  11939838,
+                  0,
+                  11939838,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1735515599,
+                  7,
+                  0,
+                  366230838,
+                  0,
+                  366230838,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  412128898,
+                  7,
+                  0,
+                  107052592,
+                  0,
+                  107052592,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  108580719,
+                  77,
+                  0,
+                  30552229,
+                  0,
+                  30552229,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2253348,
+                  9,
+                  0,
+                  2240762,
+                  0,
+                  2240762,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1114925583,
+                  44,
+                  0,
+                  242611963,
+                  0,
+                  242611963,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3306891,
+                  56,
+                  0,
+                  3250839,
+                  0,
+                  3250839,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2221448,
+                  7,
+                  0,
+                  2213302,
+                  0,
+                  2213302,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v1",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      }
+    ]
+  },
+  "current_016": {
+    "reader_run": 41766300448,
+    "reader_job": 126365358821,
+    "raw_report_projections": [
+      {
+        "acceptance_granted": false,
+        "artifact": 13290599543,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126349481887,
+        "measured_run": 41760813065,
+        "member": "run-1-raw/report.json",
+        "member_bytes": 21389833,
+        "member_sha256": "2ee99eaff99288e7701635fe062bcd2d030035d9bad03959f4b10f41649adc1b",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  429,
+                  83285220,
+                  429,
+                  0,
+                  4653739,
+                  0,
+                  4653739,
+                  "observed_calls"
+                ],
+                [
+                  241,
+                  9422344,
+                  241,
+                  0,
+                  9194422,
+                  0,
+                  9194422,
+                  "observed_calls"
+                ],
+                [
+                  234,
+                  407891486,
+                  234,
+                  0,
+                  96708094,
+                  0,
+                  96708094,
+                  "observed_calls"
+                ],
+                [
+                  84,
+                  19162067907,
+                  84,
+                  0,
+                  4253320710,
+                  0,
+                  4253320710,
+                  "observed_calls"
+                ],
+                [
+                  23,
+                  503924987,
+                  23,
+                  0,
+                  113858204,
+                  0,
+                  113858204,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  8390659679,
+                  7,
+                  0,
+                  1867147124,
+                  0,
+                  1867147124,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  986021527,
+                  3,
+                  0,
+                  210130914,
+                  0,
+                  210130914,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  4598697677,
+                  21,
+                  0,
+                  1028133378,
+                  0,
+                  1028133378,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  19104965,
+                  7,
+                  0,
+                  19096463,
+                  0,
+                  19096463,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  16083221011,
+                  7,
+                  0,
+                  3570719887,
+                  0,
+                  3570719887,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  6512754411,
+                  1,
+                  0,
+                  1467903301,
+                  0,
+                  1467903301,
+                  "observed_calls"
+                ],
+                [
+                  91,
+                  340972346,
+                  91,
+                  0,
+                  109055652,
+                  0,
+                  109055652,
+                  "observed_calls"
+                ],
+                [
+                  36,
+                  12670231,
+                  36,
+                  0,
+                  12616449,
+                  0,
+                  12616449,
+                  "observed_calls"
+                ],
+                [
+                  62,
+                  18231894335,
+                  62,
+                  0,
+                  4100568005,
+                  0,
+                  4100568005,
+                  "observed_calls"
+                ],
+                [
+                  71,
+                  19565862,
+                  71,
+                  0,
+                  19476916,
+                  0,
+                  19476916,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  5694726,
+                  7,
+                  0,
+                  5684411,
+                  0,
+                  5684411,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 1,
+              "observed_rounds": 2,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 28719374647,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1002023177,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30002210474,
+                  "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                  "observed": true,
+                  "planned_round_index": 1,
+                  "round": 1,
+                  "started_ns": 28719427206,
+                  "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                  "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 1
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  764,
+                  5066817,
+                  764,
+                  0,
+                  4408087,
+                  0,
+                  4408087,
+                  "observed_calls"
+                ],
+                [
+                  417,
+                  11544037,
+                  417,
+                  0,
+                  11174363,
+                  0,
+                  11174363,
+                  "observed_calls"
+                ],
+                [
+                  407,
+                  208343648,
+                  407,
+                  0,
+                  53433978,
+                  0,
+                  53433978,
+                  "observed_calls"
+                ],
+                [
+                  102,
+                  1927785544,
+                  102,
+                  0,
+                  430057019,
+                  0,
+                  430057019,
+                  "observed_calls"
+                ],
+                [
+                  30,
+                  224317789,
+                  30,
+                  0,
+                  69704796,
+                  0,
+                  69704796,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  1086707974,
+                  11,
+                  0,
+                  236233746,
+                  0,
+                  236233746,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  891349260,
+                  21,
+                  0,
+                  207560989,
+                  0,
+                  207560989,
+                  "observed_calls"
+                ],
+                [
+                  31,
+                  986810464,
+                  31,
+                  0,
+                  226233920,
+                  0,
+                  226233920,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  220816389,
+                  11,
+                  0,
+                  20773280,
+                  0,
+                  20773280,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  2587227090,
+                  11,
+                  0,
+                  612416464,
+                  0,
+                  612416464,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  870266362,
+                  10,
+                  0,
+                  177182809,
+                  0,
+                  177182809,
+                  "observed_calls"
+                ],
+                [
+                  112,
+                  206032208,
+                  112,
+                  0,
+                  53172747,
+                  0,
+                  53172747,
+                  "observed_calls"
+                ],
+                [
+                  13,
+                  3603122,
+                  13,
+                  0,
+                  3584805,
+                  0,
+                  3584805,
+                  "observed_calls"
+                ],
+                [
+                  66,
+                  1652926623,
+                  66,
+                  0,
+                  385276548,
+                  0,
+                  385276548,
+                  "observed_calls"
+                ],
+                [
+                  80,
+                  82274581,
+                  80,
+                  0,
+                  5672308,
+                  0,
+                  5672308,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  140866733,
+                  11,
+                  0,
+                  4494782,
+                  0,
+                  4494782,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": []
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  111,
+                  2005434,
+                  111,
+                  0,
+                  1547486,
+                  0,
+                  1547486,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  3049651,
+                  63,
+                  0,
+                  2967926,
+                  0,
+                  2967926,
+                  "observed_calls"
+                ],
+                [
+                  60,
+                  670522362,
+                  60,
+                  0,
+                  34583231,
+                  0,
+                  34583231,
+                  "observed_calls"
+                ],
+                [
+                  24,
+                  16550382142,
+                  24,
+                  0,
+                  1525719421,
+                  0,
+                  1525719421,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  490296736,
+                  6,
+                  0,
+                  36810247,
+                  0,
+                  36810247,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10483107184,
+                  3,
+                  0,
+                  973379766,
+                  0,
+                  973379766,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2100650674,
+                  2,
+                  0,
+                  194452758,
+                  0,
+                  194452758,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  5701710807,
+                  9,
+                  0,
+                  544113089,
+                  0,
+                  544113089,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  9367530,
+                  3,
+                  0,
+                  9301950,
+                  0,
+                  9301950,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  19610866016,
+                  3,
+                  0,
+                  1858556050,
+                  0,
+                  1858556050,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  27,
+                  301616273,
+                  27,
+                  0,
+                  28546093,
+                  0,
+                  28546093,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  187868931,
+                  7,
+                  0,
+                  3594943,
+                  0,
+                  3594943,
+                  "observed_calls"
+                ],
+                [
+                  16,
+                  15693595041,
+                  16,
+                  0,
+                  1485673396,
+                  0,
+                  1485673396,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  1736143,
+                  15,
+                  0,
+                  1718584,
+                  0,
+                  1718584,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2478578,
+                  3,
+                  0,
+                  2473212,
+                  0,
+                  2473212,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30064610404,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1063651499,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  3284361,
+                  469,
+                  0,
+                  2839233,
+                  0,
+                  2839233,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7550891,
+                  259,
+                  0,
+                  7284301,
+                  0,
+                  7284301,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  118642135,
+                  252,
+                  0,
+                  38969435,
+                  0,
+                  38969435,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1663581580,
+                  70,
+                  0,
+                  292047147,
+                  0,
+                  292047147,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  128436019,
+                  21,
+                  0,
+                  48927295,
+                  0,
+                  48927295,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  882852999,
+                  7,
+                  0,
+                  165324946,
+                  0,
+                  165324946,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  886888117,
+                  14,
+                  0,
+                  139735690,
+                  0,
+                  139735690,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  978672445,
+                  21,
+                  0,
+                  153134599,
+                  0,
+                  153134599,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  14715921,
+                  7,
+                  0,
+                  14689654,
+                  0,
+                  14689654,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2046846454,
+                  7,
+                  0,
+                  419129303,
+                  0,
+                  419129303,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  670748081,
+                  7,
+                  0,
+                  121707628,
+                  0,
+                  121707628,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  116617700,
+                  77,
+                  0,
+                  37980842,
+                  0,
+                  37980842,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2960755,
+                  9,
+                  0,
+                  2945853,
+                  0,
+                  2945853,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1631486246,
+                  44,
+                  0,
+                  259994182,
+                  0,
+                  259994182,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3986225,
+                  56,
+                  0,
+                  3924980,
+                  0,
+                  3924980,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3288891,
+                  7,
+                  0,
+                  3280056,
+                  0,
+                  3280056,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  79,
+                  1311569,
+                  79,
+                  0,
+                  1229737,
+                  0,
+                  1229737,
+                  "observed_calls"
+                ],
+                [
+                  45,
+                  2552378,
+                  45,
+                  0,
+                  2502783,
+                  0,
+                  2502783,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  112803105,
+                  42,
+                  0,
+                  22269494,
+                  0,
+                  22269494,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16184312419,
+                  19,
+                  0,
+                  1469546848,
+                  0,
+                  1469546848,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  202142891,
+                  4,
+                  0,
+                  21689889,
+                  0,
+                  21689889,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  9990653599,
+                  3,
+                  0,
+                  921206087,
+                  0,
+                  921206087,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2395242106,
+                  2,
+                  0,
+                  207124115,
+                  0,
+                  207124115,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  6391022730,
+                  7,
+                  0,
+                  553006357,
+                  0,
+                  553006357,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10773552,
+                  3,
+                  0,
+                  9692727,
+                  0,
+                  9692727,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  19786951369,
+                  3,
+                  0,
+                  1784160030,
+                  0,
+                  1784160030,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  22,
+                  576312500,
+                  22,
+                  0,
+                  23307887,
+                  0,
+                  23307887,
+                  "observed_calls"
+                ],
+                [
+                  5,
+                  98257368,
+                  5,
+                  0,
+                  2510702,
+                  0,
+                  2510702,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  15698361379,
+                  14,
+                  0,
+                  1439964487,
+                  0,
+                  1439964487,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  1609278,
+                  10,
+                  0,
+                  1596665,
+                  0,
+                  1596665,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2734982,
+                  3,
+                  0,
+                  2633210,
+                  0,
+                  2633210,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30050191423,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1000079169,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  83384554,
+                  469,
+                  0,
+                  3161705,
+                  0,
+                  3161705,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  84796891,
+                  259,
+                  0,
+                  7825557,
+                  0,
+                  7825557,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  119614085,
+                  252,
+                  0,
+                  39835371,
+                  0,
+                  39835371,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1995314109,
+                  70,
+                  0,
+                  297065611,
+                  0,
+                  297065611,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  129744920,
+                  21,
+                  0,
+                  50130639,
+                  0,
+                  50130639,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  800338562,
+                  7,
+                  0,
+                  167309236,
+                  0,
+                  167309236,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  893251832,
+                  14,
+                  0,
+                  142268536,
+                  0,
+                  142268536,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  984259643,
+                  21,
+                  0,
+                  155731732,
+                  0,
+                  155731732,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  14496774,
+                  7,
+                  0,
+                  14488509,
+                  0,
+                  14488509,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2144557656,
+                  7,
+                  0,
+                  427226041,
+                  0,
+                  427226041,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  678239483,
+                  7,
+                  0,
+                  126885157,
+                  0,
+                  126885157,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  37838376,
+                  77,
+                  0,
+                  37743785,
+                  0,
+                  37743785,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2901522,
+                  9,
+                  0,
+                  2887294,
+                  0,
+                  2887294,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1646781045,
+                  44,
+                  0,
+                  264035030,
+                  0,
+                  264035030,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3886660,
+                  56,
+                  0,
+                  3823903,
+                  0,
+                  3823903,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3579144,
+                  7,
+                  0,
+                  3569417,
+                  0,
+                  3569417,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v2",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13290599543,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126349481887,
+        "measured_run": 41760813065,
+        "member": "run-2-raw/report.json",
+        "member_bytes": 21737026,
+        "member_sha256": "1451dc75814fcf436cf1816ba35700646a865abf2b5a5f8c2818f5157ca8b149",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  429,
+                  82103244,
+                  429,
+                  0,
+                  4657853,
+                  0,
+                  4657853,
+                  "observed_calls"
+                ],
+                [
+                  241,
+                  10536915,
+                  241,
+                  0,
+                  10314053,
+                  0,
+                  10314053,
+                  "observed_calls"
+                ],
+                [
+                  234,
+                  331747302,
+                  234,
+                  0,
+                  98074296,
+                  0,
+                  98074296,
+                  "observed_calls"
+                ],
+                [
+                  84,
+                  19491565399,
+                  84,
+                  0,
+                  4275677205,
+                  0,
+                  4275677205,
+                  "observed_calls"
+                ],
+                [
+                  23,
+                  271155446,
+                  23,
+                  0,
+                  114950703,
+                  0,
+                  114950703,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  8397224404,
+                  7,
+                  0,
+                  1871903256,
+                  0,
+                  1871903256,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  902573864,
+                  3,
+                  0,
+                  206842043,
+                  0,
+                  206842043,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  4754106886,
+                  21,
+                  0,
+                  1026669523,
+                  0,
+                  1026669523,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  175387157,
+                  7,
+                  0,
+                  19597188,
+                  0,
+                  19597188,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  16087006086,
+                  7,
+                  0,
+                  3576307881,
+                  0,
+                  3576307881,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  6610944843,
+                  1,
+                  0,
+                  1489577754,
+                  0,
+                  1489577754,
+                  "observed_calls"
+                ],
+                [
+                  91,
+                  264505832,
+                  91,
+                  0,
+                  109712420,
+                  0,
+                  109712420,
+                  "observed_calls"
+                ],
+                [
+                  36,
+                  13429074,
+                  36,
+                  0,
+                  13373370,
+                  0,
+                  13373370,
+                  "observed_calls"
+                ],
+                [
+                  62,
+                  18639243261,
+                  62,
+                  0,
+                  4121232956,
+                  0,
+                  4121232956,
+                  "observed_calls"
+                ],
+                [
+                  71,
+                  20212903,
+                  71,
+                  0,
+                  20124978,
+                  0,
+                  20124978,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  83147324,
+                  7,
+                  0,
+                  5365166,
+                  0,
+                  5365166,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 1,
+              "observed_rounds": 2,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 28811780496,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1000914557,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30006797648,
+                  "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                  "observed": true,
+                  "planned_round_index": 1,
+                  "round": 1,
+                  "started_ns": 28811835279,
+                  "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                  "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 1
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  762,
+                  4975618,
+                  762,
+                  0,
+                  4335930,
+                  0,
+                  4335930,
+                  "observed_calls"
+                ],
+                [
+                  416,
+                  11453365,
+                  416,
+                  0,
+                  11056787,
+                  0,
+                  11056787,
+                  "observed_calls"
+                ],
+                [
+                  406,
+                  288894654,
+                  406,
+                  0,
+                  55056984,
+                  0,
+                  55056984,
+                  "observed_calls"
+                ],
+                [
+                  101,
+                  1831414191,
+                  101,
+                  0,
+                  419646625,
+                  0,
+                  419646625,
+                  "observed_calls"
+                ],
+                [
+                  30,
+                  304644893,
+                  30,
+                  0,
+                  71068880,
+                  0,
+                  71068880,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  1078869432,
+                  10,
+                  0,
+                  227315201,
+                  0,
+                  227315201,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  841357277,
+                  21,
+                  0,
+                  207827917,
+                  0,
+                  207827917,
+                  "observed_calls"
+                ],
+                [
+                  31,
+                  925797540,
+                  31,
+                  0,
+                  226201554,
+                  0,
+                  226201554,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  81226422,
+                  11,
+                  0,
+                  19690892,
+                  0,
+                  19690892,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  2519872859,
+                  11,
+                  0,
+                  598687541,
+                  0,
+                  598687541,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  799021788,
+                  10,
+                  0,
+                  178789223,
+                  0,
+                  178789223,
+                  "observed_calls"
+                ],
+                [
+                  111,
+                  130636844,
+                  111,
+                  0,
+                  52664032,
+                  0,
+                  52664032,
+                  "observed_calls"
+                ],
+                [
+                  13,
+                  3834395,
+                  13,
+                  0,
+                  3812430,
+                  0,
+                  3812430,
+                  "observed_calls"
+                ],
+                [
+                  65,
+                  1710167913,
+                  65,
+                  0,
+                  375559323,
+                  0,
+                  375559323,
+                  "observed_calls"
+                ],
+                [
+                  80,
+                  5523723,
+                  80,
+                  0,
+                  5414394,
+                  0,
+                  5414394,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  4638811,
+                  11,
+                  0,
+                  4624735,
+                  0,
+                  4624735,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": []
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  111,
+                  1996994,
+                  111,
+                  0,
+                  1695166,
+                  0,
+                  1695166,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  96278275,
+                  63,
+                  0,
+                  3198923,
+                  0,
+                  3198923,
+                  "observed_calls"
+                ],
+                [
+                  60,
+                  213666706,
+                  60,
+                  0,
+                  33375196,
+                  0,
+                  33375196,
+                  "observed_calls"
+                ],
+                [
+                  24,
+                  16304681925,
+                  24,
+                  0,
+                  1530321423,
+                  0,
+                  1530321423,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  488816745,
+                  6,
+                  0,
+                  35017956,
+                  0,
+                  35017956,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10093137270,
+                  3,
+                  0,
+                  966586702,
+                  0,
+                  966586702,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2292700348,
+                  2,
+                  0,
+                  198139512,
+                  0,
+                  198139512,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  6185744767,
+                  9,
+                  0,
+                  550065455,
+                  0,
+                  550065455,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  11253360,
+                  3,
+                  0,
+                  10073127,
+                  0,
+                  10073127,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  19999968968,
+                  3,
+                  0,
+                  1860286594,
+                  0,
+                  1860286594,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  27,
+                  118254931,
+                  27,
+                  0,
+                  27773011,
+                  0,
+                  27773011,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3583239,
+                  7,
+                  0,
+                  3411753,
+                  0,
+                  3411753,
+                  "observed_calls"
+                ],
+                [
+                  16,
+                  15901600600,
+                  16,
+                  0,
+                  1490111767,
+                  0,
+                  1490111767,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  96789405,
+                  15,
+                  0,
+                  2066265,
+                  0,
+                  2066265,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2942158,
+                  3,
+                  0,
+                  2937979,
+                  0,
+                  2937979,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30084133871,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1083514236,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  81585723,
+                  469,
+                  0,
+                  2913703,
+                  0,
+                  2913703,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7838016,
+                  259,
+                  0,
+                  7566605,
+                  0,
+                  7566605,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  195308595,
+                  252,
+                  0,
+                  38240989,
+                  0,
+                  38240989,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1339018405,
+                  70,
+                  0,
+                  289435202,
+                  0,
+                  289435202,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  283423248,
+                  21,
+                  0,
+                  48244375,
+                  0,
+                  48244375,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  797347291,
+                  7,
+                  0,
+                  162651725,
+                  0,
+                  162651725,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  871762679,
+                  14,
+                  0,
+                  138830641,
+                  0,
+                  138830641,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  884679357,
+                  21,
+                  0,
+                  151737553,
+                  0,
+                  151737553,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  14217376,
+                  7,
+                  0,
+                  14209119,
+                  0,
+                  14209119,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2026127696,
+                  7,
+                  0,
+                  416109307,
+                  0,
+                  416109307,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  675286016,
+                  7,
+                  0,
+                  123249926,
+                  0,
+                  123249926,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  196444332,
+                  77,
+                  0,
+                  37228616,
+                  0,
+                  37228616,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  82324919,
+                  9,
+                  0,
+                  2692410,
+                  0,
+                  2692410,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1228376428,
+                  44,
+                  0,
+                  257441137,
+                  0,
+                  257441137,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  82305495,
+                  56,
+                  0,
+                  3805062,
+                  0,
+                  3805062,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3305990,
+                  7,
+                  0,
+                  3296439,
+                  0,
+                  3296439,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  111,
+                  92916793,
+                  111,
+                  0,
+                  1594437,
+                  0,
+                  1594437,
+                  "observed_calls"
+                ],
+                [
+                  63,
+                  3302439,
+                  63,
+                  0,
+                  3094423,
+                  0,
+                  3094423,
+                  "observed_calls"
+                ],
+                [
+                  60,
+                  214319758,
+                  60,
+                  0,
+                  33669941,
+                  0,
+                  33669941,
+                  "observed_calls"
+                ],
+                [
+                  24,
+                  16858898506,
+                  24,
+                  0,
+                  1532998164,
+                  0,
+                  1532998164,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  216061980,
+                  6,
+                  0,
+                  36005800,
+                  0,
+                  36005800,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10590360051,
+                  3,
+                  0,
+                  970071259,
+                  0,
+                  970071259,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2298431921,
+                  2,
+                  0,
+                  202394236,
+                  0,
+                  202394236,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  5987613398,
+                  9,
+                  0,
+                  551154493,
+                  0,
+                  551154493,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  104511932,
+                  3,
+                  0,
+                  10277497,
+                  0,
+                  10277497,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  20184563466,
+                  3,
+                  0,
+                  1866688626,
+                  0,
+                  1866688626,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  27,
+                  477037480,
+                  27,
+                  0,
+                  28470413,
+                  0,
+                  28470413,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3310239,
+                  7,
+                  0,
+                  3298953,
+                  0,
+                  3298953,
+                  "observed_calls"
+                ],
+                [
+                  16,
+                  16279046671,
+                  16,
+                  0,
+                  1493885702,
+                  0,
+                  1493885702,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  2039007,
+                  15,
+                  0,
+                  2020949,
+                  0,
+                  2020949,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2606430,
+                  3,
+                  0,
+                  2601752,
+                  0,
+                  2601752,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30080342001,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1079384203,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  81159159,
+                  469,
+                  0,
+                  2901378,
+                  0,
+                  2901378,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  7349520,
+                  259,
+                  0,
+                  7103831,
+                  0,
+                  7103831,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  196269619,
+                  252,
+                  0,
+                  37914878,
+                  0,
+                  37914878,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1343126557,
+                  70,
+                  0,
+                  287940532,
+                  0,
+                  287940532,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  203670491,
+                  21,
+                  0,
+                  48324782,
+                  0,
+                  48324782,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  718751017,
+                  7,
+                  0,
+                  159349631,
+                  0,
+                  159349631,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  568574855,
+                  14,
+                  0,
+                  137735283,
+                  0,
+                  137735283,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  661056322,
+                  21,
+                  0,
+                  150687274,
+                  0,
+                  150687274,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  175897050,
+                  7,
+                  0,
+                  14023543,
+                  0,
+                  14023543,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2120991346,
+                  7,
+                  0,
+                  409863842,
+                  0,
+                  409863842,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  597271560,
+                  7,
+                  0,
+                  121968240,
+                  0,
+                  121968240,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  121745079,
+                  77,
+                  0,
+                  36963341,
+                  0,
+                  36963341,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2754957,
+                  9,
+                  0,
+                  2741462,
+                  0,
+                  2741462,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  986255535,
+                  44,
+                  0,
+                  255721391,
+                  0,
+                  255721391,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  4089900,
+                  56,
+                  0,
+                  4026908,
+                  0,
+                  4026908,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  83485019,
+                  7,
+                  0,
+                  2644041,
+                  0,
+                  2644041,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v2",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13290599543,
+        "delta_columns": [
+          "calls",
+          "wall_ns",
+          "cpu_known_calls",
+          "cpu_unknown_calls",
+          "cpu_ns_known_sum",
+          "unwinding_calls",
+          "complete_cpu_ns",
+          "observation_status"
+        ],
+        "finite_experiment_criteria_met": false,
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126349481887,
+        "measured_run": 41760813065,
+        "member": "run-3-raw/report.json",
+        "member_bytes": 21929850,
+        "member_sha256": "d84511335f96bdcc9a5c5c9cb76bfc9fdcd21555d2453e46fea6df6162dd65f1",
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  429,
+                  5114893,
+                  429,
+                  0,
+                  4674809,
+                  0,
+                  4674809,
+                  "observed_calls"
+                ],
+                [
+                  241,
+                  9527747,
+                  241,
+                  0,
+                  9296654,
+                  0,
+                  9296654,
+                  "observed_calls"
+                ],
+                [
+                  234,
+                  641542338,
+                  234,
+                  0,
+                  98966931,
+                  0,
+                  98966931,
+                  "observed_calls"
+                ],
+                [
+                  84,
+                  19003795324,
+                  84,
+                  0,
+                  4266982072,
+                  0,
+                  4266982072,
+                  "observed_calls"
+                ],
+                [
+                  23,
+                  734822387,
+                  23,
+                  0,
+                  116414020,
+                  0,
+                  116414020,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  8298446517,
+                  7,
+                  0,
+                  1863059360,
+                  0,
+                  1863059360,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  1065209382,
+                  3,
+                  0,
+                  213841526,
+                  0,
+                  213841526,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  4755345196,
+                  21,
+                  0,
+                  1031737022,
+                  0,
+                  1031737022,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  18259404,
+                  7,
+                  0,
+                  18245046,
+                  0,
+                  18245046,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  15984569772,
+                  7,
+                  0,
+                  3567767343,
+                  0,
+                  3567767343,
+                  "observed_calls"
+                ],
+                [
+                  1,
+                  6605466941,
+                  1,
+                  0,
+                  1487752192,
+                  0,
+                  1487752192,
+                  "observed_calls"
+                ],
+                [
+                  91,
+                  884962726,
+                  91,
+                  0,
+                  115185152,
+                  0,
+                  115185152,
+                  "observed_calls"
+                ],
+                [
+                  36,
+                  322401717,
+                  36,
+                  0,
+                  15497691,
+                  0,
+                  15497691,
+                  "observed_calls"
+                ],
+                [
+                  62,
+                  17840293937,
+                  62,
+                  0,
+                  4108168019,
+                  0,
+                  4108168019,
+                  "observed_calls"
+                ],
+                [
+                  71,
+                  19469651,
+                  71,
+                  0,
+                  19369001,
+                  0,
+                  19369001,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  5222348,
+                  7,
+                  0,
+                  5206249,
+                  0,
+                  5206249,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 1,
+              "observed_rounds": 2,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 28594533451,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1001844487,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30004668595,
+                  "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+                  "observed": true,
+                  "planned_round_index": 1,
+                  "round": 1,
+                  "started_ns": 28594587873,
+                  "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+                  "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 1
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  869,
+                  5626108,
+                  869,
+                  0,
+                  4860463,
+                  0,
+                  4860463,
+                  "observed_calls"
+                ],
+                [
+                  473,
+                  12180538,
+                  473,
+                  0,
+                  11719817,
+                  0,
+                  11719817,
+                  "observed_calls"
+                ],
+                [
+                  462,
+                  136600586,
+                  462,
+                  0,
+                  58594068,
+                  0,
+                  58594068,
+                  "observed_calls"
+                ],
+                [
+                  110,
+                  1778251915,
+                  110,
+                  0,
+                  446116501,
+                  0,
+                  446116501,
+                  "observed_calls"
+                ],
+                [
+                  33,
+                  231900039,
+                  33,
+                  0,
+                  76768614,
+                  0,
+                  76768614,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  1018877356,
+                  11,
+                  0,
+                  248861071,
+                  0,
+                  248861071,
+                  "observed_calls"
+                ],
+                [
+                  22,
+                  991209218,
+                  22,
+                  0,
+                  210671805,
+                  0,
+                  210671805,
+                  "observed_calls"
+                ],
+                [
+                  33,
+                  1011236822,
+                  33,
+                  0,
+                  230685527,
+                  0,
+                  230685527,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  64950943,
+                  11,
+                  0,
+                  19680832,
+                  0,
+                  19680832,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  2686977649,
+                  11,
+                  0,
+                  632536006,
+                  0,
+                  632536006,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  732139560,
+                  11,
+                  0,
+                  189569628,
+                  0,
+                  189569628,
+                  "observed_calls"
+                ],
+                [
+                  121,
+                  210771422,
+                  121,
+                  0,
+                  57702138,
+                  0,
+                  57702138,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  157245100,
+                  15,
+                  0,
+                  4269003,
+                  0,
+                  4269003,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1584995879,
+                  70,
+                  0,
+                  398881084,
+                  0,
+                  398881084,
+                  "observed_calls"
+                ],
+                [
+                  88,
+                  83454150,
+                  88,
+                  0,
+                  5975404,
+                  0,
+                  5975404,
+                  "observed_calls"
+                ],
+                [
+                  11,
+                  4375186,
+                  11,
+                  0,
+                  4360763,
+                  0,
+                  4360763,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 0,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": []
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  113,
+                  1727129,
+                  113,
+                  0,
+                  1607282,
+                  0,
+                  1607282,
+                  "observed_calls"
+                ],
+                [
+                  64,
+                  4634132,
+                  64,
+                  0,
+                  3106728,
+                  0,
+                  3106728,
+                  "observed_calls"
+                ],
+                [
+                  61,
+                  484660565,
+                  61,
+                  0,
+                  31106860,
+                  0,
+                  31106860,
+                  "observed_calls"
+                ],
+                [
+                  25,
+                  15933533364,
+                  25,
+                  0,
+                  1533739417,
+                  0,
+                  1533739417,
+                  "observed_calls"
+                ],
+                [
+                  6,
+                  390890330,
+                  6,
+                  0,
+                  32927680,
+                  0,
+                  32927680,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10095949866,
+                  3,
+                  0,
+                  962798962,
+                  0,
+                  962798962,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2199275068,
+                  2,
+                  0,
+                  194631933,
+                  0,
+                  194631933,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  6000429140,
+                  10,
+                  0,
+                  558233036,
+                  0,
+                  558233036,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  193573031,
+                  3,
+                  0,
+                  10431474,
+                  0,
+                  10431474,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  19891460837,
+                  4,
+                  0,
+                  1864043050,
+                  0,
+                  1864043050,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  28,
+                  393233275,
+                  28,
+                  0,
+                  29417975,
+                  0,
+                  29417975,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  3662239,
+                  7,
+                  0,
+                  3406872,
+                  0,
+                  3406872,
+                  "observed_calls"
+                ],
+                [
+                  17,
+                  15343620605,
+                  17,
+                  0,
+                  1491676451,
+                  0,
+                  1491676451,
+                  "observed_calls"
+                ],
+                [
+                  15,
+                  2302099,
+                  15,
+                  0,
+                  2283326,
+                  0,
+                  2283326,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2665359,
+                  3,
+                  0,
+                  2660561,
+                  0,
+                  2660561,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30072760250,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1071180488,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  81426156,
+                  469,
+                  0,
+                  2781838,
+                  0,
+                  2781838,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  86871696,
+                  259,
+                  0,
+                  6948712,
+                  0,
+                  6948712,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  116965806,
+                  252,
+                  0,
+                  38291063,
+                  0,
+                  38291063,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1567541488,
+                  70,
+                  0,
+                  286812124,
+                  0,
+                  286812124,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  284856272,
+                  21,
+                  0,
+                  48420423,
+                  0,
+                  48420423,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  873694677,
+                  7,
+                  0,
+                  159969326,
+                  0,
+                  159969326,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  549466700,
+                  14,
+                  0,
+                  134941960,
+                  0,
+                  134941960,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  562224543,
+                  21,
+                  0,
+                  147674796,
+                  0,
+                  147674796,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  173046489,
+                  7,
+                  0,
+                  13794907,
+                  0,
+                  13794907,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  1855958947,
+                  7,
+                  0,
+                  405245223,
+                  0,
+                  405245223,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  670140626,
+                  7,
+                  0,
+                  122004941,
+                  0,
+                  122004941,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  114869697,
+                  77,
+                  0,
+                  35197286,
+                  0,
+                  35197286,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2589477,
+                  9,
+                  0,
+                  2576895,
+                  0,
+                  2576895,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1459288757,
+                  44,
+                  0,
+                  256839227,
+                  0,
+                  256839227,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  3902701,
+                  56,
+                  0,
+                  3841374,
+                  0,
+                  3841374,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  82860315,
+                  7,
+                  0,
+                  2805493,
+                  0,
+                  2805493,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 1,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "client_stage_deltas": {
+              "rows": [
+                [
+                  79,
+                  1374964,
+                  79,
+                  0,
+                  1268342,
+                  0,
+                  1268342,
+                  "observed_calls"
+                ],
+                [
+                  45,
+                  3268282,
+                  45,
+                  0,
+                  2527170,
+                  0,
+                  2527170,
+                  "observed_calls"
+                ],
+                [
+                  42,
+                  389161293,
+                  42,
+                  0,
+                  22829105,
+                  0,
+                  22829105,
+                  "observed_calls"
+                ],
+                [
+                  19,
+                  16389236093,
+                  19,
+                  0,
+                  1487773678,
+                  0,
+                  1487773678,
+                  "observed_calls"
+                ],
+                [
+                  4,
+                  381350327,
+                  4,
+                  0,
+                  22801631,
+                  0,
+                  22801631,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  10683476625,
+                  3,
+                  0,
+                  950810389,
+                  0,
+                  950810389,
+                  "observed_calls"
+                ],
+                [
+                  2,
+                  2008065989,
+                  2,
+                  0,
+                  196584334,
+                  0,
+                  196584334,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  5985969733,
+                  7,
+                  0,
+                  540219745,
+                  0,
+                  540219745,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  101862161,
+                  3,
+                  0,
+                  9693506,
+                  0,
+                  9693506,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  20189853902,
+                  3,
+                  0,
+                  1802830720,
+                  0,
+                  1802830720,
+                  "observed_calls"
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  "not_entered"
+                ],
+                [
+                  22,
+                  309717841,
+                  22,
+                  0,
+                  25552883,
+                  0,
+                  25552883,
+                  "observed_calls"
+                ],
+                [
+                  5,
+                  96194296,
+                  5,
+                  0,
+                  3924068,
+                  0,
+                  3924068,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  15902101848,
+                  14,
+                  0,
+                  1457243435,
+                  0,
+                  1457243435,
+                  "observed_calls"
+                ],
+                [
+                  10,
+                  1216214,
+                  10,
+                  0,
+                  1204077,
+                  0,
+                  1204077,
+                  "observed_calls"
+                ],
+                [
+                  3,
+                  2845136,
+                  3,
+                  0,
+                  2841018,
+                  0,
+                  2841018,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "confirmation_readback": {
+              "confirmed_rounds": 0,
+              "observed_rounds": 1,
+              "observed_unconfirmed_rounds": 1,
+              "planned_rounds": 3,
+              "reason": null,
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30090025533,
+                  "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+                  "observed": true,
+                  "planned_round_index": 0,
+                  "round": 0,
+                  "started_ns": 1088225183,
+                  "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+                  "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 1,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                },
+                {
+                  "confirmed_inside_pressure_window": null,
+                  "ended_ns": null,
+                  "included_block": null,
+                  "observed": false,
+                  "planned_round_index": 2,
+                  "round": null,
+                  "started_ns": null,
+                  "tip": null,
+                  "transaction": null
+                }
+              ],
+              "schema": "trnm-original-campaign-confirmation-readback-v1",
+              "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              "status": "observed",
+              "unobserved_rounds": 2
+            },
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false,
+            "receiver_stage_deltas": {
+              "rows": [
+                [
+                  469,
+                  3136025,
+                  469,
+                  0,
+                  2730745,
+                  0,
+                  2730745,
+                  "observed_calls"
+                ],
+                [
+                  259,
+                  6901454,
+                  259,
+                  0,
+                  6668777,
+                  0,
+                  6668777,
+                  "observed_calls"
+                ],
+                [
+                  252,
+                  116710342,
+                  252,
+                  0,
+                  37895426,
+                  0,
+                  37895426,
+                  "observed_calls"
+                ],
+                [
+                  70,
+                  1316267062,
+                  70,
+                  0,
+                  283213982,
+                  0,
+                  283213982,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  205120449,
+                  21,
+                  0,
+                  47423743,
+                  0,
+                  47423743,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  787336317,
+                  7,
+                  0,
+                  154382346,
+                  0,
+                  154382346,
+                  "observed_calls"
+                ],
+                [
+                  14,
+                  632464160,
+                  14,
+                  0,
+                  135016710,
+                  0,
+                  135016710,
+                  "observed_calls"
+                ],
+                [
+                  21,
+                  721919702,
+                  21,
+                  0,
+                  147956335,
+                  0,
+                  147956335,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  13023480,
+                  7,
+                  0,
+                  13000665,
+                  0,
+                  13000665,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2014492177,
+                  7,
+                  0,
+                  397763229,
+                  0,
+                  397763229,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  592335589,
+                  7,
+                  0,
+                  121240771,
+                  0,
+                  121240771,
+                  "observed_calls"
+                ],
+                [
+                  77,
+                  115024881,
+                  77,
+                  0,
+                  35435034,
+                  0,
+                  35435034,
+                  "observed_calls"
+                ],
+                [
+                  9,
+                  2452492,
+                  9,
+                  0,
+                  2439841,
+                  0,
+                  2439841,
+                  "observed_calls"
+                ],
+                [
+                  44,
+                  1206960671,
+                  44,
+                  0,
+                  253020499,
+                  0,
+                  253020499,
+                  "observed_calls"
+                ],
+                [
+                  56,
+                  82602316,
+                  56,
+                  0,
+                  3634037,
+                  0,
+                  3634037,
+                  "observed_calls"
+                ],
+                [
+                  7,
+                  2784383,
+                  7,
+                  0,
+                  2772651,
+                  0,
+                  2772651,
+                  "observed_calls"
+                ]
+              ],
+              "status": "observed"
+            },
+            "scheduled_phase_index": 2,
+            "snapshot_keys_present": [
+              "native_history_arithmetic_before",
+              "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before",
+              "client_native_history_arithmetic_after"
+            ],
+            "state_backend": "authenticated-v1",
+            "verifier_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "scheduled_phases": 3,
+        "schema": "trnm-retained-native-history-cost-readback-v2",
+        "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+        "source_tests_executed": false,
+        "stage_names": [
+          "record",
+          "packet",
+          "delta",
+          "verify_state",
+          "verify_history",
+          "publish",
+          "read_active",
+          "state_at",
+          "execute",
+          "admission",
+          "activation",
+          "complete_commitment",
+          "complete_state_root",
+          "account_graph",
+          "persisted_state_root",
+          "execution_parent_binding"
+        ]
+      }
+    ]
+  },
+  "confirmed_count_for_later_source": null,
+  "performance_improvement_qualified": false
+}

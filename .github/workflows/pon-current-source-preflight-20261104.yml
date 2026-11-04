@@ -1,0 +1,47 @@
+name: Exact continuation source preflight
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-current-source-preflight-20261104.yml
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MEASURED_HEAD: 056303b5193809597d4b5ec1f075dfc5109fe888
+    steps:
+      - name: Checkout the exact continuation source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 056303b5193809597d4b5ec1f075dfc5109fe888
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify the complete source and original project boundary
+        env:
+          PREFLIGHT_OUT: ${{ runner.temp }}/current-source-preflight-${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$PREFLIGHT_OUT"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$MEASURED_HEAD" --output "$PREFLIGHT_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$PREFLIGHT_OUT/project-preflight.log"
+      - name: Recheck the complete measured source
+        if: always()
+        env:
+          PREFLIGHT_OUT: ${{ runner.temp }}/current-source-preflight-${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$MEASURED_HEAD" --output "$PREFLIGHT_OUT/source-after.json"
+      - name: Retain original source and preflight output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: source-preflight-056303b5193809597d4b5ec1f075dfc5109fe888-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/current-source-preflight-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

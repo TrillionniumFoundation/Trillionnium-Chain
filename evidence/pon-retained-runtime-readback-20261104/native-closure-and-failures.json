@@ -1,0 +1,696 @@
+{
+  "schema": "pon-retained-runtime-closure-readback-v1",
+  "observed_at_utc": "2026-11-04T03:25:00Z",
+  "scope": "Actual frozen-source hosted execution and readback; no current-head inheritance, new unique-test credit, external acceptance or activation.",
+  "native_closure": {
+    "run": 41763088481,
+    "job": 126355064041,
+    "workflow_commit": "a3da653724841868263c53418fd181f3319a2bae",
+    "tested_commit": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+    "scope": {
+      "cuts": [
+        "epoch",
+        "w1",
+        "m06",
+        "admitted",
+        "activated"
+      ],
+      "full_node_suite_executed": false,
+      "independent_storage_oracle_registered_methods": 29,
+      "native_export_selectors": [
+        "store::native_authenticated_tests::native_authenticated_signed_growth_branches_reopen_and_compact_queries",
+        "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts"
+      ],
+      "original_child_import_deadline_seconds": 20,
+      "original_parent_wait_seconds": 30,
+      "performance_acceptance_granted": false,
+      "production_activation": false,
+      "profile": "original cargo test profile; lib; all-features",
+      "reason": "retained f35 ARM HEAD ready marker race and C3 storage-oracle failures",
+      "schema": "pon-retained-sigkill-parent-native-scope-v1",
+      "selector": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+      "standalone_result_adds_unique_tests": false,
+      "tested_commit": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+      "workflow_commit": "a3da653724841868263c53418fd181f3319a2bae"
+    },
+    "native_results": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 998 filtered out; finished in 1.82s",
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 998 filtered out; finished in 4.99s",
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 998 filtered out; finished in 0.64s"
+    ],
+    "oracle_methods": [
+      "test_every_retained_table_is_checked_including_empty_ones (__main__.MigrationPreservationOracle.test_every_retained_table_is_checked_including_empty_ones) ... ok",
+      "test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) ... ok",
+      "test_only_schema_identity_changes_and_deleted_sequence_frontier_stays (__main__.MigrationPreservationOracle.test_only_schema_identity_changes_and_deleted_sequence_frontier_stays) ... ok",
+      "test_retained_values_cannot_change_type_or_contents (__main__.MigrationPreservationOracle.test_retained_values_cannot_change_type_or_contents) ... ok",
+      "test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text (__main__.MigrationPreservationOracle.test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text) ... ok",
+      "test_account_existence_and_nonce_monotonicity_are_checked (__main__.NativeAuthenticatedStorageOracle.test_account_existence_and_nonce_monotonicity_are_checked) ... ok",
+      "test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks (__main__.NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks) ... ok",
+      "test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused (__main__.NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused) ... ok",
+      "test_ancestry_rows_require_exact_types_and_unique_keys (__main__.NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys) ... ok",
+      "test_chainwork_uses_full_unsigned_512_bit_value (__main__.NativeAuthenticatedStorageOracle.test_chainwork_uses_full_unsigned_512_bit_value) ... ok",
+      "test_changed_delta_cannot_hide_behind_matching_account_leaf (__main__.NativeAuthenticatedStorageOracle.test_changed_delta_cannot_hide_behind_matching_account_leaf) ... ok",
+      "test_changed_stored_delta_digest_is_detected (__main__.NativeAuthenticatedStorageOracle.test_changed_stored_delta_digest_is_detected) ... ok",
+      "test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused (__main__.NativeAuthenticatedStorageOracle.test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused) ... ok",
+      "test_event_generations_cannot_skip_or_rewind (__main__.NativeAuthenticatedStorageOracle.test_event_generations_cannot_skip_or_rewind) ... ok",
+      "test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active (__main__.NativeAuthenticatedStorageOracle.test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active) ... ok",
+      "test_extra_active_and_kv_slots_are_detected (__main__.NativeAuthenticatedStorageOracle.test_extra_active_and_kv_slots_are_detected) ... ok",
+      "test_false_snapshot_and_active_kv_are_not_trusted (__main__.NativeAuthenticatedStorageOracle.test_false_snapshot_and_active_kv_are_not_trusted) ... ok",
+      "test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes (__main__.NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes) ... ok",
+      "test_missing_historical_commitment_and_orphan_deltas_are_refused (__main__.NativeAuthenticatedStorageOracle.test_missing_historical_commitment_and_orphan_deltas_are_refused) ... ok",
+      "test_missing_required_node_and_damaged_unreachable_cow_child_are_detected (__main__.NativeAuthenticatedStorageOracle.test_missing_required_node_and_damaged_unreachable_cow_child_are_detected) ... ok",
+      "test_null_boolean_absence_and_utf8_delta_values_remain_exact (__main__.NativeAuthenticatedStorageOracle.test_null_boolean_absence_and_utf8_delta_values_remain_exact) ... ok",
+      "test_parent_commitment_and_packet_digest_are_bound (__main__.NativeAuthenticatedStorageOracle.test_parent_commitment_and_packet_digest_are_bound) ... ok",
+      "test_rehashed_false_aggregate_is_recomputed_from_full_state (__main__.NativeAuthenticatedStorageOracle.test_rehashed_false_aggregate_is_recomputed_from_full_state) ... ok",
+      "test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed (__main__.NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed) ... ok",
+      "test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored (__main__.NativeAuthenticatedStorageOracle.test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored) ... ok",
+      "test_real_legacy_and_native_ddl_tables_are_all_read (__main__.NativeSchemaIdentifierControls.test_real_legacy_and_native_ddl_tables_are_all_read) ... ok",
+      "test_actual_hex_envelope_and_independent_signed_amount_replay (__main__.SignedApplicationControls.test_actual_hex_envelope_and_independent_signed_amount_replay) ... ok",
+      "test_native_compact_query_is_independently_checked_when_present (__main__.SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present) ... ok",
+      "test_self_consistent_state_records_cannot_change_signed_transfer_amount (__main__.SignedApplicationControls.test_self_consistent_state_records_cannot_change_signed_transfer_amount) ... ok"
+    ],
+    "artifact": {
+      "id": 13292622407,
+      "name": "sigkill-parent-ubuntu-24.04-arm-00099642bb4d3d9bb7f0f428a65f401c1c1a2c47-1",
+      "size_in_bytes": 1000976,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13292622407",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13292622407/zip",
+      "expired": false,
+      "created_at": "2026-11-04T03:16:52Z",
+      "expires_at": "2026-11-18T03:16:52Z",
+      "updated_at": "2026-11-04T03:16:52Z",
+      "digest": "sha256:2eb6ab671e9ea76a4df9b3340db753f0c545c02a60ab650ed05cb6f1c5c3f314",
+      "workflow_run": {
+        "id": 41763088481,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "a3da653724841868263c53418fd181f3319a2bae"
+      }
+    },
+    "source_guards": [
+      {
+        "line": 919,
+        "base": null,
+        "candidate": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+        "tested_tree": "158f55c4676da3b05fefd6abda207e7946fc6298",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 929288390,
+        "tracked_entries": 7986,
+        "tracked_worktree_verified": true
+      },
+      {
+        "line": 1959,
+        "base": null,
+        "candidate": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "00099642bb4d3d9bb7f0f428a65f401c1c1a2c47",
+        "tested_tree": "158f55c4676da3b05fefd6abda207e7946fc6298",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 929288390,
+        "tracked_entries": 7986,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "commands": [
+      {
+        "line": 957,
+        "name": "test_ci_source_integrity.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1003,
+        "name": "test_record_pq_native_command.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1017,
+        "name": "test_pq_research_integration.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1057,
+        "name": "test_pq_chain_claim_guard.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1085,
+        "name": "test_pq_authority_surface_scan.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1102,
+        "name": "pq-source.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1104,
+        "name": "pq-hold.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1106,
+        "name": "repository.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1108,
+        "name": "inventory.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1177,
+        "name": "compiler.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1185,
+        "name": "locked-graph.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1337,
+        "name": "format.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1338,
+        "name": "build.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1610,
+        "name": "sigkill-parent.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1674,
+        "name": "export-native_authenticated_signed_growth_branches_reopen_and_compact_queries.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1688,
+        "name": "export-authenticated_migration_preserves_signed_branches_and_irreversible_local_facts.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1739,
+        "name": "oracle-environment.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1759,
+        "name": "oracle-python.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1761,
+        "name": "oracle-dependencies.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1767,
+        "name": "independent-storage-controls.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1835,
+        "name": "independent-native-storage.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1837,
+        "name": "independent-native-migration.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      },
+      {
+        "line": 1863,
+        "name": "clippy.json",
+        "status": "command_succeeded",
+        "exit_code": 0
+      }
+    ],
+    "kill_cuts": [
+      {
+        "cut": "epoch",
+        "cut_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "w1",
+        "cut_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "m06",
+        "cut_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "06c2194b5bb486e3d3c02ec358cfbaa3d19feae2e7de8205565fe7f82bf1d0b4",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": false
+      },
+      {
+        "cut": "admitted",
+        "cut_active_tip": "fcbf6f4d1d6d229105c55a1a1f3ea584cf73673caef8904f4fd7b524f8ca488c",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "92c8537eb7f9822111f92f94a896671ace341cf01b330de651dd6ddd8c85d94e",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": true
+      },
+      {
+        "cut": "activated",
+        "cut_active_tip": "92c8537eb7f9822111f92f94a896671ace341cf01b330de651dd6ddd8c85d94e",
+        "debt_reconciliation_complete": false,
+        "durable_epoch_marker": "active-v1",
+        "new_cpu_account_available": false,
+        "observed_signal": 9,
+        "physical_power_loss": false,
+        "reopened_active_tip": "92c8537eb7f9822111f92f94a896671ace341cf01b330de651dd6ddd8c85d94e",
+        "schema": "native-history-real-kill-cut-v1",
+        "stored_block_after_reopen": true
+      }
+    ],
+    "preflight": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      },
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ],
+    "rust_test_profile": [
+      {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/home/runner/work/_temp/sigkill-marker-target/debug/deps/trnm_pon_node-1a8d9f853013aedd"
+      }
+    ],
+    "oracle_registered_methods_executed": 29,
+    "python_versions": [
+      "Python 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "cffi==2.1.1",
+      "cryptography==50.0.2",
+      "numpy==1.26.4",
+      "pip==24.0",
+      "pycparser==3.12"
+    ],
+    "ordinary_run_time_seconds": [
+      1.82,
+      4.99,
+      0.64
+    ],
+    "oracle_tests_time_seconds": 7.236
+  },
+  "retained_original_failure": {
+    "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+    "run": 41752900431,
+    "job": 126322034210,
+    "test": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+    "full_node": {
+      "passed": 967,
+      "failed": 1,
+      "ignored": 25,
+      "filtered": 0
+    },
+    "expected_marker": "admitted",
+    "actual_marker": "",
+    "marker_assertion_before_explicit_kill": true
+  },
+  "prior_storage_oracle_failure": {
+    "source": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "run": 41746463238,
+    "job": 126307454181,
+    "tests": 28,
+    "failures": 15,
+    "errors": 9,
+    "reason": "NATIVE_STORAGE_TABLE_NAME",
+    "repair_commit": "39839288cd112930f1f334b31c8fcb10ded43e28",
+    "registration_commit": "0b2e98399fbb0c52fa03c3eee39d179b64729710"
+  },
+  "reader": {
+    "run": 41766300448,
+    "job": 126365358821,
+    "source_guards": [
+      {
+        "base": null,
+        "candidate": "f14055d791a9cd99f2be12be0eee5f971e752bd0",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "f14055d791a9cd99f2be12be0eee5f971e752bd0",
+        "tested_tree": "d0f7ca76b1b40f99569eda96fb14c0f690200091",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 926738164,
+        "tracked_entries": 7959,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "f14055d791a9cd99f2be12be0eee5f971e752bd0",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "f14055d791a9cd99f2be12be0eee5f971e752bd0",
+        "tested_tree": "d0f7ca76b1b40f99569eda96fb14c0f690200091",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 926738164,
+        "tracked_entries": 7959,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "preflight": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ],
+    "archives": [
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 1053225,
+        "downloaded_zip_sha256": "a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+        "member_index_sha256": "aaf0db6df1943530527986039de20115e73aec10c500a7fe2933453ef4aa4cc9",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 4,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 7296784,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13284469302,
+          "job": 126300605830,
+          "name": "pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463373,
+          "size": 1053225
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 19665544,
+        "downloaded_zip_sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+        "member_index_sha256": "0849cbc26a90a0b196c31c0d2bf85fff2bad3e05f27d1b031fd3f00268a345f5",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 261527,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+          "head": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+          "id": 13287122967,
+          "job": 126322033940,
+          "name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+          "run": 41752900351,
+          "size": 19665544
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 60835230,
+        "downloaded_zip_sha256": "fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+        "member_index_sha256": "4e848b787cc48f70f6363d0da2ec75c13a6daf9c3c2ead1d1b0a3f6350cb3cde",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 12,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 2515927,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13283953563,
+          "job": 126300603089,
+          "name": "pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463223,
+          "size": 60835230
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 53187443,
+        "downloaded_zip_sha256": "e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+        "member_index_sha256": "c4c105fb2592035795be52826d6965b70ed91f829264c6140cada313b7d3e251",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 17072,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284616264,
+          "job": 126277462314,
+          "name": "priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 53187443
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 52915730,
+        "downloaded_zip_sha256": "c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+        "member_index_sha256": "55afb8811d02ce040ea70ae507f10d8d8de2e1ae94d3ec5e6124d6955f2f5e9e",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 17340,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284611411,
+          "job": 126277462527,
+          "name": "priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 52915730
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15946259,
+        "downloaded_zip_sha256": "90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+        "member_index_sha256": "1425eccd381ea4179d0c454eea91f02105802f50f1c4e20238548c8d0282ba1c",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 261553,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13286673364,
+          "job": 126323929045,
+          "name": "pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071420,
+          "size": 15946259
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 59518668,
+        "downloaded_zip_sha256": "06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+        "member_index_sha256": "c95c11aa1f538c16dd941033270faefed6b72d85148ffa445564e45cfa419c37",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 76224612,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13288600275,
+          "job": 126326178742,
+          "name": "pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071468,
+          "size": 59518668
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 56503959,
+        "downloaded_zip_sha256": "7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+        "member_index_sha256": "47cab6dfcf307804975a3a4a20161c7391aa3dfe79b261b9ede01138651b7058",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 67248983,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13290599543,
+          "job": 126349481887,
+          "name": "pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813065,
+          "size": 56503959
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15793484,
+        "downloaded_zip_sha256": "c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+        "member_index_sha256": "d1b3e472c41a3351fa29da78ce45b1dfabbc6f2e13899e4df0d1874f29e8db1b",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v4",
+        "selected_text_bytes": 261442,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13291962180,
+          "job": 126353223160,
+          "name": "pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760812979,
+          "size": 15793484
+        }
+      }
+    ],
+    "artifact": {
+      "id": 13292893021,
+      "size_in_bytes": 316377415,
+      "sha256": "402ed0c016d369062628e44c3a03123de745e41622632baa6ba830f366e18cf4"
+    }
+  },
+  "current_016_campaign": {
+    "source": "01627151f3ab50750eac2adeb46d8883a601265f",
+    "run": 41760813065,
+    "job": 126349481887,
+    "planned_confirmations": 27,
+    "confirmed": 3,
+    "observed_unconfirmed": 9,
+    "unobserved": 15,
+    "original_window_seconds": 30,
+    "native_returncodes": [
+      101,
+      101,
+      101
+    ],
+    "complete_service_qualified": false
+  },
+  "current_016_f0": {
+    "source": "01627151f3ab50750eac2adeb46d8883a601265f",
+    "run": 41760812979,
+    "job": 126353223160,
+    "native_returncode": 101,
+    "failure": "NATIVE_F0_FAILED",
+    "report_validation_failure": "BASELINE_MUST_PASS",
+    "planned_confirmations": 6,
+    "confirmed": null,
+    "counts_readback_complete": false,
+    "reason": "Original small report is retained; bounded console did not display all six rounds.",
+    "complete_service_qualified": false
+  },
+  "later_integration_source": "056303b5193809597d4b5ec1f075dfc5109fe888",
+  "later_integration_qualification_inherited": false,
+  "full_node_suite_executed_by_auxiliary_job": false,
+  "physical_power_loss_qualified": false,
+  "independent_external_review": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}
