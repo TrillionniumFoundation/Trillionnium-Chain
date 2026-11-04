@@ -238,6 +238,20 @@ impl CellStoreV1 {
         })
     }
 
+    /// Availability is only a scheduling hint. Matching lengths never replace
+    /// the full hash checks on actual reads or final payload verification.
+    pub(super) fn chunk_present(&self, expected: &CellChunkV1) -> CellResultV1<bool> {
+        Ok(self
+            .connection
+            .query_row(
+                "SELECT length(bytes) = ?2 FROM cell_chunks_v1 WHERE hash = ?1",
+                params![expected.sha256.as_slice(), expected.size],
+                |row| row.get(0),
+            )
+            .optional()?
+            .unwrap_or(false))
+    }
+
     #[cfg(test)]
     pub(super) fn put_chunk_batch(&self, chunks: &[(&CellChunkV1, &[u8])]) -> CellResultV1<()> {
         self.put_chunk_batch_with_deadline(chunks, None)

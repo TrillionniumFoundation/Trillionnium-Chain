@@ -12,11 +12,16 @@ use std::{
 };
 
 use super::{
-    manifest::MAX_MANIFEST_BYTES,
-    network::{fetch_cell_in_session, fetch_manifest, RequestContext, ResponseBudget},
-    require, CellDigestV1, CellErrorV1, CellLoaderContextV1, CellPeerLimitsV1,
-    CellReleaseClosureV1, CellReleaseLimitsV1, CellReleaseManifestV1, CellResultV1, CellStoreV1,
+    manifest::MAX_MANIFEST_BYTES, network::NetworkFetchSession, require, CellDigestV1, CellErrorV1,
+    CellLoaderContextV1, CellModelReleaseRootV1, CellPeerLimitsV1, CellReleaseClosureV1,
+    CellReleaseLimitsV1, CellReleaseManifestV1, CellResultV1, CellStoreV1,
+    CellTensorModelManifestV1,
 };
+
+pub use super::network::CellFetchTransportV2;
+
+#[cfg(test)]
+mod transport_tests;
 
 static MARKER_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
@@ -26,6 +31,62 @@ static MARKER_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 pub struct CellReleaseFetchLimitsV1 {
     pub peer: CellPeerLimitsV1,
     pub release: CellReleaseLimitsV1,
+}
+
+impl CellReleaseFetchLimitsV1 {
+    // Clamp once at every public entry, before metadata validation or encoding.
+    // Nested calls may tighten this absolute deadline but never renew it.
+    fn start(&mut self) -> CellResultV1<()> {
+        let started = Instant::now();
+        self.peer.validate()?;
+        self.release.deadline = self
+            .release
+            .deadline
+            .min(started + self.peer.overall_timeout);
+        check_deadline(self.release.deadline)
+    }
+}
+
+/// Explicit transport choice for the complete TCR1/TCD1/TMR1/TMA1 operation.
+/// The options do not alter any content identifier or authorization profile.
+#[derive(Clone, Copy, Debug)]
+pub struct CellReleaseFetchOptionsV2 {
+    pub limits: CellReleaseFetchLimitsV1,
+    pub transport: CellFetchTransportV2,
+}
+
+impl CellReleaseFetchOptionsV2 {
+    pub fn validate(self) -> CellResultV1<()> {
+        self.transport.validate(self.limits.peer)?;
+        require(
+            self.limits.release.max_payload_bytes > 0,
+            "release payload budget",
+        )?;
+        require(self.limits.release.max_chunks > 0, "release chunk budget")?;
+        check_deadline(self.limits.release.deadline)
+    }
+
+    fn start(&mut self) -> CellResultV1<()> {
+        self.limits.start()?;
+        self.validate()
+    }
+}
+
+impl From<CellReleaseFetchLimitsV1> for CellReleaseFetchOptionsV2 {
+    fn from(limits: CellReleaseFetchLimitsV1) -> Self {
+        Self {
+            limits,
+            transport: CellFetchTransportV2::OrderedV1,
+        }
+    }
+}
+
+/// Transport observations wrap the unchanged content/closure report. V1 counts
+/// one attempted query per dial; persistent V2 counts reserved frame attempts.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellTransportFetchReportV2<T> {
+    pub request_attempts: u64,
+    pub report: T,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -51,6 +112,88 @@ pub struct CellClosureFetchReportV1 {
     pub release: CellReleaseFetchReportV1,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellModelReleaseFetchReportV1 {
+    pub model_root: CellDigestV1,
+    pub closure_id: CellDigestV1,
+    pub release: CellReleaseFetchReportV1,
+}
+
+struct ClosureMarker<'a> {
+    closure: &'a CellReleaseClosureV1,
+    wire: &'a [u8],
+    tensor_model: Option<&'a CellTensorModelManifestV1>,
+}
+
+/// A complete declared byte set and strict dense tensor metadata observation.
+/// It carries no CURRENT, publisher, architecture or execution authority.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellTensorModelFetchReportV1 {
+    pub manifest_id: CellDigestV1,
+    pub model_root: CellDigestV1,
+    pub tensor_contract: CellDigestV1,
+    pub tensor_files: usize,
+    pub release: CellReleaseFetchReportV1,
+}
+
+pub fn fetch_tensor_model_to_file(
+    store: &CellStoreV1,
+    model: &CellTensorModelManifestV1,
+    expected: (CellDigestV1, &CellLoaderContextV1),
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    output: &Path,
+) -> CellResultV1<CellTensorModelFetchReportV1> {
+    fetch_tensor_model_with_options_to_file(store, model, expected, peers, limits.into(), output)
+        .map(|result| result.report)
+}
+
+pub fn fetch_tensor_model_with_options_to_file(
+    store: &CellStoreV1,
+    model: &CellTensorModelManifestV1,
+    expected: (CellDigestV1, &CellLoaderContextV1),
+    peers: &[SocketAddr],
+    mut options: CellReleaseFetchOptionsV2,
+    output: &Path,
+) -> CellResultV1<CellTransportFetchReportV2<CellTensorModelFetchReportV1>> {
+    options.start()?;
+    let mut limits = options.limits;
+    model.validate()?;
+    require(model.id() == expected.0, "tensor model manifest pin")?;
+    let root = model.root();
+    root.verify_for_loader(root.id(), expected.1)?;
+    limits.release.max_payload_bytes = limits
+        .release
+        .max_payload_bytes
+        .min(expected.1.max_payload_bytes);
+    limits.release.max_chunks = limits.release.max_chunks.min(expected.1.max_chunks);
+    let wire = model.encode();
+    let closure = root.closure();
+    let release = fetch_release_checked(
+        store,
+        closure.release(),
+        closure.release().id(),
+        peers,
+        CellReleaseFetchOptionsV2 { limits, ..options },
+        output,
+        Some(ClosureMarker {
+            closure,
+            wire: &wire,
+            tensor_model: Some(model),
+        }),
+    )?;
+    Ok(CellTransportFetchReportV2 {
+        request_attempts: release.request_attempts,
+        report: CellTensorModelFetchReportV1 {
+            manifest_id: model.id(),
+            model_root: root.id(),
+            tensor_contract: model.contract().id(),
+            tensor_files: model.contract().files().len(),
+            release: release.report,
+        },
+    })
+}
+
 /// Fetch an owner-pinned dependency plan through the original TCR1/TCL4 path.
 /// Every TCM1 is checked against its file mapping before payload acquisition.
 /// One original transport reservation covers all manifests, chunks and retries.
@@ -60,28 +203,106 @@ pub fn fetch_closure_to_file(
     closure: &CellReleaseClosureV1,
     expected: &CellLoaderContextV1,
     peers: &[SocketAddr],
-    mut limits: CellReleaseFetchLimitsV1,
+    limits: CellReleaseFetchLimitsV1,
     output: &Path,
 ) -> CellResultV1<CellClosureFetchReportV1> {
+    fetch_closure_with_options_to_file(store, closure, expected, peers, limits.into(), output)
+        .map(|result| result.report)
+}
+
+pub fn fetch_closure_with_options_to_file(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    mut options: CellReleaseFetchOptionsV2,
+    output: &Path,
+) -> CellResultV1<CellTransportFetchReportV2<CellClosureFetchReportV1>> {
+    options.start()?;
+    let mut limits = options.limits;
     closure.verify_for_loader(expected)?;
     limits.release.max_payload_bytes = limits
         .release
         .max_payload_bytes
         .min(expected.max_payload_bytes);
     limits.release.max_chunks = limits.release.max_chunks.min(expected.max_chunks);
+    let wire = closure.encode();
     let release = fetch_release_checked(
         store,
         closure.release(),
         closure.release().id(),
         peers,
-        limits,
+        CellReleaseFetchOptionsV2 { limits, ..options },
         output,
-        Some(closure),
+        Some(ClosureMarker {
+            closure,
+            wire: &wire,
+            tensor_model: None,
+        }),
     )?;
-    Ok(CellClosureFetchReportV1 {
-        closure_id: closure.id(),
-        selected_generation: closure.selected_generation(),
-        release,
+    Ok(CellTransportFetchReportV2 {
+        request_attempts: release.request_attempts,
+        report: CellClosureFetchReportV1 {
+            closure_id: closure.id(),
+            selected_generation: closure.selected_generation(),
+            release: release.report,
+        },
+    })
+}
+
+/// Acquire an independently pinned TMR1 model root using the same TCD1
+/// preflight, transport reservations, cache and create-only publication owner.
+/// The TMR1 marker grants no CURRENT selection, parser admission or FinalUse.
+pub fn fetch_model_release_to_file(
+    store: &CellStoreV1,
+    root: &CellModelReleaseRootV1,
+    expected: (CellDigestV1, &CellLoaderContextV1),
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    output: &Path,
+) -> CellResultV1<CellModelReleaseFetchReportV1> {
+    fetch_model_release_with_options_to_file(store, root, expected, peers, limits.into(), output)
+        .map(|result| result.report)
+}
+
+pub fn fetch_model_release_with_options_to_file(
+    store: &CellStoreV1,
+    root: &CellModelReleaseRootV1,
+    expected: (CellDigestV1, &CellLoaderContextV1),
+    peers: &[SocketAddr],
+    mut options: CellReleaseFetchOptionsV2,
+    output: &Path,
+) -> CellResultV1<CellTransportFetchReportV2<CellModelReleaseFetchReportV1>> {
+    options.start()?;
+    let mut limits = options.limits;
+    root.verify_for_loader(expected.0, expected.1)?;
+    limits.release.max_payload_bytes = limits
+        .release
+        .max_payload_bytes
+        .min(expected.1.max_payload_bytes);
+    limits.release.max_chunks = limits.release.max_chunks.min(expected.1.max_chunks);
+    let wire = root.encode();
+    let closure = root.closure();
+    let release = fetch_release_checked(
+        store,
+        closure.release(),
+        closure.release().id(),
+        peers,
+        CellReleaseFetchOptionsV2 { limits, ..options },
+        output,
+        Some(ClosureMarker {
+            closure,
+            wire: &wire,
+            tensor_model: None,
+        }),
+    )?;
+    Ok(CellTransportFetchReportV2 {
+        request_attempts: release.request_attempts,
+        report: CellModelReleaseFetchReportV1 {
+            model_root: root.id(),
+            closure_id: closure.id(),
+            release: release.report,
+        },
     })
 }
 
@@ -130,7 +351,19 @@ pub fn fetch_release_to_file(
     limits: CellReleaseFetchLimitsV1,
     output: &Path,
 ) -> CellResultV1<CellReleaseFetchReportV1> {
-    fetch_release_checked(store, release, pinned, peers, limits, output, None)
+    fetch_release_with_options_to_file(store, release, pinned, peers, limits.into(), output)
+        .map(|result| result.report)
+}
+
+pub fn fetch_release_with_options_to_file(
+    store: &CellStoreV1,
+    release: &CellReleaseManifestV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    options: CellReleaseFetchOptionsV2,
+    output: &Path,
+) -> CellResultV1<CellTransportFetchReportV2<CellReleaseFetchReportV1>> {
+    fetch_release_checked(store, release, pinned, peers, options, output, None)
 }
 
 fn fetch_release_checked(
@@ -138,10 +371,12 @@ fn fetch_release_checked(
     release: &CellReleaseManifestV1,
     pinned: CellDigestV1,
     peers: &[SocketAddr],
-    limits: CellReleaseFetchLimitsV1,
+    mut options: CellReleaseFetchOptionsV2,
     output: &Path,
-    closure: Option<&CellReleaseClosureV1>,
-) -> CellResultV1<CellReleaseFetchReportV1> {
+    closure: Option<ClosureMarker<'_>>,
+) -> CellResultV1<CellTransportFetchReportV2<CellReleaseFetchReportV1>> {
+    options.start()?;
+    let limits = options.limits;
     release.validate()?;
     require(release.id() == pinned, "release manifest digest")?;
     limits.peer.validate()?;
@@ -166,14 +401,9 @@ fn fetch_release_checked(
         .deadline
         .min(Instant::now() + limits.peer.overall_timeout);
     check_deadline(deadline)?;
-    let requests_left = AtomicU64::new(limits.peer.max_connections);
-    let responses = ResponseBudget::new(limits.peer.max_response_bytes);
-    let transport = RequestContext {
-        timeout: limits.peer.request_timeout,
-        overall: deadline,
-        requests_left: &requests_left,
-        responses: &responses,
-    };
+    // This owner survives both metadata passes and every member. A persistent
+    // connection, quarantine or exhausted quota is never reset at a file edge.
+    let session = NetworkFetchSession::new(peers, limits.peer, options.transport, deadline)?;
     let mut report = CellReleaseFetchReportV1 {
         release_id: pinned,
         cells: release.cells().len(),
@@ -192,13 +422,13 @@ fn fetch_release_checked(
     // Re-read by content address instead of retaining all decoded manifests.
     for digest in release.cells() {
         check_deadline(deadline)?;
-        let (manifest, rejected) = fetch_manifest(store, *digest, peers, limits.peer, &transport)?;
+        let (manifest, rejected) = session.manifest(store, *digest)?;
         require(
             manifest.context() == release.context(),
             "release cell context",
         )?;
-        if let Some(closure) = closure {
-            closure.verify_manifest(&manifest)?;
+        if let Some(marker) = &closure {
+            marker.closure.verify_manifest(&manifest)?;
         }
         report.rejected_responses += rejected;
         report.payload_bytes = report
@@ -220,8 +450,7 @@ fn fetch_release_checked(
     }
     for digest in release.cells() {
         check_deadline(deadline)?;
-        let (_, member) =
-            fetch_cell_in_session(store, *digest, peers, limits.peer, &transport, None)?;
+        let (_, member) = session.cell(store, *digest)?;
         report.cached_chunks += member.cached_chunks;
         report.downloaded_chunks += member.downloaded_chunks;
         report.downloaded_bytes += member.downloaded_bytes;
@@ -235,12 +464,34 @@ fn fetch_release_checked(
             ..limits.release
         },
     )?;
-    report.connection_attempts =
-        limits.peer.max_connections - requests_left.load(Ordering::Relaxed);
-    report.received_response_bytes = responses.received()?;
-    let marker = closure.map_or_else(|| release.encode(), CellReleaseClosureV1::encode);
+    report.connection_attempts = session.connection_attempts();
+    report.received_response_bytes = session.received_response_bytes()?;
+    if let Some(model) = closure.as_ref().and_then(|marker| marker.tensor_model) {
+        let root = model.root();
+        for file in model.contract().files() {
+            check_deadline(deadline)?;
+            let member = &root.closure().files()[usize::from(file.file_index)];
+            let manifest = store
+                .manifest(member.manifest)?
+                .ok_or(CellErrorV1::Unavailable)?;
+            root.closure().verify_manifest(&manifest)?;
+            let mut reader =
+                super::tensor_reader::CachePayloadReader::new(store, manifest, deadline)?;
+            model.contract().verify_reader(
+                root,
+                model.contract().id(),
+                file.file_index,
+                &mut reader,
+                deadline,
+            )?;
+        }
+    }
+    let marker = closure.map_or_else(|| release.encode(), |marker| marker.wire.to_vec());
     publish_marker(&marker, output, deadline)?;
-    Ok(report)
+    Ok(CellTransportFetchReportV2 {
+        request_attempts: session.request_attempts(),
+        report,
+    })
 }
 
 fn check_deadline(deadline: Instant) -> CellResultV1<()> {
