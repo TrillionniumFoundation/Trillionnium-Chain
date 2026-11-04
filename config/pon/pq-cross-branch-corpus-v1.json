@@ -325,7 +325,7 @@
   ],
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "9b282518293918949a0ed19a073d3d6aa1106e90",
-    ".github/workflows/pon-recent-batch-acceptance.yml": "6f47e1662c73e98d60da40544fe40c7cd6e250a0",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "b9fb62cc2d14c4987f0e4541e055f2eabd2d8af3",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
