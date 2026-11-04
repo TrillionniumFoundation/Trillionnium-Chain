@@ -649,3 +649,28 @@ The concurrent integration change 5c070abe adds three native Rust files but leav
 Candidate [a4a0e2b5](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/a4a0e2b561f057cfa3189979c5bf11f3a0eb2353) changes only the existing generated inventory: 1,175 paths, adding cell_residency_observer.rs, cell/residency.rs and cell/residency_tests.rs in generator order. The original generator reproduces the entire prior 1,172-path file byte-for-byte from the exact parent tree; the candidate has exactly one changed leaf and retains all 393 existing source pins. No implementation bytes or validation rule change.
 
 The added isolated workflow checks out this exact candidate, verifies its ordered parent and one-file delta, executes the original inventory --check, source-pin checker and repository checker, and repeats exact source and audit checks. The candidate is held on its own branch until this actual validation returns; no current integration pass is claimed by preparing it.
+
+
+## Legacy observation controls: actual 1b completion
+
+[The complete 1b controls record](legacy-profile-1b-controls-terminal-readback.json) now retains actual run 41821540586 / controls job 126545630356 SUCCESS on 1b25374bc7cd0af01882eb85b4d4b9398d0e8116 / tree c640b9f56b98523ca6661732f9a2145d3aaa0e4a. Both source receipts and the original cmp agree; both actual audits pass. Twenty-one real recorded command returns are zero, including nine source/control commands and five Python suites totaling 105 OK cases. The four nested command fixtures and six nested source receipts remain separate.
+
+All seven distinct exact native selectors execute once and each reports 1 PASS / 0 FAIL / 0 ignored, with a successful original named checker. Three compare the new default-off Legacy observation behavior; four retain the original nested-observation and cancellation boundaries. The full workspace all-target/all-feature test-profile compilation, selector presence checks, formatting and strict Node Clippy actually pass. This is seven executed native tests plus a complete workspace no-run build, not a full Node/workspace test execution.
+
+The complete 215,977-byte log and output artifact identity are retained. Whole-workspace profile/ELF assertions passed, but their redirected artifact bodies and exact ELF SHA values have not been independently read. Native-0 actually recompiles; the seven printed execution basenames are retained without assuming byte equality to the earlier workspace build. The original 9eba formatter failure remains preserved. The dependent original ARM 4,105-block History diagnostic is still running at the latest review; this control completion supplies no History acceptance or performance improvement.
+
+## Cell inventory precondition repaired and integrated
+
+[All four original 5c PQ lane failures](5c-pq-source-inventory-four-lane-failure.json) retain their complete raw logs, exact head/merge sources, initial audits, eight successful source-command returns followed by the inventory exit 1, skipped compiler/native/lint steps and four matching output artifact identities. This was a generated-inventory prerequisite failure, not a native execution failure.
+
+[The exact single-file repair and actual validation](cell-inventory-a4a-source-controls.json) preserve run [41826426124](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41826426124) / job 126562202938 SUCCESS. The original inventory --check, unchanged 393-pin checker and repository checker pass; the last reports 2,454 local links and 26 workspace packages. All three actual project audits pass, and candidate source-before/source-after are byte-identical. The source checker retains its original HOLD_NO_GO qualification.
+
+The validated single-file candidate a4a0e2b561f057cfa3189979c5bf11f3a0eb2353 is integrated by an expected-5c, non-forced fast-forward of the existing PR branch. GitHub's actual prospective merge ef1dfa3ad245a656137bfd01c54c92073a8c23d1 has ordered parents dd6e1c3c / a4a0e2b5 and the same eca850d0 tree, 8,766 files / 940,774,878 bytes. Main is not merged. The original PQ/native workflows on this new exact head must return their own results; the source-only validation does not grant their acceptance.
+
+## Four original W1 reports: bounded predicate readback prepared
+
+The new frozen_93e_w1_report_readback.py selects only five members from each of the two already authenticated original 93e W1 archives: the original/fresh report.json files, the exact manifest and the two source guards. It preserves complete member bytes and the original 32 MiB/160 MiB/25,000-member/200,000-JSON-node/70k-console/ten-minute limits. Full original report sizes and hashes remain unknown until this reader executes.
+
+The projection follows the exact original producer: retained-packet native success asserts the two invariant predicates, while fresh native success asserts construction plus both phase invariant/business predicates. Each phase has one original signed business transaction. Twenty-four controls check false/unknown/type/denominator/source/boundary behavior; those are prepared controls, not executed results. All native, report-validation, business, timeout and unobserved outcomes retain their own fields and no projection can grant authority.
+
+[The prior runtime PR section](pr-688-runtime-section-before-a4a-update.md) is retained verbatim before the next bounded update; the rest of PR #688 remains outside this continuation's ownership.

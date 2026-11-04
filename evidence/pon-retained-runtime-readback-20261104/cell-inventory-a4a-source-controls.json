@@ -1,0 +1,290 @@
+{
+  "schema": "trnm-cell-inventory-source-control-closure-v1",
+  "scope": "Single generated inventory correction for the three concurrent Cell Rust sources. Existing source checks only; no native test or business acceptance.",
+  "candidate": {
+    "commit": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+    "parent": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "tree": "eca850d0aa00c0a94b75e844b362389a7a5ecb2b",
+    "tracked_entries": 8766,
+    "tracked_bytes": 940774878,
+    "changed_paths": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "old": "fa481e98d3c9fac07f7910c30363366daecf0632",
+        "new": "ec901599281b656b942fe77d807a2a2b92672e5a",
+        "mode": "100644",
+        "size": 327151
+      }
+    ],
+    "prior_inventory_paths": 1172,
+    "inventory_paths": 1175,
+    "added_paths": [
+      "trillionnium/crates/trnm-data-availability/examples/cell_residency_observer.rs",
+      "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+      "trillionnium/crates/trnm-data-availability/src/cell/residency_tests.rs"
+    ],
+    "existing_corpus_pins": 393,
+    "corpus_unchanged": true,
+    "implementation_bytes_unchanged": true
+  },
+  "validation": {
+    "run": 41826426124,
+    "job": 126562202938,
+    "workflow_source": "ef81ff34ce1ac1140ad829b53243e4e7eeef4b55",
+    "workflow_path": ".github/workflows/pon-cell-inventory-closure-20261104.yml",
+    "workflow_blob": "879df2328942e5ac1ff0d26dcebc0178cbd5625f",
+    "status": "completed",
+    "conclusion": "success",
+    "job_metadata": {
+      "id": 126562202938,
+      "run_id": 41826426124,
+      "workflow_name": "Cell native source inventory closure",
+      "head_branch": "fix/chain-retained-failure-readback-20261104",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41826426124",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAdd7H1Og",
+      "head_sha": "ef81ff34ce1ac1140ad829b53243e4e7eeef4b55",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126562202938",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41826426124/job/126562202938",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T12:06:35Z",
+      "started_at": "2026-11-04T12:06:38Z",
+      "completed_at": "2026-11-04T12:08:04Z",
+      "name": "verify",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-04T12:06:39Z",
+          "completed_at": "2026-11-04T12:06:40Z"
+        },
+        {
+          "name": "Checkout exact workflow source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-04T12:06:40Z",
+          "completed_at": "2026-11-04T12:06:51Z"
+        },
+        {
+          "name": "Record original workflow source and project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-04T12:06:51Z",
+          "completed_at": "2026-11-04T12:06:53Z"
+        },
+        {
+          "name": "Checkout the one-file candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-04T12:06:53Z",
+          "completed_at": "2026-11-04T12:07:01Z"
+        },
+        {
+          "name": "Verify the exact candidate and sole inventory change",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-04T12:07:02Z",
+          "completed_at": "2026-11-04T12:07:03Z"
+        },
+        {
+          "name": "Run original inventory, source-pin and repository checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T12:07:03Z",
+          "completed_at": "2026-11-04T12:07:58Z"
+        },
+        {
+          "name": "Recheck candidate source and original project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-04T12:07:58Z",
+          "completed_at": "2026-11-04T12:07:59Z"
+        },
+        {
+          "name": "Retain exact candidate checks and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-04T12:07:59Z",
+          "completed_at": "2026-11-04T12:08:01Z"
+        },
+        {
+          "name": "Post Checkout the one-file candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-04T12:08:01Z",
+          "completed_at": "2026-11-04T12:08:01Z"
+        },
+        {
+          "name": "Post Checkout exact workflow source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-04T12:08:01Z",
+          "completed_at": "2026-11-04T12:08:01Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-04T12:08:01Z",
+          "completed_at": "2026-11-04T12:08:01Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126562202938",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000341052,
+      "runner_name": "GitHub Actions 1000341052",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    "source_receipts": [
+      {
+        "start_line": 212,
+        "original_json": "{\n  \"base\": null,\n  \"candidate\": \"ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\",\n  \"tested_tree\": \"ac2e8ad264eb9d15f0df98873afd4a3a761ebf27\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 937342253,\n  \"tracked_entries\": 8067,\n  \"tracked_worktree_verified\": true\n}",
+        "value": {
+          "base": null,
+          "candidate": "ef81ff34ce1ac1140ad829b53243e4e7eeef4b55",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "ef81ff34ce1ac1140ad829b53243e4e7eeef4b55",
+          "tested_tree": "ac2e8ad264eb9d15f0df98873afd4a3a761ebf27",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 937342253,
+          "tracked_entries": 8067,
+          "tracked_worktree_verified": true
+        }
+      },
+      {
+        "start_line": 349,
+        "original_json": "{\n  \"base\": null,\n  \"candidate\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n  \"tested_tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940774878,\n  \"tracked_entries\": 8766,\n  \"tracked_worktree_verified\": true\n}",
+        "value": {
+          "base": null,
+          "candidate": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+          "tested_tree": "eca850d0aa00c0a94b75e844b362389a7a5ecb2b",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940774878,
+          "tracked_entries": 8766,
+          "tracked_worktree_verified": true
+        }
+      },
+      {
+        "start_line": 392,
+        "original_json": "{\n  \"base\": null,\n  \"candidate\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n  \"tested_tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940774878,\n  \"tracked_entries\": 8766,\n  \"tracked_worktree_verified\": true\n}",
+        "value": {
+          "base": null,
+          "candidate": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+          "tested_tree": "eca850d0aa00c0a94b75e844b362389a7a5ecb2b",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 940774878,
+          "tracked_entries": 8766,
+          "tracked_worktree_verified": true
+        }
+      }
+    ],
+    "audits": [
+      {
+        "line": 225,
+        "s": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      {
+        "line": 362,
+        "s": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      {
+        "line": 405,
+        "s": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      }
+    ],
+    "original_inventory_output": {
+      "line": 377,
+      "original_text": "distributed source inventory: PASS"
+    },
+    "original_pins_output": {
+      "line": 378,
+      "original_text": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 393, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}"
+    },
+    "original_repository_output": {
+      "line": 379,
+      "original_text": "{\"activation\": false, \"head\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\", \"local_links\": 2454, \"normal_dependency_edges\": 24, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1097, \"source_state\": \"committed-clean\", \"tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\", \"workspace_packages\": 26}"
+    },
+    "output_artifact": {
+      "id": 13319467374,
+      "node_id": "MDg6QXJ0aWZhY3QxMzMxOTQ2NzM3NA==",
+      "name": "cell-inventory-closure-a4a0e2b5-ef81ff34ce1ac1140ad829b53243e4e7eeef4b55-1",
+      "size_in_bytes": 3163,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13319467374",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13319467374/zip",
+      "expired": false,
+      "digest": "sha256:d4f0ba09a25a43ab09b83f1b0b399b18ae71384d476fab8280e1e874e6dcd324",
+      "created_at": "2026-11-04T12:08:00Z",
+      "updated_at": "2026-11-04T12:08:00Z",
+      "expires_at": "2026-12-04T12:07:59Z",
+      "workflow_run": {
+        "id": 41826426124,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "ef81ff34ce1ac1140ad829b53243e4e7eeef4b55"
+      }
+    },
+    "output_api_upload_agree": true,
+    "full_original_log": {
+      "utf8_bytes": 38751,
+      "sha256": "2981d6e4e095e1f20bbb9dbddf09fe7e5003824b7f37e68208ea6cd506516720",
+      "original_text": "﻿2026-11-04T12:06:39.8788713Z Current runner version: '2.338.2'\n2026-11-04T12:06:39.8817119Z ##[group]Runner Image Provisioner\n2026-11-04T12:06:39.8818059Z Hosted Compute Agent\n2026-11-04T12:06:39.8818657Z Version: 20261021.618\n2026-11-04T12:06:39.8819397Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e\n2026-11-04T12:06:39.8820138Z Build Date: 2026-10-21T00:45:21Z\n2026-11-04T12:06:39.8820955Z Worker ID: {0f97d4f5-8259-425e-bfcd-83bdacc5d651}\n2026-11-04T12:06:39.8821676Z Region: westus\n2026-11-04T12:06:39.8822204Z Cloud: Azure\n2026-11-04T12:06:39.8823305Z ##[endgroup]\n2026-11-04T12:06:39.8824986Z ##[group]Operating System\n2026-11-04T12:06:39.8825766Z Ubuntu\n2026-11-04T12:06:39.8826341Z 24.04.5\n2026-11-04T12:06:39.8826853Z LTS\n2026-11-04T12:06:39.8827419Z ##[endgroup]\n2026-11-04T12:06:39.8828160Z ##[group]Runner Image\n2026-11-04T12:06:39.8828868Z Image: ubuntu-24.04\n2026-11-04T12:06:39.8829465Z Version: 20261025.353.1\n2026-11-04T12:06:39.8830826Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md\n2026-11-04T12:06:39.8832434Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353\n2026-11-04T12:06:39.8833979Z ##[endgroup]\n2026-11-04T12:06:39.8835162Z ##[group]GITHUB_TOKEN Permissions\n2026-11-04T12:06:39.8837510Z Contents: read\n2026-11-04T12:06:39.8838175Z Metadata: read\n2026-11-04T12:06:39.8838787Z ##[endgroup]\n2026-11-04T12:06:39.8841040Z Secret source: Actions\n2026-11-04T12:06:39.8842052Z Cache mode: write\n2026-11-04T12:06:39.8843100Z Prepare workflow directory\n2026-11-04T12:06:39.9324319Z Prepare all required actions\n2026-11-04T12:06:39.9375823Z Getting action download info\n2026-11-04T12:06:40.3056974Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)\n2026-11-04T12:06:40.4423742Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)\n2026-11-04T12:06:40.6558248Z Complete job name: verify\n2026-11-04T12:06:40.7456676Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n2026-11-04T12:06:40.7458135Z with:\n2026-11-04T12:06:40.7458666Z   ref: ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\n2026-11-04T12:06:40.7459270Z   fetch-depth: 1\n2026-11-04T12:06:40.7459736Z   persist-credentials: false\n2026-11-04T12:06:40.7460404Z   repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:40.7464523Z   token: ***\n2026-11-04T12:06:40.7464971Z   ssh-strict: true\n2026-11-04T12:06:40.7465410Z   ssh-user: git\n2026-11-04T12:06:40.7465835Z   clean: true\n2026-11-04T12:06:40.7466290Z   sparse-checkout-cone-mode: true\n2026-11-04T12:06:40.7466821Z   fetch-tags: false\n2026-11-04T12:06:40.7467261Z   show-progress: true\n2026-11-04T12:06:40.7467716Z   lfs: false\n2026-11-04T12:06:40.7468128Z   submodules: false\n2026-11-04T12:06:40.7468578Z   set-safe-directory: true\n2026-11-04T12:06:40.7469083Z   allow-unsafe-pr-checkout: false\n2026-11-04T12:06:40.7469941Z env:\n2026-11-04T12:06:40.7470440Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:06:40.7471102Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:06:40.7471897Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:06:40.7472540Z ##[endgroup]\n2026-11-04T12:06:41.0907105Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:41.0909333Z ##[group]Getting Git version info\n2026-11-04T12:06:41.0910257Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T12:06:41.0911486Z [command]/usr/bin/git version\n2026-11-04T12:06:41.1059777Z git version 2.56.0\n2026-11-04T12:06:41.1088942Z ##[endgroup]\n2026-11-04T12:06:41.1113725Z Temporarily overriding HOME='/home/runner/work/_temp/d4a78313-5cf4-42ee-b22e-401b750259c7' before making global git config changes\n2026-11-04T12:06:41.1116179Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T12:06:41.1120903Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T12:06:41.1191929Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T12:06:41.1198581Z ##[group]Initializing the repository\n2026-11-04T12:06:41.1204207Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T12:06:41.1363270Z hint: Using 'master' as the name for the initial branch. This default branch name\n2026-11-04T12:06:41.1364548Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name\n2026-11-04T12:06:41.1365520Z hint: to use in all of your new repositories, which will suppress this warning,\n2026-11-04T12:06:41.1366274Z hint: call:\n2026-11-04T12:06:41.1366680Z hint:\n2026-11-04T12:06:41.1367242Z hint: \tgit config --global init.defaultBranch <name>\n2026-11-04T12:06:41.1368012Z hint:\n2026-11-04T12:06:41.1368621Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\n2026-11-04T12:06:41.1369627Z hint: 'development'. The just-created branch can be renamed via this command:\n2026-11-04T12:06:41.1370483Z hint:\n2026-11-04T12:06:41.1370908Z hint: \tgit branch -m <name>\n2026-11-04T12:06:41.1371396Z hint:\n2026-11-04T12:06:41.1372039Z hint: Disable this message with \"git config set advice.defaultBranchName false\"\n2026-11-04T12:06:41.1376915Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/\n2026-11-04T12:06:41.1390821Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:41.1480429Z ##[endgroup]\n2026-11-04T12:06:41.1481774Z ##[group]Disabling automatic garbage collection\n2026-11-04T12:06:41.1485510Z [command]/usr/bin/git config --local gc.auto 0\n2026-11-04T12:06:41.1520087Z ##[endgroup]\n2026-11-04T12:06:41.1521267Z ##[group]Setting up auth\n2026-11-04T12:06:41.1527926Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:06:41.1568242Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:06:41.2007802Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:06:41.2082299Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:06:41.2364690Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:06:41.2413517Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:06:41.2674282Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***\n2026-11-04T12:06:41.2731875Z ##[endgroup]\n2026-11-04T12:06:41.2733263Z ##[group]Fetching the repository\n2026-11-04T12:06:41.2748943Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\n2026-11-04T12:06:49.4640861Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:49.4644034Z  * branch            ef81ff34ce1ac1140ad829b53243e4e7eeef4b55 -> FETCH_HEAD\n2026-11-04T12:06:49.4648913Z ##[endgroup]\n2026-11-04T12:06:49.4651027Z ##[group]Determining the checkout info\n2026-11-04T12:06:49.4653660Z ##[endgroup]\n2026-11-04T12:06:49.4657725Z [command]/usr/bin/git sparse-checkout disable\n2026-11-04T12:06:49.4723670Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig\n2026-11-04T12:06:49.4777102Z ##[group]Checking out the ref\n2026-11-04T12:06:49.4781089Z [command]/usr/bin/git checkout --progress --force ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\n2026-11-04T12:06:50.5110310Z Updating files:  41% (3372/8067)\n2026-11-04T12:06:50.6218808Z Updating files:  42% (3389/8067)\n2026-11-04T12:06:50.6401949Z Updating files:  43% (3469/8067)\n2026-11-04T12:06:50.6616731Z Updating files:  44% (3550/8067)\n2026-11-04T12:06:50.6931503Z Updating files:  45% (3631/8067)\n2026-11-04T12:06:50.7669783Z Updating files:  46% (3711/8067)\n2026-11-04T12:06:50.8339684Z Updating files:  47% (3792/8067)\n2026-11-04T12:06:50.8463833Z Updating files:  48% (3873/8067)\n2026-11-04T12:06:50.8525479Z Updating files:  49% (3953/8067)\n2026-11-04T12:06:50.8579239Z Updating files:  50% (4034/8067)\n2026-11-04T12:06:50.8746504Z Updating files:  51% (4115/8067)\n2026-11-04T12:06:50.9109747Z Updating files:  52% (4195/8067)\n2026-11-04T12:06:50.9262401Z Updating files:  53% (4276/8067)\n2026-11-04T12:06:50.9320525Z Updating files:  54% (4357/8067)\n2026-11-04T12:06:50.9360512Z Updating files:  55% (4437/8067)\n2026-11-04T12:06:50.9839899Z Updating files:  56% (4518/8067)\n2026-11-04T12:06:51.0191978Z Updating files:  57% (4599/8067)\n2026-11-04T12:06:51.0240987Z Updating files:  58% (4679/8067)\n2026-11-04T12:06:51.0296995Z Updating files:  59% (4760/8067)\n2026-11-04T12:06:51.0430550Z Updating files:  60% (4841/8067)\n2026-11-04T12:06:51.0469739Z Updating files:  61% (4921/8067)\n2026-11-04T12:06:51.0508369Z Updating files:  62% (5002/8067)\n2026-11-04T12:06:51.0580526Z Updating files:  63% (5083/8067)\n2026-11-04T12:06:51.0675616Z Updating files:  64% (5163/8067)\n2026-11-04T12:06:51.0978656Z Updating files:  65% (5244/8067)\n2026-11-04T12:06:51.1029795Z Updating files:  66% (5325/8067)\n2026-11-04T12:06:51.1063307Z Updating files:  67% (5405/8067)\n2026-11-04T12:06:51.1162890Z Updating files:  68% (5486/8067)\n2026-11-04T12:06:51.2141714Z Updating files:  69% (5567/8067)\n2026-11-04T12:06:51.2196999Z Updating files:  70% (5647/8067)\n2026-11-04T12:06:51.2245624Z Updating files:  71% (5728/8067)\n2026-11-04T12:06:51.2328263Z Updating files:  72% (5809/8067)\n2026-11-04T12:06:51.2506183Z Updating files:  73% (5889/8067)\n2026-11-04T12:06:51.2563416Z Updating files:  74% (5970/8067)\n2026-11-04T12:06:51.2639615Z Updating files:  75% (6051/8067)\n2026-11-04T12:06:51.2676486Z Updating files:  76% (6131/8067)\n2026-11-04T12:06:51.2756538Z Updating files:  77% (6212/8067)\n2026-11-04T12:06:51.2823935Z Updating files:  78% (6293/8067)\n2026-11-04T12:06:51.2900982Z Updating files:  79% (6373/8067)\n2026-11-04T12:06:51.2955979Z Updating files:  80% (6454/8067)\n2026-11-04T12:06:51.3019688Z Updating files:  81% (6535/8067)\n2026-11-04T12:06:51.3100250Z Updating files:  82% (6615/8067)\n2026-11-04T12:06:51.3179229Z Updating files:  83% (6696/8067)\n2026-11-04T12:06:51.3263287Z Updating files:  84% (6777/8067)\n2026-11-04T12:06:51.3324130Z Updating files:  85% (6857/8067)\n2026-11-04T12:06:51.3445370Z Updating files:  86% (6938/8067)\n2026-11-04T12:06:51.3520284Z Updating files:  87% (7019/8067)\n2026-11-04T12:06:51.3560752Z Updating files:  88% (7099/8067)\n2026-11-04T12:06:51.3596554Z Updating files:  89% (7180/8067)\n2026-11-04T12:06:51.3670285Z Updating files:  90% (7261/8067)\n2026-11-04T12:06:51.3756225Z Updating files:  91% (7341/8067)\n2026-11-04T12:06:51.3859363Z Updating files:  92% (7422/8067)\n2026-11-04T12:06:51.3964256Z Updating files:  93% (7503/8067)\n2026-11-04T12:06:51.4052153Z Updating files:  94% (7583/8067)\n2026-11-04T12:06:51.4124632Z Updating files:  95% (7664/8067)\n2026-11-04T12:06:51.4195052Z Updating files:  96% (7745/8067)\n2026-11-04T12:06:51.4239164Z Updating files:  97% (7825/8067)\n2026-11-04T12:06:51.4286306Z Updating files:  98% (7906/8067)\n2026-11-04T12:06:51.4323597Z Updating files:  99% (7987/8067)\n2026-11-04T12:06:51.4324097Z Updating files: 100% (8067/8067)\n2026-11-04T12:06:51.4324437Z Updating files: 100% (8067/8067), done.\n2026-11-04T12:06:51.4412965Z Note: switching to 'ef81ff34ce1ac1140ad829b53243e4e7eeef4b55'.\n2026-11-04T12:06:51.4413845Z \n2026-11-04T12:06:51.4420486Z You are in 'detached HEAD' state. You can look around, make experimental\n2026-11-04T12:06:51.4421396Z changes and commit them, and you can discard any commits you make in this\n2026-11-04T12:06:51.4422247Z state without impacting any branches by switching back to a branch.\n2026-11-04T12:06:51.4423495Z \n2026-11-04T12:06:51.4423804Z If you want to create a new branch to retain commits you create, you may\n2026-11-04T12:06:51.4424461Z do so (now or later) by using -c with the switch command. Example:\n2026-11-04T12:06:51.4424830Z \n2026-11-04T12:06:51.4424977Z   git switch -c <new-branch-name>\n2026-11-04T12:06:51.4425216Z \n2026-11-04T12:06:51.4425358Z Or undo this operation with:\n2026-11-04T12:06:51.4425580Z \n2026-11-04T12:06:51.4425695Z   git switch -\n2026-11-04T12:06:51.4425864Z \n2026-11-04T12:06:51.4426159Z Turn off this advice by setting config variable advice.detachedHead to false\n2026-11-04T12:06:51.4426603Z \n2026-11-04T12:06:51.4426951Z HEAD is now at ef81ff3 evidence: retain 93e Host costs and validate Cell inventory repair\n2026-11-04T12:06:51.4556858Z ##[endgroup]\n2026-11-04T12:06:51.4616047Z [command]/usr/bin/git log -1 --format=%H\n2026-11-04T12:06:51.4652421Z ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\n2026-11-04T12:06:51.4671905Z ##[group]Removing auth\n2026-11-04T12:06:51.4676184Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:06:51.4718375Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:06:51.4982976Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:06:51.5023620Z http.https://github.com/.extraheader\n2026-11-04T12:06:51.5031506Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader\n2026-11-04T12:06:51.5078765Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:06:51.5438221Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:06:51.5440982Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:06:51.5667134Z ##[endgroup]\n2026-11-04T12:06:51.5904159Z ##[group]Run set -euo pipefail\n2026-11-04T12:06:51.5904565Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T12:06:51.5905084Z \u001b[36;1mexport INVENTORY_OUT=\"$RUNNER_TEMP/cell-inventory-closure-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\u001b[0m\n2026-11-04T12:06:51.5905601Z \u001b[36;1mmkdir \"$INVENTORY_OUT\"\u001b[0m\n2026-11-04T12:06:51.5905927Z \u001b[36;1mecho \"INVENTORY_OUT=$INVENTORY_OUT\" >> \"$GITHUB_ENV\"\u001b[0m\n2026-11-04T12:06:51.5906597Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$GITHUB_SHA\" --output \"$INVENTORY_OUT/workflow-source.json\"\u001b[0m\n2026-11-04T12:06:51.5907377Z \u001b[36;1mbash scripts/project-preflight.sh --audit | tee \"$INVENTORY_OUT/workflow-audit.json\"\u001b[0m\n2026-11-04T12:06:51.5932466Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T12:06:51.5933138Z env:\n2026-11-04T12:06:51.5933358Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:06:51.5933724Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:06:51.5934175Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:06:51.5934513Z ##[endgroup]\n2026-11-04T12:06:53.1244587Z {\n2026-11-04T12:06:53.1244915Z   \"base\": null,\n2026-11-04T12:06:53.1245293Z   \"candidate\": \"ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\",\n2026-11-04T12:06:53.1245697Z   \"kind\": \"head\",\n2026-11-04T12:06:53.1245958Z   \"prospective_merge\": null,\n2026-11-04T12:06:53.1246444Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T12:06:53.1246837Z   \"tested_commit\": \"ef81ff34ce1ac1140ad829b53243e4e7eeef4b55\",\n2026-11-04T12:06:53.1247311Z   \"tested_tree\": \"ac2e8ad264eb9d15f0df98873afd4a3a761ebf27\",\n2026-11-04T12:06:53.1247726Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T12:06:53.1248065Z   \"tracked_bytes\": 937342253,\n2026-11-04T12:06:53.1248348Z   \"tracked_entries\": 8067,\n2026-11-04T12:06:53.1248633Z   \"tracked_worktree_verified\": true\n2026-11-04T12:06:53.1248926Z }\n2026-11-04T12:06:53.1828949Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T12:06:53.1998346Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n2026-11-04T12:06:53.1998755Z with:\n2026-11-04T12:06:53.1998991Z   ref: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:06:53.1999278Z   fetch-depth: 2\n2026-11-04T12:06:53.1999494Z   persist-credentials: false\n2026-11-04T12:06:53.1999791Z   repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:53.2002428Z   token: ***\n2026-11-04T12:06:53.2002633Z   ssh-strict: true\n2026-11-04T12:06:53.2003075Z   ssh-user: git\n2026-11-04T12:06:53.2003264Z   clean: true\n2026-11-04T12:06:53.2003472Z   sparse-checkout-cone-mode: true\n2026-11-04T12:06:53.2003731Z   fetch-tags: false\n2026-11-04T12:06:53.2003944Z   show-progress: true\n2026-11-04T12:06:53.2004154Z   lfs: false\n2026-11-04T12:06:53.2004342Z   submodules: false\n2026-11-04T12:06:53.2004553Z   set-safe-directory: true\n2026-11-04T12:06:53.2004822Z   allow-unsafe-pr-checkout: false\n2026-11-04T12:06:53.2005078Z env:\n2026-11-04T12:06:53.2005302Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:06:53.2005623Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:06:53.2006030Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:06:53.2006487Z   INVENTORY_OUT: /home/runner/work/_temp/cell-inventory-closure-41826426124-1\n2026-11-04T12:06:53.2006876Z ##[endgroup]\n2026-11-04T12:06:53.2894690Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:53.2898393Z ##[group]Getting Git version info\n2026-11-04T12:06:53.2899087Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T12:06:53.2947561Z [command]/usr/bin/git version\n2026-11-04T12:06:53.2998970Z git version 2.56.0\n2026-11-04T12:06:53.3025047Z ##[endgroup]\n2026-11-04T12:06:53.3042179Z Temporarily overriding HOME='/home/runner/work/_temp/48a12396-d18b-4c78-8044-ee6900c5a870' before making global git config changes\n2026-11-04T12:06:53.3044146Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T12:06:53.3049293Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T12:06:53.3100008Z [command]/usr/bin/git config --local --get remote.origin.url\n2026-11-04T12:06:53.3131174Z https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:06:53.3153385Z ##[group]Removing previously created refs, to avoid conflicts\n2026-11-04T12:06:53.3156324Z [command]/usr/bin/git rev-parse --symbolic-full-name --verify --quiet HEAD\n2026-11-04T12:06:53.3186010Z HEAD\n2026-11-04T12:06:53.3239189Z ##[endgroup]\n2026-11-04T12:06:53.3242355Z [command]/usr/bin/git submodule status\n2026-11-04T12:06:53.3533076Z ##[group]Cleaning the repository\n2026-11-04T12:06:53.3539977Z [command]/usr/bin/git clean -ffdx\n2026-11-04T12:06:53.3769617Z [command]/usr/bin/git reset --hard HEAD\n2026-11-04T12:06:53.4115123Z HEAD is now at ef81ff3 evidence: retain 93e Host costs and validate Cell inventory repair\n2026-11-04T12:06:53.4126574Z ##[endgroup]\n2026-11-04T12:06:53.4128759Z ##[group]Disabling automatic garbage collection\n2026-11-04T12:06:53.4138103Z [command]/usr/bin/git config --local gc.auto 0\n2026-11-04T12:06:53.4192623Z ##[endgroup]\n2026-11-04T12:06:53.4193557Z ##[group]Setting up auth\n2026-11-04T12:06:53.4203434Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:06:53.4259513Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:06:53.4573592Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:06:53.4628496Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:06:53.4933376Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:06:53.4986178Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:06:53.5304494Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***\n2026-11-04T12:06:53.5363519Z ##[endgroup]\n2026-11-04T12:06:53.5364234Z ##[group]Fetching the repository\n2026-11-04T12:06:53.5373576Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=2 origin a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:01.7392425Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T12:07:01.7393483Z  * branch              a4a0e2b561f057cfa3189979c5bf11f3a0eb2353 -> FETCH_HEAD\n2026-11-04T12:07:01.7397690Z ##[endgroup]\n2026-11-04T12:07:01.7398152Z ##[group]Determining the checkout info\n2026-11-04T12:07:01.7400135Z ##[endgroup]\n2026-11-04T12:07:01.7406876Z [command]/usr/bin/git sparse-checkout disable\n2026-11-04T12:07:01.7544050Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig\n2026-11-04T12:07:01.7591466Z ##[group]Checking out the ref\n2026-11-04T12:07:01.7596889Z [command]/usr/bin/git checkout --progress --force a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:01.8723921Z Warning: you are leaving 1 commit behind, not connected to\n2026-11-04T12:07:01.8724897Z any of your branches:\n2026-11-04T12:07:01.8725294Z \n2026-11-04T12:07:01.8725863Z   ef81ff34 evidence: retain 93e Host costs and validate Cell inventory repair\n2026-11-04T12:07:01.8726452Z \n2026-11-04T12:07:01.8726790Z If you want to keep it by creating a new branch, this may be a good time\n2026-11-04T12:07:01.8727430Z to do so with:\n2026-11-04T12:07:01.8727636Z \n2026-11-04T12:07:01.8727830Z  git branch <new-branch-name> ef81ff34\n2026-11-04T12:07:01.8728195Z \n2026-11-04T12:07:01.8729830Z HEAD is now at a4a0e2b5 fix(ci): include Cell residency sources in native inventory\n2026-11-04T12:07:01.8743289Z ##[endgroup]\n2026-11-04T12:07:01.8796899Z [command]/usr/bin/git log -1 --format=%H\n2026-11-04T12:07:01.8834714Z a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:01.8881559Z ##[group]Removing auth\n2026-11-04T12:07:01.8883852Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:07:01.8927630Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:07:01.9196863Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:07:01.9235545Z http.https://github.com/.extraheader\n2026-11-04T12:07:01.9247739Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader\n2026-11-04T12:07:01.9296197Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:07:01.9569816Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:07:01.9621853Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:07:01.9899460Z ##[endgroup]\n2026-11-04T12:07:02.0056540Z ##[group]Run set -euo pipefail\n2026-11-04T12:07:02.0056922Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T12:07:02.0057600Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$INVENTORY_CANDIDATE\" --output \"$INVENTORY_OUT/source-before.json\"\u001b[0m\n2026-11-04T12:07:02.0058491Z \u001b[36;1mbash scripts/project-preflight.sh --audit | tee \"$INVENTORY_OUT/audit-before.json\"\u001b[0m\n2026-11-04T12:07:02.0059001Z \u001b[36;1mpython3 - <<'PY'\u001b[0m\n2026-11-04T12:07:02.0059464Z \u001b[36;1mimport json, os, subprocess\u001b[0m\n2026-11-04T12:07:02.0059767Z \u001b[36;1mfrom pathlib import Path\u001b[0m\n2026-11-04T12:07:02.0060048Z \u001b[36;1mdef git(*args):\u001b[0m\n2026-11-04T12:07:02.0060430Z \u001b[36;1m    return subprocess.check_output(['git', *args], text=True).strip()\u001b[0m\n2026-11-04T12:07:02.0060905Z \u001b[36;1mcandidate = os.environ['INVENTORY_CANDIDATE']\u001b[0m\n2026-11-04T12:07:02.0061276Z \u001b[36;1mparent = os.environ['INVENTORY_PARENT']\u001b[0m\n2026-11-04T12:07:02.0061893Z \u001b[36;1mexpected = 'trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs'\u001b[0m\n2026-11-04T12:07:02.0062561Z \u001b[36;1massert git('show', '-s', '--format=%P', candidate).split() == [parent]\u001b[0m\n2026-11-04T12:07:02.0063426Z \u001b[36;1mchanged = git('diff', '--name-only', parent, candidate).splitlines()\u001b[0m\n2026-11-04T12:07:02.0063839Z \u001b[36;1massert changed == [expected], changed\u001b[0m\n2026-11-04T12:07:02.0064287Z \u001b[36;1massert git('hash-object', expected) == 'ec901599281b656b942fe77d807a2a2b92672e5a'\u001b[0m\n2026-11-04T12:07:02.0064798Z \u001b[36;1mrecord = {'schema': 'trnm-cell-inventory-source-fix-v1',\u001b[0m\n2026-11-04T12:07:02.0065264Z \u001b[36;1m          'candidate': candidate, 'parent': parent, 'changed_paths': changed,\u001b[0m\n2026-11-04T12:07:02.0065705Z \u001b[36;1m          'inventory_blob': git('hash-object', expected),\u001b[0m\n2026-11-04T12:07:02.0066123Z \u001b[36;1m          'implementation_changed': False, 'native_tests_executed': 0,\u001b[0m\n2026-11-04T12:07:02.0066535Z \u001b[36;1m          'public_business_acceptance_granted': False}\u001b[0m\n2026-11-04T12:07:02.0067055Z \u001b[36;1m(Path(os.environ['INVENTORY_OUT']) / 'candidate.json').write_text(json.dumps(record, indent=2) + '\\n')\u001b[0m\n2026-11-04T12:07:02.0067569Z \u001b[36;1mprint(json.dumps(record, sort_keys=True))\u001b[0m\n2026-11-04T12:07:02.0067860Z \u001b[36;1mPY\u001b[0m\n2026-11-04T12:07:02.0068152Z \u001b[36;1mgit diff --check \"$INVENTORY_PARENT\" \"$INVENTORY_CANDIDATE\"\u001b[0m\n2026-11-04T12:07:02.0089496Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T12:07:02.0089840Z env:\n2026-11-04T12:07:02.0090101Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:07:02.0090423Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:02.0090831Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:07:02.0091286Z   INVENTORY_OUT: /home/runner/work/_temp/cell-inventory-closure-41826426124-1\n2026-11-04T12:07:02.0091674Z ##[endgroup]\n2026-11-04T12:07:03.2408336Z {\n2026-11-04T12:07:03.2408637Z   \"base\": null,\n2026-11-04T12:07:03.2408979Z   \"candidate\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n2026-11-04T12:07:03.2409393Z   \"kind\": \"head\",\n2026-11-04T12:07:03.2409648Z   \"prospective_merge\": null,\n2026-11-04T12:07:03.2409946Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T12:07:03.2410313Z   \"tested_commit\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n2026-11-04T12:07:03.2410769Z   \"tested_tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\",\n2026-11-04T12:07:03.2411170Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T12:07:03.2411511Z   \"tracked_bytes\": 940774878,\n2026-11-04T12:07:03.2411812Z   \"tracked_entries\": 8766,\n2026-11-04T12:07:03.2412091Z   \"tracked_worktree_verified\": true\n2026-11-04T12:07:03.2412377Z }\n2026-11-04T12:07:03.3004188Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T12:07:03.3461042Z {\"candidate\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\", \"changed_paths\": [\"trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\"], \"implementation_changed\": false, \"inventory_blob\": \"ec901599281b656b942fe77d807a2a2b92672e5a\", \"native_tests_executed\": 0, \"parent\": \"5c070abeb61d0ea8702fa94fffe9330d1699119c\", \"public_business_acceptance_granted\": false, \"schema\": \"trnm-cell-inventory-source-fix-v1\"}\n2026-11-04T12:07:03.3609719Z ##[group]Run set -euo pipefail\n2026-11-04T12:07:03.3610075Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T12:07:03.3610593Z \u001b[36;1mpython3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee \"$INVENTORY_OUT/inventory.log\"\u001b[0m\n2026-11-04T12:07:03.3611583Z \u001b[36;1mpython3 scripts/ci/check_pq_research_integration.py 2>&1 | tee \"$INVENTORY_OUT/pq-source.log\"\u001b[0m\n2026-11-04T12:07:03.3612237Z \u001b[36;1mpython3 scripts/ci/check_repository.py 2>&1 | tee \"$INVENTORY_OUT/repository.log\"\u001b[0m\n2026-11-04T12:07:03.3613013Z \u001b[36;1mgit diff --exit-code HEAD --\u001b[0m\n2026-11-04T12:07:03.3634422Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T12:07:03.3634776Z env:\n2026-11-04T12:07:03.3634987Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:07:03.3635313Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:03.3635726Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:07:03.3636238Z   INVENTORY_OUT: /home/runner/work/_temp/cell-inventory-closure-41826426124-1\n2026-11-04T12:07:03.3636640Z ##[endgroup]\n2026-11-04T12:07:03.4347930Z distributed source inventory: PASS\n2026-11-04T12:07:03.6355642Z {\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 393, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n2026-11-04T12:07:58.2420683Z {\"activation\": false, \"head\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\", \"local_links\": 2454, \"normal_dependency_edges\": 24, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1097, \"source_state\": \"committed-clean\", \"tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\", \"workspace_packages\": 26}\n2026-11-04T12:07:58.2742199Z ##[group]Run set -euo pipefail\n2026-11-04T12:07:58.2742536Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T12:07:58.2743521Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$INVENTORY_CANDIDATE\" --output \"$INVENTORY_OUT/source-after.json\"\u001b[0m\n2026-11-04T12:07:58.2744298Z \u001b[36;1mcmp \"$INVENTORY_OUT/source-before.json\" \"$INVENTORY_OUT/source-after.json\"\u001b[0m\n2026-11-04T12:07:58.2744877Z \u001b[36;1mbash scripts/project-preflight.sh --audit | tee \"$INVENTORY_OUT/audit-after.json\"\u001b[0m\n2026-11-04T12:07:58.2765679Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T12:07:58.2766029Z env:\n2026-11-04T12:07:58.2766236Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:07:58.2766575Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:58.2766997Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:07:58.2767455Z   INVENTORY_OUT: /home/runner/work/_temp/cell-inventory-closure-41826426124-1\n2026-11-04T12:07:58.2767889Z ##[endgroup]\n2026-11-04T12:07:59.4405286Z {\n2026-11-04T12:07:59.4405726Z   \"base\": null,\n2026-11-04T12:07:59.4406230Z   \"candidate\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n2026-11-04T12:07:59.4406812Z   \"kind\": \"head\",\n2026-11-04T12:07:59.4407236Z   \"prospective_merge\": null,\n2026-11-04T12:07:59.4407692Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T12:07:59.4408256Z   \"tested_commit\": \"a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\",\n2026-11-04T12:07:59.4408951Z   \"tested_tree\": \"eca850d0aa00c0a94b75e844b362389a7a5ecb2b\",\n2026-11-04T12:07:59.4409413Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T12:07:59.4409757Z   \"tracked_bytes\": 940774878,\n2026-11-04T12:07:59.4410045Z   \"tracked_entries\": 8766,\n2026-11-04T12:07:59.4410335Z   \"tracked_worktree_verified\": true\n2026-11-04T12:07:59.4410630Z }\n2026-11-04T12:07:59.4988958Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T12:07:59.5180545Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n2026-11-04T12:07:59.5181032Z with:\n2026-11-04T12:07:59.5181419Z   name: cell-inventory-closure-a4a0e2b5-ef81ff34ce1ac1140ad829b53243e4e7eeef4b55-1\n2026-11-04T12:07:59.5182174Z   path: /home/runner/work/_temp/cell-inventory-closure-41826426124-1/\n2026-11-04T12:07:59.5182588Z   if-no-files-found: error\n2026-11-04T12:07:59.5183141Z   retention-days: 30\n2026-11-04T12:07:59.5183372Z   compression-level: 6\n2026-11-04T12:07:59.5183586Z   overwrite: false\n2026-11-04T12:07:59.5183803Z   include-hidden-files: false\n2026-11-04T12:07:59.5184035Z env:\n2026-11-04T12:07:59.5184232Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T12:07:59.5184554Z   INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353\n2026-11-04T12:07:59.5184960Z   INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c\n2026-11-04T12:07:59.5185420Z   INVENTORY_OUT: /home/runner/work/_temp/cell-inventory-closure-41826426124-1\n2026-11-04T12:07:59.5185844Z ##[endgroup]\n2026-11-04T12:07:59.7203165Z (node:2884) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n2026-11-04T12:07:59.7204670Z (Use `node --trace-deprecation ...` to show where the warning was created)\n2026-11-04T12:07:59.7350392Z With the provided path, there will be 10 files uploaded\n2026-11-04T12:07:59.7369458Z Artifact name is valid!\n2026-11-04T12:07:59.7370326Z Root directory input is valid!\n2026-11-04T12:08:00.1534058Z Beginning upload of artifact content to blob storage\n2026-11-04T12:08:00.1880173Z (node:2884) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n2026-11-04T12:08:00.4773199Z Uploaded bytes 3163\n2026-11-04T12:08:00.5581722Z Finished uploading artifact content to blob storage!\n2026-11-04T12:08:00.5583220Z SHA256 digest of uploaded artifact zip is d4f0ba09a25a43ab09b83f1b0b399b18ae71384d476fab8280e1e874e6dcd324\n2026-11-04T12:08:00.5584336Z Finalizing artifact upload\n2026-11-04T12:08:01.0794747Z Artifact cell-inventory-closure-a4a0e2b5-ef81ff34ce1ac1140ad829b53243e4e7eeef4b55-1.zip successfully finalized. Artifact ID 13319467374\n2026-11-04T12:08:01.0797333Z Artifact cell-inventory-closure-a4a0e2b5-ef81ff34ce1ac1140ad829b53243e4e7eeef4b55-1 has been successfully uploaded! Final size is 3163 bytes. Artifact ID is 13319467374\n2026-11-04T12:08:01.0803782Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41826426124/artifacts/13319467374\n2026-11-04T12:08:01.1026443Z Post job cleanup.\n2026-11-04T12:08:01.1960536Z [command]/usr/bin/git version\n2026-11-04T12:08:01.2013847Z git version 2.56.0\n2026-11-04T12:08:01.2098139Z Temporarily overriding HOME='/home/runner/work/_temp/5865eba7-806e-4f9c-8bce-a1a05599d8c0' before making global git config changes\n2026-11-04T12:08:01.2103161Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T12:08:01.2106010Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T12:08:01.2181124Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:08:01.2241953Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:08:01.2544656Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:08:01.2598853Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:08:01.2984979Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:08:01.3068721Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:08:01.3675948Z Post job cleanup.\n2026-11-04T12:08:01.4784962Z [command]/usr/bin/git version\n2026-11-04T12:08:01.4856494Z git version 2.56.0\n2026-11-04T12:08:01.4913060Z Temporarily overriding HOME='/home/runner/work/_temp/eee3f6a4-c6a2-4713-815b-85d9c130e1a5' before making global git config changes\n2026-11-04T12:08:01.4914558Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T12:08:01.4920670Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T12:08:01.5024486Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T12:08:01.5096540Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T12:08:01.5415971Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T12:08:01.5472613Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T12:08:01.5776602Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T12:08:01.5835160Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T12:08:01.6319071Z Cleaning up orphan processes\n2026-11-04T12:08:01.6726231Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\n"
+    }
+  },
+  "previous_failure": {
+    "run": 41824885864,
+    "measured_head": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "original_error": "distributed native source inventory differs; refresh before freezing source",
+    "native_execution_reached": false,
+    "original_failure_preserved": true
+  },
+  "limitations": {
+    "current_integration_original_PQ_native_lanes": "not established by these source-only checks",
+    "rust_compilation": "not executed by this validation",
+    "public_business_acceptance_granted": false,
+    "production_activation": false
+  },
+  "integration": {
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "pr": 688,
+    "expected_previous_head": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "head": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+    "force": false,
+    "ordinary_fast_forward": true,
+    "head_read_back_at_utc": "2026-11-04 12:10:03 UTC",
+    "actual_prospective_merge": "ef1dfa3ad245a656137bfd01c54c92073a8c23d1",
+    "actual_prospective_merge_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353"
+    ],
+    "actual_prospective_merge_tree": "eca850d0aa00c0a94b75e844b362389a7a5ecb2b",
+    "main_merged": false,
+    "original_pq_native_gates": "pending own exact-source execution"
+  }
+}
