@@ -1,0 +1,664 @@
+name: Frozen 44d service-model failure evidence (read only)
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-44d-service-model-failure-readback-20261104.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: 44d-service-model-failure-readback-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify diagnostic source and project boundary
+        env:
+          READBACK_OUT: ${{ runner.temp }}/44d-service-model-failure-readback-${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$READBACK_OUT"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Read four fixed original archives without executing their contents
+        env:
+          GH_TOKEN: ${{ github.token }}
+          READBACK_OUT: ${{ runner.temp }}/44d-service-model-failure-readback-${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, re, urllib.error, urllib.parse, urllib.request, uuid, zipfile
+          from pathlib import Path, PurePosixPath
+          
+          REPO = "TrillionniumFoundation/Trillionnium-Chain"
+          BRANCH = "fix/chain-retained-failure-readback-20261104"
+          BASE = "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+          TARGETS = json.loads(r'''[{"id":13298344954,"name":"priority-ubuntu-24.04-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1","size":7304158,"digest":"sha256:d301993b7b83d458bcfa65e828d23468996cd226a8ccdd08962aeab5c5979328","run":41778472816,"job":126407622369,"head":"44d3def32f515b98fc41f074fe1b88e97f046191","kind":"head","tested":"44d3def32f515b98fc41f074fe1b88e97f046191","tree":"f3e07fc21a74e9a4367610ba10f5883213609320","family":"from-zero"},{"id":13298993182,"name":"priority-ubuntu-24.04-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1","size":7214082,"digest":"sha256:0968962e4f4b9a2185d994bf1f10512a1d5248216d410d5848cbd264068f1bb2","run":41778472816,"job":126407622314,"head":"44d3def32f515b98fc41f074fe1b88e97f046191","kind":"prospective-merge","tested":"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b","tree":"f3e07fc21a74e9a4367610ba10f5883213609320","family":"from-zero"},{"id":13299476462,"name":"priority-ubuntu-24.04-arm-head-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1","size":7252731,"digest":"sha256:a42ac35380682d6cb2c5d63aa0f658441640308ca106bd80a884af7918d67d23","run":41778472816,"job":126407622505,"head":"44d3def32f515b98fc41f074fe1b88e97f046191","kind":"head","tested":"44d3def32f515b98fc41f074fe1b88e97f046191","tree":"f3e07fc21a74e9a4367610ba10f5883213609320","family":"from-zero"},{"id":13299640686,"name":"priority-ubuntu-24.04-arm-prospective-merge-service-model-44d3def32f515b98fc41f074fe1b88e97f046191-1","size":7290852,"digest":"sha256:cb57379ee7f3d8a3122a341144712991862d5bd838f3a8236f3ce2032c0d33e3","run":41778472816,"job":126407622427,"head":"44d3def32f515b98fc41f074fe1b88e97f046191","kind":"prospective-merge","tested":"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b","tree":"f3e07fc21a74e9a4367610ba10f5883213609320","family":"from-zero"}]''')
+          ROOT = Path(os.environ["READBACK_OUT"])
+          API = "https://api.github.com/repos/" + REPO
+          TOKEN = os.environ["GH_TOKEN"]
+          MAX_METADATA = 2 * 1024 * 1024
+          MAX_MEMBER = 32 * 1024 * 1024
+          MAX_SELECTED = 160 * 1024 * 1024
+          MAX_MEMBERS = 25000
+          MAX_STDOUT = 70000
+          MAX_NODES = 200000
+          
+          class Refused(Exception):
+              pass
+          
+          def require(condition, label):
+              if not condition:
+                  raise Refused(label)
+          
+          require(os.environ["GITHUB_REPOSITORY"] == REPO, "REPOSITORY")
+          require(os.environ["GITHUB_REF"] == "refs/heads/" + BRANCH, "REF")
+          require(os.environ["GITHUB_EVENT_NAME"] == "push", "EVENT")
+          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 4, "TARGETS")
+          
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+          
+          AUTH = urllib.request.build_opener(NoRedirect())
+          
+          def request_api(path):
+              require(path.startswith("/actions/"), "API_PATH")
+              req = urllib.request.Request(API + path, headers={
+                  "Authorization": "Bearer " + TOKEN,
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "trnm-retained-failure-readback-v1",
+              })
+              return AUTH.open(req, timeout=60)
+          
+          def read_json(path):
+              with request_api(path) as response:
+                  raw = response.read(MAX_METADATA + 1)
+              require(len(raw) <= MAX_METADATA, "METADATA_LIMIT")
+              return json.loads(raw)
+          
+          def write_json(path, value):
+              raw = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+              with path.open("xb") as stream:
+                  stream.write(raw)
+              return hashlib.sha256(raw).hexdigest()
+          
+          def archive(target, destination):
+              # Only the GitHub API receives Authorization. The signed artifact URL is
+              # fetched using a new request with no token and is never printed or saved.
+              try:
+                  response = request_api("/actions/artifacts/" + str(target["id"]) + "/zip")
+              except urllib.error.HTTPError as error:
+                  require(error.code in (301, 302, 303, 307, 308), "ARCHIVE_REDIRECT_STATUS")
+                  location = error.headers.get("Location")
+                  error.close()
+                  require(isinstance(location, str), "ARCHIVE_LOCATION")
+                  parsed = urllib.parse.urlsplit(location)
+                  require(parsed.scheme == "https" and parsed.hostname
+                          and parsed.username is None and parsed.password is None,
+                          "ARCHIVE_LOCATION_SCHEME")
+                  unsigned = urllib.request.Request(location, headers={
+                      "User-Agent": "trnm-retained-failure-readback-v1"})
+                  response = urllib.request.build_opener(NoRedirect()).open(unsigned, timeout=120)
+              digest = hashlib.sha256()
+              total = 0
+              with response, destination.open("xb") as stream:
+                  while True:
+                      block = response.read(1024 * 1024)
+                      if not block:
+                          break
+                      total += len(block)
+                      require(total <= target["size"], "ARCHIVE_SIZE_OVERRUN")
+                      digest.update(block)
+                      stream.write(block)
+              require(total == target["size"], "ARCHIVE_SIZE")
+              require("sha256:" + digest.hexdigest() == target["digest"], "ARCHIVE_DIGEST")
+              return total
+          
+          FROM_ZERO_TESTS = (
+              "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          )
+          FROM_ZERO_MANIFEST = "from-zero-native/manifest.json"
+          FROM_ZERO_MEMBERS = frozenset({
+              "source.json",
+              FROM_ZERO_MANIFEST,
+              "from-zero-native/build/stdout", "from-zero-native/build/stderr",
+              "from-zero-native/format-check/stdout", "from-zero-native/format-check/stderr",
+              "from-zero-native/format-copy/stdout", "from-zero-native/format-copy/stderr",
+              "from-zero-native-host/controller-result.json",
+              "from-zero-native-host/child-result.json",
+              "from-zero-native-host/prepare-build.json",
+              "from-zero-native-host/prepare-build/stdout",
+              "from-zero-native-host/prepare-build/stderr",
+              "from-zero-native-host/inside-before.json",
+              "from-zero-native-host/inside-after.json",
+              "from-zero-native-host/outside-after.json",
+              "from-zero-native-host/systemd-run.log",
+          } | {"from-zero-native/" + name + "/" + channel
+               for name in FROM_ZERO_TESTS for channel in ("stdout", "stderr")})
+          FRESH_SELECTORS = (
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          )
+          FRESH_MEMBERS = frozenset((
+              "source.json", "source-after.json",
+              "fresh-service/manifest.json", "fresh-service/original.log", "fresh-service/fresh.log",
+              "fresh-service-host/controller-result.json", "fresh-service-host/child-result.json",
+              "fresh-service-host/prepare-build.json",
+              "fresh-service-host/inside-before.json", "fresh-service-host/inside-after.json",
+              "fresh-service-host/outside-after.json", "fresh-service-host/systemd-run.log",
+          ))
+          FRESH_LOGS = frozenset(("fresh-service/original.log", "fresh-service/fresh.log"))
+          
+          MATCH = re.compile(
+              r"^test result:|^failures:|^thread .*panicked|^test .+ \.\.\. FAILED"
+              r"|^error(?:\[[^]]+\])?:|^Error:|^Caused by:")
+          ESSENTIAL = re.compile(
+              r"^thread .*panicked|^called .*Err|^test result: FAILED"
+              r"|^test .+ \.\.\. FAILED|^failures:|^error(?:\[[^]]+\])?:|^Error:")
+          NATIVE_LOGS = frozenset("from-zero-native/" + name + "/" + channel
+                                  for name in FROM_ZERO_TESTS for channel in ("stdout", "stderr")) | FRESH_LOGS
+          REQUIRED_MEMBERS = frozenset((
+              "source.json", FROM_ZERO_MANIFEST,
+              "from-zero-native-host/controller-result.json", "from-zero-native-host/child-result.json",
+              "from-zero-native-host/prepare-build.json",
+          ))
+          
+          def members_for(target):
+              return FRESH_MEMBERS if target["family"] == "fresh" else FROM_ZERO_MEMBERS
+          
+          def required_for(target):
+              if target["family"] == "fresh":
+                  return frozenset(("source.json", "source-after.json", "fresh-service/manifest.json",
+                                    "fresh-service/original.log", "fresh-service/fresh.log"))
+              return REQUIRED_MEMBERS
+          
+          def priority(info):
+              name = info.filename
+              if name in (FROM_ZERO_MANIFEST, "fresh-service/manifest.json"):
+                  return (0, name)
+              if name in ("source.json", "source-after.json"):
+                  return (1, name)
+              if name.endswith(("/controller-result.json", "/child-result.json", "/prepare-build.json")):
+                  return (2, name)
+              if name in NATIVE_LOGS:
+                  return (3, name)
+              return (4, name)
+          
+          def bounded_json(value):
+              # Only fixed small selected JSON members are visited. No raw native report is selected.
+              stack = [value]
+              visited = 0
+              while stack:
+                  item = stack.pop()
+                  visited += 1
+                  require(visited <= MAX_NODES, "JSON_NODE_LIMIT")
+                  if isinstance(item, dict):
+                      stack.extend(item.values())
+                  elif isinstance(item, list):
+                      stack.extend(item)
+          
+          def source_matches(value, target, inner=False):
+              # Original from-zero source_identity checks the tested checkout as a head.
+              # Its inner merge checkout is not the outer event candidate.
+              inner_fresh = inner
+              kind = "head" if inner_fresh else target["kind"]
+              candidate = target["tested"] if inner_fresh else target["head"]
+              expected = {
+                  "schema": "trnm-ci-source-v1", "kind": kind,
+                  "tested_commit": target["tested"], "tested_tree": target["tree"],
+                  "candidate": candidate,
+                  "base": BASE if kind == "prospective-merge" else None,
+                  "prospective_merge": target["tested"] if kind == "prospective-merge" else None,
+              }
+              return (isinstance(value, dict) and all(key in value and value[key] == item
+                                                    for key, item in expected.items())
+                      and value.get("tracked_worktree_verified") is True
+                      and value.get("tests_executed_by_identity_check") is False)
+          
+          def source_pair(value, target):
+              states = []
+              for key in ("source_before", "source_after"):
+                  sample = value.get(key)
+                  if sample is None:
+                      states.append("unknown")
+                  elif (isinstance(sample, dict) and sample.get("commit") == target["tested"]
+                        and sample.get("tree") == target["tree"]
+                        and source_matches(sample.get("tracked_source_identity"), target, inner=True)):
+                      states.append("verified")
+                  else:
+                      states.append("mismatch")
+              equal = value.get("source_before") == value.get("source_after") if "unknown" not in states else None
+              status = ("mismatch" if "mismatch" in states or equal is False else
+                        "verified" if states == ["verified", "verified"] else "unknown")
+              return {"status": status, "before": states[0], "after": states[1],
+                      "before_after_equal": equal,
+                      "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown."}
+          
+          def from_zero_manifest_projection(value, target, record):
+              require(isinstance(value, dict)
+                      and value.get("schema") == "trnm-from-zero-native-execution-v3",
+                      "FROM_ZERO_MANIFEST_SCHEMA")
+              def fields(item, names):
+                  return {name: item.get(name) for name in names} if isinstance(item, dict) else None
+              sources = {}
+              for key in ("source_before", "source_after"):
+                  source = value.get(key)
+                  if isinstance(source, dict):
+                      require(source.get("commit") == target["tested"]
+                              and source.get("tree") == target["tree"], "FROM_ZERO_MANIFEST_SOURCE")
+                  sources[key] = fields(source, ("commit", "tree", "test_sha256"))
+              process_fields = (
+                  "exit_code", "timed_out", "wall_ns", "user_cpu_ns", "system_cpu_ns", "cpu_ns",
+                  "cpu_scope", "wait4_cpu_resolution_ns", "stdout_sha256", "stderr_sha256",
+              )
+              runs = value.get("runs")
+              if runs is not None:
+                  require(isinstance(runs, list) and len(runs) <= len(FROM_ZERO_TESTS)
+                          and all(isinstance(row, dict) for row in runs)
+                          and [row.get("name") for row in runs] == list(FROM_ZERO_TESTS[:len(runs)]),
+                          "FROM_ZERO_MANIFEST_RUNS")
+                  runs = [{**fields(row, ("name", "passed", "failure", "named_execution",
+                                          "stdout_sha256", "stderr_sha256")),
+                           "process": fields(row.get("process"), process_fields)} for row in runs]
+              terminal = value.get("terminal")
+              terminal_view = fields(terminal, (
+                  "schema", "native_execution_completed", "native_execution_completed_scope",
+                  "unexecuted_native_tests", "unexecuted_acceptance_stages",
+                  "acceptance_passed", "finalization_completed", "subsequent_ci_steps_observed",
+              ))
+              if terminal_view is not None:
+                  invocations = terminal.get("native_invocations")
+                  if invocations is not None:
+                      require(isinstance(invocations, list) and len(invocations) == len(FROM_ZERO_TESTS)
+                              and all(isinstance(row, dict) for row in invocations)
+                              and [row.get("name") for row in invocations] == list(FROM_ZERO_TESTS),
+                              "FROM_ZERO_MANIFEST_INVOCATIONS")
+                      invocations = [fields(row, ("name", "status", "exit_code", "timed_out"))
+                                     for row in invocations]
+                  terminal_view["native_invocations"] = invocations
+                  acceptance = terminal.get("acceptance_stages")
+                  terminal_view["acceptance_stages"] = {
+                      key: fields(acceptance.get(key), (
+                          "path", "status", "error", "before_validation", "retained_report",
+                          "retained_matches_before_validation",
+                      )) if isinstance(acceptance, dict) else None
+                      for key in ("service_report", "sustained_report", "confirmation_report")}
+              projection = {
+                  "schema": "trnm-retained-from-zero-terminal-readback-v1",
+                  "artifact": target["id"], "member": record["member"],
+                  "member_bytes": record["bytes"], "member_sha256": record["sha256"],
+                  "expected_source_kind": target["kind"], "expected_tested_commit": target["tested"],
+                  "sources": sources,
+                  "original": fields(value, (
+                      "schema", "source_recompiled", "all_named_tests_passed", "format_passed",
+                      "passed", "execution_finished", "failures",
+                      "binary_sha256_before", "binary_sha256_after",
+                      "independent_wan_accepted", "work_hardness_accepted", "production_activation",
+                  )),
+                  "format": fields(value.get("format"), process_fields),
+                  "build": fields(value.get("build"), process_fields),
+                  "runs": runs, "terminal": terminal_view,
+                  "confirmation_observation": fields(value.get("confirmation_observation"), (
+                      "schema", "sha256", "original_gate_validated", "original_gate_validation_error",
+                      "simulated_control",
+                  )),
+                  "source_tests_executed": False, "acceptance_granted": False,
+                  "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+              }
+              bounded_json(projection)
+              rendered = json.dumps(projection, sort_keys=True, separators=(",", ":")) + "\n"
+              require(len(rendered) <= 12000, "FROM_ZERO_MANIFEST_CONSOLE_LIMIT")
+              return projection, rendered
+          
+          def pick(value, fields):
+              return {key: value.get(key) for key in fields}
+          
+          def literal_projection(value, target, record):
+              require(isinstance(value, dict), "SELECTED_JSON_OBJECT")
+              name = record["member"]
+              if name in ("source.json", "source-after.json"):
+                  record["source_guard_verified"] = source_matches(value, target)
+                  original = pick(value, (
+                      "schema", "kind", "tested_commit", "tested_tree", "candidate", "base",
+                      "prospective_merge", "tracked_worktree_verified", "tracked_entries",
+                      "tracked_bytes", "tests_executed_by_identity_check"))
+              elif name == "fresh-service/manifest.json":
+                  require(value.get("schema") == "trnm-w1-fresh-service-execution-v1",
+                          "FRESH_MANIFEST_SCHEMA")
+                  record["native_source_binding"] = source_pair(value, target)
+                  original = pick(value, (
+                      "schema", "source_expected", "source_recompiled", "all_named_tests_passed",
+                      "failures", "passed", "execution_finished", "requested_window_ns", "attack_workers",
+                      "binary_sha256_before", "binary_sha256_after", "build",
+                      "independent_wan_accepted", "work_hardness_accepted", "production_activation"))
+                  runs = value.get("runs")
+                  valid = (isinstance(runs, list) and len(runs) <= len(FRESH_SELECTORS)
+                           and all(isinstance(row, dict) and row.get("name") == FRESH_SELECTORS[index]
+                                   for index, row in enumerate(runs)))
+                  require(valid, "FRESH_RUN_IDENTITIES")
+                  original["runs"] = [pick(row, (
+                      "name", "process", "passed", "failure", "failure_diagnostic",
+                      "log_sha256", "report_path", "named_execution", "report")) for row in runs]
+              elif name in ("from-zero-native-host/prepare-build.json", "fresh-service-host/prepare-build.json"):
+                  require(value.get("schema") == "trnm-ci-original-native-build-preparation-v1",
+                          "FROM_ZERO_PREPARATION_SCHEMA")
+                  record["native_source_binding"] = source_pair(value, target)
+                  original = pick(value, (
+                      "schema", "process", "binary_sha256", "failure_type", "source_error",
+                      "completed", "native_tests_executed", "service_resource_observation"))
+              elif name.endswith("/controller-result.json"):
+                  require(value.get("schema") == "trnm-ci-original-public-host-controller-v2",
+                          "HOST_CONTROLLER_SCHEMA")
+                  original = pick(value, (
+                      "schema", "command_argv", "systemd_run_exit", "failure", "cleanup", "passed",
+                      "host_readiness_only", "consensus_or_model_authority", "final_host_errors",
+                      "final_parent_lease_error", "parent_reused", "preparation_execution_binding"))
+              elif name.endswith("/child-result.json"):
+                  require(value.get("schema") == "trnm-ci-original-public-host-child-v1",
+                          "HOST_CHILD_SCHEMA")
+                  original = pick(value, (
+                      "schema", "command_argv", "native_child_exit", "host_errors",
+                      "host_readiness_only", "consensus_or_model_authority"))
+              else:
+                  original = pick(value, (
+                      "schema", "label", "phase", "status", "completed", "passed", "failure",
+                      "errors", "host_errors", "elapsed_ns", "duration_ns"))
+              return {
+                  "schema": "trnm-baseline-w1-literal-readback-v1",
+                  "artifact": target["id"], "measured_head": target["head"],
+                  "tested_commit": target["tested"], "tested_tree": target["tree"],
+                  "measured_run": target["run"], "measured_job": target["job"],
+                  "member": name, "member_bytes": record["bytes"], "member_sha256": record["sha256"],
+                  "original_fields": original,
+                  "native_source_binding": record.get("native_source_binding"),
+                  "source_guard_verified": record.get("source_guard_verified"),
+                  "source_tests_executed": False, "acceptance_granted": False,
+                  "production_activation": False,
+                  "scope": "Literal original fields only. Complete selected bytes and JSON are retained. No native failure cause is inferred from Host outcome.",
+              }
+          
+          def json_console(projection):
+              rendered = json.dumps(projection, sort_keys=True, separators=(",", ":")) + "\n"
+              if len(rendered) <= 12000:
+                  return rendered
+              clipped = {
+                  "artifact": projection["artifact"], "member": projection["member"],
+                  "rendered_prefix": rendered[:10000], "console_truncated": True,
+                  "complete_original_json_and_projection_retained": True,
+              }
+              while True:
+                  shortened = json.dumps(clipped, sort_keys=True) + "\n"
+                  if len(shortened) <= 12000:
+                      return shortened
+                  clipped["rendered_prefix"] = clipped["rendered_prefix"][:len(clipped["rendered_prefix"]) // 2]
+          
+          def bounded_console(excerpt, remaining, target, name):
+              parts = excerpt.splitlines(keepends=True)
+              def marker(count):
+                  return json.dumps({"artifact": target["id"], "member": name,
+                                     "console_lines_omitted": count,
+                                     "original_excerpt_and_member_retained": True},
+                                    sort_keys=True) + "\n"
+              allowance = max(0, remaining - len(marker(len(parts))))
+              kept = []
+              used = 0
+              for part in parts:
+                  if used + len(part) > allowance:
+                      break
+                  kept.append(part)
+                  used += len(part)
+              omitted = len(parts) - len(kept)
+              rendered = "".join(kept)
+              if omitted:
+                  suffix = marker(omitted)
+                  if len(rendered) + len(suffix) <= remaining:
+                      rendered += suffix
+              require(len(rendered) <= remaining, "CONSOLE_BOUND")
+              return rendered, len(kept), omitted
+          
+          results = []
+          had_error = False
+          for target in TARGETS:
+              output = ROOT / str(target["id"])
+              output.mkdir()
+              stage = "metadata"
+              printed = 0
+              try:
+                  metadata = read_json("/actions/artifacts/" + str(target["id"]))
+                  run = read_json("/actions/runs/" + str(target["run"]))
+                  job = read_json("/actions/jobs/" + str(target["job"]))
+                  require(metadata["id"] == target["id"] and metadata["name"] == target["name"],
+                          "ARTIFACT_IDENTITY")
+                  require(metadata["size_in_bytes"] == target["size"]
+                          and metadata["digest"] == target["digest"] and not metadata["expired"],
+                          "ARTIFACT_METADATA")
+                  require(metadata["workflow_run"]["id"] == run["id"] == job["run_id"] == target["run"],
+                          "RUN_IDENTITY")
+                  require(metadata["workflow_run"]["head_sha"] == run["head_sha"] == target["head"],
+                          "SOURCE_IDENTITY")
+                  require(job["id"] == target["job"] and job["status"] == "completed"
+                          and job["conclusion"] == "failure", "ORIGINAL_FAILED_JOB")
+                  write_json(output / "metadata.json", metadata)
+                  write_json(output / "run.json", run)
+                  write_json(output / "job.json", job)
+                  stage = "archive"
+                  path = output / "original.zip"
+                  received = archive(target, path)
+                  stage = "members"
+                  records = []
+                  omitted = []
+                  selected_bytes = 0
+                  command_token = uuid.uuid4().hex
+                  print("::stop-commands::" + command_token, flush=True)
+                  try:
+                      with zipfile.ZipFile(path) as bundle:
+                          infos = bundle.infolist()
+                          require(len(infos) <= MAX_MEMBERS, "MEMBER_COUNT")
+                          require(len(infos) == len({x.filename for x in infos}), "DUPLICATE_MEMBER")
+                          for info in infos:
+                              parts = PurePosixPath(info.filename).parts
+                              require(not info.filename.startswith("/") and ".." not in parts
+                                      and "\\" not in info.filename, "MEMBER_PATH")
+                          index = [{"name": x.filename, "bytes": x.file_size,
+                                    "compressed_bytes": x.compress_size, "crc32": x.CRC}
+                                   for x in infos]
+                          index_sha = write_json(output / "members.json", index)
+                          chosen = sorted((x for x in infos if not x.is_dir()
+                                           and x.filename in members_for(target)), key=priority)
+                          for member_index, info in enumerate(chosen):
+                              if info.file_size > MAX_MEMBER or selected_bytes + info.file_size > MAX_SELECTED:
+                                  omitted.append({"name": info.filename, "reason": "bounded reader size limit"})
+                                  continue
+                              raw = bundle.read(info)
+                              selected_bytes += len(raw)
+                              require(len(raw) == info.file_size, "MEMBER_SIZE")
+                              record = {"member": info.filename, "bytes": len(raw),
+                                        "sha256": hashlib.sha256(raw).hexdigest()}
+                              raw_name = f"original-member-{member_index:04}.bin"
+                              with (output / raw_name).open("xb") as stream:
+                                  stream.write(raw)
+                              record["original_member_file"] = raw_name
+                              try:
+                                  content = raw.decode("utf-8")
+                              except UnicodeDecodeError:
+                                  record["read_status"] = "non_utf8_uninterpreted"
+                                  records.append(record)
+                                  continue
+                              if info.filename.endswith(".json"):
+                                  value = json.loads(content)
+                                  bounded_json(value)
+                                  # Preserve failures/cleanup_errors arrays and every original field.
+                                  # No archived Python, Rust, shell or binary is ever executed.
+                                  record["original_json"] = value
+                                  if info.filename == FROM_ZERO_MANIFEST:
+                                      record["native_source_binding"] = source_pair(value, target)
+                                      projection, console_excerpt = from_zero_manifest_projection(value, target, record)
+                                      record["from_zero_terminal_projection"] = projection
+                                  else:
+                                      projection = literal_projection(value, target, record)
+                                      console_excerpt = json_console(projection)
+                                  record["literal_projection"] = projection
+                                  excerpt = json.dumps(projection, sort_keys=True) + "\n"
+                              else:
+                                  lines = content.splitlines()
+                                  picked = set()
+                                  for number, line in enumerate(lines):
+                                      clean = re.sub(r"\x1b\[[0-9;]*m", "", line)
+                                      if MATCH.search(clean):
+                                          picked.update(range(max(0, number - 2), min(len(lines), number + 12)))
+                                  picked.update(range(max(0, len(lines) - 40), len(lines)))
+                                  positions = sorted(picked)
+                                  shown = positions[-240:]
+                                  record["matching_context_lines"] = len(positions)
+                                  record["displayed_context_lines"] = len(shown)
+                                  record["context_truncated"] = len(shown) != len(positions)
+                                  excerpt = "\n".join(
+                                      f"artifact={target['id']} member={info.filename} line={i + 1} {lines[i]}"
+                                      for i in shown) + ("\n" if shown else "")
+                                  ordered = sorted(shown, key=lambda i: (
+                                      0 if ESSENTIAL.search(re.sub(r"\x1b\[[0-9;]*m", "", lines[i])) else 1, i))
+                                  console_lines = []
+                                  truncated_lines = 0
+                                  for i in ordered:
+                                      line = lines[i]
+                                      if len(line) > 2048:
+                                          line = line[:2048] + " [console line truncated; original retained]"
+                                          truncated_lines += 1
+                                      console_lines.append(
+                                          f"artifact={target['id']} member={info.filename} line={i + 1} {line}")
+                                  console_excerpt = "\n".join(console_lines) + ("\n" if console_lines else "")
+                                  record["console_truncated_lines"] = truncated_lines
+                              record["read_status"] = "read"
+                              with (output / f"excerpt-{member_index:04}.txt").open("x") as stream:
+                                  stream.write(excerpt)
+                              record["excerpt_file"] = f"excerpt-{member_index:04}.txt"
+                              # Preserve display space across all five original selectors.
+                              remaining = MAX_STDOUT - printed
+                              log_limit = 24000 if info.filename in FRESH_LOGS else 4000
+                              allowance = min(log_limit, remaining) if info.filename in NATIVE_LOGS else remaining
+                              rendered, displayed_lines, omitted_lines = bounded_console(
+                                  console_excerpt, allowance, target, info.filename)
+                              if "from_zero_terminal_projection" in record:
+                                  require(omitted_lines == 0, "FROM_ZERO_MANIFEST_CONSOLE_LIMIT")
+                              record["stdout_emitted"] = displayed_lines > 0
+                              record["stdout_lines_emitted"] = displayed_lines
+                              record["stdout_lines_omitted"] = omitted_lines
+                              if rendered:
+                                  print(rendered, end="", flush=True)
+                                  printed += len(rendered)
+                              records.append(record)
+                  finally:
+                      print("::" + command_token + "::", flush=True)
+                  read_members = {row["member"] for row in records if row.get("read_status") == "read"}
+                  required = set(required_for(target))
+                  manifest_rows = [row for row in records if row["member"] == FROM_ZERO_MANIFEST
+                                   and row.get("read_status") == "read"]
+                  digest_checks = []
+                  records_by_member = {row["member"]: row for row in records}
+                  if manifest_rows:
+                      original_manifest = manifest_rows[0]["original_json"]
+                      for run_row in original_manifest.get("runs") or []:
+                          for channel in ("stdout", "stderr"):
+                              member = "from-zero-native/" + run_row["name"] + "/" + channel
+                              required.add(member)
+                              expected = run_row.get(channel + "_sha256")
+                              actual = records_by_member.get(member, {}).get("sha256")
+                              status = ("unknown" if expected is None or actual is None else
+                                        "verified" if expected == actual else "mismatch")
+                              digest_checks.append({"member": member, "expected": expected,
+                                                    "actual": actual, "status": status})
+                  missing_required = sorted(required - read_members)
+                  required_sources = ({"source.json", "source-after.json"} if target["family"] == "fresh"
+                                      else {"source.json"})
+                  verified_sources = {row["member"] for row in records if row.get("source_guard_verified") is True}
+                  source_mismatches = [row["member"] for row in records
+                                       if row.get("native_source_binding", {}).get("status") == "mismatch"]
+                  checks = {
+                      "required_members_unread_or_absent": missing_required,
+                      "required_source_members_unverified": sorted(required_sources - verified_sources),
+                      "native_source_mismatches": source_mismatches,
+                      "native_source_unknown": [row["member"] for row in records
+                                               if row.get("native_source_binding", {}).get("status") == "unknown"],
+                      "selector_log_digest_checks": digest_checks,
+                  }
+                  complete = (not missing_required and required_sources == verified_sources and not source_mismatches
+                              and not any(row["status"] == "mismatch" for row in digest_checks))
+                  had_error = had_error or not complete
+                  result = {
+                      "schema": "trnm-baseline-w1-artifact-readback-v1",
+                      "target": target, "downloaded_zip_bytes": received,
+                      "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
+                      "member_index_sha256": index_sha,
+                      "selected_text_bytes": selected_bytes, "records": records,
+                      "omitted_members": omitted,
+                      "absent_fixed_small_members": sorted(members_for(target) - {x.filename for x in infos}),
+                      "identity_and_availability": checks,
+                      "reader_status": "completed" if complete else "failed",
+                      "source_tests_executed": False, "acceptance_granted": False,
+                      "production_activation": False,
+                      "scope": "Read four exact original 44d priority service-model archives, with x64/ARM and head/prospective-merge cohorts kept separate. Complete selected bytes, JSON and ZIP are retained. Missing native observations remain unknown; reader completion is not native acceptance.",
+                  }
+                  write_json(output / "readback.json", result)
+                  summary = {key: result[key] for key in (
+                      "schema", "target", "downloaded_zip_bytes", "downloaded_zip_sha256",
+                      "member_index_sha256", "selected_text_bytes", "reader_status",
+                      "absent_fixed_small_members", "identity_and_availability",
+                      "source_tests_executed", "acceptance_granted", "production_activation")}
+                  summary["omitted_members"] = len(omitted)
+                  summary["records"] = len(records)
+                  print(json.dumps(summary, sort_keys=True), flush=True)
+                  results.append(summary)
+              except Exception as error:
+                  had_error = True
+                  result = {"target": target, "reader_status": "failed", "stage": stage,
+                            "error_type": type(error).__name__, "http_status": getattr(error, "code", None),
+                            "reason": str(error) if isinstance(error, Refused) else None,
+                            "source_tests_executed": False, "acceptance_granted": False}
+                  write_json(output / "reader-failure.json", result)
+                  print(json.dumps(result, sort_keys=True), flush=True)
+                  results.append(result)
+          
+          write_json(ROOT / "readback.json", {
+              "schema": "trnm-baseline-w1-readback-cohort-v1",
+              "planned_artifacts": len(TARGETS), "results": results,
+              "source_tests_executed": False, "acceptance_granted": False,
+              "production_activation": False})
+          raise SystemExit(1 if had_error else 0)
+          PY
+      - name: Recheck unchanged diagnostic source and project boundary
+        if: always()
+        env:
+          READBACK_OUT: ${{ runner.temp }}/44d-service-model-failure-readback-${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-after.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Retain original ZIP bytes and all reader outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: 44d-service-model-failure-readback-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/44d-service-model-failure-readback-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
