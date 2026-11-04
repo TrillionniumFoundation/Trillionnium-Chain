@@ -1,7 +1,7 @@
 {
-  "schema": "trnm-da-original-log-reader-source-v3",
-  "base": "5234a60b48543015fcb04091bf5f8fdc0e8d0b1d",
-  "base_tree": "c6cbfe43ee100e3c64ec853b555543cf9b08ebbf",
+  "schema": "trnm-da-original-log-reader-source-v4",
+  "base": "1a98b94fa1cd6ac5c0849f1351bab1c95d8564b5",
+  "base_tree": "a18cc31c6e92e75062a106335ecce988f10356ae",
   "branch": "research/chain-da-sequence-readback-20261104-gpt6",
   "helper": {
     "path": "qualification/original-artifact-readback-20261104/readback.py",
@@ -53,12 +53,6 @@
       "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
     },
     {
-      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
-      "bytes": 12918,
-      "git_blob": "46d2d459a89354437e682c33daff7e04009cd020",
-      "sha256": "642a6411cb16379f14a981ce9414d2193944965a5bbd00fd3b8683bac915ddae"
-    },
-    {
       "path": "qualification/da-sequence-log-readback-20261104/README.md",
       "bytes": 2398,
       "git_blob": "1d5818e02fda510922e5092aa63768d04d7ce46c",
@@ -77,10 +71,34 @@
       "sha256": "6c7797f98f3f80351f38ca43c7c5a74086083f944cb430a060e49621eae72da6"
     },
     {
+      "path": "qualification/da-sequence-diagnostic-20261104/transcript.py",
+      "bytes": 5828,
+      "git_blob": "bffa2c9b974fc36253eb244d25c3adc5d73595b5",
+      "sha256": "f27ddf57ff49b4f274dde26a3573db975b880d57692f09947bec9f1e2aa22938"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
+      "bytes": 14374,
+      "git_blob": "215a567ad997a954ac04e842c6245153c2ff4677",
+      "sha256": "a5a0d90dca054413817d2c0aae1651ce78871ec9f0c176603c089033b214245a"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/v3-success/job-126393888525.decoded.log",
+      "bytes": 36102,
+      "git_blob": "5d13395a7376f1cb47bbf3b971ce4dd90a76c72a",
+      "sha256": "9106c7016e46941d0f85a9b7d27be3ba82710ddfa57c3c8ed87849bf36b1b379"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/v3-success/READBACK.json",
+      "bytes": 5836,
+      "git_blob": "a9a6203828fa4e431a7fcf0cf44c53b39f27970d",
+      "sha256": "8e236f020221aab32ab48831af171395713683b5c3c4d33e3400a16d3ef8e6bb"
+    },
+    {
       "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
-      "bytes": 420772,
-      "git_blob": "bf9d60a139fd9975569485165e5c8a2e95b84aab",
-      "sha256": "c0f97d89f879266abb70992951ce51261ce2e32538eb703aa75b490fe4230c96"
+      "bytes": 422079,
+      "git_blob": "5b0fa9fb8b25d006dd6d701118312607b1ea4ce0",
+      "sha256": "d1d44a689c22ed39e82452d22a1ece5f81335254be41a89fb6d56bacddb91a4b"
     }
   ],
   "original_artifact": {
@@ -118,7 +136,7 @@
       "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
     }
   },
-  "revision": "Keep all decode/output/time limits; decompress and CRC/hash only the five explicit required logs. Unselected members remain declared metadata only, not CRC or decoded-SHA verified.",
+  "revision": "Evaluate only a source-bound pure transcript parser on the same original fixed log; original false flags remain and native/Host/performance qualification remains false.",
   "v2_failure": {
     "source": "5234a60b48543015fcb04091bf5f8fdc0e8d0b1d",
     "run": 41774865598,
@@ -129,5 +147,22 @@
       "bytes": 25449,
       "sha256": "6c7797f98f3f80351f38ca43c7c5a74086083f944cb430a060e49621eae72da6"
     }
+  },
+  "v3_actual_readback": {
+    "run": 41775222238,
+    "job": 126393888525,
+    "conclusion": "success",
+    "selected_members": 5,
+    "selected_decoded_bytes": 45345,
+    "all_member_crc_verified": false,
+    "native_executed": false,
+    "original_native_summary": [
+      174,
+      0,
+      0,
+      0,
+      0
+    ],
+    "original_diagnostic_passed": false
   }
 }

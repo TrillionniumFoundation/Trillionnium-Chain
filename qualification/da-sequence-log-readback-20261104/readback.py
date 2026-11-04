@@ -42,7 +42,7 @@ ERROR_CODES = frozenset({
     "REQUIRED_LOGS", "ORIGINAL_SOURCE_BINDING", "RECEIPT_SOURCE_BINDING",
     "EXACT_COMMANDS", "ACTUAL_LOG_DIGEST_BINDING", "ORIGINAL_REGISTRY_SIZE",
     "OUTPUT_BYTES", "OUTCOME_FLAG_TYPE", "EXIT_CODE_TYPE_OR_RANGE",
-    "READER_CONTROL_FAILED",
+    "READER_CONTROL_FAILED", "FROZEN_TRANSCRIPT_CANDIDATE",
 })
 
 
@@ -125,6 +125,18 @@ def load_helper():
     return module
 
 
+def load_transcript():
+    path = ROOT / "qualification/da-sequence-diagnostic-20261104/transcript.py"
+    raw = path.read_bytes()
+    blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw,
+                       usedforsecurity=False).hexdigest()
+    require(blob == "bffa2c9b974fc36253eb244d25c3adc5d73595b5", "FROZEN_TRANSCRIPT_CANDIDATE")
+    spec = importlib.util.spec_from_file_location("frozen_transcript", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def name_rows(values):
     # Only libtest-parser identifiers; never arbitrary captured test output.
     values = sorted(values)
@@ -150,6 +162,9 @@ def main():
     resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
     print(json.dumps(reader_controls(), sort_keys=True), flush=True)
     helper = load_helper()
+    transcript = load_transcript()
+    parser_controls = transcript.reader_controls()
+    print(json.dumps(parser_controls, sort_keys=True), flush=True)
     token = os.environ.get("GH_TOKEN")
     require(isinstance(token, str) and token, "READ_TOKEN_REQUIRED")
     repo = helper.REPOSITORY
@@ -226,6 +241,7 @@ def main():
         r"(\d+) measured; (\d+) filtered out;", module, re.M)]
     require(len(names) == 174 and len(set(names)) == 174, "ORIGINAL_REGISTRY_SIZE")
     counts = Counter(successful)
+    candidate = transcript.observations(module, False, names)
     report = {
         "schema": "trnm-da-diagnostic-original-log-readback-v1",
         "reader_source": os.environ["GITHUB_SHA"],
@@ -243,6 +259,16 @@ def main():
         "successful_line_count": len(successful),
         "unique_successful_names": len(counts),
         "module_summaries": summaries,
+        "candidate_parser": {
+            "controls": parser_controls,
+            "passed": candidate["passed"],
+            "native_summaries": candidate["native_summaries"],
+            "raw_plain_success_rows": candidate["raw_plain_success_rows"],
+            "normalized_plain_success_rows": candidate["completed_plain_success_rows"],
+            "exact_retention_child_prefix_blocks": candidate["retention_child_prefix_blocks"],
+            "fixture_source_blob": "8b35329519e7014104d6cb155481142cd5bb5610",
+            "scope": "Read-only parser evaluation on the same failed original transcript; no native test rerun and no original failure erased."
+        },
         **outcomes,
         "missing_success_names": name_rows(set(names) - set(successful)),
         "unexpected_success_names": name_rows(set(successful) - set(names)),
