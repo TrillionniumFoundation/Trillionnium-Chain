@@ -1,0 +1,86 @@
+name: Exact e62 DA native and strict package lint
+on:
+  push:
+    branches: [research/chain-original-cpu-readback-20261103-gpt6]
+    paths:
+      - .github/workflows/chain-exact-da-native.yml
+      - qualification/exact-e62-da-native-20261104/**
+permissions:
+  contents: read
+concurrency:
+  group: exact-e62-da-native-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  exact-da:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      CARGO_INCREMENTAL: '0'
+      CARGO_BUILD_JOBS: '2'
+      RUST_TEST_THREADS: '1'
+      CARGO_HOME: ${{ runner.temp }}/exact-e62-da-cargo
+      CARGO_TARGET_DIR: ${{ runner.temp }}/exact-e62-da-target
+    steps:
+      - name: Checkout immutable qualification recipe
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: recipe
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Checkout exact published production source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29
+          path: candidate
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+      - name: Verify both source trees and original audit preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          (
+            cd recipe
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/exact-e62-da-recipe-before.json"
+            bash scripts/project-preflight.sh --audit
+          )
+          (
+            cd candidate
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29 --output "$RUNNER_TEMP/exact-e62-da-candidate-before.json"
+            bash scripts/project-preflight.sh --audit
+          )
+      - name: Install exact original Rust and lint components
+        shell: bash
+        run: rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt
+      - name: Run exact complete DA library and strict package lint
+        shell: bash
+        run: python3 recipe/qualification/exact-e62-da-native-20261104/run.py --root "$GITHUB_WORKSPACE/candidate" --out "$RUNNER_TEMP/exact-e62-da-evidence"
+      - name: Verify both source trees remain unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          (
+            cd recipe
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/exact-e62-da-recipe-after.json"
+          )
+          (
+            cd candidate
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29 --output "$RUNNER_TEMP/exact-e62-da-candidate-after.json"
+          )
+      - name: Retain original commands logs and exact source receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: exact-e62-da-native-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/exact-e62-da-evidence/
+            ${{ runner.temp }}/exact-e62-da-recipe-before.json
+            ${{ runner.temp }}/exact-e62-da-recipe-after.json
+            ${{ runner.temp }}/exact-e62-da-candidate-before.json
+            ${{ runner.temp }}/exact-e62-da-candidate-after.json
+          if-no-files-found: error
+          retention-days: 30
