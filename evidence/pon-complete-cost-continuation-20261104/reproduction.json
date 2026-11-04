@@ -1,7 +1,7 @@
 {
   "schema": "pon-complete-cost-continuation-reproduction-v1",
-  "status": "M06_FRESH_PREFIX_HOLD_DEFAULT_RESTORED_FINAL_NODE_VALIDATION_PENDING",
-  "updated_utc": "2026-11-04T07:19:27.659153+00:00",
+  "status": "LOCAL_COMPONENT_OBSERVATIONS_COMPLETE_M06_CANDIDATE_REJECTED_HOLD",
+  "updated_utc": "2026-11-04T07:51:14.034028+00:00",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "pull_request": 688,
   "draft_provenance": {
@@ -24,15 +24,8 @@
       "trillionnium/Cargo.lock": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
       "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
     },
-    "planned_concurrent_integration": {
-      "commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
-      "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
-      "previous_concurrent_commit": "faae36cfaa3332ef20c7f94ac5e816641a1ee884",
-      "previous_concurrent_tree": "202703393b317471d9b2fac9def99910184e8dfc",
-      "basis": "Parent reports all 23 incoming files integrated, including six added release-finality workflow lines after faae. Final continuation checkpoint and Node binary remain pending. The 7dfee primary experiment identity is unchanged."
-    },
-    "final_continuation_commit": null,
-    "final_continuation_tree": null,
+    "final_continuation_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+    "final_continuation_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
     "final_source_and_binary_qualified": false,
     "retained_node_inputs_before_final_integration": {
       "scripts/ci/check_growth_scale_observation.py": {
@@ -69,7 +62,16 @@
       "input_pins_retained": 389,
       "required_sources_retained": 301,
       "basis": "Parent reports the complete incoming 301-source required set restored, including two account files absent from the prior 7dfee 299-entry set, with current blob identities updated. No required-source reduction is claimed."
-    }
+    },
+    "concurrent_integration": {
+      "commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+      "previous_concurrent_commit": "faae36cfaa3332ef20c7f94ac5e816641a1ee884",
+      "previous_concurrent_tree": "202703393b317471d9b2fac9def99910184e8dfc",
+      "basis": "All 23 incoming files through 73ab are preserved, with only explicit nonconflicting PERFORMANCE text integration and keywise current corpus pins. The rejected 7dfee remains the second parent of frozen f690; 73ab is its first parent."
+    },
+    "final_local_source_and_selected_binary_receipts_verified": true,
+    "qualification_scope": "Exact clean local source, selected linked binaries and actual native exits were verified. Complete original-workspace CI, independent execution attestation, public business and performance qualification are not granted."
   },
   "scope": {
     "account_root": "Retain the 40a digest-only production root, independent original Node::lift oracle, full fork-depth/error/cancellation controls and owner-derived ordered rows. Complete sorting/traversal and O(A) arithmetic remain; no fixed-touched-set complexity closure.",
@@ -117,16 +119,7 @@
     ],
     "process_receipt": {
       "schema": "local-component-process-receipt-v1",
-      "command": [
-        "bash",
-        "/workspace/scratch/850bfac2502c/run-task.sh",
-        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
-        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
-        "--exact",
-        "--ignored",
-        "--test-threads=1",
-        "--show-output"
-      ],
+      "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80", "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost", "--exact", "--ignored", "--test-threads=1", "--show-output"],
       "started_utc": "2026-11-04T07:09:20.585732+00:00",
       "ended_utc": "2026-11-04T07:09:38.064039+00:00",
       "exit_code": 0,
@@ -176,10 +169,7 @@
         "overflow_checks": true,
         "test": true
       },
-      "features": [
-        "default",
-        "pq-native-openssl"
-      ],
+      "features": ["default", "pq-native-openssl"],
       "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
       "scope": "Actual component compiler artifact; successful compilation is not full-workspace execution or production acceptance."
     },
@@ -190,13 +180,7 @@
         "sha256": "6245da9f70f42b88977b686781147f7677203ca136d240fa8b1a24cc7b95cc3e"
       },
       "binary_sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290",
-      "command": [
-        "bash",
-        "/workspace/scratch/850bfac2502c/run-task.sh",
-        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
-        "--test-threads=1",
-        "--show-output"
-      ],
+      "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80", "--test-threads=1", "--show-output"],
       "exit_code": 0,
       "passed": 119,
       "failed": 0,
@@ -217,36 +201,12 @@
       "registered_before_v4_execution_utc": "2026-11-04T06:45:24.374405+00:00",
       "decision_unchanged_from_original_registration": true,
       "six_permutation_order": [
-        [
-          0,
-          1,
-          2
-        ],
-        [
-          2,
-          1,
-          0
-        ],
-        [
-          1,
-          2,
-          0
-        ],
-        [
-          0,
-          2,
-          1
-        ],
-        [
-          2,
-          0,
-          1
-        ],
-        [
-          1,
-          0,
-          2
-        ]
+        [0, 1, 2],
+        [2, 1, 0],
+        [1, 2, 0],
+        [0, 2, 1],
+        [2, 0, 1],
+        [1, 0, 2]
       ],
       "permutation_repetitions": 2,
       "samples_per_arm": 12,
@@ -582,21 +542,13 @@
             "case": "same_root_hint_last_value_changed",
             "minimum_paired_median_improvement_fraction": 0.05,
             "reference": "parent_40a_shared_map_ns",
-            "state_keys": [
-              128,
-              1024,
-              4096
-            ]
+            "state_keys": [128, 1024, 4096]
           },
           {
             "case": "unchanged",
             "minimum_paired_median_improvement_fraction": 0.05,
             "reference": "original_full_map_ns",
-            "state_keys": [
-              128,
-              1024,
-              4096
-            ]
+            "state_keys": [128, 1024, 4096]
           }
         ],
         "public_business_gate_replaced": false,
@@ -654,7 +606,7 @@
     "passing_comparisons": 14,
     "failing_comparisons": 4,
     "all_six_primary_improvement_targets_passed": true,
-    "statistical_scope": "Twelve correlated finite shared-container samples per arm; nearest-rank p95 is the maximum. No confidence bound, isolated CPU, physical-memory proof or full-chain latency claim.",
+    "statistical_scope": "Each timing sample is the total wall time of eight complete bindings, including result classification and destruction. median_ns_per_binding is median of twelve batch totals divided by eight: a normalized batch-average statistic, not the distribution median of individual invocations. Nearest-rank p95 is the maximum of twelve batch totals, not per-operation or business-confirmation p95. Samples are correlated and share one container; no confidence bound, host isolation or physical-memory qualification is established.",
     "candidate_retained_patch": {
       "path": "evidence/pon-complete-cost-continuation-20261104/retained-three-arm-fresh-prefix.patch",
       "bytes": 50848,
@@ -682,7 +634,17 @@
           "equals_parent_bytes": true
         }
       },
-      "validation_on_final_integrated_binary": "pending"
+      "validation_on_final_integrated_binary": {
+        "source_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+        "selector": "complete trnm_mvcc_fee libtest binary",
+        "passed": 113,
+        "failed": 0,
+        "original_ignored": 7,
+        "exit_code": 0,
+        "binary_sha256": "01f11d457d8a1b6675f591c86cf4e9aedefb3c168a2dcdac53b866491d7e35c3",
+        "source_and_binary_stable": true,
+        "scope": "Selected local original-profile binary, not complete original-workspace hosted qualification"
+      }
     },
     "future_changes_require_new_source_bound_experiment": true,
     "source_receipts": {
@@ -701,12 +663,7 @@
       "same_five_input_hashes_before_and_after": true,
       "concurrency_as_recorded": "All cargo/native/heavy Python tasks started by this root are finished. Shared-container global isolation is not asserted; process inventory unavailable."
     },
-    "failed_comparison_indices_zero_based": [
-      1,
-      7,
-      10,
-      13
-    ],
+    "failed_comparison_indices_zero_based": [1, 7, 10, 13],
     "native_source_exit_verification": {
       "identity": {
         "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-native-verification.json",
@@ -731,6 +688,211 @@
         "candidate_adopted": false,
         "public_business_gate_replaced": false
       }
+    },
+    "compact_samples": {
+      "schema": "unchanged-snapshot-v4-compact-samples-v1",
+      "source_stdout": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary.stdout",
+        "bytes": 30721,
+        "sha256": "e51a5a0f4e3c22815baea25dd00f7ba2d1aeb2f859b6be7a77f1b500d2bec359"
+      },
+      "measured_source": {
+        "commit": "7dfee35b293cfc2964c4fd8e025c6e92355f02c2",
+        "tree": "dfac579e471a4171b9151fe86d4c92609ada562a",
+        "binary_sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290"
+      },
+      "reconstruction": "For each cohort, merge shared_row_fields then cohort. This reproduces each of the nine original parsed JSON objects exactly; it does not reproduce original stdout bytes, Rust harness prose, or a native execution attestation.",
+      "shared_row_fields": {
+        "arm_names": ["original_full_map_ns", "parent_40a_shared_map_ns", "checked_shared_map_ns"],
+        "arm_order_per_six_rounds": [
+          [0, 1, 2],
+          [2, 1, 0],
+          [1, 2, 0],
+          [0, 2, 1],
+          [2, 0, 1],
+          [1, 0, 2]
+        ],
+        "bindings_per_sample": 8,
+        "complete_actual_state_compared": true,
+        "decision": {
+          "all_nine_cells_against_each_reference_required": true,
+          "candidate": "checked_shared_map_ns",
+          "expected_results": {
+            "same_root_hint_first_value_changed": "COMMITMENT_ROOT",
+            "same_root_hint_last_value_changed": "COMMITMENT_ROOT",
+            "unchanged": "Ok with expected root"
+          },
+          "maximum_missing_or_unexpected_result_bindings": 0,
+          "maximum_p95_regression_fraction": 0.1,
+          "maximum_paired_median_regression_fraction": 0.1,
+          "no_cell_aggregation_or_sample_exclusion": true,
+          "p95_definition": "nearest rank ceil(0.95 * N); N=12 gives order statistic twelve, the maximum; no confidence or full-chain latency claim",
+          "paired_median_definition": "median of round-matched (reference_ns - candidate_ns) / reference_ns; midpoint of central two values for twelve samples",
+          "physical_memory_qualification": false,
+          "primary_targets": [
+            {
+              "case": "same_root_hint_last_value_changed",
+              "minimum_paired_median_improvement_fraction": 0.05,
+              "reference": "parent_40a_shared_map_ns",
+              "state_keys": [128, 1024, 4096]
+            },
+            {
+              "case": "unchanged",
+              "minimum_paired_median_improvement_fraction": 0.05,
+              "reference": "original_full_map_ns",
+              "state_keys": [128, 1024, 4096]
+            }
+          ],
+          "public_business_gate_replaced": false,
+          "schema": "unchanged-snapshot-three-arm-decision-v1"
+        },
+        "expected_root_checked": true,
+        "mismatch_path": "one fresh encoding pass; move fresh verified prefix values with exact original capacities; sequential map insertion",
+        "node_owner_measured": false,
+        "order": "fixed six-permutation rotation repeated twice",
+        "parent_mismatch_path": "40a candidate stops at first mismatch; pinned original full-map preparation rechecks all actual rows",
+        "physical_memory_bound": false,
+        "public_tps_measured": false,
+        "samples_per_arm": 12,
+        "schema": "unchanged-snapshot-full-binding-cost-v4",
+        "scope": "full component binding, constant-time result classification and output destruction; unchanged cache limits; all planned failure returns retained",
+        "source_identity": {
+          "compiled_production_source_sha256": "e55b7972cb84e3a62b7d670188c501d134f9efe21cc39a9ab799947a31c50740",
+          "compiled_test_source_sha256": "0f0c29f74dd84a99b5387a3033f837bef39cbb32757a7ac2b71e5fa94459d110",
+          "original_full_map_commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+          "original_reference_source_sha256": "18ed1e6582e34bdbf9b2a376171fccf27fc59eff8b6786bd44dfd525b25e5c01",
+          "parent_reference_source_sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+          "parent_shared_map_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+          "scope": "pinned old function bodies in one current test binary; identical shared helpers, canonical encoder, tree and wire source"
+        },
+        "tree_empty_delta_check_retained": true
+      },
+      "cohorts": [
+        {
+          "case": "unchanged",
+          "state_keys": 128,
+          "value_width": 64,
+          "original_full_map_ns": [897606, 959480, 935563, 842192, 812888, 779188, 889414, 767150, 814761, 772968, 777144, 998569],
+          "parent_40a_shared_map_ns": [497793, 471793, 549600, 475458, 516680, 581258, 500687, 497011, 541398, 472594, 496120, 486405],
+          "checked_shared_map_ns": [573036, 556381, 550592, 674079, 657404, 745627, 817756, 568469, 535760, 865949, 544092, 544352],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_first_value_changed",
+          "state_keys": 128,
+          "value_width": 64,
+          "original_full_map_ns": [1154234, 1321827, 1094704, 1070207, 1159091, 1094374, 1082375, 1182116, 1280224, 1156568, 1144780, 1183318],
+          "parent_40a_shared_map_ns": [1134304, 1211691, 1178000, 1204109, 1149317, 1173994, 1117028, 1143759, 1199973, 1131600, 1420817, 1212663],
+          "checked_shared_map_ns": [1131841, 1149948, 1171920, 1068585, 1071108, 1069096, 1172532, 1085480, 1101274, 1174234, 1214896, 1150779],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_last_value_changed",
+          "state_keys": 128,
+          "value_width": 64,
+          "original_full_map_ns": [1390842, 1257279, 1073702, 1254625, 1245602, 1187635, 1806470, 1093652, 1128235, 1179763, 1075676, 1297069],
+          "parent_40a_shared_map_ns": [1629502, 1830746, 1666919, 1784286, 1899070, 1689443, 1728823, 1747591, 1730856, 1713990, 1728201, 1686858],
+          "checked_shared_map_ns": [1193013, 1275126, 1141465, 1158851, 1380296, 1278983, 1223189, 1156978, 1134153, 1194906, 1268267, 1137038],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "unchanged",
+          "state_keys": 1024,
+          "value_width": 512,
+          "original_full_map_ns": [23823119, 24123551, 23562023, 23983870, 26128661, 29677244, 28980019, 26361703, 24552950, 26604405, 23423664, 23421070],
+          "parent_40a_shared_map_ns": [18923544, 19412022, 18947130, 18789181, 21768503, 21442480, 24670829, 18263457, 19101814, 23194383, 18703902, 19691204],
+          "checked_shared_map_ns": [21346446, 21768885, 20733719, 20865248, 24397165, 27992742, 29252011, 29768001, 21436742, 20644014, 21181601, 19550332],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_first_value_changed",
+          "state_keys": 1024,
+          "value_width": 512,
+          "original_full_map_ns": [24105465, 23781915, 25685923, 29963450, 23705110, 23934596, 23689075, 23882206, 27000573, 24850140, 24784490, 24478141],
+          "parent_40a_shared_map_ns": [23831810, 23657227, 23374439, 24122951, 24357034, 24216342, 24225726, 23792981, 24025458, 24570347, 24263874, 33193812],
+          "checked_shared_map_ns": [23953200, 24589155, 26364858, 24037492, 23706961, 23158273, 23594732, 24182141, 26308062, 24537187, 25168711, 23173076],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_last_value_changed",
+          "state_keys": 1024,
+          "value_width": 512,
+          "original_full_map_ns": [23344615, 23669135, 24795146, 25566307, 25904722, 24585239, 23630327, 24168780, 23541732, 23504245, 23583886, 26263415],
+          "parent_40a_shared_map_ns": [42976098, 51295413, 42562678, 48432874, 43515163, 42986234, 42328540, 42754444, 41831690, 43991252, 44268621, 49576327],
+          "checked_shared_map_ns": [27528496, 25626393, 24966776, 26483051, 31279063, 25287245, 22740081, 22846562, 23837088, 24057131, 23975768, 25445659],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "unchanged",
+          "state_keys": 4096,
+          "value_width": 512,
+          "original_full_map_ns": [108924758, 113223014, 110887850, 125145599, 118114605, 112973491, 111520171, 137093584, 108045771, 135479194, 126288321, 162251502],
+          "parent_40a_shared_map_ns": [75301823, 81228849, 89401054, 84058105, 91269837, 89912881, 83637929, 107171484, 84832074, 92249322, 112709082, 105318050],
+          "checked_shared_map_ns": [90262010, 98601209, 105808915, 94749089, 99222198, 101562905, 104399111, 99294037, 92378617, 107993422, 103549848, 156940778],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_first_value_changed",
+          "state_keys": 4096,
+          "value_width": 512,
+          "original_full_map_ns": [108398403, 124482342, 109630110, 107803489, 110762911, 112877210, 111450204, 143061692, 113927582, 107328422, 125490475, 115418571],
+          "parent_40a_shared_map_ns": [115992424, 119140610, 126847306, 111095544, 104453081, 116164158, 104148786, 130622636, 126868136, 111572875, 141306711, 132517368],
+          "checked_shared_map_ns": [136032684, 119251884, 113603529, 116108229, 110071347, 109428661, 105518416, 111102199, 113763957, 115638068, 108385489, 109837393],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        },
+        {
+          "case": "same_root_hint_last_value_changed",
+          "state_keys": 4096,
+          "value_width": 512,
+          "original_full_map_ns": [126533702, 151809645, 156233576, 131580242, 123961605, 132454128, 127485264, 118328714, 127050583, 130275221, 105665174, 96602084],
+          "parent_40a_shared_map_ns": [204795832, 298519375, 234845374, 238886000, 221556994, 243145371, 203363477, 217562238, 214266082, 209473638, 182398787, 176040373],
+          "checked_shared_map_ns": [147852016, 135490526, 145240854, 131292513, 132478505, 126651535, 115332155, 131317350, 147796852, 126423231, 116526027, 96733383],
+          "expected_returns_per_arm": [96, 96, 96],
+          "unexpected_returns_per_arm": [0, 0, 0],
+          "equal_result": true
+        }
+      ],
+      "measurement_scope": {
+        "array_element": "One wall-nanosecond sample is the total time of eight complete bindings, including result classification and destruction, in the recorded arm/round order.",
+        "median_ns_per_binding": "median of the 12 batch totals divided by eight; a normalized batch-average statistic, not an empirical median of individual call latency.",
+        "paired_median_improvement": "median of 12 round-matched (reference_batch_ns - candidate_batch_ns) / reference_batch_ns fractions; the middle two fractions are averaged exactly.",
+        "p95": "Nearest-rank p95 of 12 batch totals is their maximum. Reported p95 regression compares those maxima; this is neither individual-operation nor end-to-end business p95.",
+        "raw_values_divided_or_rounded": false,
+        "source_or_samples_relabelled": false,
+        "new_native_run": false
+      },
+      "independent_projection_check": {
+        "readback_sha256": "454bf1b84db1ec108eeb1242d5963fc0ab83f02412346c9c6d76ec4b7189a4fc",
+        "parsed_rows_round_trip_equal": 9,
+        "arm_arrays": 27,
+        "integer_raw_samples": 324,
+        "exact_fraction_comparisons_equal": 18,
+        "all_normalized_medians_equal": true,
+        "all_decision_booleans_equal": true,
+        "planned_bindings": 2592,
+        "expected_ok_bindings": 864,
+        "expected_commitment_root_error_bindings": 1728,
+        "unexpected_or_missing_bindings": 0,
+        "performance_decision": "HOLD",
+        "comparison_passes": 14,
+        "comparison_failures": 4
+      }
     }
   },
   "retained_negative_observations": {
@@ -740,10 +902,7 @@
         "path": "evidence/pon-complete-cost-continuation-20261104/retained-two-pass-candidate.patch",
         "bytes": 22939,
         "sha256": "26655bbd71d79f3ef21c9a9c4592534db471ef63660c5567d81de33fc0dc4bf3",
-        "affected_files": [
-          "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
-          "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs"
-        ],
+        "affected_files": ["trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs", "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs"],
         "applied_to_current_checkout": false,
         "patch_is_not_full_historical_source_attestation": true
       },
@@ -1043,11 +1202,7 @@
     },
     "cancelled_admissions": 9,
     "cold_reopens": 9,
-    "fixed_witness_owners": [
-      "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
-      "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
-      "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
-    ],
+    "fixed_witness_owners": ["79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9", "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc", "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"],
     "native_stage_cpu_measurements_available": false,
     "thread_cpu_ns": null,
     "process_cpu_ns": null,
@@ -1056,18 +1211,7 @@
     "throughput_qualified": false,
     "whole_process_cpu_is_not_per_stage_cpu": true,
     "process_execution": {
-      "command": [
-        "bash",
-        "/workspace/scratch/850bfac2502c/run-task.sh",
-        "env",
-        "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/850bfac2502c/validation/growth-v2-initial",
-        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
-        "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
-        "--exact",
-        "--ignored",
-        "--test-threads=1",
-        "--show-output"
-      ],
+      "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "env", "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/850bfac2502c/validation/growth-v2-initial", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation", "--exact", "--ignored", "--test-threads=1", "--show-output"],
       "started_utc": "2026-11-04T06:28:42.101711+00:00",
       "ended_utc": "2026-11-04T06:33:38.607552+00:00",
       "exit_code": 0,
@@ -1098,40 +1242,1938 @@
     "raw_file_identities_location": "The identity-bound provisional readback records all 10 raw files; no raw files are copied into this repository."
   },
   "final_node_validation": {
-    "status": "PENDING_FINAL_INTEGRATED_SOURCE_AND_BINARY",
-    "source_commit": null,
-    "source_tree": null,
-    "compiled_binaries": [],
-    "native_execution_receipts": [],
-    "paired_digest_cost_results": [],
-    "growth_v2_runs": [],
-    "actual_growth_return_counts": null,
-    "actual_completed_cohorts": null,
-    "native_result": null,
+    "status": "COMPLETE_LOCAL_SELECTED_NATIVE_OBSERVATIONS",
+    "source_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+    "source_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+    "compiled_binaries": [
+      {
+        "package": "trnm_mvcc_fee",
+        "profile": {
+          "opt_level": "1",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": ["default", "pq-native-openssl"],
+        "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-e0449001e2f07dd8",
+        "bytes": 75119152,
+        "sha256": "01f11d457d8a1b6675f591c86cf4e9aedefb3c168a2dcdac53b866491d7e35c3",
+        "fresh": false,
+        "target_source": "/workspace/scratch/850bfac2502c/chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+      },
+      {
+        "package": "trnm_pon_node",
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": ["default", "pq-native-openssl"],
+        "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+        "bytes": 412439512,
+        "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683",
+        "fresh": false,
+        "target_source": "/workspace/scratch/850bfac2502c/chain/trillionnium/crates/trnm-pon-node/src/lib.rs"
+      }
+    ],
+    "native_execution_receipts": [
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-e0449001e2f07dd8", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:34:12.257818+00:00",
+        "ended_utc": "2026-11-04T07:34:42.637019+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 30325447518,
+        "child_process_user_cpu_s": 30.15878,
+        "child_process_system_cpu_s": 0.353108,
+        "child_peak_rss_kib_linux": 109684,
+        "input_blocks": 0,
+        "output_blocks": 5384,
+        "voluntary_context_switches": 2067,
+        "involuntary_context_switches": 417,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-e0449001e2f07dd8",
+          "bytes": 75119152,
+          "sha256": "01f11d457d8a1b6675f591c86cf4e9aedefb3c168a2dcdac53b866491d7e35c3"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-e0449001e2f07dd8",
+          "bytes": 75119152,
+          "sha256": "01f11d457d8a1b6675f591c86cf4e9aedefb3c168a2dcdac53b866491d7e35c3"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-m06-semantics.stdout",
+          "bytes": 27697,
+          "sha256": "349ae7b3faa063748cc2d3fb597c170980a3219793e79f67705f7f4a80602069"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-m06-semantics.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "account_archive_prototype::", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:34:42.975290+00:00",
+        "ended_utc": "2026-11-04T07:34:51.661588+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 8361572826,
+        "child_process_user_cpu_s": 6.7034389999999995,
+        "child_process_system_cpu_s": 0.679066,
+        "child_peak_rss_kib_linux": 27920,
+        "input_blocks": 0,
+        "output_blocks": 71160,
+        "voluntary_context_switches": 9260,
+        "involuntary_context_switches": 62,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-account-archive.stdout",
+          "bytes": 11765,
+          "sha256": "d66d53802dbf8b7359c18d9ffc3ef98cb62460f8e6beac6a07b9ea1bd708294a"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-account-archive.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::native_authenticated::", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:34:52.021887+00:00",
+        "ended_utc": "2026-11-04T07:35:23.068203+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 30748694780,
+        "child_process_user_cpu_s": 29.394137,
+        "child_process_system_cpu_s": 0.661026,
+        "child_peak_rss_kib_linux": 89676,
+        "input_blocks": 0,
+        "output_blocks": 276344,
+        "voluntary_context_switches": 3092,
+        "involuntary_context_switches": 483,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-authenticated.stdout",
+          "bytes": 34509,
+          "sha256": "07c353b0f23002c6002367e3023deb1cfce175271d4a0a9e9d7c86610bfa9fd8"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-authenticated.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::native_authenticated_tests::", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:35:23.412897+00:00",
+        "ended_utc": "2026-11-04T07:35:50.464550+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 26740388221,
+        "child_process_user_cpu_s": 22.123051,
+        "child_process_system_cpu_s": 0.7516229999999999,
+        "child_peak_rss_kib_linux": 65332,
+        "input_blocks": 640,
+        "output_blocks": 205704,
+        "voluntary_context_switches": 4888,
+        "involuntary_context_switches": 311,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-authenticated-integration.stdout",
+          "bytes": 19601,
+          "sha256": "a2d7353bbfd7dd420b94c93e8fa6bb85ac4ac5eab9ef31d097453e3cf06e0d7f"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-authenticated-integration.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::growth::tests::scale_observation::", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:35:50.805392+00:00",
+        "ended_utc": "2026-11-04T07:35:51.235399+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 135896971,
+        "child_process_user_cpu_s": 0.112509,
+        "child_process_system_cpu_s": 0.00821,
+        "child_peak_rss_kib_linux": 20960,
+        "input_blocks": 0,
+        "output_blocks": 2144,
+        "voluntary_context_switches": 95,
+        "involuntary_context_switches": 3,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-scale-controls.stdout",
+          "bytes": 5348,
+          "sha256": "5a9523c08c376c7f87905504e6924e8b6439a36c4e1158b3b01845c2d19c9532"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-scale-controls.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "ingress::pq_network::tests::", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:35:51.581684+00:00",
+        "ended_utc": "2026-11-04T07:36:13.913425+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 22004126098,
+        "child_process_user_cpu_s": 3.999634,
+        "child_process_system_cpu_s": 0.302871,
+        "child_peak_rss_kib_linux": 40360,
+        "input_blocks": 1000,
+        "output_blocks": 161728,
+        "voluntary_context_switches": 9881,
+        "involuntary_context_switches": 67,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-pq-ingress.stdout",
+          "bytes": 4193254,
+          "sha256": "71d1dc587c86a179523202b62fcb53ba142fa027cb77a16b17cb48988720c9a9"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-node-pq-ingress.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["env", "TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT=/workspace/scratch/850bfac2502c/validation/final-root-digest-cost.jsonl", "bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation", "--exact", "--ignored", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:36:28.795313+00:00",
+        "ended_utc": "2026-11-04T07:37:09.787996+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 40694666028,
+        "child_process_user_cpu_s": 40.26588,
+        "child_process_system_cpu_s": 0.391885,
+        "child_peak_rss_kib_linux": 15716,
+        "input_blocks": 0,
+        "output_blocks": 224,
+        "voluntary_context_switches": 3,
+        "involuntary_context_switches": 517,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-root-digest-cost.stdout",
+          "bytes": 378,
+          "sha256": "031ebabfdd5d4bd8de0ddaa0ca6c5e41bd54b7c2cf5311b28c5b9427072e6859"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-root-digest-cost.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      },
+      {
+        "schema": "local-component-process-receipt-v1",
+        "command": ["env", "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/850bfac2502c/validation/final-growth-v2", "bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation", "--exact", "--ignored", "--test-threads=1", "--show-output"],
+        "started_utc": "2026-11-04T07:37:10.158732+00:00",
+        "ended_utc": "2026-11-04T07:42:22.149024+00:00",
+        "exit_code": 0,
+        "command_wall_ns": 311684509323,
+        "child_process_user_cpu_s": 308.626512,
+        "child_process_system_cpu_s": 1.144226,
+        "child_peak_rss_kib_linux": 202848,
+        "input_blocks": 63968,
+        "output_blocks": 393904,
+        "voluntary_context_switches": 7713,
+        "involuntary_context_switches": 2766,
+        "binary_before": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_after": {
+          "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+        },
+        "binary_identity_stable": true,
+        "stdout": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-growth-v2-process.stdout",
+          "bytes": 479750,
+          "sha256": "b70569c83c52123c4cb2aa810678779cb5a1e1ef3510125a3350101e164dd4d1"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/850bfac2502c/validation/final-growth-v2-process.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+        "production_acceptance": false
+      }
+    ],
+    "paired_digest_cost_results": [
+      {
+        "baseline": {
+          "accounts": [1024, 9216],
+          "arm_0": "original complete record_root: owner-path derivation, complete ordering, leaf/fork construction and record-ID/serialization work using build_with_lift(None,...)",
+          "arm_1": "complete account_root_with_lifts via digest-only builder; same ordered accounts, leaf/fork/lift mathematical relation; omits stored-record serialization and record-ID work",
+          "cold_calls_per_arm_and_size": 2,
+          "debug_assertions": true,
+          "entries_limit_per_lift_cache": 8192,
+          "independent_lift_caches_per_arm": 2,
+          "same_immutable_fixture_across_all_calls_of_a_size": true,
+          "simultaneously_live_lift_caches": 4,
+          "warm_calls_per_arm_and_size": 100
+        },
+        "cohorts": [
+          {
+            "accounts": 1024,
+            "calling_thread_cpu": {
+              "baseline_midpoint_median_ms": 37.306768,
+              "baseline_p95_ms": 37.659644,
+              "baseline_p99_ms": 37.659644,
+              "candidate_midpoint_median_ms": 37.542775,
+              "candidate_p95_ms": 39.403571,
+              "candidate_p99_ms": 39.403571,
+              "p95_regression_percent": 4.630758060272689,
+              "paired_improvement_max_percent": 3.441891858102524,
+              "paired_improvement_min_percent": -4.630758060272689,
+              "paired_median_improvement_percent": -0.5944331010850823,
+              "two_cold_pair_improvement_percent": [-4.630758060272689, 3.441891858102524]
+            },
+            "calls_per_arm": 2,
+            "pairs": 2,
+            "recorded_retained_account_rows_per_call": 1024,
+            "root": "060d9d8f123803c80ed383a26a74bda90839ecf6373f1420bfa88cfcce87a57d",
+            "source_derived_fork_nodes_per_call": 1023,
+            "source_derived_full_account_inputs_per_call": 1024,
+            "source_derived_leaf_nodes_per_call": 1024,
+            "temperature": "cold",
+            "wall": {
+              "baseline_midpoint_median_ms": 37.331714,
+              "baseline_p95_ms": 37.688038,
+              "baseline_p99_ms": 37.688038,
+              "candidate_midpoint_median_ms": 37.5467395,
+              "candidate_p95_ms": 39.408037,
+              "candidate_p99_ms": 39.408037,
+              "p95_regression_percent": 4.56377962684075,
+              "paired_improvement_max_percent": 3.4886663805304017,
+              "paired_improvement_min_percent": -4.56377962684075,
+              "paired_median_improvement_percent": -0.5375566231551743,
+              "two_cold_pair_improvement_percent": [-4.56377962684075, 3.4886663805304017]
+            }
+          },
+          {
+            "accounts": 1024,
+            "calling_thread_cpu": {
+              "baseline_midpoint_median_ms": 1.6235475,
+              "baseline_p95_ms": 2.351361,
+              "baseline_p99_ms": 2.577247,
+              "candidate_midpoint_median_ms": 0.6311805,
+              "candidate_p95_ms": 0.976033,
+              "candidate_p99_ms": 1.452684,
+              "p95_regression_percent": -58.49072090589238,
+              "paired_improvement_max_percent": 75.98049391463061,
+              "paired_improvement_min_percent": 1.2566180274080987,
+              "paired_median_improvement_percent": 60.96843369420878
+            },
+            "calls_per_arm": 100,
+            "pairs": 100,
+            "recorded_retained_account_rows_per_call": 1024,
+            "root": "060d9d8f123803c80ed383a26a74bda90839ecf6373f1420bfa88cfcce87a57d",
+            "source_derived_fork_nodes_per_call": 1023,
+            "source_derived_full_account_inputs_per_call": 1024,
+            "source_derived_leaf_nodes_per_call": 1024,
+            "temperature": "warm",
+            "wall": {
+              "baseline_midpoint_median_ms": 1.62459,
+              "baseline_p95_ms": 2.352324,
+              "baseline_p99_ms": 2.583223,
+              "candidate_midpoint_median_ms": 0.63188,
+              "candidate_p95_ms": 0.977097,
+              "candidate_p99_ms": 1.453616,
+              "p95_regression_percent": -58.46248220908345,
+              "paired_improvement_max_percent": 76.01190450843771,
+              "paired_improvement_min_percent": 1.2579688683442753,
+              "paired_median_improvement_percent": 60.92378016759062
+            }
+          },
+          {
+            "accounts": 9216,
+            "calling_thread_cpu": {
+              "baseline_midpoint_median_ms": 354.163417,
+              "baseline_p95_ms": 381.950253,
+              "baseline_p99_ms": 381.950253,
+              "candidate_midpoint_median_ms": 368.136288,
+              "candidate_p95_ms": 369.095353,
+              "candidate_p99_ms": 369.095353,
+              "p95_regression_percent": -3.365595361969822,
+              "paired_improvement_max_percent": 3.8677890337724166,
+              "paired_improvement_min_percent": -13.088798181876903,
+              "paired_median_improvement_percent": -4.610504574052244,
+              "two_cold_pair_improvement_percent": [3.8677890337724166, -13.088798181876903]
+            },
+            "calls_per_arm": 2,
+            "pairs": 2,
+            "recorded_retained_account_rows_per_call": 9216,
+            "root": "41b627ac6f8ad98bc3a716895f1a8e6e130a0da0f37f64705d3312ecdcbea8d9",
+            "source_derived_fork_nodes_per_call": 9215,
+            "source_derived_full_account_inputs_per_call": 9216,
+            "source_derived_leaf_nodes_per_call": 9216,
+            "temperature": "cold",
+            "wall": {
+              "baseline_midpoint_median_ms": 354.1958835,
+              "baseline_p95_ms": 381.991233,
+              "baseline_p99_ms": 381.991233,
+              "candidate_midpoint_median_ms": 368.2488205,
+              "candidate_p95_ms": 369.130826,
+              "candidate_p99_ms": 369.130826,
+              "p95_regression_percent": -3.366675957194023,
+              "paired_improvement_max_percent": 3.828469539770825,
+              "paired_improvement_min_percent": -13.091367062530601,
+              "paired_median_improvement_percent": -4.631448761379889,
+              "two_cold_pair_improvement_percent": [3.828469539770825, -13.091367062530601]
+            }
+          },
+          {
+            "accounts": 9216,
+            "calling_thread_cpu": {
+              "baseline_midpoint_median_ms": 198.924052,
+              "baseline_p95_ms": 216.521792,
+              "baseline_p99_ms": 242.399098,
+              "candidate_midpoint_median_ms": 186.4424205,
+              "candidate_p95_ms": 198.27049,
+              "candidate_p99_ms": 217.664472,
+              "p95_regression_percent": -8.429314126496791,
+              "paired_improvement_max_percent": 31.86122206165613,
+              "paired_improvement_min_percent": -25.68446912400684,
+              "paired_median_improvement_percent": 6.354117979281734
+            },
+            "calls_per_arm": 100,
+            "pairs": 100,
+            "recorded_retained_account_rows_per_call": 9216,
+            "root": "41b627ac6f8ad98bc3a716895f1a8e6e130a0da0f37f64705d3312ecdcbea8d9",
+            "source_derived_fork_nodes_per_call": 9215,
+            "source_derived_full_account_inputs_per_call": 9216,
+            "source_derived_leaf_nodes_per_call": 9216,
+            "temperature": "warm",
+            "wall": {
+              "baseline_midpoint_median_ms": 199.0498695,
+              "baseline_p95_ms": 216.631559,
+              "baseline_p99_ms": 242.517073,
+              "candidate_midpoint_median_ms": 186.7205995,
+              "candidate_p95_ms": 198.277264,
+              "candidate_p99_ms": 217.683939,
+              "p95_regression_percent": -8.472585935643846,
+              "paired_improvement_max_percent": 31.815424996004477,
+              "paired_improvement_min_percent": -25.764093031125274,
+              "paired_median_improvement_percent": 6.3201745263302955
+            }
+          }
+        ],
+        "four_second_business_gate_passed_by_this_assay": false,
+        "independent_accepted": false,
+        "limitations": ["Two cold observations per arm and size; report both rather than a stable cold-tail estimate.", "Warm repetitions reuse two caches per arm in one shared process; scheduling noise and cache overflow can affect per-call tails.", "9216 accounts exceed the 8192-entry-per-cache capacity; no recorded hit/miss data proves the precise source of the scaling discontinuity.", "Per-call timing excludes fixture creation, independent protocol root computation, JSON serialization/flush, account State parsing, SQL graph verification, Host budgets, PQ, full State root, networking and confirmation. Whole-command measurements include test setup and observation output.", "No error/cancellation cohort, account/history fixed-W scaling, or end-to-end four-second hostile-business result is established by this successful-root assay."],
+        "pairing_and_statistics": {
+          "arm_median": "midpoint of the two central samples for even sample count",
+          "cold_cannot_support_stable_tail_claim": true,
+          "improvement": "median of (arm0 - arm1)/arm0 over matched calls; positive is faster",
+          "pair_key": ["accounts", "round", "instance"],
+          "quantiles": "nearest rank ceil(q*n); cold has only two calls per arm; warm has 100 calls per arm sharing two evolving cache instances",
+          "warm_calls_are_not_independent_hosts_or_client_confirmations": true
+        },
+        "performance_acceptance_decision": null,
+        "production_acceptance": false,
+        "raw": {
+          "bytes": 97519,
+          "path": "/workspace/scratch/850bfac2502c/validation/final-root-digest-cost.jsonl",
+          "root_rows": 408,
+          "rows": 413,
+          "sha256": "fa03b01c9df46536ff36b28d7fc5c292fa297886c560251e8b7d231933a4ea4e",
+          "source_rows": 1,
+          "summary_rows": 4
+        },
+        "schema": "pon-native-root-digest-cost-analysis-v1",
+        "scope": "finite complete-account mathematical root comparison; native test/process success is separate from performance or public business acceptance",
+        "source": {
+          "business_acceptance_qualified": false,
+          "debug_assertions": true,
+          "digest_builder_sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080",
+          "kind": "source",
+          "live_lift_caches": 4,
+          "native_store_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+          "order": "alternating ABBA/BAAB, two independent caches per arm; two cold and 100 warm observations per arm and size",
+          "prototype_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+          "schema": "pon-native-root-digest-cost-v1",
+          "scope": "same complete current-account math and exact hash/cache grammar; excludes account State parsing, SQL graph verification, Host, PQ, full State root, networking and business confirmation",
+          "source_authority": false,
+          "test_source_sha256": "93db686c615d86035484c64321095105ea8dc97e3fc6c51491f45b3b0f0f1700"
+        },
+        "source_bindings": {
+          "digest_builder_sha256": {
+            "matches_current_commit": true,
+            "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+            "sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080"
+          },
+          "native_store_sha256": {
+            "matches_current_commit": true,
+            "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+            "sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f"
+          },
+          "prototype_sha256": {
+            "matches_current_commit": true,
+            "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+            "sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709"
+          },
+          "test_source_sha256": {
+            "matches_current_commit": true,
+            "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
+            "sha256": "93db686c615d86035484c64321095105ea8dc97e3fc6c51491f45b3b0f0f1700"
+          }
+        },
+        "validation": {
+          "binary_before_after_identity_matches_process_receipt": true,
+          "binary_rehashed_during_this_lightweight_analysis": false,
+          "binary_sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683",
+          "expected_abba_baab_order": true,
+          "expected_grid_complete": true,
+          "native_exit_code": 0,
+          "native_selector_passed": true,
+          "producer_quantiles_recomputed_exactly": true,
+          "receipt_stdout_stderr_hashes_match": true,
+          "root_equality_within_each_size": true,
+          "source_headers_match_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+          "thread_cpu_samples_available": 408,
+          "thread_cpu_samples_missing": 0,
+          "unique_call_identities": 408
+        },
+        "whole_command": {
+          "input_blocks": 0,
+          "journal_and_reference_fixture_setup_inside_call_timer": false,
+          "output_blocks": 224,
+          "peak_rss_kib_linux": 15716,
+          "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+          "sum_measured_call_thread_cpu_s": 40.222049574,
+          "sum_measured_call_wall_s": 40.258441383,
+          "system_cpu_s": 0.391885,
+          "user_cpu_s": 40.26588,
+          "wall_s": 40.694666028
+        },
+        "work_scope": {
+          "cache_hit_miss_counters": null,
+          "dedicated_account_touch_counter": null,
+          "does_not_establish_O_of_touched_keys": true,
+          "ledger_account_mutations_in_fixture": 0,
+          "measured_counter": "retained_account_rows equals complete A in all 408 root receipts",
+          "source_derived_complete_account_inputs_across_all_root_calls": 2088960,
+          "source_derived_complete_account_inputs_by_size": {
+            "1024": 208896,
+            "9216": 1880064
+          },
+          "source_derived_traversal": "Both arms derive paths and sort all A accounts, then rebuild A leaves and A-1 forks each call. Account traversal remains at least linear in A, with a full sort; no fixed-touched-set bound is measured."
+        }
+      }
+    ],
+    "growth_v2_runs": [
+      {
+        "readback": {
+          "cancellation_stage_measurements_available": true,
+          "cancelled_admissions": 9,
+          "cohorts": [
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [9635189, 10207965],
+              "cancelled_admission_wall_ns": 10914772,
+              "cold_reopen_wall_ns": 62031582,
+              "copied_nodes_min_max": [13, 13],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [16, 16],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [917, 917]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [16649448, 18808310],
+              "cancelled_admission_wall_ns": 15705942,
+              "cold_reopen_wall_ns": 200111106,
+              "copied_nodes_min_max": [13, 16],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [16, 16],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [917, 917]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [15100958, 16147449],
+              "cancelled_admission_wall_ns": 22291233,
+              "cold_reopen_wall_ns": 1553085961,
+              "copied_nodes_min_max": [16, 16],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [16, 16],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [917, 917]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [9199731, 9348746],
+              "cancelled_admission_wall_ns": 9673527,
+              "cold_reopen_wall_ns": 153067490,
+              "copied_nodes_min_max": [23, 23],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [30, 30],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [1841, 1841]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [16206808, 18390438],
+              "cancelled_admission_wall_ns": 13593000,
+              "cold_reopen_wall_ns": 254879929,
+              "copied_nodes_min_max": [23, 30],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [30, 30],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [1841, 1841]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [16527574, 16909951],
+              "cancelled_admission_wall_ns": 16289644,
+              "cold_reopen_wall_ns": 1353966092,
+              "copied_nodes_min_max": [30, 30],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [30, 30],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [1841, 1841]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [10066932, 11254896],
+              "cancelled_admission_wall_ns": 13750788,
+              "cold_reopen_wall_ns": 1623749486,
+              "copied_nodes_min_max": [27, 27],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [37, 37],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [2303, 2303]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [19191028, 19731045],
+              "cancelled_admission_wall_ns": 14122461,
+              "cold_reopen_wall_ns": 1726126627,
+              "copied_nodes_min_max": [27, 37],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [37, 37],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [2303, 2303]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [17638322, 17751430],
+              "cancelled_admission_wall_ns": 14833505,
+              "cold_reopen_wall_ns": 2605622008,
+              "copied_nodes_min_max": [37, 37],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [37, 37],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [2303, 2303]
+            }
+          ],
+          "cold_reopens": 9,
+          "completed_cohorts": 9,
+          "files": [
+            {
+              "bytes": 1993,
+              "file": "run.jsonl",
+              "sha256": "69fa6d9da7f3276f79fd1ec22e7e60c95d1cdf24c976fb1c7042efa32fc63b81"
+            },
+            {
+              "bytes": 47230,
+              "file": "cohort-a64-h0.jsonl",
+              "sha256": "87ad2246c0d78a85d02ccd408f2a384f16dc7e17c772267317ffcc98b836d5ae"
+            },
+            {
+              "bytes": 49369,
+              "file": "cohort-a64-h16.jsonl",
+              "sha256": "e886a665f94465596fed515543114422c93dc70759aa12bd8d6d1e9355bef00f"
+            },
+            {
+              "bytes": 62288,
+              "file": "cohort-a64-h128.jsonl",
+              "sha256": "31ade9b93ac16af16e43cf1edaf54e2a5f3a352d51a8cabb5e8e93001493f702"
+            },
+            {
+              "bytes": 47286,
+              "file": "cohort-a1024-h0.jsonl",
+              "sha256": "41bd8ffd3c94658f6a4002179a5cf215bb099773957c590ff6399aa5acf08f48"
+            },
+            {
+              "bytes": 49426,
+              "file": "cohort-a1024-h16.jsonl",
+              "sha256": "be0e590102a703eec3a41800f6f102812a1d368a095be171c56e3fa1a3c363a0"
+            },
+            {
+              "bytes": 62364,
+              "file": "cohort-a1024-h128.jsonl",
+              "sha256": "0803ed1606a9b70dd46188dd79ed35f21056de7d5118d06beab3a0a7b0d51f8d"
+            },
+            {
+              "bytes": 47381,
+              "file": "cohort-a16384-h0.jsonl",
+              "sha256": "6303ec94af8e313d20a81c2c3c929ade960d1b91be5b36debce48f0496e3d0c0"
+            },
+            {
+              "bytes": 49509,
+              "file": "cohort-a16384-h16.jsonl",
+              "sha256": "a4626f981134e9871c2ea4c5bcdcf5e9b58f9bcef4b2ded2a8f382f599f76418"
+            },
+            {
+              "bytes": 62416,
+              "file": "cohort-a16384-h128.jsonl",
+              "sha256": "ca0a05c9f7f5ce0c26fed3073b3663a15f105e27b23ea3d59c58e66dfec84b41"
+            }
+          ],
+          "fixed_witness_owners": ["79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9", "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc", "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"],
+          "historical_v1": false,
+          "measured_native_blocks": 72,
+          "native_stage_cpu_measurements_available": false,
+          "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
+          "observation_schema": "native-growth-fixed-owner-scale-observation-v2",
+          "p99_ns": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "requires_separate_source_binary_and_native_exit_verification": true,
+          "result": "COMPLETE_LOCAL_OBSERVATION",
+          "returned_native_outcomes": {
+            "accepted": 144,
+            "rejected": 9
+          },
+          "returned_native_stages": 153,
+          "schema": "native-growth-fixed-owner-scale-readback-v2",
+          "throughput_qualified": false
+        },
+        "analysis": {
+          "acceptance": {
+            "exact_frozen_source_observation_receipts_present": true,
+            "full_performance_acceptance_granted_by_this_analysis": false,
+            "original_65536_signed_growth_gate_replaced": false,
+            "p99_qualified": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "throughput_qualified": false
+          },
+          "campaign_process_cost": {
+            "child_peak_rss_kib_linux": 202848,
+            "child_peak_rss_mib": 198.09375,
+            "child_system_cpu_s": 1.144226,
+            "child_total_cpu_s": 309.770738,
+            "child_user_cpu_s": 308.626512,
+            "command_wall_ns": 311684509323,
+            "command_wall_s": 311.684509323,
+            "ended_utc": "2026-11-04T07:42:22.149024+00:00",
+            "includes": "Whole command including setup, all warmup, packet/work construction, reference diagnostics, journals, measured calls and cold reopens. No per-stage CPU or RSS allocation is inferred.",
+            "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+            "started_utc": "2026-11-04T07:37:10.158732+00:00"
+          },
+          "classification": "DESCRIPTIVE_LOCAL_FROZEN_F690_BINARY_OBSERVATION",
+          "cohorts": [
+            {
+              "A_accounts": 64,
+              "H_warmup_blocks": 0,
+              "activation_wall_ms": {
+                "max": 3.150861,
+                "median": 2.710065,
+                "median_interval": [2.673159, 2.746971],
+                "min": 2.345544,
+                "n": 8,
+                "p25": 2.520298,
+                "p75": 2.815674,
+                "p95_nearest_rank": 3.150861
+              },
+              "admission_wall_ms": {
+                "max": 16.485405,
+                "median": 9.921577,
+                "median_interval": [9.635189, 10.207965],
+                "min": 7.929922,
+                "n": 8,
+                "p25": 9.071267,
+                "p75": 10.669943,
+                "p95_nearest_rank": 16.485405
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 8
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 10.914772,
+                "median": 10.914772,
+                "median_interval": [10.914772, 10.914772],
+                "min": 10.914772,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [27, 27],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [0, 42],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [27, 27],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [48, 48],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 62.031582,
+                "separate_journal_typed_events": 8,
+                "separate_post_open_journal_wall_ms": 0.306232
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [50670, 50670],
+                "parent_working_keys": [5, 12],
+                "retained_cow_nodes_added": [13, 13],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [16, 16],
+                "successor_working_keys": [6, 13],
+                "witness_bytes": [917, 917],
+                "witness_frontier_nodes": [11, 11]
+              },
+              "measured_parent_history_min_max": [0, 7],
+              "sql_total_changes_min_max": {
+                "activation": [4, 5],
+                "admission": [19, 19],
+                "cancelled_admission": [19, 19]
+              }
+            },
+            {
+              "A_accounts": 64,
+              "H_warmup_blocks": 16,
+              "activation_wall_ms": {
+                "max": 6.349114,
+                "median": 4.10658,
+                "median_interval": [3.939603, 4.273557],
+                "min": 3.815946,
+                "n": 8,
+                "p25": 3.816046,
+                "p75": 4.84468,
+                "p95_nearest_rank": 6.349114
+              },
+              "admission_wall_ms": {
+                "max": 22.499702,
+                "median": 17.728879,
+                "median_interval": [16.649448, 18.80831],
+                "min": 14.072484,
+                "n": 8,
+                "p25": 14.474812,
+                "p75": 19.793444,
+                "p95_nearest_rank": 22.499702
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 24
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 15.705942,
+                "median": 15.705942,
+                "median_interval": [15.705942, 15.705942],
+                "min": 15.705942,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [27, 33],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [33, 33],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 200.111106,
+                "separate_journal_typed_events": 24,
+                "separate_post_open_journal_wall_ms": 0.682632
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [50670, 50670],
+                "parent_working_keys": [21, 25],
+                "retained_cow_nodes_added": [13, 16],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [16, 16],
+                "successor_working_keys": [22, 25],
+                "witness_bytes": [917, 917],
+                "witness_frontier_nodes": [11, 11]
+              },
+              "measured_parent_history_min_max": [16, 23],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [19, 24],
+                "cancelled_admission": [24, 24]
+              }
+            },
+            {
+              "A_accounts": 64,
+              "H_warmup_blocks": 128,
+              "activation_wall_ms": {
+                "max": 5.061268,
+                "median": 3.637992,
+                "median_interval": [3.621672, 3.654312],
+                "min": 3.531497,
+                "n": 8,
+                "p25": 3.531747,
+                "p75": 3.693922,
+                "p95_nearest_rank": 5.061268
+              },
+              "admission_wall_ms": {
+                "max": 20.729443,
+                "median": 15.6242035,
+                "median_interval": [15.100958, 16.147449],
+                "min": 14.174118,
+                "n": 8,
+                "p25": 14.574092,
+                "p75": 17.992647,
+                "p95_nearest_rank": 20.729443
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 136
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 22.291233,
+                "median": 22.291233,
+                "median_interval": [22.291233, 22.291233],
+                "min": 22.291233,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [33, 33],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [33, 33],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 1553.085961,
+                "separate_journal_typed_events": 136,
+                "separate_post_open_journal_wall_ms": 6.550248
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [50670, 50670],
+                "parent_working_keys": [25, 25],
+                "retained_cow_nodes_added": [16, 16],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [16, 16],
+                "successor_working_keys": [25, 25],
+                "witness_bytes": [917, 917],
+                "witness_frontier_nodes": [11, 11]
+              },
+              "measured_parent_history_min_max": [128, 135],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [24, 24],
+                "cancelled_admission": [24, 24]
+              }
+            },
+            {
+              "A_accounts": 1024,
+              "H_warmup_blocks": 0,
+              "activation_wall_ms": {
+                "max": 3.268018,
+                "median": 2.3739875,
+                "median_interval": [2.266405, 2.48157],
+                "min": 1.979501,
+                "n": 8,
+                "p25": 2.167195,
+                "p75": 2.507989,
+                "p95_nearest_rank": 3.268018
+              },
+              "admission_wall_ms": {
+                "max": 12.476452,
+                "median": 9.2742385,
+                "median_interval": [9.199731, 9.348746],
+                "min": 8.454425,
+                "n": 8,
+                "p25": 8.871695,
+                "p75": 9.737845,
+                "p95_nearest_rank": 12.476452
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 8
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 9.673527,
+                "median": 9.673527,
+                "median_interval": [9.673527, 9.673527],
+                "min": 9.673527,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [47, 47],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [0, 42],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [47, 47],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [48, 48],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 153.06749,
+                "separate_journal_typed_events": 8,
+                "separate_post_open_journal_wall_ms": 0.24503
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [51594, 51594],
+                "parent_working_keys": [5, 12],
+                "retained_cow_nodes_added": [23, 23],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [30, 30],
+                "successor_working_keys": [6, 13],
+                "witness_bytes": [1841, 1841],
+                "witness_frontier_nodes": [25, 25]
+              },
+              "measured_parent_history_min_max": [0, 7],
+              "sql_total_changes_min_max": {
+                "activation": [4, 5],
+                "admission": [29, 29],
+                "cancelled_admission": [29, 29]
+              }
+            },
+            {
+              "A_accounts": 1024,
+              "H_warmup_blocks": 16,
+              "activation_wall_ms": {
+                "max": 5.962345,
+                "median": 4.478122,
+                "median_interval": [4.415202, 4.541042],
+                "min": 3.297362,
+                "n": 8,
+                "p25": 3.347679,
+                "p75": 4.756948,
+                "p95_nearest_rank": 5.962345
+              },
+              "admission_wall_ms": {
+                "max": 36.676759,
+                "median": 17.298623,
+                "median_interval": [16.206808, 18.390438],
+                "min": 13.049208,
+                "n": 8,
+                "p25": 13.848976,
+                "p75": 18.520881,
+                "p95_nearest_rank": 36.676759
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 24
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 13.593,
+                "median": 13.593,
+                "median_interval": [13.593, 13.593],
+                "min": 13.593,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [47, 61],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [61, 61],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 254.879929,
+                "separate_journal_typed_events": 24,
+                "separate_post_open_journal_wall_ms": 0.487686
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [51594, 51594],
+                "parent_working_keys": [21, 25],
+                "retained_cow_nodes_added": [23, 30],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [30, 30],
+                "successor_working_keys": [22, 25],
+                "witness_bytes": [1841, 1841],
+                "witness_frontier_nodes": [25, 25]
+              },
+              "measured_parent_history_min_max": [16, 23],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [29, 38],
+                "cancelled_admission": [38, 38]
+              }
+            },
+            {
+              "A_accounts": 1024,
+              "H_warmup_blocks": 128,
+              "activation_wall_ms": {
+                "max": 4.63258,
+                "median": 3.772125,
+                "median_interval": [3.767233, 3.777017],
+                "min": 3.603806,
+                "n": 8,
+                "p25": 3.650255,
+                "p75": 4.11636,
+                "p95_nearest_rank": 4.63258
+              },
+              "admission_wall_ms": {
+                "max": 20.607688,
+                "median": 16.7187625,
+                "median_interval": [16.527574, 16.909951],
+                "min": 15.38051,
+                "n": 8,
+                "p25": 15.72081,
+                "p75": 18.490986,
+                "p95_nearest_rank": 20.607688
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 136
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 16.289644,
+                "median": 16.289644,
+                "median_interval": [16.289644, 16.289644],
+                "min": 16.289644,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [61, 61],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [61, 61],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 1353.966092,
+                "separate_journal_typed_events": 136,
+                "separate_post_open_journal_wall_ms": 4.862587
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [51594, 51594],
+                "parent_working_keys": [25, 25],
+                "retained_cow_nodes_added": [30, 30],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [30, 30],
+                "successor_working_keys": [25, 25],
+                "witness_bytes": [1841, 1841],
+                "witness_frontier_nodes": [25, 25]
+              },
+              "measured_parent_history_min_max": [128, 135],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [38, 38],
+                "cancelled_admission": [38, 38]
+              }
+            },
+            {
+              "A_accounts": 16384,
+              "H_warmup_blocks": 0,
+              "activation_wall_ms": {
+                "max": 6.098345,
+                "median": 2.525651,
+                "median_interval": [2.407878, 2.643424],
+                "min": 1.732567,
+                "n": 8,
+                "p25": 2.070458,
+                "p75": 2.798929,
+                "p95_nearest_rank": 6.098345
+              },
+              "admission_wall_ms": {
+                "max": 13.354894,
+                "median": 10.660914,
+                "median_interval": [10.066932, 11.254896],
+                "min": 7.455556,
+                "n": 8,
+                "p25": 8.467254,
+                "p75": 11.989757,
+                "p95_nearest_rank": 13.354894
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 8
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 13.750788,
+                "median": 13.750788,
+                "median_interval": [13.750788, 13.750788],
+                "min": 13.750788,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [55, 55],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [0, 42],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [55, 55],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [48, 48],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 1623.749486,
+                "separate_journal_typed_events": 8,
+                "separate_post_open_journal_wall_ms": 0.612275
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [52056, 52056],
+                "parent_working_keys": [5, 12],
+                "retained_cow_nodes_added": [27, 27],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [37, 37],
+                "successor_working_keys": [6, 13],
+                "witness_bytes": [2303, 2303],
+                "witness_frontier_nodes": [32, 32]
+              },
+              "measured_parent_history_min_max": [0, 7],
+              "sql_total_changes_min_max": {
+                "activation": [4, 5],
+                "admission": [33, 33],
+                "cancelled_admission": [33, 33]
+              }
+            },
+            {
+              "A_accounts": 16384,
+              "H_warmup_blocks": 16,
+              "activation_wall_ms": {
+                "max": 5.609396,
+                "median": 4.485728,
+                "median_interval": [4.320258, 4.651198],
+                "min": 3.37546,
+                "n": 8,
+                "p25": 3.967135,
+                "p75": 4.714053,
+                "p95_nearest_rank": 5.609396
+              },
+              "admission_wall_ms": {
+                "max": 25.882412,
+                "median": 19.4610365,
+                "median_interval": [19.191028, 19.731045],
+                "min": 16.995547,
+                "n": 8,
+                "p25": 18.307615,
+                "p75": 20.524373,
+                "p95_nearest_rank": 25.882412
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 24
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 14.122461,
+                "median": 14.122461,
+                "median_interval": [14.122461, 14.122461],
+                "min": 14.122461,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [55, 75],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [75, 75],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 1726.126627,
+                "separate_journal_typed_events": 24,
+                "separate_post_open_journal_wall_ms": 1.175887
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [52056, 52056],
+                "parent_working_keys": [21, 25],
+                "retained_cow_nodes_added": [27, 37],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [37, 37],
+                "successor_working_keys": [22, 25],
+                "witness_bytes": [2303, 2303],
+                "witness_frontier_nodes": [32, 32]
+              },
+              "measured_parent_history_min_max": [16, 23],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [33, 45],
+                "cancelled_admission": [45, 45]
+              }
+            },
+            {
+              "A_accounts": 16384,
+              "H_warmup_blocks": 128,
+              "activation_wall_ms": {
+                "max": 10.271747,
+                "median": 4.4704505,
+                "median_interval": [4.164513, 4.776388],
+                "min": 3.581812,
+                "n": 8,
+                "p25": 3.937359,
+                "p75": 5.046076,
+                "p95_nearest_rank": 10.271747
+              },
+              "admission_wall_ms": {
+                "max": 21.702138,
+                "median": 17.694876,
+                "median_interval": [17.638322, 17.75143],
+                "min": 15.610238,
+                "n": 8,
+                "p25": 16.018925,
+                "p75": 19.690665,
+                "p95_nearest_rank": 21.702138
+              },
+              "cancellation": {
+                "active_generation_equal": true,
+                "all_sql_rows_equal": true,
+                "expected_error": "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL",
+                "parent_history_blocks": 136
+              },
+              "cancelled_admission_wall_ms": {
+                "max": 14.833505,
+                "median": 14.833505,
+                "median_interval": [14.833505, 14.833505],
+                "min": 14.833505,
+                "n": 1,
+                "p25": null,
+                "p75": null,
+                "p95_nearest_rank": null
+              },
+              "checkpoint_min_max": {
+                "activation": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [0, 0],
+                  "cow_account_node_checkpoints": [0, 0],
+                  "execution_checkpoints": [0, 0],
+                  "full_work_checkpoints": [0, 0],
+                  "header_ancestors": [0, 0],
+                  "reorg_ancestors": [1, 1],
+                  "reorg_readbacks": [5, 5],
+                  "reorg_writes": [1, 1]
+                },
+                "admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [75, 75],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                },
+                "cancelled_admission": {
+                  "before_commit_checks": [1, 1],
+                  "context_checks": [2, 2],
+                  "cow_account_node_checkpoints": [75, 75],
+                  "execution_checkpoints": [10, 10],
+                  "full_work_checkpoints": [1099, 1099],
+                  "header_ancestors": [96, 96],
+                  "reorg_ancestors": [0, 0],
+                  "reorg_readbacks": [0, 0],
+                  "reorg_writes": [0, 0]
+                }
+              },
+              "cold_reopen": {
+                "complete_state_reference_equal_after_open": true,
+                "n": 1,
+                "native_open_wall_ms": 2605.622008,
+                "separate_journal_typed_events": 136,
+                "separate_post_open_journal_wall_ms": 5.311486
+              },
+              "data_access_min_max": {
+                "full_work_proof_bytes": [49188, 49188],
+                "packet_bytes": [52056, 52056],
+                "parent_working_keys": [25, 25],
+                "retained_cow_nodes_added": [37, 37],
+                "separate_successor_query_expanded_witnesses": [0, 0],
+                "separate_successor_query_point_reads": [37, 37],
+                "successor_working_keys": [25, 25],
+                "witness_bytes": [2303, 2303],
+                "witness_frontier_nodes": [32, 32]
+              },
+              "measured_parent_history_min_max": [128, 135],
+              "sql_total_changes_min_max": {
+                "activation": [5, 5],
+                "admission": [45, 45],
+                "cancelled_admission": [45, 45]
+              }
+            }
+          ],
+          "coverage": {
+            "all_cancelled_sql_rows_and_active_generations_unchanged": true,
+            "all_cold_reopen_complete_state_references_equal": true,
+            "all_native_returns": 153,
+            "all_successful_full_state_references_equal": true,
+            "cohorts": 9,
+            "cold_reopens": 9,
+            "deliberate_cancelled_admission_returns": 9,
+            "fixed_witness_owner_count": 3,
+            "fixed_witness_owners": ["79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9", "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc", "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"],
+            "measured_blocks": 72,
+            "successful_activation_returns": 72,
+            "successful_admission_returns": 72,
+            "unexpected_rejected_returns": 0,
+            "warmup_blocks_excluded_from_measured_latency": 432
+          },
+          "created_utc": "2026-11-04T07:44:33.472424+00:00",
+          "cross_axis_findings": {
+            "A64_to_A16384_ratios": {
+              "H0_copied_nodes_factor": 2.076923076923077,
+              "H128_copied_nodes_factor": 2.3125,
+              "account_scale_factor": 256.0,
+              "cold_open_H0_factor": 26.17617403341414,
+              "cold_open_H128_factor": 1.6777062399831968,
+              "query_point_reads_factor": 2.3125,
+              "witness_bytes_factor": 2.5114503816793894
+            },
+            "account_scale": [
+              {
+                "A_accounts": 64,
+                "activation_median_ms_range_across_H": [2.710065, 4.10658],
+                "admission_median_ms_range_across_H": [9.921577, 17.728879],
+                "cold_open_ms_by_H": {
+                  "0": 62.031582,
+                  "128": 1553.085961,
+                  "16": 200.111106
+                },
+                "retained_cow_nodes_added": [13, 16],
+                "separate_successor_query_point_reads": [16, 16],
+                "witness_bytes": [917, 917]
+              },
+              {
+                "A_accounts": 1024,
+                "activation_median_ms_range_across_H": [2.3739875, 4.478122],
+                "admission_median_ms_range_across_H": [9.2742385, 17.298623],
+                "cold_open_ms_by_H": {
+                  "0": 153.06749,
+                  "128": 1353.966092,
+                  "16": 254.879929
+                },
+                "retained_cow_nodes_added": [23, 30],
+                "separate_successor_query_point_reads": [30, 30],
+                "witness_bytes": [1841, 1841]
+              },
+              {
+                "A_accounts": 16384,
+                "activation_median_ms_range_across_H": [2.525651, 4.485728],
+                "admission_median_ms_range_across_H": [10.660914, 19.4610365],
+                "cold_open_ms_by_H": {
+                  "0": 1623.749486,
+                  "128": 2605.622008,
+                  "16": 1726.126627
+                },
+                "retained_cow_nodes_added": [27, 37],
+                "separate_successor_query_point_reads": [37, 37],
+                "witness_bytes": [2303, 2303]
+              }
+            ],
+            "cold_open_interpretation": "Whole native opener calls span 62.031582 to 2605.622008 ms. H=128 minus H=0 adds 1491.054379, 1200.898602 and 981.872522 ms at A=64, 1024 and 16384 respectively. Bounded measured header callbacks do not imply bounded recovery cost.",
+            "header_ancestors": {
+              "by_H": {
+                "0": {
+                  "admission_sequence_per_A": [0, 6, 12, 18, 24, 30, 36, 42],
+                  "cancelled_admission": 48
+                },
+                "128": {
+                  "admission_min_max": [96, 96],
+                  "cancelled_admission": 96
+                },
+                "16": {
+                  "admission_min_max": [96, 96],
+                  "cancelled_admission": 96
+                }
+              },
+              "cancelled_returns_checked": 9,
+              "continues_linearly_between_H16_and_H128": false,
+              "mismatches": 0,
+              "observed_fit": "All 81 successful/cancelled admission returns match 6 * min(parent_history_blocks, 16).",
+              "returns_checked": 81,
+              "scope": "The observed counter plateaus by H=16 across all three A values. This finite matrix does not establish a bound for every history/state shape or deep reorganization.",
+              "successful_returns_checked": 72,
+              "units": "progress callback count, not a count of distinct ancestor identities"
+            },
+            "wall_interpretation": "Successful admission medians span 9.2742385 to 19.4610365 ms and activation medians 2.3739875 to 4.485728 ms across these cells. Account-scale wall results are not monotone in every H slice; eight samples on a shared host do not isolate causality or establish throughput.",
+            "working_set_and_recovery": "The fixed W=3 owner set does not make every cost constant: working reward keys change with H, witness/COW/query work grows with A, and whole cold opener time rises with A/H in broad trend but is not monotone in every slice. Retained COW nodes count persisted additions; separately measured successor-query point reads are diagnostic work outside the timed admission/activation, not total native SQL reads."
+          },
+          "inputs_sha256": {
+            "final-cost-source-verification.json": "6355748b4c931c56ee52ddfd875f0defdd554ed24767bbc5b648f24f094925bb",
+            "final-growth-v2-process.json": "4d636c76cc81f67b443fb3bbaeac17abcbb56c9b71c5e7cdc1d0f0479032764f",
+            "final-growth-v2-process.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "final-growth-v2-process.stdout": "b70569c83c52123c4cb2aa810678779cb5a1e1ef3510125a3350101e164dd4d1",
+            "final-growth-v2-readback.json": "daa1dcb94f9b8d87e45d14947e2bc372b5d669f998d1fbf6168c89bac7687118",
+            "final-growth-v2/cohort-a1024-h0.jsonl": "41bd8ffd3c94658f6a4002179a5cf215bb099773957c590ff6399aa5acf08f48",
+            "final-growth-v2/cohort-a1024-h128.jsonl": "0803ed1606a9b70dd46188dd79ed35f21056de7d5118d06beab3a0a7b0d51f8d",
+            "final-growth-v2/cohort-a1024-h16.jsonl": "be0e590102a703eec3a41800f6f102812a1d368a095be171c56e3fa1a3c363a0",
+            "final-growth-v2/cohort-a16384-h0.jsonl": "6303ec94af8e313d20a81c2c3c929ade960d1b91be5b36debce48f0496e3d0c0",
+            "final-growth-v2/cohort-a16384-h128.jsonl": "ca0a05c9f7f5ce0c26fed3073b3663a15f105e27b23ea3d59c58e66dfec84b41",
+            "final-growth-v2/cohort-a16384-h16.jsonl": "a4626f981134e9871c2ea4c5bcdcf5e9b58f9bcef4b2ded2a8f382f599f76418",
+            "final-growth-v2/cohort-a64-h0.jsonl": "87ad2246c0d78a85d02ccd408f2a384f16dc7e17c772267317ffcc98b836d5ae",
+            "final-growth-v2/cohort-a64-h128.jsonl": "31ade9b93ac16af16e43cf1edaf54e2a5f3a352d51a8cabb5e8e93001493f702",
+            "final-growth-v2/cohort-a64-h16.jsonl": "e886a665f94465596fed515543114422c93dc70759aa12bd8d6d1e9355bef00f",
+            "final-growth-v2/run.jsonl": "69fa6d9da7f3276f79fd1ec22e7e60c95d1cdf24c976fb1c7042efa32fc63b81"
+          },
+          "method": {
+            "A": "Preallocated dormant-account count; fixed three actual witness owners at every measured block.",
+            "H": "Warmup history length. Eight successive measurements use parent heights H through H+7; deliberate cancellation uses H+8.",
+            "before_commit_return": "Includes normal/error return processing; does not measure durable commit or fsync.",
+            "cold_reopen_scope": "One whole Node opener call per cohort after dropping the prior Node. Complete-state equality is checked afterward; that post-open reference check and the separately timed journal differential are excluded from native_open_wall_ms. No OS page-cache eviction or new-process cold-start claim.",
+            "comparability_to_initial": "Same descriptive aggregation structure as the earlier dirty-a10 observation. These sequential shared-container campaigns are not a randomized paired performance comparison, so no speedup or regression attribution is inferred between them.",
+            "excluded_from_native_stage_wall": "Setup, warmup, signed-packet/work construction, full-state reference diagnostics and flushed return-journal IO; these remain in the campaign process cost.",
+            "host": "Shared container; cohorts were sequential, not randomized repetitions on an isolated host.",
+            "input_validation": "All 10 JSONL byte lengths and SHA-256 values match the strict readback; process stdout/stderr digests also match. All 153 actual native returns are counted once and matched to completed sample/cancellation records. Source/binary stability is separately established by final-cost-source-verification.json and the process receipt; this analysis does not fabricate execution attestation.",
+            "median": "Arithmetic midpoint of the two central order statistics for n=8; median_interval gives those two observed order statistics, not a confidence interval.",
+            "native_stage_timing": "Inclusive native call wall time only. No sums of nested offsets, persistence spans, or BeforeCommit-to-return intervals are formed.",
+            "p99_ms": null,
+            "per_stage_process_cpu_ns": null,
+            "per_stage_thread_cpu_ns": null,
+            "quantiles": "Descriptive empirical nearest-rank p25, p75, p95: sorted[ceil(q*n)-1]. At n=8 p95 equals the observed maximum; it is not a tail qualification. For each n=1 cancellation p25/p75/p95 are null and the median is only the single observed value.",
+            "separate_query_scope": "Successor witness query is a separately instrumented diagnostic outside native admission/activation wall timings; its point_reads are not total SQL reads of those stages.",
+            "sql_changes_scope": "SQLite total_changes records work performed, including rolled-back writes; positive cancelled changes do not imply durable published mutations.",
+            "touched_set_scope": "W=3 is the exact witness-owner set observed for each of the 72 completed measured blocks; three owners do not imply three nodes, three database reads, or constant working obligation-key count.",
+            "wall_units": "milliseconds; raw input nanoseconds remain authoritative"
+          },
+          "schema": "local-native-growth-v2-final-analysis-v1",
+          "source_and_binary": {
+            "base_head": "f690e732c15602d9e14eb8b672a8463601cad271",
+            "binary": {
+              "bytes": 412439512,
+              "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+              "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+            },
+            "binary_identity_stable": true,
+            "concurrency": "No build, Clippy or other native/cost command launched by this root overlaps this sequence. Shared-container global isolation is not asserted.",
+            "native_process_exit_code": 0,
+            "readback_exit_code": 0,
+            "readback_result": "COMPLETE_LOCAL_OBSERVATION",
+            "source_binding_basis": "Existing final-cost-source-verification.json records exact f690 source/tree clean before and after; final-growth-v2-process.json records actual child exit and stable binary bytes. This analysis validates receipt consistency and raw evidence hashes without re-running native execution.",
+            "source_identity_stable": true,
+            "tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+            "worktree_state": "committed-clean before and after native cost sequence"
+          }
+        },
+        "process_receipt": {
+          "schema": "local-component-process-receipt-v1",
+          "command": ["env", "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/850bfac2502c/validation/final-growth-v2", "bash", "/workspace/scratch/850bfac2502c/run-task.sh", "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1", "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation", "--exact", "--ignored", "--test-threads=1", "--show-output"],
+          "started_utc": "2026-11-04T07:37:10.158732+00:00",
+          "ended_utc": "2026-11-04T07:42:22.149024+00:00",
+          "exit_code": 0,
+          "command_wall_ns": 311684509323,
+          "child_process_user_cpu_s": 308.626512,
+          "child_process_system_cpu_s": 1.144226,
+          "child_peak_rss_kib_linux": 202848,
+          "input_blocks": 63968,
+          "output_blocks": 393904,
+          "voluntary_context_switches": 7713,
+          "involuntary_context_switches": 2766,
+          "binary_before": {
+            "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+            "bytes": 412439512,
+            "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+          },
+          "binary_after": {
+            "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+            "bytes": 412439512,
+            "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+          },
+          "binary_identity_stable": true,
+          "stdout": {
+            "path": "/workspace/scratch/850bfac2502c/validation/final-growth-v2-process.stdout",
+            "bytes": 479750,
+            "sha256": "b70569c83c52123c4cb2aa810678779cb5a1e1ef3510125a3350101e164dd4d1"
+          },
+          "stderr": {
+            "path": "/workspace/scratch/850bfac2502c/validation/final-growth-v2-process.stderr",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+          "production_acceptance": false
+        }
+      }
+    ],
+    "actual_growth_return_counts": {
+      "admission_success": 72,
+      "activation_success": 72,
+      "before_commit_cancelled_admission": 9,
+      "total": 153
+    },
+    "actual_completed_cohorts": 9,
+    "native_result": "All six selected ordinary libtest invocations completed with zero failures; both exact ignored observations completed with one pass each. Original ignored annotations remain and are separately reported.",
     "planned_growth_v2_contract": {
       "observation_schema": "native-growth-fixed-owner-scale-observation-v2",
       "reader_schema": "native-growth-fixed-owner-scale-readback-v2",
       "return_schema": "native-growth-stage-return-v1",
       "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
-      "accounts": [
-        64,
-        1024,
-        16384
-      ],
-      "warmup_history_blocks": [
-        0,
-        16,
-        128
-      ],
+      "accounts": [64, 1024, 16384],
+      "warmup_history_blocks": [0, 16, 128],
       "planned_cohorts": 9,
       "measured_successful_blocks_per_cohort": 8,
       "planned_successful_admission_returns": 72,
       "planned_successful_activation_returns": 72,
       "planned_cancelled_admission_returns": 9,
       "planned_total_native_returns": 153,
-      "actual_return_counts": null,
-      "actual_completed_cohorts": null,
-      "actual_result": null,
+      "actual_return_counts": {
+        "admission_success": 72,
+        "activation_success": 72,
+        "before_commit_cancelled_admission": 9,
+        "total": 153
+      },
+      "actual_completed_cohorts": 9,
+      "actual_result": "COMPLETE_LOCAL_OBSERVATION",
       "cancellation": "one actual BeforeCommit cancellation per cohort; its wall duration is separate from eight successful-block samples; rollback/unchanged authority checks retained",
       "cpu": {
         "thread_cpu_ns": null,
@@ -1148,7 +3190,597 @@
       "historical_v1": "requires explicit --historical-v1; missing return/cancellation costs remain unknown",
       "throughput_qualified": false
     },
-    "performance_qualified": false
+    "performance_qualified": false,
+    "build_receipt": {
+      "schema": "final-native-build-source-v1",
+      "source_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "source_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+      "clean_after_build_and_clippy": true,
+      "build_exit_code": 0,
+      "clippy_exit_code": 0,
+      "clippy_scope": "--workspace --all-targets --all-features -- -D warnings",
+      "artifacts": [
+        {
+          "package": "trnm_mvcc_fee",
+          "profile": {
+            "opt_level": "1",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": ["default", "pq-native-openssl"],
+          "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-e0449001e2f07dd8",
+          "bytes": 75119152,
+          "sha256": "01f11d457d8a1b6675f591c86cf4e9aedefb3c168a2dcdac53b866491d7e35c3",
+          "fresh": false,
+          "target_source": "/workspace/scratch/850bfac2502c/chain/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        {
+          "package": "trnm_pon_node",
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 2,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "features": ["default", "pq-native-openssl"],
+          "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+          "bytes": 412439512,
+          "sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683",
+          "fresh": false,
+          "target_source": "/workspace/scratch/850bfac2502c/chain/trillionnium/crates/trnm-pon-node/src/lib.rs"
+        }
+      ],
+      "logs": {
+        "final-native-build.jsonl": {
+          "bytes": 119510,
+          "sha256": "e0a0f4ae41e1d02fc62e0e25fe5e60835151bf53b8023628390bd86e1ea1e6f0"
+        },
+        "final-native-build.log": {
+          "bytes": 542,
+          "sha256": "293a1a73256060f0cc433195b949aeeb3b1df008438b754563e80fef229bfea6"
+        },
+        "final-workspace-clippy.log": {
+          "bytes": 5505,
+          "sha256": "8f1b9f0a2526949d13043b6c309dab83ca33d8c7db4a9798fb1bacd66ae1e7a6"
+        },
+        "final-cargo-metadata.json": {
+          "bytes": 828221,
+          "sha256": "9c5af0079d3ef26e77a57243ed0c0a5f17ecb4c1c1c3d1e6ad4f062f354d68bd"
+        }
+      },
+      "public_business_acceptance": false
+    },
+    "build_scope": "Actual local link command selected -p trnm-mvcc-fee -p trnm-pon-node --lib --all-features, with the locked original test profiles. Complete workspace/all-targets/all-features strict Clippy passed separately. This local build is not the complete original-workspace/all-targets link artifact required by the hosted acceptance workflow.",
+    "complete_original_workspace_link_artifact_obtained_locally": false,
+    "native_execution_summary": [
+      {
+        "name": "final-m06-semantics",
+        "selector": "",
+        "selected_count": 120,
+        "summary": [113, 0, 7, 0, 0],
+        "exit_code": 0,
+        "complete_selected_result": true
+      },
+      {
+        "name": "final-node-account-archive",
+        "selector": "account_archive_prototype::",
+        "selected_count": 42,
+        "summary": [34, 0, 8, 0, 972],
+        "exit_code": 0,
+        "complete_selected_result": true
+      },
+      {
+        "name": "final-node-authenticated",
+        "selector": "store::native_authenticated::",
+        "selected_count": 91,
+        "summary": [90, 0, 1, 0, 923],
+        "exit_code": 0,
+        "complete_selected_result": true
+      },
+      {
+        "name": "final-node-authenticated-integration",
+        "selector": "store::native_authenticated_tests::",
+        "selected_count": 21,
+        "summary": [21, 0, 0, 0, 993],
+        "exit_code": 0,
+        "complete_selected_result": true
+      },
+      {
+        "name": "final-node-scale-controls",
+        "selector": "store::growth::tests::scale_observation::",
+        "selected_count": 3,
+        "summary": [2, 0, 1, 0, 1011],
+        "exit_code": 0,
+        "complete_selected_result": true
+      },
+      {
+        "name": "final-node-pq-ingress",
+        "selector": "ingress::pq_network::tests::",
+        "selected_count": 17,
+        "summary": [17, 0, 0, 0, 997],
+        "exit_code": 0,
+        "complete_selected_result": true
+      }
+    ],
+    "native_semantics_summary_identity": {
+      "file": "final-native-semantics-summary.json",
+      "bytes": 40696,
+      "sha256": "d75e08ad201970cf828b240e57ff0f070566c432bb3e2b5e0e57eefb14006bf6"
+    },
+    "source_binary_verification": {
+      "schema": "final-native-cost-source-verification-v1",
+      "source_before": {
+        "commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+        "tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+        "clean": true,
+        "binary_sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+      },
+      "source_after": {
+        "commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+        "tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+        "clean": true,
+        "binary_sha256": "bdeaa8b402c17b568a6fd96cc30f5d8125acd33c5392f8c8e664f40edde8c683"
+      },
+      "source_and_binary_stable": true,
+      "outcomes": [
+        {
+          "name": "final-root-digest-cost",
+          "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+          "exit_code": 0
+        },
+        {
+          "name": "final-growth-v2-process",
+          "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+          "exit_code": 0
+        }
+      ],
+      "growth_reader_exit": 0,
+      "concurrency": "No build, Clippy or other native/cost command launched by this root overlaps this sequence. Shared-container global isolation is not asserted.",
+      "production_acceptance": false,
+      "ended_utc": "2026-11-04T07:42:22.713357+00:00"
+    },
+    "paired_digest_compact_samples": {
+      "source": {
+        "business_acceptance_qualified": false,
+        "debug_assertions": true,
+        "digest_builder_sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080",
+        "kind": "source",
+        "live_lift_caches": 4,
+        "native_store_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+        "order": "alternating ABBA/BAAB, two independent caches per arm; two cold and 100 warm observations per arm and size",
+        "prototype_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+        "schema": "pon-native-root-digest-cost-v1",
+        "scope": "same complete current-account math and exact hash/cache grammar; excludes account State parsing, SQL graph verification, Host, PQ, full State root, networking and business confirmation",
+        "source_authority": false,
+        "test_source_sha256": "93db686c615d86035484c64321095105ea8dc97e3fc6c51491f45b3b0f0f1700"
+      },
+      "raw_identity": {
+        "file": "final-root-digest-cost.jsonl",
+        "bytes": 97519,
+        "sha256": "fa03b01c9df46536ff36b28d7fc5c292fa297886c560251e8b7d231933a4ea4e"
+      },
+      "columns": ["accounts", "arm", "round", "instance", "temperature", "elapsed_ns", "thread_cpu_ns"],
+      "samples": [
+        [1024, 0, 0, 0, "cold", 37688038, 37659644],
+        [1024, 1, 0, 0, "cold", 39408037, 39403571],
+        [1024, 1, 0, 1, "cold", 35685442, 35681979],
+        [1024, 0, 0, 1, "cold", 36975390, 36953892],
+        [1024, 1, 1, 0, "warm", 1004528, 1003374],
+        [1024, 0, 1, 0, "warm", 1766790, 1765489],
+        [1024, 0, 1, 1, "warm", 1572225, 1571381],
+        [1024, 1, 1, 1, "warm", 673267, 672531],
+        [1024, 0, 2, 0, "warm", 1642812, 1641795],
+        [1024, 1, 2, 0, "warm", 708611, 707904],
+        [1024, 1, 2, 1, "warm", 667108, 665972],
+        [1024, 0, 2, 1, "warm", 1621500, 1615316],
+        [1024, 1, 3, 0, "warm", 722011, 721094],
+        [1024, 0, 3, 0, "warm", 1580157, 1579232],
+        [1024, 0, 3, 1, "warm", 1868122, 1866951],
+        [1024, 1, 3, 1, "warm", 609211, 608657],
+        [1024, 0, 4, 0, "warm", 1605226, 1604209],
+        [1024, 1, 4, 0, "warm", 957527, 956374],
+        [1024, 1, 4, 1, "warm", 570392, 569979],
+        [1024, 0, 4, 1, "warm", 1616933, 1615235],
+        [1024, 1, 5, 0, "warm", 595780, 595196],
+        [1024, 0, 5, 0, "warm", 1572577, 1571640],
+        [1024, 0, 5, 1, "warm", 1608451, 1607595],
+        [1024, 1, 5, 1, "warm", 573516, 573174],
+        [1024, 0, 6, 0, "warm", 1528089, 1527374],
+        [1024, 1, 6, 0, "warm", 626817, 626223],
+        [1024, 1, 6, 1, "warm", 561478, 560925],
+        [1024, 0, 6, 1, "warm", 1737866, 1736176],
+        [1024, 1, 7, 0, "warm", 727540, 726632],
+        [1024, 0, 7, 0, "warm", 1689022, 1688195],
+        [1024, 0, 7, 1, "warm", 2146263, 2145015],
+        [1024, 1, 7, 1, "warm", 586076, 585652],
+        [1024, 0, 8, 0, "warm", 1570843, 1570018],
+        [1024, 1, 8, 0, "warm", 669532, 668706],
+        [1024, 1, 8, 1, "warm", 587959, 587265],
+        [1024, 0, 8, 1, "warm", 1495560, 1494716],
+        [1024, 1, 9, 0, "warm", 559556, 559223],
+        [1024, 0, 9, 0, "warm", 1992275, 1990700],
+        [1024, 0, 9, 1, "warm", 1667019, 1665210],
+        [1024, 1, 9, 1, "warm", 607798, 607044],
+        [1024, 0, 10, 0, "warm", 1722803, 1721784],
+        [1024, 1, 10, 0, "warm", 575850, 575346],
+        [1024, 1, 10, 1, "warm", 806228, 805289],
+        [1024, 0, 10, 1, "warm", 1922785, 1921562],
+        [1024, 1, 11, 0, "warm", 648210, 647384],
+        [1024, 0, 11, 0, "warm", 1828794, 1827722],
+        [1024, 0, 11, 1, "warm", 2517634, 2516368],
+        [1024, 1, 11, 1, "warm", 669722, 668867],
+        [1024, 0, 12, 0, "warm", 1664585, 1663577],
+        [1024, 1, 12, 0, "warm", 673187, 672491],
+        [1024, 1, 12, 1, "warm", 647749, 647114],
+        [1024, 0, 12, 1, "warm", 1856545, 1855423],
+        [1024, 1, 13, 0, "warm", 632476, 631701],
+        [1024, 0, 13, 0, "warm", 1714741, 1713632],
+        [1024, 0, 13, 1, "warm", 1765307, 1764277],
+        [1024, 1, 13, 1, "warm", 664895, 664049],
+        [1024, 0, 14, 0, "warm", 1627049, 1625971],
+        [1024, 1, 14, 0, "warm", 939149, 938017],
+        [1024, 1, 14, 1, "warm", 685926, 685111],
+        [1024, 0, 14, 1, "warm", 1866220, 1864857],
+        [1024, 1, 15, 0, "warm", 812568, 811268],
+        [1024, 0, 15, 0, "warm", 1645155, 1643998],
+        [1024, 0, 15, 1, "warm", 1735182, 1733972],
+        [1024, 1, 15, 1, "warm", 1486756, 1485903],
+        [1024, 0, 16, 0, "warm", 1680460, 1679331],
+        [1024, 1, 16, 0, "warm", 745386, 744629],
+        [1024, 1, 16, 1, "warm", 596972, 596528],
+        [1024, 0, 16, 1, "warm", 1791777, 1790747],
+        [1024, 1, 17, 0, "warm", 671214, 670468],
+        [1024, 0, 17, 0, "warm", 1653057, 1651770],
+        [1024, 0, 17, 1, "warm", 1440907, 1440375],
+        [1024, 1, 17, 1, "warm", 689372, 688706],
+        [1024, 0, 18, 0, "warm", 1719678, 1718940],
+        [1024, 1, 18, 0, "warm", 639136, 638431],
+        [1024, 1, 18, 1, "warm", 611764, 611050],
+        [1024, 0, 18, 1, "warm", 1670925, 1669886],
+        [1024, 1, 19, 0, "warm", 571393, 571061],
+        [1024, 0, 19, 0, "warm", 1610443, 1609406],
+        [1024, 0, 19, 1, "warm", 1830196, 1828933],
+        [1024, 1, 19, 1, "warm", 605315, 604831],
+        [1024, 0, 20, 0, "warm", 2449862, 2448497],
+        [1024, 1, 20, 0, "warm", 849975, 848994],
+        [1024, 1, 20, 1, "warm", 642911, 642156],
+        [1024, 0, 20, 1, "warm", 1520228, 1519152],
+        [1024, 1, 21, 0, "warm", 685436, 684559],
+        [1024, 0, 21, 0, "warm", 1557774, 1557008],
+        [1024, 0, 21, 1, "warm", 1551254, 1550009],
+        [1024, 1, 21, 1, "warm", 654710, 653914],
+        [1024, 0, 22, 0, "warm", 1577824, 1576848],
+        [1024, 1, 22, 0, "warm", 589821, 589217],
+        [1024, 1, 22, 1, "warm", 626627, 625902],
+        [1024, 0, 22, 1, "warm", 1606858, 1606322],
+        [1024, 1, 23, 0, "warm", 722962, 721805],
+        [1024, 0, 23, 0, "warm", 1785107, 1783796],
+        [1024, 0, 23, 1, "warm", 1542160, 1541555],
+        [1024, 1, 23, 1, "warm", 616551, 615837],
+        [1024, 0, 24, 0, "warm", 1519697, 1518742],
+        [1024, 1, 24, 0, "warm", 609000, 608476],
+        [1024, 1, 24, 1, "warm", 1396681, 1395668],
+        [1024, 0, 24, 1, "warm", 1554739, 1553654],
+        [1024, 1, 25, 0, "warm", 604494, 603789],
+        [1024, 0, 25, 0, "warm", 1772068, 1771208],
+        [1024, 0, 25, 1, "warm", 1957437, 1956153],
+        [1024, 1, 25, 1, "warm", 713538, 712581],
+        [1024, 0, 26, 0, "warm", 1549622, 1548747],
+        [1024, 1, 26, 0, "warm", 589320, 588727],
+        [1024, 1, 26, 1, "warm", 790324, 789005],
+        [1024, 0, 26, 1, "warm", 1649642, 1648936],
+        [1024, 1, 27, 0, "warm", 731586, 730748],
+        [1024, 0, 27, 0, "warm", 1644795, 1643778],
+        [1024, 0, 27, 1, "warm", 1563022, 1562267],
+        [1024, 1, 27, 1, "warm", 695571, 694835],
+        [1024, 0, 28, 0, "warm", 1543432, 1542527],
+        [1024, 1, 28, 0, "warm", 570553, 570179],
+        [1024, 1, 28, 1, "warm", 631284, 630660],
+        [1024, 0, 28, 1, "warm", 2603915, 2602726],
+        [1024, 1, 29, 0, "warm", 614819, 614115],
+        [1024, 0, 29, 0, "warm", 1644475, 1643588],
+        [1024, 0, 29, 1, "warm", 1543132, 1542037],
+        [1024, 1, 29, 1, "warm", 820820, 819620],
+        [1024, 0, 30, 0, "warm", 1593598, 1592381],
+        [1024, 1, 30, 0, "warm", 567538, 566955],
+        [1024, 1, 30, 1, "warm", 590933, 590449],
+        [1024, 0, 30, 1, "warm", 1688121, 1686872],
+        [1024, 1, 31, 0, "warm", 838927, 837807],
+        [1024, 0, 31, 0, "warm", 1520989, 1520154],
+        [1024, 0, 31, 1, "warm", 2064780, 2063824],
+        [1024, 1, 31, 1, "warm", 638725, 638010],
+        [1024, 0, 32, 0, "warm", 1620038, 1619171],
+        [1024, 1, 32, 0, "warm", 578444, 578121],
+        [1024, 1, 32, 1, "warm", 757455, 756637],
+        [1024, 0, 32, 1, "warm", 2352324, 2351361],
+        [1024, 1, 33, 0, "warm", 585154, 584641],
+        [1024, 0, 33, 0, "warm", 1641721, 1640784],
+        [1024, 0, 33, 1, "warm", 1542290, 1541386],
+        [1024, 1, 33, 1, "warm", 613808, 613284],
+        [1024, 0, 34, 0, "warm", 1558816, 1557860],
+        [1024, 1, 34, 0, "warm", 578734, 578362],
+        [1024, 1, 34, 1, "warm", 581639, 581175],
+        [1024, 0, 34, 1, "warm", 1467948, 1467295],
+        [1024, 1, 35, 0, "warm", 581158, 580625],
+        [1024, 0, 35, 0, "warm", 1466776, 1465943],
+        [1024, 0, 35, 1, "warm", 1427297, 1426174],
+        [1024, 1, 35, 1, "warm", 602380, 601816],
+        [1024, 0, 36, 0, "warm", 1612317, 1611420],
+        [1024, 1, 36, 0, "warm", 651875, 650849],
+        [1024, 1, 36, 1, "warm", 610822, 609668],
+        [1024, 0, 36, 1, "warm", 1562531, 1561606],
+        [1024, 1, 37, 0, "warm", 600007, 599393],
+        [1024, 0, 37, 0, "warm", 1727120, 1725871],
+        [1024, 0, 37, 1, "warm", 2583223, 2577247],
+        [1024, 1, 37, 1, "warm", 619666, 619042],
+        [1024, 0, 38, 0, "warm", 1612576, 1611540],
+        [1024, 1, 38, 0, "warm", 669102, 668376],
+        [1024, 1, 38, 1, "warm", 668760, 667905],
+        [1024, 0, 38, 1, "warm", 1478254, 1477180],
+        [1024, 1, 39, 0, "warm", 860340, 859240],
+        [1024, 0, 39, 0, "warm", 1514248, 1513413],
+        [1024, 0, 39, 1, "warm", 1681050, 1680012],
+        [1024, 1, 39, 1, "warm", 686367, 685781],
+        [1024, 0, 40, 0, "warm", 1733269, 1732319],
+        [1024, 1, 40, 0, "warm", 576261, 575898],
+        [1024, 1, 40, 1, "warm", 622140, 621405],
+        [1024, 0, 40, 1, "warm", 1423361, 1422929],
+        [1024, 1, 41, 0, "warm", 614779, 614175],
+        [1024, 0, 41, 0, "warm", 1428729, 1427836],
+        [1024, 0, 41, 1, "warm", 1453186, 1452543],
+        [1024, 1, 41, 1, "warm", 582119, 581676],
+        [1024, 0, 42, 0, "warm", 2399326, 2398061],
+        [1024, 1, 42, 0, "warm", 651384, 648495],
+        [1024, 1, 42, 1, "warm", 594378, 593925],
+        [1024, 0, 42, 1, "warm", 1659668, 1658650],
+        [1024, 1, 43, 0, "warm", 589661, 588847],
+        [1024, 0, 43, 0, "warm", 1680749, 1679451],
+        [1024, 0, 43, 1, "warm", 1622131, 1621124],
+        [1024, 1, 43, 1, "warm", 646427, 645541],
+        [1024, 0, 44, 0, "warm", 1417552, 1416930],
+        [1024, 1, 44, 0, "warm", 614389, 613814],
+        [1024, 1, 44, 1, "warm", 599196, 598652],
+        [1024, 0, 44, 1, "warm", 1659307, 1658179],
+        [1024, 1, 45, 0, "warm", 594008, 593294],
+        [1024, 0, 45, 0, "warm", 1600999, 1599833],
+        [1024, 0, 45, 1, "warm", 1418925, 1418353],
+        [1024, 1, 45, 1, "warm", 626136, 625512],
+        [1024, 0, 46, 0, "warm", 1916025, 1914951],
+        [1024, 1, 46, 0, "warm", 748411, 747253],
+        [1024, 1, 46, 1, "warm", 1453616, 1452684],
+        [1024, 0, 46, 1, "warm", 1472135, 1471171],
+        [1024, 1, 47, 0, "warm", 624313, 623608],
+        [1024, 0, 47, 0, "warm", 1725827, 1724809],
+        [1024, 0, 47, 1, "warm", 1715682, 1714263],
+        [1024, 1, 47, 1, "warm", 571083, 570589],
+        [1024, 0, 48, 0, "warm", 1619036, 1617789],
+        [1024, 1, 48, 0, "warm", 977097, 976033],
+        [1024, 1, 48, 1, "warm", 583803, 583248],
+        [1024, 0, 48, 1, "warm", 1498164, 1497560],
+        [1024, 1, 49, 0, "warm", 596031, 595457],
+        [1024, 0, 49, 0, "warm", 1553037, 1552482],
+        [1024, 0, 49, 1, "warm", 1505925, 1505211],
+        [1024, 1, 49, 1, "warm", 1034153, 1033148],
+        [1024, 0, 50, 0, "warm", 1567439, 1566673],
+        [1024, 1, 50, 0, "warm", 648530, 647545],
+        [1024, 1, 50, 1, "warm", 647719, 647124],
+        [1024, 0, 50, 1, "warm", 2281468, 2280706],
+        [9216, 0, 0, 0, "cold", 381991233, 381950253],
+        [9216, 1, 0, 0, "cold", 367366815, 367177223],
+        [9216, 1, 0, 1, "cold", 369130826, 369095353],
+        [9216, 0, 0, 1, "cold", 326400534, 326376581],
+        [9216, 1, 1, 0, "warm", 188332232, 188320068],
+        [9216, 0, 1, 0, "warm", 186687312, 186635033],
+        [9216, 0, 1, 1, "warm", 202226196, 202205746],
+        [9216, 1, 1, 1, "warm", 176411645, 176405449],
+        [9216, 0, 2, 0, "warm", 195183365, 194915570],
+        [9216, 1, 2, 0, "warm", 191852156, 191838772],
+        [9216, 1, 2, 1, "warm", 217683939, 217664472],
+        [9216, 0, 2, 1, "warm", 194098705, 194091211],
+        [9216, 1, 3, 0, "warm", 176628843, 176615832],
+        [9216, 0, 3, 0, "warm", 198381141, 198375126],
+        [9216, 0, 3, 1, "warm", 188024794, 188003741],
+        [9216, 1, 3, 1, "warm", 176247186, 176241674],
+        [9216, 0, 4, 0, "warm", 179670930, 179651873],
+        [9216, 1, 4, 0, "warm", 193439194, 193410994],
+        [9216, 1, 4, 1, "warm", 195632939, 195625702],
+        [9216, 0, 4, 1, "warm", 213166162, 213144411],
+        [9216, 1, 5, 0, "warm", 189105721, 189099048],
+        [9216, 0, 5, 0, "warm", 213405413, 213383668],
+        [9216, 0, 5, 1, "warm", 205729039, 205707051],
+        [9216, 1, 5, 1, "warm", 258733260, 258541815],
+        [9216, 0, 6, 0, "warm", 176219745, 176204479],
+        [9216, 1, 6, 0, "warm", 182045583, 182035026],
+        [9216, 1, 6, 1, "warm", 189960337, 189937562],
+        [9216, 0, 6, 1, "warm", 203562506, 203545281],
+        [9216, 1, 7, 0, "warm", 198277264, 198270490],
+        [9216, 0, 7, 0, "warm", 191194156, 191180807],
+        [9216, 0, 7, 1, "warm", 193194584, 193173128],
+        [9216, 1, 7, 1, "warm", 175696465, 175487562],
+        [9216, 0, 8, 0, "warm", 193632536, 193625594],
+        [9216, 1, 8, 0, "warm", 189757630, 189736221],
+        [9216, 1, 8, 1, "warm", 197742386, 197726150],
+        [9216, 0, 8, 1, "warm", 202401806, 202385359],
+        [9216, 1, 9, 0, "warm", 187926519, 187900682],
+        [9216, 0, 9, 0, "warm", 178559891, 178553748],
+        [9216, 0, 9, 1, "warm", 184162987, 184146266],
+        [9216, 1, 9, 1, "warm", 195746615, 195730052],
+        [9216, 0, 10, 0, "warm", 205450042, 205403943],
+        [9216, 1, 10, 0, "warm", 192613366, 192338566],
+        [9216, 1, 10, 1, "warm", 187751874, 183253762],
+        [9216, 0, 10, 1, "warm", 200639103, 200521332],
+        [9216, 1, 11, 0, "warm", 173229687, 173124783],
+        [9216, 0, 11, 0, "warm", 197821736, 197671729],
+        [9216, 0, 11, 1, "warm", 194673094, 194561633],
+        [9216, 1, 11, 1, "warm", 189936586, 189812560],
+        [9216, 0, 12, 0, "warm", 201386592, 199440844],
+        [9216, 1, 12, 0, "warm", 175400546, 175282666],
+        [9216, 1, 12, 1, "warm", 170718632, 170381729],
+        [9216, 0, 12, 1, "warm", 180988991, 180881395],
+        [9216, 1, 13, 0, "warm", 175686880, 175543634],
+        [9216, 0, 13, 0, "warm", 182175484, 182066189],
+        [9216, 0, 13, 1, "warm", 242517073, 242399098],
+        [9216, 1, 13, 1, "warm", 185252303, 184992315],
+        [9216, 0, 14, 0, "warm", 180065115, 179961135],
+        [9216, 1, 14, 0, "warm", 165846070, 165641448],
+        [9216, 1, 14, 1, "warm", 171089918, 170932932],
+        [9216, 0, 14, 1, "warm", 216631559, 216521792],
+        [9216, 1, 15, 0, "warm", 188242371, 188133585],
+        [9216, 0, 15, 0, "warm", 177757097, 177601919],
+        [9216, 0, 15, 1, "warm", 194933437, 194827408],
+        [9216, 1, 15, 1, "warm", 183720032, 183443835],
+        [9216, 0, 16, 0, "warm", 210571436, 210465237],
+        [9216, 1, 16, 0, "warm", 193695146, 193567641],
+        [9216, 1, 16, 1, "warm", 170790420, 170725702],
+        [9216, 0, 16, 1, "warm", 184232562, 184075400],
+        [9216, 1, 17, 0, "warm", 186905901, 186551207],
+        [9216, 0, 17, 0, "warm", 202818301, 202702856],
+        [9216, 0, 17, 1, "warm", 201786828, 199987776],
+        [9216, 1, 17, 1, "warm", 187782686, 187245301],
+        [9216, 0, 18, 0, "warm", 207623757, 207238887],
+        [9216, 1, 18, 0, "warm", 197948552, 197622559],
+        [9216, 1, 18, 1, "warm", 192351600, 192236694],
+        [9216, 0, 18, 1, "warm", 205233405, 205096045],
+        [9216, 1, 19, 0, "warm", 199559111, 199446943],
+        [9216, 0, 19, 0, "warm", 210000448, 209873932],
+        [9216, 0, 19, 1, "warm", 206751419, 206511833],
+        [9216, 1, 19, 1, "warm", 194408498, 193452817],
+        [9216, 0, 20, 0, "warm", 206074706, 205926402],
+        [9216, 1, 20, 0, "warm", 160646283, 160551829],
+        [9216, 1, 20, 1, "warm", 162365359, 162127686],
+        [9216, 0, 20, 1, "warm", 173234354, 173082390],
+        [9216, 1, 21, 0, "warm", 173200923, 173094138],
+        [9216, 0, 21, 0, "warm", 189223702, 189113473],
+        [9216, 0, 21, 1, "warm", 189949791, 189834097],
+        [9216, 1, 21, 1, "warm", 189149967, 189016495],
+        [9216, 0, 22, 0, "warm", 179799875, 179326128],
+        [9216, 1, 22, 0, "warm", 167618037, 167457132],
+        [9216, 1, 22, 1, "warm", 167685399, 167497122],
+        [9216, 0, 22, 1, "warm", 196565958, 196389579],
+        [9216, 1, 23, 0, "warm", 172330708, 172268858],
+        [9216, 0, 23, 0, "warm", 177991122, 177853245],
+        [9216, 0, 23, 1, "warm", 174717555, 174555602],
+        [9216, 1, 23, 1, "warm", 180860832, 180679849],
+        [9216, 0, 24, 0, "warm", 198191165, 198079347],
+        [9216, 1, 24, 0, "warm", 186448801, 186333634],
+        [9216, 1, 24, 1, "warm", 189409575, 188977810],
+        [9216, 0, 24, 1, "warm", 229054599, 228587157],
+        [9216, 1, 25, 0, "warm", 183406309, 183298019],
+        [9216, 0, 25, 0, "warm", 204426365, 204315343],
+        [9216, 0, 25, 1, "warm", 200386812, 200285642],
+        [9216, 1, 25, 1, "warm", 185542327, 185490945],
+        [9216, 0, 26, 0, "warm", 202737363, 202525276],
+        [9216, 1, 26, 0, "warm", 184914521, 184769074],
+        [9216, 1, 26, 1, "warm", 186285324, 186038034],
+        [9216, 0, 26, 1, "warm", 207096841, 206357352],
+        [9216, 1, 27, 0, "warm", 192619806, 192227001],
+        [9216, 0, 27, 0, "warm", 200686274, 200560941],
+        [9216, 0, 27, 1, "warm", 189478849, 189307644],
+        [9216, 1, 27, 1, "warm", 169756298, 169629237],
+        [9216, 0, 28, 0, "warm", 192542379, 192412978],
+        [9216, 1, 28, 0, "warm", 182232400, 182165937],
+        [9216, 1, 28, 1, "warm", 174951298, 174822581],
+        [9216, 0, 28, 1, "warm", 177547982, 177388723],
+        [9216, 1, 29, 0, "warm", 166504795, 166396693],
+        [9216, 0, 29, 0, "warm", 192015277, 191884424],
+        [9216, 0, 29, 1, "warm", 188600808, 188545222],
+        [9216, 1, 29, 1, "warm", 173976455, 173861911],
+        [9216, 0, 30, 0, "warm", 184860586, 184766363],
+        [9216, 1, 30, 0, "warm", 170428984, 170314313],
+        [9216, 1, 30, 1, "warm", 198186653, 197812844],
+        [9216, 0, 30, 1, "warm", 210264708, 210134488],
+        [9216, 1, 31, 0, "warm", 189364788, 189259781],
+        [9216, 0, 31, 0, "warm", 220066059, 219927734],
+        [9216, 0, 31, 1, "warm", 210581782, 210452307],
+        [9216, 1, 31, 1, "warm", 191793633, 191669384],
+        [9216, 0, 32, 0, "warm", 203748082, 203569131],
+        [9216, 1, 32, 0, "warm", 192689651, 192487869],
+        [9216, 1, 32, 1, "warm", 192434906, 192324095],
+        [9216, 0, 32, 1, "warm", 210486403, 210371492],
+        [9216, 1, 33, 0, "warm", 192183467, 192060993],
+        [9216, 0, 33, 0, "warm", 205902898, 205581308],
+        [9216, 0, 33, 1, "warm", 204792108, 204637383],
+        [9216, 1, 33, 1, "warm", 191759777, 191648199],
+        [9216, 0, 34, 0, "warm", 201991296, 201880417],
+        [9216, 1, 34, 0, "warm", 193438793, 193323864],
+        [9216, 1, 34, 1, "warm", 184751196, 183534084],
+        [9216, 0, 34, 1, "warm", 181933148, 181883666],
+        [9216, 1, 35, 0, "warm", 188126236, 188026335],
+        [9216, 0, 35, 0, "warm", 171094341, 170988251],
+        [9216, 0, 35, 1, "warm", 187715204, 187593740],
+        [9216, 1, 35, 1, "warm", 178976331, 178876599],
+        [9216, 0, 36, 0, "warm", 192843218, 192556054],
+        [9216, 1, 36, 0, "warm", 178476290, 178418170],
+        [9216, 1, 36, 1, "warm", 184264250, 184168440],
+        [9216, 0, 36, 1, "warm", 199204195, 199077994],
+        [9216, 1, 37, 0, "warm", 182661589, 182549237],
+        [9216, 0, 37, 0, "warm", 193354496, 193207909],
+        [9216, 0, 37, 1, "warm", 203459295, 203323997],
+        [9216, 1, 37, 1, "warm", 193504848, 193385220],
+        [9216, 0, 38, 0, "warm", 206782811, 206676674],
+        [9216, 1, 38, 0, "warm", 187598939, 187504667],
+        [9216, 1, 38, 1, "warm", 185836375, 185734541],
+        [9216, 0, 38, 1, "warm", 199828088, 199697485],
+        [9216, 1, 39, 0, "warm", 186660001, 186557086],
+        [9216, 0, 39, 0, "warm", 199573551, 199468945],
+        [9216, 0, 39, 1, "warm", 204420371, 204319918],
+        [9216, 1, 39, 1, "warm", 172352274, 172300144],
+        [9216, 0, 40, 0, "warm", 187733445, 187629654],
+        [9216, 1, 40, 0, "warm", 178563114, 178462758],
+        [9216, 1, 40, 1, "warm", 178566708, 178379532],
+        [9216, 0, 40, 1, "warm", 203772597, 203658741],
+        [9216, 1, 41, 0, "warm", 193651829, 193543611],
+        [9216, 0, 41, 0, "warm", 206032296, 205898399],
+        [9216, 0, 41, 1, "warm", 198544852, 198438692],
+        [9216, 1, 41, 1, "warm", 217269285, 217087622],
+        [9216, 0, 42, 0, "warm", 207383733, 207272731],
+        [9216, 1, 42, 0, "warm", 204273804, 204167798],
+        [9216, 1, 42, 1, "warm", 176700740, 176604931],
+        [9216, 0, 42, 1, "warm", 217449838, 217348113],
+        [9216, 1, 43, 0, "warm", 183491285, 183388387],
+        [9216, 0, 43, 0, "warm", 197785045, 197658289],
+        [9216, 0, 43, 1, "warm", 280451366, 280298558],
+        [9216, 1, 43, 1, "warm", 191224572, 190992012],
+        [9216, 0, 44, 0, "warm", 198454416, 198234487],
+        [9216, 1, 44, 0, "warm", 184794299, 184698294],
+        [9216, 1, 44, 1, "warm", 189999810, 189884762],
+        [9216, 0, 44, 1, "warm", 216335430, 216229030],
+        [9216, 1, 45, 0, "warm", 190768242, 190616954],
+        [9216, 0, 45, 0, "warm", 212487780, 212390519],
+        [9216, 0, 45, 1, "warm", 192977088, 192883126],
+        [9216, 1, 45, 1, "warm", 190811111, 190699140],
+        [9216, 0, 46, 0, "warm", 197562321, 197448962],
+        [9216, 1, 46, 0, "warm", 193310220, 193199228],
+        [9216, 1, 46, 1, "warm", 176672523, 176529136],
+        [9216, 0, 46, 1, "warm", 198895544, 198770110],
+        [9216, 1, 47, 0, "warm", 171255463, 171153296],
+        [9216, 0, 47, 0, "warm", 175154546, 175101035],
+        [9216, 0, 47, 1, "warm", 190554274, 190454831],
+        [9216, 1, 47, 1, "warm", 193856510, 193754029],
+        [9216, 0, 48, 0, "warm", 190244742, 190152706],
+        [9216, 1, 48, 0, "warm", 186781198, 186656130],
+        [9216, 1, 48, 1, "warm", 195599909, 195481708],
+        [9216, 0, 48, 1, "warm", 206000154, 205878791],
+        [9216, 1, 49, 0, "warm", 194201095, 194082643],
+        [9216, 0, 49, 0, "warm", 206154187, 206033561],
+        [9216, 0, 49, 1, "warm", 201440500, 201335840],
+        [9216, 1, 49, 1, "warm", 184903726, 184813560],
+        [9216, 0, 50, 0, "warm", 202475809, 201890452],
+        [9216, 1, 50, 0, "warm", 181697047, 181583245],
+        [9216, 1, 50, 1, "warm", 185392154, 185325412],
+        [9216, 0, 50, 1, "warm", 177425407, 177296807]
+      ],
+      "root_by_account_count": {
+        "1024": "060d9d8f123803c80ed383a26a74bda90839ecf6373f1420bfa88cfcce87a57d",
+        "9216": "41b627ac6f8ad98bc3a716895f1a8e6e130a0da0f37f64705d3312ecdcbea8d9"
+      },
+      "retained_account_rows_equals_accounts_for_all_samples": true,
+      "scope": "Lossless projection of timing/pairing fields, not a new native execution; original full-account row counts and roots are retained as verified common metadata."
+    },
+    "cold_reopen_scope": "Drop and reopen the Node within this process; no OS page-cache flush or independent-process cold-start claim. Post-open journal/reference checks remain separate from the opener interval."
   },
   "replay": {
     "measured_m06_command_is_in_primary_receipt": true,
@@ -1207,158 +3839,44 @@
     "full_workspace_artifact_rule": {
       "workflow": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
       "must_select": "one actual ELF each for trnm_pon_node and trnm_mvcc_fee from the completed original-workspace compiler JSON; require original opt_level 3/1, debug assertions and overflow checks true, and features [default,pq-native-openssl]",
-      "direct_binary_argv_template": [
-        "<verified-original-workspace-test-ELF>",
-        "<exact selector>",
-        "--exact",
-        "--show-output",
-        "--test-threads=1"
-      ],
+      "direct_binary_argv_template": ["<verified-original-workspace-test-ELF>", "<exact selector>", "--exact", "--show-output", "--test-threads=1"],
       "ignored_cost_additional_argument": "--ignored",
       "package_cwd_required": true,
       "binary_sha256_before_after_required": true
     },
-    "pending_final_source_commands": [
+    "portable_acceptance_replay_commands": [
       {
         "id": "original-workspace-build",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "--workspace",
-          "--all-targets",
-          "--all-features",
-          "--no-run",
-          "--message-format=json"
-        ],
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--no-run", "--message-format=json"],
         "receipt": "capture compiler artifact/profile/features and final build-finished; a successful compilation alone is not test execution"
       },
       {
         "id": "format",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "fmt",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "--all",
-          "--",
-          "--check"
-        ]
+        "argv": ["cargo", "+1.95.0", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"]
       },
       {
         "id": "strict-clippy",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "clippy",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "--workspace",
-          "--all-targets",
-          "--all-features",
-          "--",
-          "-D",
-          "warnings"
-        ]
+        "argv": ["cargo", "+1.95.0", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"]
       },
       {
         "id": "growth-reader-controls",
-        "argv": [
-          "python3",
-          "-m",
-          "unittest",
-          "discover",
-          "-s",
-          "scripts/ci",
-          "-p",
-          "test_growth_scale_observation.py",
-          "-v"
-        ]
+        "argv": ["python3", "-m", "unittest", "discover", "-s", "scripts/ci", "-p", "test_growth_scale_observation.py", "-v"]
       },
       {
         "id": "node-digest-controls",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "-p",
-          "trnm-pon-node",
-          "--lib",
-          "account_archive_prototype::native_root_digest::tests::",
-          "--",
-          "--show-output",
-          "--test-threads=1"
-        ]
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "account_archive_prototype::native_root_digest::tests::", "--", "--show-output", "--test-threads=1"]
       },
       {
         "id": "node-lift-cache-controls",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "-p",
-          "trnm-pon-node",
-          "--lib",
-          "account_archive_prototype::native_store::tests::",
-          "--",
-          "--show-output",
-          "--test-threads=1"
-        ]
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "account_archive_prototype::native_store::tests::", "--", "--show-output", "--test-threads=1"]
       },
       {
         "id": "growth-return-controls",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "-p",
-          "trnm-pon-node",
-          "--lib",
-          "store::growth::tests::scale_observation::",
-          "--",
-          "--show-output",
-          "--test-threads=1"
-        ]
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "store::growth::tests::scale_observation::", "--", "--show-output", "--test-threads=1"]
       },
       {
         "id": "digest-paired-cost",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "-p",
-          "trnm-pon-node",
-          "--lib",
-          "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
-          "--",
-          "--exact",
-          "--ignored",
-          "--show-output",
-          "--test-threads=1"
-        ],
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation", "--", "--exact", "--ignored", "--show-output", "--test-threads=1"],
         "env": {
           "TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT": "/workspace/scratch/850bfac2502c/validation/native-root-digest-current.jsonl"
         },
@@ -1366,24 +3884,7 @@
       },
       {
         "id": "growth-v2-observation",
-        "argv": [
-          "cargo",
-          "+1.95.0",
-          "test",
-          "--locked",
-          "--offline",
-          "--manifest-path",
-          "trillionnium/Cargo.toml",
-          "-p",
-          "trnm-pon-node",
-          "--lib",
-          "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
-          "--",
-          "--exact",
-          "--ignored",
-          "--nocapture",
-          "--test-threads=1"
-        ],
+        "argv": ["cargo", "+1.95.0", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--lib", "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation", "--", "--exact", "--ignored", "--nocapture", "--test-threads=1"],
         "env": {
           "TRNM_GROWTH_SCALE_OBSERVATION_DIR": "/workspace/scratch/850bfac2502c/validation/growth-scale-current-v2"
         },
@@ -1391,16 +3892,13 @@
       },
       {
         "id": "growth-v2-readback",
-        "argv": [
-          "python3",
-          "scripts/ci/check_growth_scale_observation.py",
-          "/workspace/scratch/850bfac2502c/validation/growth-scale-current-v2"
-        ],
+        "argv": ["python3", "scripts/ci/check_growth_scale_observation.py", "/workspace/scratch/850bfac2502c/validation/growth-scale-current-v2"],
         "requires": "successful exact selector, source/binary before-after and complete original workspace artifact; JSON readback alone is not native attestation"
       }
     ],
-    "pending_commands_cwd": "/workspace/scratch/850bfac2502c/chain",
-    "pending_command_status": "PENDING_ON_FINAL_INTEGRATED_SOURCE; proposed commands are not execution receipts"
+    "portable_commands_cwd": "/workspace/scratch/850bfac2502c/chain",
+    "portable_command_status": "These planned complete-workspace/Cargo invocations are portable reproduction and hosted-acceptance recipes, not a claim that each exact command ran locally. Actual local argv, source, binary and exit records are under final_node_validation and final_local_source_gates. The linked local build selected the two affected libraries; full original-workspace CI remains required.",
+    "actual_local_link_argv": ["cargo", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-mvcc-fee", "-p", "trnm-pon-node", "--lib", "--all-features", "--no-run", "--message-format=json"]
   },
   "host_sample": {
     "sampled_utc": "2026-11-04T06:19:59.569559+00:00",
@@ -1411,24 +3909,11 @@
     },
     "kernel": "6.18.57",
     "machine": "x86_64",
-    "libc": [
-      "glibc",
-      "2.39"
-    ],
+    "libc": ["glibc", "2.39"],
     "cpu": {
       "model": "AMD EPYC 9V74 80-Core Processor",
       "visible_logical_cpus": 9,
-      "process_affinity": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
+      "process_affinity": [0, 1, 2, 3, 4, 5, 6, 7, 8],
       "cgroup_cpu_max": "800000 100000",
       "cgroup_cpuset_effective": "0-8"
     },
@@ -1598,16 +4083,7 @@
     "host_memory_bytes": 2147483648,
     "native_runner": "scripts/ci/run_from_zero_native.py"
   },
-  "remaining_unqualified": [
-    "Final integrated Node build, selected original-workspace artifacts and exact source/binary custody remain pending.",
-    "Final Node ordinary root/cancellation/cache controls, digest paired costs and v2 3x3 native grid remain pending.",
-    "The M06 fresh-prefix candidate is HOLD and withdrawn; 14/18 comparisons or six primary gains cannot override four nonregression failures.",
-    "Original public four-second confirmation, hostile-worker and strict Host-resource gate is not replaced or newly passed.",
-    "Original signed 65,536 growth and deep history/cold recovery acceptance remains separate; O(A)/O(H) work is not certified touched-set bounded.",
-    "Full final-source workspace runtime, Clippy/fmt, source-negative, x64/ARM64 and prospective-merge workflows still need their own exact evidence.",
-    "Parallel atomic publication, authorization/revocation/nonce/liability semantics, bounded batch retry/drain and model-resource budgets are not qualified by these component observations.",
-    "WAN, physical power-loss, independent review, whole-chain PQ and product/business acceptance remain unqualified."
-  ],
+  "remaining_unqualified": ["The complete original-workspace/all-targets hosted link artifact and independent execution attestation remain required. The actual local two-library link, exact clean source and before/after selected binary identities are complete and recorded separately.", "Final selected native controls, the 408-call root observation and all nine growth cohorts completed. They do not establish isolated-host statistical confidence, fixed-touched-set total complexity or public business performance acceptance.", "The M06 fresh-prefix candidate is HOLD and withdrawn; 14/18 comparisons or six primary gains cannot override four nonregression failures.", "Original public four-second confirmation, hostile-worker and strict Host-resource gate is not replaced or newly passed.", "Original signed 65,536 growth and deep history/cold recovery acceptance remains separate; O(A)/O(H) work is not certified touched-set bounded.", "Complete original-workspace runtime, x64/ARM64 and prospective-merge hosted workflows still require their own exact published-source evidence. Local full-workspace/all-targets/all-features strict Clippy and 124 source/reader controls passed on frozen f690.", "Parallel atomic publication, authorization/revocation/nonce/liability semantics, bounded batch retry/drain and model-resource budgets are not qualified by these component observations.", "WAN, physical power-loss, independent review, whole-chain PQ and product/business acceptance remain unqualified."],
   "authority": {
     "production_activation": false,
     "public_network_ready": false,
@@ -1617,5 +4093,600 @@
     "current_performance_improvement_qualified": false
   },
   "raw_artifacts_copied_into_repository": false,
-  "final_fields_owner": "Root will append final integrated source and Node build/measurement receipts; empty pending fields are not passes."
+  "final_fields_owner": "Frozen native source f690 was measured before this evidence-only continuation. Native source and existing acceptance flags must remain unchanged by the evidence update; new head/merge hosted CI is separate.",
+  "final_local_source_gates": {
+    "source_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+    "source_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+    "summary_identity": {
+      "file": "final-source-gates/SUMMARY.json",
+      "bytes": 21526,
+      "sha256": "fc63f2c445e0042e754444093d3043a37b4aa7ec0e1c9096f10c09b1cea3999a"
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "tested_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 933310106,
+      "tracked_entries": 8127,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "tested_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 933310106,
+      "tracked_entries": 8127,
+      "tracked_worktree_verified": true
+    },
+    "source_identity_equal": true,
+    "command_count": 16,
+    "command_failures": 0,
+    "test_suite_count": 4,
+    "test_invocations": 124,
+    "test_failures": 0,
+    "test_skips": 0,
+    "commands": [
+      {
+        "argv": ["python3", "scripts/ci/verify_ci_source.py", "--kind", "head", "--expected-head", "f690e732c15602d9e14eb8b672a8463601cad271", "--output", "/workspace/scratch/850bfac2502c/validation/final-source-gates/source-before.json"],
+        "elapsed_seconds": 2.953,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/before-01-verify_ci_source.log",
+          "bytes": 421,
+          "sha256": "70d21828ce811fe203c0845db1b49176f3e7ab28d99073ab61853dcb0f572588"
+        }
+      },
+      {
+        "argv": ["bash", "scripts/project-preflight.sh", "--audit"],
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/before-02-project-preflight.log",
+          "bytes": 172,
+          "sha256": "1ebea773352bf1c27a0c6ab4609543680786419acc36a350810bef316946ab3a"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/test_evidence_sources.py"],
+        "elapsed_seconds": 0.761,
+        "exit_code": 0,
+        "unittest_count": 38,
+        "unittest_outcome": "OK",
+        "log_identity": {
+          "file": "final-source-gates/negative-01-test_evidence_sources.log",
+          "bytes": 6158,
+          "sha256": "d62defcf51bb494f6cf357f814de1645295865eac275d50effd156db0d1755e1"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/test_ci_source_integrity.py"],
+        "elapsed_seconds": 3.111,
+        "exit_code": 0,
+        "unittest_count": 34,
+        "unittest_outcome": "OK",
+        "log_identity": {
+          "file": "final-source-gates/negative-02-test_ci_source_integrity.log",
+          "bytes": 5509,
+          "sha256": "870b2f1c563eee9f1039a3f9a0926694a7da813d6cb7422c425ab3900200bb9a"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/test_growth_scale_observation.py"],
+        "elapsed_seconds": 2.187,
+        "exit_code": 0,
+        "unittest_count": 41,
+        "unittest_outcome": "OK",
+        "log_identity": {
+          "file": "final-source-gates/negative-03-test_growth_scale_observation.log",
+          "bytes": 140,
+          "sha256": "27daa63148ae8a64835a2cee8ad7c28fb3a72916bd9b5a394c1227124338f9a1"
+        }
+      },
+      {
+        "argv": ["python3", "evidence/pon-complete-cost-continuation-20261104/test_compare_v4.py"],
+        "elapsed_seconds": 0.175,
+        "exit_code": 0,
+        "unittest_count": 11,
+        "unittest_outcome": "OK",
+        "log_identity": {
+          "file": "final-source-gates/negative-04-test_compare_v4.log",
+          "bytes": 110,
+          "sha256": "293eda1681e8fb9f72107b88b85eb61f4e2e3e338d5c4536b6ccd3315262eb6c"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_repository.py"],
+        "elapsed_seconds": 52.459,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/repository-01-check_repository.log",
+          "bytes": 307,
+          "sha256": "67f691b5cd81597b1bfcf95f4bdcd2ce15ce137ad5af28bd3885f48ce1199971"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_ci_contract.py"],
+        "elapsed_seconds": 0.087,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/repository-02-check_ci_contract.log",
+          "bytes": 180,
+          "sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_detailed_contracts.py"],
+        "elapsed_seconds": 17.17,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/repository-03-check_detailed_contracts.log",
+          "bytes": 122,
+          "sha256": "69039cab62248ab74fb53ef59bec3a6951ebf916d591fbd33143ed894b8e4396"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_invariants.py"],
+        "elapsed_seconds": 2.208,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/repository-04-check_invariants.log",
+          "bytes": 142,
+          "sha256": "c43f1aae3b9226e7be6c220bbb287f5ef9646ca4b4a9d5fcb90baa2d2c9cfe39"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_pq_research_integration.py"],
+        "elapsed_seconds": 0.155,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/bindings-01-check_pq_research_integration.log",
+          "bytes": 557,
+          "sha256": "8f22903e62d0b4b2e4cf248cb6a6e606a1cd2aec29d1ea87f2f3141c2e8553cc"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/refresh_distributed_source_inventory.py", "--check"],
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/bindings-02-refresh_distributed_source_inventory.log",
+          "bytes": 35,
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/report_module_evidence.py", "--bindings-only"],
+        "elapsed_seconds": 17.537,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/bindings-03-report_module_evidence.log",
+          "bytes": 134,
+          "sha256": "e584a430bf2c16d491abf6b2456d32900e9cff0dd2f04e2117794d626b4f7f1c"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/check_applicability.py"],
+        "elapsed_seconds": 25.416,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/bindings-04-check_applicability.log",
+          "bytes": 266163,
+          "sha256": "737ef434319d68234526a6d522ba30a6cf75e5caefcc2c5cbec497619882dbcd"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/report_current_implementation.py", "--check"],
+        "elapsed_seconds": 0.048,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/bindings-05-report_current_implementation.log",
+          "bytes": 71,
+          "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+        }
+      },
+      {
+        "argv": ["python3", "scripts/ci/verify_ci_source.py", "--kind", "head", "--expected-head", "f690e732c15602d9e14eb8b672a8463601cad271", "--output", "/workspace/scratch/850bfac2502c/validation/final-source-gates/source-after.json"],
+        "elapsed_seconds": 2.317,
+        "exit_code": 0,
+        "unittest_count": null,
+        "unittest_outcome": null,
+        "log_identity": {
+          "file": "final-source-gates/after-01-verify_ci_source.log",
+          "bytes": 421,
+          "sha256": "70d21828ce811fe203c0845db1b49176f3e7ab28d99073ab61853dcb0f572588"
+        }
+      }
+    ],
+    "retained_source_and_tests_review": {
+      "comparison_base": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "defects_found": [],
+      "flags": {
+        "changed": {},
+        "checked_original_boolean_fields_in_changed_configs": 196,
+        "removed": {}
+      },
+      "m06_default": {
+        "comparisons": 18,
+        "docs_percentages_match_readback": true,
+        "failed_comparisons": 4,
+        "primary_readback_sha256": "9ebe0ba94bb66ade73d4003bd8e5cb954f396959a97c24cf88974ffaa5bfd464",
+        "rejected_candidate": "7dfee35b293cfc2964c4fd8e025c6e92355f02c2",
+        "retained_ignored_cost_schema": "unchanged-snapshot-full-binding-cost-v1",
+        "retained_ordinary_tests": 6,
+        "status": "HOLD",
+        "two_source_files_exact_40a_and_unchanged_from_73ab": true
+      },
+      "remote_preservation": {
+        "additional_73ab_fix_files_preserved": [".github/workflows/release-finality-reference.yml"],
+        "between_40a_and_faae_changed_files": 22,
+        "combined_files": ["config/pon/pq-cross-branch-corpus-v1.json", "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md"],
+        "matching_current_bytes": 20
+      },
+      "retained_tests": {
+        "changed_rust_python_files": 6,
+        "growth_reader_tests": [25, 41],
+        "native_growth_tests": [1, 3],
+        "native_store_tests": [8, 8],
+        "original_attributed_tests_in_changed_files": 38,
+        "removed_test_names_or_changed_skip_controls": 0,
+        "root_digest_tests": [4, 4],
+        "test_body_changes": "Root controls retain existing cases and expand independent references/cancellation boundaries. Growth original observation is extended to real returned outcomes; two additional native regressions are added.",
+        "unchanged_tracked_rust_python_files_by_git_blob": 1659
+      },
+      "reviewed_commit": "f690e732c15602d9e14eb8b672a8463601cad271",
+      "reviewed_tree": "c5a187c482048c0af43e627143abaa851f1d9cd7",
+      "root_oracles": {
+        "Node_lift_matches_original_a10_body": true,
+        "controls": "Original account-count/warm-cache mutations preserved; absent vs zero and old/max nonce cases added; actual owner-derived path precondition checked; all original valid/repeated/reversed traversal and cancellation cases retained with explicit expected errors; fork checks expanded across every divergence depth and child-depth shape.",
+        "digest_adapter_separate_from_Node_lift": true,
+        "existing_ignored_cost_function_body_unchanged_from_73ab": true,
+        "fork_reference_uses_Node_fork_with_original_lift": true,
+        "full_256_level_protocol_root_reference_retained": true
+      },
+      "schema": "local-final-source-readonly-review-v1",
+      "scope": "Static read-only review, not native execution or acceptance.",
+      "source_pins": {
+        "baseline_pins": 389,
+        "baseline_required_paths": 301,
+        "current_pins": 389,
+        "current_required_paths": 301,
+        "removed_pinned_paths": [],
+        "removed_required_paths": [],
+        "restored_required_sources": ["trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs", "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"],
+        "stale_current_blob_pins": []
+      },
+      "utc": "2026-11-04T07:30:24.430666+00:00",
+      "v2_return_constraints": {
+        "BeforeCommit_tail_is_not_durable_commit_measurement": true,
+        "actual_Result_classification": true,
+        "admission_receipt_precedes_activation_attempt": true,
+        "cancel_requires_positive_sql_changes_and_header_ancestors": true,
+        "cancellation_before_sqlite_commit_and_original_sql_active_nonce_checks_retained": true,
+        "each_native_return_flushed_before_original_assertion": true,
+        "expected_complete_returns": 153,
+        "historical_v1_requires_explicit_mode": true,
+        "return_identity_order_and_completion_binding_required": true,
+        "separate_cancelled_returns": 9,
+        "successful_returns": 144,
+        "unexpected_regular_failures_cannot_qualify_complete_campaign": true,
+        "unmeasured_stage_cpu_null": true
+      }
+    },
+    "strict_clippy": {
+      "argv": ["cargo", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"],
+      "exit_code": 0,
+      "log_identity": {
+        "file": "final-workspace-clippy.log",
+        "bytes": 5505,
+        "sha256": "8f1b9f0a2526949d13043b6c309dab83ca33d8c7db4a9798fb1bacd66ae1e7a6"
+      }
+    },
+    "locked_workspace_graph": {
+      "file": "final-cargo-metadata.json",
+      "bytes": 828221,
+      "sha256": "9c5af0079d3ef26e77a57243ed0c0a5f17ecb4c1c1c3d1e6ad4f062f354d68bd"
+    },
+    "qualification_granted": false
+  },
+  "auxiliary_pq_roster_fix_ci": {
+    "schema": "auxiliary-pq-roster-fix-ci-readback-v1",
+    "commit": "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+    "pull_request": 706,
+    "readback_utc": "2026-11-04T07:28:01Z",
+    "runs": [
+      {
+        "id": 41789918199,
+        "name": "PoN priority acceptance",
+        "status": "pending",
+        "conclusion": null
+      },
+      {
+        "id": 41789918337,
+        "name": "Native PQ quota v3 research",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918172,
+        "name": "PoN original native campaign",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 41789918201,
+        "name": "Native PQ accounts v2 research",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918151,
+        "name": "Native PQ task permissions v4 research",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918197,
+        "name": "Pinned CodeQL analysis and coverage research",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 41789918149,
+        "name": "Pure PoN raw History joint research",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 41789918261,
+        "name": "PoN recent batch exact-source acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918148,
+        "name": "PoN ticket-first native cost research",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918217,
+        "name": "PoN parent-bound model evidence",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918188,
+        "name": "PoN owned process cleanup",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918296,
+        "name": "Owned fixed-parent receiver fixture",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 41789918147,
+        "name": "trnm-required-baseline",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 41789918329,
+        "name": "Pure PoN admission and DAA evidence",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 41789918198,
+        "name": "CodeQL exact-source analysis export",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 41789918405,
+        "name": "Native PQ task renewal v5 research",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "selected_jobs": [
+      {
+        "run_id": 41789918405,
+        "data": {
+          "jobs": [
+            {
+              "id": 126440634339,
+              "name": "native-pq",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 41789918405,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Checkout exact head without retained credentials",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Verify source and isolate actual observations",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Install repository-pinned native compiler and checks",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Refuse compiled-only, missing, ignored and filtered success claims",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Execute real requester/source permissions and all retained PQ1 PQ2 PQ3 PQ4 paths",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Execute anchored CLAIM and task authority together after same-source retained 205",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Verify final exact source regardless of test outcome",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Retain successes and all actual failures",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Checkout exact head without retained credentials",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 18
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 19
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "run_id": 41789918151,
+        "data": {
+          "jobs": [
+            {
+              "id": 126440633789,
+              "name": "native-pq",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 41789918151,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Checkout exact head without retained credentials",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Verify source and isolate actual observations",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Install repository-pinned native compiler and checks",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Refuse compiled-only, missing, ignored and filtered success claims",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Execute real requester/source permissions and all retained PQ1 PQ2 PQ3 paths",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify final exact source regardless of test outcome",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Retain successes and all actual failures",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Post Checkout exact head without retained credentials",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 16
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 17
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "scope": "Read-only current GitHub Actions run and step metadata; not raw native artifact validation or whole-chain PQ/business qualification",
+    "whole_chain_qualified": false
+  },
+  "raw_artifact_scope": "No complete raw logs, JSONL campaigns, archives or executable binaries are copied. Lossless parsed M06 timing rows and projected root timing samples are embedded in this compact reproduction manifest; all omitted original artifacts retain hashes and exact commands."
 }

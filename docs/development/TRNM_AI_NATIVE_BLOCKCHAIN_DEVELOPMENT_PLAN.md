@@ -5723,3 +5723,33 @@ include misleading same-root hints and cold/over-capacity account roots; retaine
 negative samples must accompany warm-path gains. Original full Node, SQL damage,
 cancellation, reorganization, W1, Host, F0 and independent-client confirmation
 requirements remain. No consensus, security, service or release flag is promoted.
+
+
+### 2026-11-04 complete return costs and rejected preparation candidate
+
+The [compact reproduction record](../../evidence/pon-complete-cost-continuation-20261104/reproduction.json)
+binds the completed measurements to frozen source `f690e732`, its actual native
+binaries, the retained `7dfee35b` candidate and all original failure observations.
+The candidate's three-arm experiment keeps all 2,592 bindings and 18 comparisons:
+six primary improvement targets pass, but four nonregression comparisons fail.
+Restore both M06 default files exactly to `40a5ba25`; keep the rejected candidate
+in history and patches. Do not rerun until green or change the 5%/10% rules.
+
+The final fixed-owner grid keeps W=3 across A=64/1,024/16,384 and H=0/16/128.
+All 153 actual returns are retained: 72 successful admissions, 72 activations and
+nine BeforeCommit cancellations with unchanged SQL rows and active generation.
+All 81 admission return traces have exactly `6 * min(parent_history_blocks, 16)`
+header callbacks; this is not a total unique-history-read count. Complete cold
+Node reopen still grows from about 62 ms to 2,606 ms. Whole-campaign wall cost is
+311.685 seconds, including setup, 432 warmup blocks, reference checks and journals.
+Per-stage CPU remains unmeasured; BeforeCommit-to-return does not isolate fsync.
+
+The separate 408-call root comparison preserves full-account traversal and sorting.
+Warm paired-median wall improvements are 60.92% at 1,024 accounts and 6.32% at
+9,216; two cold calls per arm instead regress 0.54% and 4.63%. These are local
+component observations, not fixed-touched-set complexity or business confirmation.
+The 124 source/reader controls, six selected native invocations and complete
+workspace strict Clippy pass on the frozen source. Local linking selects the two
+affected libraries; full original-workspace head/merge CI remains its own gate.
+Original four-second service, 4,105-block recovery, independent operation and
+whole-chain PQ/effect qualification remain HOLD with unchanged budgets and flags.
