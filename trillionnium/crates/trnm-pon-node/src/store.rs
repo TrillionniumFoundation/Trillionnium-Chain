@@ -5121,11 +5121,13 @@ impl Node {
         let transaction_result: Result<()> = (|| {
             let mut readback = run(progress, original_owner.as_ref())?;
             {
-                let _stage = self.legacy_reorg_step_observation_enabled(commit_site).then(|| {
-                    self.authenticated_arithmetic
-                        .history
-                        .observe(native_authenticated::HistoryStage::ReadActive)
-                });
+                let _stage = self
+                    .legacy_reorg_step_observation_enabled(commit_site)
+                    .then(|| {
+                        self.authenticated_arithmetic
+                            .history
+                            .observe(native_authenticated::HistoryStage::ReadActive)
+                    });
                 self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
             }
             self.continuous_scope_checkpoint()?;

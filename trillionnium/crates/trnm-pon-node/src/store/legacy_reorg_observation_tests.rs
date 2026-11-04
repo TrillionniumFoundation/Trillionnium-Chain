@@ -97,8 +97,7 @@ fn transfer(node: &Node, nonce: u64, recipient: u64) -> Vec<u8> {
         signature: [0; 64],
     };
     let key =
-        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
-            .unwrap();
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
     transaction.signature = hex::decode(sign_hex(&key, &transaction.signing_digest().unwrap()))
         .unwrap()
         .try_into()
@@ -156,7 +155,10 @@ fn fork_pair(control_path: &Path, observed_path: &Path) -> (Node, Node, Hash, u6
             first_nonce + 1
         );
     }
-    assert_eq!(control.read_active().unwrap(), observed.read_active().unwrap());
+    assert_eq!(
+        control.read_active().unwrap(),
+        observed.read_active().unwrap()
+    );
     (control, observed, target_id, first_nonce)
 }
 
@@ -238,7 +240,10 @@ fn legacy_observation_opt_in_is_local_and_keeps_unentered_unknown() {
     let original = authenticated.native_history_arithmetic_observation();
     assert_eq!(original["schema"], ORIGINAL_SCHEMA);
     assert!(!authenticated.enable_native_legacy_reorg_observation());
-    assert_eq!(authenticated.native_history_arithmetic_observation(), original);
+    assert_eq!(
+        authenticated.native_history_arithmetic_observation(),
+        original
+    );
 }
 
 #[test]
