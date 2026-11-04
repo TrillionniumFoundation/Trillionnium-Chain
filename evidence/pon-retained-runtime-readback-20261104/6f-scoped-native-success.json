@@ -1,0 +1,1521 @@
+{
+  "schema": "pon-scoped-state-native-terminal-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "workflow_commit": "8102335d91db9a2bfe2cc7c65a2aed7d6f5881b2",
+  "measured_source": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "measured_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+  "run": 41775481816,
+  "job": 126394717519,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41775481816/job/126394717519",
+  "terminal_metadata": {
+    "id": 126394717519,
+    "name": "Original scoped state and SQL commit controls",
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 41775481816,
+    "logs_url": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Checkout the exact repair source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Bind source and preserve original preflight",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Retain original source and claim checks",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Install the original compiler",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Prepare the original independently pinned provider",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Bind compiler graph formatting and original test-profile ELF",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Execute the original scoped state and transaction controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8
+      },
+      {
+        "name": "Execute the unchanged complete parent selector once",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      {
+        "name": "Generate both original native storage exports",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "Execute the complete original independent storage oracle controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Independently reconstruct both actual Rust storage exports",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Keep original strict Node lint",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13
+      },
+      {
+        "name": "Recheck the complete measured source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14
+      },
+      {
+        "name": "Retain full records including failures",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15
+      },
+      {
+        "name": "Post Checkout the exact repair source",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31
+      }
+    ]
+  },
+  "log_readback": {
+    "complete_terminal_decoded_log_read": true,
+    "decoded_js_characters": 1498296,
+    "utf8_bytes": 1498702,
+    "utf8_sha256": "27f54c7fa32fb890dbbc09a7a422e43bfbdcc696c3c517d23fd976f954538e2f",
+    "cleaned_lines": 2575,
+    "line_normalization": "Remove each UTC timestamp prefix and ANSI color escapes, preserve line order.",
+    "native_reexecuted_by_this_review": false
+  },
+  "source_before": {
+    "lines": [
+      929,
+      941
+    ],
+    "value": {
+      "base": null,
+      "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 931951117,
+      "tracked_entries": 8026,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_after": {
+    "lines": [
+      2501,
+      2513
+    ],
+    "value": {
+      "base": null,
+      "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 931951117,
+      "tracked_entries": 8026,
+      "tracked_worktree_verified": true
+    }
+  },
+  "preflight": [
+    {
+      "line": 942,
+      "value": {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    },
+    {
+      "line": 2514,
+      "value": {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    }
+  ],
+  "scope": {
+    "additional_exact_native_selectors": [
+      "account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+      "store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints",
+      "store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes",
+      "store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority",
+      "store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation",
+      "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+      "store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+      "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+      "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+      "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+      "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+      "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+      "store::admission_parent_tests::admission_parent_foreign_sql_change_forces_original_fresh_state_validation",
+      "store::admission_parent_tests::admission_parent_keeps_second_boundary_cancellation_and_error_identity",
+      "store::reorg_cancellation::tests::cancellation_terminates_only_staging_and_preserves_full_active_state",
+      "store::reorg_cancellation::tests::late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts",
+      "store::reorg_cancellation::tests::cleanup_authorizer_blocks_trigger_writes_and_restores_after_error",
+      "store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu",
+      "store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence"
+    ],
+    "cuts": [
+      "epoch",
+      "w1",
+      "m06",
+      "admitted",
+      "activated"
+    ],
+    "full_node_suite_executed": false,
+    "independent_storage_oracle_registered_methods": 29,
+    "native_export_selectors": [
+      "store::native_authenticated_tests::native_authenticated_signed_growth_branches_reopen_and_compact_queries",
+      "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts"
+    ],
+    "original_child_import_deadline_seconds": 20,
+    "original_parent_wait_seconds": 30,
+    "performance_acceptance_granted": false,
+    "production_activation": false,
+    "profile": "original cargo test profile; lib; all-features",
+    "reason": "same-call scoped account parsing, identity-lift arithmetic and four authenticated ledger/reorg Transaction::commit API observations",
+    "schema": "pon-scoped-state-commit-native-scope-v1",
+    "selector": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+    "standalone_result_adds_unique_tests": false,
+    "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+    "workflow_commit": "8102335d91db9a2bfe2cc7c65a2aed7d6f5881b2"
+  },
+  "command_receipt_count": 42,
+  "command_receipts": [
+    {
+      "line": 967,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_ci_source_integrity.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1013,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_record_pq_native_command.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1027,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_research_integration.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1067,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_chain_claim_guard.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1095,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_authority_surface_scan.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1112,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/pq-source.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1114,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/pq-hold.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1116,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/repository.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1118,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/inventory.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1187,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/compiler.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1195,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/locked-graph.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1347,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/format.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1348,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/build.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1828,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1842,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1862,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_is_bound_to_exact_state_and_never_hides_account_changes.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1876,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_preserves_complete_root_and_late_error_priority.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1890,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_rereads_corrupt_sql_and_preserves_every_cancellation.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1904,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1925,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1939,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1953,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-actual_stored_graph_damage_is_reread_after_a_receipt.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1967,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1981,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 1995,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2009,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_foreign_sql_change_forces_original_fresh_state_validation.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2023,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_keeps_second_boundary_cancellation_and_error_identity.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2037,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cancellation_terminates_only_staging_and_preserves_full_active_state.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2051,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2065,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_authorizer_blocks_trigger_writes_and_restores_after_error.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2079,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2102,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2153,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/sigkill-parent.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2217,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/export-native_authenticated_signed_growth_branches_reopen_and_compact_queries.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2231,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/export-authenticated_migration_preserves_signed_branches_and_irreversible_local_facts.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2282,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-environment.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2302,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-python.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2304,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-dependencies.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2310,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/independent-storage-controls.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2378,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/independent-native-storage.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2380,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/independent-native-migration.json",
+        "status": "command_succeeded"
+      }
+    },
+    {
+      "line": 2406,
+      "value": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/clippy.json",
+        "status": "command_succeeded"
+      }
+    }
+  ],
+  "command_receipt_scope": "42 actual command wrapper stdout receipts under scoped-state-native, all exit_code 0 / command_succeeded. Temporary nested receipt recorder negative controls (exit 3, exit 7, record_failed) are excluded. Full per-command receipt JSON bodies remain in the original artifact and were not separately decoded during this log-only readback.",
+  "synthetic_checker_controls": {
+    "positive_controls_completed": 1,
+    "negative_controls_completed": 18,
+    "negative_control_names": [
+      "missing_child",
+      "extra_child",
+      "wrong_child",
+      "duplicate_parent",
+      "missing_terminal",
+      "extra_terminal",
+      "failed_terminal",
+      "ignored_terminal",
+      "missing_cut",
+      "duplicate_cut",
+      "reordered_cuts",
+      "wrong_signal",
+      "false_preservation",
+      "wrong_debt_error",
+      "bool_lifecycle",
+      "new_paid_debit",
+      "duplicate_json_key",
+      "wrong_selector"
+    ],
+    "execution_conclusion": "success_via_fail_closed_step",
+    "step": 8,
+    "control_invocation_line": 1772,
+    "sticky_failure_check_line": 1806,
+    "stdout_json_body_read": false,
+    "artifact_member": "reorg-sigkill-checker-controls.json",
+    "basis": "The actual step invokes --self-test, sets sticky failed=1 on any nonzero exit and ends with test \"$failed\" = 0. The unchanged helper executes one positive and all 18 rejecting controls before returning 0. GitHub records this step completed success. The result JSON itself is redirected to the artifact, so this evidence does not claim to have read its body.",
+    "native_tests_executed": 0,
+    "unique_native_tests_added": 0
+  },
+  "native_invocations": [
+    {
+      "selector": "account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+      "receipt_line": 1828,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1840,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.01s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints",
+      "receipt_line": 1842,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1860,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.25s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes",
+      "receipt_line": 1862,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_is_bound_to_exact_state_and_never_hides_account_changes.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1874,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.04s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority",
+      "receipt_line": 1876,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_preserves_complete_root_and_late_error_priority.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1888,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.05s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation",
+      "receipt_line": 1890,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_rereads_corrupt_sql_and_preserves_every_cancellation.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1902,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.08s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+      "receipt_line": 1904,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1923,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.00s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+      "receipt_line": 1925,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1937,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.13s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+      "receipt_line": 1939,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1951,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.06s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+      "receipt_line": 1953,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-actual_stored_graph_damage_is_reread_after_a_receipt.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1965,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.03s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+      "receipt_line": 1967,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1979,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.13s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+      "receipt_line": 1981,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 1993,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.06s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+      "receipt_line": 1995,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2007,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 2.10s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::admission_parent_tests::admission_parent_foreign_sql_change_forces_original_fresh_state_validation",
+      "receipt_line": 2009,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_foreign_sql_change_forces_original_fresh_state_validation.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2021,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.30s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::admission_parent_tests::admission_parent_keeps_second_boundary_cancellation_and_error_identity",
+      "receipt_line": 2023,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_keeps_second_boundary_cancellation_and_error_identity.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2035,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.07s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::cancellation_terminates_only_staging_and_preserves_full_active_state",
+      "receipt_line": 2037,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cancellation_terminates_only_staging_and_preserves_full_active_state.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2049,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.12s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts",
+      "receipt_line": 2051,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2063,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.16s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::cleanup_authorizer_blocks_trigger_writes_and_restores_after_error",
+      "receipt_line": 2065,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_authorizer_blocks_trigger_writes_and_restores_after_error.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2077,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.11s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu",
+      "receipt_line": 2079,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2100,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.04s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence",
+      "receipt_line": 2102,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/scope-three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2126,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.23s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 4,
+      "child_announcements": [
+        "test store::reorg_cancellation::tests::reorg_cancellation_kill_child ... ",
+        "test store::reorg_cancellation::tests::reorg_cancellation_kill_child ... ",
+        "test store::reorg_cancellation::tests::reorg_cancellation_kill_child ... ok"
+      ],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+      "receipt_line": 2153,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/sigkill-parent.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2173,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.79s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::native_authenticated_tests::native_authenticated_signed_growth_branches_reopen_and_compact_queries",
+      "receipt_line": 2217,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/export-native_authenticated_signed_growth_branches_reopen_and_compact_queries.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2229,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 3.17s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    },
+    {
+      "selector": "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+      "receipt_line": 2231,
+      "receipt": {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/export-authenticated_migration_preserves_signed_branches_and_irreversible_local_facts.json",
+        "status": "command_succeeded"
+      },
+      "summary": {
+        "line": 2243,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.39s"
+      },
+      "original_profile": "test; --lib --all-features --locked --exact --show-output --test-threads=1",
+      "running_one_test_markers": 1,
+      "child_announcements": [],
+      "unique_native_tests_added": 0
+    }
+  ],
+  "native_invocation_count": 22,
+  "native_summary_count": 22,
+  "native_passes_in_this_focused_job": 22,
+  "native_failures_in_this_focused_job": 0,
+  "native_ignored_in_this_focused_job": 0,
+  "reorg_composite": {
+    "parent_selector": "store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence",
+    "parent_invocations": 1,
+    "child_process_announcements": 3,
+    "children_added_to_unique_denominator": false,
+    "cut_records": [
+      {
+        "line": 2118,
+        "value": {
+          "cold_bind_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "cpu_epoch_retained": true,
+          "cut": "cancel-before-transaction",
+          "fresh_unbound_domain_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "metered_fact_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "metered_plain_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "native_replay_and_audit_bytes_unchanged": true,
+          "new_cpu_account_available": false,
+          "original_cancelled_lifecycle_retained": false,
+          "pre_reopen_active_state_unchanged": true,
+          "pre_reopen_done": 0,
+          "pre_reopen_lifecycle": 0,
+          "schema": "native-reorg-termination-sigkill-v2",
+          "scope": "actual native SIGKILL; original cold recovery remains trusted-local; supplied diagnostic domain never attaches or reserves; no autonomous paid restart recovery claim",
+          "signal": 9,
+          "unknown_debt_refuses_public_restart": true
+        },
+        "raw_helper_packet_hex_omitted_from_projection": true,
+        "raw_helper_packet_hex_chars": 99016,
+        "raw_helper_packet_hex_utf8_sha256": "d6b39b8a737198cb934d2de351740a60de5515cae7f4950ecbc6c8262c397f0f",
+        "original_full_row_retained_in_native_artifact": true
+      },
+      {
+        "line": 2119,
+        "value": {
+          "cold_bind_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "cpu_epoch_retained": true,
+          "cut": "cancel-lifecycle-written",
+          "fresh_unbound_domain_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "metered_fact_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "metered_plain_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "native_replay_and_audit_bytes_unchanged": true,
+          "new_cpu_account_available": false,
+          "original_cancelled_lifecycle_retained": false,
+          "pre_reopen_active_state_unchanged": true,
+          "pre_reopen_done": 0,
+          "pre_reopen_lifecycle": 0,
+          "schema": "native-reorg-termination-sigkill-v2",
+          "scope": "actual native SIGKILL; original cold recovery remains trusted-local; supplied diagnostic domain never attaches or reserves; no autonomous paid restart recovery claim",
+          "signal": 9,
+          "unknown_debt_refuses_public_restart": true
+        },
+        "raw_helper_packet_hex_omitted_from_projection": true,
+        "raw_helper_packet_hex_chars": 99016,
+        "raw_helper_packet_hex_utf8_sha256": "d6b39b8a737198cb934d2de351740a60de5515cae7f4950ecbc6c8262c397f0f",
+        "original_full_row_retained_in_native_artifact": true
+      },
+      {
+        "line": 2120,
+        "value": {
+          "cold_bind_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "cpu_epoch_retained": true,
+          "cut": "cancel-committed",
+          "fresh_unbound_domain_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 0,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 0,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 0,
+            "remaining_paid_credit_ns": 2000000000,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 0,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 0,
+            "stored_credit_ns": 2000000000,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "metered_fact_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "metered_plain_error": "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+          "native_replay_and_audit_bytes_unchanged": true,
+          "new_cpu_account_available": false,
+          "original_cancelled_lifecycle_retained": true,
+          "pre_reopen_active_state_unchanged": true,
+          "pre_reopen_done": 2,
+          "pre_reopen_lifecycle": 2,
+          "schema": "native-reorg-termination-sigkill-v2",
+          "scope": "actual native SIGKILL; original cold recovery remains trusted-local; supplied diagnostic domain never attaches or reserves; no autonomous paid restart recovery claim",
+          "signal": 9,
+          "unknown_debt_refuses_public_restart": true
+        },
+        "raw_helper_packet_hex_omitted_from_projection": true,
+        "raw_helper_packet_hex_chars": 99016,
+        "raw_helper_packet_hex_utf8_sha256": "d6b39b8a737198cb934d2de351740a60de5515cae7f4950ecbc6c8262c397f0f",
+        "original_full_row_retained_in_native_artifact": true
+      }
+    ],
+    "strict_checker_result_body_read": false,
+    "strict_checker_success_proved_by_step8": true,
+    "scope": "One original parent summary is counted; three SIGKILL child harness announcements are not independent PASS tests. Original native preservation assertions and custom cut/parser check both completed."
+  },
+  "history_sigkill": {
+    "parent_selector": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+    "parent_invocations": 1,
+    "cut_records": [
+      {
+        "line": 2163,
+        "value": {
+          "cut": "epoch",
+          "cut_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "debt_reconciliation_complete": false,
+          "durable_epoch_marker": "active-v1",
+          "new_cpu_account_available": false,
+          "observed_signal": 9,
+          "physical_power_loss": false,
+          "reopened_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "schema": "native-history-real-kill-cut-v1",
+          "stored_block_after_reopen": false
+        }
+      },
+      {
+        "line": 2164,
+        "value": {
+          "cut": "w1",
+          "cut_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "debt_reconciliation_complete": false,
+          "durable_epoch_marker": "active-v1",
+          "new_cpu_account_available": false,
+          "observed_signal": 9,
+          "physical_power_loss": false,
+          "reopened_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "schema": "native-history-real-kill-cut-v1",
+          "stored_block_after_reopen": false
+        }
+      },
+      {
+        "line": 2165,
+        "value": {
+          "cut": "m06",
+          "cut_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "debt_reconciliation_complete": false,
+          "durable_epoch_marker": "active-v1",
+          "new_cpu_account_available": false,
+          "observed_signal": 9,
+          "physical_power_loss": false,
+          "reopened_active_tip": "a8681092cfaf8022016492fc9e9328047037da2e7cd1865d982788a730b6a8c7",
+          "schema": "native-history-real-kill-cut-v1",
+          "stored_block_after_reopen": false
+        }
+      },
+      {
+        "line": 2166,
+        "value": {
+          "cut": "admitted",
+          "cut_active_tip": "6d9a06097f3f9da6b84cf613c791b18f527139a1e043163ec862250155f2f371",
+          "debt_reconciliation_complete": false,
+          "durable_epoch_marker": "active-v1",
+          "new_cpu_account_available": false,
+          "observed_signal": 9,
+          "physical_power_loss": false,
+          "reopened_active_tip": "afb6e2fbdf5988c58536b546f6eccf326693c4d18918c3fada84828cc7f4991f",
+          "schema": "native-history-real-kill-cut-v1",
+          "stored_block_after_reopen": true
+        }
+      },
+      {
+        "line": 2167,
+        "value": {
+          "cut": "activated",
+          "cut_active_tip": "afb6e2fbdf5988c58536b546f6eccf326693c4d18918c3fada84828cc7f4991f",
+          "debt_reconciliation_complete": false,
+          "durable_epoch_marker": "active-v1",
+          "new_cpu_account_available": false,
+          "observed_signal": 9,
+          "physical_power_loss": false,
+          "reopened_active_tip": "afb6e2fbdf5988c58536b546f6eccf326693c4d18918c3fada84828cc7f4991f",
+          "schema": "native-history-real-kill-cut-v1",
+          "stored_block_after_reopen": true
+        }
+      }
+    ],
+    "checker_stdout": {
+      "line": 2175,
+      "value": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks"
+      }
+    },
+    "original_parent_wait_seconds": 30,
+    "original_child_deadline_seconds": 20
+  },
+  "cold_parse_diagnostic_rows": [
+    {
+      "line": 1852,
+      "value": {
+        "cold_parser_calls": 1,
+        "cold_scanned_rows": 9,
+        "extra_zero_balance_accounts": 0,
+        "public_service_qualified": false,
+        "reference_parser_calls": 2,
+        "reference_scanned_rows": 18,
+        "schema": "trnm-current-account-parse-observation-v1",
+        "state_keys": 9,
+        "unchanged_verification_checkpoints": 12,
+        "warm_parser_calls": 1,
+        "warm_scanned_rows": 9
+      }
+    },
+    {
+      "line": 1853,
+      "value": {
+        "cold_parser_calls": 1,
+        "cold_scanned_rows": 73,
+        "extra_zero_balance_accounts": 64,
+        "public_service_qualified": false,
+        "reference_parser_calls": 2,
+        "reference_scanned_rows": 146,
+        "schema": "trnm-current-account-parse-observation-v1",
+        "state_keys": 73,
+        "unchanged_verification_checkpoints": 140,
+        "warm_parser_calls": 1,
+        "warm_scanned_rows": 73
+      }
+    },
+    {
+      "line": 1854,
+      "value": {
+        "cold_parser_calls": 1,
+        "cold_scanned_rows": 1033,
+        "extra_zero_balance_accounts": 1024,
+        "public_service_qualified": false,
+        "reference_parser_calls": 2,
+        "reference_scanned_rows": 2066,
+        "schema": "trnm-current-account-parse-observation-v1",
+        "state_keys": 1033,
+        "unchanged_verification_checkpoints": 2060,
+        "warm_parser_calls": 1,
+        "warm_scanned_rows": 1033
+      }
+    }
+  ],
+  "caught_panic_controls": [
+    {
+      "selector": "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+      "lines": [
+        1915,
+        1917
+      ],
+      "message": "retain unfinished SQL observation",
+      "parent_summary_line": 1923
+    },
+    {
+      "selector": "store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu",
+      "lines": [
+        2090,
+        2094
+      ],
+      "message": "assertion `left != right` failed: actual cleanup panic before COMMIT\n  left: \"cancel-lifecycle-written\"\n right: \"cancel-lifecycle-written\"\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "parent_summary_line": 2100
+    }
+  ],
+  "oracle": {
+    "registered_controls": 29,
+    "actual_ok_rows": [
+      {
+        "line": 2311,
+        "text": "test_every_retained_table_is_checked_including_empty_ones (__main__.MigrationPreservationOracle.test_every_retained_table_is_checked_including_empty_ones) ... ok"
+      },
+      {
+        "line": 2312,
+        "text": "test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) ... ok"
+      },
+      {
+        "line": 2313,
+        "text": "test_only_schema_identity_changes_and_deleted_sequence_frontier_stays (__main__.MigrationPreservationOracle.test_only_schema_identity_changes_and_deleted_sequence_frontier_stays) ... ok"
+      },
+      {
+        "line": 2314,
+        "text": "test_retained_values_cannot_change_type_or_contents (__main__.MigrationPreservationOracle.test_retained_values_cannot_change_type_or_contents) ... ok"
+      },
+      {
+        "line": 2315,
+        "text": "test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text (__main__.MigrationPreservationOracle.test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text) ... ok"
+      },
+      {
+        "line": 2316,
+        "text": "test_account_existence_and_nonce_monotonicity_are_checked (__main__.NativeAuthenticatedStorageOracle.test_account_existence_and_nonce_monotonicity_are_checked) ... ok"
+      },
+      {
+        "line": 2317,
+        "text": "test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks (__main__.NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks) ... ok"
+      },
+      {
+        "line": 2318,
+        "text": "test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused (__main__.NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused) ... ok"
+      },
+      {
+        "line": 2319,
+        "text": "test_ancestry_rows_require_exact_types_and_unique_keys (__main__.NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys) ... ok"
+      },
+      {
+        "line": 2320,
+        "text": "test_chainwork_uses_full_unsigned_512_bit_value (__main__.NativeAuthenticatedStorageOracle.test_chainwork_uses_full_unsigned_512_bit_value) ... ok"
+      },
+      {
+        "line": 2321,
+        "text": "test_changed_delta_cannot_hide_behind_matching_account_leaf (__main__.NativeAuthenticatedStorageOracle.test_changed_delta_cannot_hide_behind_matching_account_leaf) ... ok"
+      },
+      {
+        "line": 2322,
+        "text": "test_changed_stored_delta_digest_is_detected (__main__.NativeAuthenticatedStorageOracle.test_changed_stored_delta_digest_is_detected) ... ok"
+      },
+      {
+        "line": 2323,
+        "text": "test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused (__main__.NativeAuthenticatedStorageOracle.test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused) ... ok"
+      },
+      {
+        "line": 2324,
+        "text": "test_event_generations_cannot_skip_or_rewind (__main__.NativeAuthenticatedStorageOracle.test_event_generations_cannot_skip_or_rewind) ... ok"
+      },
+      {
+        "line": 2325,
+        "text": "test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active (__main__.NativeAuthenticatedStorageOracle.test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active) ... ok"
+      },
+      {
+        "line": 2326,
+        "text": "test_extra_active_and_kv_slots_are_detected (__main__.NativeAuthenticatedStorageOracle.test_extra_active_and_kv_slots_are_detected) ... ok"
+      },
+      {
+        "line": 2327,
+        "text": "test_false_snapshot_and_active_kv_are_not_trusted (__main__.NativeAuthenticatedStorageOracle.test_false_snapshot_and_active_kv_are_not_trusted) ... ok"
+      },
+      {
+        "line": 2328,
+        "text": "test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes (__main__.NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes) ... ok"
+      },
+      {
+        "line": 2329,
+        "text": "test_missing_historical_commitment_and_orphan_deltas_are_refused (__main__.NativeAuthenticatedStorageOracle.test_missing_historical_commitment_and_orphan_deltas_are_refused) ... ok"
+      },
+      {
+        "line": 2330,
+        "text": "test_missing_required_node_and_damaged_unreachable_cow_child_are_detected (__main__.NativeAuthenticatedStorageOracle.test_missing_required_node_and_damaged_unreachable_cow_child_are_detected) ... ok"
+      },
+      {
+        "line": 2331,
+        "text": "test_null_boolean_absence_and_utf8_delta_values_remain_exact (__main__.NativeAuthenticatedStorageOracle.test_null_boolean_absence_and_utf8_delta_values_remain_exact) ... ok"
+      },
+      {
+        "line": 2332,
+        "text": "test_parent_commitment_and_packet_digest_are_bound (__main__.NativeAuthenticatedStorageOracle.test_parent_commitment_and_packet_digest_are_bound) ... ok"
+      },
+      {
+        "line": 2333,
+        "text": "test_rehashed_false_aggregate_is_recomputed_from_full_state (__main__.NativeAuthenticatedStorageOracle.test_rehashed_false_aggregate_is_recomputed_from_full_state) ... ok"
+      },
+      {
+        "line": 2334,
+        "text": "test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed (__main__.NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed) ... ok"
+      },
+      {
+        "line": 2335,
+        "text": "test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored (__main__.NativeAuthenticatedStorageOracle.test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored) ... ok"
+      },
+      {
+        "line": 2336,
+        "text": "test_real_legacy_and_native_ddl_tables_are_all_read (__main__.NativeSchemaIdentifierControls.test_real_legacy_and_native_ddl_tables_are_all_read) ... ok"
+      },
+      {
+        "line": 2337,
+        "text": "test_actual_hex_envelope_and_independent_signed_amount_replay (__main__.SignedApplicationControls.test_actual_hex_envelope_and_independent_signed_amount_replay) ... ok"
+      },
+      {
+        "line": 2338,
+        "text": "test_native_compact_query_is_independently_checked_when_present (__main__.SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present) ... ok"
+      },
+      {
+        "line": 2339,
+        "text": "test_self_consistent_state_records_cannot_change_signed_transfer_amount (__main__.SignedApplicationControls.test_self_consistent_state_records_cannot_change_signed_transfer_amount) ... ok"
+      }
+    ],
+    "summary": {
+      "line": 2342,
+      "text": "Ran 29 tests in 5.874s"
+    },
+    "terminal": {
+      "line": 2344,
+      "text": "OK"
+    },
+    "environment": {
+      "python": "Python 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "dependencies": [
+        "cffi==2.1.1",
+        "cryptography==50.0.2",
+        "numpy==1.26.4",
+        "pip==24.0",
+        "pycparser==3.12"
+      ]
+    },
+    "actual_cli_results": [
+      {
+        "line": 2379,
+        "value": {
+          "output": "/home/runner/work/_temp/scoped-state-native/native-authenticated-state/oracle.json",
+          "result": "PASS"
+        }
+      },
+      {
+        "line": 2381,
+        "value": {
+          "output": "/home/runner/work/_temp/scoped-state-native/authenticated-migration/oracle.json",
+          "result": "PASS"
+        }
+      }
+    ],
+    "external_independent_signoff": false
+  },
+  "compiler": {
+    "lines": [
+      1188,
+      1194
+    ],
+    "output": [
+      "rustc 1.95.0 (59807616e 2026-04-14)",
+      "binary: rustc",
+      "commit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860",
+      "commit-date: 2026-04-14",
+      "host: x86_64-unknown-linux-gnu",
+      "release: 1.95.0",
+      "LLVM version: 22.1.2"
+    ]
+  },
+  "build": {
+    "receipt_line": 1348,
+    "command_line": 1165,
+    "command": "bash \"$PQ_OUT/run-command.sh\" build cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features --no-run --message-format=json",
+    "no_run_only_build": true
+  },
+  "format": {
+    "receipt_line": 1347,
+    "command_line": 1164,
+    "command": "bash \"$PQ_OUT/run-command.sh\" format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check"
+  },
+  "strict_clippy": {
+    "receipt_line": 2406,
+    "command_line": 2384,
+    "command": "bash \"$PQ_OUT/run-command.sh\" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings",
+    "finished_line": 2475,
+    "finished": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 38.87s"
+  },
+  "artifact": {
+    "id": 13297620244,
+    "name": "scoped-state-ubuntu-24.04-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+    "size_in_bytes": 1066238,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13297620244",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13297620244/zip",
+    "expired": false,
+    "created_at": "2026-11-04T05:01:25Z",
+    "expires_at": "2026-11-18T05:01:23Z",
+    "updated_at": "2026-11-04T05:01:25Z",
+    "digest": "sha256:a1d5a529c307aefe3658d4281eab15a29557ce784c8c23a90fd3ad8cefc2f6f2",
+    "workflow_run": {
+      "id": 41775481816,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-retained-failure-readback-20261104",
+      "head_sha": "8102335d91db9a2bfe2cc7c65a2aed7d6f5881b2"
+    },
+    "upload_lines": [
+      2546,
+      2557
+    ],
+    "uploaded_files": 123,
+    "zip_bytes_reported_in_upload": 1066238,
+    "zip_sha256_reported_in_upload": "a1d5a529c307aefe3658d4281eab15a29557ce784c8c23a90fd3ad8cefc2f6f2",
+    "contents_read_during_this_review": false
+  },
+  "limits": {
+    "full_node_suite_executed": false,
+    "unique_native_tests_added": 0,
+    "prior_failed_attempts_reclassified": false,
+    "independent_external_signoff": false,
+    "performance_acceptance_granted": false,
+    "whole_chain_pq_acceptance_granted": false,
+    "production_activation": false,
+    "source_or_native_commands_changed_by_review": false
+  },
+  "conclusion": "The auxiliary composite-parser failure from the prior scoped run is closed for this exact x64 focused job: original 19 scoped controls, one History SIGKILL parent and two exports each pass; all 42 wrapped commands succeed, oracle 29 and both export reconstructions pass, strict lint and both source/audit gates pass. This focused result does not qualify a full Node suite, another architecture/source, current throughput, whole-chain PQ, or unrelated failures."
+}

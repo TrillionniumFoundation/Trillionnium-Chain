@@ -1,0 +1,5100 @@
+{
+  "schema": "trnm-6f-workspace-four-lane-terminal-evidence-v1",
+  "source": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "actual_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+  "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+  "lanes": [
+    {
+      "job": 126389215203,
+      "run": 41771598347,
+      "run_attempt": 1,
+      "name": "original workspace test CPU (ubuntu-24.04, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598347/job/126389215203",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:32:29Z",
+            "completed_at": "2026-11-04T04:32:30Z"
+          },
+          {
+            "name": "Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:32:30Z",
+            "completed_at": "2026-11-04T04:32:54Z"
+          },
+          {
+            "name": "Verify unchanged source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:32:54Z",
+            "completed_at": "2026-11-04T04:32:55Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:32:55Z",
+            "completed_at": "2026-11-04T04:33:04Z"
+          },
+          {
+            "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:33:04Z",
+            "completed_at": "2026-11-04T04:34:56Z"
+          },
+          {
+            "name": "Build the original complete workspace in the unchanged test profile",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:34:56Z",
+            "completed_at": "2026-11-04T04:48:20Z"
+          },
+          {
+            "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:48:20Z",
+            "completed_at": "2026-11-04T04:48:59Z"
+          },
+          {
+            "name": "Execute selected arithmetic canonical and reorg semantic controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:48:59Z",
+            "completed_at": "2026-11-04T04:49:18Z"
+          },
+          {
+            "name": "Observe fixed touched owners across actual account and history growth",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:49:18Z",
+            "completed_at": "2026-11-04T04:54:38Z"
+          },
+          {
+            "name": "Recheck the same test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:54:38Z",
+            "completed_at": "2026-11-04T04:54:38Z"
+          },
+          {
+            "name": "Recheck the same M06 test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:54:38Z",
+            "completed_at": "2026-11-04T04:54:38Z"
+          },
+          {
+            "name": "Reverify exact source after every outcome",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T04:54:38Z",
+            "completed_at": "2026-11-04T04:54:42Z"
+          },
+          {
+            "name": "Retain actual successes and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T04:54:42Z",
+            "completed_at": "2026-11-04T04:54:44Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T04:54:44Z",
+            "completed_at": "2026-11-04T04:54:44Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T04:54:44Z",
+            "completed_at": "2026-11-04T04:54:44Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 872,
+          "end_line": 884,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 3149,
+          "end_line": 3161,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "whole_workspace_no_run_command": "/usr/bin/time -v -o \"$TRNM_CI_RECEIPT_DIR/build.resources.txt\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features --no-run --message-format=json > \"$TRNM_CI_RECEIPT_DIR/build.jsonl\" 2> \"$TRNM_CI_RECEIPT_DIR/build.stderr\"",
+      "selected": [
+        {
+          "header_line": 1152,
+          "terminal_line": 1161,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "24.22"
+          }
+        },
+        {
+          "header_line": 1164,
+          "terminal_line": 1170,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "14.03"
+          }
+        },
+        {
+          "header_line": 1173,
+          "terminal_line": 1176,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 1179,
+          "terminal_line": 1182,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2456,
+          "terminal_line": 2459,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2462,
+          "terminal_line": 2465,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2468,
+          "terminal_line": 2475,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2478,
+          "terminal_line": 2481,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.16"
+          }
+        },
+        {
+          "header_line": 2484,
+          "terminal_line": 2487,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "2.01"
+          }
+        },
+        {
+          "header_line": 2490,
+          "terminal_line": 2493,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2496,
+          "terminal_line": 2499,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2502,
+          "terminal_line": 2505,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2508,
+          "terminal_line": 2511,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2514,
+          "terminal_line": 2517,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2520,
+          "terminal_line": 2523,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2526,
+          "terminal_line": 2529,
+          "declared": 1,
+          "first_test": "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2532,
+          "terminal_line": 2535,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.23"
+          }
+        },
+        {
+          "header_line": 2538,
+          "terminal_line": 2541,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2544,
+          "terminal_line": 2547,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "2.38"
+          }
+        },
+        {
+          "header_line": 2550,
+          "terminal_line": 2553,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2556,
+          "terminal_line": 2559,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2562,
+          "terminal_line": 2565,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "1.10"
+          }
+        },
+        {
+          "header_line": 2568,
+          "terminal_line": 2571,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "8.06"
+          }
+        },
+        {
+          "header_line": 2574,
+          "terminal_line": 2577,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.21"
+          }
+        },
+        {
+          "header_line": 2580,
+          "terminal_line": 2583,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.27"
+          }
+        },
+        {
+          "header_line": 2586,
+          "terminal_line": 2589,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.21"
+          }
+        },
+        {
+          "header_line": 2592,
+          "terminal_line": 2595,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2598,
+          "terminal_line": 2601,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.23"
+          }
+        },
+        {
+          "header_line": 2604,
+          "terminal_line": 2607,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2610,
+          "terminal_line": 2613,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2616,
+          "terminal_line": 2619,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2622,
+          "terminal_line": 2625,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2628,
+          "terminal_line": 2631,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2634,
+          "terminal_line": 2637,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2640,
+          "terminal_line": 2643,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2646,
+          "terminal_line": 2649,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2652,
+          "terminal_line": 2655,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2658,
+          "terminal_line": 2661,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2664,
+          "terminal_line": 2667,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.18"
+          }
+        },
+        {
+          "header_line": 2670,
+          "terminal_line": 2673,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2676,
+          "terminal_line": 2679,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2682,
+          "terminal_line": 2685,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.13"
+          }
+        },
+        {
+          "header_line": 2688,
+          "terminal_line": 2691,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.15"
+          }
+        },
+        {
+          "header_line": 2694,
+          "terminal_line": 2697,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.17"
+          }
+        },
+        {
+          "header_line": 2700,
+          "terminal_line": 2703,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.13"
+          }
+        },
+        {
+          "header_line": 2706,
+          "terminal_line": 2709,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2712,
+          "terminal_line": 2715,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2718,
+          "terminal_line": 2721,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2724,
+          "terminal_line": 2727,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        }
+      ],
+      "unique_named_count": 49,
+      "all_49_one_pass": true,
+      "names": [
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+        "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+        "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+        "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+        "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+        "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+        "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+        "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+        "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+        "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+        "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+        "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+        "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+        "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+        "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+        "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+        "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+        "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+        "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+        "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+        "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+        "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+        "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+        "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+        "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+        "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+        "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+      ],
+      "growth_reader": {
+        "line": 2777,
+        "end_line": 3055,
+        "value": {
+          "cancelled_admissions": 9,
+          "cohorts": [
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                9195413,
+                9681111
+              ],
+              "cold_reopen_wall_ns": 57419301,
+              "copied_nodes_min_max": [
+                13,
+                13
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                16313816,
+                16857843
+              ],
+              "cold_reopen_wall_ns": 187657600,
+              "copied_nodes_min_max": [
+                13,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                17088024,
+                17097490
+              ],
+              "cold_reopen_wall_ns": 1262959214,
+              "copied_nodes_min_max": [
+                16,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                10115333,
+                10122978
+              ],
+              "cold_reopen_wall_ns": 146157591,
+              "copied_nodes_min_max": [
+                23,
+                23
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                16759110,
+                17254455
+              ],
+              "cold_reopen_wall_ns": 276550408,
+              "copied_nodes_min_max": [
+                23,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                18107097,
+                18129308
+              ],
+              "cold_reopen_wall_ns": 1358597713,
+              "copied_nodes_min_max": [
+                30,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                9972035,
+                10343990
+              ],
+              "cold_reopen_wall_ns": 1564222002,
+              "copied_nodes_min_max": [
+                27,
+                27
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                17162573,
+                17720265
+              ],
+              "cold_reopen_wall_ns": 1693454900,
+              "copied_nodes_min_max": [
+                27,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                18990565,
+                19064635
+              ],
+              "cold_reopen_wall_ns": 2836664612,
+              "copied_nodes_min_max": [
+                37,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            }
+          ],
+          "cold_reopens": 9,
+          "completed_cohorts": 9,
+          "files": [
+            {
+              "bytes": 1397,
+              "file": "run.jsonl",
+              "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+            },
+            {
+              "bytes": 25716,
+              "file": "cohort-a64-h0.jsonl",
+              "sha256": "f1283914947c726259f2de143eab0fd524b776539c6ffade9edebbb681cca08d"
+            },
+            {
+              "bytes": 27835,
+              "file": "cohort-a64-h16.jsonl",
+              "sha256": "c0bb0e3b10d5e6ac8fe9a7dbeaad7520005b52f9f17832f535af7933d89b74b2"
+            },
+            {
+              "bytes": 40769,
+              "file": "cohort-a64-h128.jsonl",
+              "sha256": "c728688170c2d7c77eadb3933e2b40ab21160cbf8dcad75af732e7ad01737533"
+            },
+            {
+              "bytes": 25793,
+              "file": "cohort-a1024-h0.jsonl",
+              "sha256": "3a086c09a883f618944553425e2379b24768e0a4fd7b5fdb043fb627564412d4"
+            },
+            {
+              "bytes": 27900,
+              "file": "cohort-a1024-h16.jsonl",
+              "sha256": "77e9e10dba43edb9ce995c97ddc92faab0d87d0a26713600681153051453d651"
+            },
+            {
+              "bytes": 40837,
+              "file": "cohort-a1024-h128.jsonl",
+              "sha256": "ec26dbe3b61177243a3ddd36f70c904ca16e27bb47c22a1ab918bbdf6efdfe5a"
+            },
+            {
+              "bytes": 25860,
+              "file": "cohort-a16384-h0.jsonl",
+              "sha256": "09a3866a14d6d2f7909e8698bf3e4325d66a167938e95542e93c4e21c62ffa2a"
+            },
+            {
+              "bytes": 27974,
+              "file": "cohort-a16384-h16.jsonl",
+              "sha256": "cd8990a776fcea8b8b8d4950d32827c76c6e892435ba4849b59a2650131cfe36"
+            },
+            {
+              "bytes": 40891,
+              "file": "cohort-a16384-h128.jsonl",
+              "sha256": "97baf4ce107ddf16b8e931b2ab0ebd062ebce93d3c946cc7bb59a2e89641d683"
+            }
+          ],
+          "fixed_witness_owners": [
+            "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+            "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+            "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+          ],
+          "measured_native_blocks": 72,
+          "p99_ns": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "requires_separate_source_binary_and_native_exit_verification": true,
+          "result": "COMPLETE_LOCAL_OBSERVATION",
+          "schema": "native-growth-fixed-owner-scale-readback-v1",
+          "throughput_qualified": false
+        }
+      },
+      "growth_native_terminal_read": false,
+      "growth_exits_not_printed": true,
+      "growth_step_success": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-04T04:49:18Z",
+        "completed_at": "2026-11-04T04:54:38Z"
+      },
+      "growth_qualification_limit": "Console contains the original observation reader result, but redirected native stdout, original exit-code file, compiler-artifact profile and binary SHA are not read from the archive. Do not call this 50 independently observed native PASS results.",
+      "artifacts": [
+        {
+          "id": 13296891890,
+          "name": "original-workspace-test-cpu-ubuntu-24.04-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 323559,
+          "sha256": "fe92fb5a7d06771ab5666a866540514180270837a07803871aa1e776eab5eb8c",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-workspace-terminal-log-126389215203",
+        "decoded_utf8_bytes": 466567,
+        "decoded_utf8_sha256": "a65823e5c25e3aa3b75f352aa5f2829b5c5fd7d3ee7bdbd2dae8e5c51da544e5"
+      },
+      "filesystem_written": false,
+      "no_zip_download": true
+    },
+    {
+      "job": 126389215365,
+      "run": 41771598347,
+      "run_attempt": 1,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598347/job/126389215365",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:34:06Z",
+            "completed_at": "2026-11-04T04:34:07Z"
+          },
+          {
+            "name": "Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:34:07Z",
+            "completed_at": "2026-11-04T04:34:29Z"
+          },
+          {
+            "name": "Verify unchanged source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:34:29Z",
+            "completed_at": "2026-11-04T04:34:30Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:34:30Z",
+            "completed_at": "2026-11-04T04:34:37Z"
+          },
+          {
+            "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:34:37Z",
+            "completed_at": "2026-11-04T04:35:51Z"
+          },
+          {
+            "name": "Build the original complete workspace in the unchanged test profile",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:35:51Z",
+            "completed_at": "2026-11-04T04:46:12Z"
+          },
+          {
+            "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:46:12Z",
+            "completed_at": "2026-11-04T04:46:36Z"
+          },
+          {
+            "name": "Execute selected arithmetic canonical and reorg semantic controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:46:36Z",
+            "completed_at": "2026-11-04T04:46:53Z"
+          },
+          {
+            "name": "Observe fixed touched owners across actual account and history growth",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:46:53Z",
+            "completed_at": "2026-11-04T04:50:38Z"
+          },
+          {
+            "name": "Recheck the same test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:50:38Z",
+            "completed_at": "2026-11-04T04:50:39Z"
+          },
+          {
+            "name": "Recheck the same M06 test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:50:39Z",
+            "completed_at": "2026-11-04T04:50:39Z"
+          },
+          {
+            "name": "Reverify exact source after every outcome",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T04:50:39Z",
+            "completed_at": "2026-11-04T04:50:42Z"
+          },
+          {
+            "name": "Retain actual successes and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T04:50:42Z",
+            "completed_at": "2026-11-04T04:50:43Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T04:50:43Z",
+            "completed_at": "2026-11-04T04:50:44Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T04:50:44Z",
+            "completed_at": "2026-11-04T04:50:44Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 870,
+          "end_line": 882,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 3147,
+          "end_line": 3159,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "whole_workspace_no_run_command": "/usr/bin/time -v -o \"$TRNM_CI_RECEIPT_DIR/build.resources.txt\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features --no-run --message-format=json > \"$TRNM_CI_RECEIPT_DIR/build.jsonl\" 2> \"$TRNM_CI_RECEIPT_DIR/build.stderr\"",
+      "selected": [
+        {
+          "header_line": 1150,
+          "terminal_line": 1159,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "14.67"
+          }
+        },
+        {
+          "header_line": 1162,
+          "terminal_line": 1168,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "8.32"
+          }
+        },
+        {
+          "header_line": 1171,
+          "terminal_line": 1174,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 1177,
+          "terminal_line": 1180,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2454,
+          "terminal_line": 2457,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.01"
+          }
+        },
+        {
+          "header_line": 2460,
+          "terminal_line": 2463,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2466,
+          "terminal_line": 2473,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2476,
+          "terminal_line": 2479,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2482,
+          "terminal_line": 2485,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "1.13"
+          }
+        },
+        {
+          "header_line": 2488,
+          "terminal_line": 2491,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2494,
+          "terminal_line": 2497,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2500,
+          "terminal_line": 2503,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2506,
+          "terminal_line": 2509,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2512,
+          "terminal_line": 2515,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2518,
+          "terminal_line": 2521,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2524,
+          "terminal_line": 2527,
+          "declared": 1,
+          "first_test": "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.01"
+          }
+        },
+        {
+          "header_line": 2530,
+          "terminal_line": 2533,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "1.90"
+          }
+        },
+        {
+          "header_line": 2536,
+          "terminal_line": 2539,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.55"
+          }
+        },
+        {
+          "header_line": 2542,
+          "terminal_line": 2545,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "4.04"
+          }
+        },
+        {
+          "header_line": 2548,
+          "terminal_line": 2551,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2554,
+          "terminal_line": 2557,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2560,
+          "terminal_line": 2563,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.69"
+          }
+        },
+        {
+          "header_line": 2566,
+          "terminal_line": 2569,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "4.77"
+          }
+        },
+        {
+          "header_line": 2572,
+          "terminal_line": 2575,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.12"
+          }
+        },
+        {
+          "header_line": 2578,
+          "terminal_line": 2581,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.13"
+          }
+        },
+        {
+          "header_line": 2584,
+          "terminal_line": 2587,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.15"
+          }
+        },
+        {
+          "header_line": 2590,
+          "terminal_line": 2593,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2596,
+          "terminal_line": 2599,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.13"
+          }
+        },
+        {
+          "header_line": 2602,
+          "terminal_line": 2605,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2608,
+          "terminal_line": 2611,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2614,
+          "terminal_line": 2617,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2620,
+          "terminal_line": 2623,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2626,
+          "terminal_line": 2629,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2632,
+          "terminal_line": 2635,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2638,
+          "terminal_line": 2641,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2644,
+          "terminal_line": 2647,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2650,
+          "terminal_line": 2653,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2656,
+          "terminal_line": 2659,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2662,
+          "terminal_line": 2665,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.11"
+          }
+        },
+        {
+          "header_line": 2668,
+          "terminal_line": 2671,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2674,
+          "terminal_line": 2677,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2680,
+          "terminal_line": 2683,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2686,
+          "terminal_line": 2689,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2692,
+          "terminal_line": 2695,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2698,
+          "terminal_line": 2701,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2704,
+          "terminal_line": 2707,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2710,
+          "terminal_line": 2713,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2716,
+          "terminal_line": 2719,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2722,
+          "terminal_line": 2725,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        }
+      ],
+      "unique_named_count": 49,
+      "all_49_one_pass": true,
+      "names": [
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+        "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+        "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+        "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+        "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+        "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+        "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+        "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+        "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+        "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+        "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+        "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+        "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+        "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+        "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+        "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+        "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+        "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+        "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+        "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+        "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+        "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+        "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+        "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+        "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+        "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+        "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+      ],
+      "growth_reader": {
+        "line": 2775,
+        "end_line": 3053,
+        "value": {
+          "cancelled_admissions": 9,
+          "cohorts": [
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                5923467,
+                6119413
+              ],
+              "cold_reopen_wall_ns": 36239638,
+              "copied_nodes_min_max": [
+                13,
+                13
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                9771691,
+                10107156
+              ],
+              "cold_reopen_wall_ns": 114664105,
+              "copied_nodes_min_max": [
+                13,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                10266066,
+                10273016
+              ],
+              "cold_reopen_wall_ns": 770890517,
+              "copied_nodes_min_max": [
+                16,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                6724694,
+                6773086
+              ],
+              "cold_reopen_wall_ns": 94560111,
+              "copied_nodes_min_max": [
+                23,
+                23
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                10290853,
+                10331645
+              ],
+              "cold_reopen_wall_ns": 178045713,
+              "copied_nodes_min_max": [
+                23,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                11428502,
+                11532898
+              ],
+              "cold_reopen_wall_ns": 864776864,
+              "copied_nodes_min_max": [
+                30,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                6540890,
+                6950277
+              ],
+              "cold_reopen_wall_ns": 1124309213,
+              "copied_nodes_min_max": [
+                27,
+                27
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                10917946,
+                11250620
+              ],
+              "cold_reopen_wall_ns": 1192113216,
+              "copied_nodes_min_max": [
+                27,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                11038893,
+                11048247
+              ],
+              "cold_reopen_wall_ns": 1791939602,
+              "copied_nodes_min_max": [
+                37,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            }
+          ],
+          "cold_reopens": 9,
+          "completed_cohorts": 9,
+          "files": [
+            {
+              "bytes": 1397,
+              "file": "run.jsonl",
+              "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+            },
+            {
+              "bytes": 25709,
+              "file": "cohort-a64-h0.jsonl",
+              "sha256": "98fa537aedebdf31c88ee02a98466e755c1a23f61760325fbcb265d21f62559f"
+            },
+            {
+              "bytes": 27810,
+              "file": "cohort-a64-h16.jsonl",
+              "sha256": "b57983b83628609d340f1743f23a1906d6758f79511ad1e4ce4e795aaa209e4a"
+            },
+            {
+              "bytes": 40750,
+              "file": "cohort-a64-h128.jsonl",
+              "sha256": "7b64357abdf9a5d8004f9c42a266351c6783d6ce7f77a0e9ffa6a0fb8c36d6d7"
+            },
+            {
+              "bytes": 25773,
+              "file": "cohort-a1024-h0.jsonl",
+              "sha256": "0218ca5d2c27651de3eca53bf75a52071a006a6a71f93fb13b3b180b02fb5ea2"
+            },
+            {
+              "bytes": 27872,
+              "file": "cohort-a1024-h16.jsonl",
+              "sha256": "5fe483f79bc17a8123abcdc33b44293b55d38a3e016fc09d2a1f147c09b6e97e"
+            },
+            {
+              "bytes": 40821,
+              "file": "cohort-a1024-h128.jsonl",
+              "sha256": "581db7054b012feba52694e1a706a0ccd73e4aadc29d86cf306ddb69ebd4e7d0"
+            },
+            {
+              "bytes": 25849,
+              "file": "cohort-a16384-h0.jsonl",
+              "sha256": "995231199de17bac53eddb34e953a2dd7895c41cba4d01684bab60bdd89e1f5d"
+            },
+            {
+              "bytes": 27951,
+              "file": "cohort-a16384-h16.jsonl",
+              "sha256": "7bb7009859df3db5f44dba7b253f9a7250e0d72ea689d614f02650a5d8c97bac"
+            },
+            {
+              "bytes": 40870,
+              "file": "cohort-a16384-h128.jsonl",
+              "sha256": "715fdc9dcfdcf3997082d94689ff032f3cc26daab046e27bb5cc422791d6df6d"
+            }
+          ],
+          "fixed_witness_owners": [
+            "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+            "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+            "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+          ],
+          "measured_native_blocks": 72,
+          "p99_ns": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "requires_separate_source_binary_and_native_exit_verification": true,
+          "result": "COMPLETE_LOCAL_OBSERVATION",
+          "schema": "native-growth-fixed-owner-scale-readback-v1",
+          "throughput_qualified": false
+        }
+      },
+      "growth_native_terminal_read": false,
+      "growth_exits_not_printed": true,
+      "growth_step_success": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-04T04:46:53Z",
+        "completed_at": "2026-11-04T04:50:38Z"
+      },
+      "growth_qualification_limit": "Console contains the original observation reader result, but redirected native stdout, original exit-code file, compiler-artifact profile and binary SHA are not read from the archive. Do not call this 50 independently observed native PASS results.",
+      "artifacts": [
+        {
+          "id": 13296856810,
+          "name": "original-workspace-test-cpu-ubuntu-24.04-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 323308,
+          "sha256": "dcc5721a908db0659024d03b29673c619b600d40f54fbe574734fabff94da4ff",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-workspace-terminal-log-126389215365",
+        "decoded_utf8_bytes": 466959,
+        "decoded_utf8_sha256": "5cf01e9a9f0057366d2756000c98b4d94027ef07854764f0798f4cd14ab99cee"
+      },
+      "filesystem_written": false,
+      "no_zip_download": true
+    },
+    {
+      "job": 126389215261,
+      "run": 41771598347,
+      "run_attempt": 1,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598347/job/126389215261",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:33:22Z",
+            "completed_at": "2026-11-04T04:33:22Z"
+          },
+          {
+            "name": "Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:33:22Z",
+            "completed_at": "2026-11-04T04:33:45Z"
+          },
+          {
+            "name": "Verify unchanged source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:33:45Z",
+            "completed_at": "2026-11-04T04:33:47Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:33:47Z",
+            "completed_at": "2026-11-04T04:33:53Z"
+          },
+          {
+            "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:33:53Z",
+            "completed_at": "2026-11-04T04:35:32Z"
+          },
+          {
+            "name": "Build the original complete workspace in the unchanged test profile",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:35:32Z",
+            "completed_at": "2026-11-04T04:50:54Z"
+          },
+          {
+            "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:50:54Z",
+            "completed_at": "2026-11-04T04:51:45Z"
+          },
+          {
+            "name": "Execute selected arithmetic canonical and reorg semantic controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:51:45Z",
+            "completed_at": "2026-11-04T04:52:09Z"
+          },
+          {
+            "name": "Observe fixed touched owners across actual account and history growth",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:52:09Z",
+            "completed_at": "2026-11-04T05:03:10Z"
+          },
+          {
+            "name": "Recheck the same test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T05:03:10Z",
+            "completed_at": "2026-11-04T05:03:11Z"
+          },
+          {
+            "name": "Recheck the same M06 test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T05:03:11Z",
+            "completed_at": "2026-11-04T05:03:11Z"
+          },
+          {
+            "name": "Reverify exact source after every outcome",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:03:11Z",
+            "completed_at": "2026-11-04T05:03:14Z"
+          },
+          {
+            "name": "Retain actual successes and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:03:14Z",
+            "completed_at": "2026-11-04T05:03:16Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:03:16Z",
+            "completed_at": "2026-11-04T05:03:16Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:03:16Z",
+            "completed_at": "2026-11-04T05:03:16Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 866,
+          "end_line": 878,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 3143,
+          "end_line": 3155,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "whole_workspace_no_run_command": "/usr/bin/time -v -o \"$TRNM_CI_RECEIPT_DIR/build.resources.txt\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features --no-run --message-format=json > \"$TRNM_CI_RECEIPT_DIR/build.jsonl\" 2> \"$TRNM_CI_RECEIPT_DIR/build.stderr\"",
+      "selected": [
+        {
+          "header_line": 1146,
+          "terminal_line": 1155,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "31.84"
+          }
+        },
+        {
+          "header_line": 1158,
+          "terminal_line": 1164,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "17.64"
+          }
+        },
+        {
+          "header_line": 1167,
+          "terminal_line": 1170,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 1173,
+          "terminal_line": 1176,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2450,
+          "terminal_line": 2453,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2456,
+          "terminal_line": 2459,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.01"
+          }
+        },
+        {
+          "header_line": 2462,
+          "terminal_line": 2469,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2472,
+          "terminal_line": 2475,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.25"
+          }
+        },
+        {
+          "header_line": 2478,
+          "terminal_line": 2481,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "2.66"
+          }
+        },
+        {
+          "header_line": 2484,
+          "terminal_line": 2487,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.12"
+          }
+        },
+        {
+          "header_line": 2490,
+          "terminal_line": 2493,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2496,
+          "terminal_line": 2499,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2502,
+          "terminal_line": 2505,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2508,
+          "terminal_line": 2511,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2514,
+          "terminal_line": 2517,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2520,
+          "terminal_line": 2523,
+          "declared": 1,
+          "first_test": "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2526,
+          "terminal_line": 2529,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.25"
+          }
+        },
+        {
+          "header_line": 2532,
+          "terminal_line": 2535,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2538,
+          "terminal_line": 2541,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "2.86"
+          }
+        },
+        {
+          "header_line": 2544,
+          "terminal_line": 2547,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2550,
+          "terminal_line": 2553,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2556,
+          "terminal_line": 2559,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "1.32"
+          }
+        },
+        {
+          "header_line": 2562,
+          "terminal_line": 2565,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "11.10"
+          }
+        },
+        {
+          "header_line": 2568,
+          "terminal_line": 2571,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.26"
+          }
+        },
+        {
+          "header_line": 2574,
+          "terminal_line": 2577,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.25"
+          }
+        },
+        {
+          "header_line": 2580,
+          "terminal_line": 2583,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.28"
+          }
+        },
+        {
+          "header_line": 2586,
+          "terminal_line": 2589,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2592,
+          "terminal_line": 2595,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.28"
+          }
+        },
+        {
+          "header_line": 2598,
+          "terminal_line": 2601,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2604,
+          "terminal_line": 2607,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2610,
+          "terminal_line": 2613,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2616,
+          "terminal_line": 2619,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2622,
+          "terminal_line": 2625,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2628,
+          "terminal_line": 2631,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2634,
+          "terminal_line": 2637,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2640,
+          "terminal_line": 2643,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2646,
+          "terminal_line": 2649,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2652,
+          "terminal_line": 2655,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2658,
+          "terminal_line": 2661,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.23"
+          }
+        },
+        {
+          "header_line": 2664,
+          "terminal_line": 2667,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2670,
+          "terminal_line": 2673,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2676,
+          "terminal_line": 2679,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.17"
+          }
+        },
+        {
+          "header_line": 2682,
+          "terminal_line": 2685,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.19"
+          }
+        },
+        {
+          "header_line": 2688,
+          "terminal_line": 2691,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.22"
+          }
+        },
+        {
+          "header_line": 2694,
+          "terminal_line": 2697,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.18"
+          }
+        },
+        {
+          "header_line": 2700,
+          "terminal_line": 2703,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2706,
+          "terminal_line": 2709,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2712,
+          "terminal_line": 2715,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2718,
+          "terminal_line": 2721,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        }
+      ],
+      "unique_named_count": 49,
+      "all_49_one_pass": true,
+      "names": [
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+        "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+        "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+        "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+        "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+        "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+        "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+        "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+        "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+        "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+        "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+        "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+        "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+        "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+        "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+        "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+        "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+        "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+        "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+        "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+        "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+        "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+        "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+        "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+        "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+        "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+        "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+      ],
+      "growth_reader": {
+        "line": 2771,
+        "end_line": 3049,
+        "value": {
+          "cancelled_admissions": 9,
+          "cohorts": [
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                14279795,
+                15061137
+              ],
+              "cold_reopen_wall_ns": 93837212,
+              "copied_nodes_min_max": [
+                13,
+                13
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                25386917,
+                26435555
+              ],
+              "cold_reopen_wall_ns": 315859777,
+              "copied_nodes_min_max": [
+                13,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                26903877,
+                26913884
+              ],
+              "cold_reopen_wall_ns": 2164195973,
+              "copied_nodes_min_max": [
+                16,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                14854206,
+                15787235
+              ],
+              "cold_reopen_wall_ns": 274514362,
+              "copied_nodes_min_max": [
+                23,
+                23
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                25985412,
+                26906081
+              ],
+              "cold_reopen_wall_ns": 495846360,
+              "copied_nodes_min_max": [
+                23,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                27634863,
+                27642974
+              ],
+              "cold_reopen_wall_ns": 2343483777,
+              "copied_nodes_min_max": [
+                30,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                15376150,
+                17107434
+              ],
+              "cold_reopen_wall_ns": 3137892499,
+              "copied_nodes_min_max": [
+                27,
+                27
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                27237266,
+                27313230
+              ],
+              "cold_reopen_wall_ns": 3357619481,
+              "copied_nodes_min_max": [
+                27,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                29120586,
+                29819068
+              ],
+              "cold_reopen_wall_ns": 5193330379,
+              "copied_nodes_min_max": [
+                37,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            }
+          ],
+          "cold_reopens": 9,
+          "completed_cohorts": 9,
+          "files": [
+            {
+              "bytes": 1397,
+              "file": "run.jsonl",
+              "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+            },
+            {
+              "bytes": 25739,
+              "file": "cohort-a64-h0.jsonl",
+              "sha256": "053c8401fb4977dbaf701ab2a80b38f9a55ae7ac059c5e1436e8db5dcccc0e95"
+            },
+            {
+              "bytes": 27844,
+              "file": "cohort-a64-h16.jsonl",
+              "sha256": "4d21242fadf13cecc0fed68e1c1f6caba2f36eca89eb0ef6343230c2784a818b"
+            },
+            {
+              "bytes": 40781,
+              "file": "cohort-a64-h128.jsonl",
+              "sha256": "9fe850eacdee82165e79e9d7e99082ba585151997900943f2472e7b8ddbe8b98"
+            },
+            {
+              "bytes": 25815,
+              "file": "cohort-a1024-h0.jsonl",
+              "sha256": "36664f3aea814ae4085fcb8723369261736652a36e5341af60335dab310bff87"
+            },
+            {
+              "bytes": 27911,
+              "file": "cohort-a1024-h16.jsonl",
+              "sha256": "82e465a944b89ebb1e6d581a18ef9bf2d14a640399f003ccc5a6c0e6f1602e84"
+            },
+            {
+              "bytes": 40846,
+              "file": "cohort-a1024-h128.jsonl",
+              "sha256": "a035357648b8b34db7578dec6228ee80a0228cb71ed15ff211dad0100a470540"
+            },
+            {
+              "bytes": 25885,
+              "file": "cohort-a16384-h0.jsonl",
+              "sha256": "86890b3b581f4ee215c68d44e02f726c5a489379502c488a0a02eccfe695a7e8"
+            },
+            {
+              "bytes": 27982,
+              "file": "cohort-a16384-h16.jsonl",
+              "sha256": "a7e58c088d28eee9a5101e43a250c504ab62d25a6b18ffb6cd07cabb3117098e"
+            },
+            {
+              "bytes": 40896,
+              "file": "cohort-a16384-h128.jsonl",
+              "sha256": "7f016e2b229c186e15fc6049908236d56bdc6277de84b9f00e0fa98585d49538"
+            }
+          ],
+          "fixed_witness_owners": [
+            "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+            "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+            "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+          ],
+          "measured_native_blocks": 72,
+          "p99_ns": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "requires_separate_source_binary_and_native_exit_verification": true,
+          "result": "COMPLETE_LOCAL_OBSERVATION",
+          "schema": "native-growth-fixed-owner-scale-readback-v1",
+          "throughput_qualified": false
+        }
+      },
+      "growth_native_terminal_read": false,
+      "growth_exits_not_printed": true,
+      "growth_step_success": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-04T04:52:09Z",
+        "completed_at": "2026-11-04T05:03:10Z"
+      },
+      "growth_qualification_limit": "Console contains the original observation reader result, but redirected native stdout, original exit-code file, compiler-artifact profile and binary SHA are not read from the archive. Do not call this 50 independently observed native PASS results.",
+      "artifacts": [
+        {
+          "id": 13297745287,
+          "name": "original-workspace-test-cpu-ubuntu-24.04-arm-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 323222,
+          "sha256": "17568ee44a27c9c21e7d6b35f2c57f49e1c233033743c05feee0ea1945f992d8",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-workspace-terminal-log-126389215261",
+        "decoded_utf8_bytes": 466239,
+        "decoded_utf8_sha256": "ebed92c3deeb665ae7c81507aa0627cbc98b68010a13b2e96b20cab83d161fa1"
+      },
+      "filesystem_written": false,
+      "no_zip_download": true
+    },
+    {
+      "job": 126389214961,
+      "run": 41771598347,
+      "run_attempt": 1,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598347/job/126389214961",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:32:15Z",
+            "completed_at": "2026-11-04T04:32:15Z"
+          },
+          {
+            "name": "Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:32:16Z",
+            "completed_at": "2026-11-04T04:32:42Z"
+          },
+          {
+            "name": "Verify unchanged source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:32:42Z",
+            "completed_at": "2026-11-04T04:32:44Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:32:44Z",
+            "completed_at": "2026-11-04T04:32:50Z"
+          },
+          {
+            "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:32:50Z",
+            "completed_at": "2026-11-04T04:34:27Z"
+          },
+          {
+            "name": "Build the original complete workspace in the unchanged test profile",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:34:27Z",
+            "completed_at": "2026-11-04T04:49:31Z"
+          },
+          {
+            "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:49:31Z",
+            "completed_at": "2026-11-04T04:50:21Z"
+          },
+          {
+            "name": "Execute selected arithmetic canonical and reorg semantic controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:50:21Z",
+            "completed_at": "2026-11-04T04:50:46Z"
+          },
+          {
+            "name": "Observe fixed touched owners across actual account and history growth",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:50:46Z",
+            "completed_at": "2026-11-04T05:01:47Z"
+          },
+          {
+            "name": "Recheck the same test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T05:01:47Z",
+            "completed_at": "2026-11-04T05:01:48Z"
+          },
+          {
+            "name": "Recheck the same M06 test ELF after success or failure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T05:01:48Z",
+            "completed_at": "2026-11-04T05:01:48Z"
+          },
+          {
+            "name": "Reverify exact source after every outcome",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:01:48Z",
+            "completed_at": "2026-11-04T05:01:51Z"
+          },
+          {
+            "name": "Retain actual successes and failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:01:51Z",
+            "completed_at": "2026-11-04T05:01:52Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or actual target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:01:52Z",
+            "completed_at": "2026-11-04T05:01:52Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:01:52Z",
+            "completed_at": "2026-11-04T05:01:52Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 869,
+          "end_line": 881,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 3146,
+          "end_line": 3158,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "whole_workspace_no_run_command": "/usr/bin/time -v -o \"$TRNM_CI_RECEIPT_DIR/build.resources.txt\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features --no-run --message-format=json > \"$TRNM_CI_RECEIPT_DIR/build.jsonl\" 2> \"$TRNM_CI_RECEIPT_DIR/build.stderr\"",
+      "selected": [
+        {
+          "header_line": 1149,
+          "terminal_line": 1158,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "32.38"
+          }
+        },
+        {
+          "header_line": 1161,
+          "terminal_line": 1167,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "17.55"
+          }
+        },
+        {
+          "header_line": 1170,
+          "terminal_line": 1173,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 1176,
+          "terminal_line": 1179,
+          "declared": 1,
+          "first_test": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2453,
+          "terminal_line": 2456,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 2459,
+          "terminal_line": 2462,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.01"
+          }
+        },
+        {
+          "header_line": 2465,
+          "terminal_line": 2472,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2475,
+          "terminal_line": 2478,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.25"
+          }
+        },
+        {
+          "header_line": 2481,
+          "terminal_line": 2484,
+          "declared": 1,
+          "first_test": "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "2.69"
+          }
+        },
+        {
+          "header_line": 2487,
+          "terminal_line": 2490,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.12"
+          }
+        },
+        {
+          "header_line": 2493,
+          "terminal_line": 2496,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2499,
+          "terminal_line": 2502,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2505,
+          "terminal_line": 2508,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.00"
+          }
+        },
+        {
+          "header_line": 2511,
+          "terminal_line": 2514,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2517,
+          "terminal_line": 2520,
+          "declared": 1,
+          "first_test": "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2523,
+          "terminal_line": 2526,
+          "declared": 1,
+          "first_test": "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 112,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2529,
+          "terminal_line": 2532,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.25"
+          }
+        },
+        {
+          "header_line": 2535,
+          "terminal_line": 2538,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.05"
+          }
+        },
+        {
+          "header_line": 2541,
+          "terminal_line": 2544,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "2.82"
+          }
+        },
+        {
+          "header_line": 2547,
+          "terminal_line": 2550,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2553,
+          "terminal_line": 2556,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 2559,
+          "terminal_line": 2562,
+          "declared": 1,
+          "first_test": "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "1.31"
+          }
+        },
+        {
+          "header_line": 2565,
+          "terminal_line": 2568,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "11.05"
+          }
+        },
+        {
+          "header_line": 2571,
+          "terminal_line": 2574,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.31"
+          }
+        },
+        {
+          "header_line": 2577,
+          "terminal_line": 2580,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.26"
+          }
+        },
+        {
+          "header_line": 2583,
+          "terminal_line": 2586,
+          "declared": 1,
+          "first_test": "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.27"
+          }
+        },
+        {
+          "header_line": 2589,
+          "terminal_line": 2592,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2595,
+          "terminal_line": 2598,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.28"
+          }
+        },
+        {
+          "header_line": 2601,
+          "terminal_line": 2604,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2607,
+          "terminal_line": 2610,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2613,
+          "terminal_line": 2616,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2619,
+          "terminal_line": 2622,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 2625,
+          "terminal_line": 2628,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2631,
+          "terminal_line": 2634,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2637,
+          "terminal_line": 2640,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2643,
+          "terminal_line": 2646,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2649,
+          "terminal_line": 2652,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.06"
+          }
+        },
+        {
+          "header_line": 2655,
+          "terminal_line": 2658,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.04"
+          }
+        },
+        {
+          "header_line": 2661,
+          "terminal_line": 2664,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.22"
+          }
+        },
+        {
+          "header_line": 2667,
+          "terminal_line": 2670,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2673,
+          "terminal_line": 2676,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2679,
+          "terminal_line": 2682,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.17"
+          }
+        },
+        {
+          "header_line": 2685,
+          "terminal_line": 2688,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.19"
+          }
+        },
+        {
+          "header_line": 2691,
+          "terminal_line": 2694,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.22"
+          }
+        },
+        {
+          "header_line": 2697,
+          "terminal_line": 2700,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.17"
+          }
+        },
+        {
+          "header_line": 2703,
+          "terminal_line": 2706,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 2709,
+          "terminal_line": 2712,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        },
+        {
+          "header_line": 2715,
+          "terminal_line": 2718,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 2721,
+          "terminal_line": 2724,
+          "declared": 1,
+          "first_test": "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 999,
+            "duration_seconds_text": "0.03"
+          }
+        }
+      ],
+      "unique_named_count": 49,
+      "all_49_one_pass": true,
+      "names": [
+        "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+        "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks",
+        "pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root",
+        "pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order",
+        "pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+        "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+        "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+        "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+        "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+        "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+        "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+        "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+        "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+        "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+        "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+        "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+        "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+        "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+        "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+        "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+        "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+        "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+        "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+        "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+        "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer",
+        "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+        "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+        "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+        "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+        "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+        "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+      ],
+      "growth_reader": {
+        "line": 2774,
+        "end_line": 3052,
+        "value": {
+          "cancelled_admissions": 9,
+          "cohorts": [
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                14057415,
+                14782133
+              ],
+              "cold_reopen_wall_ns": 92953132,
+              "copied_nodes_min_max": [
+                13,
+                13
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                25095230,
+                26197767
+              ],
+              "cold_reopen_wall_ns": 312762570,
+              "copied_nodes_min_max": [
+                13,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 64,
+              "admission_median_interval_ns": [
+                26173406,
+                26180430
+              ],
+              "cold_reopen_wall_ns": 2125971235,
+              "copied_nodes_min_max": [
+                16,
+                16
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                16,
+                16
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                917,
+                917
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                14573439,
+                15292557
+              ],
+              "cold_reopen_wall_ns": 273398149,
+              "copied_nodes_min_max": [
+                23,
+                23
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                25807322,
+                26737469
+              ],
+              "cold_reopen_wall_ns": 493082782,
+              "copied_nodes_min_max": [
+                23,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 1024,
+              "admission_median_interval_ns": [
+                27425271,
+                27429696
+              ],
+              "cold_reopen_wall_ns": 2325501067,
+              "copied_nodes_min_max": [
+                30,
+                30
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                30,
+                30
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                1841,
+                1841
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                15038156,
+                15833931
+              ],
+              "cold_reopen_wall_ns": 3140344751,
+              "copied_nodes_min_max": [
+                27,
+                27
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 0,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                25856974,
+                27304624
+              ],
+              "cold_reopen_wall_ns": 3367622707,
+              "copied_nodes_min_max": [
+                27,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 16,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            },
+            {
+              "accounts": 16384,
+              "admission_median_interval_ns": [
+                28679547,
+                28725252
+              ],
+              "cold_reopen_wall_ns": 5211546287,
+              "copied_nodes_min_max": [
+                37,
+                37
+              ],
+              "measured_blocks": 8,
+              "p99_ns": null,
+              "separate_query_point_reads_min_max": [
+                37,
+                37
+              ],
+              "warmup_history_blocks": 128,
+              "witness_bytes_min_max": [
+                2303,
+                2303
+              ]
+            }
+          ],
+          "cold_reopens": 9,
+          "completed_cohorts": 9,
+          "files": [
+            {
+              "bytes": 1397,
+              "file": "run.jsonl",
+              "sha256": "a608e8cb48fa0df541fed725ec6a55a5612af9980602ebebae878a8c16045c32"
+            },
+            {
+              "bytes": 25739,
+              "file": "cohort-a64-h0.jsonl",
+              "sha256": "86ba016f6aab44c40c2f61501c3112884ccce3a5e46e62dccd29bacdd1cdbabc"
+            },
+            {
+              "bytes": 27843,
+              "file": "cohort-a64-h16.jsonl",
+              "sha256": "21ec1d5d57e81a65a09bdb3f9f017081fc5abd32e47a8acb2979f0012a201011"
+            },
+            {
+              "bytes": 40776,
+              "file": "cohort-a64-h128.jsonl",
+              "sha256": "a5080377866433adcd8836f9c8f485d7334926c36f24ccc663456987d7566eb9"
+            },
+            {
+              "bytes": 25811,
+              "file": "cohort-a1024-h0.jsonl",
+              "sha256": "ff02b9ca35a586c92343dc9277af6e2563fc45500aff3f0f16211b78a0ea2f3b"
+            },
+            {
+              "bytes": 27911,
+              "file": "cohort-a1024-h16.jsonl",
+              "sha256": "e49f9bb8b49d4ab4f11767f5e4294a9d52e3a77ec498eea5b7d29edda3b8c6b5"
+            },
+            {
+              "bytes": 40843,
+              "file": "cohort-a1024-h128.jsonl",
+              "sha256": "9b01659aa6e774242133eaf4f6b95b5b53b698f5731113437a98e488e97722d4"
+            },
+            {
+              "bytes": 25885,
+              "file": "cohort-a16384-h0.jsonl",
+              "sha256": "7356d94949c4a4f74761fe07e8b270ca18df1e56be045e9ff86f3ca72db437f0"
+            },
+            {
+              "bytes": 27981,
+              "file": "cohort-a16384-h16.jsonl",
+              "sha256": "1dcb319a33323546b8a0da9c781b0cb72468828335e2284dc48169501cc242e6"
+            },
+            {
+              "bytes": 40895,
+              "file": "cohort-a16384-h128.jsonl",
+              "sha256": "5d5029f29cc067f18fb213a9b93abec7126a9facf6d1aa7b1e46f164a8a3d5c8"
+            }
+          ],
+          "fixed_witness_owners": [
+            "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+            "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+            "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+          ],
+          "measured_native_blocks": 72,
+          "p99_ns": null,
+          "production_activation": false,
+          "public_network_ready": false,
+          "requires_separate_source_binary_and_native_exit_verification": true,
+          "result": "COMPLETE_LOCAL_OBSERVATION",
+          "schema": "native-growth-fixed-owner-scale-readback-v1",
+          "throughput_qualified": false
+        }
+      },
+      "growth_native_terminal_read": false,
+      "growth_exits_not_printed": true,
+      "growth_step_success": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-04T04:50:46Z",
+        "completed_at": "2026-11-04T05:01:47Z"
+      },
+      "growth_qualification_limit": "Console contains the original observation reader result, but redirected native stdout, original exit-code file, compiler-artifact profile and binary SHA are not read from the archive. Do not call this 50 independently observed native PASS results.",
+      "artifacts": [
+        {
+          "id": 13297675214,
+          "name": "original-workspace-test-cpu-ubuntu-24.04-arm-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 323230,
+          "sha256": "d65c6f6feaa5cfdb5a1ae7bbeea36e1d464f4968f2b4a7b658ea02a1e0e95e1f",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-workspace-terminal-log-126389214961",
+        "decoded_utf8_bytes": 467000,
+        "decoded_utf8_sha256": "3a29df2979136442b80b60e7bc66517978cb5346084aca6d3cfb48e7e20308ae"
+      },
+      "filesystem_written": false,
+      "no_zip_download": true
+    }
+  ],
+  "all_four_logs_read": true,
+  "identical_named_49_sets": true,
+  "filesystem_persisted": false,
+  "interpretation": {
+    "whole_workspace_command": "Original --workspace --all-targets --all-features --no-run compiled the workspace; it did not execute all workspace tests.",
+    "selected_tests": "Each lane contains 49 unique named original selected single-test invocations with actual one-pass libtest terminal records. Same names in all four lanes; no summation across lanes.",
+    "growth": "The original reader output reports 9 cohorts, 72 measured native blocks, 9 cancelled admissions and 9 cold reopens per lane. Redirected native log/exit file and original binary profile/SHA are not read here. This is not a claim of 50 independently read native PASS records.",
+    "limits": "p99 is null; throughput_qualified, public_network_ready and production_activation remain false.",
+    "raw_log_hash_scope": "UTF-8 of complete decoded connector-returned log text",
+    "no_zip_download": true,
+    "no_cross_source_inheritance": true
+  }
+}

@@ -1,0 +1,1151 @@
+{
+  "schema": "trnm-6f-w1-two-x64-factorial-terminal-evidence-v1",
+  "source": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+  "actual_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+  "lanes": [
+    {
+      "schema": "original-w1-factorial-terminal-v1",
+      "job": 126385207509,
+      "run": 41771598422,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (x64, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598422/job/126385207509",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:36:08Z",
+            "completed_at": "2026-11-04T04:36:09Z"
+          },
+          {
+            "name": "Checkout exact measured source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:36:09Z",
+            "completed_at": "2026-11-04T04:36:34Z"
+          },
+          {
+            "name": "Reserve observations and verify ordered source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:36:34Z",
+            "completed_at": "2026-11-04T04:36:36Z"
+          },
+          {
+            "name": "Install exact original compiler and tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:36:36Z",
+            "completed_at": "2026-11-04T04:36:43Z"
+          },
+          {
+            "name": "Verify retained and factorial readers and command-owner failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:36:43Z",
+            "completed_at": "2026-11-04T04:36:56Z"
+          },
+          {
+            "name": "Verify actual locked graph and original formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:36:56Z",
+            "completed_at": "2026-11-04T04:37:07Z"
+          },
+          {
+            "name": "Execute native producer, header, History and CPU cancellation controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:37:07Z",
+            "completed_at": "2026-11-04T04:42:42Z"
+          },
+          {
+            "name": "Prepare pinned provider required by native all-feature controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:42:42Z",
+            "completed_at": "2026-11-04T04:44:05Z"
+          },
+          {
+            "name": "Run strict native lint for all affected owners",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:44:05Z",
+            "completed_at": "2026-11-04T04:44:55Z"
+          },
+          {
+            "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:44:55Z",
+            "completed_at": "2026-11-04T04:51:33Z"
+          },
+          {
+            "name": "Verify measured source after execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:51:33Z",
+            "completed_at": "2026-11-04T04:51:34Z"
+          },
+          {
+            "name": "Retain costs, binaries and all failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T04:51:34Z",
+            "completed_at": "2026-11-04T04:51:48Z"
+          },
+          {
+            "name": "Post Checkout exact measured source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T04:51:48Z",
+            "completed_at": "2026-11-04T04:51:48Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T04:51:48Z",
+            "completed_at": "2026-11-04T04:51:48Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 875,
+          "end_line": 887,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1699,
+          "end_line": 1711,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 888,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "groups": [
+        {
+          "header_line": 1281,
+          "terminal_line": 1289,
+          "declared": 6,
+          "first_test": "pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work",
+          "counts": {
+            "result": "ok",
+            "passed": 6,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 125,
+            "duration_seconds_text": "0.08"
+          }
+        },
+        {
+          "header_line": 1353,
+          "terminal_line": 1361,
+          "declared": 6,
+          "first_test": "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+          "counts": {
+            "result": "ok",
+            "passed": 6,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 0,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 1367,
+          "terminal_line": 1370,
+          "declared": 1,
+          "first_test": "complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 0,
+            "duration_seconds_text": "0.07"
+          }
+        },
+        {
+          "header_line": 1376,
+          "terminal_line": 1387,
+          "declared": 5,
+          "first_test": "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+          "counts": {
+            "result": "ok",
+            "passed": 5,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 979,
+            "duration_seconds_text": "0.33"
+          }
+        },
+        {
+          "header_line": 1392,
+          "terminal_line": 1441,
+          "declared": 29,
+          "first_test": "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+          "counts": {
+            "result": "ok",
+            "passed": 28,
+            "failed": 0,
+            "ignored": 1,
+            "measured": 0,
+            "filtered_out": 955,
+            "duration_seconds_text": "22.98"
+          }
+        },
+        {
+          "header_line": 1446,
+          "terminal_line": 1462,
+          "declared": 11,
+          "first_test": "ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity",
+          "counts": {
+            "result": "ok",
+            "passed": 11,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 973,
+            "duration_seconds_text": "2.15"
+          }
+        }
+      ],
+      "history_names": [
+        {
+          "line": 1393,
+          "name": "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced ... ok"
+        },
+        {
+          "line": 1394,
+          "name": "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation ... ok"
+        },
+        {
+          "line": 1395,
+          "name": "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account ... ok"
+        },
+        {
+          "line": 1396,
+          "name": "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline ... ok"
+        },
+        {
+          "line": 1397,
+          "name": "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu ... ok"
+        },
+        {
+          "line": 1398,
+          "name": "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry ... ok"
+        },
+        {
+          "line": 1399,
+          "name": "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account ... ok"
+        },
+        {
+          "line": 1400,
+          "name": "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen ... ok"
+        },
+        {
+          "line": 1401,
+          "name": "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account ... ok"
+        },
+        {
+          "line": 1402,
+          "name": "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart ... ok"
+        },
+        {
+          "line": 1403,
+          "name": "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors ... ok"
+        },
+        {
+          "line": 1404,
+          "name": "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline ... ok"
+        },
+        {
+          "line": 1405,
+          "name": "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+          "status": "output_interleaved",
+          "original_row": "test ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account ... {\"committed\":false,\"cut\":\"w1\",\"flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":100888048,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":1199788,\"live_owners\":0,\"paid_cpu_debit_ns\":1201871,\"remaining_paid_credit_ns\":99686177,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":1201871,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":2083,\"stored_credit_ns\":99686177,\"unsettled_known_live_cpu_ns\":0},\"real_host_revocation\":false,\"schema\":\"history-native-resource-failure-v1\",\"shared\":false}"
+        },
+        {
+          "line": 1414,
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "status": "ignored",
+          "original_row": "test ingress::history_import::tests::history_kill_cut_child ... ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        },
+        {
+          "line": 1415,
+          "name": "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+          "status": "output_interleaved",
+          "original_row": null
+        },
+        {
+          "line": 1420,
+          "name": "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary ... ok"
+        },
+        {
+          "line": 1421,
+          "name": "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account ... ok"
+        },
+        {
+          "line": 1422,
+          "name": "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries ... ok"
+        },
+        {
+          "line": 1423,
+          "name": "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work ... ok"
+        },
+        {
+          "line": 1424,
+          "name": "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null ... ok"
+        },
+        {
+          "line": 1425,
+          "name": "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation ... ok"
+        },
+        {
+          "line": 1426,
+          "name": "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch ... ok"
+        },
+        {
+          "line": 1427,
+          "name": "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1 ... ok"
+        },
+        {
+          "line": 1428,
+          "name": "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one ... ok"
+        },
+        {
+          "line": 1429,
+          "name": "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1 ... ok"
+        },
+        {
+          "line": 1430,
+          "name": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+          "status": "output_interleaved",
+          "original_row": "test ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... {\"cut\":\"epoch\",\"cut_active_tip\":\"133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74\",\"debt_reconciliation_complete\":false,\"durable_epoch_marker\":\"active-v1\",\"new_cpu_account_available\":false,\"observed_signal\":9,\"physical_power_loss\":false,\"reopened_active_tip\":\"133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74\",\"schema\":\"native-history-real-kill-cut-v1\",\"stored_block_after_reopen\":false}"
+        },
+        {
+          "line": 1436,
+          "name": "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit ... ok"
+        },
+        {
+          "line": 1437,
+          "name": "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+          "status": "output_interleaved",
+          "original_row": null
+        },
+        {
+          "line": 1439,
+          "name": "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer ... ok"
+        }
+      ],
+      "real_sigkill_cuts": [
+        {
+          "line": 1430,
+          "value": {
+            "cut": "epoch",
+            "cut_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1431,
+          "value": {
+            "cut": "w1",
+            "cut_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1432,
+          "value": {
+            "cut": "m06",
+            "cut_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1433,
+          "value": {
+            "cut": "admitted",
+            "cut_active_tip": "133f8acca4ab6098bee05c434783b586de6a0435be39a348d41abf11f219ae74",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "240238d17f4507d6e8c792c583e2e5d49c7ec1765d8366f387d64e793425fe8a",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": true
+          }
+        },
+        {
+          "line": 1434,
+          "value": {
+            "cut": "activated",
+            "cut_active_tip": "404c99f401ce4ea5278e226ae7c54a759154b87de65a3859cdd20a4ff4e3b48d",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "404c99f401ce4ea5278e226ae7c54a759154b87de65a3859cdd20a4ff4e3b48d",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": true
+          }
+        }
+      ],
+      "commands": [
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib pon_work::legal_attempt:: -- --test-threads=1 2>&1 | tee \"$OUT/factorial-kernel-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v3 -- --test-threads=1 2>&1 | tee \"$OUT/factorial-example-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test work_header_binding -- --test-threads=1 2>&1 | tee \"$OUT/header-binding-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/history-w1-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/history-import-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/cpu-completion-tests.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/factorial-kernel-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/factorial-node-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "original_runner_receipts": [
+        {
+          "line": 999,
+          "value": {
+            "receipt": "/tmp/trnm-ci-raw-source-g43ipr8c/.git/receipt-PASS",
+            "result": "PASS"
+          }
+        },
+        {
+          "line": 1665,
+          "value": {
+            "receipt": "/home/runner/work/_temp/w1-legal-factorial-head-x64-41771598422-1/w1-legal-strategy-v3",
+            "result": "PASS"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 13296941431,
+          "name": "w1-legal-factorial-head-x64-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 174213560,
+          "sha256": "4b8d3d8aac387df13875ce07dfca035f38c1a508cc186e37c2d7455454e36e61",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-w1factorial-terminal-log-126385207509",
+        "decoded_utf8_bytes": 206697,
+        "decoded_utf8_sha256": "13f4a5772a4d8e67c59f23744655f900fcceea24d14ce720d9d8d3c7d321082d"
+      },
+      "no_inherited_source": true,
+      "no_zip_download": true,
+      "filesystem_persisted": false
+    },
+    {
+      "schema": "original-w1-factorial-terminal-v1",
+      "job": 126385207728,
+      "run": 41771598422,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598422/job/126385207728",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:37:11Z",
+            "completed_at": "2026-11-04T04:37:12Z"
+          },
+          {
+            "name": "Checkout exact measured source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:37:12Z",
+            "completed_at": "2026-11-04T04:37:38Z"
+          },
+          {
+            "name": "Reserve observations and verify ordered source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:37:38Z",
+            "completed_at": "2026-11-04T04:37:39Z"
+          },
+          {
+            "name": "Install exact original compiler and tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:37:39Z",
+            "completed_at": "2026-11-04T04:37:48Z"
+          },
+          {
+            "name": "Verify retained and factorial readers and command-owner failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:37:48Z",
+            "completed_at": "2026-11-04T04:37:58Z"
+          },
+          {
+            "name": "Verify actual locked graph and original formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:37:58Z",
+            "completed_at": "2026-11-04T04:38:11Z"
+          },
+          {
+            "name": "Execute native producer, header, History and CPU cancellation controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:38:11Z",
+            "completed_at": "2026-11-04T04:45:09Z"
+          },
+          {
+            "name": "Prepare pinned provider required by native all-feature controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:45:09Z",
+            "completed_at": "2026-11-04T04:46:45Z"
+          },
+          {
+            "name": "Run strict native lint for all affected owners",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:46:45Z",
+            "completed_at": "2026-11-04T04:47:43Z"
+          },
+          {
+            "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:47:43Z",
+            "completed_at": "2026-11-04T04:56:08Z"
+          },
+          {
+            "name": "Verify measured source after execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:56:08Z",
+            "completed_at": "2026-11-04T04:56:09Z"
+          },
+          {
+            "name": "Retain costs, binaries and all failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T04:56:09Z",
+            "completed_at": "2026-11-04T04:56:25Z"
+          },
+          {
+            "name": "Post Checkout exact measured source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T04:56:25Z",
+            "completed_at": "2026-11-04T04:56:25Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T04:56:25Z",
+            "completed_at": "2026-11-04T04:56:25Z"
+          }
+        ]
+      },
+      "source": [
+        {
+          "line": 880,
+          "end_line": 892,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1704,
+          "end_line": 1716,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 893,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "groups": [
+        {
+          "header_line": 1286,
+          "terminal_line": 1294,
+          "declared": 6,
+          "first_test": "pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work",
+          "counts": {
+            "result": "ok",
+            "passed": 6,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 125,
+            "duration_seconds_text": "0.10"
+          }
+        },
+        {
+          "header_line": 1358,
+          "terminal_line": 1366,
+          "declared": 6,
+          "first_test": "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+          "counts": {
+            "result": "ok",
+            "passed": 6,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 0,
+            "duration_seconds_text": "0.02"
+          }
+        },
+        {
+          "header_line": 1372,
+          "terminal_line": 1375,
+          "declared": 1,
+          "first_test": "complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 0,
+            "duration_seconds_text": "0.09"
+          }
+        },
+        {
+          "header_line": 1381,
+          "terminal_line": 1392,
+          "declared": 5,
+          "first_test": "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+          "counts": {
+            "result": "ok",
+            "passed": 5,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 979,
+            "duration_seconds_text": "0.30"
+          }
+        },
+        {
+          "header_line": 1397,
+          "terminal_line": 1446,
+          "declared": 29,
+          "first_test": "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+          "counts": {
+            "result": "ok",
+            "passed": 28,
+            "failed": 0,
+            "ignored": 1,
+            "measured": 0,
+            "filtered_out": 955,
+            "duration_seconds_text": "22.97"
+          }
+        },
+        {
+          "header_line": 1451,
+          "terminal_line": 1467,
+          "declared": 11,
+          "first_test": "ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity",
+          "counts": {
+            "result": "ok",
+            "passed": 11,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 973,
+            "duration_seconds_text": "2.15"
+          }
+        }
+      ],
+      "history_names": [
+        {
+          "line": 1398,
+          "name": "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced ... ok"
+        },
+        {
+          "line": 1399,
+          "name": "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation ... ok"
+        },
+        {
+          "line": 1400,
+          "name": "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account ... ok"
+        },
+        {
+          "line": 1401,
+          "name": "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline ... ok"
+        },
+        {
+          "line": 1402,
+          "name": "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu ... ok"
+        },
+        {
+          "line": 1403,
+          "name": "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry ... ok"
+        },
+        {
+          "line": 1404,
+          "name": "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account ... ok"
+        },
+        {
+          "line": 1405,
+          "name": "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen ... ok"
+        },
+        {
+          "line": 1406,
+          "name": "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account ... ok"
+        },
+        {
+          "line": 1407,
+          "name": "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart ... ok"
+        },
+        {
+          "line": 1408,
+          "name": "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors ... ok"
+        },
+        {
+          "line": 1409,
+          "name": "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline ... ok"
+        },
+        {
+          "line": 1410,
+          "name": "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+          "status": "output_interleaved",
+          "original_row": "test ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account ... {\"committed\":false,\"cut\":\"w1\",\"flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":101197668,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":1365804,\"live_owners\":0,\"paid_cpu_debit_ns\":1367343,\"remaining_paid_credit_ns\":99830325,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":1367343,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":1539,\"stored_credit_ns\":99830325,\"unsettled_known_live_cpu_ns\":0},\"real_host_revocation\":false,\"schema\":\"history-native-resource-failure-v1\",\"shared\":false}"
+        },
+        {
+          "line": 1419,
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "status": "ignored",
+          "original_row": "test ingress::history_import::tests::history_kill_cut_child ... ignored, subprocess fixture: parent selects a real SIGKILL cut"
+        },
+        {
+          "line": 1420,
+          "name": "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+          "status": "output_interleaved",
+          "original_row": null
+        },
+        {
+          "line": 1425,
+          "name": "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary ... ok"
+        },
+        {
+          "line": 1426,
+          "name": "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account ... ok"
+        },
+        {
+          "line": 1427,
+          "name": "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries ... ok"
+        },
+        {
+          "line": 1428,
+          "name": "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work ... ok"
+        },
+        {
+          "line": 1429,
+          "name": "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null ... ok"
+        },
+        {
+          "line": 1430,
+          "name": "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation ... ok"
+        },
+        {
+          "line": 1431,
+          "name": "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch ... ok"
+        },
+        {
+          "line": 1432,
+          "name": "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1 ... ok"
+        },
+        {
+          "line": 1433,
+          "name": "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one ... ok"
+        },
+        {
+          "line": 1434,
+          "name": "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1 ... ok"
+        },
+        {
+          "line": 1435,
+          "name": "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+          "status": "output_interleaved",
+          "original_row": "test ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... {\"cut\":\"epoch\",\"cut_active_tip\":\"71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0\",\"debt_reconciliation_complete\":false,\"durable_epoch_marker\":\"active-v1\",\"new_cpu_account_available\":false,\"observed_signal\":9,\"physical_power_loss\":false,\"reopened_active_tip\":\"71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0\",\"schema\":\"native-history-real-kill-cut-v1\",\"stored_block_after_reopen\":false}"
+        },
+        {
+          "line": 1441,
+          "name": "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit ... ok"
+        },
+        {
+          "line": 1442,
+          "name": "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+          "status": "output_interleaved",
+          "original_row": null
+        },
+        {
+          "line": 1444,
+          "name": "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer",
+          "status": "ok",
+          "original_row": "test ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer ... ok"
+        }
+      ],
+      "real_sigkill_cuts": [
+        {
+          "line": 1435,
+          "value": {
+            "cut": "epoch",
+            "cut_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1436,
+          "value": {
+            "cut": "w1",
+            "cut_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1437,
+          "value": {
+            "cut": "m06",
+            "cut_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": false
+          }
+        },
+        {
+          "line": 1438,
+          "value": {
+            "cut": "admitted",
+            "cut_active_tip": "71901c96996686d5ae575321bca640245297bbbe880ce63deff113a98b4f6cd0",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "a48bfdefef9f3b79b5d9067ffc777314ce22404ada9362f1668edb5d82d05fc6",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": true
+          }
+        },
+        {
+          "line": 1439,
+          "value": {
+            "cut": "activated",
+            "cut_active_tip": "eaa622260bb9d497d07d0df84b21abaeb0255a0aaa699a899091c75a7efca6f7",
+            "debt_reconciliation_complete": false,
+            "durable_epoch_marker": "active-v1",
+            "new_cpu_account_available": false,
+            "observed_signal": 9,
+            "physical_power_loss": false,
+            "reopened_active_tip": "eaa622260bb9d497d07d0df84b21abaeb0255a0aaa699a899091c75a7efca6f7",
+            "schema": "native-history-real-kill-cut-v1",
+            "stored_block_after_reopen": true
+          }
+        }
+      ],
+      "commands": [
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib pon_work::legal_attempt:: -- --test-threads=1 2>&1 | tee \"$OUT/factorial-kernel-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v3 -- --test-threads=1 2>&1 | tee \"$OUT/factorial-example-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test work_header_binding -- --test-threads=1 2>&1 | tee \"$OUT/header-binding-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/history-w1-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/history-import-tests.log\"",
+        "cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee \"$OUT/cpu-completion-tests.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/factorial-kernel-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee \"$OUT/factorial-node-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "original_runner_receipts": [
+        {
+          "line": 1004,
+          "value": {
+            "receipt": "/tmp/trnm-ci-raw-source-woq9adup/.git/receipt-PASS",
+            "result": "PASS"
+          }
+        },
+        {
+          "line": 1670,
+          "value": {
+            "receipt": "/home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-41771598422-1/w1-legal-strategy-v3",
+            "result": "PASS"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 13297445861,
+          "name": "w1-legal-factorial-prospective-merge-x64-4d0bcfb743d032db14faf1f05422e2e0cf300089-1",
+          "bytes": 174295069,
+          "sha256": "de067477e94092ea06645a87eb1994cba431dc5a6359cdcdf33e22cbc8254851",
+          "api_match": true
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-w1factorial-terminal-log-126385207728",
+        "decoded_utf8_bytes": 207806,
+        "decoded_utf8_sha256": "27e49ed988ed5bcd2a4d9b95058d7b81c2caa8ce23744816bcd5b1c911647936"
+      },
+      "no_inherited_source": true,
+      "no_zip_download": true,
+      "filesystem_persisted": false
+    }
+  ],
+  "existing_ten_lane_blob_unchanged": "c19d45f2cea4a111a18d81641e709d48df2861b4",
+  "filesystem_persisted": false,
+  "interpretation": {
+    "scope": "Only the two original x64 factorial lanes newly read after the frozen ten-lane blob; the ARM factorial results remain in that separate blob.",
+    "history": "Each original History invocation declares 29 tests and terminates 28 passed, zero failed, one original child harness ignored, 955 filtered out. The default-feature registry is 984, separate from all-feature Node registry 1000.",
+    "kill_cuts": "The five original cuts preserve observed_signal=9 and original debt_reconciliation_complete=false, new_cpu_account_available=false, physical_power_loss=false. No stronger recovery claim.",
+    "source": "Original before and after source receipts bind exact6f head or actualmerge4d0b, same tree76d. No other source cohort is inherited.",
+    "raw_log_hash_scope": "UTF-8 of complete decoded connector-returned log text",
+    "no_zip_download": true,
+    "no_public_throughput_qualification": true
+  }
+}

@@ -1,0 +1,1144 @@
+{
+  "schema": "pon-original-long-history-and-current-w1-failures-v1",
+  "reader": {
+    "commit": "88f860608edf576a9028de7e66bc91a6cdadd92c",
+    "tree": "34ba22e2cdefa8860c7450923b12f833a6fd0584",
+    "run": 41776513691,
+    "job": 126398047214,
+    "attempt": 1,
+    "conclusion": "success",
+    "artifact": {
+      "id": 13297396683,
+      "name": "history-w1-failure-readback-88f860608edf576a9028de7e66bc91a6cdadd92c-1",
+      "size_in_bytes": 195695419,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13297396683",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13297396683/zip",
+      "expired": false,
+      "created_at": "2026-11-04T05:00:42Z",
+      "expires_at": "2026-12-04T05:00:34Z",
+      "updated_at": "2026-11-04T05:00:42Z",
+      "digest": "sha256:70081d6b90bdbb118a0120393b92bdca229f5291d30a8793aeb2f612f61b89b9",
+      "workflow_run": {
+        "id": 41776513691,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "88f860608edf576a9028de7e66bc91a6cdadd92c"
+      }
+    },
+    "source_guards": [
+      {
+        "base": null,
+        "candidate": "88f860608edf576a9028de7e66bc91a6cdadd92c",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "88f860608edf576a9028de7e66bc91a6cdadd92c",
+        "tested_tree": "34ba22e2cdefa8860c7450923b12f833a6fd0584",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 927683684,
+        "tracked_entries": 7974,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "88f860608edf576a9028de7e66bc91a6cdadd92c",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "88f860608edf576a9028de7e66bc91a6cdadd92c",
+        "tested_tree": "34ba22e2cdefa8860c7450923b12f833a6fd0584",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 927683684,
+        "tracked_entries": 7974,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "project_audits": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      },
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ]
+  },
+  "archive_readback_summaries": [
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 55989786,
+      "downloaded_zip_sha256": "cb3bce4b7411866e0dd78a123c3b07a3a3c7aeaeb12ff3be0161f30cf4195837",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "a3f973e5e65c4abf102b66990d3c9aa6f0ad3057ef6b02aada6ed3deb5c15d41",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 26657,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:cb3bce4b7411866e0dd78a123c3b07a3a3c7aeaeb12ff3be0161f30cf4195837",
+        "family": "history",
+        "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "id": 13295526681,
+        "job": 126367533983,
+        "kind": "head",
+        "name": "priority-ubuntu-24.04-head-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "run": 41760813063,
+        "size": 55989786,
+        "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+      }
+    },
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 50769435,
+      "downloaded_zip_sha256": "f1afa7bc2fbf4219e76459ccdb2bffc3ce2551daae39dd930ad0214c6518e54d",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "092389902651327742af71426996f522afa3caab62c5e031178c2c61a2c8a260",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 27098,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:f1afa7bc2fbf4219e76459ccdb2bffc3ce2551daae39dd930ad0214c6518e54d",
+        "family": "history",
+        "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "id": 13295423283,
+        "job": 126367533922,
+        "kind": "prospective-merge",
+        "name": "priority-ubuntu-24.04-prospective-merge-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "run": 41760813063,
+        "size": 50769435,
+        "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+        "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+      }
+    },
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 52942631,
+      "downloaded_zip_sha256": "9dcd09bbf10ef28a7b7f6fd3123a4ce90baab691929274367ed40ff49c57e882",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "5c6467ba7182d13cebd6c996ff0292abb0af539ec4f6148311f295c331017c08",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 26565,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:9dcd09bbf10ef28a7b7f6fd3123a4ce90baab691929274367ed40ff49c57e882",
+        "family": "history",
+        "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "id": 13295839361,
+        "job": 126367534168,
+        "kind": "head",
+        "name": "priority-ubuntu-24.04-arm-head-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "run": 41760813063,
+        "size": 52942631,
+        "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+      }
+    },
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 52923934,
+      "downloaded_zip_sha256": "30832aba24550552f14a4f2963392e0ff4925fb4db142e7bd3eb362e5eb0aaba",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "7a22b7c19c0fb57b4bb57bdcb84234f0a03cec39344d64056f24dc9888a52a49",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 27188,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:30832aba24550552f14a4f2963392e0ff4925fb4db142e7bd3eb362e5eb0aaba",
+        "family": "history",
+        "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "id": 13296112215,
+        "job": 126367534056,
+        "kind": "prospective-merge",
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "run": 41760813063,
+        "size": 52923934,
+        "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+        "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+      }
+    },
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 5282435,
+      "downloaded_zip_sha256": "50a691bb6ee4e90b602e3e0b564891c35b1e3986babbca4d5c33e81412666137",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "4073c6f5617b9698d28ffa7db36276ab439d96ac29712a8a7aa9fd3e1ea72735",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 28157,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:50a691bb6ee4e90b602e3e0b564891c35b1e3986babbca4d5c33e81412666137",
+        "family": "fresh",
+        "head": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+        "id": 13296332008,
+        "job": 126385207656,
+        "kind": "head",
+        "name": "w1-fresh-service-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+        "run": 41771598422,
+        "size": 5282435,
+        "tested": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+        "tree": "76d3b416eccc6a810634062e036f646f22bffc76"
+      }
+    },
+    {
+      "absent_fixed_small_members": [],
+      "acceptance_granted": false,
+      "downloaded_zip_bytes": 5379344,
+      "downloaded_zip_sha256": "a546d5ffedaacbd5834db534d6de97629076f0cd1e059e59b5048fb092c25b9a",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "member_index_sha256": "8d19ead034493829a96d1edb277b7da054b6254d24c1c4085f39d606efc0679c",
+      "omitted_members": 0,
+      "production_activation": false,
+      "reader_status": "completed",
+      "records": 12,
+      "schema": "trnm-history-w1-failure-artifact-readback-v1",
+      "selected_text_bytes": 28386,
+      "source_tests_executed": false,
+      "target": {
+        "digest": "sha256:a546d5ffedaacbd5834db534d6de97629076f0cd1e059e59b5048fb092c25b9a",
+        "family": "fresh",
+        "head": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+        "id": 13296696264,
+        "job": 126385207706,
+        "kind": "prospective-merge",
+        "name": "w1-fresh-service-prospective-merge-4d0bcfb743d032db14faf1f05422e2e0cf300089-1",
+        "run": 41771598422,
+        "size": 5379344,
+        "tested": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+        "tree": "76d3b416eccc6a810634062e036f646f22bffc76"
+      }
+    }
+  ],
+  "actual_history_manifest_summary": [
+    {
+      "artifact": 13295526681,
+      "run": 41760813063,
+      "job": 126367533983,
+      "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+      "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "returncode": 101,
+      "passed": false,
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "original_command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "binary_before_sha256": "683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd",
+      "binary_after_sha256": "683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd"
+    },
+    {
+      "artifact": 13295423283,
+      "run": 41760813063,
+      "job": 126367533922,
+      "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+      "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "returncode": 101,
+      "passed": false,
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "original_command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "binary_before_sha256": "683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd",
+      "binary_after_sha256": "683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd"
+    },
+    {
+      "artifact": 13295839361,
+      "run": 41760813063,
+      "job": 126367534168,
+      "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+      "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "returncode": 101,
+      "passed": false,
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "original_command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "binary_before_sha256": "af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7",
+      "binary_after_sha256": "af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7"
+    },
+    {
+      "artifact": 13296112215,
+      "run": 41760813063,
+      "job": 126367534056,
+      "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+      "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "returncode": 101,
+      "passed": false,
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "original_command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "binary_before_sha256": "af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7",
+      "binary_after_sha256": "af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7"
+    }
+  ],
+  "actual_history_server_exit": [
+    {
+      "artifact": 13295526681,
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800000227058,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1800001421603,
+      "stop_requested_when_exited": true
+    },
+    {
+      "artifact": 13295423283,
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800000821034,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1800074863704,
+      "stop_requested_when_exited": true
+    },
+    {
+      "artifact": 13295839361,
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800001058012,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1800001830367,
+      "stop_requested_when_exited": true
+    },
+    {
+      "artifact": 13296112215,
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800000733457,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1800001442584,
+      "stop_requested_when_exited": true
+    }
+  ],
+  "actual_fresh_manifest_summary": [
+    {
+      "artifact": 13296332008,
+      "run": 41771598422,
+      "job": 126385207656,
+      "commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "all_named_tests_passed": false,
+      "execution_finished": true,
+      "source_recompiled": true,
+      "requested_window_ns": 4000000000,
+      "attack_workers": 16,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "binary_before_sha256": "9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664",
+      "binary_after_sha256": "9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664",
+      "runs": [
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "failure": "CONFIRMATION_TARGET",
+          "passed": false,
+          "diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "process_exit_code": 0,
+          "process_elapsed_ns": 17520345494,
+          "process_timed_out": false,
+          "log_sha256": "87718a808d77a561fc8a8a6ecb371ed1f27ab757f6da2d450cc7c914d3e7b78e"
+        },
+        {
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "passed": false,
+          "diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "process_exit_code": 101,
+          "process_elapsed_ns": 17604352217,
+          "process_timed_out": false,
+          "log_sha256": "50312744991bebe912bcdc1671342f612cf82c444a928e19d0f48016636dcd0a"
+        }
+      ]
+    },
+    {
+      "artifact": 13296696264,
+      "run": 41771598422,
+      "job": 126385207706,
+      "commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+      "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "all_named_tests_passed": false,
+      "execution_finished": true,
+      "source_recompiled": true,
+      "requested_window_ns": 4000000000,
+      "attack_workers": 16,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "binary_before_sha256": "9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664",
+      "binary_after_sha256": "9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664",
+      "runs": [
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "failure": "CONFIRMATION_TARGET",
+          "passed": false,
+          "diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "process_exit_code": 0,
+          "process_elapsed_ns": 15903708624,
+          "process_timed_out": false,
+          "log_sha256": "ce4690d5729bb391ce0a9877d5a2c81204e0d910be8bcbfcdd18bf033fb0a679"
+        },
+        {
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "passed": false,
+          "diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "process_exit_code": 101,
+          "process_elapsed_ns": 15893147771,
+          "process_timed_out": false,
+          "log_sha256": "1148dd19406098746095e0db8b3f93c582b194e6a0a452d04dab35552c715d3d"
+        }
+      ]
+    }
+  ],
+  "original_native_excerpt_lines": [
+    "artifact=13295526681 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED",
+    "artifact=13295526681 member=history-native/history.log line=9 failures:",
+    "artifact=13295526681 member=history-native/history.log line=30 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4705) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:",
+    "artifact=13295526681 member=history-native/history.log line=31 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }",
+    "artifact=13295526681 member=history-native/history.log line=35 failures:",
+    "artifact=13295526681 member=history-native/history.log line=38 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2786.39s",
+    "artifact=13295526681 member=history-native/history.log line=1 ",
+    "artifact=13295526681 member=history-native/history.log line=2 running 1 test",
+    "artifact=13295526681 member=history-native/history.log line=4 ",
+    "artifact=13295526681 member=history-native/history.log line=5 successes:",
+    "artifact=13295526681 member=history-native/history.log line=6 ",
+    "artifact=13295526681 member=history-native/history.log line=7 successes:",
+    "artifact=13295526681 member=history-native/history.log line=8 ",
+    "artifact=13295526681 member=history-native/history.log line=10 ",
+    "artifact=13295526681 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----",
+    "artifact=13295526681 member=history-native/history.log line=12 {\"elapsed_ns\":41309240143,\"height\":500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=13 {\"elapsed_ns\":107296949800,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=14 {\"elapsed_ns\":193690669316,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=15 {\"elapsed_ns\":301187619313,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=16 {\"elapsed_ns\":428899397457,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=17 {\"elapsed_ns\":579696317356,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=18 {\"elapsed_ns\":751686293901,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=19 {\"elapsed_ns\":942686791069,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=20 {\"elapsed_ns\":1261502388733,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=21 {\"elapsed_ns\":1534096352502,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=22 {\"elapsed_ns\":1810886248412,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=23 {\"elapsed_ns\":2095092015749,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=24 {\"elapsed_ns\":2379202310243,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=25 {\"elapsed_ns\":2660894663355,\"height\":3000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295526681 member=history-native/history.log line=26 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000227058,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001421603,\"stop_requested_when_exited\":true}",
+    "artifact=13295526681 member=history-native/history.log line=27 {\"elapsed_ns\":2786392072586,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}",
+    "artifact=13295526681 member=history-native/history.log line=28 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}",
+    "artifact=13295526681 member=history-native/history.log line=29 ",
+    "artifact=13295526681 member=history-native/history.log line=32 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13295526681 member=history-native/history.log line=33 ",
+    "artifact=13295526681 member=history-native/history.log line=34 ",
+    "artifact=13295526681 member=history-native/history.log line=36     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "artifact=13295526681 member=history-native/history.log line=37 ",
+    "artifact=13295526681 member=history-native/history.log line=39 ",
+    "artifact=13295423283 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED",
+    "artifact=13295423283 member=history-native/history.log line=9 failures:",
+    "artifact=13295423283 member=history-native/history.log line=28 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4872) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:",
+    "artifact=13295423283 member=history-native/history.log line=29 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }",
+    "artifact=13295423283 member=history-native/history.log line=33 failures:",
+    "artifact=13295423283 member=history-native/history.log line=36 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3249.70s",
+    "artifact=13295423283 member=history-native/history.log line=1 ",
+    "artifact=13295423283 member=history-native/history.log line=2 running 1 test",
+    "artifact=13295423283 member=history-native/history.log line=4 ",
+    "artifact=13295423283 member=history-native/history.log line=5 successes:",
+    "artifact=13295423283 member=history-native/history.log line=6 ",
+    "artifact=13295423283 member=history-native/history.log line=7 successes:",
+    "artifact=13295423283 member=history-native/history.log line=8 ",
+    "artifact=13295423283 member=history-native/history.log line=10 ",
+    "artifact=13295423283 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----",
+    "artifact=13295423283 member=history-native/history.log line=12 {\"elapsed_ns\":63400303361,\"height\":500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=13 {\"elapsed_ns\":160411771682,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=14 {\"elapsed_ns\":288511167722,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=15 {\"elapsed_ns\":445908904446,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=16 {\"elapsed_ns\":634490369160,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=17 {\"elapsed_ns\":854004293257,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=18 {\"elapsed_ns\":1104307413324,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=19 {\"elapsed_ns\":1385492688746,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=20 {\"elapsed_ns\":1831303523127,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=21 {\"elapsed_ns\":2221601348222,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=22 {\"elapsed_ns\":2614290698092,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=23 {\"elapsed_ns\":3005491525350,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295423283 member=history-native/history.log line=24 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000821034,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800074863704,\"stop_requested_when_exited\":true}",
+    "artifact=13295423283 member=history-native/history.log line=25 {\"elapsed_ns\":3249699620897,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}",
+    "artifact=13295423283 member=history-native/history.log line=26 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}",
+    "artifact=13295423283 member=history-native/history.log line=27 ",
+    "artifact=13295423283 member=history-native/history.log line=30 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13295423283 member=history-native/history.log line=31 ",
+    "artifact=13295423283 member=history-native/history.log line=32 ",
+    "artifact=13295423283 member=history-native/history.log line=34     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "artifact=13295423283 member=history-native/history.log line=35 ",
+    "artifact=13295423283 member=history-native/history.log line=37 ",
+    "artifact=13295839361 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED",
+    "artifact=13295839361 member=history-native/history.log line=9 failures:",
+    "artifact=13295839361 member=history-native/history.log line=29 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4964) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:",
+    "artifact=13295839361 member=history-native/history.log line=30 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }",
+    "artifact=13295839361 member=history-native/history.log line=34 failures:",
+    "artifact=13295839361 member=history-native/history.log line=37 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3768.70s",
+    "artifact=13295839361 member=history-native/history.log line=1 ",
+    "artifact=13295839361 member=history-native/history.log line=2 running 1 test",
+    "artifact=13295839361 member=history-native/history.log line=4 ",
+    "artifact=13295839361 member=history-native/history.log line=5 successes:",
+    "artifact=13295839361 member=history-native/history.log line=6 ",
+    "artifact=13295839361 member=history-native/history.log line=7 successes:",
+    "artifact=13295839361 member=history-native/history.log line=8 ",
+    "artifact=13295839361 member=history-native/history.log line=10 ",
+    "artifact=13295839361 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----",
+    "artifact=13295839361 member=history-native/history.log line=12 {\"elapsed_ns\":107018402039,\"height\":500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=13 {\"elapsed_ns\":251602611156,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=14 {\"elapsed_ns\":434696761436,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=15 {\"elapsed_ns\":652212903281,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=16 {\"elapsed_ns\":907516243540,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=17 {\"elapsed_ns\":1196100633468,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=18 {\"elapsed_ns\":1525516811624,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=19 {\"elapsed_ns\":1885095822824,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=20 {\"elapsed_ns\":2291919864872,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=21 {\"elapsed_ns\":2626418755919,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=22 {\"elapsed_ns\":2959917795239,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=23 {\"elapsed_ns\":3292714610580,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=24 {\"elapsed_ns\":3630516176291,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13295839361 member=history-native/history.log line=25 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800001058012,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001830367,\"stop_requested_when_exited\":true}",
+    "artifact=13295839361 member=history-native/history.log line=26 {\"elapsed_ns\":3768696715204,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}",
+    "artifact=13295839361 member=history-native/history.log line=27 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}",
+    "artifact=13295839361 member=history-native/history.log line=28 ",
+    "artifact=13295839361 member=history-native/history.log line=31 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13295839361 member=history-native/history.log line=32 ",
+    "artifact=13295839361 member=history-native/history.log line=33 ",
+    "artifact=13295839361 member=history-native/history.log line=35     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "artifact=13295839361 member=history-native/history.log line=36 ",
+    "artifact=13295839361 member=history-native/history.log line=38 ",
+    "artifact=13296112215 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED",
+    "artifact=13296112215 member=history-native/history.log line=9 failures:",
+    "artifact=13296112215 member=history-native/history.log line=29 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4881) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:",
+    "artifact=13296112215 member=history-native/history.log line=30 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }",
+    "artifact=13296112215 member=history-native/history.log line=34 failures:",
+    "artifact=13296112215 member=history-native/history.log line=37 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3737.59s",
+    "artifact=13296112215 member=history-native/history.log line=1 ",
+    "artifact=13296112215 member=history-native/history.log line=2 running 1 test",
+    "artifact=13296112215 member=history-native/history.log line=4 ",
+    "artifact=13296112215 member=history-native/history.log line=5 successes:",
+    "artifact=13296112215 member=history-native/history.log line=6 ",
+    "artifact=13296112215 member=history-native/history.log line=7 successes:",
+    "artifact=13296112215 member=history-native/history.log line=8 ",
+    "artifact=13296112215 member=history-native/history.log line=10 ",
+    "artifact=13296112215 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----",
+    "artifact=13296112215 member=history-native/history.log line=12 {\"elapsed_ns\":108062744453,\"height\":500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=13 {\"elapsed_ns\":253681830711,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=14 {\"elapsed_ns\":435577699388,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=15 {\"elapsed_ns\":652776616232,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=16 {\"elapsed_ns\":901360066088,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=17 {\"elapsed_ns\":1184664167156,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=18 {\"elapsed_ns\":1504268857399,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=19 {\"elapsed_ns\":1857174906944,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=20 {\"elapsed_ns\":2261062158898,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=21 {\"elapsed_ns\":2594267806158,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=22 {\"elapsed_ns\":2929466698285,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=23 {\"elapsed_ns\":3267478433144,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=24 {\"elapsed_ns\":3604868457181,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}",
+    "artifact=13296112215 member=history-native/history.log line=25 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000733457,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001442584,\"stop_requested_when_exited\":true}",
+    "artifact=13296112215 member=history-native/history.log line=26 {\"elapsed_ns\":3737588518772,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}",
+    "artifact=13296112215 member=history-native/history.log line=27 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}",
+    "artifact=13296112215 member=history-native/history.log line=28 ",
+    "artifact=13296112215 member=history-native/history.log line=31 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13296112215 member=history-native/history.log line=32 ",
+    "artifact=13296112215 member=history-native/history.log line=33 ",
+    "artifact=13296112215 member=history-native/history.log line=35     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "artifact=13296112215 member=history-native/history.log line=36 ",
+    "artifact=13296112215 member=history-native/history.log line=38 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=5 thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5270) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:220:5:",
+    "artifact=13296332008 member=fresh-service/fresh.log line=10 failures:",
+    "artifact=13296332008 member=fresh-service/fresh.log line=12 failures:",
+    "artifact=13296332008 member=fresh-service/fresh.log line=15 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.79s",
+    "artifact=13296332008 member=fresh-service/fresh.log line=1 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=2 running 1 test",
+    "artifact=13296332008 member=fresh-service/fresh.log line=3 test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-41771598422-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}",
+    "artifact=13296332008 member=fresh-service/fresh.log line=4 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=6 fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+    "artifact=13296332008 member=fresh-service/fresh.log line=7 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13296332008 member=fresh-service/fresh.log line=8 FAILED",
+    "artifact=13296332008 member=fresh-service/fresh.log line=9 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=11 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=13     fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+    "artifact=13296332008 member=fresh-service/fresh.log line=14 ",
+    "artifact=13296332008 member=fresh-service/fresh.log line=16 ",
+    "artifact=13296332008 member=fresh-service/original.log line=1 ",
+    "artifact=13296332008 member=fresh-service/original.log line=2 running 1 test",
+    "artifact=13296332008 member=fresh-service/original.log line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-41771598422-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}",
+    "artifact=13296332008 member=fresh-service/original.log line=4 ok",
+    "artifact=13296332008 member=fresh-service/original.log line=5 ",
+    "artifact=13296332008 member=fresh-service/original.log line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.79s",
+    "artifact=13296332008 member=fresh-service/original.log line=7 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=5 thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5172) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:220:5:",
+    "artifact=13296696264 member=fresh-service/fresh.log line=10 failures:",
+    "artifact=13296696264 member=fresh-service/fresh.log line=12 failures:",
+    "artifact=13296696264 member=fresh-service/fresh.log line=15 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.60s",
+    "artifact=13296696264 member=fresh-service/fresh.log line=1 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=2 running 1 test",
+    "artifact=13296696264 member=fresh-service/fresh.log line=3 test fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41771598422-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}",
+    "artifact=13296696264 member=fresh-service/fresh.log line=4 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=6 fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+    "artifact=13296696264 member=fresh-service/fresh.log line=7 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "artifact=13296696264 member=fresh-service/fresh.log line=8 FAILED",
+    "artifact=13296696264 member=fresh-service/fresh.log line=9 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=11 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=13     fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+    "artifact=13296696264 member=fresh-service/fresh.log line=14 ",
+    "artifact=13296696264 member=fresh-service/fresh.log line=16 ",
+    "artifact=13296696264 member=fresh-service/original.log line=1 ",
+    "artifact=13296696264 member=fresh-service/original.log line=2 running 1 test",
+    "artifact=13296696264 member=fresh-service/original.log line=3 test from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41771598422-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}",
+    "artifact=13296696264 member=fresh-service/original.log line=4 ok",
+    "artifact=13296696264 member=fresh-service/original.log line=5 ",
+    "artifact=13296696264 member=fresh-service/original.log line=6 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.69s",
+    "artifact=13296696264 member=fresh-service/original.log line=7 "
+  ],
+  "original_literal_json_records": [
+    {
+      "artifact": 13295526681,
+      "member": "history-native/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native/manifest.json\",\"member_bytes\":4899,\"member_sha256\":\"ca071621ca51020314df46853b6052962aeb7dbf50da64afde3ece91b970d5c1\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793763236227253627,\"device\":66305,\"inode\":9454493,\"mtime_ns\":1793763236226253608,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"binary_before\":{\"ctime_ns\":1793763236227253627,\"device\":66305,\"inode\":9454493,\"mtime_ns\":1793763236226253608,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":{\"ctime_ns\":1793766033615247109,\"device\":66305,\"inode\":9454499,\"mtime_ns\":1793766033615247109,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"311a3b4009a16c7a369538eafedfc337a54d94a04eb318bdc50fd568d3bade45\",\"size_bytes\":3043},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"1994156a9217d6dbb8e74acc0c795dfac00def12f16699fb7db83d3d9a1f0213\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4703,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793766033615247109,\"device\":66305,\"inode\":9454500,\"mtime_ns\":1793766033615247109,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"52ec6d3e7b8d48bbbaa1cd6237068cd33fc09933b84164ca5d8dbd6f46fafdda\",\"size_bytes\":971},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793766033614247088,\"device\":66305,\"inode\":9454509,\"mtime_ns\":1793766033614247088,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5b913b53005d43e907198a946977130c2ea53a2d6574956e5c2151de2077c69c\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":929288658,\"tracked_entries\":7986,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7727,\"member_sha256\":\"bd24eaac57fc09faf7e9de6fe4a09e6c30b305ba4b7b406684a600f55e216d35\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"9feb75a96103d0226989a2aa0121285d0694c765b9708be0cbc94e9571644082\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1686,\"member_sha256\":\"bba4529f2a1505d5288a15beeb41379164824716a39d94cf236be1a1e2e734f2\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"c78b2e2aa66bfa15803eab1a66f5964d3e51e503f804b4a6476c1135421f159f\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native/execution-start.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295526681,
+      "member": "history-native/preparation.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295526681,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533983,\"measured_run\":41760813063,\"member\":\"history-native/preparation.json\",\"member_bytes\":3470,\"member_sha256\":\"1994156a9217d6dbb8e74acc0c795dfac00def12f16699fb7db83d3d9a1f0213\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793763236227253627,\"device\":66305,\"inode\":9454493,\"mtime_ns\":1793763236226253608,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2323,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native/manifest.json\",\"member_bytes\":5072,\"member_sha256\":\"21cb0f8e51d5c49db923e51bf834eb3c3d5c757251989d3f0ccece5779680641\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793763292190309042,\"device\":2049,\"inode\":9192213,\"mtime_ns\":1793763292188309014,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"binary_before\":{\"ctime_ns\":1793763292190309042,\"device\":2049,\"inode\":9192213,\"mtime_ns\":1793763292188309014,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":{\"ctime_ns\":1793766557420537831,\"device\":2049,\"inode\":9192206,\"mtime_ns\":1793766557420537831,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"6672882b8fed23912e06b8371f604ad1b92018d14e2e34cf596d420990e70b5b\",\"size_bytes\":2867},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"d81633786f76dc9b5c3ce51c3a2457faf3b9cb77bcd0001ec9f785746817b594\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4870,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793766557421537845,\"device\":2049,\"inode\":9192207,\"mtime_ns\":1793766557421537845,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"bcae9a2f6a371ad516065616dab105a36cfe8fbd1754a63fe1561d80910d2b49\",\"size_bytes\":972},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793766557420537831,\"device\":2049,\"inode\":9437342,\"mtime_ns\":1793766557420537831,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"dea3ab27ebce7bc1669836d0ebc4cbca9afe81f1357ff8f58f8bdc8ea3bfa1c0\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":929288658,\"tracked_entries\":7986,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7903,\"member_sha256\":\"fcc14d06b968eeecaedb4cd7ccabe91b7e0ae05fdd71afb59b85350f04a54316\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"417d050bdbba57cba6c33fea3a70968ec3792b21fc09d32313cafe1b7e14364a\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1688,\"member_sha256\":\"e0f4e38cd9993d49172ba502f09615d85d148be9e9421e65a13f4682395e31e6\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"5cf8b9667d9fcd02828c41d3c45d4e65bd0e1738ba96b212b0b0d21dc0ad1899\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native/execution-start.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295423283,
+      "member": "history-native/preparation.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295423283,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367533922,\"measured_run\":41760813063,\"member\":\"history-native/preparation.json\",\"member_bytes\":3646,\"member_sha256\":\"d81633786f76dc9b5c3ce51c3a2457faf3b9cb77bcd0001ec9f785746817b594\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793763292190309042,\"device\":2049,\"inode\":9192213,\"mtime_ns\":1793763292188309014,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-04ec70065e4650bd\",\"sha256\":\"683a04d4afc6f8035504595f18ab13d901536a8582e14f3275d93cc8e86beddd\",\"size_bytes\":9653784},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2499,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native/manifest.json\",\"member_bytes\":4894,\"member_sha256\":\"af25e1d3b04e26f5a8695b45b37a70201bf81c360da7e2a727dd3abfffa27cb7\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793763315608183066,\"device\":2049,\"inode\":6058689,\"mtime_ns\":1793763315607296890,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"binary_before\":{\"ctime_ns\":1793763315608183066,\"device\":2049,\"inode\":6058689,\"mtime_ns\":1793763315607296890,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":{\"ctime_ns\":1793767097728159123,\"device\":2049,\"inode\":6058691,\"mtime_ns\":1793767097728159123,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"6fc9ce74ce4c1594c36a03d07825f6b26d3a1d82d29d3028964d1b74c301a482\",\"size_bytes\":2958},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"1583187b99ab843e0d1d103e6dfda1d87794b0c523de39b851d36951993e105e\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4962,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793767097729159156,\"device\":2049,\"inode\":6058692,\"mtime_ns\":1793767097729159156,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"9787670e037237b4397a0d8d745526033cd565a0df42dce249f7e26bc1043ebe\",\"size_bytes\":970},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793767097727159090,\"device\":2049,\"inode\":6291663,\"mtime_ns\":1793767097727159090,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5b913b53005d43e907198a946977130c2ea53a2d6574956e5c2151de2077c69c\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":929288658,\"tracked_entries\":7986,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7725,\"member_sha256\":\"b5f69e9ef79f9fb37e0d476756e3b1824edec36d14e783e2097439ae3a379c03\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"b2d65ef9e03bdc5c5ccf4265730bb8cf7378c1abe186e6f04501ef5754b888c3\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"1e9d99aa1a54417ecd189acae21f81e403344a255d37a94731f49702ff235396\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"0eebf504f2281105aabf87ac23045911b5e4e8bb282bc5c682b66d184b6b4433\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native/execution-start.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13295839361,
+      "member": "history-native/preparation.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13295839361,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534168,\"measured_run\":41760813063,\"member\":\"history-native/preparation.json\",\"member_bytes\":3468,\"member_sha256\":\"1583187b99ab843e0d1d103e6dfda1d87794b0c523de39b851d36951993e105e\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793763315608183066,\"device\":2049,\"inode\":6058689,\"mtime_ns\":1793763315607296890,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2656,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native/manifest.json\",\"member_bytes\":5072,\"member_sha256\":\"c87448cecbf5b9ae004a61214047ef3ed1697295cce6ade192d76fb79ba9dc76\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793763026766083598,\"device\":2049,\"inode\":6058688,\"mtime_ns\":1793763026765666499,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"binary_before\":{\"ctime_ns\":1793763026766083598,\"device\":2049,\"inode\":6058688,\"mtime_ns\":1793763026765666499,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":{\"ctime_ns\":1793766778098580328,\"device\":2049,\"inode\":6058690,\"mtime_ns\":1793766778098580328,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"9ccba92aca4ca5d40c751c5909dcd021f89340f2b24d5a0c100d478ca8981fe9\",\"size_bytes\":2958},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"7ddba4ac27fae32a495a84dc76cd7b345bcec0b29260a65d08440f037660e628\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4879,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793766778098580328,\"device\":2049,\"inode\":6058691,\"mtime_ns\":1793766778098580328,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"c4b7e654833b195112af9c551c7905a81a786fdcef028d8902b959b33484920d\",\"size_bytes\":970},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793766778097580396,\"device\":2049,\"inode\":6291671,\"mtime_ns\":1793766778097580396,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"dea3ab27ebce7bc1669836d0ebc4cbca9afe81f1357ff8f58f8bdc8ea3bfa1c0\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":929288658,\"tracked_entries\":7986,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7903,\"member_sha256\":\"c4ae21bb3d5b4d9581b875eeb8d4d2596901bfa5f870e7e4586f8179347a9e92\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"61c0b09fe8252fb785929a8d9d3962ad64fa6a3f69b7f78d6b274b92b70fa8c9\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"4a5ca260f826e51e91843c5dcf060531cf5f629cc2c4ea761a7a266adab2b025\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"b14d1999836b8500a87c7890d3a03976288add24190bc05481a3188089694891\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native/execution-start.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296112215,
+      "member": "history-native/preparation.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296112215,\"measured_head\":\"01627151f3ab50750eac2adeb46d8883a601265f\",\"measured_job\":126367534056,\"measured_run\":41760813063,\"member\":\"history-native/preparation.json\",\"member_bytes\":3646,\"member_sha256\":\"7ddba4ac27fae32a495a84dc76cd7b345bcec0b29260a65d08440f037660e628\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793763026766083598,\"device\":2049,\"inode\":6058688,\"mtime_ns\":1793763026765666499,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-6b84e60e682bb331\",\"sha256\":\"af710a3e46bdfa4ad6f6217e4405ffc317a9dd0cda7c958661e5c232be0f9be7\",\"size_bytes\":8699512},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41760813063\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2527,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"554a76fb8e21f160806692c753ca3ea6ad53a42f\",\"tested_tree\":\"e0a48a52802852a08bf80ffc564c23e20bc91358\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service/manifest.json\",\"member_bytes\":8914,\"member_sha256\":\"19eedc4ea15f1850fcc8bcecb520eb8b3440deea1fde4a33b620e0ae36ce2b26\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"all_named_tests_passed\":false,\"attack_workers\":16,\"binary_sha256_after\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"binary_sha256_before\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"build\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":9388151165,\"executed\":true,\"exit_code\":0,\"expected_source\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"log\":\"build.log\",\"process_exit_code\":0,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"execution_finished\":true,\"failures\":[\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET\",\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED\"],\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"requested_window_ns\":4000000000,\"runs\":[{\"failure\":\"CONFIRMATION_TARGET\",\"failure_diagnostic\":{\"acceptance_authority\":false,\"finite_target_met\":false,\"last_history_replay\":{\"history_call_index\":0,\"phase\":\"from-zero-pressure\",\"replay_accepted\":false,\"replay_error\":\"PUBLIC_REQUEST_DEADLINE\"},\"native_returncode\":0,\"schema\":\"trnm-w1-fresh-failure-diagnostic-v1\"},\"log_sha256\":\"87718a808d77a561fc8a8a6ecb371ed1f27ab757f6da2d450cc7c914d3e7b78e\",\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":null,\"passed\":false,\"process\":{\"command\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"--exact\",\"--nocapture\",\"--test-threads=1\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":17520345494,\"executed\":true,\"exit_code\":0,\"expected_source\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"log\":\"original.log\",\"process_exit_code\":0,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"report\":null,\"report_path\":\"original/report.json\"},{\"failure\":\"FRESH_NATIVE_PROCESS_REQUIRED\",\"failure_diagnostic\":{\"acceptance_authority\":false,\"finite_target_met\":false,\"last_history_replay\":{\"history_call_index\":0,\"phase\":\"from-zero-pressure\",\"replay_accepted\":false,\"replay_error\":\"PUBLIC_REQUEST_DEADLINE\"},\"native_returncode\":101,\"schema\":\"trnm-w1-fresh-failure-diagnostic-v1\"},\"log_sha256\":\"50312744991bebe912bcdc1671342f612cf82c444a928e19d0f48016636dcd0a\",\"name\":\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\",\"named_execution\":null,\"passed\":false,\"process\":{\"command\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\",\"--exact\",\"--nocapture\",\"--test-threads=1\",\"--ignored\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":17604352217,\"executed\":true,\"exit_code\":101,\"expected_source\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"log\":\"fresh.log\",\"process_exit_code\":101,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"report\":null,\"report_path\":\"fresh/report.json\"}],\"schema\":\"trnm-w1-fresh-service-execution-v1\",\"source_expected\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "source-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"source-after.json\",\"member_bytes\":421,\"member_sha256\":\"976e000edcab4eefb583e979d632d1f114d33b09e2762b5b4e7b22fb0f13394a\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":931951117,\"tracked_entries\":8026,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"976e000edcab4eefb583e979d632d1f114d33b09e2762b5b4e7b22fb0f13394a\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":931951117,\"tracked_entries\":8026,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/child-result.json\",\"member_bytes\":353,\"member_sha256\":\"afa9121ea5941e7c332e04e40d2ca7a74309e60ba07c92a0f4ff716964e5a147\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_w1_fresh_service_v1.py\",\"--out\",\"/home/runner/work/_temp/w1-fresh-service-head-41771598422-1/fresh-service\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/controller-result.json\",\"member_bytes\":7697,\"member_sha256\":\"fb2ae1afdcc9bf0726e939c33c0265040d60c721975d555cdd806fa77c947b79\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_w1_fresh_service_v1.py\",\"--out\",\"/home/runner/work/_temp/w1-fresh-service-head-41771598422-1/fresh-service\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"f02bfe761776cc1c8b113edc1aaed8c34b1d19ec9a8ef3302f8723b83366ba92\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/inside-before.json\",\"member_bytes\":1700,\"member_sha256\":\"9c8ef3ae31bb78420605808ebe35a45825d752766dadf2f4a615db3034cb0d6a\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/outside-after.json\",\"member_bytes\":1667,\"member_sha256\":\"18c9688ca4d76671a2a61ddfc3518afc2c6e49fe27ec4d3b1b40b2f7efa4c53e\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296332008,
+      "member": "fresh-service-host/prepare-build.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296332008,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207656,\"measured_run\":41771598422,\"member\":\"fresh-service-host/prepare-build.json\",\"member_bytes\":3402,\"member_sha256\":\"461f8f160239ee7a115e3f1623eafd92e28b97d38a3210f945925a4f23741e0a\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":334286760000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3544,\"major_faults\":2102,\"max_rss_kib\":1402648,\"minor_faults\":3717883,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"9d6b479205b06f094e75b4d658c95692aeb848d69b837453bb71af7be78a04c4\",\"stdout_sha256\":\"c8ddc5645640fba3d7671ec570b4a21bea354a59c5b18b1d440049f380edc6f4\",\"system_cpu_ns\":12586567000,\"timed_out\":false,\"user_cpu_ns\":321700193000,\"voluntary_switches\":15626,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":174879689630},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service/manifest.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service/manifest.json\",\"member_bytes\":8914,\"member_sha256\":\"ce6f453c947beca638d9b77e1902caa34a5fb5fd923b92d956ee5f5e5eb3fc15\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"all_named_tests_passed\":false,\"attack_workers\":16,\"binary_sha256_after\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"binary_sha256_before\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"build\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":7697202302,\"executed\":true,\"exit_code\":0,\"expected_source\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"log\":\"build.log\",\"process_exit_code\":0,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"execution_finished\":true,\"failures\":[\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET\",\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED\"],\"independent_wan_accepted\":false,\"passed\":false,\"production_activation\":false,\"requested_window_ns\":4000000000,\"runs\":[{\"failure\":\"CONFIRMATION_TARGET\",\"failure_diagnostic\":{\"acceptance_authority\":false,\"finite_target_met\":false,\"last_history_replay\":{\"history_call_index\":1,\"phase\":\"from-zero-pressure\",\"replay_accepted\":false,\"replay_error\":\"PUBLIC_REQUEST_DEADLINE\"},\"native_returncode\":0,\"schema\":\"trnm-w1-fresh-failure-diagnostic-v1\"},\"log_sha256\":\"ce4690d5729bb391ce0a9877d5a2c81204e0d910be8bcbfcdd18bf033fb0a679\",\"name\":\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"named_execution\":null,\"passed\":false,\"process\":{\"command\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline\",\"--exact\",\"--nocapture\",\"--test-threads=1\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":15903708624,\"executed\":true,\"exit_code\":0,\"expected_source\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"log\":\"original.log\",\"process_exit_code\":0,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"report\":null,\"report_path\":\"original/report.json\"},{\"failure\":\"FRESH_NATIVE_PROCESS_REQUIRED\",\"failure_diagnostic\":{\"acceptance_authority\":false,\"finite_target_met\":false,\"last_history_replay\":{\"history_call_index\":1,\"phase\":\"from-zero-pressure\",\"replay_accepted\":false,\"replay_error\":\"PUBLIC_REQUEST_DEADLINE\"},\"native_returncode\":101,\"schema\":\"trnm-w1-fresh-failure-diagnostic-v1\"},\"log_sha256\":\"1148dd19406098746095e0db8b3f93c582b194e6a0a452d04dab35552c715d3d\",\"name\":\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\",\"named_execution\":null,\"passed\":false,\"process\":{\"command\":[\"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c\",\"fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\",\"--exact\",\"--nocapture\",\"--test-threads=1\",\"--ignored\"],\"cwd\":\"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\",\"elapsed_ns\":15893147771,\"executed\":true,\"exit_code\":101,\"expected_source\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"log\":\"fresh.log\",\"process_exit_code\":101,\"source_after_verified\":true,\"source_before_verified\":true,\"source_verified\":true,\"timed_out\":false},\"report\":null,\"report_path\":\"fresh/report.json\"}],\"schema\":\"trnm-w1-fresh-service-execution-v1\",\"source_expected\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"source_recompiled\":true,\"work_hardness_accepted\":false},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "source-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"source-after.json\",\"member_bytes\":510,\"member_sha256\":\"e9a45e3850ab5ac95daa4735b60f4ba9da4d7f1a0d998f1b373a537f816354c7\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":931951117,\"tracked_entries\":8026,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "source.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"e9a45e3850ab5ac95daa4735b60f4ba9da4d7f1a0d998f1b373a537f816354c7\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":931951117,\"tracked_entries\":8026,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/child-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/child-result.json\",\"member_bytes\":366,\"member_sha256\":\"fa888c0f7ed7052c211c33a59a43850bfdc44ec7fd34c0edb54100ac4cafabe8\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_w1_fresh_service_v1.py\",\"--out\",\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41771598422-1/fresh-service\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/controller-result.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/controller-result.json\",\"member_bytes\":7710,\"member_sha256\":\"becbdbe249ba7cc4cc6f369f27b2d160f9215f9aed18d0a8758966a27bcc183d\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_w1_fresh_service_v1.py\",\"--out\",\"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41771598422-1/fresh-service\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/inside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"58763c0ec72af429f5f786fb13064050277f531f12c1f2f0ef31171ad042130f\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/inside-before.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/inside-before.json\",\"member_bytes\":1699,\"member_sha256\":\"40baba23d2a70164ffcc10114d76e0aed91dc6f4d6caa83777c8fcb99c848977\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/outside-after.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/outside-after.json\",\"member_bytes\":1667,\"member_sha256\":\"2c8be356ece14bbc52bb2c5f0f3997b96421091a88784ad5fbeb5efa51cdcc20\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    },
+    {
+      "artifact": 13296696264,
+      "member": "fresh-service-host/prepare-build.json",
+      "utf8_json": "{\"acceptance_granted\":false,\"artifact\":13296696264,\"measured_head\":\"6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029\",\"measured_job\":126385207706,\"measured_run\":41771598422,\"member\":\"fresh-service-host/prepare-build.json\",\"member_bytes\":3402,\"member_sha256\":\"7d4d9ed1d7e936daffc98422072f08bb73981c5cf9f5ba64d1eeae76970ba9f0\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary_sha256\":\"9606215a554c7bd401c8da8bae29f04bd5a2fb5bbd645f73c151667efdd0c664\",\"completed\":true,\"failure_type\":null,\"native_tests_executed\":false,\"process\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--release\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"public_v3_from_zero\",\"--no-run\",\"--message-format=json\"],\"cpu_ns\":264620555000,\"cpu_scope\":\"entire child, not apportioned to nested wall intervals\",\"exit_code\":0,\"involuntary_switches\":3310,\"major_faults\":2103,\"max_rss_kib\":1411860,\"minor_faults\":3691508,\"rss_scope\":\"whole waited child including pre-exec image; no Rust-only RSS attribution\",\"stderr_sha256\":\"0cfc6d493fec2395c4dc0962e516f77b722e98d3e1ec3545a0a67236e3e66c27\",\"stdout_sha256\":\"34f0509b9c85ef0c871a791544189a86d2593a5a999f4744bf18e1f2efd44729\",\"system_cpu_ns\":10253358000,\"timed_out\":false,\"user_cpu_ns\":254367197000,\"voluntary_switches\":17067,\"wait4_cpu_resolution_ns\":1000,\"wall_ns\":136108953147},\"schema\":\"trnm-ci-original-native-build-preparation-v1\",\"service_resource_observation\":false,\"source_error\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"4d0bcfb743d032db14faf1f05422e2e0cf300089\",\"tested_tree\":\"76d3b416eccc6a810634062e036f646f22bffc76\"}"
+    }
+  ],
+  "literal_representation": "Original single-line JSON projections are retained verbatim as UTF-8 strings to preserve all integers, including filesystem nanosecond timestamps beyond JavaScript's exact numeric range. Full selected original JSON and ZIPs remain in the reader artifact.",
+  "outcome": {
+    "history": "All four original 01627151 lanes returned 101 with 0 passed / 1 failed. Their original loopback servers reached the unchanged 1800-second lifetime with no prior stop request. Independent full-sync then reported IO: Connection refused (os error 111); 4105-block completion was not observed. No earlier source's failure label is used to infer this result.",
+    "fresh": "Both exact 6f head/actual-merge lanes kept the original 4-second window and 16 attack workers. The original selector returned 0 with one native test passed but failed CONFIRMATION_TARGET. Each fresh selector returned 101 with one failed native test and FRESH_NATIVE_PROCESS_REQUIRED. All four last replay observations show PUBLIC_REQUEST_DEADLINE; head history index is 0, actual-merge index is 1.",
+    "acceptance_granted": false,
+    "unique_native_tests_added_by_reader": 0,
+    "production_activation": false
+  }
+}

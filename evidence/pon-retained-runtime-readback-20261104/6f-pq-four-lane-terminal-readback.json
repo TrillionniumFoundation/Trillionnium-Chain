@@ -1,0 +1,4300 @@
+{
+  "schema": "trnm-6f-pq-four-lane-terminal-evidence-v1",
+  "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "actual_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+  "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+  "lanes": [
+    {
+      "job": 126382309171,
+      "run": 41771598395,
+      "run_attempt": 1,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/job/126382309171",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T04:23:52Z",
+        "completed_at": "2026-11-04T05:00:30Z",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:23:52Z",
+            "completed_at": "2026-11-04T04:23:53Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:23:53Z",
+            "completed_at": "2026-11-04T04:24:17Z"
+          },
+          {
+            "name": "Prepare exact-source command records",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:24:17Z",
+            "completed_at": "2026-11-04T04:24:18Z"
+          },
+          {
+            "name": "Require retained source and claim controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:24:18Z",
+            "completed_at": "2026-11-04T04:25:54Z"
+          },
+          {
+            "name": "Install the original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:25:54Z",
+            "completed_at": "2026-11-04T04:26:02Z"
+          },
+          {
+            "name": "Prepare the independently pinned OpenSSL provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:26:02Z",
+            "completed_at": "2026-11-04T04:27:47Z"
+          },
+          {
+            "name": "Record compiler, exact locked graph and formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:27:47Z",
+            "completed_at": "2026-11-04T04:33:49Z"
+          },
+          {
+            "name": "Execute every required native effect and rejection control",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:33:49Z",
+            "completed_at": "2026-11-04T04:36:11Z"
+          },
+          {
+            "name": "Preserve native control records before the complete regression",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:36:11Z",
+            "completed_at": "2026-11-04T04:36:12Z"
+          },
+          {
+            "name": "Preserve the complete original Node library regression suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:36:12Z",
+            "completed_at": "2026-11-04T04:59:15Z"
+          },
+          {
+            "name": "Check strict Clippy without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:59:15Z",
+            "completed_at": "2026-11-04T05:00:02Z"
+          },
+          {
+            "name": "Observe complete component costs with unchanged native budgets",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:00:02Z",
+            "completed_at": "2026-11-04T05:00:27Z"
+          },
+          {
+            "name": "Preserve complete records including failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:00:27Z",
+            "completed_at": "2026-11-04T05:00:28Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:00:28Z",
+            "completed_at": "2026-11-04T05:00:28Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:00:28Z",
+            "completed_at": "2026-11-04T05:00:28Z"
+          }
+        ]
+      },
+      "source_before": [
+        {
+          "line": 915,
+          "end_line": 927,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "source_after": {
+        "observed": false,
+        "reason": "This job console emits the initial source identity; no second source receipt is printed."
+      },
+      "audit": [
+        {
+          "line": 928,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "full_node_command": "bash \"$PQ_OUT/run-command.sh\" node-lib cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --show-output --test-threads=1",
+      "full_node_receipt": [
+        {
+          "line": 1182,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/node-lib.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "full_node_result": [
+        {
+          "line": 1193,
+          "text": "test result: ok. 975 passed; 0 failed; 25 ignored; 0 measured; 0 filtered out; finished in 1381.14s"
+        }
+      ],
+      "pq_selector_receipts": [
+        {
+          "line": 1074,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-00.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1075,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-01.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1076,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-02.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1077,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-03.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1078,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-04.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1079,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-05.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1080,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-06.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1081,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-07.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1082,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-08.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1083,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-09.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1084,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-10.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1085,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-11.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1086,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-12.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1087,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-13.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1088,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-14.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1089,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-15.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1090,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-16.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1091,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-17.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1092,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-18.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1093,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-19.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1094,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-20.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1095,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-21.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1096,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-22.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1097,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-23.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1098,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-24.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1099,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-25.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1100,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-26.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1101,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-27.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1102,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-28.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1103,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-29.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1104,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-30.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1105,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-31.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1106,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-32.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1107,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-33.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1108,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-34.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1109,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-35.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1110,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-36.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1111,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-37.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1112,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-38.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1113,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-39.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1114,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-40.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1115,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-41.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1116,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-42.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "pq_all_43_exit_zero": true,
+      "format_receipts": [
+        {
+          "line": 1028,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/format.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "clippy_command": "bash \"$PQ_OUT/run-command.sh\" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings",
+      "clippy_receipts": [
+        {
+          "line": 1217,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/clippy.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "cost_binary_witness": [
+        {
+          "line": 1281,
+          "value": {
+            "architecture": "x86_64",
+            "binary_sha256": "91aec131403eba378ebb9cf676e06d59f5ac4c230fdf671dfb801a3779106614",
+            "build_profile_scope": "the existing CI compiled test binary; no release-capacity claim",
+            "compiled_debug_assertions": true,
+            "order": "ABBA",
+            "process_rss_measured": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "reference": "retained pre-cache PQ caller authentication in this same test binary",
+            "retained_slots": 8,
+            "same_original_intake_budget_for_both_arms": true,
+            "samples_per_arm_per_case": 64,
+            "schema": "pon-pq-caller-auth-cost-source-v1",
+            "source_files": [
+              {
+                "path": "pq_identity.rs",
+                "sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d"
+              },
+              {
+                "path": "verifier_cache.rs",
+                "sha256": "736a3160e5ab372cab3bc40c19ae2c62708c20adfb40b44f4adfe74765e73b26"
+              },
+              {
+                "path": "verifier_cache_tests.rs",
+                "sha256": "d5e5d48c6c9180fb59ca0393bb20168d714e2a360d53726f370995175a1f1c3b"
+              },
+              {
+                "path": "pq_auth.rs",
+                "sha256": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b"
+              },
+              {
+                "path": "Cargo.lock",
+                "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+              }
+            ],
+            "timed_scope": "complete charged caller authentication; no ticket, network or Node"
+          }
+        }
+      ],
+      "cost_binary_is_not_a_direct_node_lib_command_receipt": true,
+      "observed_test_profile_lines": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s",
+        "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c)",
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s"
+      ],
+      "artifact_bindings": [
+        {
+          "id": 13295614479,
+          "name": "pq-system-controls-ubuntu-24.04-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 288653,
+          "sha256": "d330546d7af11595ad46e737e48944ea41f5f95f23afbf34d5df149b8b21d011",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13295614479"
+        },
+        {
+          "id": 13297485807,
+          "name": "pq-system-ubuntu-24.04-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 1148762,
+          "sha256": "92e357be528546f76f7eb222653485c834532b9058a4019da7b3a318fc1884e8",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13297485807"
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-pq-terminal-log-126382309171",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126382309171/logs",
+        "decoded_utf8_bytes": 606460,
+        "decoded_utf8_sha256": "03c91c61ecd704720c384bf75f152fe5abc1c8c7797e6289210dcd1b4574d070"
+      },
+      "no_artifact_archive_downloaded": true,
+      "full_name_list_not_read_from_archive": true,
+      "pq_selector_index_source": "6f458c-pq-required-tests-config-raw",
+      "pq_selector_mapping": [
+        {
+          "label": "native-00",
+          "selector": "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+          "exit_code": 0
+        },
+        {
+          "label": "native-01",
+          "selector": "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+          "exit_code": 0
+        },
+        {
+          "label": "native-02",
+          "selector": "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+          "exit_code": 0
+        },
+        {
+          "label": "native-03",
+          "selector": "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-04",
+          "selector": "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+          "exit_code": 0
+        },
+        {
+          "label": "native-05",
+          "selector": "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-06",
+          "selector": "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
+          "exit_code": 0
+        },
+        {
+          "label": "native-07",
+          "selector": "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",
+          "exit_code": 0
+        },
+        {
+          "label": "native-08",
+          "selector": "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-09",
+          "selector": "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-10",
+          "selector": "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-11",
+          "selector": "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-12",
+          "selector": "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected",
+          "exit_code": 0
+        },
+        {
+          "label": "native-13",
+          "selector": "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota",
+          "exit_code": 0
+        },
+        {
+          "label": "native-14",
+          "selector": "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority",
+          "exit_code": 0
+        },
+        {
+          "label": "native-15",
+          "selector": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-16",
+          "selector": "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge",
+          "exit_code": 0
+        },
+        {
+          "label": "native-17",
+          "selector": "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node",
+          "exit_code": 0
+        },
+        {
+          "label": "native-18",
+          "selector": "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive",
+          "exit_code": 0
+        },
+        {
+          "label": "native-19",
+          "selector": "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor",
+          "exit_code": 0
+        },
+        {
+          "label": "native-20",
+          "selector": "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance",
+          "exit_code": 0
+        },
+        {
+          "label": "native-21",
+          "selector": "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory",
+          "exit_code": 0
+        },
+        {
+          "label": "native-22",
+          "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+          "exit_code": 0
+        },
+        {
+          "label": "native-23",
+          "selector": "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked",
+          "exit_code": 0
+        },
+        {
+          "label": "native-24",
+          "selector": "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume",
+          "exit_code": 0
+        },
+        {
+          "label": "native-25",
+          "selector": "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner",
+          "exit_code": 0
+        },
+        {
+          "label": "native-26",
+          "selector": "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work",
+          "exit_code": 0
+        },
+        {
+          "label": "native-27",
+          "selector": "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-28",
+          "selector": "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-29",
+          "selector": "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check",
+          "exit_code": 0
+        },
+        {
+          "label": "native-30",
+          "selector": "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-31",
+          "selector": "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-32",
+          "selector": "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses",
+          "exit_code": 0
+        },
+        {
+          "label": "native-33",
+          "selector": "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch",
+          "exit_code": 0
+        },
+        {
+          "label": "native-34",
+          "selector": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+          "exit_code": 0
+        },
+        {
+          "label": "native-35",
+          "selector": "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair",
+          "exit_code": 0
+        },
+        {
+          "label": "native-36",
+          "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-37",
+          "selector": "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-38",
+          "selector": "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-39",
+          "selector": "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-40",
+          "selector": "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+          "exit_code": 0
+        },
+        {
+          "label": "native-41",
+          "selector": "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-42",
+          "selector": "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "job": 126382309028,
+      "run": 41771598395,
+      "run_attempt": 1,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/job/126382309028",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T04:23:29Z",
+        "completed_at": "2026-11-04T05:00:41Z",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:23:30Z",
+            "completed_at": "2026-11-04T04:23:31Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:23:31Z",
+            "completed_at": "2026-11-04T04:23:54Z"
+          },
+          {
+            "name": "Prepare exact-source command records",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:23:54Z",
+            "completed_at": "2026-11-04T04:23:56Z"
+          },
+          {
+            "name": "Require retained source and claim controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:23:56Z",
+            "completed_at": "2026-11-04T04:25:33Z"
+          },
+          {
+            "name": "Install the original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:25:33Z",
+            "completed_at": "2026-11-04T04:25:42Z"
+          },
+          {
+            "name": "Prepare the independently pinned OpenSSL provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:25:42Z",
+            "completed_at": "2026-11-04T04:27:29Z"
+          },
+          {
+            "name": "Record compiler, exact locked graph and formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:27:29Z",
+            "completed_at": "2026-11-04T04:33:39Z"
+          },
+          {
+            "name": "Execute every required native effect and rejection control",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:33:39Z",
+            "completed_at": "2026-11-04T04:36:05Z"
+          },
+          {
+            "name": "Preserve native control records before the complete regression",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:36:05Z",
+            "completed_at": "2026-11-04T04:36:07Z"
+          },
+          {
+            "name": "Preserve the complete original Node library regression suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:36:07Z",
+            "completed_at": "2026-11-04T04:59:23Z"
+          },
+          {
+            "name": "Check strict Clippy without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T04:59:23Z",
+            "completed_at": "2026-11-04T05:00:12Z"
+          },
+          {
+            "name": "Observe complete component costs with unchanged native budgets",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:00:12Z",
+            "completed_at": "2026-11-04T05:00:38Z"
+          },
+          {
+            "name": "Preserve complete records including failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:00:38Z",
+            "completed_at": "2026-11-04T05:00:39Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:00:39Z",
+            "completed_at": "2026-11-04T05:00:39Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:00:39Z",
+            "completed_at": "2026-11-04T05:00:39Z"
+          }
+        ]
+      },
+      "source_before": [
+        {
+          "line": 919,
+          "end_line": 931,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "source_after": {
+        "observed": false,
+        "reason": "This job console emits the initial source identity; no second source receipt is printed."
+      },
+      "audit": [
+        {
+          "line": 932,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "full_node_command": "bash \"$PQ_OUT/run-command.sh\" node-lib cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --show-output --test-threads=1",
+      "full_node_receipt": [
+        {
+          "line": 1186,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/node-lib.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "full_node_result": [
+        {
+          "line": 1197,
+          "text": "test result: ok. 975 passed; 0 failed; 25 ignored; 0 measured; 0 filtered out; finished in 1394.54s"
+        }
+      ],
+      "pq_selector_receipts": [
+        {
+          "line": 1078,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-00.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1079,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-01.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1080,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-02.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1081,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-03.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1082,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-04.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1083,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-05.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1084,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-06.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1085,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-07.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1086,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-08.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1087,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-09.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1088,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-10.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1089,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-11.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1090,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-12.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1091,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-13.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1092,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-14.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1093,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-15.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1094,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-16.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1095,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-17.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1096,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-18.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1097,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-19.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1098,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-20.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1099,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-21.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1100,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-22.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1101,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-23.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1102,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-24.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1103,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-25.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1104,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-26.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1105,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-27.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1106,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-28.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1107,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-29.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1108,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-30.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1109,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-31.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1110,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-32.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1111,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-33.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1112,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-34.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1113,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-35.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1114,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-36.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1115,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-37.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1116,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-38.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1117,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-39.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1118,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-40.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1119,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-41.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1120,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-42.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "pq_all_43_exit_zero": true,
+      "format_receipts": [
+        {
+          "line": 1032,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/format.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "clippy_command": "bash \"$PQ_OUT/run-command.sh\" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings",
+      "clippy_receipts": [
+        {
+          "line": 1221,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/clippy.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "cost_binary_witness": [
+        {
+          "line": 1285,
+          "value": {
+            "architecture": "x86_64",
+            "binary_sha256": "bcefb19369755f3d307978e4f53141337aa2d5907b089b78ba168a32e807f69e",
+            "build_profile_scope": "the existing CI compiled test binary; no release-capacity claim",
+            "compiled_debug_assertions": true,
+            "order": "ABBA",
+            "process_rss_measured": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "reference": "retained pre-cache PQ caller authentication in this same test binary",
+            "retained_slots": 8,
+            "same_original_intake_budget_for_both_arms": true,
+            "samples_per_arm_per_case": 64,
+            "schema": "pon-pq-caller-auth-cost-source-v1",
+            "source_files": [
+              {
+                "path": "pq_identity.rs",
+                "sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d"
+              },
+              {
+                "path": "verifier_cache.rs",
+                "sha256": "736a3160e5ab372cab3bc40c19ae2c62708c20adfb40b44f4adfe74765e73b26"
+              },
+              {
+                "path": "verifier_cache_tests.rs",
+                "sha256": "d5e5d48c6c9180fb59ca0393bb20168d714e2a360d53726f370995175a1f1c3b"
+              },
+              {
+                "path": "pq_auth.rs",
+                "sha256": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b"
+              },
+              {
+                "path": "Cargo.lock",
+                "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+              }
+            ],
+            "timed_scope": "complete charged caller authentication; no ticket, network or Node"
+          }
+        }
+      ],
+      "cost_binary_is_not_a_direct_node_lib_command_receipt": true,
+      "observed_test_profile_lines": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s",
+        "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-4a176b3f1058369c)",
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s"
+      ],
+      "artifact_bindings": [
+        {
+          "id": 13296396453,
+          "name": "pq-system-controls-ubuntu-24.04-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 292200,
+          "sha256": "9ff40f99e3bee6ff45c01c9e6498986392a4f7cf298d9d8aad33ff775d13e3e8",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13296396453"
+        },
+        {
+          "id": 13297067223,
+          "name": "pq-system-ubuntu-24.04-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 1168383,
+          "sha256": "5151edcf693eeacfa78004027628077227bcddec16ff5cd7bc40e73cbb98dfa4",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13297067223"
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-pq-terminal-log-126382309028",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126382309028/logs",
+        "decoded_utf8_bytes": 607329,
+        "decoded_utf8_sha256": "75dec0d06212c62d780a13d90d8c165dc18f24e3097f2b07c9cd73c2b1127453"
+      },
+      "no_artifact_archive_downloaded": true,
+      "full_name_list_not_read_from_archive": true,
+      "pq_selector_index_source": "6f458c-pq-required-tests-config-raw",
+      "pq_selector_mapping": [
+        {
+          "label": "native-00",
+          "selector": "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+          "exit_code": 0
+        },
+        {
+          "label": "native-01",
+          "selector": "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+          "exit_code": 0
+        },
+        {
+          "label": "native-02",
+          "selector": "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+          "exit_code": 0
+        },
+        {
+          "label": "native-03",
+          "selector": "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-04",
+          "selector": "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+          "exit_code": 0
+        },
+        {
+          "label": "native-05",
+          "selector": "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-06",
+          "selector": "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
+          "exit_code": 0
+        },
+        {
+          "label": "native-07",
+          "selector": "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",
+          "exit_code": 0
+        },
+        {
+          "label": "native-08",
+          "selector": "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-09",
+          "selector": "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-10",
+          "selector": "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-11",
+          "selector": "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-12",
+          "selector": "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected",
+          "exit_code": 0
+        },
+        {
+          "label": "native-13",
+          "selector": "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota",
+          "exit_code": 0
+        },
+        {
+          "label": "native-14",
+          "selector": "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority",
+          "exit_code": 0
+        },
+        {
+          "label": "native-15",
+          "selector": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-16",
+          "selector": "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge",
+          "exit_code": 0
+        },
+        {
+          "label": "native-17",
+          "selector": "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node",
+          "exit_code": 0
+        },
+        {
+          "label": "native-18",
+          "selector": "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive",
+          "exit_code": 0
+        },
+        {
+          "label": "native-19",
+          "selector": "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor",
+          "exit_code": 0
+        },
+        {
+          "label": "native-20",
+          "selector": "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance",
+          "exit_code": 0
+        },
+        {
+          "label": "native-21",
+          "selector": "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory",
+          "exit_code": 0
+        },
+        {
+          "label": "native-22",
+          "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+          "exit_code": 0
+        },
+        {
+          "label": "native-23",
+          "selector": "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked",
+          "exit_code": 0
+        },
+        {
+          "label": "native-24",
+          "selector": "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume",
+          "exit_code": 0
+        },
+        {
+          "label": "native-25",
+          "selector": "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner",
+          "exit_code": 0
+        },
+        {
+          "label": "native-26",
+          "selector": "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work",
+          "exit_code": 0
+        },
+        {
+          "label": "native-27",
+          "selector": "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-28",
+          "selector": "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-29",
+          "selector": "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check",
+          "exit_code": 0
+        },
+        {
+          "label": "native-30",
+          "selector": "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-31",
+          "selector": "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-32",
+          "selector": "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses",
+          "exit_code": 0
+        },
+        {
+          "label": "native-33",
+          "selector": "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch",
+          "exit_code": 0
+        },
+        {
+          "label": "native-34",
+          "selector": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+          "exit_code": 0
+        },
+        {
+          "label": "native-35",
+          "selector": "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair",
+          "exit_code": 0
+        },
+        {
+          "label": "native-36",
+          "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-37",
+          "selector": "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-38",
+          "selector": "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-39",
+          "selector": "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-40",
+          "selector": "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+          "exit_code": 0
+        },
+        {
+          "label": "native-41",
+          "selector": "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-42",
+          "selector": "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "job": 126382309189,
+      "run": 41771598395,
+      "run_attempt": 1,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/job/126382309189",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T04:15:34Z",
+        "completed_at": "2026-11-04T05:04:48Z",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:15:35Z",
+            "completed_at": "2026-11-04T04:15:35Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:15:35Z",
+            "completed_at": "2026-11-04T04:15:59Z"
+          },
+          {
+            "name": "Prepare exact-source command records",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:15:59Z",
+            "completed_at": "2026-11-04T04:16:01Z"
+          },
+          {
+            "name": "Require retained source and claim controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:16:01Z",
+            "completed_at": "2026-11-04T04:17:25Z"
+          },
+          {
+            "name": "Install the original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:17:25Z",
+            "completed_at": "2026-11-04T04:17:30Z"
+          },
+          {
+            "name": "Prepare the independently pinned OpenSSL provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:17:30Z",
+            "completed_at": "2026-11-04T04:19:11Z"
+          },
+          {
+            "name": "Record compiler, exact locked graph and formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:19:11Z",
+            "completed_at": "2026-11-04T04:25:18Z"
+          },
+          {
+            "name": "Execute every required native effect and rejection control",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:25:18Z",
+            "completed_at": "2026-11-04T04:27:11Z"
+          },
+          {
+            "name": "Preserve native control records before the complete regression",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:27:11Z",
+            "completed_at": "2026-11-04T04:27:12Z"
+          },
+          {
+            "name": "Preserve the complete original Node library regression suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T04:27:12Z",
+            "completed_at": "2026-11-04T05:03:35Z"
+          },
+          {
+            "name": "Check strict Clippy without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T05:03:35Z",
+            "completed_at": "2026-11-04T05:04:15Z"
+          },
+          {
+            "name": "Observe complete component costs with unchanged native budgets",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:04:15Z",
+            "completed_at": "2026-11-04T05:04:46Z"
+          },
+          {
+            "name": "Preserve complete records including failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:04:46Z",
+            "completed_at": "2026-11-04T05:04:47Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:04:47Z",
+            "completed_at": "2026-11-04T05:04:47Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:04:47Z",
+            "completed_at": "2026-11-04T05:04:47Z"
+          }
+        ]
+      },
+      "source_before": [
+        {
+          "line": 911,
+          "end_line": 923,
+          "value": {
+            "base": null,
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "source_after": {
+        "observed": false,
+        "reason": "This job console emits the initial source identity; no second source receipt is printed."
+      },
+      "audit": [
+        {
+          "line": 924,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "full_node_command": "bash \"$PQ_OUT/run-command.sh\" node-lib cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --show-output --test-threads=1",
+      "full_node_receipt": [
+        {
+          "line": 1178,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/node-lib.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "full_node_result": [
+        {
+          "line": 1189,
+          "text": "test result: ok. 975 passed; 0 failed; 25 ignored; 0 measured; 0 filtered out; finished in 2181.46s"
+        }
+      ],
+      "pq_selector_receipts": [
+        {
+          "line": 1070,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-00.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1071,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-01.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1072,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-02.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1073,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-03.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1074,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-04.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1075,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-05.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1076,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-06.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1077,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-07.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1078,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-08.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1079,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-09.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1080,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-10.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1081,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-11.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1082,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-12.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1083,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-13.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1084,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-14.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1085,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-15.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1086,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-16.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1087,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-17.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1088,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-18.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1089,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-19.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1090,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-20.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1091,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-21.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1092,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-22.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1093,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-23.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1094,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-24.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1095,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-25.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1096,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-26.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1097,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-27.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1098,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-28.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1099,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-29.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1100,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-30.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1101,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-31.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1102,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-32.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1103,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-33.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1104,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-34.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1105,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-35.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1106,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-36.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1107,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-37.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1108,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-38.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1109,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-39.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1110,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-40.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1111,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-41.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1112,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-42.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "pq_all_43_exit_zero": true,
+      "format_receipts": [
+        {
+          "line": 1024,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/format.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "clippy_command": "bash \"$PQ_OUT/run-command.sh\" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings",
+      "clippy_receipts": [
+        {
+          "line": 1213,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/clippy.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "cost_binary_witness": [
+        {
+          "line": 1277,
+          "value": {
+            "architecture": "aarch64",
+            "binary_sha256": "b0a2a18fa70cdd6c8f9e6a820e27ae7accfeb6e3633f05364a6356cd46f058cc",
+            "build_profile_scope": "the existing CI compiled test binary; no release-capacity claim",
+            "compiled_debug_assertions": true,
+            "order": "ABBA",
+            "process_rss_measured": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "reference": "retained pre-cache PQ caller authentication in this same test binary",
+            "retained_slots": 8,
+            "same_original_intake_budget_for_both_arms": true,
+            "samples_per_arm_per_case": 64,
+            "schema": "pon-pq-caller-auth-cost-source-v1",
+            "source_files": [
+              {
+                "path": "pq_identity.rs",
+                "sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d"
+              },
+              {
+                "path": "verifier_cache.rs",
+                "sha256": "736a3160e5ab372cab3bc40c19ae2c62708c20adfb40b44f4adfe74765e73b26"
+              },
+              {
+                "path": "verifier_cache_tests.rs",
+                "sha256": "d5e5d48c6c9180fb59ca0393bb20168d714e2a360d53726f370995175a1f1c3b"
+              },
+              {
+                "path": "pq_auth.rs",
+                "sha256": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b"
+              },
+              {
+                "path": "Cargo.lock",
+                "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+              }
+            ],
+            "timed_scope": "complete charged caller authentication; no ticket, network or Node"
+          }
+        }
+      ],
+      "cost_binary_is_not_a_direct_node_lib_command_receipt": true,
+      "observed_test_profile_lines": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s",
+        "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd)",
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s"
+      ],
+      "artifact_bindings": [
+        {
+          "id": 13295767828,
+          "name": "pq-system-controls-ubuntu-24.04-arm-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 286966,
+          "sha256": "186235538643497ddbdbc5232815d66a77a94c2786041e01cedf047314148565",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13295767828"
+        },
+        {
+          "id": 13297043452,
+          "name": "pq-system-ubuntu-24.04-arm-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 1161662,
+          "sha256": "491fc17ca97254ccbc244a2d795b96aea6f7cd36eb4a74654e13849a159745c1",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13297043452"
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-pq-terminal-log-126382309189",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126382309189/logs",
+        "decoded_utf8_bytes": 606271,
+        "decoded_utf8_sha256": "0547e34d1b30a0c98eb0f2be6e40822cd5b6ca7bf29b83c4c6c24c0f3f9b1765"
+      },
+      "no_artifact_archive_downloaded": true,
+      "full_name_list_not_read_from_archive": true,
+      "pq_selector_index_source": "6f458c-pq-required-tests-config-raw",
+      "pq_selector_mapping": [
+        {
+          "label": "native-00",
+          "selector": "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+          "exit_code": 0
+        },
+        {
+          "label": "native-01",
+          "selector": "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+          "exit_code": 0
+        },
+        {
+          "label": "native-02",
+          "selector": "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+          "exit_code": 0
+        },
+        {
+          "label": "native-03",
+          "selector": "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-04",
+          "selector": "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+          "exit_code": 0
+        },
+        {
+          "label": "native-05",
+          "selector": "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-06",
+          "selector": "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
+          "exit_code": 0
+        },
+        {
+          "label": "native-07",
+          "selector": "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",
+          "exit_code": 0
+        },
+        {
+          "label": "native-08",
+          "selector": "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-09",
+          "selector": "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-10",
+          "selector": "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-11",
+          "selector": "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-12",
+          "selector": "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected",
+          "exit_code": 0
+        },
+        {
+          "label": "native-13",
+          "selector": "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota",
+          "exit_code": 0
+        },
+        {
+          "label": "native-14",
+          "selector": "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority",
+          "exit_code": 0
+        },
+        {
+          "label": "native-15",
+          "selector": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-16",
+          "selector": "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge",
+          "exit_code": 0
+        },
+        {
+          "label": "native-17",
+          "selector": "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node",
+          "exit_code": 0
+        },
+        {
+          "label": "native-18",
+          "selector": "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive",
+          "exit_code": 0
+        },
+        {
+          "label": "native-19",
+          "selector": "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor",
+          "exit_code": 0
+        },
+        {
+          "label": "native-20",
+          "selector": "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance",
+          "exit_code": 0
+        },
+        {
+          "label": "native-21",
+          "selector": "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory",
+          "exit_code": 0
+        },
+        {
+          "label": "native-22",
+          "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+          "exit_code": 0
+        },
+        {
+          "label": "native-23",
+          "selector": "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked",
+          "exit_code": 0
+        },
+        {
+          "label": "native-24",
+          "selector": "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume",
+          "exit_code": 0
+        },
+        {
+          "label": "native-25",
+          "selector": "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner",
+          "exit_code": 0
+        },
+        {
+          "label": "native-26",
+          "selector": "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work",
+          "exit_code": 0
+        },
+        {
+          "label": "native-27",
+          "selector": "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-28",
+          "selector": "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-29",
+          "selector": "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check",
+          "exit_code": 0
+        },
+        {
+          "label": "native-30",
+          "selector": "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-31",
+          "selector": "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-32",
+          "selector": "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses",
+          "exit_code": 0
+        },
+        {
+          "label": "native-33",
+          "selector": "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch",
+          "exit_code": 0
+        },
+        {
+          "label": "native-34",
+          "selector": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+          "exit_code": 0
+        },
+        {
+          "label": "native-35",
+          "selector": "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair",
+          "exit_code": 0
+        },
+        {
+          "label": "native-36",
+          "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-37",
+          "selector": "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-38",
+          "selector": "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-39",
+          "selector": "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-40",
+          "selector": "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+          "exit_code": 0
+        },
+        {
+          "label": "native-41",
+          "selector": "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-42",
+          "selector": "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "job": 126382308770,
+      "run": 41771598395,
+      "run_attempt": 1,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/job/126382308770",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-04T04:14:46Z",
+        "completed_at": "2026-11-04T05:04:37Z",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T04:14:47Z",
+            "completed_at": "2026-11-04T04:14:48Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T04:14:48Z",
+            "completed_at": "2026-11-04T04:15:13Z"
+          },
+          {
+            "name": "Prepare exact-source command records",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T04:15:13Z",
+            "completed_at": "2026-11-04T04:15:15Z"
+          },
+          {
+            "name": "Require retained source and claim controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T04:15:15Z",
+            "completed_at": "2026-11-04T04:16:41Z"
+          },
+          {
+            "name": "Install the original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T04:16:41Z",
+            "completed_at": "2026-11-04T04:16:46Z"
+          },
+          {
+            "name": "Prepare the independently pinned OpenSSL provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T04:16:46Z",
+            "completed_at": "2026-11-04T04:18:35Z"
+          },
+          {
+            "name": "Record compiler, exact locked graph and formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T04:18:35Z",
+            "completed_at": "2026-11-04T04:24:43Z"
+          },
+          {
+            "name": "Execute every required native effect and rejection control",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T04:24:43Z",
+            "completed_at": "2026-11-04T04:26:42Z"
+          },
+          {
+            "name": "Preserve native control records before the complete regression",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T04:26:42Z",
+            "completed_at": "2026-11-04T04:26:43Z"
+          },
+          {
+            "name": "Preserve the complete original Node library regression suite",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 10,
+            "started_at": "2026-11-04T04:26:43Z",
+            "completed_at": "2026-11-04T05:03:22Z"
+          },
+          {
+            "name": "Check strict Clippy without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T05:03:22Z",
+            "completed_at": "2026-11-04T05:04:02Z"
+          },
+          {
+            "name": "Observe complete component costs with unchanged native budgets",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T05:04:02Z",
+            "completed_at": "2026-11-04T05:04:32Z"
+          },
+          {
+            "name": "Preserve complete records including failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-11-04T05:04:32Z",
+            "completed_at": "2026-11-04T05:04:34Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-11-04T05:04:34Z",
+            "completed_at": "2026-11-04T05:04:34Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-11-04T05:04:34Z",
+            "completed_at": "2026-11-04T05:04:34Z"
+          }
+        ]
+      },
+      "source_before": [
+        {
+          "line": 914,
+          "end_line": 926,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+            "kind": "prospective-merge",
+            "prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+            "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 931951117,
+            "tracked_entries": 8026,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "source_after": {
+        "observed": false,
+        "reason": "This job console emits the initial source identity; no second source receipt is printed."
+      },
+      "audit": [
+        {
+          "line": 927,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "full_node_command": "bash \"$PQ_OUT/run-command.sh\" node-lib cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --show-output --test-threads=1",
+      "full_node_receipt": [
+        {
+          "line": 1181,
+          "exit_code": 101,
+          "receipt": "/home/runner/work/_temp/pq-system-records/node-lib.json",
+          "status": "command_failed"
+        }
+      ],
+      "full_node_result": [
+        {
+          "line": 1379,
+          "text": "test result: FAILED. 974 passed; 1 failed; 25 ignored; 0 measured; 0 filtered out; finished in 2196.61s"
+        }
+      ],
+      "pq_selector_receipts": [
+        {
+          "line": 1073,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-00.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1074,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-01.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1075,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-02.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1076,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-03.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1077,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-04.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1078,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-05.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1079,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-06.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1080,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-07.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1081,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-08.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1082,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-09.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1083,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-10.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1084,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-11.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1085,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-12.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1086,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-13.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1087,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-14.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1088,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-15.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1089,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-16.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1090,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-17.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1091,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-18.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1092,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-19.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1093,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-20.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1094,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-21.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1095,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-22.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1096,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-23.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1097,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-24.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1098,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-25.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1099,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-26.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1100,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-27.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1101,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-28.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1102,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-29.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1103,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-30.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1104,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-31.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1105,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-32.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1106,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-33.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1107,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-34.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1108,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-35.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1109,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-36.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1110,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-37.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1111,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-38.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1112,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-39.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1113,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-40.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1114,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-41.json",
+          "status": "command_succeeded"
+        },
+        {
+          "line": 1115,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/native-42.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "pq_all_43_exit_zero": true,
+      "format_receipts": [
+        {
+          "line": 1027,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/format.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "clippy_command": "bash \"$PQ_OUT/run-command.sh\" clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --tests --all-features -- -D warnings",
+      "clippy_receipts": [
+        {
+          "line": 1406,
+          "exit_code": 0,
+          "receipt": "/home/runner/work/_temp/pq-system-records/clippy.json",
+          "status": "command_succeeded"
+        }
+      ],
+      "cost_binary_witness": [
+        {
+          "line": 1470,
+          "value": {
+            "architecture": "aarch64",
+            "binary_sha256": "179eaa7eeca5ebb530e924867b0435257271b98b5b1b7afcf5415a27dcaf2062",
+            "build_profile_scope": "the existing CI compiled test binary; no release-capacity claim",
+            "compiled_debug_assertions": true,
+            "order": "ABBA",
+            "process_rss_measured": false,
+            "production_activation": false,
+            "public_network_ready": false,
+            "reference": "retained pre-cache PQ caller authentication in this same test binary",
+            "retained_slots": 8,
+            "same_original_intake_budget_for_both_arms": true,
+            "samples_per_arm_per_case": 64,
+            "schema": "pon-pq-caller-auth-cost-source-v1",
+            "source_files": [
+              {
+                "path": "pq_identity.rs",
+                "sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d"
+              },
+              {
+                "path": "verifier_cache.rs",
+                "sha256": "736a3160e5ab372cab3bc40c19ae2c62708c20adfb40b44f4adfe74765e73b26"
+              },
+              {
+                "path": "verifier_cache_tests.rs",
+                "sha256": "d5e5d48c6c9180fb59ca0393bb20168d714e2a360d53726f370995175a1f1c3b"
+              },
+              {
+                "path": "pq_auth.rs",
+                "sha256": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b"
+              },
+              {
+                "path": "Cargo.lock",
+                "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+              }
+            ],
+            "timed_scope": "complete charged caller authentication; no ticket, network or Node"
+          }
+        }
+      ],
+      "cost_binary_is_not_a_direct_node_lib_command_receipt": true,
+      "observed_test_profile_lines": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s",
+        "     Running unittests src/lib.rs (/home/runner/work/_temp/pq-system-target/debug/deps/trnm_pon_node-1a8d9f853013aedd)",
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s"
+      ],
+      "artifact_bindings": [
+        {
+          "id": 13295951522,
+          "name": "pq-system-controls-ubuntu-24.04-arm-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 290338,
+          "sha256": "52aebf472db08e3ee83288b118cfd730950ea24f7e006159b9c7f1f3c5328025",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13295951522"
+        },
+        {
+          "id": 13297925371,
+          "name": "pq-system-ubuntu-24.04-arm-prospective-merge-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "bytes": 1166733,
+          "sha256": "653c3a0dcfad8d27fc0b55d7374774fbbf3743c94c1e99660e6fcc69576a4eb0",
+          "api_match": true,
+          "download_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598395/artifacts/13297925371"
+        }
+      ],
+      "raw_log": {
+        "key": "cohort-6f458c-pq-terminal-log-126382308770",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126382308770/logs",
+        "decoded_utf8_bytes": 641713,
+        "decoded_utf8_sha256": "6fd2f320ae97630542c43bf7ca23d7afaf2ed4ec2e298d28bfd43b8fc15dd4e3"
+      },
+      "no_artifact_archive_downloaded": true,
+      "full_name_list_not_read_from_archive": true,
+      "pq_selector_index_source": "6f458c-pq-required-tests-config-raw",
+      "pq_selector_mapping": [
+        {
+          "label": "native-00",
+          "selector": "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+          "exit_code": 0
+        },
+        {
+          "label": "native-01",
+          "selector": "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+          "exit_code": 0
+        },
+        {
+          "label": "native-02",
+          "selector": "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+          "exit_code": 0
+        },
+        {
+          "label": "native-03",
+          "selector": "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-04",
+          "selector": "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+          "exit_code": 0
+        },
+        {
+          "label": "native-05",
+          "selector": "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-06",
+          "selector": "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
+          "exit_code": 0
+        },
+        {
+          "label": "native-07",
+          "selector": "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",
+          "exit_code": 0
+        },
+        {
+          "label": "native-08",
+          "selector": "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-09",
+          "selector": "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-10",
+          "selector": "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline",
+          "exit_code": 0
+        },
+        {
+          "label": "native-11",
+          "selector": "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-12",
+          "selector": "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected",
+          "exit_code": 0
+        },
+        {
+          "label": "native-13",
+          "selector": "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota",
+          "exit_code": 0
+        },
+        {
+          "label": "native-14",
+          "selector": "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority",
+          "exit_code": 0
+        },
+        {
+          "label": "native-15",
+          "selector": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+          "exit_code": 0
+        },
+        {
+          "label": "native-16",
+          "selector": "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge",
+          "exit_code": 0
+        },
+        {
+          "label": "native-17",
+          "selector": "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node",
+          "exit_code": 0
+        },
+        {
+          "label": "native-18",
+          "selector": "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive",
+          "exit_code": 0
+        },
+        {
+          "label": "native-19",
+          "selector": "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor",
+          "exit_code": 0
+        },
+        {
+          "label": "native-20",
+          "selector": "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance",
+          "exit_code": 0
+        },
+        {
+          "label": "native-21",
+          "selector": "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory",
+          "exit_code": 0
+        },
+        {
+          "label": "native-22",
+          "selector": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+          "exit_code": 0
+        },
+        {
+          "label": "native-23",
+          "selector": "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked",
+          "exit_code": 0
+        },
+        {
+          "label": "native-24",
+          "selector": "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume",
+          "exit_code": 0
+        },
+        {
+          "label": "native-25",
+          "selector": "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner",
+          "exit_code": 0
+        },
+        {
+          "label": "native-26",
+          "selector": "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work",
+          "exit_code": 0
+        },
+        {
+          "label": "native-27",
+          "selector": "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-28",
+          "selector": "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-29",
+          "selector": "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check",
+          "exit_code": 0
+        },
+        {
+          "label": "native-30",
+          "selector": "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy",
+          "exit_code": 0
+        },
+        {
+          "label": "native-31",
+          "selector": "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit",
+          "exit_code": 0
+        },
+        {
+          "label": "native-32",
+          "selector": "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses",
+          "exit_code": 0
+        },
+        {
+          "label": "native-33",
+          "selector": "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch",
+          "exit_code": 0
+        },
+        {
+          "label": "native-34",
+          "selector": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+          "exit_code": 0
+        },
+        {
+          "label": "native-35",
+          "selector": "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair",
+          "exit_code": 0
+        },
+        {
+          "label": "native-36",
+          "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+          "exit_code": 0
+        },
+        {
+          "label": "native-37",
+          "selector": "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+          "exit_code": 0
+        },
+        {
+          "label": "native-38",
+          "selector": "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+          "exit_code": 0
+        },
+        {
+          "label": "native-39",
+          "selector": "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-40",
+          "selector": "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+          "exit_code": 0
+        },
+        {
+          "label": "native-41",
+          "selector": "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+          "exit_code": 0
+        },
+        {
+          "label": "native-42",
+          "selector": "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement",
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "filesystem_written": false,
+  "scope": "Original current-cohort job consoles and API metadata. No result inherited from another source. Full per-test archive records remain unread.",
+  "provenance_limits": {
+    "complete_node_native_count_is_actual_console": true,
+    "complete_per_test_name_list_not_read": true,
+    "source_before_receipt_count_per_lane": 1,
+    "source_after_not_emitted_by_this_job_console": true,
+    "compiler_artifact_and_node_lib_executable_sha_not_read_from_archive": true,
+    "cost_executable_witness_is_only_attributed_to_original_cost_invocation": true,
+    "no_release_capacity_claim": true,
+    "no_public_service_throughput_qualification": true,
+    "raw_log_hash_scope": "UTF-8 encoding of exact complete decoded job-log text returned by the GitHub connector",
+    "filesystem_written": false,
+    "zip_downloaded": false,
+    "no_inheritance_from_other_source": true
+  },
+  "required_43_control_config": {
+    "source_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+    "path": "config/pon/pq-system-required-tests-v1.json",
+    "original_config": {
+      "schema": "trnm-pq-system-required-tests-v1",
+      "scope": "explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification",
+      "expected_meaningful_controls": 43,
+      "tests": [
+        "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
+        "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
+        "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",
+        "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit",
+        "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer",
+        "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client",
+        "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text",
+        "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current",
+        "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable",
+        "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline",
+        "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline",
+        "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart",
+        "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected",
+        "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota",
+        "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority",
+        "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+        "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge",
+        "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node",
+        "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive",
+        "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor",
+        "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance",
+        "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory",
+        "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse",
+        "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked",
+        "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume",
+        "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner",
+        "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work",
+        "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation",
+        "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy",
+        "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check",
+        "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy",
+        "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit",
+        "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses",
+        "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch",
+        "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success",
+        "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair",
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client",
+        "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation",
+        "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen",
+        "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas",
+        "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen",
+        "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement"
+      ],
+      "child_process_harnesses_not_counted": [
+        "store::pq_rollback_witness::combined_tests::independent_witness_process_child"
+      ],
+      "whole_chain_quantum_security_qualified": false,
+      "original_business_budgets_changed": false
+    },
+    "failed_full_node_selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+    "failed_selector_is_in_43": false,
+    "interpretation": "All 43 original selected commands returned zero in each lane. This selector is absent from that list. Those 43 receipts do not qualify it as an independently passing selector."
+  },
+  "failed_native": {
+    "job": 126382308770,
+    "selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+    "panic_path": "crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:568:6",
+    "original_failure_block": {
+      "start_line": 1367,
+      "end_line": 1379,
+      "text": "---- store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics stdout ----\nTRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":true,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":{\"error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"id\":19,\"kind\":\"witness_connection\",\"marks\":[false,false,false,false,false,false,false],\"phase\":\"witness_write\",\"thread_cpu_ns\":23880264,\"wall_ns\":419421919},\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":2302216,\"unfinished\":0,\"wall_ns\":2296661,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":20,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":20,\"thread_cpu_ns\":21328,\"unfinished\":0,\"wall_ns\":21710,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":17920432,\"unfinished\":0,\"wall_ns\":17953531,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":6,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":6,\"thread_cpu_ns\":1051312,\"unfinished\":0,\"wall_ns\":1048270,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":4,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":4,\"thread_cpu_ns\":3144792,\"unfinished\":0,\"wall_ns\":388561643,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":4,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":4,\"thread_cpu_ns\":1983392,\"unfinished\":0,\"wall_ns\":387395701,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":1583112,\"unfinished\":0,\"wall_ns\":1853618,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":230672208,\"unfinished\":0,\"wall_ns\":230647796,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":9864,\"unfinished\":0,\"wall_ns\":10623,\"wall_unknown\":0}},{\"phase\":\"witness_read\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":1308320,\"unfinished\":0,\"wall_ns\":365684017,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":256895080,\"unfinished\":0,\"wall_ns\":642610478,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":1,\"last_error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"started\":10,\"thread_cpu_ns\":118744,\"unfinished\":0,\"wall_ns\":117978,\"wall_unknown\":0}}],\"process_id\":23543,\"record_capacity\":8,\"records\":[{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998104,\"error\":null,\"fixture_delay_entered\":false,\"id\":13,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998104,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":87336,\"unfinished\":0,\"wall_ns\":17997607,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":32624376,\"unfinished\":0,\"wall_ns\":34073168,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10272,\"unfinished\":0,\"wall_ns\":10255,\"wall_unknown\":0}}],\"thread_cpu_ns\":32726968,\"transport_entered\":false,\"wall_ns\":52086406},{\"accepted\":true,\"cas_commit_attempted\":true,\"cas_committed\":true,\"closed\":true,\"effective_remaining_ns\":9981995985,\"error\":null,\"fixture_delay_entered\":false,\"id\":14,\"kind\":\"service_cas\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9981995985,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":242128,\"unfinished\":0,\"wall_ns\":241592,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":1840,\"unfinished\":0,\"wall_ns\":1840,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1785880,\"unfinished\":0,\"wall_ns\":1784967,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":695072,\"unfinished\":0,\"wall_ns\":2145712,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":417592,\"unfinished\":0,\"wall_ns\":1867785,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":185912,\"unfinished\":0,\"wall_ns\":185188,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":29697288,\"unfinished\":0,\"wall_ns\":29692862,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1000,\"unfinished\":0,\"wall_ns\":1128,\"wall_unknown\":0}}],\"thread_cpu_ns\":32622608,\"transport_entered\":false,\"wall_ns\":34071312},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998224,\"error\":null,\"fixture_delay_entered\":false,\"id\":15,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998224,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":71624,\"unfinished\":0,\"wall_ns\":17946514,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":41171736,\"unfinished\":0,\"wall_ns\":41177820,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10256,\"unfinished\":0,\"wall_ns\":10103,\"wall_unknown\":0}}],\"thread_cpu_ns\":41259240,\"transport_entered\":false,\"wall_ns\":59140685},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9982046046,\"error\":null,\"fixture_delay_entered\":false,\"id\":16,\"kind\":\"service_current\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9982046046,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":229744,\"unfinished\":0,\"wall_ns\":229249,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":2200,\"unfinished\":0,\"wall_ns\":2328,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1781424,\"unfinished\":0,\"wall_ns\":1780847,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":170264,\"unfinished\":0,\"wall_ns\":169805,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":112432,\"unfinished\":0,\"wall_ns\":112177,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":38857912,\"unfinished\":0,\"wall_ns\":38860976,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1104,\"unfinished\":0,\"wall_ns\":1128,\"wall_unknown\":0}}],\"thread_cpu_ns\":41169672,\"transport_entered\":false,\"wall_ns\":41175764},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999997760,\"error\":null,\"fixture_delay_entered\":false,\"id\":17,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999997760,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":58408,\"unfinished\":0,\"wall_ns\":14803418,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":25900928,\"unfinished\":0,\"wall_ns\":25899288,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10000,\"unfinished\":0,\"wall_ns\":9992,\"wall_unknown\":0}}],\"thread_cpu_ns\":25974768,\"transport_entered\":false,\"wall_ns\":40718609},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9985189583,\"error\":null,\"fixture_delay_entered\":false,\"id\":18,\"kind\":\"service_current\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9985189583,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":227672,\"unfinished\":0,\"wall_ns\":226826,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":2056,\"unfinished\":0,\"wall_ns\":2160,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1777432,\"unfinished\":0,\"wall_ns\":1776775,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":174448,\"unfinished\":0,\"wall_ns\":173965,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":110216,\"unfinished\":0,\"wall_ns\":110009,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":23594480,\"unfinished\":0,\"wall_ns\":23591739,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":816,\"unfinished\":0,\"wall_ns\":871,\"wall_unknown\":0}}],\"thread_cpu_ns\":25899288,\"transport_entered\":false,\"wall_ns\":25897704},{\"accepted\":false,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998272,\"error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"fixture_delay_entered\":false,\"id\":19,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998272,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":52448,\"unfinished\":0,\"wall_ns\":14796530,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":23793976,\"unfinished\":0,\"wall_ns\":404591455,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":1,\"last_error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"started\":1,\"thread_cpu_ns\":28800,\"unfinished\":0,\"wall_ns\":28446,\"wall_unknown\":0}}],\"thread_cpu_ns\":23880264,\"transport_entered\":false,\"wall_ns\":419421919},{\"accepted\":true,\"cas_commit_attempted\":true,\"cas_committed\":true,\"closed\":true,\"effective_remaining_ns\":9985198038,\"error\":null,\"fixture_delay_entered\":false,\"id\":20,\"kind\":\"service_cas\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9985198038,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":193648,\"unfinished\":0,\"wall_ns\":193164,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":1696,\"unfinished\":0,\"wall_ns\":1728,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1792512,\"unfinished\":0,\"wall_ns\":1791622,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":781984,\"unfinished\":0,\"wall_ns\":381306704,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":517760,\"unfinished\":0,\"wall_ns\":381040169,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":300304,\"unfinished\":0,\"wall_ns\":574027,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":20705648,\"unfinished\":0,\"wall_ns\":20701507,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":976,\"unfinished\":0,\"wall_ns\":1056,\"wall_unknown\":0}}],\"thread_cpu_ns\":23791872,\"transport_entered\":false,\"wall_ns\":404589311}],\"records_closed\":20,\"records_completed\":20,\"records_overwritten\":12,\"records_started\":20,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}\nTRNM_PQ_FIXTURE_CLEANUP {\"child_cleanup_error\":null,\"child_exit_observed\":true,\"child_exit_success\":true,\"cleanup_complete\":true,\"primary_error_preserved\":true,\"worker_cleanup_error\":null,\"worker_join_observed\":true}\n\nthread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (23541) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:568:6:\ncalled `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }\nTRNM_PQ_PHASE_DIAGNOSTIC {\"schema\":\"pon-pq-test-phase-observation-v1\",\"process_log_limit_reached\":true}\n\n\nfailures:\n    store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics\n\ntest result: FAILED. 974 passed; 1 failed; 25 ignored; 0 measured; 0 filtered out; finished in 2196.61s"
+    },
+    "original_diagnostics_and_cleanup": [
+      {
+        "line": 1368,
+        "prefix": "TRNM_PQ_PHASE_DIAGNOSTIC",
+        "raw_text": "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":true,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":{\"error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"id\":19,\"kind\":\"witness_connection\",\"marks\":[false,false,false,false,false,false,false],\"phase\":\"witness_write\",\"thread_cpu_ns\":23880264,\"wall_ns\":419421919},\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":2302216,\"unfinished\":0,\"wall_ns\":2296661,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":20,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":20,\"thread_cpu_ns\":21328,\"unfinished\":0,\"wall_ns\":21710,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":17920432,\"unfinished\":0,\"wall_ns\":17953531,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":6,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":6,\"thread_cpu_ns\":1051312,\"unfinished\":0,\"wall_ns\":1048270,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":4,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":4,\"thread_cpu_ns\":3144792,\"unfinished\":0,\"wall_ns\":388561643,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":4,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":4,\"thread_cpu_ns\":1983392,\"unfinished\":0,\"wall_ns\":387395701,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":1583112,\"unfinished\":0,\"wall_ns\":1853618,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":230672208,\"unfinished\":0,\"wall_ns\":230647796,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":9864,\"unfinished\":0,\"wall_ns\":10623,\"wall_unknown\":0}},{\"phase\":\"witness_read\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":1308320,\"unfinished\":0,\"wall_ns\":365684017,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":10,\"thread_cpu_ns\":256895080,\"unfinished\":0,\"wall_ns\":642610478,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":10,\"cpu_unknown\":0,\"failed\":1,\"last_error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"started\":10,\"thread_cpu_ns\":118744,\"unfinished\":0,\"wall_ns\":117978,\"wall_unknown\":0}}],\"process_id\":23543,\"record_capacity\":8,\"records\":[{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998104,\"error\":null,\"fixture_delay_entered\":false,\"id\":13,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998104,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":87336,\"unfinished\":0,\"wall_ns\":17997607,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":32624376,\"unfinished\":0,\"wall_ns\":34073168,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10272,\"unfinished\":0,\"wall_ns\":10255,\"wall_unknown\":0}}],\"thread_cpu_ns\":32726968,\"transport_entered\":false,\"wall_ns\":52086406},{\"accepted\":true,\"cas_commit_attempted\":true,\"cas_committed\":true,\"closed\":true,\"effective_remaining_ns\":9981995985,\"error\":null,\"fixture_delay_entered\":false,\"id\":14,\"kind\":\"service_cas\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9981995985,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":242128,\"unfinished\":0,\"wall_ns\":241592,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":1840,\"unfinished\":0,\"wall_ns\":1840,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1785880,\"unfinished\":0,\"wall_ns\":1784967,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":695072,\"unfinished\":0,\"wall_ns\":2145712,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":417592,\"unfinished\":0,\"wall_ns\":1867785,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":185912,\"unfinished\":0,\"wall_ns\":185188,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":29697288,\"unfinished\":0,\"wall_ns\":29692862,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1000,\"unfinished\":0,\"wall_ns\":1128,\"wall_unknown\":0}}],\"thread_cpu_ns\":32622608,\"transport_entered\":false,\"wall_ns\":34071312},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998224,\"error\":null,\"fixture_delay_entered\":false,\"id\":15,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998224,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":71624,\"unfinished\":0,\"wall_ns\":17946514,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":41171736,\"unfinished\":0,\"wall_ns\":41177820,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10256,\"unfinished\":0,\"wall_ns\":10103,\"wall_unknown\":0}}],\"thread_cpu_ns\":41259240,\"transport_entered\":false,\"wall_ns\":59140685},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9982046046,\"error\":null,\"fixture_delay_entered\":false,\"id\":16,\"kind\":\"service_current\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9982046046,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":229744,\"unfinished\":0,\"wall_ns\":229249,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":2200,\"unfinished\":0,\"wall_ns\":2328,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1781424,\"unfinished\":0,\"wall_ns\":1780847,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":170264,\"unfinished\":0,\"wall_ns\":169805,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":112432,\"unfinished\":0,\"wall_ns\":112177,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":38857912,\"unfinished\":0,\"wall_ns\":38860976,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1104,\"unfinished\":0,\"wall_ns\":1128,\"wall_unknown\":0}}],\"thread_cpu_ns\":41169672,\"transport_entered\":false,\"wall_ns\":41175764},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999997760,\"error\":null,\"fixture_delay_entered\":false,\"id\":17,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999997760,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":58408,\"unfinished\":0,\"wall_ns\":14803418,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":25900928,\"unfinished\":0,\"wall_ns\":25899288,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":10000,\"unfinished\":0,\"wall_ns\":9992,\"wall_unknown\":0}}],\"thread_cpu_ns\":25974768,\"transport_entered\":false,\"wall_ns\":40718609},{\"accepted\":true,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9985189583,\"error\":null,\"fixture_delay_entered\":false,\"id\":18,\"kind\":\"service_current\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9985189583,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":227672,\"unfinished\":0,\"wall_ns\":226826,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":2056,\"unfinished\":0,\"wall_ns\":2160,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1777432,\"unfinished\":0,\"wall_ns\":1776775,\"wall_unknown\":0}},{\"phase\":\"service_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":174448,\"unfinished\":0,\"wall_ns\":173965,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":110216,\"unfinished\":0,\"wall_ns\":110009,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":23594480,\"unfinished\":0,\"wall_ns\":23591739,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":816,\"unfinished\":0,\"wall_ns\":871,\"wall_unknown\":0}}],\"thread_cpu_ns\":25899288,\"transport_entered\":false,\"wall_ns\":25897704},{\"accepted\":false,\"cas_commit_attempted\":false,\"cas_committed\":false,\"closed\":true,\"effective_remaining_ns\":9999998272,\"error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"fixture_delay_entered\":false,\"id\":19,\"kind\":\"witness_connection\",\"last_phase\":\"witness_write\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9999998272,\"phases\":[{\"phase\":\"witness_read\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":52448,\"unfinished\":0,\"wall_ns\":14796530,\"wall_unknown\":0}},{\"phase\":\"witness_handle\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":23793976,\"unfinished\":0,\"wall_ns\":404591455,\"wall_unknown\":0}},{\"phase\":\"witness_write\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":1,\"last_error\":{\"code\":null,\"io_kind\":\"broken_pipe\",\"origin\":\"io\",\"raw_os_error\":32,\"sqlite_extended_code\":null},\"started\":1,\"thread_cpu_ns\":28800,\"unfinished\":0,\"wall_ns\":28446,\"wall_unknown\":0}}],\"thread_cpu_ns\":23880264,\"transport_entered\":false,\"wall_ns\":419421919},{\"accepted\":true,\"cas_commit_attempted\":true,\"cas_committed\":true,\"closed\":true,\"effective_remaining_ns\":9985198038,\"error\":null,\"fixture_delay_entered\":false,\"id\":20,\"kind\":\"service_cas\",\"last_phase\":\"service_final\",\"local_commit_attempted\":false,\"local_committed\":false,\"matching_cas_receipt\":false,\"original_remaining_ns\":9985198038,\"phases\":[{\"phase\":\"service_entry_and_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":193648,\"unfinished\":0,\"wall_ns\":193164,\"wall_unknown\":0}},{\"phase\":\"service_request_context\",\"samples\":{\"completed\":2,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":2,\"thread_cpu_ns\":1696,\"unfinished\":0,\"wall_ns\":1728,\"wall_unknown\":0}},{\"phase\":\"service_request_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":1792512,\"unfinished\":0,\"wall_ns\":1791622,\"wall_unknown\":0}},{\"phase\":\"service_cas\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":781984,\"unfinished\":0,\"wall_ns\":381306704,\"wall_unknown\":0}},{\"phase\":\"service_commit\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":517760,\"unfinished\":0,\"wall_ns\":381040169,\"wall_unknown\":0}},{\"phase\":\"service_final_storage\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":300304,\"unfinished\":0,\"wall_ns\":574027,\"wall_unknown\":0}},{\"phase\":\"reply_sign_including_self_verify\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":20705648,\"unfinished\":0,\"wall_ns\":20701507,\"wall_unknown\":0}},{\"phase\":\"service_final\",\"samples\":{\"completed\":1,\"cpu_unknown\":0,\"failed\":0,\"last_error\":null,\"started\":1,\"thread_cpu_ns\":976,\"unfinished\":0,\"wall_ns\":1056,\"wall_unknown\":0}}],\"thread_cpu_ns\":23791872,\"transport_entered\":false,\"wall_ns\":404589311}],\"records_closed\":20,\"records_completed\":20,\"records_overwritten\":12,\"records_started\":20,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}",
+        "record": {
+          "budgets_unchanged": true,
+          "cpu_is_calling_thread_only": true,
+          "failure_checkpoint_saved": true,
+          "has_open_operations": false,
+          "has_open_records": false,
+          "last_failure": {
+            "error": {
+              "code": null,
+              "io_kind": "broken_pipe",
+              "origin": "io",
+              "raw_os_error": 32,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_write",
+            "thread_cpu_ns": 23880264,
+            "wall_ns": 419421919
+          },
+          "last_service_failure": null,
+          "last_tcp_failure": null,
+          "mark_order": [
+            "transport_entered",
+            "cas_commit_attempted",
+            "cas_committed",
+            "local_commit_attempted",
+            "local_committed",
+            "matching_cas_receipt",
+            "fixture_delay_entered"
+          ],
+          "measurement_failures": 0,
+          "nested_intervals_are_not_additive": true,
+          "observation_has_authority": false,
+          "operation_ids_are_process_local": true,
+          "phase_totals": [
+            {
+              "phase": "service_entry_and_storage",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 2302216,
+                "unfinished": 0,
+                "wall_ns": 2296661,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_request_context",
+              "samples": {
+                "completed": 20,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 20,
+                "thread_cpu_ns": 21328,
+                "unfinished": 0,
+                "wall_ns": 21710,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_request_verify",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 17920432,
+                "unfinished": 0,
+                "wall_ns": 17953531,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_read",
+              "samples": {
+                "completed": 6,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 6,
+                "thread_cpu_ns": 1051312,
+                "unfinished": 0,
+                "wall_ns": 1048270,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_cas",
+              "samples": {
+                "completed": 4,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 4,
+                "thread_cpu_ns": 3144792,
+                "unfinished": 0,
+                "wall_ns": 388561643,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_commit",
+              "samples": {
+                "completed": 4,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 4,
+                "thread_cpu_ns": 1983392,
+                "unfinished": 0,
+                "wall_ns": 387395701,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_final_storage",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 1583112,
+                "unfinished": 0,
+                "wall_ns": 1853618,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "reply_sign_including_self_verify",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 230672208,
+                "unfinished": 0,
+                "wall_ns": 230647796,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_final",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 9864,
+                "unfinished": 0,
+                "wall_ns": 10623,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "witness_read",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 1308320,
+                "unfinished": 0,
+                "wall_ns": 365684017,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "witness_handle",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 10,
+                "thread_cpu_ns": 256895080,
+                "unfinished": 0,
+                "wall_ns": 642610478,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "witness_write",
+              "samples": {
+                "completed": 10,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": null,
+                  "io_kind": "broken_pipe",
+                  "origin": "io",
+                  "raw_os_error": 32,
+                  "sqlite_extended_code": null
+                },
+                "started": 10,
+                "thread_cpu_ns": 118744,
+                "unfinished": 0,
+                "wall_ns": 117978,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "process_id": 23543,
+          "record_capacity": 8,
+          "records": [
+            {
+              "accepted": true,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9999998104,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 13,
+              "kind": "witness_connection",
+              "last_phase": "witness_write",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9999998104,
+              "phases": [
+                {
+                  "phase": "witness_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 87336,
+                    "unfinished": 0,
+                    "wall_ns": 17997607,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_handle",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 32624376,
+                    "unfinished": 0,
+                    "wall_ns": 34073168,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_write",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 10272,
+                    "unfinished": 0,
+                    "wall_ns": 10255,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 32726968,
+              "transport_entered": false,
+              "wall_ns": 52086406
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": true,
+              "cas_committed": true,
+              "closed": true,
+              "effective_remaining_ns": 9981995985,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 14,
+              "kind": "service_cas",
+              "last_phase": "service_final",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9981995985,
+              "phases": [
+                {
+                  "phase": "service_entry_and_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 242128,
+                    "unfinished": 0,
+                    "wall_ns": 241592,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_context",
+                  "samples": {
+                    "completed": 2,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 2,
+                    "thread_cpu_ns": 1840,
+                    "unfinished": 0,
+                    "wall_ns": 1840,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1785880,
+                    "unfinished": 0,
+                    "wall_ns": 1784967,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_cas",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 695072,
+                    "unfinished": 0,
+                    "wall_ns": 2145712,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_commit",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 417592,
+                    "unfinished": 0,
+                    "wall_ns": 1867785,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 185912,
+                    "unfinished": 0,
+                    "wall_ns": 185188,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "reply_sign_including_self_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 29697288,
+                    "unfinished": 0,
+                    "wall_ns": 29692862,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1000,
+                    "unfinished": 0,
+                    "wall_ns": 1128,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 32622608,
+              "transport_entered": false,
+              "wall_ns": 34071312
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9999998224,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 15,
+              "kind": "witness_connection",
+              "last_phase": "witness_write",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9999998224,
+              "phases": [
+                {
+                  "phase": "witness_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 71624,
+                    "unfinished": 0,
+                    "wall_ns": 17946514,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_handle",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 41171736,
+                    "unfinished": 0,
+                    "wall_ns": 41177820,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_write",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 10256,
+                    "unfinished": 0,
+                    "wall_ns": 10103,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 41259240,
+              "transport_entered": false,
+              "wall_ns": 59140685
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9982046046,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 16,
+              "kind": "service_current",
+              "last_phase": "service_final",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9982046046,
+              "phases": [
+                {
+                  "phase": "service_entry_and_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 229744,
+                    "unfinished": 0,
+                    "wall_ns": 229249,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_context",
+                  "samples": {
+                    "completed": 2,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 2,
+                    "thread_cpu_ns": 2200,
+                    "unfinished": 0,
+                    "wall_ns": 2328,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1781424,
+                    "unfinished": 0,
+                    "wall_ns": 1780847,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 170264,
+                    "unfinished": 0,
+                    "wall_ns": 169805,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 112432,
+                    "unfinished": 0,
+                    "wall_ns": 112177,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "reply_sign_including_self_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 38857912,
+                    "unfinished": 0,
+                    "wall_ns": 38860976,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1104,
+                    "unfinished": 0,
+                    "wall_ns": 1128,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 41169672,
+              "transport_entered": false,
+              "wall_ns": 41175764
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9999997760,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 17,
+              "kind": "witness_connection",
+              "last_phase": "witness_write",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9999997760,
+              "phases": [
+                {
+                  "phase": "witness_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 58408,
+                    "unfinished": 0,
+                    "wall_ns": 14803418,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_handle",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 25900928,
+                    "unfinished": 0,
+                    "wall_ns": 25899288,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_write",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 10000,
+                    "unfinished": 0,
+                    "wall_ns": 9992,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 25974768,
+              "transport_entered": false,
+              "wall_ns": 40718609
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9985189583,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 18,
+              "kind": "service_current",
+              "last_phase": "service_final",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9985189583,
+              "phases": [
+                {
+                  "phase": "service_entry_and_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 227672,
+                    "unfinished": 0,
+                    "wall_ns": 226826,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_context",
+                  "samples": {
+                    "completed": 2,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 2,
+                    "thread_cpu_ns": 2056,
+                    "unfinished": 0,
+                    "wall_ns": 2160,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1777432,
+                    "unfinished": 0,
+                    "wall_ns": 1776775,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 174448,
+                    "unfinished": 0,
+                    "wall_ns": 173965,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 110216,
+                    "unfinished": 0,
+                    "wall_ns": 110009,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "reply_sign_including_self_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 23594480,
+                    "unfinished": 0,
+                    "wall_ns": 23591739,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 816,
+                    "unfinished": 0,
+                    "wall_ns": 871,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 25899288,
+              "transport_entered": false,
+              "wall_ns": 25897704
+            },
+            {
+              "accepted": false,
+              "cas_commit_attempted": false,
+              "cas_committed": false,
+              "closed": true,
+              "effective_remaining_ns": 9999998272,
+              "error": {
+                "code": null,
+                "io_kind": "broken_pipe",
+                "origin": "io",
+                "raw_os_error": 32,
+                "sqlite_extended_code": null
+              },
+              "fixture_delay_entered": false,
+              "id": 19,
+              "kind": "witness_connection",
+              "last_phase": "witness_write",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9999998272,
+              "phases": [
+                {
+                  "phase": "witness_read",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 52448,
+                    "unfinished": 0,
+                    "wall_ns": 14796530,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_handle",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 23793976,
+                    "unfinished": 0,
+                    "wall_ns": 404591455,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "witness_write",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 1,
+                    "last_error": {
+                      "code": null,
+                      "io_kind": "broken_pipe",
+                      "origin": "io",
+                      "raw_os_error": 32,
+                      "sqlite_extended_code": null
+                    },
+                    "started": 1,
+                    "thread_cpu_ns": 28800,
+                    "unfinished": 0,
+                    "wall_ns": 28446,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 23880264,
+              "transport_entered": false,
+              "wall_ns": 419421919
+            },
+            {
+              "accepted": true,
+              "cas_commit_attempted": true,
+              "cas_committed": true,
+              "closed": true,
+              "effective_remaining_ns": 9985198038,
+              "error": null,
+              "fixture_delay_entered": false,
+              "id": 20,
+              "kind": "service_cas",
+              "last_phase": "service_final",
+              "local_commit_attempted": false,
+              "local_committed": false,
+              "matching_cas_receipt": false,
+              "original_remaining_ns": 9985198038,
+              "phases": [
+                {
+                  "phase": "service_entry_and_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 193648,
+                    "unfinished": 0,
+                    "wall_ns": 193164,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_context",
+                  "samples": {
+                    "completed": 2,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 2,
+                    "thread_cpu_ns": 1696,
+                    "unfinished": 0,
+                    "wall_ns": 1728,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_request_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 1792512,
+                    "unfinished": 0,
+                    "wall_ns": 1791622,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_cas",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 781984,
+                    "unfinished": 0,
+                    "wall_ns": 381306704,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_commit",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 517760,
+                    "unfinished": 0,
+                    "wall_ns": 381040169,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final_storage",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 300304,
+                    "unfinished": 0,
+                    "wall_ns": 574027,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "reply_sign_including_self_verify",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 20705648,
+                    "unfinished": 0,
+                    "wall_ns": 20701507,
+                    "wall_unknown": 0
+                  }
+                },
+                {
+                  "phase": "service_final",
+                  "samples": {
+                    "completed": 1,
+                    "cpu_unknown": 0,
+                    "failed": 0,
+                    "last_error": null,
+                    "started": 1,
+                    "thread_cpu_ns": 976,
+                    "unfinished": 0,
+                    "wall_ns": 1056,
+                    "wall_unknown": 0
+                  }
+                }
+              ],
+              "thread_cpu_ns": 23791872,
+              "transport_entered": false,
+              "wall_ns": 404589311
+            }
+          ],
+          "records_closed": 20,
+          "records_completed": 20,
+          "records_overwritten": 12,
+          "records_started": 20,
+          "schema": "pon-pq-test-phase-observation-v1",
+          "scope_snapshot_is_final": true,
+          "snapshot_is_not_service_completion": true
+        }
+      },
+      {
+        "line": 1369,
+        "prefix": "TRNM_PQ_FIXTURE_CLEANUP",
+        "raw_text": "TRNM_PQ_FIXTURE_CLEANUP {\"child_cleanup_error\":null,\"child_exit_observed\":true,\"child_exit_success\":true,\"cleanup_complete\":true,\"primary_error_preserved\":true,\"worker_cleanup_error\":null,\"worker_join_observed\":true}",
+        "record": {
+          "child_cleanup_error": null,
+          "child_exit_observed": true,
+          "child_exit_success": true,
+          "cleanup_complete": true,
+          "primary_error_preserved": true,
+          "worker_cleanup_error": null,
+          "worker_join_observed": true
+        }
+      },
+      {
+        "line": 1373,
+        "prefix": "TRNM_PQ_PHASE_DIAGNOSTIC",
+        "raw_text": "TRNM_PQ_PHASE_DIAGNOSTIC {\"schema\":\"pon-pq-test-phase-observation-v1\",\"process_log_limit_reached\":true}",
+        "record": {
+          "schema": "pon-pq-test-phase-observation-v1",
+          "process_log_limit_reached": true
+        }
+      }
+    ],
+    "observed_service_cas_record": {
+      "accepted": true,
+      "cas_commit_attempted": true,
+      "cas_committed": true,
+      "closed": true,
+      "effective_remaining_ns": 9985198038,
+      "error": null,
+      "fixture_delay_entered": false,
+      "id": 20,
+      "kind": "service_cas",
+      "last_phase": "service_final",
+      "local_commit_attempted": false,
+      "local_committed": false,
+      "matching_cas_receipt": false,
+      "original_remaining_ns": 9985198038,
+      "phases": [
+        {
+          "phase": "service_entry_and_storage",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 193648,
+            "unfinished": 0,
+            "wall_ns": 193164,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_request_context",
+          "samples": {
+            "completed": 2,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 2,
+            "thread_cpu_ns": 1696,
+            "unfinished": 0,
+            "wall_ns": 1728,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_request_verify",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 1792512,
+            "unfinished": 0,
+            "wall_ns": 1791622,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_cas",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 781984,
+            "unfinished": 0,
+            "wall_ns": 381306704,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_commit",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 517760,
+            "unfinished": 0,
+            "wall_ns": 381040169,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_final_storage",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 300304,
+            "unfinished": 0,
+            "wall_ns": 574027,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "reply_sign_including_self_verify",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 20705648,
+            "unfinished": 0,
+            "wall_ns": 20701507,
+            "wall_unknown": 0
+          }
+        },
+        {
+          "phase": "service_final",
+          "samples": {
+            "completed": 1,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 1,
+            "thread_cpu_ns": 976,
+            "unfinished": 0,
+            "wall_ns": 1056,
+            "wall_unknown": 0
+          }
+        }
+      ],
+      "thread_cpu_ns": 23791872,
+      "transport_entered": false,
+      "wall_ns": 404589311
+    },
+    "observed_service_commit_wall_ns": 381040169,
+    "observed_service_commit_thread_cpu_ns": 517760,
+    "causal_attribution": "The original snapshot reports a service_commit wall interval and separately a witness_write broken_pipe. It does not by itself establish which socket event caused FRAME_EOF.",
+    "diagnostic_limits": {
+      "record_capacity": 8,
+      "records_started": 20,
+      "records_overwritten": 12,
+      "process_log_limit_reached": true,
+      "last_service_failure": null,
+      "last_tcp_failure": null,
+      "full_client_or_all_prior_connection_events_not_present": true,
+      "no_new_deadline_or_retry_claim": true
+    }
+  }
+}

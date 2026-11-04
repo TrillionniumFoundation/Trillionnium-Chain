@@ -1,0 +1,772 @@
+{
+  "schema": "trnm-existing-plan-remaining-blocker-readback-v1",
+  "status": "existing_contracts_open_no_gate_promotion",
+  "scope": "现有唯一计划及原契约的只读blocker清单；不是新路线图，不是native验收回执。",
+  "inspected_source": {
+    "commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+    "tree": "76d3b416eccc6a810634062e036f646f22bffc76"
+  },
+  "documents": {
+    "plan": {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "blob": "32b0e52d990772e29397da93dd81e6772325d020",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    "performance": {
+      "path": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "blob": "c6c2c2a73346ac60e61c2a4fbba7d8e9cc5ba0bb",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029/docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md"
+    },
+    "observation_config": {
+      "path": "config/pon/performance-six-axis-v1.json",
+      "blob": "bc246a75439d8db2522c41f53e868d24a09a9971",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029/config/pon/performance-six-axis-v1.json"
+    }
+  },
+  "live_issue_snapshot": [
+    {
+      "number": 639,
+      "title": "P0: retain native 4s signed confirmation under 16 hostile W1 producers",
+      "state": "open",
+      "updated_at": "2026-11-03T08:14:45Z",
+      "comments": 35,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639"
+    },
+    {
+      "number": 629,
+      "title": "P0 security: qualify full-chain post-quantum trust, W1 proof, mining economics and recovery",
+      "state": "open",
+      "updated_at": "2026-11-01T01:15:30Z",
+      "comments": 32,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/629"
+    }
+  ],
+  "latest639_scope": {
+    "comment": 6598679112,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639#issuecomment-6598679112",
+    "measured_source": "8c26165d6653fe3f31179a92773cc26b0feb4457",
+    "note": "该comment的旧#685证据不能当成6f的执行结果；issue仍open。"
+  },
+  "distinctions": [
+    "PN0->joint PN1/PN2->public PN3->PN4->PN5->PN6；受控PN3可在PN0后并行，但不转移public acceptance。",
+    "组件正确性、有限性能、原native业务完成、科学资格、独立验收与activation是不同结论。",
+    "新source/binary/profile需要自己的applicable head/merge证据；旧lane PASS、reader PASS不继承。",
+    "Busy/timeout/invalid/stale/pending/cancelled/withdrawn/reorged/unknown保留在原计划分母。",
+    "native commit后final Host refusal仍为outer failure；调用线程CPU不含scoped workers；nested intervals不能相加。",
+    "016历史失败只证明016，不代替6f原4105selector结果。"
+  ],
+  "frozen_six_axis_config": {
+    "schema": "pon-six-axis-performance-observation-v1",
+    "status": "development-observation-hold",
+    "integration_baseline": {
+      "commit": "af064bf751ed92c82da0b113682a7dfff3225d97",
+      "tree": "06c2a2493183a48ade725db226fc44b24c1f9b0f",
+      "parents": [
+        "9a05cae09b175a51773db398541b14ab76061a39",
+        "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c"
+      ]
+    },
+    "original_public_business_gate": {
+      "window_ns": 4000000000,
+      "hostile_workers": 16,
+      "required_unique_confirmed_transactions": 1,
+      "confirmation_depth": 6,
+      "host_cpu_quota_ns_per_second": 250000000,
+      "host_memory_bytes": 2147483648,
+      "native_runner": "scripts/ci/run_from_zero_native.py"
+    },
+    "growth_observation": {
+      "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "accounts": [
+        64,
+        1024,
+        16384
+      ],
+      "warmup_history_blocks": [
+        0,
+        16,
+        128
+      ],
+      "measured_blocks_per_cohort": 8,
+      "deliberately_cancelled_admissions_per_cohort": 1,
+      "required_cold_reopens_per_cohort": 1,
+      "require_identical_actual_witness_owner_set": true,
+      "maximum_separate_query_point_reads_exclusive": 1024,
+      "maximum_added_cow_nodes_exclusive": 4096,
+      "expanded_witness_allocations": 0,
+      "p99_minimum_independent_observations": 100,
+      "p99_for_this_cohort": null,
+      "scope": "real signed native Node make/admit/activate, complete-State reference, atomic cancellation and cold recovery; no public throughput or permanent bounded-storage claim"
+    },
+    "paired_component_decision": {
+      "comparison_order": "ABBA with every planned outcome retained",
+      "maximum_failed_or_unknown_operations_for_acceptance": 0,
+      "minimum_paired_median_improvement_fraction": 0.05,
+      "maximum_p95_regression_fraction": 0.1,
+      "same_mathematical_inputs_workload_resources_and_confirmation_rules_required": true,
+      "component_result_cannot_replace_original_public_business_gate": true,
+      "scope": "finite development decision, no statistical confidence or production capacity claim"
+    },
+    "whole_chain_post_quantum_qualified": false,
+    "independent_accepted": false,
+    "public_network_ready": false,
+    "production_activation": false
+  },
+  "additional_original_gates": {
+    "original_campaign": {
+      "seed_signed_transfers": 1024,
+      "seed_blocks": 4,
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "attackers": [
+        0,
+        24,
+        24
+      ],
+      "rounds_per_mode": 3,
+      "window_seconds": 30,
+      "workers": 2,
+      "cpu_burst_seconds": 2,
+      "cpu_refill_seconds_per_second": 0.25,
+      "start_reservation_ms": 100,
+      "complete_repetitions": 3,
+      "total_planned_confirmations": 27,
+      "exit": "每mode 3/3 timely independent confirmations，完整重复3次；保留所有原criteria和失败。有限开发gate，不是普适公平性。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            2120,
+            2126
+          ]
+        }
+      ]
+    },
+    "churn_supplement": {
+      "minimum_actual_distinct_complete_work_identities": 4097,
+      "scheduling_capacity": 4096,
+      "exit": "真实生成work并跨容量，在honest confirmation期间持续fresh identities；原资源/截止/确认不变，保留实际构造成本、occupancy和fallback。直接注表不算此cohort。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            2127,
+            2134
+          ]
+        }
+      ]
+    },
+    "growth_exit": {
+      "permanent_accounts_must_cross": 65536,
+      "complexity_target": "O(W log A + bounded non-account/range input)",
+      "new_hot_path_per_request_full_history_walk_allowed": false,
+      "exit": "actual signed native transitions + full reference equality + oldnonce/liabilities/proofs/deepfork/fault/cold recovery + fixed-W accounts/history成本曲线；cache变大或archive-only叶数不能通过。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            2196,
+            2208
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2298,
+            2304
+          ]
+        }
+      ]
+    },
+    "independent_acceptance": {
+      "minimum_WAN_hours": 72,
+      "minimum_independent_administrators_and_failure_domains": 3,
+      "initial_full_replicas": 3,
+      "replicas_after_one_loss": 2,
+      "repair_deadline": "must be preregistered; no new value supplied here",
+      "exit": "每个load/fault cohort分别达到预注册latency/completion/repair/recovery及tail样本目标。独立环境、实际命令、完整输出、identified authorized reviewer和signed scope。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            2749,
+            2774
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            111,
+            123
+          ]
+        }
+      ]
+    },
+    "comparison_rule_scope": "six-axis config规定ABBA、median至少5% improvement、p95最多10%regression、failed/unknown=0；另有更严格冻结规则的组件保留其自身规则。100独立completed block只是empirical p99分辨率最低值，不是置信保证；9个小growth cohorts的p99继续null。"
+  },
+  "remaining_six_priorities": [
+    {
+      "priority": 1,
+      "owners": "PN1/PN2; M01/M04/M06/M07/M15/M17",
+      "status": "open",
+      "blocker": "完整验证/回放成本与原诚实业务截止时间仍未闭合。组件计时、SQL COMMIT 和 decoder counters 不能单独证明完整端到端成本或业务成功。",
+      "source_work": "按实际 decode、owner/queue wait、parent/task、完整W1、执行、root/witness、持久提交、response、client import 定位真实成本；保持完整检查、错误/取消顺序及原预算。",
+      "pending_evidence": "本轮精确 6f 原 campaign/F0 成本与业务分母已实际读回：campaign 3/27，F0 原确认 1/6、原 4s gate 0/6。仍待独立 Host 逐 import 读回和修复后原门槛实证。新 6f W1 head/merge 的 PUBLIC_REQUEST_DEADLINE 与 ARM merge PQ FRAME_EOF 均保留为实际失败。",
+      "exit": "完整计划分母和每请求/阶段原时间戳；inclusive wall/CPU、worker CPU或missing、queue/refusal/failure、cold/warm与真实RSS/disk/WAL；原4s业务gate和原三模式campaign通过。嵌套时间不可相加；COMMIT API不是物理fsync；decode hit不是SQL读减少。",
+      "refs": [
+        {
+          "document": "performance",
+          "lines": [
+            65,
+            109
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            740,
+            756
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            4759,
+            4774
+          ]
+        },
+        "issue639"
+      ]
+    },
+    {
+      "priority": 2,
+      "owners": "PN2; M00/M06/M07/M08/M13",
+      "status": "open",
+      "blocker": "fixed-W完整路径扩容、bounded-parent公开admission、retained roots/disk/WAL责任和长历史完成仍未闭合。authenticated-v1仍保留完整State/account/history验证。",
+      "source_work": "通过显式认证parent/witness、持久root、generation fences和现有单一持久writer约束实际触及的数据；不能省略最终readback或虚构finality。",
+      "pending_evidence": "下方016四个原4105-block lanes确实失败；6f后继修复须有自己的原selector、A/H fixed-W曲线、原生导出及独立读回。",
+      "exit": "目标O(W log A + bounded non-account/range input)，新热路径无逐请求全history遍历；真实签名状态转移跨65536账户；full-reference roots一致；零余额存在性/旧nonce/负债，wrong-parent/遗漏/多余proof、mandatory maturity/refund/expiry、取消、深reorg、disk-full/provider-loss/process-cut/cold recovery均保留。披露所有剩余full-read和增长的保留存储。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            2175,
+            2208
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2273,
+            2275
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2298,
+            2304
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            79,
+            79
+          ]
+        }
+      ]
+    },
+    {
+      "priority": 3,
+      "owners": "PN1/PN2; M05/M06/M07",
+      "status": "open",
+      "blocker": "并行准备在不改变原子发布边界下的完整路径收益，不能由candidate代码或局部正确性控制证明。",
+      "source_work": "只并行独立签名、交易、proof/hash准备；nonce、共享sponsor/reward、供给及最终active-generation仍由一致的原持久边界处理。",
+      "pending_evidence": "当前 scoped job 已实际 SUCCESS，但控制 JSON 本体未解 ZIP，保留独立范围；完整 Node 三 lane 975/0/25、ARM merge 974/1/25 仍非全绿。冲突、final-readback、取消、rollback/reorg 和性能原门槛须由适用 exact-source 原始回执闭合；保留此前 repeated-sender scheduling A/B 回退。",
+      "exit": "1/2/4/8 workers，disjoint/shared-sponsor/single-hot-key三类负载有相同root/error/cancellation语义，无丢debit/双效果/无界队列，并达到预注册完整成本收益。",
+      "refs": [
+        {
+          "document": "performance",
+          "lines": [
+            48,
+            63
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            80,
+            80
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            4788,
+            4795
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2203,
+            2208
+          ]
+        }
+      ]
+    },
+    {
+      "priority": 4,
+      "owners": "PN0/PN1/PN2; existing verifier/authorization owners",
+      "status": "continuing_required_gate",
+      "blocker": "数学事实复用与当前授权必须持续分离；现有cache和hit计数不能替代跨generation权限安全、完整性能或公开服务验收。",
+      "source_work": "数学事实绑定完整input/proof/profile/version/context并保留当前语义与实际bytes/rows检查；若缓存授权，还必须绑定当前generation、revocation、expiry并执行last-use recheck。",
+      "pending_evidence": "当前 scoped job 已实际 SUCCESS，但原控制 JSON 本体仍待解 ZIP；exact-input、foreign-writer/corruption、changed-challenge/profile、optional contention/poison、rollback/cancellation、oldnonce/debt/reorg 和 generation 控制只能按其实际范围认定。完整 Node ARM merge PQ FRAME_EOF 仍未闭合。",
+      "exit": "对抗改变下完整数学绑定和当前授权仍正确，不扩大retention、不跳检查；rollback不能留下成功SQL verdict。完整路径收益与codec/hash hit分开计量，未知值不能填0。",
+      "refs": [
+        {
+          "document": "plan",
+          "lines": [
+            79,
+            95
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            460,
+            468
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            4791,
+            4795
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            5439,
+            5445
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            532,
+            565
+          ]
+        },
+        "issue629"
+      ]
+    },
+    {
+      "priority": 5,
+      "owners": "PN1/PN2; M04/M05/M07/M15",
+      "status": "open",
+      "blocker": "batch/pipeline摊销仍需全量验证、可用性、重试及确认排空验收。两个历史confirmation compaction candidates保留性能回退，功能测试不授权替换原默认helper。",
+      "source_work": "有界block/receipt传播、共享只读准备与commit摊销保持原operation identity和durable owner；不得默认继承经典签名的PQ batch/aggregation安全性质。",
+      "pending_evidence": "固定负载/预算的当前源码A/B，失败/取消batch与重试，panic/晚RPC失败及crash/reorg；保留被拒candidate及全分母。",
+      "exit": "计入所有成员验证/availability、head-of-line、stale work、retry amplification、confirmation drain；满足原median/tail/无失败规则及业务截止。新的PQ聚合/批验证关系需要单独版本和安全资格。",
+      "refs": [
+        {
+          "document": "performance",
+          "lines": [
+            81,
+            109
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            4793,
+            4797
+          ]
+        },
+        "issue629"
+      ]
+    },
+    {
+      "priority": 6,
+      "owners": "PN3/PN4/PN5; M09/M14 and existing Hepta owners",
+      "status": "open",
+      "blocker": "独立有限的weight/release数据路径有开发组件，但完整verified loading/inference、同总预算物理隔离、独立custody/repair及有用产品loop仍未闭合。",
+      "source_work": "账本保留承诺/权限/业务状态/结算；下载、repair、推理cache使用既有有限resource/loader/currentness/effect owners，保留预算及单调本地事实。",
+      "pending_evidence": "当前源码完整release cold/warm成本、真实loaded hashes/next-task inference、失败和repair backlog；历史TCP/Cell单组件提速不能继承为当前install或ledger throughput。",
+      "exit": "同总SSD/RAM/device/bandwidth预算下完整release-to-real-inference tails，withdrawal/author-loss/restart。三次真实installed-predecessor lineage cycles和独立consumer next-task；no-update机械闭合与三次实测beneficial release分开。真实funded byte-time/repair/inference及独立WAN/custody另验。",
+      "refs": [
+        {
+          "document": "performance",
+          "lines": [
+            82,
+            82
+          ]
+        },
+        {
+          "document": "performance",
+          "lines": [
+            731,
+            748
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2306,
+            2392
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            2733,
+            2774
+          ]
+        },
+        {
+          "document": "plan",
+          "lines": [
+            4797,
+            4817
+          ]
+        }
+      ]
+    }
+  ],
+  "actual_failed_native_evidence": {
+    "provenance": {
+      "readback_run": 41776513691,
+      "readback_job": 126398047214,
+      "reader_status": "success",
+      "archives": 6,
+      "required_sources": "all_verified",
+      "missing": 0,
+      "omitted": 0,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41776513691/job/126398047214",
+      "durable_literal_blob": "46ed28d65b7f566d0b1127155c38487a9b8dc04b",
+      "durable_chars": 152806,
+      "literal_json_strings": 54,
+      "native_log_excerpts": 198,
+      "observer": "Root完整读回并确认逐lane映射；本agent按要求不重复下载/读取日志。",
+      "reader_pass_is_native_pass": false
+    },
+    "history_016": [
+      {
+        "identity": {
+          "id": 13295526681,
+          "name": "priority-ubuntu-24.04-head-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "size": 55989786,
+          "digest": "sha256:cb3bce4b7411866e0dd78a123c3b07a3a3c7aeaeb12ff3be0161f30cf4195837",
+          "run": 41760813063,
+          "job": 126367533983,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "kind": "head",
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+          "family": "history"
+        },
+        "native_exit": 101,
+        "named_pass": 0,
+        "named_fail": 1,
+        "required_blocks": 4105,
+        "last_sync_progress": 3000,
+        "elapsed_seconds_literal": "2786.39",
+        "original_server_lifetime_seconds": 1800,
+        "reported_lifetime_expired": true,
+        "reported_stopped_before_lifetime": false,
+        "subsequent_error": "I/O connection refused (111)",
+        "complete_4105": false,
+        "cost_attribution": "No exclusive SQL/hash/Host attribution inferred; current6f outcome remains separate."
+      },
+      {
+        "identity": {
+          "id": 13295423283,
+          "name": "priority-ubuntu-24.04-prospective-merge-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "size": 50769435,
+          "digest": "sha256:f1afa7bc2fbf4219e76459ccdb2bffc3ce2551daae39dd930ad0214c6518e54d",
+          "run": 41760813063,
+          "job": 126367533922,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "kind": "prospective-merge",
+          "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+          "family": "history"
+        },
+        "native_exit": 101,
+        "named_pass": 0,
+        "named_fail": 1,
+        "required_blocks": 4105,
+        "last_sync_progress": 2000,
+        "elapsed_seconds_literal": "3249.70",
+        "original_server_lifetime_seconds": 1800,
+        "reported_lifetime_expired": true,
+        "reported_stopped_before_lifetime": false,
+        "subsequent_error": "I/O connection refused (111)",
+        "complete_4105": false,
+        "cost_attribution": "No exclusive SQL/hash/Host attribution inferred; current6f outcome remains separate."
+      },
+      {
+        "identity": {
+          "id": 13295839361,
+          "name": "priority-ubuntu-24.04-arm-head-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "size": 52942631,
+          "digest": "sha256:9dcd09bbf10ef28a7b7f6fd3123a4ce90baab691929274367ed40ff49c57e882",
+          "run": 41760813063,
+          "job": 126367534168,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "kind": "head",
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+          "family": "history"
+        },
+        "native_exit": 101,
+        "named_pass": 0,
+        "named_fail": 1,
+        "required_blocks": 4105,
+        "last_sync_progress": 2500,
+        "elapsed_seconds_literal": "3768.70",
+        "original_server_lifetime_seconds": 1800,
+        "reported_lifetime_expired": true,
+        "reported_stopped_before_lifetime": false,
+        "subsequent_error": "I/O connection refused (111)",
+        "complete_4105": false,
+        "cost_attribution": "No exclusive SQL/hash/Host attribution inferred; current6f outcome remains separate."
+      },
+      {
+        "identity": {
+          "id": 13296112215,
+          "name": "priority-ubuntu-24.04-arm-prospective-merge-history-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "size": 52923934,
+          "digest": "sha256:30832aba24550552f14a4f2963392e0ff4925fb4db142e7bd3eb362e5eb0aaba",
+          "run": 41760813063,
+          "job": 126367534056,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "kind": "prospective-merge",
+          "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+          "family": "history"
+        },
+        "native_exit": 101,
+        "named_pass": 0,
+        "named_fail": 1,
+        "required_blocks": 4105,
+        "last_sync_progress": 2500,
+        "elapsed_seconds_literal": "3737.59",
+        "original_server_lifetime_seconds": 1800,
+        "reported_lifetime_expired": true,
+        "reported_stopped_before_lifetime": false,
+        "subsequent_error": "I/O connection refused (111)",
+        "complete_4105": false,
+        "cost_attribution": "No exclusive SQL/hash/Host attribution inferred; current6f outcome remains separate."
+      }
+    ],
+    "w1_fresh_6f": [
+      {
+        "identity": {
+          "id": 13296332008,
+          "name": "w1-fresh-service-head-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+          "size": 5282435,
+          "digest": "sha256:50a691bb6ee4e90b602e3e0b564891c35b1e3986babbca4d5c33e81412666137",
+          "run": 41771598422,
+          "job": 126385207656,
+          "head": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+          "kind": "head",
+          "tested": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+          "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+          "family": "fresh"
+        },
+        "original_selector": {
+          "exit": 0,
+          "named_pass": 1,
+          "acceptance_failure": "CONFIRMATION_TARGET",
+          "finite_target_met": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_index": 0
+        },
+        "fresh_selector": {
+          "exit": 101,
+          "named_fail": 1,
+          "acceptance_failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_index": 0
+        },
+        "host_errors": [],
+        "controller_failure": null,
+        "cleanup": "already-collected",
+        "interpretation": "实际业务失败；Host正常cleanup与named native test exit0均不满足原4s gate。"
+      },
+      {
+        "identity": {
+          "id": 13296696264,
+          "name": "w1-fresh-service-prospective-merge-4d0bcfb743d032db14faf1f05422e2e0cf300089-1",
+          "size": 5379344,
+          "digest": "sha256:a546d5ffedaacbd5834db534d6de97629076f0cd1e059e59b5048fb092c25b9a",
+          "run": 41771598422,
+          "job": 126385207706,
+          "head": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+          "kind": "prospective-merge",
+          "tested": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+          "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+          "family": "fresh"
+        },
+        "original_selector": {
+          "exit": 0,
+          "named_pass": 1,
+          "acceptance_failure": "CONFIRMATION_TARGET",
+          "finite_target_met": false,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_index": 1
+        },
+        "fresh_selector": {
+          "exit": 101,
+          "named_fail": 1,
+          "acceptance_failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_index": 1
+        },
+        "host_errors": [],
+        "controller_failure": null,
+        "cleanup": "already-collected",
+        "interpretation": "实际业务失败；Host正常cleanup与named native test exit0均不满足原4s gate。"
+      }
+    ]
+  },
+  "external_and_cross_owner_remaining": [
+    {
+      "gate": "PN1 / #629 W1、PQ-128及work economics",
+      "class": "source/measurement + independent crypto/hardware review",
+      "required": "完整关系/compiler/backend/commitment/quantum FS/FRI/composition与worst invalid verification；最便宜合法structured/preprocessed/hardware producer、量子DAA/链选择与资源经济假设；独立review/reproduction。不能从同作者双实现或组件分数推hardness。"
+    },
+    {
+      "gate": "#629 全链PQ六域",
+      "class": "source/native regression + external security/rollback/hardware/governance",
+      "required": "全部effect-authorizing入口inventory及downgrade拒绝；W1 PQ-128；quantum mining/chain selection；pre-exposure ownership/old nonce/负债/分支与全库一致rollback外部anchor；实际wire/network/cost；独立端到端授权及activation。issue六checkbox仍未完成。"
+    },
+    {
+      "gate": "PN3 真实模型loop/efficacy",
+      "class": "cross-repository integration + real model/evaluation evidence",
+      "required": "实际installed-parent、普通授权export/eval/TaskFlow/loader/FinalUse/CURRENT/next-task回执；等总预算及frozen controls。工程可用公开/已见数据，future-efficacy另需prospective证据；no-update不是有益升级。"
+    },
+    {
+      "gate": "PN4 funding/retention/不可逆effect",
+      "class": "existing source owners + real funded/service/effect evidence",
+      "required": "真实locks/debits、独立metered byte-time/repair/inference；reorg/Unknown/lostACK/funding replacement保守负债；按原effect identity reconciliation，不redispatch或回滚local log。"
+    },
+    {
+      "gate": "PN5 WAN/custody/fault",
+      "class": "external independent operators/hardware/fault campaign",
+      "required": "≥3独立管理员/故障域、≥72h，逐cohort通过；真实power-loss、partition/eclipse、origin-loss、disk-full、deepreorg/new-node。单机进程crash/普通CI不替代。"
+    },
+    {
+      "gate": "PN6 migration/activation",
+      "class": "accepted predecessors + governed authority",
+      "required": "特定binary/profile上已验收PN0-PN5，drain/reconciliation、源保留独立目标迁移、cold verify及abort/recovery，最后由原治理权限明确授权。"
+    }
+  ],
+  "current_pending_not_claimed_passed": [
+    "本轮 exact6f 原成本 reader 已实际成功：F0 原确认 1/6、原 4s gate 0/6；campaign 原确认 3/27，均未达到原业务门槛。独立 Host 逐 import reader 仍待真实终局与原字段读回。",
+    "当前 scoped job 41775481816/126394717519 已实际 SUCCESS；控制 JSON 本体未解 ZIP，仍需保留其独立范围。完整 Node 三 lane 为 975/0/25，ARM merge 为 974/1/25，PQ valid_submit_cleanup FRAME_EOF 仍是实际阻塞。",
+    "016 四个 4105 失败已由六失败 reader 41776513691/126398047214 成功读回：原 1800s server lifetime 到期后 IO111，原 4105 未完成。修复后必须在后继 exact source 及原生命周期/完整验证下重跑原 selector，不能延长门槛闭合。",
+    "新 6f W1 head 及其 merge 的 fresh 都实际 PUBLIC_REQUEST_DEADLINE；修复后须真正满足原 4s gate，不能由 original named selector exit0 继承。",
+    "DurableWitness 提交尾延迟候选仅进行只读评估；尚无修改、原控制执行或同文件系统性能证据，不视为已修复。"
+  ],
+  "no_new_roadmap": true,
+  "source_tests_executed_by_this_review": false,
+  "whole_chain_post_quantum_qualified": false,
+  "independent_accepted": false,
+  "public_network_ready": false,
+  "production_activation": false,
+  "current_actual_readbacks": {
+    "provenance": "Root 已完整读取相应实际 CI/reader 日志并明确提供以下状态；本 agent 只更新当前证据状态，不重复下载日志、不将 reader/scoped 结果升级为全量验收。",
+    "current_6f_cost_readback": {
+      "source_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "source_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "reader_status": "actual_success",
+      "reader_pass_is_native_pass": false,
+      "fixed_host_f0": {
+        "artifact": 13295252045,
+        "original_confirmation": {
+          "confirmed": 1,
+          "planned": 6
+        },
+        "original_4s_gate": {
+          "confirmed": 0,
+          "planned": 6
+        },
+        "business_acceptance": false
+      },
+      "campaign": {
+        "artifact": 13295139319,
+        "original_confirmation": {
+          "confirmed": 3,
+          "planned": 27
+        },
+        "business_acceptance": false
+      },
+      "remaining": "原成本/分母已实际读回；独立逐 import Host 子阶段读回仍待运行终局。未据嵌套计时推断唯一成本归因。"
+    },
+    "current_6f_scoped_native": {
+      "run": 41775481816,
+      "job": 126394717519,
+      "job_status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41775481816/job/126394717519",
+      "original_control_json_extracted": false,
+      "artifact_control_body_status": "not_yet_read",
+      "whole_workspace_acceptance": false,
+      "meaning": "实际 scoped job 成功；原控制 JSON 本体仍未解 ZIP，不扩展唯一测试分母，不继承全 workspace 或性能验收。"
+    },
+    "current_6f_full_node": {
+      "counts_provenance": "Root 实读原 full Node 终局日志；下列是原 pass/fail/ignored 字面计数。",
+      "lanes": [
+        {
+          "lane": "x64 head",
+          "passed": 975,
+          "failed": 0,
+          "ignored": 25
+        },
+        {
+          "lane": "x64 prospective-merge",
+          "passed": 975,
+          "failed": 0,
+          "ignored": 25
+        },
+        {
+          "lane": "ARM head",
+          "passed": 975,
+          "failed": 0,
+          "ignored": 25
+        },
+        {
+          "lane": "ARM prospective-merge",
+          "passed": 974,
+          "failed": 1,
+          "ignored": 25
+        }
+      ],
+      "all_lanes_passed": false,
+      "failing_control": {
+        "source": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        "source_line": 568,
+        "step": "valid_submit_cleanup",
+        "error": "FRAME_EOF",
+        "observed_last_service_commit": {
+          "wall_ns": 381040169,
+          "thread_cpu_ns": 517760
+        },
+        "original_client_max_exchange_ns": 250000000,
+        "parent_diagnostic_global_cap_available": false,
+        "exact_end_to_end_causal_attribution": null,
+        "interpretation": "实际 durable COMMIT wall 超过原 250 ms cap，提示需测持久提交尾延迟；父诊断 global cap 缺失，不能据该子样本给完整端到端精确因果。原 deadline/assertion/retry 不变。"
+      },
+      "cleanup": "原四 lane cleanup 均成功；不改变上述 native 失败。"
+    }
+  }
+}
