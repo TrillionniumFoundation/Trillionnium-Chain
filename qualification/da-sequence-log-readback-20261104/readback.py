@@ -34,9 +34,80 @@ WANTED = ("source-before.json", "source-after.json", "receipt.json",
           "registry.log", "original-module.log")
 
 
+ERROR_CODES = frozenset({
+    "FROZEN_NETWORK_HELPER", "NAME_RESULT_COUNT", "TEST_IDENTIFIER_SHAPE",
+    "READ_ONLY_JOB_SCOPE", "OUTSIDE_SOURCE", "ADDRESS_SPACE_AVAILABLE",
+    "READ_TOKEN_REQUIRED", "MEMBER_COUNT", "MEMBER_BYTE_LIMIT",
+    "RETURNED_DECODED_LIMIT", "AMBIGUOUS_REQUIRED_MEMBER", "DECODED_SIZE",
+    "REQUIRED_LOGS", "ORIGINAL_SOURCE_BINDING", "RECEIPT_SOURCE_BINDING",
+    "EXACT_COMMANDS", "ACTUAL_LOG_DIGEST_BINDING", "ORIGINAL_REGISTRY_SIZE",
+    "OUTPUT_BYTES", "OUTCOME_FLAG_TYPE", "EXIT_CODE_TYPE_OR_RANGE",
+    "READER_CONTROL_FAILED",
+})
+
+
+class ReadbackRejected(ValueError):
+    pass
+
+
 def require(condition, code):
     if not condition:
-        raise ValueError(code)
+        raise ReadbackRejected(code)
+
+
+def safe_failure(error):
+    code = (error.args[0] if type(error) is ReadbackRejected
+            and len(error.args) == 1 and type(error.args[0]) is str
+            and error.args[0] in ERROR_CODES else "UNCLASSIFIED")
+    return {"readback_error": code, "native_executed": False}
+
+
+def checked_outcomes(receipt, module):
+    flags = {
+        "recorded_diagnostic_module_passed": module["passed"],
+        "recorded_diagnostic_complete": receipt["complete"],
+        "recorded_diagnostic_all_passed": receipt["diagnostic_all_passed"],
+    }
+    require(all(type(value) is bool for value in flags.values()), "OUTCOME_FLAG_TYPE")
+    exit_code = module["execution"]["exit_code"]
+    require(type(exit_code) is int and -255 <= exit_code <= 255,
+            "EXIT_CODE_TYPE_OR_RANGE")
+    return {**flags, "native_exit_code": exit_code}
+
+
+def reader_controls():
+    import copy
+
+    receipt = {"complete": True, "diagnostic_all_passed": False}
+    module = {"passed": False, "execution": {"exit_code": 0}}
+    correct = checked_outcomes(receipt, module)
+    require(correct == {"recorded_diagnostic_complete": True,
+                        "recorded_diagnostic_all_passed": False,
+                        "recorded_diagnostic_module_passed": False,
+                        "native_exit_code": 0}, "READER_CONTROL_FAILED")
+    for field in ("complete", "diagnostic_all_passed", "passed"):
+        test_receipt, test_module = copy.deepcopy(receipt), copy.deepcopy(module)
+        (test_module if field == "passed" else test_receipt)[field] = "must-not-print"
+        try:
+            checked_outcomes(test_receipt, test_module)
+        except ReadbackRejected as error:
+            require(safe_failure(error)["readback_error"] == "OUTCOME_FLAG_TYPE",
+                    "READER_CONTROL_FAILED")
+        else:
+            raise ReadbackRejected("READER_CONTROL_FAILED")
+    for bad in (True, "must-not-print", 256):
+        try:
+            checked_outcomes(receipt, {"passed": False, "execution": {"exit_code": bad}})
+        except ReadbackRejected as error:
+            require(safe_failure(error)["readback_error"] == "EXIT_CODE_TYPE_OR_RANGE",
+                    "READER_CONTROL_FAILED")
+        else:
+            raise ReadbackRejected("READER_CONTROL_FAILED")
+    require(safe_failure(ValueError("must-not-print"))["readback_error"] == "UNCLASSIFIED",
+            "READER_CONTROL_FAILED")
+    require(safe_failure(ReadbackRejected("must-not-print"))["readback_error"] == "UNCLASSIFIED",
+            "READER_CONTROL_FAILED")
+    return {"synthetic_schema_controls_passed": 9, "native_executed": False}
 
 
 def digest(data):
@@ -77,6 +148,7 @@ def main():
     cap = min([512 * 1024 * 1024] + [value for value in limits if value >= 0])
     require(cap >= 128 * 1024 * 1024, "ADDRESS_SPACE_AVAILABLE")
     resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
+    print(json.dumps(reader_controls(), sort_keys=True), flush=True)
     helper = load_helper()
     token = os.environ.get("GH_TOKEN")
     require(isinstance(token, str) and token, "READ_TOKEN_REQUIRED")
@@ -132,6 +204,7 @@ def main():
     require(registries[0]["log_digest"] == digest(retained["registry.log"])
             and modules[0]["execution"]["log_digest"] == digest(retained["original-module.log"]),
             "ACTUAL_LOG_DIGEST_BINDING")
+    outcomes = checked_outcomes(receipt, modules[0])
     registry = retained["registry.log"].decode("utf-8")
     module = retained["original-module.log"].decode("utf-8")
     names = re.findall(r"^([A-Za-z_][A-Za-z0-9_:]*): test$", registry, re.M)
@@ -154,10 +227,7 @@ def main():
         "successful_line_count": len(successful),
         "unique_successful_names": len(counts),
         "module_summaries": summaries,
-        "recorded_diagnostic_module_passed": modules[0]["passed"],
-        "recorded_diagnostic_complete": receipt["complete"],
-        "recorded_diagnostic_all_passed": receipt["diagnostic_all_passed"],
-        "native_exit_code": modules[0]["execution"]["exit_code"],
+        **outcomes,
         "missing_success_names": name_rows(set(names) - set(successful)),
         "unexpected_success_names": name_rows(set(successful) - set(names)),
         "duplicate_success_names": name_rows(name for name, count in counts.items() if count != 1),
@@ -181,6 +251,5 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except Exception as error:
         # No signed URLs, token, raw API response or arbitrary test text.
-        print(json.dumps({"readback_error_type": type(error).__name__,
-                          "native_executed": False}))
+        print(json.dumps(safe_failure(error), sort_keys=True))
         raise SystemExit(1) from None

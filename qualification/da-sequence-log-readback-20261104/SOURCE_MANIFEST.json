@@ -1,7 +1,7 @@
 {
-  "schema": "trnm-da-original-log-reader-source-v1",
-  "base": "fa2fca6cf2aede38a60b5f39c67f12b3fefb7fcb",
-  "base_tree": "018ecdddc29d6e0fe2375001cd47e21234c759ff",
+  "schema": "trnm-da-original-log-reader-source-v2",
+  "base": "531aa49f6fc0bd07cf457b12e21c2e0b616f6556",
+  "base_tree": "ac000cfe85c1ea1e3f6875977ad6d996529ab6fc",
   "branch": "research/chain-da-sequence-readback-20261104-gpt6",
   "helper": {
     "path": "qualification/original-artifact-readback-20261104/readback.py",
@@ -10,12 +10,6 @@
     "sha256": "f2093a5f940fd9ac3d2dfe3fc19439a9ca32f5a1cb5b1ce1cc40bef97ac2d0c3"
   },
   "files": [
-    {
-      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
-      "bytes": 8942,
-      "git_blob": "e220d5ca3f4c5e47addc6345794a258777448496",
-      "sha256": "87ebf9822c8273625114fa5fec7bd8ef078dd1f2c4244fd1af289a51e2a96497"
-    },
     {
       "path": ".github/workflows/chain-da-sequence-log-readback.yml",
       "bytes": 1812,
@@ -59,10 +53,22 @@
       "sha256": "b1b6b085ad69d98036891ccef099e1f9a7301a56b511e50abbb62aa62c558f4e"
     },
     {
+      "path": "qualification/da-sequence-log-readback-20261104/readback.py",
+      "bytes": 11978,
+      "git_blob": "9d814000e3df2879cda8289e608eae407cee39f1",
+      "sha256": "adc7cef28939c916ae7f685ec633975b4f2c36bc7cb73cc27c5ba34fe87f6b27"
+    },
+    {
+      "path": "qualification/da-sequence-log-readback-20261104/v1-failure/job-126391889966.decoded.log",
+      "bytes": 25349,
+      "git_blob": "4342660ab072029fa90bb4446e8c76cf6484d7bf",
+      "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
+    },
+    {
       "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
-      "bytes": 419291,
-      "git_blob": "d4a76d98a9a8e0c2354a6d06733f2526eb8ba3ae",
-      "sha256": "a49380503d58410add458dbf3a38d991c12327ceffd75127715297d56a635d1a"
+      "bytes": 420071,
+      "git_blob": "4996e18d7dce1e1c323b445e4c831dee9688e62a",
+      "sha256": "3d259bbacd60a99a034313a17d5d385eeb9b07e3ebef1cd04a068b61ee09a4b4"
     }
   ],
   "original_artifact": {
@@ -88,5 +94,17 @@
     "host": false,
     "performance": false,
     "production": false
-  }
+  },
+  "previous_reader_failure": {
+    "source": "531aa49f6fc0bd07cf457b12e21c2e0b616f6556",
+    "run": 41774593974,
+    "job": 126391889966,
+    "observed_error_type": "ValueError",
+    "exact_guard_unknown": true,
+    "log": {
+      "bytes": 25349,
+      "sha256": "94a589b9eb977cc0dd5f9bc44af87278a310e91c1f57387cbda3090482d0c867"
+    }
+  },
+  "revision": "Strict boolean/outcome and bounded integer exit fields; closed failure-code projection; nine synthetic schema controls execute on the hosted reader. Original archive and acceptance checks unchanged."
 }
