@@ -1,0 +1,1513 @@
+{
+  "schema": "trnm-original-016-four-lane-state-terminal-evidence-v1",
+  "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+  "actual_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+  "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+  "lanes": [
+    {
+      "job": 126367533875,
+      "run": 41760813063,
+      "attempt": 1,
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41760813063/job/126367533875",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T03:27:48Z",
+        "completed_at": "2026-11-04T04:20:37Z"
+      },
+      "source": [
+        {
+          "line": 871,
+          "end_line": 883,
+          "value": {
+            "base": null,
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1614,
+          "end_line": 1626,
+          "value": {
+            "base": null,
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "primary_native_groups": [
+        {
+          "header_line": 1125,
+          "terminal_line": 1134,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6.31"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+          ]
+        },
+        {
+          "header_line": 1140,
+          "terminal_line": 1146,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "3.91"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+          ]
+        },
+        {
+          "header_line": 1172,
+          "terminal_line": 1415,
+          "declared": 1,
+          "first_test": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "2712.23"
+          },
+          "named_tests": [
+            "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover"
+          ]
+        },
+        {
+          "header_line": 1441,
+          "terminal_line": 1503,
+          "declared": 36,
+          "first_test": "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 36,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 947,
+            "duration_seconds_text": "5.83"
+          },
+          "named_tests": [
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+            "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+            "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+            "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+            "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+            "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+            "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+            "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+            "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+            "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+            "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+            "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+            "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+            "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+            "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+            "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+            "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+            "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+            "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source"
+          ]
+        },
+        {
+          "header_line": 1539,
+          "terminal_line": 1547,
+          "declared": 1,
+          "first_test": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.03"
+          },
+          "named_tests": [
+            "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission"
+          ]
+        },
+        {
+          "header_line": 1554,
+          "terminal_line": 1574,
+          "declared": 1,
+          "first_test": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.57"
+          },
+          "named_tests": [
+            "test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ]
+        },
+        {
+          "header_line": 1580,
+          "terminal_line": 1588,
+          "declared": 1,
+          "first_test": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.05"
+          },
+          "named_tests": [
+            "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+          ]
+        }
+      ],
+      "named_count": 42,
+      "unique_named_tests": [
+        "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+        "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+        "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+        "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+        "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+        "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+        "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+        "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+        "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+        "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+        "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+        "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+        "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+        "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+        "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+        "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+        "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+        "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+      ],
+      "all_primary_passed": true,
+      "subprocess_run_headers_without_terminal": [
+        {
+          "line": 1458,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1460,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1462,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1464,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1466,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        }
+      ],
+      "nested_child_and_reprinted_results_not_added": true,
+      "original_native_commands": [
+        "  if ! cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --nocapture --test-threads=1 2>&1 | tee \"$log\"; then",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/capacity.log\"",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/migration.log\"",
+        "  cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test \"$target\" \"$selector\" -- --exact --show-output 2>&1 | tee \"$log\""
+      ],
+      "observed_release_profile_lines": [
+        "    Finished `release` profile [optimized] target(s) in 5m 05s",
+        "    Finished `release` profile [optimized] target(s) in 0.09s",
+        "    Finished `release` profile [optimized] target(s) in 0.08s",
+        "    Finished `release` profile [optimized] target(s) in 1m 27s",
+        "    Finished `release` profile [optimized] target(s) in 3.51s"
+      ],
+      "compiler_artifact_profile_and_elf_hash_not_in_console": true,
+      "artifact": {
+        "id": 13296045164,
+        "name": "priority-ubuntu-24.04-head-state-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "bytes": 16673,
+        "sha256": "6593aaeaf222c169157fffa9b0f391b7abb31eff05d11bfa23b4e0e3f164326f",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-016271-priority-terminal-log-126367533875",
+        "decoded_utf8_bytes": 271657,
+        "decoded_utf8_sha256": "89382429bc55c39ec2a7df73c968490ca9e73b532e501024b074843432c3bb2f"
+      },
+      "no_current44_qualification": true,
+      "no_complete_node_or_public_throughput_claim": true,
+      "no_zip_download": true,
+      "filesystem_written": false,
+      "all_literal_native_result_lines_not_summed": [
+        {
+          "line": 1134,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6.31s"
+        },
+        {
+          "line": 1146,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 3.91s"
+        },
+        {
+          "line": 1415,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 2712.23s"
+        },
+        {
+          "line": 1483,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1489,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1503,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 5.83s"
+        },
+        {
+          "line": 1505,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1506,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1507,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 5.83s"
+        },
+        {
+          "line": 1547,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.03s"
+        },
+        {
+          "line": 1574,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.57s"
+        },
+        {
+          "line": 1588,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.05s"
+        }
+      ],
+      "all_primary_ignored_count": 0,
+      "unselected_filtered_registry_entries_not_qualified": true
+    },
+    {
+      "job": 126367533868,
+      "run": 41760813063,
+      "attempt": 1,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41760813063/job/126367533868",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T03:42:42Z",
+        "completed_at": "2026-11-04T04:35:16Z"
+      },
+      "source": [
+        {
+          "line": 874,
+          "end_line": 886,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "prospective-merge",
+            "prospective_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1617,
+          "end_line": 1629,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "prospective-merge",
+            "prospective_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "primary_native_groups": [
+        {
+          "header_line": 1128,
+          "terminal_line": 1137,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6.09"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+          ]
+        },
+        {
+          "header_line": 1143,
+          "terminal_line": 1149,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "3.77"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+          ]
+        },
+        {
+          "header_line": 1175,
+          "terminal_line": 1418,
+          "declared": 1,
+          "first_test": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "2695.75"
+          },
+          "named_tests": [
+            "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover"
+          ]
+        },
+        {
+          "header_line": 1444,
+          "terminal_line": 1506,
+          "declared": 36,
+          "first_test": "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 36,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 947,
+            "duration_seconds_text": "5.88"
+          },
+          "named_tests": [
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+            "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+            "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+            "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+            "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+            "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+            "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+            "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+            "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+            "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+            "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+            "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+            "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+            "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+            "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+            "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+            "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+            "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+            "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source"
+          ]
+        },
+        {
+          "header_line": 1542,
+          "terminal_line": 1550,
+          "declared": 1,
+          "first_test": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.03"
+          },
+          "named_tests": [
+            "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission"
+          ]
+        },
+        {
+          "header_line": 1557,
+          "terminal_line": 1577,
+          "declared": 1,
+          "first_test": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.57"
+          },
+          "named_tests": [
+            "test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ]
+        },
+        {
+          "header_line": 1583,
+          "terminal_line": 1591,
+          "declared": 1,
+          "first_test": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.04"
+          },
+          "named_tests": [
+            "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+          ]
+        }
+      ],
+      "named_count": 42,
+      "unique_named_tests": [
+        "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+        "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+        "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+        "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+        "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+        "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+        "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+        "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+        "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+        "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+        "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+        "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+        "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+        "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+        "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+        "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+        "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+        "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+      ],
+      "all_primary_passed": true,
+      "subprocess_run_headers_without_terminal": [
+        {
+          "line": 1461,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1463,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1465,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1467,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1469,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        }
+      ],
+      "nested_child_and_reprinted_results_not_added": true,
+      "original_native_commands": [
+        "  if ! cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --nocapture --test-threads=1 2>&1 | tee \"$log\"; then",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/capacity.log\"",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/migration.log\"",
+        "  cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test \"$target\" \"$selector\" -- --exact --show-output 2>&1 | tee \"$log\""
+      ],
+      "observed_release_profile_lines": [
+        "    Finished `release` profile [optimized] target(s) in 4m 46s",
+        "    Finished `release` profile [optimized] target(s) in 0.08s",
+        "    Finished `release` profile [optimized] target(s) in 1m 23s",
+        "    Finished `release` profile [optimized] target(s) in 3.41s",
+        "    Finished `release` profile [optimized] target(s) in 0.07s"
+      ],
+      "compiler_artifact_profile_and_elf_hash_not_in_console": true,
+      "artifact": {
+        "id": 13296207289,
+        "name": "priority-ubuntu-24.04-prospective-merge-state-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "bytes": 16673,
+        "sha256": "2a0c219e869066f55711b9930e0284891ae090e3f962137217b6d10577cc1015",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-016271-priority-terminal-log-126367533868",
+        "decoded_utf8_bytes": 272482,
+        "decoded_utf8_sha256": "72b0398964940cceb174601e4646f627d813e847d2a33c5d084d2698b80bb4e4"
+      },
+      "no_current44_qualification": true,
+      "no_complete_node_or_public_throughput_claim": true,
+      "no_zip_download": true,
+      "filesystem_written": false,
+      "all_literal_native_result_lines_not_summed": [
+        {
+          "line": 1137,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6.09s"
+        },
+        {
+          "line": 1149,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 3.77s"
+        },
+        {
+          "line": 1418,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 2695.75s"
+        },
+        {
+          "line": 1486,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1492,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1506,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 5.88s"
+        },
+        {
+          "line": 1508,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1509,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1510,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 5.88s"
+        },
+        {
+          "line": 1550,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.03s"
+        },
+        {
+          "line": 1577,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.57s"
+        },
+        {
+          "line": 1591,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.04s"
+        }
+      ],
+      "all_primary_ignored_count": 0,
+      "unselected_filtered_registry_entries_not_qualified": true
+    },
+    {
+      "job": 126367534095,
+      "run": 41760813063,
+      "attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41760813063/job/126367534095",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T03:25:39Z",
+        "completed_at": "2026-11-04T05:22:48Z"
+      },
+      "source": [
+        {
+          "line": 867,
+          "end_line": 879,
+          "value": {
+            "base": null,
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1610,
+          "end_line": 1622,
+          "value": {
+            "base": null,
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "primary_native_groups": [
+        {
+          "header_line": 1121,
+          "terminal_line": 1130,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "10.32"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+          ]
+        },
+        {
+          "header_line": 1136,
+          "terminal_line": 1142,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6.28"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+          ]
+        },
+        {
+          "header_line": 1168,
+          "terminal_line": 1411,
+          "declared": 1,
+          "first_test": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6591.58"
+          },
+          "named_tests": [
+            "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover"
+          ]
+        },
+        {
+          "header_line": 1437,
+          "terminal_line": 1499,
+          "declared": 36,
+          "first_test": "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 36,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 947,
+            "duration_seconds_text": "10.32"
+          },
+          "named_tests": [
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+            "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+            "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+            "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+            "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+            "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+            "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+            "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+            "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+            "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+            "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+            "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+            "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+            "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+            "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+            "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+            "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+            "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+            "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source"
+          ]
+        },
+        {
+          "header_line": 1535,
+          "terminal_line": 1543,
+          "declared": 1,
+          "first_test": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.04"
+          },
+          "named_tests": [
+            "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission"
+          ]
+        },
+        {
+          "header_line": 1550,
+          "terminal_line": 1570,
+          "declared": 1,
+          "first_test": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.80"
+          },
+          "named_tests": [
+            "test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ]
+        },
+        {
+          "header_line": 1576,
+          "terminal_line": 1584,
+          "declared": 1,
+          "first_test": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.07"
+          },
+          "named_tests": [
+            "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+          ]
+        }
+      ],
+      "named_count": 42,
+      "unique_named_tests": [
+        "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+        "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+        "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+        "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+        "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+        "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+        "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+        "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+        "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+        "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+        "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+        "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+        "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+        "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+        "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+        "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+        "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+        "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+      ],
+      "all_primary_passed": true,
+      "subprocess_run_headers_without_terminal": [
+        {
+          "line": 1454,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1456,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1458,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1460,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1462,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        }
+      ],
+      "nested_child_and_reprinted_results_not_added": true,
+      "original_native_commands": [
+        "  if ! cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --nocapture --test-threads=1 2>&1 | tee \"$log\"; then",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/capacity.log\"",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/migration.log\"",
+        "  cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test \"$target\" \"$selector\" -- --exact --show-output 2>&1 | tee \"$log\""
+      ],
+      "observed_release_profile_lines": [
+        "    Finished `release` profile [optimized] target(s) in 4m 44s",
+        "    Finished `release` profile [optimized] target(s) in 0.06s",
+        "    Finished `release` profile [optimized] target(s) in 0.07s",
+        "    Finished `release` profile [optimized] target(s) in 1m 25s",
+        "    Finished `release` profile [optimized] target(s) in 3.88s"
+      ],
+      "compiler_artifact_profile_and_elf_hash_not_in_console": true,
+      "artifact": {
+        "id": 13297558333,
+        "name": "priority-ubuntu-24.04-arm-head-state-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "bytes": 16628,
+        "sha256": "fe87ffdf2809aea2eedc45f93e06bbc6f25e2d19f3dede5c6455d03bb635b480",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-016271-priority-terminal-log-126367534095",
+        "decoded_utf8_bytes": 271466,
+        "decoded_utf8_sha256": "ae03c16e77dd9b373c180776613dea9dcf62e1dbe5ab11296fc2701b08f0e63d"
+      },
+      "no_current44_qualification": true,
+      "no_complete_node_or_public_throughput_claim": true,
+      "no_zip_download": true,
+      "filesystem_written": false,
+      "all_literal_native_result_lines_not_summed": [
+        {
+          "line": 1130,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 10.32s"
+        },
+        {
+          "line": 1142,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6.28s"
+        },
+        {
+          "line": 1411,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6591.58s"
+        },
+        {
+          "line": 1479,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1485,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1499,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 10.32s"
+        },
+        {
+          "line": 1501,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1502,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1503,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 10.32s"
+        },
+        {
+          "line": 1543,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.04s"
+        },
+        {
+          "line": 1570,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.80s"
+        },
+        {
+          "line": 1584,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.07s"
+        }
+      ],
+      "all_primary_ignored_count": 0,
+      "unselected_filtered_registry_entries_not_qualified": true
+    },
+    {
+      "job": 126367534041,
+      "run": 41760813063,
+      "attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41760813063/job/126367534041",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T03:31:57Z",
+        "completed_at": "2026-11-04T05:29:07Z"
+      },
+      "source": [
+        {
+          "line": 868,
+          "end_line": 880,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "prospective-merge",
+            "prospective_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1611,
+          "end_line": 1623,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "kind": "prospective-merge",
+            "prospective_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "tested_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 929288658,
+            "tracked_entries": 7986,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "primary_native_groups": [
+        {
+          "header_line": 1122,
+          "terminal_line": 1131,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "10.39"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+          ]
+        },
+        {
+          "header_line": 1137,
+          "terminal_line": 1143,
+          "declared": 1,
+          "first_test": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6.32"
+          },
+          "named_tests": [
+            "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+          ]
+        },
+        {
+          "header_line": 1169,
+          "terminal_line": 1412,
+          "declared": 1,
+          "first_test": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 982,
+            "duration_seconds_text": "6581.54"
+          },
+          "named_tests": [
+            "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover"
+          ]
+        },
+        {
+          "header_line": 1438,
+          "terminal_line": 1500,
+          "declared": 36,
+          "first_test": "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 36,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 947,
+            "duration_seconds_text": "10.90"
+          },
+          "named_tests": [
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+            "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+            "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+            "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+            "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+            "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+            "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+            "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+            "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+            "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+            "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+            "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+            "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+            "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+            "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+            "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+            "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+            "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+            "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+            "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+            "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+            "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+            "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+            "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+            "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source"
+          ]
+        },
+        {
+          "header_line": 1536,
+          "terminal_line": 1544,
+          "declared": 1,
+          "first_test": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.05"
+          },
+          "named_tests": [
+            "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission"
+          ]
+        },
+        {
+          "header_line": 1551,
+          "terminal_line": 1571,
+          "declared": 1,
+          "first_test": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.85"
+          },
+          "named_tests": [
+            "test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ]
+        },
+        {
+          "header_line": 1577,
+          "terminal_line": 1585,
+          "declared": 1,
+          "first_test": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 30,
+            "duration_seconds_text": "0.07"
+          },
+          "named_tests": [
+            "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+          ]
+        }
+      ],
+      "named_count": 42,
+      "unique_named_tests": [
+        "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation",
+        "store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement",
+        "store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance",
+        "store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback",
+        "store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions",
+        "store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback",
+        "store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination",
+        "store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination",
+        "store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes",
+        "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
+        "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+        "store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches",
+        "store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations",
+        "store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker",
+        "store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once",
+        "store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target",
+        "store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim",
+        "store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+        "store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit",
+        "store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint",
+        "store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption",
+        "store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate",
+        "store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry"
+      ],
+      "all_primary_passed": true,
+      "subprocess_run_headers_without_terminal": [
+        {
+          "line": 1455,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1457,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1459,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1461,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        },
+        {
+          "line": 1463,
+          "declared": 1,
+          "first_test": "store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens",
+          "scope": "No matching terminal before the next run boundary; not counted as a pass or failure"
+        }
+      ],
+      "nested_child_and_reprinted_results_not_added": true,
+      "original_native_commands": [
+        "  if ! cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --nocapture --test-threads=1 2>&1 | tee \"$log\"; then",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/capacity.log\"",
+        "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/migration.log\"",
+        "  cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test \"$target\" \"$selector\" -- --exact --show-output 2>&1 | tee \"$log\""
+      ],
+      "observed_release_profile_lines": [
+        "    Finished `release` profile [optimized] target(s) in 4m 49s",
+        "    Finished `release` profile [optimized] target(s) in 0.06s",
+        "    Finished `release` profile [optimized] target(s) in 0.07s",
+        "    Finished `release` profile [optimized] target(s) in 1m 27s",
+        "    Finished `release` profile [optimized] target(s) in 3.80s"
+      ],
+      "compiler_artifact_profile_and_elf_hash_not_in_console": true,
+      "artifact": {
+        "id": 13297844997,
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-state-01627151f3ab50750eac2adeb46d8883a601265f-1",
+        "bytes": 16675,
+        "sha256": "d0e29d22735bfeb0a91454c88f467dae35cc0f8a0dcff1c8a1692056fa4920d8",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-016271-priority-terminal-log-126367534041",
+        "decoded_utf8_bytes": 272085,
+        "decoded_utf8_sha256": "6e823a150c77889ec6f89269c45e040831478b79bd1e494342849a4d0df6d3a6"
+      },
+      "no_current44_qualification": true,
+      "no_complete_node_or_public_throughput_claim": true,
+      "no_zip_download": true,
+      "filesystem_written": false,
+      "all_literal_native_result_lines_not_summed": [
+        {
+          "line": 1131,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 10.39s"
+        },
+        {
+          "line": 1143,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6.32s"
+        },
+        {
+          "line": 1412,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 6581.54s"
+        },
+        {
+          "line": 1480,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1486,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1500,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 10.90s"
+        },
+        {
+          "line": 1502,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1503,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 982 filtered out; finished in 0.00s"
+        },
+        {
+          "line": 1504,
+          "text": "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 947 filtered out; finished in 10.90s"
+        },
+        {
+          "line": 1544,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.05s"
+        },
+        {
+          "line": 1571,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.85s"
+        },
+        {
+          "line": 1585,
+          "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.07s"
+        }
+      ],
+      "all_primary_ignored_count": 0,
+      "unselected_filtered_registry_entries_not_qualified": true
+    }
+  ],
+  "identical_42_named_sets": true,
+  "source_scope": "These historical state-lane results do not qualify 44d, the history lanes, the service-model lanes or the complete priority workflow.",
+  "filesystem_written": false,
+  "interpretation": {
+    "source_scope": "Historical candidate016 and its actualmerge554a, both treee0a; these records do not qualify candidate44d or any successor.",
+    "original_selected_scope": "Seven original top-level invocations per lane: two large-state selectors, one explicitly selected ignored full-capacity selector, the full36 migration filter, and three range/reorganization selectors. Exactly42 unique named selectors per lane.",
+    "ignored_scope": "Every selected top-level terminal reports0ignored. The capacity selector was actually invoked with --ignored. Filtered registry entries and tests not selected by these commands are not treated as executed or passed.",
+    "nested_scope": "Fixture child process headers, nested child terminals and grep reprints are preserved but never added to the enclosing36-test migration denominator or42 named set.",
+    "profile_scope": "Original cargo +1.95.0 --release commands and emitted optimized release-profile lines are preserved. No compiler-artifact profile JSON or independent executable SHA was read from these consoles.",
+    "performance_scope": "This closes only the original historical state-lane terminal readback. It does not close touched-set asymptotic complexity, complete-cost public service latency, throughput, the businessSLO, the history/service-model lanes or the entire priority workflow.",
+    "raw_log_hash_scope": "UTF-8 encoding of complete decoded job-log text returned by the GitHub connector. No ZIP bytes were downloaded.",
+    "source_identity_checks_execute_no_native_tests": true
+  }
+}

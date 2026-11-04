@@ -1,0 +1,1160 @@
+{
+  "schema": "trnm-44d-branch-exact-count-guard-failure-evidence-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "candidate_head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "actual_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+  "failure_classification": "obsolete exact CI count guard after a successful native module",
+  "actual_module": {
+    "declared": 8,
+    "passed": 6,
+    "failed": 0,
+    "ignored": 2,
+    "filtered_out": 982,
+    "library_registry_in_this_default_feature_profile": 990
+  },
+  "old_required_result": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 1
+  },
+  "new_actual_passed_selector": "account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement",
+  "new_original_ignored_selector": "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation",
+  "existing_original_ignored_selector": "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+  "original_workflow": {
+    "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+    "source_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+    "git_blob_sha": "2e8af117c588841d426104db3a5b81787f44fffd",
+    "bytes": 14100,
+    "sha256": "1b3e12c7041235dd62243a7fb28c46241af1d9cd92b11ea0dab4a9cff6de4222",
+    "relevant_original_lines": [
+      {
+        "line": 115,
+        "text": "      - name: Verify immutable constants without caching stored-state verdicts"
+      },
+      {
+        "line": 116,
+        "text": "        shell: bash"
+      },
+      {
+        "line": 117,
+        "text": "        run: |"
+      },
+      {
+        "line": 118,
+        "text": "          set -euo pipefail"
+      },
+      {
+        "line": 119,
+        "text": "          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constants.log\""
+      },
+      {
+        "line": 120,
+        "text": "          grep -E '^test result: ok\\. 5 passed; 0 failed; 1 ignored;' \"$OUT/native-constants.log\""
+      },
+      {
+        "line": 121,
+        "text": "          for name in native_empty_constants_match_wire_and_keep_owned_copy_isolation native_empty_constants_parallel_callers_keep_independent_values; do"
+      },
+      {
+        "line": 122,
+        "text": "            selector=\"account_archive_prototype::native_store::tests::$name\""
+      },
+      {
+        "line": 123,
+        "text": "            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --show-output --test-threads=1 2>&1 | tee \"$OUT/$name.log\""
+      },
+      {
+        "line": 124,
+        "text": "            python3 scripts/ci/check_required_native_test.py \"$OUT/$name.log\" --test \"$selector\""
+      },
+      {
+        "line": 125,
+        "text": "          done"
+      },
+      {
+        "line": 126,
+        "text": "          selector=account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation"
+      },
+      {
+        "line": 127,
+        "text": "          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib \"$selector\" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constant-cost.log\""
+      },
+      {
+        "line": 128,
+        "text": "          python3 scripts/ci/check_required_native_test.py \"$OUT/native-constant-cost.log\" --test \"$selector\""
+      },
+      {
+        "line": 129,
+        "text": "      - name: Preserve complete existing native batch and migration controls"
+      },
+      {
+        "line": 130,
+        "text": "        shell: bash"
+      },
+      {
+        "line": 131,
+        "text": "        run: |"
+      },
+      {
+        "line": 132,
+        "text": "          set -euo pipefail"
+      },
+      {
+        "line": 133,
+        "text": "          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/batch.log\""
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "job": 126404257659,
+      "source": [
+        {
+          "line": 870,
+          "end_line": 882,
+          "value": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1827,
+          "end_line": 1839,
+          "value": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 883,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "module_original_lines": [
+        "running 8 tests",
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO",
+        "",
+        "successes:",
+        "",
+        "successes:",
+        "    account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+        "    account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+        "    account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+        "    account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement",
+        "",
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.09s"
+      ],
+      "old_guard_line": "grep -E '^test result: ok\\. 5 passed; 0 failed; 1 ignored;' \"$OUT/native-constants.log\"",
+      "workflow_path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "post_module_guard_failed": true,
+      "downstream_selected_loop_cost_migration_reorg_lint_not_reached": true,
+      "raw_log_key": "cohort-44d3def-branch-terminal-log-126404257659",
+      "filesystem_written": false,
+      "native_constants_module_terminal_passed": true,
+      "complete_node_qualified_by_this_result": false,
+      "run": 41778472916,
+      "run_attempt": 1,
+      "name": "branch encoding (ubuntu-24.04, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472916/job/126404257659",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:20:38Z",
+            "completed_at": "2026-11-04T05:20:39Z"
+          },
+          {
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:20:39Z",
+            "completed_at": "2026-11-04T05:21:03Z"
+          },
+          {
+            "name": "Verify exact unchanged source and actual ordered main merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:21:03Z",
+            "completed_at": "2026-11-04T05:21:06Z"
+          },
+          {
+            "name": "Install pinned native compiler and lint tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:21:06Z",
+            "completed_at": "2026-11-04T05:21:14Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T05:21:14Z",
+            "completed_at": "2026-11-04T05:22:59Z"
+          },
+          {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T05:22:59Z",
+            "completed_at": "2026-11-04T05:23:12Z"
+          },
+          {
+            "name": "Require exact state-root grammar and unchanged complete-state errors",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T05:23:12Z",
+            "completed_at": "2026-11-04T05:23:45Z"
+          },
+          {
+            "name": "Execute entire retained primitive suite and exact new controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T05:23:45Z",
+            "completed_at": "2026-11-04T05:28:28Z"
+          },
+          {
+            "name": "Require shared account crypto and retain both build-profile observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T05:28:28Z",
+            "completed_at": "2026-11-04T05:33:58Z"
+          },
+          {
+            "name": "Verify immutable constants without caching stored-state verdicts",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 10,
+            "started_at": "2026-11-04T05:33:58Z",
+            "completed_at": "2026-11-04T05:33:58Z"
+          },
+          {
+            "name": "Preserve complete existing native batch and migration controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:33:58Z",
+            "completed_at": "2026-11-04T05:33:58Z"
+          },
+          {
+            "name": "Require exact work arithmetic and unchanged full-profile public service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:33:58Z",
+            "completed_at": "2026-11-04T05:33:58Z"
+          },
+          {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:33:58Z",
+            "completed_at": "2026-11-04T05:33:58Z"
+          },
+          {
+            "name": "Recheck exact source and hash native logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T05:33:58Z",
+            "completed_at": "2026-11-04T05:33:59Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T05:33:59Z",
+            "completed_at": "2026-11-04T05:34:00Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30,
+            "started_at": "2026-11-04T05:34:00Z",
+            "completed_at": "2026-11-04T05:34:01Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31,
+            "started_at": "2026-11-04T05:34:01Z",
+            "completed_at": "2026-11-04T05:34:01Z"
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13299030740,
+        "name": "branch-exact-ubuntu-24.04-head-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "bytes": 54228,
+        "sha256": "5dce0b62b69936f1fc3663840ea1bac678735395ba25fed098be01a1a782bc8a",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-44d3def-branch-terminal-log-126404257659",
+        "decoded_utf8_bytes": 212060,
+        "decoded_utf8_sha256": "89d63e4c19ba98ed0ea1b1163105389fe472c39cc6ddaa3788ecab1614714daf"
+      },
+      "original_cargo_module_command": "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constants.log\"",
+      "original_error_markers": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "skipped_steps": [
+        {
+          "number": 11,
+          "name": "Preserve complete existing native batch and migration controls"
+        },
+        {
+          "number": 12,
+          "name": "Require exact work arithmetic and unchanged full-profile public service"
+        },
+        {
+          "number": 13,
+          "name": "Check complete native target lint without allowances"
+        }
+      ],
+      "no_native_test_failure_in_this_module": true
+    },
+    {
+      "job": 126404257433,
+      "source": [
+        {
+          "line": 866,
+          "end_line": 878,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1826,
+          "end_line": 1838,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 879,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "module_original_lines": [
+        "running 8 tests",
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO",
+        "",
+        "successes:",
+        "",
+        "successes:",
+        "    account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+        "    account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+        "    account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+        "    account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement",
+        "",
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.07s"
+      ],
+      "old_guard_line": "grep -E '^test result: ok\\. 5 passed; 0 failed; 1 ignored;' \"$OUT/native-constants.log\"",
+      "workflow_path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "post_module_guard_failed": true,
+      "downstream_selected_loop_cost_migration_reorg_lint_not_reached": true,
+      "raw_log_key": "cohort-44d3def-branch-terminal-log-126404257433",
+      "filesystem_written": false,
+      "native_constants_module_terminal_passed": true,
+      "complete_node_qualified_by_this_result": false,
+      "run": 41778472916,
+      "run_attempt": 1,
+      "name": "branch encoding (ubuntu-24.04-arm, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472916/job/126404257433",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:18:56Z",
+            "completed_at": "2026-11-04T05:18:56Z"
+          },
+          {
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:18:56Z",
+            "completed_at": "2026-11-04T05:19:21Z"
+          },
+          {
+            "name": "Verify exact unchanged source and actual ordered main merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:19:21Z",
+            "completed_at": "2026-11-04T05:19:23Z"
+          },
+          {
+            "name": "Install pinned native compiler and lint tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:19:23Z",
+            "completed_at": "2026-11-04T05:19:29Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T05:19:29Z",
+            "completed_at": "2026-11-04T05:21:06Z"
+          },
+          {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T05:21:06Z",
+            "completed_at": "2026-11-04T05:21:16Z"
+          },
+          {
+            "name": "Require exact state-root grammar and unchanged complete-state errors",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T05:21:16Z",
+            "completed_at": "2026-11-04T05:21:49Z"
+          },
+          {
+            "name": "Execute entire retained primitive suite and exact new controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T05:21:49Z",
+            "completed_at": "2026-11-04T05:26:29Z"
+          },
+          {
+            "name": "Require shared account crypto and retain both build-profile observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T05:26:29Z",
+            "completed_at": "2026-11-04T05:32:01Z"
+          },
+          {
+            "name": "Verify immutable constants without caching stored-state verdicts",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 10,
+            "started_at": "2026-11-04T05:32:01Z",
+            "completed_at": "2026-11-04T05:32:01Z"
+          },
+          {
+            "name": "Preserve complete existing native batch and migration controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:32:01Z",
+            "completed_at": "2026-11-04T05:32:01Z"
+          },
+          {
+            "name": "Require exact work arithmetic and unchanged full-profile public service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:32:01Z",
+            "completed_at": "2026-11-04T05:32:01Z"
+          },
+          {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:32:01Z",
+            "completed_at": "2026-11-04T05:32:01Z"
+          },
+          {
+            "name": "Recheck exact source and hash native logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T05:32:01Z",
+            "completed_at": "2026-11-04T05:32:02Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T05:32:02Z",
+            "completed_at": "2026-11-04T05:32:03Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30,
+            "started_at": "2026-11-04T05:32:03Z",
+            "completed_at": "2026-11-04T05:32:04Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31,
+            "started_at": "2026-11-04T05:32:04Z",
+            "completed_at": "2026-11-04T05:32:04Z"
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13298293242,
+        "name": "branch-exact-ubuntu-24.04-arm-prospective-merge-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "bytes": 52827,
+        "sha256": "22ac27b9ddafc4211d3764e8dbac8557f50e3a82915ae8b6b0f9c828b70cf0f4",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-44d3def-branch-terminal-log-126404257433",
+        "decoded_utf8_bytes": 212561,
+        "decoded_utf8_sha256": "2362cdc68d40b4c6a77f39811c7877dc2b3481e9df1e194590a1f72fb00ad096"
+      },
+      "original_cargo_module_command": "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constants.log\"",
+      "original_error_markers": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "skipped_steps": [
+        {
+          "number": 11,
+          "name": "Preserve complete existing native batch and migration controls"
+        },
+        {
+          "number": 12,
+          "name": "Require exact work arithmetic and unchanged full-profile public service"
+        },
+        {
+          "number": 13,
+          "name": "Check complete native target lint without allowances"
+        }
+      ],
+      "no_native_test_failure_in_this_module": true
+    },
+    {
+      "job": 126404257808,
+      "source": [
+        {
+          "line": 873,
+          "end_line": 885,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1830,
+          "end_line": 1842,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 886,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "module_original_lines": [
+        "running 8 tests",
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO",
+        "",
+        "successes:",
+        "",
+        "successes:",
+        "    account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+        "    account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+        "    account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+        "    account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement",
+        "",
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.10s"
+      ],
+      "old_guard_line": "grep -E '^test result: ok\\. 5 passed; 0 failed; 1 ignored;' \"$OUT/native-constants.log\"",
+      "workflow_path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "post_module_guard_failed": true,
+      "downstream_selected_loop_cost_migration_reorg_lint_not_reached": true,
+      "raw_log_key": "cohort-44d3def-branch-terminal-log-126404257808",
+      "filesystem_written": false,
+      "native_constants_module_terminal_passed": true,
+      "complete_node_qualified_by_this_result": false,
+      "run": 41778472916,
+      "run_attempt": 1,
+      "name": "branch encoding (ubuntu-24.04, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472916/job/126404257808",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:20:45Z",
+            "completed_at": "2026-11-04T05:20:45Z"
+          },
+          {
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:20:45Z",
+            "completed_at": "2026-11-04T05:21:12Z"
+          },
+          {
+            "name": "Verify exact unchanged source and actual ordered main merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:21:12Z",
+            "completed_at": "2026-11-04T05:21:14Z"
+          },
+          {
+            "name": "Install pinned native compiler and lint tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:21:14Z",
+            "completed_at": "2026-11-04T05:21:23Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T05:21:23Z",
+            "completed_at": "2026-11-04T05:23:11Z"
+          },
+          {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T05:23:11Z",
+            "completed_at": "2026-11-04T05:23:24Z"
+          },
+          {
+            "name": "Require exact state-root grammar and unchanged complete-state errors",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T05:23:24Z",
+            "completed_at": "2026-11-04T05:23:57Z"
+          },
+          {
+            "name": "Execute entire retained primitive suite and exact new controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T05:23:57Z",
+            "completed_at": "2026-11-04T05:28:40Z"
+          },
+          {
+            "name": "Require shared account crypto and retain both build-profile observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T05:28:40Z",
+            "completed_at": "2026-11-04T05:34:26Z"
+          },
+          {
+            "name": "Verify immutable constants without caching stored-state verdicts",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 10,
+            "started_at": "2026-11-04T05:34:26Z",
+            "completed_at": "2026-11-04T05:34:26Z"
+          },
+          {
+            "name": "Preserve complete existing native batch and migration controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:34:26Z",
+            "completed_at": "2026-11-04T05:34:26Z"
+          },
+          {
+            "name": "Require exact work arithmetic and unchanged full-profile public service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:34:26Z",
+            "completed_at": "2026-11-04T05:34:26Z"
+          },
+          {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:34:26Z",
+            "completed_at": "2026-11-04T05:34:26Z"
+          },
+          {
+            "name": "Recheck exact source and hash native logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T05:34:26Z",
+            "completed_at": "2026-11-04T05:34:28Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T05:34:28Z",
+            "completed_at": "2026-11-04T05:34:29Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30,
+            "started_at": "2026-11-04T05:34:29Z",
+            "completed_at": "2026-11-04T05:34:29Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31,
+            "started_at": "2026-11-04T05:34:29Z",
+            "completed_at": "2026-11-04T05:34:29Z"
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13298363411,
+        "name": "branch-exact-ubuntu-24.04-prospective-merge-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "bytes": 54320,
+        "sha256": "b4ce69acecf3583cd372e04920692158e8ea5d0bbf9e847c7c72e616629c50a8",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-44d3def-branch-terminal-log-126404257808",
+        "decoded_utf8_bytes": 212819,
+        "decoded_utf8_sha256": "01d5d43528b4f496595efa6775df773450eb04942e4ada28eeabc97b37fb0d23"
+      },
+      "original_cargo_module_command": "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constants.log\"",
+      "original_error_markers": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "skipped_steps": [
+        {
+          "number": 11,
+          "name": "Preserve complete existing native batch and migration controls"
+        },
+        {
+          "number": 12,
+          "name": "Require exact work arithmetic and unchanged full-profile public service"
+        },
+        {
+          "number": 13,
+          "name": "Check complete native target lint without allowances"
+        }
+      ],
+      "no_native_test_failure_in_this_module": true
+    },
+    {
+      "job": 126404257700,
+      "source": [
+        {
+          "line": 865,
+          "end_line": 877,
+          "value": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1825,
+          "end_line": 1837,
+          "value": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "audit": [
+        {
+          "line": 878,
+          "value": {
+            "result": "PASS",
+            "mode": "--audit",
+            "project": "trillionnium-chain",
+            "packages": 26,
+            "branch": "",
+            "remote_policy_mutated": false
+          }
+        }
+      ],
+      "module_original_lines": [
+        "running 8 tests",
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO",
+        "",
+        "successes:",
+        "",
+        "successes:",
+        "    account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate",
+        "    account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation",
+        "    account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values",
+        "    account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity",
+        "    account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement",
+        "",
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.07s"
+      ],
+      "old_guard_line": "grep -E '^test result: ok\\. 5 passed; 0 failed; 1 ignored;' \"$OUT/native-constants.log\"",
+      "workflow_path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "post_module_guard_failed": true,
+      "downstream_selected_loop_cost_migration_reorg_lint_not_reached": true,
+      "raw_log_key": "cohort-44d3def-branch-terminal-log-126404257700",
+      "filesystem_written": false,
+      "native_constants_module_terminal_passed": true,
+      "complete_node_qualified_by_this_result": false,
+      "run": 41778472916,
+      "run_attempt": 1,
+      "name": "branch encoding (ubuntu-24.04-arm, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472916/job/126404257700",
+      "metadata": {
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:18:55Z",
+            "completed_at": "2026-11-04T05:18:56Z"
+          },
+          {
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:18:56Z",
+            "completed_at": "2026-11-04T05:19:21Z"
+          },
+          {
+            "name": "Verify exact unchanged source and actual ordered main merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:19:21Z",
+            "completed_at": "2026-11-04T05:19:22Z"
+          },
+          {
+            "name": "Install pinned native compiler and lint tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:19:22Z",
+            "completed_at": "2026-11-04T05:19:27Z"
+          },
+          {
+            "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T05:19:27Z",
+            "completed_at": "2026-11-04T05:21:07Z"
+          },
+          {
+            "name": "Check committed formatting without rewriting source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T05:21:07Z",
+            "completed_at": "2026-11-04T05:21:17Z"
+          },
+          {
+            "name": "Require exact state-root grammar and unchanged complete-state errors",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T05:21:17Z",
+            "completed_at": "2026-11-04T05:21:54Z"
+          },
+          {
+            "name": "Execute entire retained primitive suite and exact new controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T05:21:54Z",
+            "completed_at": "2026-11-04T05:27:00Z"
+          },
+          {
+            "name": "Require shared account crypto and retain both build-profile observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T05:27:00Z",
+            "completed_at": "2026-11-04T05:33:07Z"
+          },
+          {
+            "name": "Verify immutable constants without caching stored-state verdicts",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 10,
+            "started_at": "2026-11-04T05:33:07Z",
+            "completed_at": "2026-11-04T05:33:07Z"
+          },
+          {
+            "name": "Preserve complete existing native batch and migration controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:33:07Z",
+            "completed_at": "2026-11-04T05:33:07Z"
+          },
+          {
+            "name": "Require exact work arithmetic and unchanged full-profile public service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:33:07Z",
+            "completed_at": "2026-11-04T05:33:07Z"
+          },
+          {
+            "name": "Check complete native target lint without allowances",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:33:07Z",
+            "completed_at": "2026-11-04T05:33:07Z"
+          },
+          {
+            "name": "Recheck exact source and hash native logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-11-04T05:33:07Z",
+            "completed_at": "2026-11-04T05:33:08Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-11-04T05:33:08Z",
+            "completed_at": "2026-11-04T05:33:10Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30,
+            "started_at": "2026-11-04T05:33:10Z",
+            "completed_at": "2026-11-04T05:33:10Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31,
+            "started_at": "2026-11-04T05:33:10Z",
+            "completed_at": "2026-11-04T05:33:10Z"
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13297534988,
+        "name": "branch-exact-ubuntu-24.04-arm-head-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "bytes": 52604,
+        "sha256": "fb9f318754fed48b2e17666d4ed6a9b1f8a89f7b9f198e6758c1ba18c44db97a",
+        "api_match": true
+      },
+      "raw_log": {
+        "key": "cohort-44d3def-branch-terminal-log-126404257700",
+        "decoded_utf8_bytes": 211928,
+        "decoded_utf8_sha256": "29107863cbc15cfc8d512d82c632df55052fb6beb1da396e1a719f05a77c891a"
+      },
+      "original_cargo_module_command": "cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee \"$OUT/native-constants.log\"",
+      "original_error_markers": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "skipped_steps": [
+        {
+          "number": 11,
+          "name": "Preserve complete existing native batch and migration controls"
+        },
+        {
+          "number": 12,
+          "name": "Require exact work arithmetic and unchanged full-profile public service"
+        },
+        {
+          "number": 13,
+          "name": "Check complete native target lint without allowances"
+        }
+      ],
+      "no_native_test_failure_in_this_module": true
+    }
+  ],
+  "interpretation": {
+    "reason": "The original cargo invocation completed6PASS/0FAIL/2ignored in every lane. The following original grep still required5PASS/0FAIL/1ignored and exited1 under set-e. This is a stale exact CI denominator, not a native test failure.",
+    "unexecuted": "Remaining commands in that failed shell step, including the named selector loop and explicit old cost observation, were not reached. Later skipped native/lint steps remain unqualified. Source-after and artifact retention executed as configured.",
+    "scope": "These source44d records do not qualify a10c390 or any later source. They are not complete Node, performance, public-service SLO or whole Branch lane PASS evidence.",
+    "raw_log_hashes": "UTF-8 of complete decoded connector-returned job log, not compressed archive bytes.",
+    "archive_bytes_not_downloaded": true,
+    "filesystem_written": false
+  }
+}
