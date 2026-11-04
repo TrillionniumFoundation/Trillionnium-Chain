@@ -35,6 +35,71 @@ passes the same 254 native tests plus 26 CLI integration tests. These precede
 the final typed-plan cold recovery and release-wide connection-pool additions,
 so they are not a substitute for those additions' final-source checks.
 
+The later [release CLI compiler diagnostic](release-cli-compile-diagnostic.log)
+retains a missing import used by `prepare-release`; the original import was
+restored. The [strict Clippy diagnostic](persistent-clippy-diagnostic.log)
+retains one unnecessary unit expression in a test; it was removed without a
+lint allowance. Both are followed by the committed-source checks below.
+
+## Exact committed-source results
+
+The implementation commit is
+[`3e866c637197339700c93a6b716d20a3968291f1`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/3e866c637197339700c93a6b716d20a3968291f1),
+tree `38fd2b903c276d3d53e44a0e2fbd7ef3373681f1`. The existing source recorder
+checks all **8,796 tracked entries / 941,172,912 bytes** before and after each
+command. Both receipts finish `command_succeeded`, exit 0, with identical
+before/after source identities. The delivery follow-up adds evidence only;
+the implementation, configuration, source pins and protocol documents remain
+the tested commit's exact bytes.
+
+| Actual check | Result |
+| --- | --- |
+| M09 library | 261 passed, 0 failed, 0 ignored |
+| M09 CLI integration | 29 passed, 0 failed, 0 ignored |
+| Selected M12 native paid-storage controls | 7 passed, 0 failed, 0 ignored; 994 other Node tests filtered |
+| Raw CI source-integrity negative tests | 34 passed |
+| PQ source-integrity negative tests | 34 passed |
+| Claim-guard negative tests | 22 passed |
+| Authority-surface negative tests | 11 passed |
+| Independent TMR1 Python vector/oracle | 4 passed |
+| Whole-workspace, all-targets strict Clippy | PASS, default features, `-D warnings` |
+| Workspace formatting and embedded source inventory | PASS |
+| Exact source pins and repository checks | 421 pinned blobs; 2,474 local links; qualification flags remain false |
+
+The [main receipt](exact-source/cell-storage-exact-source.json) and its
+[complete log](exact-source/cell-storage-exact-source.log) bind M09, the
+workspace static checks and all five Python suites. The
+[paid-storage receipt](exact-source/native-paid-storage-exact-source.json) and
+[complete selected-test log](exact-source/native-paid-storage-exact-source.log)
+bind the seven neighboring storage controls. These are **297 distinct native
+and CLI test executions plus 105 Python tests** in the stated final set;
+earlier repeats are not added. This is not a full Node-suite execution.
+
+[Retained-test coverage](retained-test-coverage.json) matches every original
+186 baseline name against the final 261 library names. All original archived
+archive/model-root/delta/delta-network controls remain: 15 + 4 + 4 + 2 = 25.
+The process-death parent test's output is interrupted by inherited child stdout;
+its result is established by the full name set and successful terminal count.
+The child name is not counted twice. Printed `FAIL` receipts inside source
+negative fixtures are expected rejection controls, not additional failed
+native invocations.
+
+The [first Node compilation](node-initial-sigkill.log) was killed with SIGKILL
+before executing any tests, exit 101. The container's 8 GiB memory limit and
+cgroup observations are consistent with resource exhaustion; no source
+diagnostic was emitted. The [single-job retry](node-single-job-retry.log)
+changes only `CARGO_BUILD_JOBS` to 1, preserving the original package
+optimization, test assertions and timeouts, and executes all seven selected
+tests successfully. Its later committed-source rerun also passes. Command
+wall time includes shared build-directory waiting; none of these durations
+is a performance comparison.
+
+[results.json](results.json) records the counts, command scopes, lockfile
+identity, source bounds and SHA256/size observations for the actual M09 library,
+Node library and `trnm-cell` executables. These local observations do not
+replace independent operators, the remote required-check matrix or actual
+prospective-merge qualification.
+
 ## Reproduction requirements
 
 Run `bash scripts/project-preflight.sh` before edits/builds. Use the repository's
@@ -70,6 +135,10 @@ CI/source/claim tests; deleting a newly required file and its pin together or
 reusing an old pin after mutation must fail. All activation/qualification
 flags retain their previous false values.
 
+The exact final recorder runs strict Clippy with `--workspace --all-targets`;
+the M09-only command above remains a smaller diagnostic entrypoint. Its full
+argv and pinned-provider environment are retained in the main receipt.
+
 ## Interpretation
 
 The tests use synthetic canonical payloads and real local TCP, SQLite, files
@@ -79,3 +148,10 @@ not prove release-owner completeness for a real architecture, numerical model
 safety, Expert ABI, arbitrary codec support, independent remote copies,
 automatic funded renewal, current chain-height truth or actual authorization
 at use. Those owners and the original WAN/product-loop gates remain required.
+
+TCA2's wrapper owns the private `objects` arena and holds its original physical
+exclusive lock. Ordinary M12 calls pointed at the outer TCA2 directory refuse;
+the wrapper's public physical-retirement path goes through the catalog audit.
+The internal `objects` directory must not be registered as a separate M12
+store. Same-permission reconfiguration after the wrapper closes, direct arena
+access and administrator deletion remain outside this local owner boundary.
