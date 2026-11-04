@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-frozen-draft-codeql-base-alignment-proposal-v1",
+  "investigated_pr": 699,
+  "source": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "old_base": {
+    "ref": "qualification/chain-owner-056303b5-20261104-gpt6",
+    "sha": "056303b5193809597d4b5ec1f075dfc5109fe888",
+    "protected": false
+  },
+  "main": {
+    "ref": "main",
+    "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "protected": true
+  },
+  "ancestry": {
+    "status": "ahead",
+    "ahead_by": 1085,
+    "behind_by": 0,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "head_readme_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  "original_failure": {
+    "run_id": 41768503413,
+    "job_id": 126372439045,
+    "original_wait_seconds": 1200,
+    "poll_log_lines": 38,
+    "offline_exporter_controls_passed": 16,
+    "observed_exact_head_checks": 56,
+    "observed_exact_head_codeql_checks": 0,
+    "observed_head_pull_request_runs": 9,
+    "observed_codeql_analysis_producer_runs": 0,
+    "failure": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "decoded_log": {
+      "path": "job-126372439045-codeql-negative.decoded.log",
+      "bytes": 128619,
+      "sha256": "4a93b4631de5c41263f94b9041c37fd2e1300e023eb6a5e9ff21b9ff1da27b2d"
+    },
+    "observed_all_event_head_runs": 9
+  },
+  "direct_observation": "No exact-head CodeQL producer/check was returned; read-only exporter exhausted the original deadline.",
+  "inferred_trigger_cause": "The frozen auxiliary base is not a default or protected branch and is outside documented default-setup PR triggers; same pattern is preserved in owner evidence/pon-blocker-continuation-20261103/codeql-coverage-readback.json.",
+  "official_source": "https://docs.github.com/en/code-security/concepts/code-scanning/setup-types",
+  "intended_reversible_action": "Normally retarget this owned Draft to exact current main, then publish the already intended count fix to create a synchronize event. Read back the actual new ordered merge parents/tree and original exact-source producer. Do not change scanning, protection or permissions.",
+  "qualification": {
+    "action_status_at_manifest": "PROPOSAL; actual post-publication readback required",
+    "default_producer_guaranteed": false,
+    "new_head_gate_qualified": false,
+    "old_merge_receipts_reused": false,
+    "production_activation": false
+  },
+  "boundaries": {
+    "owner688_ref_untouched": true,
+    "main_ref_untouched": true,
+    "branch_protection_unchanged": true,
+    "permissions_unchanged": true,
+    "codeql_configuration_and_deadline_unchanged": true
+  }
+}

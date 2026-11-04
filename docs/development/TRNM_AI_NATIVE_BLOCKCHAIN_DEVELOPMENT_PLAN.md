@@ -5812,3 +5812,12 @@ are not transferred to this successor. Local execution is unavailable: no local
 preflight, Cargo, Clippy or formatter is claimed for this composition. The exact
 committed source must run the original hosted preflight, graph/lock, retained
 native, strict Clippy, formatting, source-integrity and Markdown gates. HOLD_NO_GO.
+
+
+## 2026-11-04 — reuse the existing codec control count and restore ordinary CodeQL coverage
+
+- Original1bac W1factorial head job126372439231 executed all28 History controls plus1 original ignored SIGKILL child, then exact27/1 validation refused. Reuse the existing41dd owner workflow blobaa9d7597 without copying unreviewed owner source. Its only changes are27→28 and one exact successful codec-case name; the two deadline names, all original commands, matrix, error predicates and budgets remain byte-identical. The actual current corpus does not pin this W1 workflow, so the entire corpus remains unchanged.
+- The existing codec test atc75147a7 remains untouched. Full failed log and source/count evidence are durable atfa2fca6c; this patch is not a new native pass. Independent review23bfa894 is included. The frozen056 production tree plus original DA readiness overlay remains the integration basis; diagnostic e5adb is a separate branch.
+- Original CodeQL exporter126372439045 passed16 parser controls then exhausted its original1200-second window with no exact-source CodeQL checks. Current normal branch metadata confirms the auxiliary056 PR base is unprotected. Official default-setup rules cover PRs against default/protected bases. Current main dd6e1c3c is already an ancestor of1bac (ahead1085/behind0), and its empty README is retained.
+- Intended reversible review alignment: keep this owned PR Draft and all frozen source, retarget the review base to current main, then send the intended source synchronize event. No main/#688 ref, protection, permission, scanning configuration or exporter timeout changes. The actual new merge must independently match ordered[main,new-head] parents and source tree; old056 merge receipts never qualify it.
+- Local execution remains unavailable. All new original gates are pending, while older failed/running observations retain their own source. DRAFT/SHADOW_ONLY/DENY_ALL/HOLD_NO_GO and all native performance/Host/activation requirements remain unchanged.
