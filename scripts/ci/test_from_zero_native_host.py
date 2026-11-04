@@ -421,5 +421,147 @@ class HostBoundaryTests(unittest.TestCase):
             os.chdir(original)
 
 
+class EvaluationHostBoundaryTests(unittest.TestCase):
+    """Counterexamples qualify only the observer, never an actual native run."""
+
+    def test_only_whole_original_evaluation_target_enters_its_fixed_profile(self):
+        import evaluation_host_runner as runner
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / ('evaluation_sync_observation-' + 'a' * 16)
+            binary.write_bytes(b'parser fixture only')
+            command = [str(binary)]
+            self.assertTrue(runner.selected(command))
+            self.assertEqual(host.native_command(command, 1800), binary)
+            for changed in ([*command, '--skip', 'anything'], [*command, '--list'],
+                            [*command, '--test-threads=1'], [str(binary) + '.foreign'],
+                            [str(binary.with_name('another-' + 'a' * 16))]):
+                with self.subTest(command=changed), self.assertRaises(ValueError):
+                    host.native_budget(changed)
+            for seconds in (True, 90, 1200, 1799, 1801, 3600):
+                with self.subTest(seconds=seconds), self.assertRaises(ValueError):
+                    host.native_command(command, seconds)
+            with patch.object(host.time, 'monotonic_ns', return_value=10):
+                host.validate_native_deadline(10 + 1_800_000_000_000, command)
+                with self.assertRaises(ValueError):
+                    host.validate_native_deadline(11 + 1_800_000_000_000, command)
+            for changed in ([*command, '--skip', 'anything'], [str(binary) + '.foreign']):
+                with self.assertRaises(ValueError):
+                    runner.selected(changed)
+            self.assertFalse(runner.selected(['/other', '--original-args']))
+
+    def test_actual_gate_checks_the_exact_evaluation_target_and_arguments(self):
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / ('evaluation_sync_observation-' + 'b' * 16)
+            binary.write_bytes(b'parser fixture only')
+            args = SimpleNamespace(elf_fd=7, sha256='a' * 64, deadline_ns=123456)
+            leaf, _ = host.names('123.1', 'b' * 24)
+            command = ['/usr/bin/python3', '-I', '-B', str(host.SCRIPT), 'exec-native',
+                       '--gate-fd', '6', '--elf-fd', '7', '--sha256', args.sha256,
+                       '--membership', '/' + host.FIXED_UNIT + '/' + leaf,
+                       '--deadline-ns', str(args.deadline_ns), str(binary)]
+            self.assertEqual(host.validate_gate_arguments(command, args, leaf), binary)
+            for changed in ([*command, '--nocapture'], [*command, '--skip', 'anything'],
+                            [*command[:-1], str(binary) + '.foreign']):
+                with self.subTest(command=changed), self.assertRaises(ValueError):
+                    host.validate_gate_arguments(changed, args, leaf)
+
+    def observation(self):
+        import evaluation_host_runner as runner
+        stdout = 'running 2 tests\n' + ''.join(f'test {name} ... ok\n' for name in runner.TESTS)
+        stdout += 'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s\n'
+        rows = [dict(ordinal=index, receipt=dict(
+                    actual_returncode=0 if index < 2 else 2, actual_child_wait_completed=True,
+                    local_loopback_or_input_refusal_test=True, public_ready=False),
+                    stdout='{"result":{}}' if index < 2 else '',
+                    stderr='' if index < 2 else 'original expected refusal\n')
+                for index in range(19)]
+        phases = [dict(phase=name, command='"/fixture/trnm-pon-node" "sync" "--development"',
+                       server_join_succeeded=True, accepted_connections=1,
+                       actual_cli_returncode=rows[index]['receipt']['actual_returncode'])
+                  for index, name in enumerate(runner.PHASES)]
+        return runner, stdout, rows, phases, Path('/fixture/trnm-pon-node')
+
+    def test_incomplete_ignored_renamed_or_filtered_test_output_cannot_pass(self):
+        runner, stdout, rows, phases, binary = self.observation()
+        self.assertEqual(runner.validate_observation(stdout, rows, phases, binary)['actual_cli_calls'], 19)
+        for changed in (stdout.replace(runner.TESTS[0], 'other'),
+                        stdout.replace(' ... ok', ' ... ignored', 1),
+                        stdout.replace('0 filtered out', '1 filtered out'),
+                        stdout + f'test {runner.TESTS[0]} ... ok\n'):
+            with self.subTest(stdout=changed), self.assertRaises(ValueError):
+                runner.validate_observation(changed, rows, phases, binary)
+
+    def test_actual_cli_calls_require_full_distinct_roster_waits_and_outcomes(self):
+        runner, stdout, rows, phases, binary = self.observation()
+        for kind in ('missing', 'duplicate', 'exit', 'wait', 'readiness', 'product', 'refusal'):
+            changed = copy.deepcopy(rows)
+            if kind == 'missing':
+                changed.pop()
+            elif kind == 'duplicate':
+                changed[-1] = changed[-2]
+            elif kind == 'exit':
+                changed[2]['receipt']['actual_returncode'] = 0
+            elif kind == 'wait':
+                changed[0]['receipt']['actual_child_wait_completed'] = False
+            elif kind == 'readiness':
+                changed[0]['receipt']['public_ready'] = True
+            elif kind == 'product':
+                changed[0]['stdout'] = 'not JSON'
+            else:
+                changed[2]['stderr'] = ''
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                runner.validate_observation(stdout, changed, phases, binary)
+
+    def test_real_connections_exact_cli_and_all_network_phases_are_required(self):
+        runner, stdout, rows, phases, binary = self.observation()
+        for kind in ('missing', 'duplicate', 'zero', 'other-cli', 'server-failed', 'child-exit'):
+            changed = copy.deepcopy(phases)
+            if kind == 'missing':
+                changed.pop()
+            elif kind == 'duplicate':
+                changed[-1] = changed[-2]
+            elif kind == 'zero':
+                changed[0]['accepted_connections'] = 0
+            elif kind == 'other-cli':
+                changed[0]['command'] = '"/other" "sync" '
+            elif kind == 'server-failed':
+                changed[0]['server_join_succeeded'] = False
+            else:
+                changed[0]['actual_cli_returncode'] = 2
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                runner.validate_observation(stdout, rows, changed, binary)
+
+    def test_server_parser_retains_actual_zero_connection_parent_refusal(self):
+        import evaluation_host_runner as runner
+        line = ('sync phase=full-sync elapsed=2.29s command="/fixture/trnm-pon-node" "sync" '
+                'address=127.0.0.1:1 server_exited_before_stop=false '
+                'server_result=Ok(Ok(PublicMetrics { accepted_connections: 0, rejected: 0 })) '
+                'child=Ok((ExitStatus(unix_wait_status(512)), "", "PUBLIC_HOST_KERNEL_PARENT\\n"))\n')
+        rows = runner.server_observations(line)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['accepted_connections'], 0)
+        self.assertEqual(rows[0]['actual_cli_returncode'], 2)
+        self.assertTrue(rows[0]['server_join_succeeded'])
+        self.assertFalse(rows[0]['server_exited_before_stop'])
+
+    def test_partial_original_receipts_remain_hashable_without_granting_completion(self):
+        import evaluation_host_runner as runner
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            receipt = dict(actual_returncode=2, actual_child_wait_completed=True,
+                           local_loopback_or_input_refusal_test=True, public_ready=False)
+            (directory / 'cli-000.receipt.json').write_text(json.dumps(receipt))
+            (directory / 'cli-000.stdout').write_bytes(b'')
+            (directory / 'cli-000.stderr').write_bytes(b'PUBLIC_HOST_KERNEL_PARENT\n')
+            rows = runner.cli_observations(directory)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]['receipt']['actual_returncode'], 2)
+            self.assertEqual(rows[0]['files']['stderr']['sha256'],
+                             host.sha(b'PUBLIC_HOST_KERNEL_PARENT\n'))
+            _, stdout, _, phases, binary = self.observation()
+            with self.assertRaisesRegex(ValueError, 'NINETEEN'):
+                runner.validate_observation(stdout, rows, phases, binary)
+
+
 if __name__ == '__main__':
     unittest.main()

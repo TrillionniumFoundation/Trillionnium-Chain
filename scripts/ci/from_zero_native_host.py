@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact native confirmation, History and architecture tests in the Host parent.
+"""Exact native confirmation, History, architecture and sync tests in the Host parent.
 
 The runner owns the same unprivileged PID/process group and wait4 observation as
 before. A gated child holds the actual ELF; the privileged helper only attaches
@@ -42,6 +42,9 @@ HISTORY_TIMEOUT_SECONDS = 3600
 # A finite cap inside the unchanged 180-minute runtime job. Original architecture
 # trials keep their 60-second server and original request/page limits.
 ARCHITECTURE_TIMEOUT_SECONDS = 1200
+# Finite whole-target cap inside the unchanged 180-minute runtime job. Each of
+# the original twelve sync phases retains its own 120-second service lease.
+EVALUATION_TIMEOUT_SECONDS = 1800
 LIMITS = {'cpu.max': '25000 100000', 'cpu.max.burst': '0',
           'memory.max': '2147483648', 'memory.swap.max': '0', 'pids.max': '256'}
 
@@ -99,6 +102,8 @@ def validate_child(child, parent, uid, gid, pid, parent_pid, start_ticks):
 def native_budget(command):
     if len(command) == 1 and re.fullmatch(r'architecture_delivery_compare-[0-9a-f]{16}', Path(command[0]).name):
         return ARCHITECTURE_TIMEOUT_SECONDS
+    if len(command) == 1 and re.fullmatch(r'evaluation_sync_observation-[0-9a-f]{16}', Path(command[0]).name):
+        return EVALUATION_TIMEOUT_SECONDS
     if len(command) == 5 and command[1:] == [HOST_TEST, '--exact', '--nocapture', '--test-threads=1']:
         return 90
     if len(command) == 6 and command[1:] == [HISTORY_TEST, '--exact', '--ignored', '--show-output', '--test-threads=1']:
@@ -468,7 +473,9 @@ def run_host_child(command, folder, timeout, *, run_owner, source, binary_sha256
                              'native_deadline_ns': deadline, 'native_budget_seconds': native_budget(command),
                              'complete': attached is not None and error is None and cleanup_error is None
                                          and not timed_out and process is not None and process.returncode == 0,
-                             'scope': ('entire original two-test, eighteen-sample architecture target; no protocol adoption'
+                             'scope': ('entire original two-test sync observation target and actual CLI descendants; not public readiness'
+                                        if len(command) == 1 and Path(command[0]).name.startswith('evaluation_sync_observation-') else
+                                        'entire original two-test, eighteen-sample architecture target; no protocol adoption'
                                         if len(command) == 1 else
                                         'entire same-process finite confirmation fixture; not independent receiver fairness'
                                        if command[1] == HOST_TEST else
