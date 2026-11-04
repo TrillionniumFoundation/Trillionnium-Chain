@@ -52,6 +52,40 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Persisted public-pilot attempts and validated local costs — 2026-11-04
+
+Continue PR #688 from `d0737cf5434894ce47fad8082376fc417313c2cb` using the existing
+pilot and native evaluation owners; preserve the concurrent integration commits.
+The actual pilot `run` must open an explicitly created family authority, compare
+its pinned checkpoint and commit one allowance before emitting the plan or
+launching a child. Fresh output paths, recipe changes and host/identity annotations
+share the same budget. Crashes, failed execution and uncertain commit acknowledgements
+do not refund attempts. Persist returned phase receipts, bind the trained
+five-artifact roster before evaluation, and reconstruct the terminal local-cost
+assessment from retained inputs. A crash inside supervision can leave a spent
+reservation with no returned phase record. Missing RSS/CPU or failed execution
+cannot become successful no-update; absent lifecycle costs and full release
+evaluation keep the economic decision incomplete even after local returns.
+
+This cooperative SQLite owner does not establish independent custody, family
+enrollment across unregistered authorities or cross-host antirollback. Preserve the
+successful old-database-plus-old-checkpoint replay counterexample. The fixed public
+fixtures are not future held-out tasks. Bonferroni allowance allocation alone is not
+a significance result. Original CURRENT/FinalUse and deployment qualification stay
+open. The [runtime instructions](../../scripts/llm_runtime_README.md) specify the
+new runner namespace, the one-thread plan-bound contract distinction and original
+engineering boundaries. Retain the [small reproduction record](../../evidence/model-evaluation-owner-20261104/REPRODUCE.md),
+including unsuccessful full-suite observations and the unstarted pretrained pilot.
+
+Also validate retained classic evaluation closures against original committed
+reveals: schema/context, missing counts, status, minimum score, false qualification
+fields and recoverable record digest. Preserve legal zero scores and signed late
+conflicts/appeals. The old aborted schema does not encode insertion order for late
+conflicts; do not invent historical subsets, and keep such aborted states ineligible.
+Real CPU Torch component tests must exercise checked bytes, actual tensors, forward
+and refusal of malformed/executable formats. Those observations do not alone close
+pretrained quality, behavioral backdoor probes, OS isolation or execution authority.
+
 #### Joint source, native admission and reversible-artifact continuation — 2026-11-04
 
 Continue the existing PR #688 candidate from

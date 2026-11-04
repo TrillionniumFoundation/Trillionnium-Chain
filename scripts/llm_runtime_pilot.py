@@ -96,8 +96,12 @@ def plan_exit_profile(plan):
                          'llm-runtime-public-pilot-plan-v2',
                          'llm-runtime-public-pilot-plan-v3',
                          'llm-runtime-public-pilot-plan-v4'), EXIT_PROFILES))
-    require(type(plan) is dict and plan.get('schema') in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
-    expected = profiles[plan['schema']]
+    require(type(plan) is dict, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    schema = plan.get('schema')
+    if schema == 'llm-runtime-registered-public-pilot-plan-v1':
+        schema = plan.get('pilot_schema')
+    require(schema in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    expected = profiles[schema]
     if expected == 'strict-v1':
         require('exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
     else:
@@ -263,8 +267,28 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
     return plan
 
 
+def registered_plan(plan, policy, trial):
+    """New stored namespace for an explicitly authority-bound public pilot run."""
+    require(plan.get('schema') in {'llm-runtime-public-pilot-plan-v' + str(i)
+                                  for i in range(1, 5)}, 'RUNTIME_REGISTRATION_PLAN')
+    return dict(plan, schema='llm-runtime-registered-public-pilot-plan-v1',
+                pilot_schema=plan['schema'], trial_policy=policy, trial_id=trial,
+                run_components=run_components())
+
+
+def run_components():
+    # These are the changed runner dependencies, not a full release closure.
+    return {name: file_sha(REPOSITORY / 'scripts' / name) for name in (
+        'llm_runtime_pilot.py', 'llm_runtime_trial_ledger.py',
+        'llm_runtime_assessment.py', 'llm_parent_material.py')}
+
+
 def validate_plan(plan):
     plan_exit_profile(plan)
+    if plan['schema'] == 'llm-runtime-registered-public-pilot-plan-v1':
+        from llm_runtime_trial_ledger import _digest
+        _digest(plan.get('trial_policy')); _digest(plan.get('trial_id'))
+        require(plan.get('run_components') == run_components(), 'RUNTIME_RUN_COMPONENTS_CHANGED')
     require(
             plan['backend'] in ('cpu','cuda','rocm','mps') and
             type(plan['threads']) is int and 1 <= plan['threads'] <= 8 and
@@ -1943,16 +1967,23 @@ def verify_predictions(rows, plan, role, artifact, contract):
 
 
 def run(args):
+    from llm_runtime_trial_ledger import TrialLedger
+    from llm_runtime_assessment import observe_phase, build_assessment
     directory = Path(args.output)
+    require(not Path(args.trial_ledger).resolve().is_relative_to(directory.resolve()),
+            'RUNTIME_LEDGER_MUST_OUTLIVE_OUTPUT')
+    ledger = TrialLedger(args.trial_ledger, args.trial_policy)
+    # Open-existing and pin validation precede material access or any child.
+    ledger.inspect()
     directory.mkdir(mode=0o700, parents=False, exist_ok=False)
     manifest, _ = verify_materials(args.materials)
     verify_family(read_json(FAMILY_PATH))
-    plan = validate_plan(experiment_plan(manifest, backend=args.backend, threads=args.threads, steps=args.steps,
-                                        exit_observation=args.exit_observation_profile))
-    save(directory/'experiment-plan.json', plan)
-    save(directory/'experiment-freeze.json', dict(plan=identity(plan), frozen_before_candidate_training=True,
-        scope='same-operator-local-freeze-no-independent-release', utc_ns=time.time_ns()))
-    records = []
+    plan = validate_plan(registered_plan(experiment_plan(manifest, backend=args.backend,
+        threads=args.threads, steps=args.steps, exit_observation=args.exit_observation_profile),
+        args.trial_policy, args.trial_id))
+    # An uncertain debit cannot be retried through a fresh output directory.
+    reservation = ledger.reserve(plan, args.trial_id, args.trial_checkpoint, args.related_identity)
+    records, receipts = [], {}
     base = [sys.executable, str(Path(__file__).resolve()), '_child', '--materials', args.materials]
     def phase(name, phase_name, role='current-backbone', artifact=None, phase_plan=None):
         path = directory/name; path_plan = directory/'experiment-plan.json'
@@ -1962,11 +1993,24 @@ def run(args):
         if artifact is not None: command += ['--artifact', str(artifact)]
         result = supervise(command, path, plan['training_budget' if phase_name=='train' else 'inference_budget'],
                            exit_observation=plan.get('exit_observation'))
-        records.append(dict(name=name, **result)); save(directory/'phase-outcomes.json', records)
+        records.append(dict(name=name, **result))
+        checkpoint = ledger.phase(args.trial_id, name, result)
+        save(directory/'trial-checkpoint.json', checkpoint)
+        save(directory/'phase-outcomes.json', records)
         print(json.dumps(dict(phase=name, **result)), flush=True)
         require(result['outcome'] == 'success', 'RUNTIME_REQUIRED_PHASE_ABORT:'+name)
-        return read_json(path/'actual-receipt.json')
+        receipt = read_json(path/'actual-receipt.json')
+        observe_phase(phase_plan or plan, name, phase_name, role, result, receipt)
+        checkpoint = ledger.child_receipt(args.trial_id, name, receipt)
+        save(directory/'trial-checkpoint.json', checkpoint)
+        receipts[name] = receipt
+        return receipt
     try:
+        save(directory/'trial-checkpoint.json', reservation)
+        save(directory/'experiment-plan.json', plan)
+        save(directory/'experiment-freeze.json', dict(schema='llm-runtime-registered-freeze-v1',
+            plan=identity(plan), trial=reservation, frozen_before_candidate_training=True,
+            scope='same-operator-local-freeze-no-independent-release', utc_ns=time.time_ns()))
         one = dict(plan); one['threads'] = 1
         phase('loader-1thread', 'loader', phase_plan=one)
         reference = phase('loader-reference', 'loader')
@@ -1987,6 +2031,8 @@ def run(args):
                     ('current-backbone', 'randomized-rank-matched-lora')), 'RUNTIME_MATCHED_TRAINING_BUDGET')
         roster = dict(experiment=identity(plan), contract=cid, artifacts=artifacts,
                       frozen_before_evaluation=True, scope='five-actual-local-artifacts-no-independent-authority')
+        checkpoint = ledger.freeze_roster(args.trial_id, roster)
+        save(directory/'trial-checkpoint.json', checkpoint)
         save(directory/'evaluation-roster.json', roster)
         predictions = {}
         for role in PARTICIPANTS:
@@ -2004,22 +2050,23 @@ def run(args):
                         groups.setdefault(row['source_group'], []).append(int(predictions[role][row['id']] == row['target_output_sha256']))
                 score = sum((Fraction(sum(v),len(v)) for v in groups.values()), Fraction())/len(groups)
                 scores[role][partition] = [score.numerator, score.denominator]
-        selected = max(CONTROLS, key=lambda role: (Fraction(*scores[role]['calibration']), -CONTROLS.index(role)))
-        strongest = max(Fraction(*scores[role]['evaluation']) for role in CONTROLS)
-        gain = Fraction(*scores['candidate']['evaluation'])-strongest
-        save(directory/'assessment.json', dict(schema='llm-runtime-actual-pilot-assessment-v1',
-             experiment=identity(plan), roster=identity(roster), source=plan['runtime_source'],
-             scope='actual-local-short-LLM-pilot-no-future-independent-quality-or-native-admission',
-             scores=scores, calibration_selected_control=selected,
-             gain_vs_strongest_evaluation_control=[gain.numerator,gain.denominator],
-             positive_vs_all_controls=gain>0, all_required_controls_executed=True,
-             training_budget_matched_by_steps_and_token_schedule=True,
-             consumption_not_assumed_equal=True, output_byte_metric='equal-source-group-exact-output-bytes',
-             phases=records, **{name:False for name in QUALIFICATIONS}))
+        assessment = build_assessment(plan, roster, scores, records, receipts)
+        checkpoint = ledger.finish(args.trial_id, 'complete-unqualified', assessment)
+        save(directory/'trial-checkpoint.json', checkpoint)
+        save(directory/'assessment.json', assessment)
     except BaseException as error:
-        save(directory/'abort.json', dict(outcome='aborted', error_type=type(error).__name__,
-             error=str(error)[:512], phases=records, adoption=False, reward=False,
-             **{name:False for name in QUALIFICATIONS}))
+        aborted = dict(outcome='aborted', experiment=identity(plan), error_type=type(error).__name__,
+             error=str(error)[:512], phases=records, adoption=False, reward=False, no_update=False,
+             **{name:False for name in QUALIFICATIONS})
+        # Failure to append cannot refund the durable reserve or authorize retry.
+        # Preserve the original error and disclose that reconciliation is needed.
+        try:
+            checkpoint = ledger.finish(args.trial_id, 'aborted', aborted)
+            save(directory/'trial-checkpoint.json', checkpoint)
+        except BaseException as ledger_error:
+            aborted['trial_reconciliation_required'] = True
+            aborted['trial_error_type'] = type(ledger_error).__name__
+        save(directory/'abort.json', aborted)
         raise
 
 
@@ -2029,10 +2076,20 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     runner = commands.add_parser('run')
     runner.add_argument('--materials', required=True); runner.add_argument('--output', required=True)
+    for name in ('trial-ledger', 'trial-policy', 'trial-checkpoint', 'trial-id', 'related-identity'):
+        runner.add_argument('--' + name, required=True)
     runner.add_argument('--backend', choices=['cpu','cuda','rocm','mps'], default='cpu')
     runner.add_argument('--threads', type=int, default=4); runner.add_argument('--steps', type=int, default=10)
     runner.add_argument('--exit-observation-profile', choices=EXIT_PROFILES,
                         default='strict-v1')
+    initializer = commands.add_parser('trial-ledger-init',
+        help='create one local public-pilot authority; never use this to recover a lost ledger')
+    initializer.add_argument('--ledger', required=True)
+    initializer.add_argument('--max-attempts', type=int, required=True)
+    inspector = commands.add_parser('trial-ledger-inspect',
+        help='read existing spending for reconciliation; does not supply an external trusted checkpoint')
+    inspector.add_argument('--ledger', required=True)
+    inspector.add_argument('--policy', required=True)
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)
     worker.add_argument('--artifact')
@@ -2041,7 +2098,16 @@ def main():
     from llm_runtime_parent_step import add_parser, run as run_parent_step
     add_parser(commands)
     args = parser.parse_args()
-    if args.command == 'run': run(args)
+    if args.command == 'trial-ledger-init':
+        from llm_runtime_trial_ledger import initialize
+        print(json.dumps(initialize(args.ledger, args.max_attempts), sort_keys=True))
+    elif args.command == 'trial-ledger-inspect':
+        from llm_runtime_trial_ledger import TrialLedger
+        state = TrialLedger(args.ledger, args.policy).inspect()
+        print(json.dumps(dict(policy=state['policy_id'], checkpoint=state['checkpoint'],
+            spent=state['spent'], scope=state['scope'],
+            attempts={key: value['state'] for key, value in state['attempts'].items()}), sort_keys=True))
+    elif args.command == 'run': run(args)
     elif args.command == 'parent-step': run_parent_step(args)
     else: child(args)
 

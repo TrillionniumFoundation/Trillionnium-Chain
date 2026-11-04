@@ -34,20 +34,71 @@ The existing pilot test entry imports the routing controls. Optional tiny CPU
 tensor controls use `TRNM_ACTUAL_DECODER_TENSOR_TESTS=1 python -m unittest discover
 -s scripts -p test_llm_runtime_decode.py -v`; without that explicit opt-in they
 report NOT_RUN. They use constructed tensors, not pretrained model weights.
+The actual tensor artifact-loader controls use the same opt-in:
+
+```sh
+TRNM_ACTUAL_DECODER_TENSOR_TESTS=1 python -m unittest discover \
+  -s scripts -p test_llm_runtime_artifact_loading_torch.py -v
+```
 
 ## Execution
 
-Use a fresh output directory and retained exact `material-manifest.json` with the
+Use a fresh output directory, one pre-created persistent trial authority outside
+that directory, and retained exact `material-manifest.json` with the
 seven pinned public files. The source hashes are checked against code constants,
 including tokenizer/configuration bytes; a self-rehashed replacement is rejected.
 No model code is downloaded/executed. Only safetensors are loaded,
 `trust_remote_code=False`, and inference remains offline after preparation.
 
 ```sh
+# Bootstrap this authority once. Recovery must open it, never initialize a replacement.
+python scripts/llm_runtime_pilot.py trial-ledger-init \
+  --ledger /isolated/evaluator/pilot.sqlite3 --max-attempts 4
+# Pin the returned policy_id and checkpoint through the controlling owner.
 python scripts/llm_runtime_pilot.py run --materials /isolated/materials \
-  --output /isolated/runs/cpu-pilot-unique --backend cpu --threads 4 --steps 10
+  --output /isolated/runs/cpu-pilot-unique --backend cpu --threads 4 --steps 10 \
+  --trial-ledger /isolated/evaluator/pilot.sqlite3 \
+  --trial-policy "$pilot_policy" --trial-checkpoint "$pilot_checkpoint" \
+  --trial-id "$pilot_attempt" --related-identity operator-affiliation-observation
+python scripts/llm_runtime_pilot.py trial-ledger-inspect \
+  --ledger /isolated/evaluator/pilot.sqlite3 --policy "$pilot_policy"
 python -m unittest discover -s scripts -p test_llm_runtime_pilot.py -v
 ```
+
+The policy/checkpoint/attempt values are 64 lowercase hex characters. The attempt
+must be new; changing its output directory, candidate recipe, host or identity
+annotation does not create another allowance. Bootstrap generates a distinct
+authority identity, so a newly initialized database cannot satisfy an existing
+policy pin. The owner must durably reserve before emitting the plan or starting
+any child. Every returned phase observation, valid child cost receipt, frozen
+artifact roster and terminal observation is retained in a serialized SQLite
+transaction. A crash inside supervision can leave only the reservation or the
+preceding phase, with the in-flight phase unknown. A crash or unknown COMMIT
+acknowledgement leaves the debit in place. Readback reports pending work; it does
+not authorize rerunning its effects. There is no refund,
+reset or automatic pending-to-success operation.
+
+Registered `run` uses the new `llm-runtime-registered-public-pilot-plan-v1`
+namespace, binding the policy, attempt and changed runner-component hashes. The
+old V1–V4 plan formats remain lower-level engineering inputs; `_child` and
+`parent-step` are not a global evaluation admission service. The existing
+public task bytes remain public. The immutable family allowance spans all
+cooperating callers of this one authority, and allocates a fixed family-alpha
+fraction across its maximum attempts and four comparisons. It does not compute
+a significance test or prove that unregistered experiments are absent.
+
+The checkpoint comparison detects an old database against a current retained
+checkpoint. Restoring both database and its old local checkpoint is an explicit
+successful replay counterexample. Independent monotonic checkpoint custody,
+multi-host service semantics and verified related-identity enrollment remain
+required for the production guarantee. An inspect result is a local observation,
+not that independent trust root. Do not automatically replace an externally
+retained checkpoint with the head returned by `trial-ledger-inspect`; the
+controlling owner must reconcile it. A new trial ID does not resume a pending
+trial. The bounded journal rejects changed schema,
+triggers, nonregular/missing databases and inconsistent event chains. Logical
+capacity is bounded; a storage-device failure can still prevent terminal append,
+in which case the reserve remains spent and reconciliation is required.
 
 The first actual CPU environment used Python 3.12.3, Torch 2.9.1+cpu,
 Transformers 4.57.3, PEFT 0.18.0, safetensors 0.7.0, tokenizers 0.22.2,
@@ -65,6 +116,26 @@ wall/RSS caps and thread count; this does not assert equal actual consumption.
 Missing controls, subprocess failure, time/RSS exhaustion, wrong material or replay
 context cause explicit abort with no adoption/reward and retained partial records.
 
+The V2 assessment now rechecks all twelve monitored child returns and their
+actual cost-event inventories. Missing required CPU/RSS, failed receipts, wrong
+artifact/contract, duplicate/missing stages or unreaped children cause abort.
+Optional IO/accelerator timing remains null when unavailable. Sequential wall
+and CPU totals have separate scopes, and RSS aggregates use maxima rather than
+adding peaks. Positive output-byte gain does not establish net utility: the
+current pilot lacks full release-composition metrics, independent future tasks,
+tariffs/horizon, full lifecycle costs and the current-generation/FinalUse owner.
+Its terminal decision is therefore `incomplete`, with `no_update`, `adoption`
+and `reward` false. Before accepting its terminal observation, the ledger
+reconstructs local costs from persisted phase/child records and recomputes the
+assessment using caller-supplied public-runner scores. It does not independently
+derive those scores from retained prediction bytes or prove task correctness.
+
+The `loader-1thread` contract is bound to its own one-thread plan and can differ
+from the four-thread reference contract. Both must retain the same frozen source
+weight SHA, FP32 backbone root and strict integer parameter count. The reference
+loader, all training phases and all evaluation phases must match the frozen
+roster contract; train/evaluation artifacts must also match their frozen roles.
+
 CPU FP32 eager forward and fixed-count greedy decoding check actual logits device,
 dtype, finite values, token count and tokenizer output. There is no EOS early stop,
 silent truncation, remote model code, quantization or TF32. Declared source BF16 and
@@ -72,6 +143,14 @@ derived FP32 tensor hashes are separate. Ordinary rank4/alpha8 adapters target q
 in all 30 layers (230400 trainable parameters); immutable backbone hashes must stay
 unchanged. Full-tune weights and all adapters are saved and reloaded into fresh
 workers before scoring. Float adapter bytes do not prove functional equivalence.
+
+The [2026-11-04 continuation record](../evidence/model-evaluation-owner-20261104/REPRODUCE.md)
+keeps the new registered runner's full pretrained pilot at NOT_RUN with zero
+allowances spent because the shared host lacked reliable memory/disk headroom.
+It records the actual 12 loader and 10 decoder component passes, along with the
+two failed exit-observation tests in the 349-test aggregate. Single targeted
+passes do not erase that failed aggregate. The historical result below predates
+this continuation and cannot qualify its new runner.
 
 The first real short pilot completed 12 phases. Each trained role used 10 steps,
 526 total tokens and 40 supervised tokens. Candidate, fresh LoRA and full tune each

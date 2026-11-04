@@ -3,7 +3,7 @@
 //! trnm-pon-node's model_evidence_v3 test covers signed native model admission.
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
-use trnm_crypto_primitives::{signing_key_from_hex, verify_hex_strict};
+use trnm_crypto_primitives::{sign_hex, signing_key_from_hex, verify_hex_strict};
 use trnm_mvcc_fee::{
     model_evidence_v3,
     pon_executor::Config,
@@ -386,4 +386,193 @@ fn retained_reveals_recheck_commitments_at_restore_close_and_adoption() {
             assert!(changed["closed"].is_null());
         }
     }
+}
+
+fn closed_classic(index: usize) -> (Value, Config, Hash) {
+    let input = input();
+    let context = &input["context"];
+    let row = &input["cases"][index];
+    let cfg = configure(context, evaluation::PROFILE);
+    let candidate = digest(&context["candidate"]);
+    let mut e =
+        evaluation::hydrate(&frozen(&cfg, context, row), candidate, &BTreeMap::new()).unwrap();
+    for raw in row["commits"].as_array().unwrap() {
+        let tx = transaction(raw, &cfg);
+        evaluation::commit(
+            &mut e,
+            &hex::encode(tx.sender),
+            tx.payload[32..64].try_into().unwrap(),
+            tx.payload[64..96].try_into().unwrap(),
+            16,
+        )
+        .unwrap();
+    }
+    for raw in row["reveals"].as_array().unwrap() {
+        evaluation::reveal(&mut e, reveal(&transaction(raw, &cfg)), 32).unwrap();
+    }
+    evaluation::close(&mut e, 48).unwrap();
+    assert_eq!(e["closed"], row["expected_closed"]);
+    (e, cfg, candidate)
+}
+
+fn restore(e: &Value, candidate: Hash) -> Result<Value, &'static str> {
+    evaluation::hydrate(
+        &evaluation::compact(e).unwrap(),
+        candidate,
+        &evaluation::record_rows(candidate, e).unwrap(),
+    )
+}
+
+#[test]
+fn classic_retained_closure_rejects_substituted_summary_at_use_and_restore() {
+    let (e, _, candidate) = closed_classic(0);
+    assert!(evaluation::adoption_allowed(&e, 56).is_ok());
+    for (field, replacement) in [
+        ("schema", json!("pon-native-closed-evaluation-v3")),
+        ("round", json!(hex::encode([91; 32]))),
+        ("candidate", json!(hex::encode([91; 32]))),
+        ("status", json!("aborted")),
+        ("score", json!(18)),
+        ("score", Value::Null),
+        ("missing_reveal_count", json!(1)),
+        ("conflict_count_before_close", json!(1)),
+        ("records_digest", json!(hex::encode([91; 32]))),
+        ("closed_height", json!(47)),
+        ("objective_model_quality", json!(true)),
+        ("independent_governance_accepted", json!(true)),
+        ("execution_authority", json!(true)),
+    ] {
+        let mut changed = e.clone();
+        changed["closed"][field] = replacement;
+        assert_eq!(
+            evaluation::adoption_allowed(&changed, 56),
+            Err("PUBLIC_EVAL_CLOSED_BINDING"),
+            "{field}: substitute must not authorize adoption"
+        );
+        assert_eq!(
+            restore(&changed, candidate),
+            Err("PUBLIC_EVAL_CLOSED_BINDING"),
+            "{field}: substitute must not be restored"
+        );
+    }
+    let mut future = e.clone();
+    future["closed"]["closed_height"] = json!(57);
+    assert!(restore(&future, candidate).is_ok());
+    assert_eq!(
+        evaluation::adoption_allowed(&future, 56),
+        Err("PUBLIC_EVAL_ADOPTION")
+    );
+    assert!(evaluation::adoption_allowed(&future, 57).is_ok());
+}
+
+#[test]
+fn classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score() {
+    let (aborted, _, candidate) = closed_classic(1);
+    assert!(restore(&aborted, candidate).is_ok());
+    assert!(evaluation::closed_digest(&aborted).is_ok());
+    for (field, value) in [
+        ("status", json!("complete-scored")),
+        ("score", json!(0)),
+        ("missing_reveal_count", json!(0)),
+        ("records_digest", json!(hex::encode([91; 32]))),
+    ] {
+        let mut changed = aborted.clone();
+        changed["closed"][field] = value;
+        assert_eq!(
+            restore(&changed, candidate),
+            Err("PUBLIC_EVAL_CLOSED_BINDING"),
+            "aborted {field}"
+        );
+    }
+
+    let (mut zero, cfg, _) = closed_classic(0);
+    zero["closed"] = Value::Null;
+    zero["commits"] = json!({});
+    zero["reveals"] = json!({});
+    for raw in input()["cases"][0]["reveals"].as_array().unwrap() {
+        let mut value = reveal(&transaction(raw, &cfg));
+        value.score = 0;
+        let commitment = evaluation::reveal_commitment_for(&zero, &value).unwrap();
+        evaluation::commit(
+            &mut zero,
+            &hex::encode(value.evaluator),
+            value.round,
+            commitment,
+            16,
+        )
+        .unwrap();
+        evaluation::reveal(&mut zero, value, 32).unwrap();
+    }
+    assert_eq!(evaluation::close(&mut zero, 48), Ok(Some(0)));
+    assert_eq!(zero["closed"]["status"], "complete-scored");
+    assert!(restore(&zero, candidate).is_ok());
+    assert!(evaluation::closed_digest(&zero).is_ok());
+    assert_eq!(
+        evaluation::adoption_allowed(&zero, 56),
+        Err("PUBLIC_EVAL_ADOPTION")
+    );
+}
+
+fn add_classic_conflict(e: &mut Value, cfg: &Config, candidate: Hash, index: usize) {
+    let original = transaction(&input()["cases"][0]["commits"][index], cfg);
+    let who = (0..3).find(|who| public(*who) == original.sender).unwrap();
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()]))).unwrap();
+    let mut changed = original.clone();
+    changed.payload[64] ^= 1;
+    changed.signature = hex::decode(sign_hex(&key, &changed.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    evaluation::conflict(
+        e,
+        cfg,
+        candidate,
+        &original.encode().unwrap(),
+        &changed.encode().unwrap(),
+    )
+    .unwrap();
+}
+
+#[test]
+fn classic_retained_closure_preserves_legal_appeals_and_late_conflicts() {
+    let (mut e, cfg, candidate) = closed_classic(0);
+    let closed = e["closed"].clone();
+    let result = evaluation::closed_digest(&e).unwrap();
+    // This is only an identifier. Existing callers can calculate it from the
+    // compact record; restoring or adopting it requires complete validation.
+    assert_eq!(
+        evaluation::closed_digest(&evaluation::compact(&e).unwrap()),
+        Ok(result)
+    );
+    let author = hex::encode(public(3));
+    evaluation::appeal(&mut e, &author, &author, result, [1; 32], [2; 32], 49).unwrap();
+    assert!(restore(&e, candidate).is_ok());
+    assert!(evaluation::adoption_allowed(&e, 56).is_ok());
+    add_classic_conflict(&mut e, &cfg, candidate, 0);
+    assert_eq!(e["closed"], closed);
+    assert!(restore(&e, candidate).is_ok());
+    assert_eq!(evaluation::closed_digest(&e), Ok(result));
+    assert_eq!(
+        evaluation::adoption_allowed(&e, 56),
+        Err("PUBLIC_EVAL_ADOPTION")
+    );
+    let mut changed = e.clone();
+    changed["closed"]["records_digest"] = json!(hex::encode([91; 32]));
+    assert_eq!(
+        restore(&changed, candidate),
+        Err("PUBLIC_EVAL_CLOSED_BINDING")
+    );
+
+    let (mut early, _, _) = closed_classic(0);
+    early["closed"] = Value::Null;
+    add_classic_conflict(&mut early, &cfg, candidate, 0);
+    assert_eq!(evaluation::close(&mut early, 48), Ok(None));
+    assert_eq!(early["closed"]["conflict_count_before_close"], 1);
+    assert!(restore(&early, candidate).is_ok());
+    let result = evaluation::closed_digest(&early).unwrap();
+    add_classic_conflict(&mut early, &cfg, candidate, 1);
+    assert!(restore(&early, candidate).is_ok());
+    assert_eq!(evaluation::closed_digest(&early), Ok(result));
+    assert!(evaluation::adoption_allowed(&early, 56).is_err());
 }

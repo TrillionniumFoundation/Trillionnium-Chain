@@ -193,6 +193,10 @@ from test_llm_runtime_evidence_frames import EvidenceFrameTests, EvidenceWriterT
 from test_llm_runtime_evidence_transport import EvidenceTransportTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
 from test_llm_runtime_artifact_loading import ArtifactChildTests, RecipeBindingTests
+from test_llm_runtime_artifact_loading_torch import ActualArtifactTensorTests
+from test_llm_runtime_assessment import CostAssessmentTests
+from test_llm_runtime_trial_ledger import TrialLedgerTests, PilotRunAdmissionTests
+from test_llm_runtime_trial_review import TrialLedgerReviewTests
 
 
 if __name__=='__main__':unittest.main()

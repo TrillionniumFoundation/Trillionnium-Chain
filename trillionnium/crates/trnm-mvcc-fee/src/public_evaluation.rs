@@ -364,6 +364,82 @@ fn validate_reveals(evaluation: &Value) -> Result<()> {
     Ok(())
 }
 
+/// Check the classic closure against the immutable commit/reveal records.
+/// A later conflict can block adoption, but cannot rescore historical closure.
+/// Classic conflict rows do not retain insertion heights: after an aborted
+/// closure gains more conflicts, its exact old subset cannot be reconstructed.
+/// In that case validate the summary/count bounds without inventing a subset.
+fn validate_classic_closure(evaluation: &Value) -> Result<()> {
+    if is_quorum(evaluation)? || evaluation["closed"].is_null() {
+        return Ok(());
+    }
+    check(
+        round(evaluation)? == expected_round(evaluation)?,
+        "PUBLIC_EVAL_ROUND",
+    )?;
+    let closed = &evaluation["closed"];
+    let roster = evaluation["plan"]["roster"]
+        .as_array()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let reveals = evaluation["reveals"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let conflicts = evaluation["conflicts"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let missing = roster
+        .iter()
+        .filter(|key| !reveals.contains_key(key.as_str().unwrap_or("")))
+        .count();
+    let before = n(closed, "conflict_count_before_close")?;
+    let aborted = missing > 0 || before > 0;
+    let score = if aborted {
+        None
+    } else {
+        reveals
+            .values()
+            .map(|value| n(value, "score"))
+            .collect::<Result<Vec<_>>>()?
+            .into_iter()
+            .min()
+    };
+    check(
+        closed.as_object().is_some_and(|value| value.len() == 11)
+            && closed["schema"] == "pon-native-closed-evaluation-v2"
+            && closed["round"] == evaluation["round"]
+            && closed["candidate"] == evaluation["plan"]["candidate"]
+            && closed["missing_reveal_count"] == json!(missing)
+            && before <= conflicts.len() as u64
+            && n(closed, "closed_height")? > n(&evaluation["plan"], "reveal_end")?
+            && closed["status"]
+                == if aborted {
+                    "aborted"
+                } else {
+                    "complete-scored"
+                }
+            && (aborted || score.is_some())
+            && closed["score"] == json!(score)
+            && closed["objective_model_quality"] == false
+            && closed["independent_governance_accepted"] == false,
+        "PUBLIC_EVAL_CLOSED_BINDING",
+    )?;
+    let retained = digest(closed, "records_digest")?;
+    if before == 0 {
+        // A complete classic result necessarily closed with no conflicts.
+        // Retain this exact digest even when new conflicts or appeals arrive.
+        check(
+            retained == records_digest_with_conflicts(evaluation, &json!({}))?,
+            "PUBLIC_EVAL_CLOSED_BINDING",
+        )?;
+    } else if before == conflicts.len() as u64 {
+        check(
+            retained == records_digest(evaluation)?,
+            "PUBLIC_EVAL_CLOSED_BINDING",
+        )?;
+    }
+    Ok(())
+}
+
 /// Closure is a mandatory block transition after the admitted chain height deadline.
 /// Legacy missing signatures abort. The explicit v2 profile counts real matching
 /// reveals against its frozen threshold, never synthetic votes or a reduced quorum.
@@ -426,9 +502,11 @@ pub fn adoption_allowed_with_disqualified(
         return quorum_v2::adoption_allowed(evaluation, height, false, current_disqualified);
     }
     validate_reveals(evaluation)?;
+    validate_classic_closure(evaluation)?;
     check(
         height >= n(&evaluation["plan"], "adoption_start")?
             && evaluation["closed"]["status"] == "complete-scored"
+            && height >= n(&evaluation["closed"], "closed_height")?
             && n(&evaluation["closed"], "score")? > 0
             && evaluation["conflicts"]
                 .as_object()
@@ -437,6 +515,8 @@ pub fn adoption_allowed_with_disqualified(
         "PUBLIC_EVAL_ADOPTION",
     )
 }
+/// Identify a closure, including from its compact record. This hash is not
+/// validation of the retained records; hydration and adoption perform that check.
 pub fn closed_digest(evaluation: &Value) -> Result<Hash> {
     check(!evaluation["closed"].is_null(), "PUBLIC_EVAL_NOT_CLOSED")?;
     let domain: &[u8] = if is_quorum(evaluation)? {
@@ -644,7 +724,9 @@ pub fn compact(evaluation: &Value) -> Result<Value> {
 }
 pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>) -> Result<Value> {
     if pq_storage::enabled(compact) {
-        return pq_storage::hydrate(compact, candidate, rows);
+        let value = pq_storage::hydrate(compact, candidate, rows)?;
+        validate_classic_closure(&value)?;
+        return Ok(value);
     }
     is_quorum(compact)?;
     check(
@@ -688,6 +770,7 @@ pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>)
         )?;
     }
     validate_reveals(&value)?;
+    validate_classic_closure(&value)?;
     Ok(value)
 }
 pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Result<Value> {
@@ -705,7 +788,10 @@ pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Resu
     hydrate(&contribution["public_evaluation"], candidate, &rows)
 }
 fn records_digest(evaluation: &Value) -> Result<Hash> {
-    let snapshot = json!({"commits":evaluation["commits"],"reveals":evaluation["reveals"],"conflicts":evaluation["conflicts"]});
+    records_digest_with_conflicts(evaluation, &evaluation["conflicts"])
+}
+fn records_digest_with_conflicts(evaluation: &Value, conflicts: &Value) -> Result<Hash> {
+    let snapshot = json!({"commits":evaluation["commits"],"reveals":evaluation["reveals"],"conflicts":conflicts});
     let domain: &[u8] = if is_quorum(evaluation)? {
         b"native-public-evaluation-closure-records-v3"
     } else {
