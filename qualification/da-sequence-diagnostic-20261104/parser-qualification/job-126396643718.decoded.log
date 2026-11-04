@@ -1,0 +1,527 @@
+﻿2026-11-04T04:55:27.0780129Z Current runner version: '2.338.2'
+2026-11-04T04:55:27.0805371Z ##[group]Runner Image Provisioner
+2026-11-04T04:55:27.0806246Z Hosted Compute Agent
+2026-11-04T04:55:27.0806780Z Version: 20261021.618
+2026-11-04T04:55:27.0807368Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-04T04:55:27.0808306Z Build Date: 2026-10-21T00:45:21Z
+2026-11-04T04:55:27.0809048Z Worker ID: {b48becee-abac-44e9-88c9-893fc4b1a9b9}
+2026-11-04T04:55:27.0809729Z Region: westus3
+2026-11-04T04:55:27.0810224Z Cloud: Azure
+2026-11-04T04:55:27.0810702Z ##[endgroup]
+2026-11-04T04:55:27.0812959Z ##[group]Operating System
+2026-11-04T04:55:27.0813581Z Ubuntu
+2026-11-04T04:55:27.0814094Z 24.04.5
+2026-11-04T04:55:27.0814570Z LTS
+2026-11-04T04:55:27.0815049Z ##[endgroup]
+2026-11-04T04:55:27.0815559Z ##[group]Runner Image
+2026-11-04T04:55:27.0816126Z Image: ubuntu-24.04
+2026-11-04T04:55:27.0816639Z Version: 20261025.353.1
+2026-11-04T04:55:27.0817827Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-04T04:55:27.0819560Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-04T04:55:27.0820447Z ##[endgroup]
+2026-11-04T04:55:27.0821533Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T04:55:27.0823882Z Actions: read
+2026-11-04T04:55:27.0824456Z Contents: read
+2026-11-04T04:55:27.0824974Z Metadata: read
+2026-11-04T04:55:27.0825462Z ##[endgroup]
+2026-11-04T04:55:27.0827610Z Secret source: Actions
+2026-11-04T04:55:27.0828741Z Cache mode: write
+2026-11-04T04:55:27.0829453Z Prepare workflow directory
+2026-11-04T04:55:27.1236988Z Prepare all required actions
+2026-11-04T04:55:27.1290947Z Getting action download info
+2026-11-04T04:55:27.4222883Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-04T04:55:27.4948582Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-04T04:55:27.7263003Z Complete job name: readback
+2026-11-04T04:55:27.8090497Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-11-04T04:55:27.8091641Z with:
+2026-11-04T04:55:27.8092184Z   ref: 2c7c262724158833d7d00a7782f6318dad7e3e3f
+2026-11-04T04:55:27.8092825Z   fetch-depth: 1
+2026-11-04T04:55:27.8093563Z   filter: blob:none
+2026-11-04T04:55:27.8094059Z   persist-credentials: false
+2026-11-04T04:55:27.8094684Z   repository: TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:55:27.8098609Z   token: ***
+2026-11-04T04:55:27.8099096Z   ssh-strict: true
+2026-11-04T04:55:27.8099588Z   ssh-user: git
+2026-11-04T04:55:27.8100078Z   clean: true
+2026-11-04T04:55:27.8100565Z   sparse-checkout-cone-mode: true
+2026-11-04T04:55:27.8101119Z   fetch-tags: false
+2026-11-04T04:55:27.8101615Z   show-progress: true
+2026-11-04T04:55:27.8102105Z   lfs: false
+2026-11-04T04:55:27.8102551Z   submodules: false
+2026-11-04T04:55:27.8103015Z   set-safe-directory: true
+2026-11-04T04:55:27.8103618Z   allow-unsafe-pr-checkout: false
+2026-11-04T04:55:27.8104626Z env:
+2026-11-04T04:55:27.8105138Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:55:27.8105644Z ##[endgroup]
+2026-11-04T04:55:28.0729442Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:55:28.0732818Z ##[group]Getting Git version info
+2026-11-04T04:55:28.0734272Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-11-04T04:55:28.0736308Z [command]/usr/bin/git version
+2026-11-04T04:55:28.0815415Z git version 2.56.0
+2026-11-04T04:55:28.0842160Z ##[endgroup]
+2026-11-04T04:55:28.0859000Z Temporarily overriding HOME='/home/runner/work/_temp/423fa7fb-b4bf-429d-aad3-dc17d7fde324' before making global git config changes
+2026-11-04T04:55:28.0860510Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T04:55:28.0865124Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:55:28.0920728Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-11-04T04:55:28.0925704Z ##[group]Initializing the repository
+2026-11-04T04:55:28.0931547Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:55:28.1042296Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-04T04:55:28.1044865Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-04T04:55:28.1047120Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-04T04:55:28.1049372Z hint: call:
+2026-11-04T04:55:28.1050395Z hint:
+2026-11-04T04:55:28.1051839Z hint: 	git config --global init.defaultBranch <name>
+2026-11-04T04:55:28.1053321Z hint:
+2026-11-04T04:55:28.1054730Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-04T04:55:28.1059758Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-04T04:55:28.1061867Z hint:
+2026-11-04T04:55:28.1062986Z hint: 	git branch -m <name>
+2026-11-04T04:55:28.1064321Z hint:
+2026-11-04T04:55:28.1065952Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-04T04:55:28.1068939Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/
+2026-11-04T04:55:28.1073851Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:55:28.1125298Z ##[endgroup]
+2026-11-04T04:55:28.1126918Z ##[group]Disabling automatic garbage collection
+2026-11-04T04:55:28.1129409Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-04T04:55:28.1161909Z ##[endgroup]
+2026-11-04T04:55:28.1163330Z ##[group]Setting up auth
+2026-11-04T04:55:28.1173891Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:55:28.1208893Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:55:28.1558242Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:55:28.1605655Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:55:28.1848355Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:55:28.1887357Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:55:28.2105108Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-04T04:55:28.2155320Z ##[endgroup]
+2026-11-04T04:55:28.2156505Z ##[group]Fetching the repository
+2026-11-04T04:55:28.2172720Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --filter=blob:none --depth=1 origin 2c7c262724158833d7d00a7782f6318dad7e3e3f
+2026-11-04T04:55:28.8341735Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-11-04T04:55:28.8344044Z  * branch            2c7c262724158833d7d00a7782f6318dad7e3e3f -> FETCH_HEAD
+2026-11-04T04:55:28.8349360Z ##[endgroup]
+2026-11-04T04:55:28.8351020Z ##[group]Determining the checkout info
+2026-11-04T04:55:28.8353455Z ##[endgroup]
+2026-11-04T04:55:28.8355263Z [command]/usr/bin/git sparse-checkout disable
+2026-11-04T04:55:28.8407438Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-04T04:55:28.8443267Z ##[group]Checking out the ref
+2026-11-04T04:55:28.8446187Z [command]/usr/bin/git checkout --progress --force 2c7c262724158833d7d00a7782f6318dad7e3e3f
+2026-11-04T04:55:44.8471543Z Updating files:   0% (1/7662)
+2026-11-04T04:55:44.8542997Z Updating files:   1% (77/7662)
+2026-11-04T04:55:44.8575463Z Updating files:   1% (119/7662)
+2026-11-04T04:55:44.8648902Z Updating files:   2% (154/7662)
+2026-11-04T04:55:44.8682120Z Updating files:   3% (230/7662)
+2026-11-04T04:55:44.8843661Z Updating files:   4% (307/7662)
+2026-11-04T04:55:44.9047495Z Updating files:   5% (384/7662)
+2026-11-04T04:55:44.9141268Z Updating files:   6% (460/7662)
+2026-11-04T04:55:44.9183838Z Updating files:   7% (537/7662)
+2026-11-04T04:55:44.9223784Z Updating files:   8% (613/7662)
+2026-11-04T04:55:44.9259985Z Updating files:   9% (690/7662)
+2026-11-04T04:55:44.9311434Z Updating files:  10% (767/7662)
+2026-11-04T04:55:44.9441746Z Updating files:  11% (843/7662)
+2026-11-04T04:55:44.9523162Z Updating files:  12% (920/7662)
+2026-11-04T04:55:44.9641823Z Updating files:  13% (997/7662)
+2026-11-04T04:55:44.9847076Z Updating files:  14% (1073/7662)
+2026-11-04T04:55:45.0405472Z Updating files:  15% (1150/7662)
+2026-11-04T04:55:45.0523335Z Updating files:  16% (1226/7662)
+2026-11-04T04:55:45.0551169Z Updating files:  17% (1303/7662)
+2026-11-04T04:55:45.0695319Z Updating files:  18% (1380/7662)
+2026-11-04T04:55:45.0745293Z Updating files:  19% (1456/7662)
+2026-11-04T04:55:45.0839886Z Updating files:  20% (1533/7662)
+2026-11-04T04:55:45.0963721Z Updating files:  21% (1610/7662)
+2026-11-04T04:55:45.1017615Z Updating files:  22% (1686/7662)
+2026-11-04T04:55:45.1075413Z Updating files:  23% (1763/7662)
+2026-11-04T04:55:45.1266119Z Updating files:  24% (1839/7662)
+2026-11-04T04:55:45.1324347Z Updating files:  25% (1916/7662)
+2026-11-04T04:55:45.1359362Z Updating files:  26% (1993/7662)
+2026-11-04T04:55:45.1468559Z Updating files:  27% (2069/7662)
+2026-11-04T04:55:45.1555329Z Updating files:  28% (2146/7662)
+2026-11-04T04:55:45.1574665Z Updating files:  29% (2222/7662)
+2026-11-04T04:55:45.1652487Z Updating files:  30% (2299/7662)
+2026-11-04T04:55:45.1670001Z Updating files:  31% (2376/7662)
+2026-11-04T04:55:45.1707929Z Updating files:  32% (2452/7662)
+2026-11-04T04:55:45.1757886Z Updating files:  33% (2529/7662)
+2026-11-04T04:55:45.1838538Z Updating files:  34% (2606/7662)
+2026-11-04T04:55:45.3266339Z Updating files:  35% (2682/7662)
+2026-11-04T04:55:45.3981747Z Updating files:  36% (2759/7662)
+2026-11-04T04:55:45.3995550Z Updating files:  37% (2835/7662)
+2026-11-04T04:55:45.4081458Z Updating files:  38% (2912/7662)
+2026-11-04T04:55:45.5185856Z Updating files:  39% (2989/7662)
+2026-11-04T04:55:45.5738031Z Updating files:  40% (3065/7662)
+2026-11-04T04:55:45.5754937Z Updating files:  41% (3142/7662)
+2026-11-04T04:55:45.6480285Z Updating files:  42% (3219/7662)
+2026-11-04T04:55:45.7175876Z Updating files:  43% (3295/7662)
+2026-11-04T04:55:45.8230628Z Updating files:  44% (3372/7662)
+2026-11-04T04:55:45.8550465Z Updating files:  45% (3448/7662)
+2026-11-04T04:55:45.9421965Z Updating files:  45% (3457/7662)
+2026-11-04T04:55:45.9565043Z Updating files:  46% (3525/7662)
+2026-11-04T04:55:45.9691603Z Updating files:  47% (3602/7662)
+2026-11-04T04:55:45.9730024Z Updating files:  48% (3678/7662)
+2026-11-04T04:55:45.9831669Z Updating files:  49% (3755/7662)
+2026-11-04T04:55:46.0036046Z Updating files:  50% (3831/7662)
+2026-11-04T04:55:46.0236428Z Updating files:  51% (3908/7662)
+2026-11-04T04:55:46.0258039Z Updating files:  52% (3985/7662)
+2026-11-04T04:55:46.0296604Z Updating files:  53% (4061/7662)
+2026-11-04T04:55:46.0318356Z Updating files:  54% (4138/7662)
+2026-11-04T04:55:46.1013542Z Updating files:  55% (4215/7662)
+2026-11-04T04:55:46.1139380Z Updating files:  56% (4291/7662)
+2026-11-04T04:55:46.1192909Z Updating files:  57% (4368/7662)
+2026-11-04T04:55:46.1209000Z Updating files:  58% (4444/7662)
+2026-11-04T04:55:46.1331316Z Updating files:  59% (4521/7662)
+2026-11-04T04:55:46.1351186Z Updating files:  60% (4598/7662)
+2026-11-04T04:55:46.1376601Z Updating files:  61% (4674/7662)
+2026-11-04T04:55:46.1423675Z Updating files:  62% (4751/7662)
+2026-11-04T04:55:46.1508628Z Updating files:  63% (4828/7662)
+2026-11-04T04:55:46.1802288Z Updating files:  64% (4904/7662)
+2026-11-04T04:55:46.1833598Z Updating files:  65% (4981/7662)
+2026-11-04T04:55:46.1850678Z Updating files:  66% (5057/7662)
+2026-11-04T04:55:46.1911510Z Updating files:  67% (5134/7662)
+2026-11-04T04:55:46.2921972Z Updating files:  68% (5211/7662)
+2026-11-04T04:55:46.2986047Z Updating files:  69% (5287/7662)
+2026-11-04T04:55:46.3027402Z Updating files:  70% (5364/7662)
+2026-11-04T04:55:46.3091319Z Updating files:  71% (5441/7662)
+2026-11-04T04:55:46.3131739Z Updating files:  72% (5517/7662)
+2026-11-04T04:55:46.3291500Z Updating files:  73% (5594/7662)
+2026-11-04T04:55:46.3311645Z Updating files:  74% (5670/7662)
+2026-11-04T04:55:46.3340621Z Updating files:  75% (5747/7662)
+2026-11-04T04:55:46.3393330Z Updating files:  76% (5824/7662)
+2026-11-04T04:55:46.3445275Z Updating files:  77% (5900/7662)
+2026-11-04T04:55:46.3495349Z Updating files:  78% (5977/7662)
+2026-11-04T04:55:46.3540854Z Updating files:  79% (6053/7662)
+2026-11-04T04:55:46.3581602Z Updating files:  80% (6130/7662)
+2026-11-04T04:55:46.3723370Z Updating files:  81% (6207/7662)
+2026-11-04T04:55:46.3789330Z Updating files:  82% (6283/7662)
+2026-11-04T04:55:46.3854458Z Updating files:  83% (6360/7662)
+2026-11-04T04:55:46.3894150Z Updating files:  84% (6437/7662)
+2026-11-04T04:55:46.4004068Z Updating files:  85% (6513/7662)
+2026-11-04T04:55:46.4070682Z Updating files:  86% (6590/7662)
+2026-11-04T04:55:46.4107793Z Updating files:  87% (6666/7662)
+2026-11-04T04:55:46.4130285Z Updating files:  88% (6743/7662)
+2026-11-04T04:55:46.4157395Z Updating files:  89% (6820/7662)
+2026-11-04T04:55:46.4220412Z Updating files:  90% (6896/7662)
+2026-11-04T04:55:46.4300781Z Updating files:  91% (6973/7662)
+2026-11-04T04:55:46.4396093Z Updating files:  92% (7050/7662)
+2026-11-04T04:55:46.4470800Z Updating files:  93% (7126/7662)
+2026-11-04T04:55:46.4536826Z Updating files:  94% (7203/7662)
+2026-11-04T04:55:46.4597422Z Updating files:  95% (7279/7662)
+2026-11-04T04:55:46.4632993Z Updating files:  96% (7356/7662)
+2026-11-04T04:55:46.4666989Z Updating files:  97% (7433/7662)
+2026-11-04T04:55:46.4693905Z Updating files:  98% (7509/7662)
+2026-11-04T04:55:46.4715685Z Updating files:  99% (7586/7662)
+2026-11-04T04:55:46.4716361Z Updating files: 100% (7662/7662)
+2026-11-04T04:55:46.4716911Z Updating files: 100% (7662/7662), done.
+2026-11-04T04:55:46.4814207Z Note: switching to '2c7c262724158833d7d00a7782f6318dad7e3e3f'.
+2026-11-04T04:55:46.4814674Z 
+2026-11-04T04:55:46.4814992Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-04T04:55:46.4815632Z changes and commit them, and you can discard any commits you make in this
+2026-11-04T04:55:46.4816185Z state without impacting any branches by switching back to a branch.
+2026-11-04T04:55:46.4816443Z 
+2026-11-04T04:55:46.4816619Z If you want to create a new branch to retain commits you create, you may
+2026-11-04T04:55:46.4817030Z do so (now or later) by using -c with the switch command. Example:
+2026-11-04T04:55:46.4817261Z 
+2026-11-04T04:55:46.4817375Z   git switch -c <new-branch-name>
+2026-11-04T04:55:46.4817537Z 
+2026-11-04T04:55:46.4817629Z Or undo this operation with:
+2026-11-04T04:55:46.4817785Z 
+2026-11-04T04:55:46.4817862Z   git switch -
+2026-11-04T04:55:46.4817996Z 
+2026-11-04T04:55:46.4818442Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-04T04:55:46.4818734Z 
+2026-11-04T04:55:46.4819033Z HEAD is now at 2c7c262 research(da): replay the original nested-child transcript through exact parser controls
+2026-11-04T04:55:46.4889443Z ##[endgroup]
+2026-11-04T04:55:46.4933625Z [command]/usr/bin/git log -1 --format=%H
+2026-11-04T04:55:46.4959205Z 2c7c262724158833d7d00a7782f6318dad7e3e3f
+2026-11-04T04:55:46.4983664Z ##[group]Removing auth
+2026-11-04T04:55:46.4988014Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:55:46.5020414Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:55:46.5235104Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:55:46.5266238Z http.https://github.com/.extraheader
+2026-11-04T04:55:46.5272944Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-04T04:55:46.5306221Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:55:46.5512025Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:55:46.5545291Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:55:46.5750866Z ##[endgroup]
+2026-11-04T04:55:46.5946323Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-before.json"
+2026-11-04T04:55:46.5947377Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-before.json"[0m
+2026-11-04T04:55:46.5948005Z [36;1mbash scripts/project-preflight.sh --audit[0m
+2026-11-04T04:55:46.5966036Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:55:46.5966297Z env:
+2026-11-04T04:55:46.5966504Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:55:46.5966739Z ##[endgroup]
+2026-11-04T04:55:48.2446215Z {
+2026-11-04T04:55:48.2446786Z   "base": null,
+2026-11-04T04:55:48.2447498Z   "candidate": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+2026-11-04T04:55:48.2448389Z   "kind": "head",
+2026-11-04T04:55:48.2448723Z   "prospective_merge": null,
+2026-11-04T04:55:48.2449130Z   "schema": "trnm-ci-source-v1",
+2026-11-04T04:55:48.2449717Z   "tested_commit": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+2026-11-04T04:55:48.2450274Z   "tested_tree": "1a9ff0b7523e64bc05a4418536fe8aa37e1a44f1",
+2026-11-04T04:55:48.2450760Z   "tests_executed_by_identity_check": false,
+2026-11-04T04:55:48.2451174Z   "tracked_bytes": 884174342,
+2026-11-04T04:55:48.2451530Z   "tracked_entries": 7662,
+2026-11-04T04:55:48.2451870Z   "tracked_worktree_verified": true
+2026-11-04T04:55:48.2452240Z }
+2026-11-04T04:55:48.2984677Z {"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 26, "branch": "", "remote_policy_mutated": false}
+2026-11-04T04:55:48.3086376Z ##[group]Run python3 qualification/da-sequence-log-readback-20261104/readback.py --out "$RUNNER_TEMP/da-log-readback"
+2026-11-04T04:55:48.3087197Z [36;1mpython3 qualification/da-sequence-log-readback-20261104/readback.py --out "$RUNNER_TEMP/da-log-readback"[0m
+2026-11-04T04:55:48.3101404Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:55:48.3101654Z env:
+2026-11-04T04:55:48.3101861Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:55:48.3104561Z   GH_TOKEN: ***
+2026-11-04T04:55:48.3104767Z ##[endgroup]
+2026-11-04T04:55:48.3521608Z {"native_executed": false, "synthetic_schema_controls_passed": 9}
+2026-11-04T04:55:48.3829243Z {"native_tests_executed": 0, "synthetic_parser_cases_passed": 16}
+2026-11-04T04:55:50.1158981Z DA_LOG_READBACK {
+2026-11-04T04:55:50.1159475Z   "all_member_crc_verified": false,
+2026-11-04T04:55:50.1160029Z   "archive_sha_and_size_verified": true,
+2026-11-04T04:55:50.1160684Z   "candidate_parser": {
+2026-11-04T04:55:50.1161250Z     "controls": {
+2026-11-04T04:55:50.1161649Z       "native_tests_executed": 0,
+2026-11-04T04:55:50.1162195Z       "synthetic_parser_cases_passed": 16
+2026-11-04T04:55:50.1162491Z     },
+2026-11-04T04:55:50.1162729Z     "exact_retention_child_prefix_blocks": 1,
+2026-11-04T04:55:50.1163150Z     "fixture_source_blob": "8b35329519e7014104d6cb155481142cd5bb5610",
+2026-11-04T04:55:50.1163635Z     "native_summaries": [
+2026-11-04T04:55:50.1163885Z       [
+2026-11-04T04:55:50.1164079Z         174,
+2026-11-04T04:55:50.1164278Z         0,
+2026-11-04T04:55:50.1164469Z         0,
+2026-11-04T04:55:50.1164656Z         0,
+2026-11-04T04:55:50.1164844Z         0
+2026-11-04T04:55:50.1165034Z       ]
+2026-11-04T04:55:50.1165225Z     ],
+2026-11-04T04:55:50.1165448Z     "normalized_plain_success_rows": 174,
+2026-11-04T04:55:50.1165747Z     "passed": true,
+2026-11-04T04:55:50.1166225Z     "raw_plain_success_rows": 174,
+2026-11-04T04:55:50.1166883Z     "scope": "Read-only parser evaluation on the same failed original transcript; no native test rerun and no original failure erased."
+2026-11-04T04:55:50.1167500Z   },
+2026-11-04T04:55:50.1167729Z   "declared_archive_decoded_bytes": 1325272,
+2026-11-04T04:55:50.1168045Z   "duplicate_success_names": [
+2026-11-04T04:55:50.1168670Z     {
+2026-11-04T04:55:50.1173628Z       "identifier": "cell::retention::tests::retention_process_child",
+2026-11-04T04:55:50.1174223Z       "sha256": "3df80ca2ab072df0af168761cfce268b125c52347739f2fa070409e160aea153"
+2026-11-04T04:55:50.1174664Z     }
+2026-11-04T04:55:50.1174860Z   ],
+2026-11-04T04:55:50.1175083Z   "exact_registry_count": 174,
+2026-11-04T04:55:50.1175362Z   "host_qualified": false,
+2026-11-04T04:55:50.1175621Z   "member_count": 15,
+2026-11-04T04:55:50.1175856Z   "members": [
+2026-11-04T04:55:50.1176066Z     {
+2026-11-04T04:55:50.1176273Z       "declared_bytes": 36,
+2026-11-04T04:55:50.1176541Z       "decoded": false,
+2026-11-04T04:55:50.1176969Z       "name_sha256": "4b57bffd9f53daee7b1d7edd8f393dbc5d9e3e92b886cc0b035e50e168565cad"
+2026-11-04T04:55:50.1177443Z     },
+2026-11-04T04:55:50.1177652Z     {
+2026-11-04T04:55:50.1177859Z       "crc_verified": true,
+2026-11-04T04:55:50.1178365Z       "declared_bytes": 18179,
+2026-11-04T04:55:50.1178693Z       "decoded": true,
+2026-11-04T04:55:50.1178942Z       "decoded_bytes": 18179,
+2026-11-04T04:55:50.1179381Z       "name_sha256": "1eb8c35b89d5056f361e16fdad07603019e789fc3a244b25be19dc1f063a8117",
+2026-11-04T04:55:50.1179984Z       "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"
+2026-11-04T04:55:50.1180403Z     },
+2026-11-04T04:55:50.1180598Z     {
+2026-11-04T04:55:50.1180816Z       "declared_bytes": 95843,
+2026-11-04T04:55:50.1181096Z       "decoded": false,
+2026-11-04T04:55:50.1181739Z       "name_sha256": "8fbb6fa508083f449e1fcf117e0013620144acb19608c30906f9033c2978c101"
+2026-11-04T04:55:50.1182197Z     },
+2026-11-04T04:55:50.1182402Z     {
+2026-11-04T04:55:50.1182608Z       "crc_verified": true,
+2026-11-04T04:55:50.1182867Z       "declared_bytes": 9380,
+2026-11-04T04:55:50.1183137Z       "decoded": true,
+2026-11-04T04:55:50.1183646Z       "decoded_bytes": 9380,
+2026-11-04T04:55:50.1184083Z       "name_sha256": "1f5047c0be2c1e99b120e25cf43a28b79acd286086be829449fb4d46cab2f1c9",
+2026-11-04T04:55:50.1184696Z       "sha256": "05ce906559a36c1576a36b42245250d39c2db6261c4c6bac15cfa27de88b0fee"
+2026-11-04T04:55:50.1185125Z     },
+2026-11-04T04:55:50.1185320Z     {
+2026-11-04T04:55:50.1185524Z       "crc_verified": true,
+2026-11-04T04:55:50.1185784Z       "declared_bytes": 16944,
+2026-11-04T04:55:50.1186044Z       "decoded": true,
+2026-11-04T04:55:50.1186321Z       "decoded_bytes": 16944,
+2026-11-04T04:55:50.1186836Z       "name_sha256": "52096dbc4b989aef62b0770f7c87ae3664ee9c4ffe35247793e452defaef05ef",
+2026-11-04T04:55:50.1187428Z       "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"
+2026-11-04T04:55:50.1187853Z     },
+2026-11-04T04:55:50.1188042Z     {
+2026-11-04T04:55:50.1188680Z       "declared_bytes": 196,
+2026-11-04T04:55:50.1188967Z       "decoded": false,
+2026-11-04T04:55:50.1189396Z       "name_sha256": "f55245ea0452af569357a9157d5d925da5fe95ea7ec04d291ddfc2573fce30d1"
+2026-11-04T04:55:50.1189841Z     },
+2026-11-04T04:55:50.1190032Z     {
+2026-11-04T04:55:50.1190242Z       "declared_bytes": 1400,
+2026-11-04T04:55:50.1190502Z       "decoded": false,
+2026-11-04T04:55:50.1190904Z       "name_sha256": "39bcefd646a2784c3c9469d530134fa2285300175ff043c4a30921868103717d"
+2026-11-04T04:55:50.1191337Z     },
+2026-11-04T04:55:50.1191537Z     {
+2026-11-04T04:55:50.1191766Z       "declared_bytes": 1399,
+2026-11-04T04:55:50.1192029Z       "decoded": false,
+2026-11-04T04:55:50.1192427Z       "name_sha256": "593e37bae51f223ab57a9c0a2e0639fdd0bc7f334688c1d3091e73065a81b810"
+2026-11-04T04:55:50.1192871Z     },
+2026-11-04T04:55:50.1193062Z     {
+2026-11-04T04:55:50.1193260Z       "declared_bytes": 1402,
+2026-11-04T04:55:50.1193736Z       "decoded": false,
+2026-11-04T04:55:50.1194138Z       "name_sha256": "1cced4a12d8648c3b3302d5538d02d075f0b4e9fb392f787f644673476bca1de"
+2026-11-04T04:55:50.1194581Z     },
+2026-11-04T04:55:50.1194791Z     {
+2026-11-04T04:55:50.1195025Z       "declared_bytes": 421,
+2026-11-04T04:55:50.1195297Z       "decoded": false,
+2026-11-04T04:55:50.1195708Z       "name_sha256": "cdadbee7cc45c00338709dee802497d483f2c4949ca79acf1617ab8a22a62067"
+2026-11-04T04:55:50.1196155Z     },
+2026-11-04T04:55:50.1196348Z     {
+2026-11-04T04:55:50.1196555Z       "crc_verified": true,
+2026-11-04T04:55:50.1196814Z       "declared_bytes": 421,
+2026-11-04T04:55:50.1197065Z       "decoded": true,
+2026-11-04T04:55:50.1197302Z       "decoded_bytes": 421,
+2026-11-04T04:55:50.1197725Z       "name_sha256": "233209edc69f297eb3e5bc881c6deba8750c76469400d5a0ceb5646f9f3295d3",
+2026-11-04T04:55:50.1198567Z       "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+2026-11-04T04:55:50.1199001Z     },
+2026-11-04T04:55:50.1199188Z     {
+2026-11-04T04:55:50.1199400Z       "declared_bytes": 421,
+2026-11-04T04:55:50.1199652Z       "decoded": false,
+2026-11-04T04:55:50.1200052Z       "name_sha256": "211b34483ebe6835dae23ec1dc8d0e03a91146454a407ac471131997565438a7"
+2026-11-04T04:55:50.1200490Z     },
+2026-11-04T04:55:50.1200680Z     {
+2026-11-04T04:55:50.1200881Z       "crc_verified": true,
+2026-11-04T04:55:50.1201136Z       "declared_bytes": 421,
+2026-11-04T04:55:50.1201390Z       "decoded": true,
+2026-11-04T04:55:50.1201630Z       "decoded_bytes": 421,
+2026-11-04T04:55:50.1202060Z       "name_sha256": "70932bf018b9f923745acd4f20cec87c4ddb9518ab0b5922a2cebd15b7ab2a7d",
+2026-11-04T04:55:50.1202657Z       "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+2026-11-04T04:55:50.1203077Z     },
+2026-11-04T04:55:50.1203268Z     {
+2026-11-04T04:55:50.1203480Z       "declared_bytes": 1176109,
+2026-11-04T04:55:50.1203748Z       "decoded": false,
+2026-11-04T04:55:50.1204145Z       "name_sha256": "43b267b4f73cb3881e62f21f1197f6b87b7c0680b3b850044bb862acb49c2cb7"
+2026-11-04T04:55:50.1204591Z     },
+2026-11-04T04:55:50.1204782Z     {
+2026-11-04T04:55:50.1204989Z       "declared_bytes": 2700,
+2026-11-04T04:55:50.1205475Z       "decoded": false,
+2026-11-04T04:55:50.1205899Z       "name_sha256": "b402240eee7d01538fa8e43ddbc58da14c6e1c2ff57d9b1e0dd7dbfa9d1ade04"
+2026-11-04T04:55:50.1206351Z     }
+2026-11-04T04:55:50.1206543Z   ],
+2026-11-04T04:55:50.1206764Z   "missing_success_names": [
+2026-11-04T04:55:50.1207017Z     {
+2026-11-04T04:55:50.1207604Z       "identifier": "cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity",
+2026-11-04T04:55:50.1208498Z       "sha256": "a9401632a0ef1f3eafd45611e60e29be293af906723ae65bb15de656312d881f"
+2026-11-04T04:55:50.1208930Z     }
+2026-11-04T04:55:50.1209132Z   ],
+2026-11-04T04:55:50.1209359Z   "module_summaries": [
+2026-11-04T04:55:50.1209609Z     [
+2026-11-04T04:55:50.1209803Z       174,
+2026-11-04T04:55:50.1210015Z       0,
+2026-11-04T04:55:50.1210211Z       0,
+2026-11-04T04:55:50.1210406Z       0,
+2026-11-04T04:55:50.1210600Z       0
+2026-11-04T04:55:50.1210789Z     ]
+2026-11-04T04:55:50.1210973Z   ],
+2026-11-04T04:55:50.1211180Z   "native_executed": false,
+2026-11-04T04:55:50.1211439Z   "native_exit_code": 0,
+2026-11-04T04:55:50.1211682Z   "original": {
+2026-11-04T04:55:50.1211915Z     "artifact_id": 13295132077,
+2026-11-04T04:55:50.1212399Z     "artifact_name": "da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1",
+2026-11-04T04:55:50.1212901Z     "bytes": 61541,
+2026-11-04T04:55:50.1213127Z     "run_id": 41771237697,
+2026-11-04T04:55:50.1213516Z     "sha256": "af855c28548c7cd9e31c545194285285aed40255d31e416133107652c4fd3bef",
+2026-11-04T04:55:50.1214002Z     "source": "e5adb2df25db655800f9e52806e91b427d734490",
+2026-11-04T04:55:50.1214386Z     "tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b"
+2026-11-04T04:55:50.1214698Z   },
+2026-11-04T04:55:50.1214917Z   "original_baseline_qualified": false,
+2026-11-04T04:55:50.1215365Z   "original_source_receipts_match": true,
+2026-11-04T04:55:50.1215685Z   "performance_qualified": false,
+2026-11-04T04:55:50.1215989Z   "production_activation": false,
+2026-11-04T04:55:50.1216344Z   "reader_source": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+2026-11-04T04:55:50.1216727Z   "recorded_diagnostic_all_passed": false,
+2026-11-04T04:55:50.1217048Z   "recorded_diagnostic_complete": true,
+2026-11-04T04:55:50.1217374Z   "recorded_diagnostic_module_passed": false,
+2026-11-04T04:55:50.1217744Z   "required_five_members_crc_and_sha_verified": true,
+2026-11-04T04:55:50.1218202Z   "required_input_digests": {
+2026-11-04T04:55:50.1218499Z     "original-module.log": {
+2026-11-04T04:55:50.1218762Z       "bytes": 18179,
+2026-11-04T04:55:50.1219147Z       "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"
+2026-11-04T04:55:50.1219585Z     },
+2026-11-04T04:55:50.1219796Z     "receipt.json": {
+2026-11-04T04:55:50.1220056Z       "bytes": 9380,
+2026-11-04T04:55:50.1220443Z       "sha256": "05ce906559a36c1576a36b42245250d39c2db6261c4c6bac15cfa27de88b0fee"
+2026-11-04T04:55:50.1220864Z     },
+2026-11-04T04:55:50.1221066Z     "registry.log": {
+2026-11-04T04:55:50.1221306Z       "bytes": 16944,
+2026-11-04T04:55:50.1221666Z       "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"
+2026-11-04T04:55:50.1222072Z     },
+2026-11-04T04:55:50.1222280Z     "source-after.json": {
+2026-11-04T04:55:50.1222542Z       "bytes": 421,
+2026-11-04T04:55:50.1222908Z       "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+2026-11-04T04:55:50.1223319Z     },
+2026-11-04T04:55:50.1223532Z     "source-before.json": {
+2026-11-04T04:55:50.1223793Z       "bytes": 421,
+2026-11-04T04:55:50.1224148Z       "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+2026-11-04T04:55:50.1224566Z     }
+2026-11-04T04:55:50.1224756Z   },
+2026-11-04T04:55:50.1225049Z   "schema": "trnm-da-diagnostic-original-log-readback-v1",
+2026-11-04T04:55:50.1226344Z   "scope": "Selected five-log readback of the immutable original diagnostic ZIP. Other members have metadata only and were not decompressed or CRC/SHA checked. No archived code executed, no native rerun, no original baseline or performance qualification.",
+2026-11-04T04:55:50.1227469Z   "selected_decoded_bytes": 45345,
+2026-11-04T04:55:50.1227760Z   "successful_line_count": 174,
+2026-11-04T04:55:50.1228052Z   "unexpected_success_names": [],
+2026-11-04T04:55:50.1228418Z   "unique_successful_names": 173,
+2026-11-04T04:55:50.1228706Z   "unselected_members_decoded": false
+2026-11-04T04:55:50.1228992Z }
+2026-11-04T04:55:50.1229110Z 
+2026-11-04T04:55:50.1335180Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-after.json"
+2026-11-04T04:55:50.1336060Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/da-reader-after.json"[0m
+2026-11-04T04:55:50.1349555Z shell: /usr/bin/bash -e {0}
+2026-11-04T04:55:50.1349814Z env:
+2026-11-04T04:55:50.1350022Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:55:50.1350261Z ##[endgroup]
+2026-11-04T04:55:51.1899560Z {
+2026-11-04T04:55:51.1899962Z   "base": null,
+2026-11-04T04:55:51.1900417Z   "candidate": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+2026-11-04T04:55:51.1900936Z   "kind": "head",
+2026-11-04T04:55:51.1901310Z   "prospective_merge": null,
+2026-11-04T04:55:51.1901664Z   "schema": "trnm-ci-source-v1",
+2026-11-04T04:55:51.1901967Z   "tested_commit": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+2026-11-04T04:55:51.1902420Z   "tested_tree": "1a9ff0b7523e64bc05a4418536fe8aa37e1a44f1",
+2026-11-04T04:55:51.1902748Z   "tests_executed_by_identity_check": false,
+2026-11-04T04:55:51.1903020Z   "tracked_bytes": 884174342,
+2026-11-04T04:55:51.1903251Z   "tracked_entries": 7662,
+2026-11-04T04:55:51.1903478Z   "tracked_worktree_verified": true
+2026-11-04T04:55:51.1903716Z }
+2026-11-04T04:55:51.2043057Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-04T04:55:51.2043593Z with:
+2026-11-04T04:55:51.2043925Z   name: da-diagnostic-log-readback-2c7c262724158833d7d00a7782f6318dad7e3e3f-1
+2026-11-04T04:55:51.2044621Z   path: /home/runner/work/_temp/da-log-readback/
+/home/runner/work/_temp/da-reader-before.json
+/home/runner/work/_temp/da-reader-after.json
+
+2026-11-04T04:55:51.2045197Z   if-no-files-found: error
+2026-11-04T04:55:51.2045423Z   retention-days: 30
+2026-11-04T04:55:51.2045623Z   compression-level: 6
+2026-11-04T04:55:51.2045826Z   overwrite: false
+2026-11-04T04:55:51.2046029Z   include-hidden-files: false
+2026-11-04T04:55:51.2046249Z env:
+2026-11-04T04:55:51.2046441Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-04T04:55:51.2046662Z ##[endgroup]
+2026-11-04T04:55:51.3772530Z (node:2506) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-04T04:55:51.3773281Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-04T04:55:51.3842744Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-04T04:55:51.3844429Z The least common ancestor is /home/runner/work/_temp. This will be the root directory of the artifact
+2026-11-04T04:55:51.3845244Z With the provided path, there will be 3 files uploaded
+2026-11-04T04:55:51.3855640Z Artifact name is valid!
+2026-11-04T04:55:51.3856682Z Root directory input is valid!
+2026-11-04T04:55:51.7402348Z Beginning upload of artifact content to blob storage
+2026-11-04T04:55:51.7625610Z (node:2506) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-04T04:55:51.9885562Z Uploaded bytes 3124
+2026-11-04T04:55:52.0528896Z Finished uploading artifact content to blob storage!
+2026-11-04T04:55:52.0529884Z SHA256 digest of uploaded artifact zip is 1a6fdd5c8bfc941a52185d21e4f7f685e3f09b9d1a78885d65c2430c990c0047
+2026-11-04T04:55:52.0532399Z Finalizing artifact upload
+2026-11-04T04:55:52.5117129Z Artifact da-diagnostic-log-readback-2c7c262724158833d7d00a7782f6318dad7e3e3f-1.zip successfully finalized. Artifact ID 13296553967
+2026-11-04T04:55:52.5118958Z Artifact da-diagnostic-log-readback-2c7c262724158833d7d00a7782f6318dad7e3e3f-1 has been successfully uploaded! Final size is 3124 bytes. Artifact ID is 13296553967
+2026-11-04T04:55:52.5126704Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41776083441/artifacts/13296553967
+2026-11-04T04:55:52.5421580Z Post job cleanup.
+2026-11-04T04:55:52.6304526Z [command]/usr/bin/git version
+2026-11-04T04:55:52.6344493Z git version 2.56.0
+2026-11-04T04:55:52.6385510Z Temporarily overriding HOME='/home/runner/work/_temp/b368983f-34a8-410a-af44-d95c287cf5fd' before making global git config changes
+2026-11-04T04:55:52.6389466Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T04:55:52.6391594Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-04T04:55:52.6433397Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T04:55:52.6469767Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T04:55:52.6710777Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T04:55:52.6752669Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T04:55:52.7031138Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T04:55:52.7080164Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T04:55:52.7530667Z Cleaning up orphan processes
+2026-11-04T04:55:52.7846950Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

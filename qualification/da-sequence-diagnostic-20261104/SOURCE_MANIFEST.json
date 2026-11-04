@@ -1,8 +1,8 @@
 {
-  "schema": "trnm-da-sequence-diagnostic-source-v1",
+  "schema": "trnm-da-sequence-diagnostic-source-v2",
   "repo": "TrillionniumFoundation/Trillionnium-Chain",
-  "base_commit": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
-  "base_tree": "5dd3781b0d74c91d3bd66872cbaccf8e520b206a",
+  "base_commit": "e5adb2df25db655800f9e52806e91b427d734490",
+  "base_tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b",
   "inputs": [
     {
       "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
@@ -26,18 +26,53 @@
       "sha256": "e9a16034f5e816edbd2f7eb3c9bbc47673a542bd723ccdd720b6472b9a698914"
     },
     {
-      "path": "qualification/da-sequence-diagnostic-20261104/run.py",
-      "base_blob": null,
-      "candidate_blob": "88ed7c656bbf051b3a1d54abaf2ff15bcae0889c",
-      "bytes": 10024,
-      "sha256": "7e27b5d8555914127c0e4bf3bda3a42c73485e226e9d52ea0ab578988f5c1064"
-    },
-    {
       "path": ".github/workflows/chain-da-sequence-diagnostic.yml",
       "base_blob": null,
       "candidate_blob": "cd35017307b698285d951b1118ad25c8c7d614af",
       "bytes": 2248,
       "sha256": "405d4b5d594deb084def25569bab175ba031439682a8115198aa3f22510bdbcf"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/run.py",
+      "base_blob": "88ed7c656bbf051b3a1d54abaf2ff15bcae0889c",
+      "candidate_blob": "269464a7ee7b397033f209e80ed8ab2018006db8",
+      "bytes": 7567,
+      "sha256": "c21db01487bee17e82097dd2a0732e2d576c8c3c37c7a45b1a75371f185e62bc"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/transcript.py",
+      "base_blob": null,
+      "candidate_blob": "bffa2c9b974fc36253eb244d25c3adc5d73595b5",
+      "bytes": 5828,
+      "sha256": "f27ddf57ff49b4f274dde26a3573db975b880d57692f09947bec9f1e2aa22938"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/parser-qualification/job-126396643718.decoded.log",
+      "base_blob": null,
+      "candidate_blob": "45d8b46a94eb874b89810037ee0179a73d714a79",
+      "bytes": 37407,
+      "sha256": "4136576e2ebc7dcee8cd0de34fa72fe7ae6de279a72a0104c5def21503890bc9"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/parser-qualification/ORIGINAL_LOG_READBACK.json",
+      "base_blob": null,
+      "candidate_blob": "7eb8eecc71052297253f43b4dd56fa9529f80c07",
+      "bytes": 6421,
+      "sha256": "f03c2e0f4f0a0b5b7ca71103abc5957180e9aa34c4a11a604561d69fb4284905"
+    },
+    {
+      "path": "qualification/da-sequence-diagnostic-20261104/parser-qualification/LEGACY_NATIVE_FAILED_RECEIPT.json",
+      "base_blob": null,
+      "candidate_blob": "5e8721febdac2a0fcd2f384341784ddf2cc11ab2",
+      "bytes": 9380,
+      "sha256": "524929d0faf7e502ce492382c122f80ca6e2f8c06bcf991301da16bebae04efe"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "base_blob": null,
+      "candidate_blob": "72ad75d2af1c33f39f45ed1c4e88e27c05afca70",
+      "bytes": 456080,
+      "sha256": "6c0a813ca8976b4e1ee71a56eb070fcbc57352e83892ebfe95243ce2f3454bf1"
     }
   ],
   "original_observations": [
@@ -89,9 +124,9 @@
     "additional_exact_failure_case_executions": 3,
     "original_distinct_registered_da_cases": 174,
     "build_profile": "test, package-selected",
-    "reader_controls": 8,
+    "reader_controls": 16,
     "compiler": "1.95.0",
-    "native_result": "PENDING_HOSTED_EXECUTION",
+    "native_result": "PENDING_NEW_HOSTED_EXECUTION",
     "all_outcomes_retained": true,
     "no_failure_replaced_by_later_pass": true
   },
@@ -109,5 +144,28 @@
     "local_preflight_available": false,
     "local_compilation_executed": false,
     "hosted_original_audit_preflight_requested": true
-  }
+  },
+  "parser_proof": {
+    "source": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+    "tree": "1a9ff0b7523e64bc05a4418536fe8aa37e1a44f1",
+    "run": 41776083441,
+    "job": 126396643718,
+    "pure_parser_blob": "bffa2c9b974fc36253eb244d25c3adc5d73595b5",
+    "original_archive": {
+      "artifact_id": 13295132077,
+      "artifact_name": "da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1",
+      "bytes": 61541,
+      "run_id": 41771237697,
+      "sha256": "af855c28548c7cd9e31c545194285285aed40255d31e416133107652c4fd3bef",
+      "source": "e5adb2df25db655800f9e52806e91b427d734490",
+      "tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b"
+    },
+    "old_wrapper_failed": true,
+    "proposed_parser_on_same_log_passed": true,
+    "selected_decoded_members": 5,
+    "selected_decoded_bytes": 45345,
+    "unselected_members_crc_sha_verified": false,
+    "native_executed": false
+  },
+  "command_bodies_outside_parser_import_byte_identical": true
 }

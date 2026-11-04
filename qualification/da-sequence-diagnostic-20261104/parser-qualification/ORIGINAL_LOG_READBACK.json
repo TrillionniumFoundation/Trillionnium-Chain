@@ -1,0 +1,191 @@
+{
+  "all_member_crc_verified": false,
+  "archive_sha_and_size_verified": true,
+  "candidate_parser": {
+    "controls": {
+      "native_tests_executed": 0,
+      "synthetic_parser_cases_passed": 16
+    },
+    "exact_retention_child_prefix_blocks": 1,
+    "fixture_source_blob": "8b35329519e7014104d6cb155481142cd5bb5610",
+    "native_summaries": [
+      [
+        174,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "normalized_plain_success_rows": 174,
+    "passed": true,
+    "raw_plain_success_rows": 174,
+    "scope": "Read-only parser evaluation on the same failed original transcript; no native test rerun and no original failure erased."
+  },
+  "declared_archive_decoded_bytes": 1325272,
+  "duplicate_success_names": [
+    {
+      "identifier": "cell::retention::tests::retention_process_child",
+      "sha256": "3df80ca2ab072df0af168761cfce268b125c52347739f2fa070409e160aea153"
+    }
+  ],
+  "exact_registry_count": 174,
+  "host_qualified": false,
+  "member_count": 15,
+  "members": [
+    {
+      "declared_bytes": 36,
+      "decoded": false,
+      "name_sha256": "4b57bffd9f53daee7b1d7edd8f393dbc5d9e3e92b886cc0b035e50e168565cad"
+    },
+    {
+      "crc_verified": true,
+      "declared_bytes": 18179,
+      "decoded": true,
+      "decoded_bytes": 18179,
+      "name_sha256": "1eb8c35b89d5056f361e16fdad07603019e789fc3a244b25be19dc1f063a8117",
+      "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"
+    },
+    {
+      "declared_bytes": 95843,
+      "decoded": false,
+      "name_sha256": "8fbb6fa508083f449e1fcf117e0013620144acb19608c30906f9033c2978c101"
+    },
+    {
+      "crc_verified": true,
+      "declared_bytes": 9380,
+      "decoded": true,
+      "decoded_bytes": 9380,
+      "name_sha256": "1f5047c0be2c1e99b120e25cf43a28b79acd286086be829449fb4d46cab2f1c9",
+      "sha256": "05ce906559a36c1576a36b42245250d39c2db6261c4c6bac15cfa27de88b0fee"
+    },
+    {
+      "crc_verified": true,
+      "declared_bytes": 16944,
+      "decoded": true,
+      "decoded_bytes": 16944,
+      "name_sha256": "52096dbc4b989aef62b0770f7c87ae3664ee9c4ffe35247793e452defaef05ef",
+      "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"
+    },
+    {
+      "declared_bytes": 196,
+      "decoded": false,
+      "name_sha256": "f55245ea0452af569357a9157d5d925da5fe95ea7ec04d291ddfc2573fce30d1"
+    },
+    {
+      "declared_bytes": 1400,
+      "decoded": false,
+      "name_sha256": "39bcefd646a2784c3c9469d530134fa2285300175ff043c4a30921868103717d"
+    },
+    {
+      "declared_bytes": 1399,
+      "decoded": false,
+      "name_sha256": "593e37bae51f223ab57a9c0a2e0639fdd0bc7f334688c1d3091e73065a81b810"
+    },
+    {
+      "declared_bytes": 1402,
+      "decoded": false,
+      "name_sha256": "1cced4a12d8648c3b3302d5538d02d075f0b4e9fb392f787f644673476bca1de"
+    },
+    {
+      "declared_bytes": 421,
+      "decoded": false,
+      "name_sha256": "cdadbee7cc45c00338709dee802497d483f2c4949ca79acf1617ab8a22a62067"
+    },
+    {
+      "crc_verified": true,
+      "declared_bytes": 421,
+      "decoded": true,
+      "decoded_bytes": 421,
+      "name_sha256": "233209edc69f297eb3e5bc881c6deba8750c76469400d5a0ceb5646f9f3295d3",
+      "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+    },
+    {
+      "declared_bytes": 421,
+      "decoded": false,
+      "name_sha256": "211b34483ebe6835dae23ec1dc8d0e03a91146454a407ac471131997565438a7"
+    },
+    {
+      "crc_verified": true,
+      "declared_bytes": 421,
+      "decoded": true,
+      "decoded_bytes": 421,
+      "name_sha256": "70932bf018b9f923745acd4f20cec87c4ddb9518ab0b5922a2cebd15b7ab2a7d",
+      "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+    },
+    {
+      "declared_bytes": 1176109,
+      "decoded": false,
+      "name_sha256": "43b267b4f73cb3881e62f21f1197f6b87b7c0680b3b850044bb862acb49c2cb7"
+    },
+    {
+      "declared_bytes": 2700,
+      "decoded": false,
+      "name_sha256": "b402240eee7d01538fa8e43ddbc58da14c6e1c2ff57d9b1e0dd7dbfa9d1ade04"
+    }
+  ],
+  "missing_success_names": [
+    {
+      "identifier": "cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity",
+      "sha256": "a9401632a0ef1f3eafd45611e60e29be293af906723ae65bb15de656312d881f"
+    }
+  ],
+  "module_summaries": [
+    [
+      174,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "native_executed": false,
+  "native_exit_code": 0,
+  "original": {
+    "artifact_id": 13295132077,
+    "artifact_name": "da-sequence-diagnostic-e5adb2df25db655800f9e52806e91b427d734490-1",
+    "bytes": 61541,
+    "run_id": 41771237697,
+    "sha256": "af855c28548c7cd9e31c545194285285aed40255d31e416133107652c4fd3bef",
+    "source": "e5adb2df25db655800f9e52806e91b427d734490",
+    "tree": "2bb9f0f3718891ba1df19087a2fa8b96e19bf05b"
+  },
+  "original_baseline_qualified": false,
+  "original_source_receipts_match": true,
+  "performance_qualified": false,
+  "production_activation": false,
+  "reader_source": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+  "recorded_diagnostic_all_passed": false,
+  "recorded_diagnostic_complete": true,
+  "recorded_diagnostic_module_passed": false,
+  "required_five_members_crc_and_sha_verified": true,
+  "required_input_digests": {
+    "original-module.log": {
+      "bytes": 18179,
+      "sha256": "076016e2b5dcb781432a0ce769d1659b620c60ba934318096ff85915e2be31d6"
+    },
+    "receipt.json": {
+      "bytes": 9380,
+      "sha256": "05ce906559a36c1576a36b42245250d39c2db6261c4c6bac15cfa27de88b0fee"
+    },
+    "registry.log": {
+      "bytes": 16944,
+      "sha256": "68389324c31926190938495cd8c3a8bd94773cac39a767d1caa682ac68376198"
+    },
+    "source-after.json": {
+      "bytes": 421,
+      "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+    },
+    "source-before.json": {
+      "bytes": 421,
+      "sha256": "90d14f126ec38d3a21989a532e1386e12a92c2634ebd53b0f73d34481b93b291"
+    }
+  },
+  "schema": "trnm-da-diagnostic-original-log-readback-v1",
+  "scope": "Selected five-log readback of the immutable original diagnostic ZIP. Other members have metadata only and were not decompressed or CRC/SHA checked. No archived code executed, no native rerun, no original baseline or performance qualification.",
+  "selected_decoded_bytes": 45345,
+  "successful_line_count": 174,
+  "unexpected_success_names": [],
+  "unique_successful_names": 173,
+  "unselected_members_decoded": false
+}
