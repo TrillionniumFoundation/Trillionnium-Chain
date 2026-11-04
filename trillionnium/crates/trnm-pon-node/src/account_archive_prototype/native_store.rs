@@ -39,6 +39,11 @@ impl LiftCache {
     }
 
     pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
+        // The original lift performs no branch hashes at this exact depth.
+        // Do not occupy or evict arithmetic entries for an identity result.
+        if depth == node.depth {
+            return node.digest;
+        }
         let key = (node.path, node.digest, node.depth, depth);
         if let Ok(entries) = self.0.try_borrow() {
             if let Some(value) = entries.get(&key) {
@@ -669,11 +674,29 @@ mod tests {
             }
             assert_eq!(cache.lift(&node, 0), node.lift(0, &empty));
         }
+        let identity_entries = cache.0.borrow().len();
         for index in 0..=LiftCache::MAX_ENTRIES {
             node.digest[..8].copy_from_slice(&(index as u64).to_le_bytes());
             assert_eq!(cache.lift(&node, node.depth), node.digest);
             assert!(cache.0.borrow().len() <= LiftCache::MAX_ENTRIES);
         }
+        assert_eq!(cache.0.borrow().len(), identity_entries);
+
+        // Preserve the original identity controls above. These distinct inputs
+        // perform one real branch hash, so the fixed-capacity boundary is still
+        // exercised after identity lifts stop entering the cache.
+        let capacity_cache = LiftCache::default();
+        let lifted_depth = node.depth - 1;
+        for index in 0..=LiftCache::MAX_ENTRIES {
+            node.digest[..8].copy_from_slice(&(index as u64).to_le_bytes());
+            let actual = capacity_cache.lift(&node, lifted_depth);
+            assert_eq!(actual, node.lift(lifted_depth, &empty));
+            assert!(capacity_cache.0.borrow().len() <= LiftCache::MAX_ENTRIES);
+            if index + 1 == LiftCache::MAX_ENTRIES {
+                assert_eq!(capacity_cache.0.borrow().len(), LiftCache::MAX_ENTRIES);
+            }
+        }
+        assert_eq!(capacity_cache.0.borrow().len(), 1);
     }
 
     #[test]

@@ -478,7 +478,16 @@ impl Node {
             cursor,
             2,
         )?;
-        tx.commit()?;
+        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)
+        });
+        let commit_result = tx.commit();
+        if let Some(observation) = commit_observation {
+            observation.finish_sql_result(&commit_result);
+        }
+        commit_result?;
         cut(hook, "cancel-committed")?;
         Ok(())
     }

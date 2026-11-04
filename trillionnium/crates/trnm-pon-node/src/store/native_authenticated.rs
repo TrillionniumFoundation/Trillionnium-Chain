@@ -21,7 +21,7 @@ use trnm_sqlite_io_boundary::TransactionScope;
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
-pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
+pub(crate) use history_arithmetic::{HistoryStage, SqlCommitSite, StageObservation};
 mod post_write_readback;
 pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
@@ -689,10 +689,7 @@ pub(super) fn verify_state_with_readback(
         let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
         verify_record(db, settings, &record, progress, cache)?;
         let (current_commitment, current_accounts) = match cache {
-            Some(cache) if readback.is_none() => {
-                cache.complete_with_current_accounts(settings, state)?
-            }
-            Some(cache) => (cache.complete(settings, state)?, None),
+            Some(cache) => cache.complete_with_current_accounts(settings, state)?,
             None => (complete(settings, state)?, None),
         };
         local(ensure(
@@ -725,6 +722,7 @@ pub(super) fn verify_state_with_readback(
                     access,
                     progress,
                     cache.map(|c| &c.lifts),
+                    current_accounts.as_ref(),
                 )?);
             } else if let Some(current_accounts) = current_accounts.as_ref() {
                 // This is the same complete immutable State just compared with

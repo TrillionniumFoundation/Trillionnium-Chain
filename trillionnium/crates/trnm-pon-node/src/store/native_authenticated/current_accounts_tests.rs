@@ -129,6 +129,52 @@ fn cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints() {
         assert_eq!(warm_parses, (1, state.len()));
         assert_eq!(node.db.total_changes(), changes);
 
+        // Use two fresh arithmetic caches in the same actual writer. The control
+        // discards only this call's projection; both scoped verifiers read the
+        // complete SQL graph and retain every original checkpoint.
+        node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+        let owner = TransactionScope::capture(&node.db).unwrap();
+        let run_scoped = |reuse_projection: bool| {
+            let scoped_cache = ArithmeticCache::default();
+            if !reuse_projection {
+                scoped_cache.discard_current_accounts_for_control();
+            }
+            let mut scope = PostWriteReadback::new(
+                &node.db,
+                &node.settings,
+                node.settings.genesis(),
+                &owner,
+                node.post_write_schema.as_ref().unwrap(),
+            )
+            .unwrap()
+            .unwrap();
+            take_account_parse_observation();
+            let mut checkpoints = 0;
+            let result = verify_state_with_readback(
+                &node.db,
+                &node.settings,
+                node.settings.genesis(),
+                state,
+                &mut || {
+                    checkpoints += 1;
+                    Ok(())
+                },
+                Some(&scoped_cache),
+                Some(&mut scope),
+            )
+            .map_err(|error| error.to_string());
+            let parses = take_account_parse_observation();
+            ((result, checkpoints), parses)
+        };
+        let scoped_control = run_scoped(false);
+        assert_eq!(scoped_control.0, reference);
+        assert_eq!(scoped_control.1, reference_parses);
+        let scoped_current = run_scoped(true);
+        assert_eq!(scoped_current.0, scoped_control.0);
+        assert_eq!(scoped_current.1, (1, state.len()));
+        node.db.execute_batch("ROLLBACK").unwrap();
+        assert_eq!(node.db.total_changes(), changes);
+
         println!(
             "{}",
             json!({

@@ -1,0 +1,515 @@
+{
+  "schema": "trnm-frozen-owner-6f-composition-v1",
+  "owner": {
+    "commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+    "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+    "immediate_parent": "41dd661222285728720b97519da1f5a024c7716b",
+    "previous_frozen_owner": "056303b5193809597d4b5ec1f075dfc5109fe888"
+  },
+  "current_parent": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+  "ordered_candidate_parents": [
+    "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+    "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029"
+  ],
+  "review_base": {
+    "ref": "main",
+    "commit": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+  },
+  "workspace_overlay": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a9660b4cd43fcb480a6f6859b01f60eff766312"
+    }
+  ],
+  "retained_non_owner_evidence": [
+    {
+      "path": "qualification/architecture-fixed-host-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2688a4d154188a14a3d6872c60b13315fe872eb"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96081c0890b42a9f189c691e7d9cf4b05209801a"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/REPRODUCTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "309b7be22c4de59112bac81d25410297cb4b2c1c"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "17a5846365a202e309be58219cee0446b01220d9"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "200f082db582c3ae60c1abb7c0a0b9f0c329f739"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/capture.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2440904f2214752df7889352a9552fd3cb61f6d"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd710dc95f05da0cd91b3dab4f87ebe657df50d4"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/invocation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3f9451f66f940405b6b76b98b14e18ec6a04b10"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/tests/architecture_delivery_compare.rs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea4cfa95d14775392e3a09865b701dcc5173bc90"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/ci-contract.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92a3e47248ccd54f73fc4dbd33ebad59b1389eb3"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/diff-check.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/final-check-0.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7318b8aef8720c4622cc09fe286130fcb5bc20a0"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-failure-derived.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e6a2f2fd28c125a1f5f2828125b6442ea0043ad"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bf1a333e23b870de95e92000e4c0a506cdb93ce"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3f9a99c48fd9b02258ed12f3ef4d4821a2b9779"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-source.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bbcae1777e5ec43960b27c43e5146be380b7e077"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/preflight.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "926d86709b68c2c344eba0aab02d6462de793634"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_architecture_delivery_host.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a66648d2bbbf9c0f2635427e67e993b7b258578"
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_rust_baseline_shards.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4e126956edd2e44009c2160615be95f28c37511"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450dc8da1084d366f6d69a2b33bf9d7a761e0512"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FINAL_INPUT_BINDING.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3652b6351cee6cb5a3f170efe5c0970e6c5de7ee"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FROZEN_056_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01d3509c2dda1212db59541fd00b620ec5bd0515"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FROZEN_BE0_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "598793726ff594909691f97b02cecf1e8f2bf380"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f8536e1217f8daec883447c8cf277a80fc97e6d"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INITIAL_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e5be8db43d2ce0e48376ea820f75667cf790656"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCAL_COMMANDS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "739fa748536794154e27f7bbe04caeed3af567fe"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCKED_GRAPH.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "946a98efc505ebc18daf53afddac5f8df90cba59"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/MARKDOWN_LINKS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b9adab0a2b9f702e08372ae651e2db7559e79a73"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NATIVE_INPUTS_AT_EXECUTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9999188df2af699f74bf83d1e78c840561c94f96"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NEGATIVE_MUTATION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e7ac196fce530d1e0916400cd999a51311dbe0e"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/ORIGINAL_HOSTED_FAILURE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f6c803d85297fbaa6b9e5856a904d162a9ac841"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_056_PREFIX_CODEC_INDEPENDENT_REVIEW.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4c69d5d279e1d0efa22cea6d5632d263618c1cb"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_CONTROLS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9a5c88b7ed7f84ff94e74bccfaaefc87fd8bed7"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_HOST_CONTROLS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c00036aa38e2965f2c72f8fd3d60c6fc12deee91"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_INDEPENDENT_REVIEW.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd5050d075e95d49e7c0699da5fbc7c20db2fff8"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_12171_MERGE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1eb07a8a192eff68042d1eb8feb1d7fbc8eeea07"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_8A74_MERGE.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8176bd45b90bbdd22d3704c30f8eaa4ad1b623d3"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_BBCB_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e142799f10139a613f21daa2c5c28299af95aded"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_C9_DEADLINE_INDEPENDENT_REVIEW.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "154b499d7a84a165ad5588d91039fc3d3a9f5e0f"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_F35EE_COMPOSITION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab5ee5e4c16a9ca0ed85d212aed010c14be6adc1"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/PIN_CORRECTION.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88a14a8c4954c45b9b6d5787c0dc47b95f4f9034"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f924e6b288354d27ffa60ed3308aa2e0628b08e7"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/RETAINED_TESTS.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "456eebfd4eea354f9b42b4cf0fa8f2f0fffda94c"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/SOURCE_MANIFEST.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "423cf9b0c8a088cfd34281f68ee4a5b672ffd453"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/TOOLCHAIN.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf0d599c87c9451815a20edf6d924db018455fb5"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/WHITESPACE_CHECK.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e985740f9bae4643623a8b92f2c2ce0cb9fe9d61"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/candidate-before-comment.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c942b9ac09abc4fd74d85842f9dd34bb6199f24e"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/negative-mutant.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78faf39168efe9a2352fa08d4f53e086062f0f69"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/original-tests.rs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b0e61bc5acaebbcd095fd6fbd7ae1eb7cd1e233"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-12171-controls/run_controls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b982b3e4491992cb8b27e73258b38ff6a5d85c4"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-12171-controls/run_host_control.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59b5e153793cba8de8bd7e1ebd9d5a1f0d2f68b7"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-295-negative/job-126319351908-rustfmt.decoded.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5785bdc54aeaa811933abdc7c9f7a0e5c2219715"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-e8-negative/job-126318926289-external-evidence.decoded.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d7bd292bbf86fb71a5b6b15352a980d278afd16"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-e8-negative/job-126318926403-repository-truth.decoded.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a3b3268a81421fbe66ca87c4b9c5a26e6b839dc"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/parent-format-only.patch.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47c534abfe637e35772aac83c8584b23b5c232a5"
+    },
+    {
+      "path": "qualification/frozen-codec-control-count-20261104/CODEQL_BASE_ALIGNMENT_PROPOSAL.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bcf4b8f6fd30da44dccaa376f88a45c512c725b8"
+    },
+    {
+      "path": "qualification/frozen-codec-control-count-20261104/INDEPENDENT_REVIEW.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23bfa8942fc014960339fbd49d2166d637f86ab2"
+    },
+    {
+      "path": "qualification/frozen-codec-control-count-20261104/SOURCE_MANIFEST.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49a76221ee3f39e525c6d205fea06080135d9bd2"
+    },
+    {
+      "path": "qualification/frozen-codec-control-count-20261104/job-126372439045-codeql-negative.decoded.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e02c3a9b23c0522a17e64405691ce968c0ea83b"
+    }
+  ],
+  "adopted_source_inputs": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "mode": "100644",
+      "blob": "8a88f024f9947c59c945aa2d3011c68f00fb2e96",
+      "bytes": 14100
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "mode": "100644",
+      "blob": "0cfbce49376fc0c3147f9b7558c8101ac3a24be4",
+      "bytes": 31731
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "mode": "100644",
+      "blob": "570ca080158b49999efcce9a503a797df7ce575f",
+      "bytes": 70715
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "mode": "100644",
+      "blob": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
+      "bytes": 12380
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "mode": "100644",
+      "blob": "d137e38fc08738f4e6d6b81712f7c7423624a8c2",
+      "bytes": 31870
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "mode": "100644",
+      "blob": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+      "bytes": 333060
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "mode": "100644",
+      "blob": "e99453b1abe6ce589f003be199b5553241cba398",
+      "bytes": 94925
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+      "mode": "100644",
+      "blob": "c10bd2e5dda69c69e9ee51c548fe8bb1bbf76258",
+      "bytes": 16620
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "mode": "100644",
+      "blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "bytes": 23653
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "mode": "100644",
+      "blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "bytes": 28141
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "mode": "100644",
+      "blob": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+      "bytes": 19441
+    }
+  ],
+  "new_evidence_inputs": [
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_41DD_SCOPED_ACCOUNTS_INDEPENDENT_REVIEW.json",
+      "bytes": 6174,
+      "git_blob": "651b7bbd21101fafd65ec48cd24f8fc9d154ecd0",
+      "sha256": "a08667ccd1d0122a8b69ccb063d00ffc25bb00b1e9893f86a244970091e462bc"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/OWNER_6F_SQL_AND_IDENTITY_STATIC_REVIEW.json",
+      "bytes": 3781,
+      "git_blob": "bb25109359913ab3007fe0dbad6b387a35266d8e",
+      "sha256": "a88b248d0f3bbdd8714c7de14dff25e59cd54a5f1ffc6790468cc9e6faa08de4"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/owner-41dd-negative/job-126376194673-format.decoded.log",
+      "bytes": 142843,
+      "git_blob": "1f254b10cfa7dc4ffa8fb99a48e64a45024d27b5",
+      "sha256": "5011397490cf7a9a68bdc23c1475f3daedabd3a347ecf2fc6ebb13ede17cc2f2"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/prior-1ba-observations/job-126384998881-codeql.decoded.log",
+      "bytes": 125599,
+      "git_blob": "71557059a001855e2376f1585a77d87a28343a3d",
+      "sha256": "606b73b020b9277556f58f635fe6312690fadcce704237f4e55d191a6efdec40"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/prior-1ba-observations/job-126384999079-w1-count.decoded.log",
+      "bytes": 206810,
+      "git_blob": "1af3434a316485f499f0ede2680057a9a30fd319",
+      "sha256": "416c7ecca5faf0483f584f127b275f1fa6d665bf00e9c6855a3d97dce22fd866"
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/prior-1ba-observations/VERIFIED.json",
+      "bytes": 7283,
+      "git_blob": "806f17ad8038a86f0602e912aab93426ece4a0ad",
+      "sha256": "454b53c3c028c49a5928f27e3720965d4234e73903a72309cd52b3e19f80e866"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 457277,
+      "git_blob": "d53f131a5d89026d599235b45723757e15eb4822",
+      "sha256": "3bf59ab2b124c7d846e0c555b717128b30ad06d3a15710a6328ba4206678d51e"
+    }
+  ],
+  "existing_corpus_pins_verified": 384,
+  "existing_inline_workflow_pins_verified": 20,
+  "original_w1_history_count": 28,
+  "original_ignored_history_child_count": 1,
+  "source_api_readback": true,
+  "local_executable_environment_available": false,
+  "local_preflight_executed": false,
+  "hosted_original_gates_required": true,
+  "unchanged_requirements": [
+    "original 4-second/16-hostile fresh budget",
+    "original 30-second campaign phases and 24 attackers",
+    "original Host parent/kernel/deadline/resource/fail-closed checks",
+    "original history/error ordering and paid/settled/no-live-in-flight semantics",
+    "original required native/ARM/full-workspace selectors"
+  ],
+  "qualification": {
+    "new_source_native": false,
+    "new_source_host": false,
+    "new_source_performance": false,
+    "new_source_production": false
+  }
+}
