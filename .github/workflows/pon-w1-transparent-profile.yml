@@ -195,7 +195,7 @@ jobs:
           if not all(checks):
               raise SystemExit('compiled profile differs from its mapped, unqualified construction')
           PY
-      - name: Retain all 42 actual saved-proof acceptance and rejection controls
+      - name: Retain all 44 actual saved-proof acceptance and rejection controls
         if: always() && steps.source.outcome == 'success' && steps.hardened.outcome == 'success'
         id: receipt_controls
         shell: bash
@@ -208,13 +208,15 @@ jobs:
           import json, sys
           report = json.loads(Path(sys.argv[1]).read_text())
           cases = report['cases']
+          retained_extra = {'hash_function_sha256', 'hash_function_blake2b'}
           if (report['schema'] != 'TRNM-W1-HARDENED-VERIFIER-CONTROLS2'
-                  or len(cases) != 42 or len({case['name'] for case in cases}) != 42
+                  or len(cases) != 44 or len({case['name'] for case in cases}) != 44
+                  or not retained_extra.issubset({case['name'] for case in cases})
                   or report['all_passed'] is not True or report['fake_proofs_used'] is not False
                   or report['consensus_admission'] is not False
                   or any(case['passed'] is not True or case['observed']['outcome'] != case['expected']
                          or case['observed']['outcome'] not in ('ACCEPT', 'REJECT') for case in cases)):
-              raise SystemExit('all 42 real controls must complete without panic or changed expectations')
+              raise SystemExit('all 44 real controls must complete without panic or changed expectations')
           PY
       - name: Compare the saved proof under one shared 120-second deadline
         if: always() && steps.source.outcome == 'success' && steps.native.outcome == 'success' && steps.hardened.outcome == 'success'
