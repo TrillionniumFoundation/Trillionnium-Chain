@@ -5600,3 +5600,12 @@ execution and this executor's actual Unix-socket EPERM capability failure.
 Neither is evidence of a successful runtime qualification. The original 250 ms
 witness deadline, four-second service condition, CPU allocations and all
 qualification/activation negatives are unchanged.
+
+
+The same continuation repairs the existing original-campaign cost reader.
+All known disjoint setup/search intervals now remain a lower bound on complete
+acquisition cost even when another interval is unknown. CPU and wall clocks
+both reject a known subtotal above the measured complete denominator; unknown
+values stay unknown. The original fixed historical receipt fixture and all
+existing reader controls remain. This is cost-accounting correctness, not
+measured quantum throughput, a W1 cost lower bound or a changed chainwork rule.
