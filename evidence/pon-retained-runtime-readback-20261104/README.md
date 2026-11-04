@@ -73,4 +73,25 @@ The auxiliary workflow now handles only that existing composite parent with a de
 
 A separate read-only workflow binds the two original failed `6f458c4f` F0 and three-run campaign archives. It authenticates archive metadata, complete ZIP hashes and original source guards before reading their four raw phase reports. Original snapshots and sixteen stages remain intact. Additive SQL commit-call and exact node-decode differences retain missing, saturated, failed, abandoned, in-flight and unknown observations. A zero or missing cost is never substituted for an unentered or unobserved interval.
 
-The reader requires seventeen SQL controls and five decode-control groups. It preserves the original member, archive, JSON-node and console limits, executes no archived source and grants no native or performance acceptance. The two archives have not yet been read by this new reader; current confirmation counts and measured cost changes remain unknown.
+The reader requires seventeen SQL controls and five decode-control groups. It preserves the original member, archive, JSON-node and console limits, executes no archived source and grants no native or performance acceptance. The first actual readback is now complete; the original failed native outcomes and measured cost observations are recorded below.
+
+## Actual 6f cost readback and next failed-archive cohort
+
+The [current-cost reader](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41775481853/job/126394717589) completed successfully on auxiliary source `8102335d91db9a2bfe2cc7c65a2aed7d6f5881b2` / tree `3d8620899228d3023ed5d29a6a240e87b7a1832b`. Both source guards verified 7,972 files / 927,427,337 bytes and both project audits passed. Seventeen SQL reader controls and five decode-control groups passed. Both fixed original archives and all four required raw reports were read, with zero selected-member omissions. Some optional console lines were bounded; their full excerpts and original members remain retained.
+
+[Complete current observations](6f-native-cost-and-confirmation-readback.json) preserve the original source guards, exact ZIP/member hashes, all four native cost projections and both F0 terminal reports. The [reader artifact](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41775481853/artifacts/13296772091) is 72,766,949 bytes, SHA-256 `823ca76ca1bce34608f7890317e8866260ecfdf9e3f2790b4be7155c4e65b779`, and retains the complete raw snapshots.
+
+| Original current-source cohort | Actual result |
+| --- | --- |
+| F0, six planned confirmations | 1 confirmed, 2 observed unconfirmed, 3 unobserved; 1/6 |
+| F0, original scheduled four-second window | 0/6 |
+| Three-run campaign, 27 planned confirmations | 3 confirmed, 9 observed unconfirmed, 15 unobserved; 3/27 |
+| Three baseline client graph intervals | 62 calls each; 17.861–18.213 seconds wall |
+| Same baseline client SQL commit calls | 7 admission and 9 reorg-step calls each; 18.669–20.306 milliseconds total wall |
+| Same baseline exact node decode counts | 68,002 calls; 67,874 exact hits; 128 original decodes; 108 bounded probe refusals; no borrow conflicts |
+
+All 22 receiver/client observations preserve the original sixteen stages: 352 rows, including seven not-entered rows. The additive SQL child has 88 closed site intervals, 37 entered and 51 unentered. Entered SQL calls in these intervals show no failures, abandoned/unwinding calls or CPU-unknown calls; unentered complete wall/CPU values stay null. All 22 decode differences are observed. These are observations of these intervals, not a claim that no failing or cancelled request exists.
+
+Account-graph work remains the measured investigation priority. The interval includes actual SQL reads, exact byte/cache comparisons, lift/path arithmetic, graph containers and the original progress callbacks. Those callbacks also perform live Host resource checks. These aggregate measurements do not isolate the constituents; exact decode counts are not SQL-read counts. Nested stage costs cannot be added, and Host CPU includes each actual invoking thread while enclosing phase CPU excludes scoped workers.
+
+A separate bounded reader now freezes the four original `01627151` long-history failures and both current `6f458c4f` W1 fresh-service failures. It reads only the original native logs, manifests, source identities and Host records. It does not rerun their tests or reuse an older native error label. All six ZIP identities were independently checked against original job/API records. The actual native reasons remain pending until this new readback executes.
