@@ -150,10 +150,19 @@ renewal policy. Test operators and multiple keys on one machine cannot establish
 independent custody. Source-preserving migration and governed activation remain
 separate PN6 gates.
 
-### PN4/PN5 release-wide duty interface — target
+### Local complete-release catalog and PN4/PN5 qualification
 
-Extending a single-manifest duty to a complete model release is existing I05/I09
-work, not an implemented field in this v1 contract or TCR1. M10 supplies the
+The separate [TCA2 complete-release catalog](CELL_MODEL_STORAGE_V1.md) now
+composes immutable TMR1 roots, optional complete TMA1 validation plans and the
+original per-manifest duties. It protects pending and expired-but-unretired
+roots, shares exact original object contracts and performs collection under
+one catalog writer transaction. A pending repair also blocks physical
+retirement, even when the target bytes are healthy. Catalog and physical writer
+waits use the original caller deadline. This adds no field to TCR1 or this
+physical v1 duty and supplies no new monetary or chain-height authority.
+
+The full funded release-wide interface below remains an I05/I09 qualification
+target beyond the local catalog. M10 supplies the
 validated versioned closure; M09 owns bytes/duties, M12 owns the original funded
 operation and settlement, and M17 records actual readback. A content hash proves
 identity, a successful retrieval proves scoped availability, evaluation owns

@@ -13,6 +13,7 @@ use std::{
 
 mod directory;
 pub mod pq;
+mod selection;
 mod transport;
 pub use directory::{CellProviderDirectoryUsageV1, CellProviderDirectoryV1};
 pub use transport::{
@@ -430,3 +431,6 @@ mod sequence_tests;
 
 #[cfg(all(test, unix))]
 mod equivocation_history_tests;
+
+#[cfg(all(test, unix))]
+mod diversity_tests;

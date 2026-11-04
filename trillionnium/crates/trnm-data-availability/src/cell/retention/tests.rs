@@ -664,6 +664,71 @@ fn missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id()
 }
 
 #[test]
+fn expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, bytes) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let configuration = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, configuration.clone()).unwrap();
+    let duty = contract(1, &manifest);
+    store.reserve(duty.clone()).unwrap();
+    store
+        .acknowledge(duty.operation, &cache, deadline())
+        .unwrap();
+    damage(&mut store);
+    let observer = Connection::open(path.join("retention.sqlite")).unwrap();
+    let arena_path = path.join("payload.arena");
+    let mut interrupted = false;
+    let result =
+        store.repair_controlled(duty.operation, [101; 32], &cache, deadline(), &mut || {
+            let pending: bool = observer.query_row(
+                "SELECT EXISTS(SELECT 1 FROM repairs WHERE operation=?1 AND complete=0)",
+                [[101_u8; 32].as_slice()],
+                |row| row.get(0),
+            )?;
+            let target = fs::read(&arena_path)?;
+            if pending && target[..bytes.len()] == bytes {
+                // Preserve a real charged repair and fully durable target,
+                // with its terminal repair acknowledgement still missing.
+                File::open(&arena_path)?.sync_all()?;
+                interrupted = true;
+                return Err(CellErrorV1::Invalid("test repair completion interrupted"));
+            }
+            Ok(())
+        });
+    assert!(interrupted && result.is_err());
+    assert_eq!(
+        store.repair_row([101; 32]).unwrap(),
+        Some((duty.operation, manifest.size(), false))
+    );
+    drop(store);
+    let mut store = CellRetentionStoreV1::open(&path, configuration).unwrap();
+    assert!(
+        store
+            .verify(duty.operation, deadline())
+            .unwrap()
+            .acknowledged
+    );
+    let refusal = store.retire(duty.operation, duty.retain_until_height, None, deadline());
+    assert!(
+        refusal.is_err(),
+        "retirement reclaimed an unresolved repair target: {refusal:?}"
+    );
+    assert!(store.reserve(contract(2, &manifest)).is_err());
+    assert!(!store.reserve(duty.clone()).unwrap().retired);
+    store
+        .reconcile_repair(duty.operation, [101; 32], deadline())
+        .unwrap();
+    assert!(
+        store
+            .retire(duty.operation, duty.retain_until_height, None, deadline())
+            .unwrap()
+            .retired
+    );
+    assert!(!store.reserve(contract(2, &manifest)).unwrap().retired);
+}
+
+#[test]
 fn contract_commitment_has_an_exact_vector_and_binds_every_immutable_term() {
     let dir = tempfile::tempdir().unwrap();
     let (_, manifest, _) = material(dir.path(), 5000);
