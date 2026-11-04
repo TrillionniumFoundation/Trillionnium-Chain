@@ -119,8 +119,52 @@ The native inventory is regenerated from the actual combined source. Current
 composition observations belong in their own receipts; the 7 selected Node
 results above remain bound specifically to `3e866c6`.
 
-[results.json](results.json) records the counts, command scopes, lockfile
-identity, source bounds and SHA256/size observations for the actual M09 library,
+### Exact composed-source results
+
+The composed implementation is
+[`b110ba5bc1f755e5988c1b1f710243677976bcc8`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/b110ba5bc1f755e5988c1b1f710243677976bcc8),
+tree `20d41d881353ae7f66f1d15f326274ee811f7c65`, with ordered parents
+`d0737cf5` and `f6941358`. The [main composition receipt](composition/cell-storage-composition-exact-source.json)
+and [complete log](composition/cell-storage-composition-exact-source.log), plus
+the [selected owner/documentation receipt](composition/cell-storage-composition-owner-doc-controls.json)
+and [complete log](composition/cell-storage-composition-owner-doc-controls.log),
+all finish successfully with exact before/after identities. Each source check
+verifies **8,811 tracked entries / 941,457,721 bytes**. The evidence follow-up
+does not change implementation, configuration, source pins or the lockfile.
+
+| Actual composed-source check | Result |
+| --- | --- |
+| M09 complete library | 281 passed, 0 failed, 0 ignored |
+| M09 CLI integration | 29 passed, 0 failed, 0 ignored |
+| M06 `evaluation_quorum_v2` integration target | 3 passed, 0 failed, 0 ignored |
+| Exact original PQ evaluation/claim owner case | 1 passed; 119 other M06 library tests filtered |
+| M09 compile-fail documentation controls | 8 passed, 0 failed, 0 ignored |
+| Source/claim/authority negatives and TMR1 oracle | 105 passed |
+| Incoming weight-loading and parent-material Python controls | 17 + 11 passed |
+| Whole-workspace, all-targets strict Clippy | PASS, default features, `-D warnings` |
+| Formatting, native inventory, exact pins and repository links | PASS; 424 pins; 2,490 local links |
+
+This set contains **314 native/CLI tests**, **8 compile-fail controls** and
+**133 Python tests**. The added rejection assertions inside the selected PQ
+owner case are not counted as separate tests. The 28 weight-loading Python
+controls use NumPy-backed test doubles; they do not run Torch/Safetensors or
+an actual LLM forward. The seven selected Node storage tests above are not
+rerun or relabeled as composition results.
+
+The [composition audit](composition/source-composition-audit.json) verifies
+that all 338 required paths and 424 pinned paths are exactly the union of both
+parents, with no missing or mismatched blob. Twelve incoming source/test/doc
+files, including the ten evaluator/weight-loader source and test files, are
+byte-identical to `d0737cf5`; the entire M06 directory and lockfile are unchanged.
+The sole plan intentionally preserves both continuation sections. The
+[composed test coverage](composition/retained-test-coverage.json) retains all
+186 original baseline names and all 261 names from the first implementation;
+the combined library adds 20 names and passes all 281. The
+[composed results](composition/results.json) record exact counts, executable
+hashes, graph identity and the limits of these local observations.
+
+The original [A results](results.json) record the counts, command scopes, lockfile
+identity, source bounds and SHA256/size observations for the original M09 library,
 Node library and `trnm-cell` executables. These local observations do not
 replace independent operators, the remote required-check matrix or actual
 prospective-merge qualification.
