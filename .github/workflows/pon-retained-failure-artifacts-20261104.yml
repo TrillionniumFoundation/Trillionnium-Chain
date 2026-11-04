@@ -31,7 +31,7 @@ jobs:
           echo "READBACK_OUT=$READBACK_OUT" >> "$GITHUB_ENV"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
           bash scripts/project-preflight.sh --audit
-      - name: Read seven exact original artifacts without executing their contents
+      - name: Read nine exact original artifacts without executing their contents
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -43,7 +43,7 @@ jobs:
           
           REPO = "TrillionniumFoundation/Trillionnium-Chain"
           BRANCH = "fix/chain-retained-failure-readback-20261104"
-          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"}]''')
+          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13290599543,"name":"pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1","size":56503959,"digest":"sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771","run":41760813065,"job":126349481887,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13291962180,"name":"pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":15793484,"digest":"sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a","run":41760812979,"job":126353223160,"head":"01627151f3ab50750eac2adeb46d8883a601265f"}]''')
           ROOT = Path(os.environ["READBACK_OUT"])
           API = "https://api.github.com/repos/" + REPO
           TOKEN = os.environ["GH_TOKEN"]
@@ -63,7 +63,7 @@ jobs:
           require(os.environ["GITHUB_REPOSITORY"] == REPO, "REPOSITORY")
           require(os.environ["GITHUB_REF"] == "refs/heads/" + BRANCH, "REF")
           require(os.environ["GITHUB_EVENT_NAME"] == "push", "EVENT")
-          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 7, "TARGETS")
+          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 9, "TARGETS")
           
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -135,10 +135,19 @@ jobs:
               r"|deadline|cancelled|pending|unknown|elapsed|duration|host_errors"
               r"|observed|scheduled|within|before_original|slo|success|known_empty|^mode$|^number$|^code$|^kind$"
               r"|^schema$|^status$|^phase$|^name$|^label$|^reason$|^error$")
-          BE0D_NATIVE_REPORTS = {
-              "run-1-raw/report.json": (24004285, "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593"),
-              "run-2-raw/report.json": (24941889, "d6099b55cc3ff1c378475f5707188a72ad5649fe2940fafe46d22a58c73b6755"),
-              "run-3-raw/report.json": (24864185, "4e0ed8293440c60edefac30a9dbf7f864620810ac89dd9fb8a2e5bb5d02c3fec"),
+          NATIVE_REPORTS = {
+              13288600275: {
+                  "run-1-raw/report.json": (24004285, "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593"),
+                  "run-2-raw/report.json": (24941889, "d6099b55cc3ff1c378475f5707188a72ad5649fe2940fafe46d22a58c73b6755"),
+                  "run-3-raw/report.json": (24864185, "4e0ed8293440c60edefac30a9dbf7f864620810ac89dd9fb8a2e5bb5d02c3fec"),
+              },
+              13290599543: {
+                  # Exact hashes come from the original native campaign results.
+                  # ZIP member sizes are recorded and bounded on this first read.
+                  "run-1-raw/report.json": (None, "2ee99eaff99288e7701635fe062bcd2d030035d9bad03959f4b10f41649adc1b"),
+                  "run-2-raw/report.json": (None, "1451dc75814fcf436cf1816ba35700646a865abf2b5a5f8c2818f5157ca8b149"),
+                  "run-3-raw/report.json": (None, "d84511335f96bdcc9a5c5c9cb76bfc9fdcd21555d2453e46fea6df6162dd65f1"),
+              },
           }
           NATIVE_STAGE_NAMES = (
               "record", "packet", "delta", "verify_state", "verify_history", "publish",
@@ -154,7 +163,7 @@ jobs:
               "client_native_history_arithmetic_before", "client_native_history_arithmetic_after",
           )
           def selected(name, target):
-              if target["id"] == 13288600275 and name in BE0D_NATIVE_REPORTS:
+              if name in NATIVE_REPORTS.get(target["id"], {}):
                   return True
               # Read the original failed command and bounded terminal/derived
               # reports first. Per-attacker and cost reports stay in the retained
@@ -164,14 +173,14 @@ jobs:
                       "node-lib.log", "node-lib.json", "source.json",
                       "source-before.json", "source-after.json", "clippy.json"
                   }
-              if target["id"] in (13287122967, 13286673364):
+              if target["id"] in (13287122967, 13286673364, 13291962180):
                   return (name in {
                       "finalization/result.json", "execution/results.json",
                       "prepared/prepared.json", "source-before.json",
                       "source-after.json", "execution/source-before.json",
                       "execution/source-after.json", "workflow-outcomes.json"
                   } or ("/raw/" not in name and name.endswith((".log", ".stdout", ".stderr"))))
-              if target["id"] in (13283953563, 13288600275):
+              if target["id"] in (13283953563, 13288600275, 13290599543):
                   return (name in {"results.json", "source-before.json", "source-after.json"}
                           or re.fullmatch(r"run-[123]-phase-readback\.json", name) is not None
                           or re.fullmatch(r"run-[123]\.(?:stdout|stderr)\.log", name) is not None)
@@ -181,7 +190,7 @@ jobs:
           
           def priority(info):
               name = info.filename
-              if name in BE0D_NATIVE_REPORTS:
+              if any(name in reports for reports in NATIVE_REPORTS.values()):
                   return (-1, name)
               if name in ("node-lib.log", "node-lib.json", "finalization/result.json",
                           "execution/results.json", "results.json"):
@@ -300,6 +309,41 @@ jobs:
               return {"status": "observed", "rows": rows}
 
 
+          def confirmation_projection(phase):
+              # Both pinned campaign sources schedule exactly ROUNDS = 3.
+              # Their original loop stops after the first unconfirmed round.
+              raw = phase.get("confirmations")
+              fields = (
+                  "round", "started_ns", "ended_ns", "confirmed_inside_pressure_window",
+                  "transaction", "included_block", "tip",
+              )
+              valid = (
+                  isinstance(raw, list) and len(raw) <= 3
+                  and all(isinstance(row, dict)
+                          and type(row.get("round")) is int and row["round"] == index
+                          and type(row.get("confirmed_inside_pressure_window")) is bool
+                          for index, row in enumerate(raw))
+              )
+              rows = []
+              for index in range(3):
+                  observed = index < len(raw) if valid else None
+                  row = {"planned_round_index": index, "observed": observed}
+                  row.update({key: raw[index].get(key) if observed else None for key in fields})
+                  rows.append(row)
+              confirmed = sum(row["confirmed_inside_pressure_window"] for row in raw) if valid else None
+              return {
+                  "schema": "trnm-original-campaign-confirmation-readback-v1",
+                  "status": "observed" if valid else "unknown",
+                  "reason": None if valid else "confirmation_array_missing_or_invalid",
+                  "planned_rounds": 3,
+                  "observed_rounds": len(raw) if valid else None,
+                  "confirmed_rounds": confirmed,
+                  "observed_unconfirmed_rounds": len(raw) - confirmed if valid else None,
+                  "unobserved_rounds": 3 - len(raw) if valid else None,
+                  "rounds": rows,
+                  "scope": "Original confirmed_inside_pressure_window only; unobserved fields remain null; no inferred timestamps or changed window.",
+              }
+
           def native_history_projection(value, target, record):
               require(isinstance(value, dict)
                       and value.get("schema") == "native-public-v3-separate-process-campaign-v2"
@@ -319,6 +363,7 @@ jobs:
               for index, phase in enumerate(phases):
                   row = {key: phase[key] for key in phase_keys if key in phase}
                   row["scheduled_phase_index"] = index
+                  row["confirmation_readback"] = confirmation_projection(phase)
                   row["snapshot_keys_present"] = [key for key in NATIVE_SNAPSHOT_KEYS if key in phase]
                   row["snapshots"] = {key: phase.get(key) for key in NATIVE_SNAPSHOT_KEYS}
                   row["receiver_stage_deltas"] = native_stage_delta(
@@ -327,7 +372,7 @@ jobs:
                       phase.get(NATIVE_SNAPSHOT_KEYS[2]), phase.get(NATIVE_SNAPSHOT_KEYS[3]))
                   kept.append(row)
               projection = {
-                  "schema": "trnm-retained-native-history-cost-readback-v1",
+                  "schema": "trnm-retained-native-history-cost-readback-v2",
                   "artifact": target["id"], "measured_head": target["head"],
                   "measured_run": target["run"], "measured_job": target["job"],
                   "member": record["member"], "member_bytes": record["bytes"],
@@ -356,6 +401,7 @@ jobs:
           results = []
           had_error = False
           for target in TARGETS:
+              reports = NATIVE_REPORTS.get(target["id"], {})
               output = ROOT / str(target["id"])
               output.mkdir()
               stage = "metadata"
@@ -400,8 +446,8 @@ jobs:
                                     "compressed_bytes": x.compress_size, "crc32": x.CRC}
                                    for x in infos]
                           index_sha = write_json(output / "members.json", index)
-                          if target["id"] == 13288600275:
-                              require(set(BE0D_NATIVE_REPORTS) <= {x.filename for x in infos}, "NATIVE_REPORT_MEMBER_MISSING")
+                          if reports:
+                              require(set(reports) <= {x.filename for x in infos}, "NATIVE_REPORT_MEMBER_MISSING")
                           chosen = sorted((x for x in infos if not x.is_dir() and selected(x.filename, target)),
                                           key=priority)
                           for member_index, info in enumerate(chosen):
@@ -413,10 +459,11 @@ jobs:
                               require(len(raw) == info.file_size, "MEMBER_SIZE")
                               record = {"member": info.filename, "bytes": len(raw),
                                         "sha256": hashlib.sha256(raw).hexdigest()}
-                              native_report = target["id"] == 13288600275 and info.filename in BE0D_NATIVE_REPORTS
+                              native_report = info.filename in reports
                               if native_report:
-                                  expected_size, expected_sha = BE0D_NATIVE_REPORTS[info.filename]
-                                  require(record["bytes"] == expected_size and record["sha256"] == expected_sha,
+                                  expected_size, expected_sha = reports[info.filename]
+                                  require((expected_size is None or record["bytes"] == expected_size)
+                                          and record["sha256"] == expected_sha,
                                           "NATIVE_REPORT_BYTES_OR_HASH")
                               try:
                                   content = raw.decode("utf-8")
@@ -485,15 +532,15 @@ jobs:
                                   print(rendered, end="", flush=True)
                                   printed += len(rendered)
                               records.append(record)
-                          if target["id"] == 13288600275:
+                          if reports:
                               require({row["member"] for row in records
                                        if row.get("read_status") == "read"
                                        and "native_history_cost_projection" in row}
-                                      == set(BE0D_NATIVE_REPORTS), "NATIVE_REPORT_SET_INCOMPLETE")
+                                      == set(reports), "NATIVE_REPORT_SET_INCOMPLETE")
                   finally:
                       print("::" + command_token + "::", flush=True)
                   result = {
-                      "schema": "trnm-retained-failure-artifact-readback-v3",
+                      "schema": "trnm-retained-failure-artifact-readback-v4",
                       "target": target, "downloaded_zip_bytes": received,
                       "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
                       "member_index_sha256": index_sha,
@@ -524,7 +571,7 @@ jobs:
                   results.append(result)
           
           write_json(ROOT / "readback.json", {
-              "schema": "trnm-retained-failure-readback-cohort-v2",
+              "schema": "trnm-retained-failure-readback-cohort-v3",
               "planned_artifacts": len(TARGETS), "results": results,
               "source_tests_executed": False, "acceptance_granted": False,
               "production_activation": False})
