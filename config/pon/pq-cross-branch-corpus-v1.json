@@ -324,7 +324,7 @@
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response_tests.rs"
   ],
   "pinned_blobs": {
-    ".github/workflows/pon-branch-encoding-acceptance.yml": "2e8af117c588841d426104db3a5b81787f44fffd",
+    ".github/workflows/pon-branch-encoding-acceptance.yml": "73e995142a6363d5e9c7eea52915e4dd5b303717",
     ".github/workflows/pon-recent-batch-acceptance.yml": "0cfbce49376fc0c3147f9b7558c8101ac3a24be4",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
