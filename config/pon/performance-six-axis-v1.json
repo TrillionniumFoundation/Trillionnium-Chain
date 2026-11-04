@@ -40,11 +40,19 @@
     "p99_minimum_independent_observations": 100,
     "p99_for_this_cohort": null,
     "scope": "real signed native Node make/admit/activate, complete-State reference, atomic cancellation and cold recovery; no public throughput or permanent bounded-storage claim",
-    "receipt_schema": "native-growth-fixed-owner-scale-observation-v2",
+    "receipt_schema": "native-growth-fixed-owner-scale-observation-v3",
+    "header_window_contract": {
+      "profile": "native-growth-single-header-window-v1",
+      "complete_admission_windows": 3,
+      "maximum_ancestor_headers_per_window": 16,
+      "counter": "header_ancestors",
+      "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU"
+    },
     "native_return_receipts_per_complete_campaign": 153,
     "cancellation_return_receipts_per_complete_campaign": 9,
     "retain_native_returns_before_original_assertions": true,
     "historical_v1_requires_explicit_readback_mode": true,
+    "historical_v2_requires_explicit_readback_mode": true,
     "unmeasured_stage_cpu_is_null": true
   },
   "paired_component_decision": {

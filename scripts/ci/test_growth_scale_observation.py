@@ -256,9 +256,37 @@ def fixture_v2():
     return files
 
 
+def fixture_v3():
+    """Current producer structure; the retained v1/v2 fixtures stay unchanged."""
+    files = fixture_v2()
+    first = files["run.jsonl"][0]
+    first["schema"] = "native-growth-fixed-owner-scale-observation-v3"
+    first["header_window_contract"] = {
+        "profile": "native-growth-single-header-window-v1",
+        "complete_admission_windows": 3,
+        "maximum_ancestor_headers_per_window": 16,
+        "counter": "header_ancestors",
+        "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU",
+    }
+    for accounts in ACCOUNTS:
+        for history in HISTORY:
+            for row in files[f"cohort-a{accounts}-h{history}.jsonl"]:
+                if row["event"] == "native_stage_returned" and row["operation"] == "admission":
+                    height = history + (SAMPLES if row["sample"] is None else row["sample"])
+                    row["native_stage"]["checkpoints"]["header_ancestors"] = 3 * min(height, 16)
+                elif row["event"] == "measurement_completed":
+                    row["native_admission"]["checkpoints"]["header_ancestors"] = (
+                        3 * min(history + row["sample"], 16))
+                elif row["event"] == "atomic_cancellation_completed":
+                    row["native_admission"]["checkpoints"]["header_ancestors"] = (
+                        3 * min(history + SAMPLES, 16))
+    return files
+
+
 class ObservationFiles(unittest.TestCase):
     make_fixture = staticmethod(fixture)
     historical_v1 = True
+    historical_v2 = False
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="trnm-growth-reader-")
@@ -286,7 +314,8 @@ class ObservationFiles(unittest.TestCase):
             self.read()
 
     def read(self):
-        return check(self.root, historical_v1=self.historical_v1)
+        return check(self.root, historical_v1=self.historical_v1,
+                     historical_v2=self.historical_v2)
 
 
 class GrowthObservationReaderTests(ObservationFiles):
@@ -427,7 +456,7 @@ class GrowthObservationReaderTests(ObservationFiles):
         alias = Path(self.temp.name) / "alias"
         alias.symlink_to(self.root, target_is_directory=True)
         with self.assertRaises(ValueError):
-            check(alias, historical_v1=self.historical_v1)
+            check(alias, historical_v1=self.historical_v1, historical_v2=self.historical_v2)
 
     def test_extra_file_and_trailing_event_are_refused(self):
         extra = self.root / "omitted-failure.jsonl"
@@ -543,6 +572,7 @@ class GrowthObservationReaderTests(ObservationFiles):
 class GrowthReturnedStageReaderTests(ObservationFiles):
     make_fixture = staticmethod(fixture_v2)
     historical_v1 = False
+    historical_v2 = True
 
     def receipt(self, operation="admission", sample=0, purpose="measurement", accounts=64, history=0):
         return next(row for row in self.cohort(accounts, history)
@@ -553,6 +583,8 @@ class GrowthReturnedStageReaderTests(ObservationFiles):
         result = self.read()
         self.assertEqual(result["schema"], "native-growth-fixed-owner-scale-readback-v2")
         self.assertFalse(result["historical_v1"])
+        self.assertTrue(result["historical_v2"])
+        self.assertIsNone(result["header_window_contract"])
         self.assertEqual(result["returned_native_stages"], 153)
         self.assertEqual(result["returned_native_outcomes"], {"accepted": 144, "rejected": 9})
         self.assertTrue(result["cancellation_stage_measurements_available"])
@@ -787,6 +819,144 @@ class GrowthReturnedStageReaderTests(ObservationFiles):
                     end["admission_median_interval_ns"] = [1040, 1040]
                 else:
                     end["admission_max_ns"] = end["cancelled_admission_wall_ns"]
+                self.refused()
+
+
+class GrowthSingleWindowReaderTests(ObservationFiles):
+    make_fixture = staticmethod(fixture_v3)
+    historical_v1 = False
+    historical_v2 = False
+    receipt = GrowthReturnedStageReaderTests.receipt
+
+    def replace_ancestors(self, count, *, sample=0, purpose="measurement", accounts=64, history=0):
+        row = self.receipt(sample=sample, purpose=purpose, accounts=accounts, history=history)
+        row["native_stage"]["checkpoints"]["header_ancestors"] = count
+        completed = self.event(
+            "measurement_completed" if purpose == "measurement" else "atomic_cancellation_completed",
+            sample=sample, accounts=accounts, history=history)
+        completed["native_admission"]["checkpoints"]["header_ancestors"] = count
+
+    def test_v3_retains_all_returns_with_exact_three_local_windows(self):
+        result = self.read()
+        self.assertEqual(result["schema"], "native-growth-fixed-owner-scale-readback-v3")
+        self.assertFalse(result["historical_v1"])
+        self.assertFalse(result["historical_v2"])
+        self.assertEqual(result["header_window_contract"], self.files["run.jsonl"][0]["header_window_contract"])
+        self.assertEqual(result["returned_native_stages"], 153)
+        self.assertEqual(result["returned_native_outcomes"], {"accepted": 144, "rejected": 9})
+        self.assertEqual(result["measured_native_blocks"], 72)
+        self.assertEqual(result["cancelled_admissions"], 9)
+        self.assertTrue(result["cancellation_stage_measurements_available"])
+        self.assertFalse(result["native_stage_cpu_measurements_available"])
+        self.assertFalse(result["throughput_qualified"])
+        self.assertFalse(result["production_activation"])
+        for cohort in result["cohorts"]:
+            self.assertEqual(cohort["admission_median_interval_ns"], [1030, 1040])
+            self.assertEqual(cohort["cancelled_admission_wall_ns"], 11000)
+            self.assertIsNone(cohort["p99_ns"])
+
+    def test_historical_v2_requires_explicit_mode_and_preserves_original_six_windows(self):
+        self.files = fixture_v2()
+        self.write()
+        before = {path.name: path.read_bytes() for path in self.root.iterdir()}
+        with self.assertRaisesRegex(ValueError, "run context"):
+            check(self.root)
+        result = check(self.root, historical_v2=True)
+        self.assertEqual(result["schema"], "native-growth-fixed-owner-scale-readback-v2")
+        self.assertTrue(result["historical_v2"])
+        self.assertIsNone(result["header_window_contract"])
+        self.assertEqual(self.receipt(sample=1)["native_stage"]["checkpoints"]["header_ancestors"], 6)
+        self.assertEqual(before, {path.name: path.read_bytes() for path in self.root.iterdir()})
+        with self.assertRaises(ValueError):
+            check(self.root, historical_v1=True, historical_v2=True)
+        self.files = fixture_v3()
+        self.write()
+        with self.assertRaisesRegex(ValueError, "run context"):
+            check(self.root, historical_v2=True)
+
+    def test_v3_refuses_wrong_window_counts_in_every_account_history_cohort(self):
+        for accounts in ACCOUNTS:
+            for history in HISTORY:
+                for sample in (0, SAMPLES - 1):
+                    expected = 3 * min(history + sample, 16)
+                    wrong = {0, expected + 1, 6 * min(history + sample, 16)} - {expected}
+                    for count in wrong:
+                        with self.subTest(accounts=accounts, history=history, sample=sample, count=count):
+                            self.files = fixture_v3()
+                            self.replace_ancestors(count, sample=sample, accounts=accounts, history=history)
+                            self.write()
+                            with self.assertRaisesRegex(ValueError, "exact native header window count"):
+                                self.read()
+
+    def test_v3_cancellation_cannot_retain_old_six_windows_or_erase_actual_work(self):
+        for accounts in ACCOUNTS:
+            for history in HISTORY:
+                expected = 3 * min(history + SAMPLES, 16)
+                for count in (0, expected + 1, 6 * min(history + SAMPLES, 16)):
+                    with self.subTest(accounts=accounts, history=history, count=count):
+                        self.files = fixture_v3()
+                        self.replace_ancestors(count, sample=None, purpose="atomic_cancellation",
+                                               accounts=accounts, history=history)
+                        self.write()
+                        with self.assertRaisesRegex(ValueError, "exact native header window count"):
+                            self.read()
+
+    def test_current_contract_cannot_change_window_size_counter_scope_or_number_types(self):
+        for mutation in ("missing", "six", "window32", "boolean", "float", "counter",
+                         "scope", "profile", "extra"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v3()
+                first = self.files["run.jsonl"][0]
+                contract = first["header_window_contract"]
+                if mutation == "missing":
+                    first.pop("header_window_contract")
+                elif mutation == "six":
+                    contract["complete_admission_windows"] = 6
+                elif mutation == "window32":
+                    contract["maximum_ancestor_headers_per_window"] = 32
+                elif mutation == "boolean":
+                    contract["complete_admission_windows"] = True
+                elif mutation == "float":
+                    contract["complete_admission_windows"] = 3.0
+                elif mutation == "counter":
+                    contract["counter"] = "all_sql_reads"
+                elif mutation == "scope":
+                    contract["scope"] = "half of total SQL and latency"
+                elif mutation == "profile":
+                    contract["profile"] = "unbound"
+                else:
+                    contract["production_qualified"] = True
+                self.refused()
+
+    def test_relabelling_v2_as_v3_or_v3_as_v2_does_not_change_observed_counts(self):
+        self.files = fixture_v2()
+        first = self.files["run.jsonl"][0]
+        first["schema"] = "native-growth-fixed-owner-scale-observation-v3"
+        first["header_window_contract"] = fixture_v3()["run.jsonl"][0]["header_window_contract"]
+        self.write()
+        with self.assertRaisesRegex(ValueError, "exact native header window count"):
+            self.read()
+        self.files = fixture_v3()
+        first = self.files["run.jsonl"][0]
+        first["schema"] = "native-growth-fixed-owner-scale-observation-v2"
+        first.pop("header_window_contract")
+        self.write()
+        with self.assertRaisesRegex(ValueError, "exact native header window count"):
+            check(self.root, historical_v2=True)
+
+    def test_v3_keeps_failed_cancelled_and_unobserved_returns_in_planned_denominator(self):
+        for mutation in ("failed_admission", "failed_activation", "missing_return", "missing_cancellation"):
+            with self.subTest(mutation=mutation):
+                self.files = fixture_v3()
+                if mutation in ("failed_admission", "failed_activation"):
+                    operation = "admission" if mutation == "failed_admission" else "activation"
+                    row = self.receipt(operation=operation)
+                    row.update(accepted=False, returned_block=None, error="PUBLIC_REQUEST_DEADLINE",
+                               error_code="PUBLIC_REQUEST_DEADLINE")
+                elif mutation == "missing_return":
+                    self.cohort().remove(self.receipt())
+                else:
+                    self.cohort().remove(self.receipt(sample=None, purpose="atomic_cancellation"))
                 self.refused()
 
 

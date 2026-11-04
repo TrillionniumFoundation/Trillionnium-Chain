@@ -18,7 +18,7 @@ fn new_and_exact_duplicate(node: &mut Node, packet: Packet, clock: u64) {
     let id = packet.id().unwrap();
     assert_eq!(decoded.id().unwrap(), id);
     assert_eq!(
-        node.check_admission_header_context(&packet, clock, None)
+        node.check_admission_header_context(&packet, clock, None, &mut || Ok(()))
             .unwrap(),
         None
     );
@@ -59,7 +59,7 @@ fn new_and_exact_duplicate(node: &mut Node, packet: Packet, clock: u64) {
     let state = node.state_at(id).unwrap();
     let stats = node.stats().unwrap();
     assert_eq!(
-        node.check_admission_header_context(&decoded, clock, None)
+        node.check_admission_header_context(&decoded, clock, None, &mut || Ok(()))
             .unwrap(),
         Some(id)
     );

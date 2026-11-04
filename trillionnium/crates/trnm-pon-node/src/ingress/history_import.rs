@@ -312,7 +312,7 @@ fn admit_packet(
                     let existing = node.precheck_public_admission_context_with_progress(
                         &packet,
                         clock,
-                        &mut || check(),
+                        &mut |_| check(),
                     )?;
                     let permit = if existing.is_none() {
                         node.begin_owner_work(&packet)?

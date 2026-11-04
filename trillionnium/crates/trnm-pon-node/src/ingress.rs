@@ -1445,11 +1445,9 @@ fn dispatch_shared_with_execution_observation(
                             owner.pending_exact_activation_replay(&packet, clock, &mut || {
                                 progress(0)
                             })?;
-                        let mut checkpoint = || {
+                        let mut checkpoint = |point| {
                             progress(0)?;
-                            (control.progress)(
-                                trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
-                            )
+                            (control.progress)(point)
                         };
                         let existing = if pending_exact.is_some() {
                             pending_exact
@@ -4020,6 +4018,73 @@ mod tests {
         })
         .unwrap();
         assert_eq!(duplicate["block"], reply["block"]);
+    }
+
+    #[test]
+    fn public_v3_header_resource_refusal_precedes_parent_state_and_work() {
+        use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
+        for authenticated in [false, true] {
+            let (_dir, node, packet) = pending_packet_with_backend(authenticated);
+            let before = node.lock().unwrap().read_active().unwrap();
+            let stats = node.lock().unwrap().stats().unwrap();
+            for public_order in [false, true] {
+                for code in [
+                    crate::ErrorCode::PublicRequestCancelled,
+                    crate::ErrorCode::PublicRequestDeadline,
+                    crate::ErrorCode::PublicMutationCpuBudget,
+                ] {
+                    let headers = std::sync::atomic::AtomicUsize::new(0);
+                    let parents = std::sync::atomic::AtomicUsize::new(0);
+                    let work = std::sync::atomic::AtomicUsize::new(0);
+                    let error = dispatch_shared_with_execution_observation(
+                        &node,
+                        Request::Submit {
+                            packet: hex::encode(packet.encode().unwrap()),
+                        },
+                        &mut |_| Ok(()),
+                        |packet| {
+                            work.fetch_add(1, Ordering::SeqCst);
+                            WorkCheckedPacket::verify(packet)
+                        },
+                        &ExecutionControl::new(
+                            &|point| {
+                                if point == ExecutionProgress::BeforeHeaderContext {
+                                    headers.fetch_add(1, Ordering::SeqCst);
+                                    return Err(Error::new(code));
+                                }
+                                if point == ExecutionProgress::BeforeParentBinding {
+                                    parents.fetch_add(1, Ordering::SeqCst);
+                                }
+                                Ok(())
+                            },
+                            &(),
+                        ),
+                        SubmitDispatchContext {
+                            public_proof_before_unowned_task: public_order,
+                            ..SubmitDispatchContext::default()
+                        },
+                    )
+                    .unwrap_err();
+                    assert!(error.is(code));
+                    assert!(!error.requires_owner_stop());
+                    assert_eq!(headers.load(Ordering::SeqCst), 1);
+                    assert_eq!(parents.load(Ordering::SeqCst), 0);
+                    assert_eq!(work.load(Ordering::SeqCst), 0);
+                    assert_eq!(node.lock().unwrap().stats().unwrap(), stats);
+                    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+                }
+            }
+            let reply = dispatch_shared_with(
+                &node,
+                Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                &mut |_| Ok(()),
+                WorkCheckedPacket::verify,
+            )
+            .unwrap();
+            assert_eq!(reply["block"], hex::encode(packet.id().unwrap()));
+        }
     }
 
     #[test]

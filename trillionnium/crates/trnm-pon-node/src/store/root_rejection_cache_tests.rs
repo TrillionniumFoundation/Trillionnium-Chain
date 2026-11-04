@@ -257,8 +257,8 @@ fn root_rejection_retains_only_the_actual_bound_parent_across_sql_faults() {
     let root_a = root(&original.2).unwrap();
     let slot = node.slot().unwrap();
     let mut context_calls = 0;
-    node.check_admission_context_with_progress(&valid, 1000, &mut || {
-        context_calls += 1;
+    node.check_admission_context_with_progress(&valid, 1000, &mut |point| {
+        context_calls += usize::from(point == ExecutionProgress::BeforeParentBinding);
         Ok(())
     })
     .unwrap();

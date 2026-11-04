@@ -156,7 +156,7 @@ concurrent builds. These records and the completed v4 HOLD remain negative
 evidence; the original complete business gates are unchanged.
 
 Fixed-owner A/H recordings now use
-`native-growth-fixed-owner-scale-observation-v2`. Admission and activation returns
+`native-growth-fixed-owner-scale-observation-v3`. Admission and activation returns
 are flushed before their original result assertions; a later activation failure
 cannot erase its admission receipt. A complete 3-by-3 run retains 144 successful
 native returns and nine separately timed BeforeCommit cancellations. Those nine
@@ -164,8 +164,21 @@ do not enter the eight-successful-block latency population. The neutral
 BeforeCommit-to-return interval includes the actual error/success return and is
 not an isolated durable-commit result. Thread/process CPU are unmeasured here
 and remain null. Journal serialization/sync is outside the ended native interval
-and remains part of whole-campaign cost. Historical v1 readback requires explicit
-`--historical-v1` and leaves its missing return/cancellation costs unknown.
+and remains part of whole-campaign cost. The current producer and reader require
+exactly `3 * min(parent_history_blocks, 16)` `HeaderAncestor` callbacks for each
+fresh admission in this workload, including a deliberate BeforeCommit cancellation. Target and
+median-time checks share one operation-local window, while initial precheck,
+owner reacquisition and the write transaction each read their own current window.
+The two prechecks also finish with fresh storage epoch/schema checks. Header
+callback counts exclude those checks and all other SQL; they do not measure a
+latency or CPU improvement. The original cost and business gates are unchanged.
+
+Retained v2 observations require explicit `--historical-v2` and retain their
+original `6 * min(parent_history_blocks, 16)` header callback contract. The default
+reader rejects v2 and does not relabel earlier observations as current v3.
+Historical v1 readback still requires explicit `--historical-v1` and leaves its
+missing return/cancellation costs unknown. Published historical observations
+are unchanged.
 
 These are additional implementation/observation controls. The original four-second
 deadline, hostile workload, confirmation depth/work, Host budgets, complete W1/PQ

@@ -148,13 +148,18 @@ impl Node {
             h.network == self.settings.network() && h.parameters == self.settings.parameters(),
             "NETWORK",
         )?;
+        let parent = self.record(h.parent)?;
         ensure(
-            self.record(h.parent)?.height.checked_add(1) == Some(h.height)
-                && h.height <= i64::MAX as u64,
+            parent.height.checked_add(1) == Some(h.height) && h.height <= i64::MAX as u64,
             "HEIGHT",
         )?;
+        let height = consensus::BranchTargetHeight::after(parent.height)?;
+        // Target and median time use the same immutable parent-first window.
+        // Each precheck/reacquire/transaction check still reads it afresh; only
+        // duplicate SQL reads within this one check are removed.
+        let recent = self.growth_recent_with_progress(h.parent, progress)?;
         ensure(
-            h.target == self.growth_target_with_progress(h.parent, progress)?,
+            h.target == self.growth_target_from_recent(height, &recent)?,
             "TARGET",
         )?;
         ensure(
@@ -165,12 +170,7 @@ impl Node {
             h.work_task == continuity_v1::maintenance_task()?,
             "CONTINUITY_MAINTENANCE",
         )?;
-        let times: Vec<_> = self
-            .growth_recent_with_progress(h.parent, progress)?
-            .iter()
-            .take(11)
-            .map(|p| p.0)
-            .collect();
+        let times: Vec<_> = recent.iter().take(11).map(|p| p.0).collect();
         consensus::check_time(
             h.timestamp,
             &times,
@@ -218,11 +218,18 @@ impl Node {
                 |r| r.get(0),
             )
             .optional()?;
-        if let Some(previous) = previous {
+        let existing = if let Some(previous) = previous {
             ensure(previous == bytes, "DUPLICATE_CONTENT")?;
-            return Ok(Some(id));
-        }
-        Ok(None)
+            Some(id)
+        } else {
+            None
+        };
+        // A foreign writer can change an already-read ancestor while the
+        // current owner is checking another header. Recheck the audited epoch
+        // after the complete read, including the duplicate fast return; a
+        // local window is never an authority to use a changed storage epoch.
+        self.growth_guard()?;
+        Ok(existing)
     }
 
     /// The caller must reacquire the original Node owner after W1 verification.

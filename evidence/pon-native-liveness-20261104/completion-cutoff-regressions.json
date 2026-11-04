@@ -1,0 +1,63 @@
+{
+  "schema": "trnm-completion-cutoff-regression-handoff-v1",
+  "base_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "base_source_sha256": "b3356e27b020891d186fefeb7a833515bc44c4f81e5cac6d42f1053dea39989e",
+  "candidate_source_sha256": "a80adb9e81a27821cd13f0e2de4da12e284b1bf1ed086f0103722beec2bde1c9",
+  "patch_file": "public-v3-completion-deadline.patch",
+  "patch_bytes": 19891,
+  "patch_sha256": "7b7698b7b5af3c4d5377a57836c55e3f22524c4ec234570b9f31e687ba5a2c55",
+  "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+  "planned": 5,
+  "executed": 0,
+  "passed": 0,
+  "failed_at_runtime": 0,
+  "not_run": 5,
+  "runtime_outcomes_unknown": 5,
+  "combined_planned_regressions": 23,
+  "prior_build_failures_are_execution_results_for_these_tests": false,
+  "wire_or_signed_namespace_changed": false,
+  "native_runtime_execution_performed": false,
+  "native_admission_is_exercised_by_fixture": false,
+  "full_w1_is_exercised_by_fixture": false,
+  "claimed_original_4s16_acceptance": false,
+  "claimed_hard_preemption": false,
+  "tests": [
+    {
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selector": "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+      "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+      "executed": false,
+      "runtime_outcome": null
+    },
+    {
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+      "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+      "executed": false,
+      "runtime_outcome": null
+    },
+    {
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selector": "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+      "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+      "executed": false,
+      "runtime_outcome": null
+    },
+    {
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selector": "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+      "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+      "executed": false,
+      "runtime_outcome": null
+    },
+    {
+      "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "selector": "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+      "result": "NOT_RUN_ADDED_AFTER_BLOCKED_BUILD",
+      "executed": false,
+      "runtime_outcome": null
+    }
+  ],
+  "readme_text": "Five additional completion-cutoff native regressions were added after the three retained Node library-test build failures. Their status is NOT_RUN_ADDED_AFTER_BLOCKED_BUILD: five planned, zero executed, five unknown runtime outcomes. The earlier SIGKILL attempts are not compilation or execution results for these added selectors. Together with the prior 18 unexecuted regressions, the planned native regression denominator is 23, all unexecuted.\n\nThe production change checks the original work, total and service deadlines, including equality at the cutoff, plus service stop and request cancellation, before promoting a queued completion from Await to Output. Worker response checks alone do not cover later CPU settlement, channel send or reactor delay. A refused completion releases Finished bytes, its output reservation and TaskObservation before closing the connection; it leaves prior native dispatch and CPU observations unchanged. A timely output stage remains capped by the original total/service deadlines and existing OUTPUT_MS. A late result, including a late encoding error, is recorded as deadline/cancellation rather than serialization or consensus invalidity. An on-time encoding error retains the original serialization path.\n\nThe regressions exercise the production completion helper with real TCP sockets, Instant deadlines, listener permits and observers. One holds the real connection slot while peer EOF proves connection destruction has begun, so it can verify that output resources were already released and the connection observation is still open. Their preexisting accepted/CPU values are observation fixtures; these tests do not perform durable native admission or W1 verification. The missing-connection branch retains its existing counters and terminal outcome; abandoned_tasks is a subset counter, not the complete failed-operation denominator. Complete request/connection observations retain the orphan completion.\n\nNo wire field, signed resource profile, worker count, numerical budget, W1 rule or original 4s/16 acceptance threshold changes. This enforces the existing r14 absolute work/overall/service bounds; it introduces no new namespace. The 2b4d7b46f runtime report is not relabelled as execution of this later source, and the original business gate remains unmet. Cancellation remains cooperative, not hard preemption of already-running provider/hash/SQLite calls."
+}

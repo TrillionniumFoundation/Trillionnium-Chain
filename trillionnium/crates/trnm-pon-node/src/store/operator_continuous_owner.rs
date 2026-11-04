@@ -1996,7 +1996,7 @@ impl Node {
             let id = match self.check_admission_context_with_progress(
                 &packet,
                 observed_now,
-                &mut || progress(),
+                &mut |_| progress(),
             )? {
                 Some(id) => id,
                 None => {

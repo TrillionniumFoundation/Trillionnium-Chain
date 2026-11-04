@@ -1047,8 +1047,8 @@ fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() 
         let before = logical_rows(&node.db);
         let mut total = 0;
         assert_eq!(
-            node.check_admission_context_with_progress(&packet, 100_000, &mut || {
-                total += 1;
+            node.check_admission_context_with_progress(&packet, 100_000, &mut |point| {
+                total += usize::from(point == ExecutionProgress::BeforeParentBinding);
                 Ok(())
             })
             .unwrap(),
@@ -1061,7 +1061,10 @@ fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() 
         for cut in [0, total / 2, total - 1] {
             let mut calls = 0;
             let error = node
-                .check_admission_context_with_progress(&packet, 100_000, &mut || {
+                .check_admission_context_with_progress(&packet, 100_000, &mut |point| {
+                    if point != ExecutionProgress::BeforeParentBinding {
+                        return Ok(());
+                    }
                     let current = calls;
                     calls += 1;
                     if current == cut {
@@ -1085,7 +1088,7 @@ fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() 
         wrong_network.header.network = [99; 32];
         let mut calls = 0;
         assert_eq!(
-            node.check_admission_context_with_progress(&wrong_network, 100_000, &mut || {
+            node.check_admission_context_with_progress(&wrong_network, 100_000, &mut |_| {
                 calls += 1;
                 Err("MUST_NOT_RUN".into())
             })

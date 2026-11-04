@@ -935,7 +935,9 @@ fn response(
     s: &Settings,
     c: &Cookie,
     outcome: Result<Value>,
+    progress: &dyn Fn() -> Result<()>,
 ) -> Result<Vec<u8>> {
+    progress()?;
     let (ok, value) = match outcome {
         Ok(v) => (true, v),
         Err(e) => (
@@ -961,11 +963,20 @@ fn response(
         value,
         signature: String::new(),
     };
-    r.signature = server.sign_authentication(&r.message()?)?;
-    framed(
+    let message = r.message()?;
+    // Hashing/serializing the bounded value can outlive its original operation.
+    // Do not start a fresh signature after that deadline or cancellation.
+    progress()?;
+    r.signature = server.sign_authentication(&message)?;
+    // One signature is nonpreemptible, but its return must not start another
+    // allocation/serialization phase for an operation that has already ended.
+    progress()?;
+    let bytes = framed(
         serde_json::to_vec(&r)?,
         pq_identity::response_maximum_for(c.op, server.identity.is_pq()),
-    )
+    )?;
+    progress()?;
+    Ok(bytes)
 }
 /// Streaming canonical equality avoids another body-sized serialization Vec.
 struct ExactCanonical<'a> {
@@ -1095,9 +1106,6 @@ fn try_paid_permits(
     Ok(Some((lane, body)))
 }
 struct Task {
-    observation: Option<TaskObservation>,
-    _permit: BufferPermit,
-    _lane_permit: Arc<BufferPermit>,
     id: u64,
     cookie: Cookie,
     // Keep the already-reserved, bounded paid bytes until the worker owns the
@@ -1107,12 +1115,46 @@ struct Task {
     backpressure_seen: bool,
     deadline: Instant,
     cancelled: Arc<AtomicBool>,
+    // Buffered/queued task disposal must free the actual bytes before another
+    // request may reuse their body or lane allowance.
+    _permit: BufferPermit,
+    _lane_permit: Arc<BufferPermit>,
+    // Mark task closure only after its resources have actually been released.
+    observation: Option<TaskObservation>,
 }
 struct Finished {
-    permit: Option<BufferPermit>,
     id: u64,
     bytes: Result<Vec<u8>>,
+    // A dropped receiver/completion keeps its allowance until its bytes die.
+    permit: Option<BufferPermit>,
+    // A disconnected request stays open while the completion queue still owns
+    // its output allocation. A live Output stage has its connection observer.
+    _observation: Option<TaskObservation>,
 }
+
+fn join_public_workers(
+    workers: Vec<thread::ScopedJoinHandle<'_, Result<()>>>,
+    proof_rx: Arc<Mutex<mpsc::Receiver<Task>>>,
+    read_rx: Arc<Mutex<mpsc::Receiver<Task>>>,
+) -> Result<()> {
+    let mut outcome = Ok(());
+    for worker in workers {
+        // A previous error must not skip another explicit join and let a later
+        // panic escape through the scope's implicit join instead of this Result.
+        let result = worker
+            .join()
+            .unwrap_or_else(|_| Err("PUBLIC_WORKER_PANIC".into()));
+        if outcome.is_ok() {
+            outcome = result;
+        }
+    }
+    // A failed worker may leave buffered tasks. Their original permits and
+    // observations must be released before the final resource snapshot.
+    drop(proof_rx);
+    drop(read_rx);
+    outcome
+}
+
 #[derive(Clone, Copy)]
 struct PendingOrder {
     sequence: u64,
@@ -1247,8 +1289,54 @@ fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, Pend
         }
     }
 }
-struct Connection {
+// Own the accepted socket before any fallible setup or capacity decision. A
+// local `?` must close it before returning its slot and recording closure.
+struct AcceptedConnection {
+    socket: TcpStream,
+    intake_lease: Option<ConnectionLease>,
+    connection_permit: Option<BufferPermit>,
     observation: Option<ConnectionObservation>,
+}
+impl AcceptedConnection {
+    fn into_connection(
+        mut self,
+        peer: SocketAddr,
+        next_id: &mut u64,
+        intake: &ListenerIntake,
+    ) -> Result<Connection> {
+        self.socket.set_nonblocking(true)?;
+        self.socket.set_nodelay(true)?;
+        *next_id = next_id.checked_add(1).ok_or("PUBLIC_CONNECTION_ID")?;
+        if let Some(record) = &self.observation {
+            record.identity(*next_id);
+        }
+        let accepted_at = Instant::now();
+        let cancelled = Arc::new(AtomicBool::new(false));
+        let permit = self
+            .connection_permit
+            .as_ref()
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        self.intake_lease =
+            Some(intake.connection_lease(permit, cancelled.clone(), accepted_at)?);
+        let prefix = Vec::with_capacity(HELLO_BYTES);
+        Ok(Connection {
+            id: *next_id,
+            socket: self.socket,
+            peer,
+            deadline: accepted_at + Duration::from_millis(PREFIX_MS),
+            stage: Stage::Hello(prefix),
+            total_deadline: accepted_at + Duration::from_millis(OVERALL_MS),
+            permit: None,
+            lane_permit: None,
+            cancelled,
+            intake_lease: self.intake_lease,
+            _connection_permit: self.connection_permit,
+            observation: self.observation,
+        })
+    }
+}
+
+struct Connection {
     id: u64,
     socket: TcpStream,
     peer: SocketAddr,
@@ -1261,68 +1349,89 @@ struct Connection {
     // Metadata is retired before its original connection permit. It does not
     // release capacity when another listener requests pressure cancellation.
     intake_lease: Option<ConnectionLease>,
-    // Drop last, after the socket, stage buffers and lane/body references.
+    // Release after the socket, stage buffers and lane/body references.
     // New listeners cannot reuse this slot while those resources still live.
     _connection_permit: Option<BufferPermit>,
+    // Closure is an observation of completed cleanup, including the slot.
+    observation: Option<ConnectionObservation>,
 }
 impl Drop for Connection {
     fn drop(&mut self) {
         self.cancelled.store(true, Ordering::Release);
     }
 }
-/// A queued completion cannot renew an expired work-stage deadline. The
-/// reactor drains completions before scanning deadlines, so this check belongs
-/// to the same transition that installs Output. Native dispatch and its CPU
-/// settlement have already completed; discarding late output changes neither.
+// Completions are drained before the reactor's ordinary deadline scan. The
+// original work/total/service bounds therefore belong to this transition too;
+// worker-side response checks cannot cover settlement, send or queue delay.
 fn apply_finished_connection(
     connections: &mut BTreeMap<u64, Connection>,
     done: Finished,
     metrics: &Mutex<PublicMetrics>,
     now: Instant,
+    service_end: Instant,
+    stop: &AtomicBool,
 ) -> Result<()> {
     let Some(conn) = connections.get_mut(&done.id) else {
+        // Preserve the already-recorded connection terminal and existing
+        // orphan counter semantics. The full request observer, not the subset
+        // abandoned_tasks counter, retains this undelivered completion.
+        drop(done);
         return Ok(());
     };
     ensure(
         matches!(conn.stage, Stage::Await),
         "PUBLIC_COMPLETION_STATE",
     )?;
-    let expired = now >= conn.deadline;
-    if expired {
-        // Signal the original task before diagnostic locks. Its remaining
-        // owners still retain their own reservations until they actually exit.
+    let refusal = if stop.load(Ordering::Acquire) {
+        Some(("shutdown", "PUBLIC_REQUEST_CANCELLED", false))
+    } else if conn.cancelled.load(Ordering::Acquire) {
+        Some(("work", "PUBLIC_REQUEST_CANCELLED", false))
+    } else if now >= conn.deadline || now >= conn.total_deadline || now >= service_end {
+        Some(("work", "PUBLIC_REQUEST_DEADLINE", true))
+    } else {
+        None
+    };
+    if let Some((phase, code, expired)) = refusal {
         conn.cancelled.store(true, Ordering::Release);
+        if let Some(record) = &conn.observation {
+            record.terminal_error(phase, &code.into());
+        }
+        let id = done.id;
+        let serialization_failed = done.bytes.is_err();
+        // The native result/CPU observations remain factual. Dispose of bytes,
+        // output allowance and TaskObservation before closing the connection.
+        // Expiry/cancellation remains the primary resource refusal. An actual
+        // encoding failure is a separate overlapping event, not another request
+        // or a consensus verdict; existing worker phase observations stay intact.
+        drop(done);
+        drop(connections.remove(&id));
         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-        m.expired_connections += 1;
-        *m.expired_phase_counts.entry("work".into()).or_default() += 1;
-    }
-    let bytes = match done.bytes {
-        Ok(bytes) => bytes,
-        Err(error) => {
-            // Preserve the original serialization failure and its diagnostic
-            // priority, including when this completion also missed its work
-            // deadline. Counters describe overlapping events, not new requests.
-            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+        if serialization_failed {
             m.output_serialization_failures += 1;
             *m.retained_phase_errors.entry("output".into()).or_default() += 1;
-            drop(m);
-            if let Some(record) = &conn.observation {
-                record.terminal_error("serialization", &error);
-            }
-            connections.remove(&done.id);
-            return Ok(());
         }
-    };
-    if expired {
-        if let Some(record) = &conn.observation {
-            record.terminal_error("work", &"PUBLIC_REQUEST_DEADLINE".into());
+        m.abandoned_tasks += 1;
+        if expired {
+            m.expired_connections += 1;
+            *m.expired_phase_counts.entry(phase.into()).or_default() += 1;
+        } else {
+            *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
         }
-        // Drop the socket and connection-owned reservations now. A worker's
-        // body/lane references remain charged until that worker releases them.
-        // The Finished output reservation drops on return.
-        connections.remove(&done.id);
         return Ok(());
     }
+    if let Err(error) = &done.bytes {
+        if let Some(record) = &conn.observation {
+            record.terminal_error("serialization", error);
+        }
+        let id = done.id;
+        drop(done);
+        drop(connections.remove(&id));
+        let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+        m.output_serialization_failures += 1;
+        *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+        return Ok(());
+    }
+    let bytes = done.bytes?;
     if let Some(record) = &conn.observation {
         record.response_started();
     }
@@ -1331,8 +1440,11 @@ fn apply_finished_connection(
         cursor: 0,
         _permit: done.permit,
     };
+    // This is the first output-stage budget of an on-time completion; neither
+    // the original overall bound nor the original service lifetime is renewed.
     conn.deadline = conn
         .total_deadline
+        .min(service_end)
         .min(now + Duration::from_millis(OUTPUT_MS));
     Ok(())
 }
@@ -2029,7 +2141,7 @@ fn serve_public_protected_v3_inner(
                     let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
                     let task = dequeue_order.as_ref().unwrap().try_recv();
                     match task {
-                        Ok(task) => {
+                        Ok(mut task) => {
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
                             let alive = task_alive(task.deadline, &stop, &task.cancelled);
                             if let Some(record) = &task.observation {
@@ -2171,7 +2283,7 @@ fn serve_public_protected_v3_inner(
                                             );
                                             // Releasing the bounded raw body also belongs
                                             // to the same actual owner CPU interval.
-                                            drop(task.raw_body);
+                                            drop(std::mem::take(&mut task.raw_body));
                                             accounting =
                                                 cpu_permit.map(|permit| (permit, measurement));
                                             outcome
@@ -2201,7 +2313,13 @@ fn serve_public_protected_v3_inner(
                             if let (Some(record), Err(error)) = (&task.observation, &outcome) {
                                 record.dispatch_error(error);
                             }
-                            let bytes = if task.cancelled.load(Ordering::Acquire) {
+                            let response_progress =
+                                || task_alive(task.deadline.min(end), &stop, &task.cancelled);
+                            let bytes = if response_progress().is_err() {
+                                // Release the bounded native result before settling
+                                // the original worker CPU interval. A completed
+                                // native success remains success in the observation.
+                                drop(outcome);
                                 None
                             } else {
                                 // Output memory was reserved before admission. Keep
@@ -2212,7 +2330,15 @@ fn serve_public_protected_v3_inner(
                                 let bytes = super::observe_submit_phase(
                                     task.observation.as_ref(),
                                     SubmitPhase::ResponseEncoding,
-                                    || response(server, settings, &task.cookie, outcome),
+                                    || {
+                                        response(
+                                            server,
+                                            settings,
+                                            &task.cookie,
+                                            outcome,
+                                            &response_progress,
+                                        )
+                                    },
                                 );
                                 // Fault injection cannot skip the actual signing work.
                                 #[cfg(test)]
@@ -2222,13 +2348,38 @@ fn serve_public_protected_v3_inner(
                                 } else {
                                     bytes
                                 };
+                                let bytes = if response_progress().is_ok() {
+                                    Some(bytes)
+                                } else {
+                                    // Expiry/cancellation during response work is
+                                    // abandonment, not an output serialization
+                                    // failure. Drop any materialized bytes inside
+                                    // this same worker CPU interval.
+                                    drop(bytes);
+                                    None
+                                };
                                 if let Some((_, measurement)) = &accounting {
                                     measurement.record_phase(
                                         &measurement.response_ns,
                                         response_cpu.and_then(ThreadCpuStamp::finish),
                                     );
                                 }
-                                Some(bytes)
+                                bytes
+                            };
+                            let id = task.id;
+                            let observation = task.observation.take();
+                            // Keep response/dispatch observation alive, but destroy
+                            // the remaining task-owned cookie, body and permits
+                            // before the original owner CPU interval is settled.
+                            drop(task);
+                            let permit = if bytes.is_some() {
+                                permit
+                            } else {
+                                // An abandoned response has no remaining output
+                                // owner; release its reservation before settlement
+                                // and before closing the retained task observation.
+                                drop(permit);
+                                None
                             };
                             // Unknown accounting latches future mutation but never
                             // rewrites a completed native outcome or signed ACK.
@@ -2239,7 +2390,7 @@ fn serve_public_protected_v3_inner(
                                 None => read_cpu.and_then(ThreadCpuStamp::finish),
                             };
                             if dispatch_started {
-                                if let Some(record) = &task.observation {
+                                if let Some(record) = &observation {
                                     record.dispatch_finished(cpu, accepted);
                                 }
                             }
@@ -2253,8 +2404,9 @@ fn serve_public_protected_v3_inner(
                             if finished
                                 .send(Finished {
                                     permit,
-                                    id: task.id,
+                                    id,
                                     bytes,
+                                    _observation: observation,
                                 })
                                 .is_err()
                             {
@@ -2289,56 +2441,34 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match listener.accept() {
                         Ok((socket, peer)) => {
-                            let observation = observer
-                                .as_ref()
-                                .and_then(PublicRequestObserver::connection);
+                            let mut accepted = AcceptedConnection {
+                                socket,
+                                intake_lease: None,
+                                connection_permit: None,
+                                observation: observer
+                                    .as_ref()
+                                    .and_then(PublicRequestObserver::connection),
+                            };
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             m.accepted_connections += 1;
-                            let Some(connection_permit) = BufferPermit::try_acquire(
+                            accepted.connection_permit = BufferPermit::try_acquire(
                                 intake.connections.clone(),
                                 1,
                                 MAX_CONNECTIONS,
-                            )?
-                            else {
+                            )?;
+                            if accepted.connection_permit.is_none() {
                                 m.capacity_refusals += 1;
                                 if intake.cancel_idle_unpaid_under_pressure(Instant::now())? {
                                     m.unpaid_pressure_cancel_requests += 1;
                                 }
-                                if let Some(record) = &observation {
+                                if let Some(record) = &accepted.observation {
                                     record.terminal("capacity");
                                 }
                                 continue;
-                            };
-                            socket.set_nonblocking(true)?;
-                            socket.set_nodelay(true)?;
-                            next_id = next_id.checked_add(1).ok_or("PUBLIC_CONNECTION_ID")?;
-                            if let Some(record) = &observation {
-                                record.identity(next_id);
                             }
-                            let accepted_at = Instant::now();
-                            let cancelled = Arc::new(AtomicBool::new(false));
-                            let intake_lease = intake.connection_lease(
-                                &connection_permit,
-                                cancelled.clone(),
-                                accepted_at,
-                            )?;
-                            connections.insert(
-                                next_id,
-                                Connection {
-                                    _connection_permit: Some(connection_permit),
-                                    observation,
-                                    id: next_id,
-                                    socket,
-                                    peer,
-                                    deadline: accepted_at + Duration::from_millis(PREFIX_MS),
-                                    stage: Stage::Hello(Vec::with_capacity(HELLO_BYTES)),
-                                    total_deadline: accepted_at + Duration::from_millis(OVERALL_MS),
-                                    permit: None,
-                                    lane_permit: None,
-                                    cancelled,
-                                    intake_lease: Some(intake_lease),
-                                },
-                            );
+                            let connection =
+                                accepted.into_connection(peer, &mut next_id, &intake)?;
+                            connections.insert(next_id, connection);
                             m.peak_connections = m.peak_connections.max(connections.len());
                         }
                         Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => break,
@@ -2347,14 +2477,14 @@ fn serve_public_protected_v3_inner(
                 }
                 for _ in 0..8 {
                     match finished_rx.try_recv() {
-                        Ok(done) => {
-                            apply_finished_connection(
-                                &mut connections,
-                                done,
-                                &metrics,
-                                Instant::now(),
-                            )?;
-                        }
+                        Ok(done) => apply_finished_connection(
+                            &mut connections,
+                            done,
+                            &metrics,
+                            Instant::now(),
+                            end,
+                            &stop,
+                        )?,
                         Err(TryRecvError::Empty) => break,
                         Err(TryRecvError::Disconnected) => return Err("PUBLIC_WORKERS_GONE".into()),
                     }
@@ -2742,23 +2872,25 @@ fn serve_public_protected_v3_inner(
                                 caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)?;
                                 Ok(Stage::Await)
                             }
-                            Stage::Output {
-                                bytes,
-                                mut cursor,
-                                _permit,
-                            } => {
-                                let before = cursor;
+                            mut output @ Stage::Output { .. } => {
+                                // Keep the owning variant intact on both success
+                                // and `?` failure. Detached locals would drop the
+                                // permit before the output buffer on an early exit.
+                                let Stage::Output { bytes, cursor, .. } = &mut output else {
+                                    unreachable!();
+                                };
+                                let before = *cursor;
                                 if write_available_observed(
                                     &mut conn.socket,
-                                    &bytes,
-                                    &mut cursor,
+                                    bytes,
+                                    cursor,
                                     conn.observation.as_ref(),
                                     5,
                                 )? {
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
-                                        .response_bytes_written += (cursor - before) as u64;
+                                        .response_bytes_written += (*cursor - before) as u64;
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
@@ -2772,12 +2904,8 @@ fn serve_public_protected_v3_inner(
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
-                                        .response_bytes_written += (cursor - before) as u64;
-                                    Ok(Stage::Output {
-                                        bytes,
-                                        cursor,
-                                        _permit,
-                                    })
+                                        .response_bytes_written += (*cursor - before) as u64;
+                                    Ok(output)
                                 }
                             }
                         }
@@ -2868,9 +2996,7 @@ fn serve_public_protected_v3_inner(
             }
         }
         connections.clear();
-        for worker in workers {
-            worker.join().map_err(|_| "PUBLIC_WORKER_PANIC")??;
-        }
+        let worker_outcome = join_public_workers(workers, proof_rx, read_rx);
         {
             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
             m.paid_body_reserved_bytes_after_shutdown =
@@ -2891,6 +3017,7 @@ fn serve_public_protected_v3_inner(
                 u64::try_from((-cpu.credit_ns).max(0)).unwrap_or(u64::MAX);
             m.mutation_cpu_unavailable_after_shutdown = cpu.unavailable;
         }
+        worker_outcome?;
         outcome
     })?;
     // A late OS-parent change cannot turn completed native work into a success
@@ -4750,6 +4877,368 @@ mod tests {
         assert_eq!(metrics.lock().unwrap().queue_backpressure_events, 4);
         assert_eq!(metrics.lock().unwrap().queue_refusals, 0);
     }
+
+    fn wait_for_released_pool(pool: &Mutex<usize>) -> bool {
+        let until = Instant::now() + Duration::from_secs(2);
+        loop {
+            if *pool.lock().unwrap() == 0 {
+                return true;
+            }
+            if Instant::now() >= until {
+                return false;
+            }
+            thread::yield_now();
+        }
+    }
+
+    #[test]
+    fn dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let raw_body = serde_json::to_vec(&Request::Head).unwrap();
+        let cookie = server()
+            .cookie(
+                &settings,
+                hello(2, raw_body.len()),
+                "127.0.0.1:1".parse().unwrap(),
+            )
+            .unwrap();
+        let body_pool = Arc::new(Mutex::new(0));
+        let lane_pool = Arc::new(Mutex::new(0));
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        connection.identity(1);
+        connection.request(2, [3; 32]);
+        let record = connection.task();
+        let ready_at = Instant::now();
+        record.queue_started(ready_at);
+        let task = Task {
+            id: 1,
+            cookie,
+            _permit: BufferPermit::acquire(
+                body_pool.clone(),
+                raw_body.len() * 3,
+                MAX_PAID_BODY_BYTES,
+            )
+            .unwrap(),
+            _lane_permit: Arc::new(
+                BufferPermit::acquire(lane_pool.clone(), 1, MAX_READ_GRANTS).unwrap(),
+            ),
+            raw_body,
+            ready_at,
+            backpressure_seen: false,
+            deadline: ready_at + Duration::from_millis(WORK_MS),
+            cancelled: Arc::new(AtomicBool::new(true)),
+            observation: Some(record),
+        };
+        connection.terminal_error("shutdown", &"PUBLIC_REQUEST_CANCELLED".into());
+        drop(connection);
+        let (sender, receiver) = mpsc::sync_channel(2);
+        sender.send(task).ok().unwrap();
+        drop(sender);
+
+        // Dropping this real queue releases its body allowance and then blocks
+        // in the last grant's real destructor. The first release proves that
+        // the drop has actually started; no sleep or assumed scheduling order.
+        let held = lane_pool.lock().unwrap();
+        let worker = thread::spawn(move || drop(receiver));
+        let cleanup_started = wait_for_released_pool(&body_pool);
+        let while_held = observer.snapshot();
+        let reserved = *held;
+        drop(held);
+        worker.join().unwrap();
+
+        assert!(cleanup_started);
+        assert_eq!(reserved, 1);
+        let row = &while_held.records[0];
+        assert!(row.connection_closed);
+        assert!(!row.task_closed && !row.complete);
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+        assert_eq!(row.dispatch_accepted, None);
+        let after = observer.snapshot();
+        assert_eq!(after.measurement_failures, 0);
+        assert!(after.records[0].task_closed && after.records[0].complete);
+        assert_eq!(*body_pool.lock().unwrap(), 0);
+        assert_eq!(*lane_pool.lock().unwrap(), 0);
+    }
+
+    #[test]
+    fn connection_is_not_observed_closed_before_its_original_slot_releases() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let raw_body = serde_json::to_vec(&Request::Head).unwrap();
+        let cookie = server()
+            .cookie(
+                &settings,
+                hello(2, raw_body.len()),
+                "127.0.0.1:1".parse().unwrap(),
+            )
+            .unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (socket, peer) = listener.accept().unwrap();
+        let body_pool = Arc::new(Mutex::new(0));
+        let slots = Arc::new(Mutex::new(0));
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let record = observer.connection().unwrap();
+        record.identity(1);
+        record.request(2, [3; 32]);
+        record.terminal_error("body", &"PUBLIC_REQUEST_DEADLINE".into());
+        let cancelled = Arc::new(AtomicBool::new(false));
+        let deadline = Instant::now() + Duration::from_millis(BODY_MS);
+        let conn = Connection {
+            id: 1,
+            socket,
+            peer,
+            deadline,
+            permit: Some(
+                BufferPermit::acquire(body_pool.clone(), raw_body.len() * 3, MAX_PAID_BODY_BYTES)
+                    .unwrap(),
+            ),
+            stage: Stage::Body {
+                cookie,
+                bytes: raw_body,
+            },
+            total_deadline: deadline,
+            lane_permit: None,
+            cancelled: cancelled.clone(),
+            intake_lease: None,
+            _connection_permit: Some(
+                BufferPermit::acquire(slots.clone(), 1, MAX_CONNECTIONS).unwrap(),
+            ),
+            observation: Some(record),
+        };
+
+        // Body release proves that socket/stage cleanup has progressed, while
+        // the original connection slot is deliberately still being reclaimed.
+        let held = slots.lock().unwrap();
+        let worker = thread::spawn(move || drop(conn));
+        let cleanup_started = wait_for_released_pool(&body_pool);
+        let while_held = observer.snapshot();
+        let reserved = *held;
+        drop(held);
+        worker.join().unwrap();
+
+        assert!(cleanup_started);
+        assert!(cancelled.load(Ordering::Acquire));
+        assert_eq!(reserved, 1);
+        let row = &while_held.records[0];
+        assert!(!row.connection_closed && !row.complete);
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+        let after = observer.snapshot();
+        assert_eq!(after.measurement_failures, 0);
+        assert!(after.records[0].connection_closed && after.records[0].complete);
+        assert_eq!(*body_pool.lock().unwrap(), 0);
+        assert_eq!(*slots.lock().unwrap(), 0);
+    }
+
+    #[test]
+    fn accepted_setup_error_closes_socket_before_releasing_slot_and_observation() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        client
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let (socket, peer) = listener.accept().unwrap();
+        let intake = ListenerIntake::new();
+        let slots = intake.connections.clone();
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let accepted = AcceptedConnection {
+            socket,
+            intake_lease: None,
+            connection_permit: Some(
+                BufferPermit::acquire(slots.clone(), 1, MAX_CONNECTIONS).unwrap(),
+            ),
+            observation: observer.connection(),
+        };
+        let held = slots.lock().unwrap();
+        let worker = thread::spawn(move || -> Result<()> {
+            // Exercise the production setup helper's actual overflow `?`,
+            // before its resources can be transferred to a Connection.
+            let mut next_id = u64::MAX;
+            accepted
+                .into_connection(peer, &mut next_id, &intake)
+                .map(|_| ())
+        });
+        let eof = client.read(&mut [0u8; 1]);
+        let while_held = observer.snapshot();
+        let reserved = *held;
+        drop(held);
+        let error = worker.join().unwrap().unwrap_err();
+
+        // A real peer EOF proves socket destruction happened before the still
+        // blocked permit destructor. The observer must not close before either.
+        assert!(matches!(eof, Ok(0)), "{eof:?}");
+        assert_eq!(error.to_string(), "PUBLIC_CONNECTION_ID");
+        assert_eq!(reserved, 1);
+        assert_eq!(while_held.accepted_connections_seen, 1);
+        assert!(!while_held.records[0].connection_closed);
+        assert!(!while_held.records[0].complete);
+        assert_eq!(*slots.lock().unwrap(), 0);
+        let closed = observer.snapshot();
+        assert_eq!(closed.measurement_failures, 0);
+        assert!(closed.records[0].connection_closed && closed.records[0].complete);
+        assert!(!closed.records[0].response_frame_complete);
+        assert_eq!(closed.records[0].dispatch_accepted, None);
+    }
+
+    #[test]
+    fn finished_queue_and_failed_send_keep_output_owned_until_request_closes() {
+        for disconnected in [false, true] {
+            let output_pool = Arc::new(Mutex::new(0));
+            let observer = PublicRequestObserver::new(1).unwrap();
+            let connection = observer.connection().unwrap();
+            connection.identity(1);
+            let observation = connection.task();
+            connection.terminal_error("work", &"PUBLIC_REQUEST_DEADLINE".into());
+            drop(connection);
+            let done = Finished {
+                id: 1,
+                bytes: Ok(vec![7; IO_QUANTUM]),
+                permit: Some(
+                    BufferPermit::acquire(output_pool.clone(), IO_QUANTUM, MAX_OUTPUT_BYTES)
+                        .unwrap(),
+                ),
+                _observation: Some(observation),
+            };
+            let (sender, receiver) = mpsc::sync_channel(1);
+            let assert_pending = || {
+                assert_eq!(*output_pool.lock().unwrap(), IO_QUANTUM);
+                let pending = observer.snapshot();
+                let row = &pending.records[0];
+                assert!(row.connection_closed);
+                assert!(!row.task_closed && !row.complete);
+                assert_eq!(row.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+            };
+            if disconnected {
+                drop(receiver);
+                let failed = sender.send(done).err().unwrap();
+                assert_pending();
+                drop(failed);
+            } else {
+                sender.send(done).ok().unwrap();
+                assert_pending();
+                drop(receiver);
+            }
+            assert_eq!(*output_pool.lock().unwrap(), 0);
+            let closed = observer.snapshot();
+            assert_eq!(closed.measurement_failures, 0);
+            assert!(closed.records[0].task_closed && closed.records[0].complete);
+        }
+    }
+
+    #[test]
+    fn shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error() {
+        for panic_first in [false, true] {
+            let settings = Settings::development(Some(1)).unwrap();
+            let raw_body = serde_json::to_vec(&Request::Head).unwrap();
+            let cookie = server()
+                .cookie(
+                    &settings,
+                    hello(2, raw_body.len()),
+                    "127.0.0.1:1".parse().unwrap(),
+                )
+                .unwrap();
+            let body_pool = Arc::new(Mutex::new(0));
+            let lane_pool = Arc::new(Mutex::new(0));
+            let output_pool = Arc::new(Mutex::new(0));
+            let observer = PublicRequestObserver::new(2).unwrap();
+            let ready_at = Instant::now();
+            let make_task = |id| {
+                let connection = observer.connection().unwrap();
+                connection.identity(id);
+                let record = connection.task();
+                record.queue_started(ready_at);
+                connection.terminal_error("shutdown", &"PUBLIC_REQUEST_CANCELLED".into());
+                drop(connection);
+                Task {
+                    id,
+                    cookie: cookie.clone(),
+                    raw_body: raw_body.clone(),
+                    ready_at,
+                    backpressure_seen: false,
+                    deadline: ready_at + Duration::from_millis(WORK_MS),
+                    cancelled: Arc::new(AtomicBool::new(true)),
+                    _permit: BufferPermit::acquire(
+                        body_pool.clone(),
+                        raw_body.len() * 3,
+                        MAX_PAID_BODY_BYTES,
+                    )
+                    .unwrap(),
+                    _lane_permit: Arc::new(
+                        BufferPermit::acquire(lane_pool.clone(), 1, MAX_READ_GRANTS).unwrap(),
+                    ),
+                    observation: Some(record),
+                }
+            };
+            let (proof_tx, proof_rx) = mpsc::sync_channel(2);
+            let (read_tx, read_rx) = mpsc::sync_channel(2);
+            // These are owned queue allocations; no native work is dispatched
+            // or represented as valid by this teardown-only regression.
+            proof_tx.send(make_task(1)).ok().unwrap();
+            read_tx.send(make_task(2)).ok().unwrap();
+            drop((proof_tx, read_tx));
+            let outputs: Vec<_> = (0..3)
+                .map(|_| {
+                    (
+                        vec![7u8; IO_QUANTUM],
+                        BufferPermit::acquire(output_pool.clone(), IO_QUANTUM, MAX_OUTPUT_BYTES)
+                            .unwrap(),
+                    )
+                })
+                .collect();
+            let mut outputs = outputs.into_iter();
+            let first = outputs.next().unwrap();
+            let second = outputs.next().unwrap();
+            let third = outputs.next().unwrap();
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                thread::scope(|scope| {
+                    let first = scope.spawn(move || -> Result<()> {
+                        let _output = first;
+                        if panic_first {
+                            panic!("first scoped worker failure");
+                        }
+                        Err("PUBLIC_QUEUE".into())
+                    });
+                    let second = scope.spawn(move || -> Result<()> {
+                        let _output = second;
+                        if !panic_first {
+                            panic!("later scoped worker failure");
+                        }
+                        Err("PUBLIC_OWNER".into())
+                    });
+                    let third = scope.spawn(move || -> Result<()> {
+                        let _output = third;
+                        Ok(())
+                    });
+                    let outcome = join_public_workers(
+                        vec![first, second, third],
+                        Arc::new(Mutex::new(proof_rx)),
+                        Arc::new(Mutex::new(read_rx)),
+                    );
+                    // These checks run before leaving thread::scope. An early
+                    // join error must not defer cleanup to implicit scope joins
+                    // or leave queued allocations for the outer function drop.
+                    assert_eq!(*body_pool.lock().unwrap(), 0);
+                    assert_eq!(*lane_pool.lock().unwrap(), 0);
+                    assert_eq!(*output_pool.lock().unwrap(), 0);
+                    let snapshot = observer.snapshot();
+                    assert_eq!(snapshot.accepted_connections_seen, 2);
+                    assert_eq!(snapshot.measurement_failures, 0);
+                    assert!(snapshot.records.iter().all(|r| r.complete));
+                    outcome
+                })
+            }))
+            .expect("all worker panics must be explicitly joined into the service Result");
+            assert_eq!(
+                result.unwrap_err().to_string(),
+                if panic_first {
+                    "PUBLIC_WORKER_PANIC"
+                } else {
+                    "PUBLIC_QUEUE"
+                }
+            );
+        }
+    }
+
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
         // Fixed independent r14 SHA-256/length-framing vector for development
@@ -6990,6 +7479,7 @@ mod tests {
             &s,
             &cookie,
             Ok(serde_json::to_value(page).unwrap()),
+            &|| Ok(()),
         )
         .unwrap();
         assert!(response.len() <= MAX_RESPONSE + 4);
@@ -7675,79 +8165,315 @@ mod completion_deadline_tests {
         cancelled: Arc<AtomicBool>,
         intake: ListenerIntake,
         observer: PublicRequestObserver,
-        metrics: Mutex<PublicMetrics>,
+        task: Option<TaskObservation>,
+        metrics: Arc<Mutex<PublicMetrics>>,
     }
     impl Fixture {
         fn new(deadline: Instant, total_deadline: Instant) -> Self {
             let listener = TcpListener::bind("127.0.0.1:0").unwrap();
             let peer = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
-            peer.set_read_timeout(Some(Duration::from_secs(1))).unwrap();
+            peer.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
             let (socket, address) = listener.accept().unwrap();
             let intake = ListenerIntake::new();
-            let connection_permit =
-                BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
-            let cancelled = Arc::new(AtomicBool::new(false));
-            let lease = intake
-                .connection_lease(&connection_permit, cancelled.clone(), Instant::now())
-                .unwrap();
-            lease.protect().unwrap();
             let observer = PublicRequestObserver::new(1).unwrap();
-            let observation = observer.connection().unwrap();
-            observation.identity(7);
-            observation.request(1, [0x55; 32]);
-            // The completion transition owns no native execution or CPU credit.
-            // Preserve a completed native success even if its response is late.
-            let task = observation.task();
+            let accepted = AcceptedConnection {
+                socket,
+                intake_lease: None,
+                connection_permit: Some(
+                    BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap(),
+                ),
+                observation: observer.connection(),
+            };
+            let mut id = 0;
+            let mut conn = accepted.into_connection(address, &mut id, &intake).unwrap();
+            conn.deadline = deadline;
+            conn.total_deadline = total_deadline;
+            conn.stage = Stage::Await;
+            conn.intake_lease.as_ref().unwrap().protect().unwrap();
+            conn.lane_permit = Some(Arc::new(
+                BufferPermit::acquire(intake.mutating_grants.clone(), 1, MAX_MUTATING_GRANTS)
+                    .unwrap(),
+            ));
+            let record = conn.observation.as_ref().unwrap();
+            record.request(1, [0x55; 32]);
+            let task = record.task();
+            // A preexisting dispatch observation is a fixture, not W1 execution.
+            // Transport refusal must preserve its native outcome and CPU value.
             task.dispatch_started();
             task.dispatch_finished(Some(123), true);
-            drop(task);
-            let connection = Connection {
-                observation: Some(observation),
-                id: 7,
-                socket,
-                peer: address,
-                deadline,
-                stage: Stage::Await,
-                total_deadline,
-                permit: Some(
-                    BufferPermit::acquire(intake.body_pool.clone(), 64, MAX_PAID_BODY_BYTES)
-                        .unwrap(),
-                ),
-                lane_permit: Some(Arc::new(
-                    BufferPermit::acquire(intake.mutating_grants.clone(), 1, MAX_MUTATING_GRANTS)
-                        .unwrap(),
-                )),
-                cancelled: cancelled.clone(),
-                intake_lease: Some(lease),
-                _connection_permit: Some(connection_permit),
-            };
+            let cancelled = conn.cancelled.clone();
             Self {
-                connections: BTreeMap::from([(7, connection)]),
+                connections: BTreeMap::from([(id, conn)]),
                 peer,
                 cancelled,
                 intake,
                 observer,
-                metrics: Mutex::new(PublicMetrics::default()),
+                task: Some(task),
+                metrics: Arc::new(Mutex::new(PublicMetrics::default())),
             }
         }
-        fn finished(&self, bytes: Result<Vec<u8>>) -> Finished {
+        fn finished(&mut self, bytes: Result<Vec<u8>>) -> Finished {
             Finished {
-                id: 7,
+                id: 1,
+                bytes,
                 permit: Some(
                     BufferPermit::acquire(self.intake.output_pool.clone(), 128, MAX_OUTPUT_BYTES)
                         .unwrap(),
                 ),
-                bytes,
+                _observation: Some(self.task.take().unwrap()),
             }
         }
         fn assert_released(&mut self) {
+            assert!(self.connections.is_empty());
             assert!(self.cancelled.load(Ordering::Acquire));
             assert_eq!(*self.intake.connections.lock().unwrap(), 0);
             assert_eq!(*self.intake.body_pool.lock().unwrap(), 0);
             assert_eq!(*self.intake.mutating_grants.lock().unwrap(), 0);
             assert_eq!(*self.intake.output_pool.lock().unwrap(), 0);
-            assert_eq!(self.peer.read(&mut [0; 1]).unwrap(), 0);
+            assert_eq!(self.peer.read(&mut [0u8; 1]).unwrap(), 0);
+            let snapshot = self.observer.snapshot();
+            assert!(snapshot.coverage_complete());
+            assert_eq!(snapshot.accepted_connections_seen, 1);
+            let row = &snapshot.records[0];
+            assert_eq!(row.dispatch_accepted, Some(true));
+            assert_eq!(row.dispatch_thread_cpu_ns, Some(123));
+            assert!(!row.response_frame_complete);
+            let m = self.metrics.lock().unwrap();
+            assert_eq!(m.executor_refusals, 0);
+            assert_eq!(m.work_failed, 0);
+            assert_eq!(m.mutation_cpu_charged_ns, 0);
         }
+    }
+
+    #[test]
+    fn completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome() {
+        let deadline = Instant::now();
+        for (late_ns, failed_encoding) in [(0, false), (1, false), (0, true)] {
+            let mut f = Fixture::new(deadline, deadline + Duration::from_secs(30));
+            let done = f.finished(if failed_encoding {
+                Err("PUBLIC_OUTPUT_LIMIT".into())
+            } else {
+                Ok(vec![1, 2, 3])
+            });
+            apply_finished_connection(
+                &mut f.connections,
+                done,
+                &f.metrics,
+                deadline + Duration::from_nanos(late_ns),
+                deadline + Duration::from_secs(60),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+            f.assert_released();
+            let m = f.metrics.lock().unwrap();
+            assert_eq!(m.expired_connections, 1);
+            assert_eq!(m.expired_phase_counts.get("work"), Some(&1));
+            assert_eq!(m.abandoned_tasks, 1);
+            assert_eq!(m.output_serialization_failures, u64::from(failed_encoding));
+            assert_eq!(
+                m.retained_phase_errors.get("output").copied().unwrap_or(0),
+                u64::from(failed_encoding)
+            );
+            let snapshot = f.observer.snapshot();
+            let row = &snapshot.records[0];
+            assert_eq!(row.terminal_phase, Some("work"));
+            assert_eq!(row.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+            let diagnostic = serde_json::to_value(row.error_diagnostics.terminal).unwrap();
+            assert_eq!(diagnostic["kind"], "cancelled");
+        }
+    }
+
+    #[test]
+    fn completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error() {
+        let now = Instant::now();
+        for (total_secs, service_secs, stopped, cancelled, phase, code, expired) in [
+            (0, 20, false, false, "work", "PUBLIC_REQUEST_DEADLINE", true),
+            (30, 0, false, false, "work", "PUBLIC_REQUEST_DEADLINE", true),
+            (
+                30,
+                20,
+                true,
+                false,
+                "shutdown",
+                "PUBLIC_REQUEST_CANCELLED",
+                false,
+            ),
+            (
+                30,
+                20,
+                false,
+                true,
+                "work",
+                "PUBLIC_REQUEST_CANCELLED",
+                false,
+            ),
+        ] {
+            let mut f = Fixture::new(
+                now + Duration::from_secs(10),
+                now + Duration::from_secs(total_secs),
+            );
+            f.cancelled.store(cancelled, Ordering::Release);
+            let done = f.finished(Err("PUBLIC_OUTPUT_LIMIT".into()));
+            apply_finished_connection(
+                &mut f.connections,
+                done,
+                &f.metrics,
+                now,
+                now + Duration::from_secs(service_secs),
+                &AtomicBool::new(stopped),
+            )
+            .unwrap();
+            f.assert_released();
+            let m = f.metrics.lock().unwrap();
+            assert_eq!(m.expired_connections, u64::from(expired));
+            assert_eq!(m.abandoned_tasks, 1);
+            assert_eq!(m.output_serialization_failures, 1);
+            assert_eq!(m.retained_phase_errors.get("output"), Some(&1));
+            if !expired {
+                assert_eq!(m.retained_phase_errors.get(phase), Some(&1));
+            }
+            let snapshot = f.observer.snapshot();
+            let row = &snapshot.records[0];
+            assert_eq!(row.terminal_phase, Some(phase));
+            assert_eq!(row.terminal_error_code, Some(code));
+            let diagnostic = serde_json::to_value(row.error_diagnostics.terminal).unwrap();
+            assert_eq!(diagnostic["kind"], "cancelled");
+        }
+    }
+
+    #[test]
+    fn timely_completion_transfers_output_under_original_total_and_service_caps() {
+        let now = Instant::now();
+        for (total_secs, service_secs) in [(30, 20), (1, 20), (30, 2)] {
+            let total = now + Duration::from_secs(total_secs);
+            let end = now + Duration::from_secs(service_secs);
+            let mut f = Fixture::new(now + Duration::from_secs(10), total);
+            let done = f.finished(Ok(vec![1, 2, 3]));
+            apply_finished_connection(
+                &mut f.connections,
+                done,
+                &f.metrics,
+                now,
+                end,
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+            let conn = &f.connections[&1];
+            assert_eq!(conn.total_deadline, total);
+            assert_eq!(
+                conn.deadline,
+                total.min(end).min(now + Duration::from_millis(OUTPUT_MS))
+            );
+            assert!(matches!(&conn.stage,
+                Stage::Output { bytes, cursor: 0, .. } if bytes == &[1, 2, 3]));
+            assert!(!f.cancelled.load(Ordering::Acquire));
+            assert_eq!(*f.intake.output_pool.lock().unwrap(), 128);
+            let live = f.observer.snapshot();
+            assert!(live.records[0].task_closed);
+            assert!(!live.records[0].connection_closed && !live.records[0].complete);
+            assert_eq!(f.metrics.lock().unwrap().expired_connections, 0);
+            assert_eq!(f.metrics.lock().unwrap().abandoned_tasks, 0);
+            f.connections.clear();
+            f.assert_released();
+        }
+    }
+
+    #[test]
+    fn rejected_completion_releases_output_before_connection_slot_and_close_observation() {
+        let now = Instant::now();
+        let mut f = Fixture::new(now, now + Duration::from_secs(30));
+        let done = f.finished(Ok(vec![1, 2, 3]));
+        let mut connections = std::mem::take(&mut f.connections);
+        let metrics = f.metrics.clone();
+        let slots = f.intake.connections.clone();
+        let held = slots.lock().unwrap();
+        let worker = thread::spawn(move || {
+            let result = apply_finished_connection(
+                &mut connections,
+                done,
+                &metrics,
+                now,
+                now + Duration::from_secs(60),
+                &AtomicBool::new(false),
+            );
+            (connections, result)
+        });
+        // Real peer EOF proves Connection destruction reached its socket. Its
+        // original slot is still blocked, so the Finished output must already
+        // have died while the connection-close observer must remain open.
+        let eof = f.peer.read(&mut [0u8; 1]);
+        let output_reserved = *f.intake.output_pool.lock().unwrap();
+        let before_slot_release = f.observer.snapshot();
+        let slot_reserved = *held;
+        drop(held);
+        let (connections, result) = worker.join().unwrap();
+        f.connections = connections;
+        result.unwrap();
+        assert!(matches!(eof, Ok(0)), "{eof:?}");
+        assert_eq!(slot_reserved, 1);
+        assert_eq!(output_reserved, 0);
+        let row = &before_slot_release.records[0];
+        assert!(row.task_closed);
+        assert!(!row.connection_closed && !row.complete);
+        assert_eq!(row.dispatch_accepted, Some(true));
+        f.assert_released();
+    }
+
+    #[test]
+    fn completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct() {
+        let now = Instant::now();
+        let mut live = Fixture::new(now + Duration::from_secs(10), now + Duration::from_secs(30));
+        let done = live.finished(Err("PUBLIC_OUTPUT_LIMIT".into()));
+        apply_finished_connection(
+            &mut live.connections,
+            done,
+            &live.metrics,
+            now,
+            now + Duration::from_secs(60),
+            &AtomicBool::new(false),
+        )
+        .unwrap();
+        live.assert_released();
+        {
+            let m = live.metrics.lock().unwrap();
+            assert_eq!(m.output_serialization_failures, 1);
+            assert_eq!(m.expired_connections, 0);
+            assert_eq!(m.abandoned_tasks, 0);
+            assert_eq!(m.retained_phase_errors.get("output"), Some(&1));
+        }
+        assert_eq!(
+            live.observer.snapshot().records[0].terminal_phase,
+            Some("serialization")
+        );
+
+        let mut orphan = Fixture::new(now, now + Duration::from_secs(30));
+        let done = orphan.finished(Ok(vec![1, 2, 3]));
+        orphan.connections[&1]
+            .observation
+            .as_ref()
+            .unwrap()
+            .terminal_error("work", &"PUBLIC_REQUEST_CANCELLED".into());
+        orphan.connections.clear();
+        assert_eq!(*orphan.intake.output_pool.lock().unwrap(), 128);
+        assert!(!orphan.observer.snapshot().records[0].complete);
+        apply_finished_connection(
+            &mut orphan.connections,
+            done,
+            &orphan.metrics,
+            now,
+            now + Duration::from_secs(60),
+            &AtomicBool::new(false),
+        )
+        .unwrap();
+        orphan.assert_released();
+        let m = orphan.metrics.lock().unwrap();
+        assert_eq!(m.expired_connections, 0);
+        assert_eq!(m.abandoned_tasks, 0);
+        assert_eq!(m.output_serialization_failures, 0);
+        assert_eq!(
+            orphan.observer.snapshot().records[0].terminal_error_code,
+            Some("PUBLIC_REQUEST_CANCELLED")
+        );
     }
 
     #[test]
@@ -7761,8 +8487,15 @@ mod completion_deadline_tests {
             let mut fixture = Fixture::new(deadline, deadline + Duration::from_secs(30));
             let serialization_failed = bytes.is_err();
             let done = fixture.finished(bytes);
-            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
-                .unwrap();
+            apply_finished_connection(
+                &mut fixture.connections,
+                done,
+                &fixture.metrics,
+                now,
+                deadline + Duration::from_secs(60),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
             assert!(fixture.connections.is_empty());
             fixture.assert_released();
             let metrics = fixture.metrics.lock().unwrap();
@@ -7772,21 +8505,27 @@ mod completion_deadline_tests {
                 metrics.output_serialization_failures,
                 u64::from(serialization_failed)
             );
+            assert_eq!(
+                metrics
+                    .retained_phase_errors
+                    .get("output")
+                    .copied()
+                    .unwrap_or(0),
+                u64::from(serialization_failed)
+            );
             assert_eq!(metrics.executor_refusals, 0);
             let snapshot = fixture.observer.snapshot();
             assert!(snapshot.coverage_complete());
             let record = &snapshot.records[0];
             assert_eq!(record.dispatch_accepted, Some(true));
             assert_eq!(record.dispatch_thread_cpu_ns, Some(123));
-            if serialization_failed {
-                assert_eq!(record.terminal_phase, Some("serialization"));
-                let diagnostic = serde_json::to_value(record.error_diagnostics.terminal).unwrap();
-                assert_eq!(diagnostic["message_prefix"], "PUBLIC_OUTPUT_LIMIT");
-                assert_eq!(metrics.retained_phase_errors.get("output"), Some(&1));
-            } else {
-                assert_eq!(record.terminal_phase, Some("work"));
-                assert_eq!(record.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
-            }
+            // The transport deadline stays primary even if output encoding also
+            // failed. Its real failure event is retained in the output counters;
+            // neither event replaces the already-observed native outcome.
+            assert_eq!(record.terminal_phase, Some("work"));
+            assert_eq!(record.terminal_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+            let diagnostic = serde_json::to_value(record.error_diagnostics.terminal).unwrap();
+            assert_eq!(diagnostic["kind"], "cancelled");
             assert!(!record.response_frame_complete);
         }
     }
@@ -7801,9 +8540,16 @@ mod completion_deadline_tests {
             let now = deadline - Duration::from_nanos(1);
             let mut fixture = Fixture::new(deadline, total_deadline);
             let done = fixture.finished(Ok(vec![1, 2, 3]));
-            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
-                .unwrap();
-            let connection = &fixture.connections[&7];
+            apply_finished_connection(
+                &mut fixture.connections,
+                done,
+                &fixture.metrics,
+                now,
+                deadline + Duration::from_secs(60),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+            let connection = &fixture.connections[&1];
             assert_eq!(
                 connection.deadline,
                 total_deadline.min(now + Duration::from_millis(OUTPUT_MS))
@@ -7824,12 +8570,28 @@ mod completion_deadline_tests {
     fn queued_completion_expiry_keeps_worker_reservations_until_actual_release() {
         let now = Instant::now();
         let mut fixture = Fixture::new(now, now + Duration::from_secs(30));
-        let connection = fixture.connections.get_mut(&7).unwrap();
-        // This is the real ownership transfer at Body -> Enqueue. The worker
-        // can still hold these fields briefly after sending its Finished value.
-        let body = connection.permit.take().unwrap();
-        let lane = connection.lane_permit.as_ref().unwrap().clone();
-        let done = fixture.finished(Ok(vec![1, 2, 3]));
+        let mut done = fixture.finished(Ok(vec![1, 2, 3]));
+        // Exercise a separate, still-live owner of real request reservations.
+        // Production workers normally destroy Task before sending Finished; a
+        // completion gate must nevertheless never release another owner's grant
+        // or mark that owner's task observation closed while it still holds data.
+        struct WorkerResources {
+            _raw_body: Vec<u8>,
+            _body: BufferPermit,
+            _lane: Arc<BufferPermit>,
+            _observation: Option<TaskObservation>,
+        }
+        let resources = WorkerResources {
+            _raw_body: vec![0; 64],
+            _body: BufferPermit::acquire(fixture.intake.body_pool.clone(), 64, MAX_PAID_BODY_BYTES)
+                .unwrap(),
+            _lane: fixture.connections[&1]
+                .lane_permit
+                .as_ref()
+                .unwrap()
+                .clone(),
+            _observation: done._observation.take(),
+        };
         let (finished_tx, finished_rx) = mpsc::sync_channel(8);
         let (sent_tx, sent_rx) = mpsc::channel();
         let (release_tx, release_rx) = mpsc::channel();
@@ -7840,19 +8602,33 @@ mod completion_deadline_tests {
                 sent_tx.send(()).unwrap();
                 // Sender drop also releases this test worker on assertion panic.
                 let _ = release_rx.recv();
-                drop((body, lane));
+                // Actual bytes, then body/lane reservations, then task observer.
+                drop(resources);
             });
             sent_rx.recv_timeout(Duration::from_secs(5)).unwrap();
             let done = finished_rx.try_recv().unwrap();
-            apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now)
-                .unwrap();
+            apply_finished_connection(
+                &mut fixture.connections,
+                done,
+                &fixture.metrics,
+                now,
+                now + Duration::from_secs(60),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
             assert!(fixture.connections.is_empty());
             assert!(fixture.cancelled.load(Ordering::Acquire));
             assert_eq!(*fixture.intake.connections.lock().unwrap(), 0);
             assert_eq!(*fixture.intake.output_pool.lock().unwrap(), 0);
             assert_eq!(*fixture.intake.body_pool.lock().unwrap(), 64);
             assert_eq!(*fixture.intake.mutating_grants.lock().unwrap(), 1);
-            assert_eq!(fixture.peer.read(&mut [0; 1]).unwrap(), 0);
+            assert_eq!(fixture.peer.read(&mut [0u8; 1]).unwrap(), 0);
+            let pending = fixture.observer.snapshot();
+            let record = &pending.records[0];
+            assert!(record.connection_closed);
+            assert!(!record.task_closed && !record.complete);
+            assert_eq!(record.dispatch_accepted, Some(true));
+            assert_eq!(record.dispatch_thread_cpu_ns, Some(123));
             release_worker.send(()).unwrap();
             worker.join().unwrap();
         });
@@ -7866,8 +8642,21 @@ mod completion_deadline_tests {
         let mut fixture = Fixture::new(now, now + Duration::from_secs(30));
         let done = fixture.finished(Ok(vec![1, 2, 3]));
         fixture.connections.clear();
-        apply_finished_connection(&mut fixture.connections, done, &fixture.metrics, now).unwrap();
+        assert_eq!(*fixture.intake.output_pool.lock().unwrap(), 128);
+        assert!(!fixture.observer.snapshot().records[0].complete);
+        apply_finished_connection(
+            &mut fixture.connections,
+            done,
+            &fixture.metrics,
+            now,
+            now + Duration::from_secs(60),
+            &AtomicBool::new(false),
+        )
+        .unwrap();
         fixture.assert_released();
-        assert_eq!(fixture.metrics.lock().unwrap().expired_connections, 0);
+        let metrics = fixture.metrics.lock().unwrap();
+        assert_eq!(metrics.expired_connections, 0);
+        assert_eq!(metrics.abandoned_tasks, 0);
+        assert_eq!(metrics.output_serialization_failures, 0);
     }
 }

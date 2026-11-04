@@ -72,8 +72,8 @@ fn state_reads(node: &Node) -> u64 {
 fn context_checkpoints(node: &Node, packet: &Packet) -> usize {
     let mut calls = 0;
     assert!(node
-        .check_admission_context_with_progress(packet, 1000, &mut || {
-            calls += 1;
+        .check_admission_context_with_progress(packet, 1000, &mut |point| {
+            calls += usize::from(point == ExecutionProgress::BeforeParentBinding);
             Ok(())
         })
         .unwrap()

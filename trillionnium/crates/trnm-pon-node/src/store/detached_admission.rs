@@ -46,7 +46,12 @@ pub(super) struct CommitFence {
     observed_now: u64,
 }
 impl CommitFence {
-    pub(super) fn validate(self, node: &Node, packet: &Packet) -> Result<()> {
+    pub(super) fn validate(
+        self,
+        node: &Node,
+        packet: &Packet,
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<()> {
         node.namespace()?;
         node.storage_context()?;
         ensure(
@@ -59,8 +64,10 @@ impl CommitFence {
         )
         .map_err(Error::local_integrity)?;
         ensure(
-            node.check_admission_header_context(packet, self.observed_now, None)?
-                .is_none(),
+            node.check_admission_header_context(packet, self.observed_now, None, &mut || {
+                (control.progress)(ExecutionProgress::BeforeHeaderContext)
+            })?
+            .is_none(),
             "OWNER_DETACHED_EXECUTION_CONTEXT",
         )
     }
@@ -225,7 +232,7 @@ impl Node {
             &checked.packet,
             observed_now,
             None,
-            &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
+            &mut |point| (control.progress)(point),
         )? {
             CheckedAdmissionContext::Existing(id) => {
                 return Ok(PreparedSharedAdmission::Existing(id))
@@ -394,7 +401,9 @@ impl Node {
         // Recheck current clock/target/namespace/duplicate/parent header context
         // after reacquisition. A prepared clock or active tip is no authority.
         if let Some(id) =
-            self.check_admission_header_context(&admission.packet, observed_now, None)?
+            self.check_admission_header_context(&admission.packet, observed_now, None, &mut || {
+                (control.progress)(ExecutionProgress::BeforeHeaderContext)
+            })?
         {
             return Ok(id);
         }

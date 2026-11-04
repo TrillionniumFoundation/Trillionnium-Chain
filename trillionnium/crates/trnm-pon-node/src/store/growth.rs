@@ -585,8 +585,17 @@ impl Node {
     ) -> Result<Hash> {
         let height = consensus::BranchTargetHeight::after(self.record(parent)?.height)?;
         let recent = self.growth_recent_with_progress(parent, progress)?;
+        self.growth_target_from_recent(height, &recent)
+    }
+    // `recent` belongs to one current-owner header check. It is never retained
+    // across W1 work, owner release, another request or a write transaction.
+    fn growth_target_from_recent(
+        &self,
+        height: consensus::BranchTargetHeight,
+        recent: &[(u64, Hash)],
+    ) -> Result<Hash> {
         let interval = self.settings.limit("retarget_interval")?;
-        match height.window(&recent, interval)? {
+        match height.window(recent, interval)? {
             consensus::TargetWindow::Parent(target) => Ok(target),
             consensus::TargetWindow::Retarget {
                 target,

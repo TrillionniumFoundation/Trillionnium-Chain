@@ -163,7 +163,14 @@ fn pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused() {
         .unwrap();
     assert_eq!(usage.attempts, 3); // Cookie, accepted caller, rejected caller.
     assert!(usage.actual_thread_cpu_ns > 0);
-    let bytes = response(&owner, &settings, &cookie, Ok(json!({"head":"fixture"}))).unwrap();
+    let bytes = response(
+        &owner,
+        &settings,
+        &cookie,
+        Ok(json!({"head":"fixture"})),
+        &|| Ok(()),
+    )
+    .unwrap();
     let response: Response = serde_json::from_slice(&bytes[4..]).unwrap();
     pin.verify(&response.message().unwrap(), &response.signature)
         .unwrap();
@@ -516,4 +523,98 @@ fn pq_history_native_application_account_packet_uses_the_same_paid_history_owner
     assert_eq!(metrics.completed_read, 1);
     assert_eq!(metrics.pq_authentication_attempts, 3);
     assert_eq!(metrics.completed_submit, 0);
+}
+
+#[test]
+fn pq_response_expiry_stop_and_cancel_do_not_start_signing() {
+    let settings = Settings::development(Some(1)).unwrap();
+    let owner = server();
+    let cookie = owner
+        .cookie(
+            &settings,
+            hello(&identity(72)),
+            "127.0.0.1:1".parse().unwrap(),
+        )
+        .unwrap();
+    let intake = owner.listener_intake().unwrap();
+    let before = intake.pq_authentication.usage().unwrap();
+    let now = Instant::now();
+    for (deadline, stopped, cancelled, expected) in [
+        (now, false, false, "PUBLIC_REQUEST_DEADLINE"),
+        (
+            now + Duration::from_secs(10),
+            true,
+            false,
+            "PUBLIC_REQUEST_DEADLINE",
+        ),
+        (
+            now + Duration::from_secs(10),
+            false,
+            true,
+            "PUBLIC_REQUEST_CANCELLED",
+        ),
+    ] {
+        let stop = AtomicBool::new(stopped);
+        let cancelled = AtomicBool::new(cancelled);
+        // Both a native success and a bounded refusal use the same original
+        // operation lifetime. Neither justifies a new response-signing budget.
+        for outcome in [
+            Ok(json!({"head":"fixture"})),
+            Err("PUBLIC_MUTATION_CPU_BUDGET".into()),
+        ] {
+            let error = response(&owner, &settings, &cookie, outcome, &|| {
+                task_alive(deadline, &stop, &cancelled)
+            })
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+        }
+    }
+    let after = intake.pq_authentication.usage().unwrap();
+    assert_eq!(after.attempts, before.attempts);
+    assert_eq!(after.bytes, before.bytes);
+    assert_eq!(after.actual_thread_cpu_ns, before.actual_thread_cpu_ns);
+    assert_eq!(after.unavailable, before.unavailable);
+}
+
+#[test]
+fn pq_response_cancellation_between_encoding_and_signing_stops_new_work() {
+    let settings = Settings::development(Some(1)).unwrap();
+    let owner = server();
+    let cookie = owner
+        .cookie(
+            &settings,
+            hello(&identity(72)),
+            "127.0.0.1:1".parse().unwrap(),
+        )
+        .unwrap();
+    let intake = owner.listener_intake().unwrap();
+    let stop = AtomicBool::new(false);
+    let deadline = Instant::now() + Duration::from_secs(10);
+    // A cancellation arriving after entry must prevent a signature. If it
+    // arrives after signature admission, the one in-progress signature is
+    // charged, but the remaining response is abandoned without a new budget.
+    for (cancel_after_check, expected_signatures) in [(1, 0), (2, 1), (3, 1)] {
+        let cancelled = AtomicBool::new(false);
+        let checks = Cell::new(0);
+        let before = intake.pq_authentication.usage().unwrap();
+        let error = response(
+            &owner,
+            &settings,
+            &cookie,
+            Ok(json!({"head":"fixture"})),
+            &|| {
+                task_alive(deadline, &stop, &cancelled)?;
+                checks.set(checks.get() + 1);
+                if checks.get() == cancel_after_check {
+                    cancelled.store(true, Ordering::Release);
+                }
+                Ok(())
+            },
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_REQUEST_CANCELLED");
+        let after = intake.pq_authentication.usage().unwrap();
+        assert_eq!(after.attempts - before.attempts, expected_signatures);
+        assert!(!after.unavailable);
+    }
 }

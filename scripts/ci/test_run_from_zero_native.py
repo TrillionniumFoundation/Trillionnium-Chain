@@ -1132,6 +1132,55 @@ class ConfirmationObservationTests(unittest.TestCase):
         self.assertIsNone(business['unconfirmed_latency_lower_bound_ns'])
         self.assertEqual(business['unknown'], 1)
 
+    def test_business_start_at_or_after_window_retains_failed_offer(self):
+        for started in (4_000_000_000, 4_000_000_001, 9_000_000_000):
+            def edit(doc):
+                self.fail_pressure(doc)
+                phase = doc['phases'][1]
+                phase.update(business_started_ns=started, honest_submissions=[],
+                             honest_history=[], independent_history_page_replay=[])
+            with self.subTest(started=started):
+                result = self.summarize(edit)
+                self.assertFalse(result['original_gate_validated'])
+                self.assertEqual(result['original_gate_validation_error'], 'CONFIRMATION_TARGET')
+                phase = result['phases'][1]
+                business = phase['business']
+                self.assertEqual(business['required_signed_transactions'], 1)
+                self.assertEqual(business['reported_independently_confirmed_in_window'], 0)
+                self.assertEqual(business['unconfirmed'], 1)
+                self.assertEqual(business['unknown'], 0)
+                self.assertEqual(business['business_start_delay_ns'], started)
+                self.assertFalse(business['business_started_before_original_window_end'])
+                self.assertEqual(business['original_window_remaining_at_business_start_ns'], 0)
+                self.assertEqual(business['pre_business_window_overrun_ns'], started-4_000_000_000)
+                self.assertEqual(business['unconfirmed_latency_lower_bound_ns'], 0)
+                self.assertIsNone(business['observed_success_latency_ns'])
+                self.assertEqual(phase['signed_submit_ack']['attempts'], 0)
+                self.assertEqual(phase['history_response']['attempts'], 0)
+
+    def test_expired_business_start_keeps_unknown_confirmation_unknown(self):
+        def edit(doc):
+            self.fail_pressure(doc)
+            phase = doc['phases'][1]
+            phase.update(business_started_ns=4_000_000_001, honest_submissions=[],
+                         honest_history=[], independent_history_page_replay=[])
+            del phase['client_confirmed_transactions']
+        business = self.summarize(edit)['phases'][1]['business']
+        self.assertEqual(business['required_signed_transactions'], 1)
+        self.assertEqual(business['unknown'], 1)
+        self.assertIsNone(business['reported_independently_confirmed_in_window'])
+        self.assertIsNone(business['unconfirmed'])
+        self.assertIsNone(business['unconfirmed_latency_lower_bound_ns'])
+        self.assertFalse(business['business_started_before_original_window_end'])
+
+    def test_expired_business_start_cannot_claim_success_or_relax_window(self):
+        for started in (4_000_000_000, 4_000_000_001):
+            with self.subTest(started=started):
+                with self.assertRaisesRegex(ValueError, 'CONFIRMATION_NATIVE_OBSERVATION'):
+                    self.summarize(lambda doc: doc['phases'][1].update(business_started_ns=started))
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW'):
+            self.summarize(lambda doc: doc['phases'][1].update(requested_window_ns=30_000_000_000))
+
     def test_failed_and_late_calls_cannot_pollute_success_latency(self):
         def edit(doc):
             phase = doc['phases'][1]

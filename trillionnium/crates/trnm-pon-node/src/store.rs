@@ -1,5 +1,7 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
 #[cfg(test)]
+mod admission_header_tests;
+#[cfg(test)]
 mod append_readback_tests;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
@@ -3337,15 +3339,24 @@ impl Node {
         }
         Ok(state)
     }
-    fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
+    fn recent(&self, parent: Hash) -> Result<Vec<(u64, Hash)>> {
+        self.recent_with_progress(parent, &mut || Ok(()))
+    }
+    fn recent_with_progress(
+        &self,
+        mut parent: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Vec<(u64, Hash)>> {
         let mut out = Vec::new();
         let bound = self.settings.limit("retarget_interval")?.max(11);
         while parent != self.settings.genesis() && out.len() < (bound as usize) {
+            progress()?;
             // The per-link projection already validates the complete child and
             // parent record shapes. Batch the exact window, without keeping a
             // previous ancestry, time or target verdict across calls.
             let maximum = (bound - out.len() as u64).min(HISTORY_HEADER_BATCH);
             (parent, _) = self.visit_header_batch_limited(parent, maximum, &mut |_, link| {
+                progress()?;
                 out.push((link.header.timestamp, link.header.target));
                 Ok(())
             })?;
@@ -3364,8 +3375,17 @@ impl Node {
         }
         let height = consensus::BranchTargetHeight::after(self.record(parent)?.height)?;
         let recent = self.recent(parent)?;
+        self.target_from_recent(height, &recent)
+    }
+    // One invocation owns this immutable window. Callers must still acquire
+    // fresh parent rows after owner release, W1 replay and transaction entry.
+    fn target_from_recent(
+        &self,
+        height: consensus::BranchTargetHeight,
+        recent: &[(u64, Hash)],
+    ) -> Result<Hash> {
         let interval = self.settings.limit("retarget_interval")?;
-        match height.window(&recent, interval)? {
+        match height.window(recent, interval)? {
             consensus::TargetWindow::Parent(target) => Ok(target),
             consensus::TargetWindow::Retarget {
                 target,
@@ -3435,13 +3455,13 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_with_progress(packet, observed_now, &mut || Ok(()))
+        self.check_admission_context_with_progress(packet, observed_now, &mut |_| Ok(()))
     }
     pub(crate) fn check_admission_context_with_progress(
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn FnMut(ExecutionProgress) -> Result<()>,
     ) -> Result<Option<Hash>> {
         Ok(self
             .check_admission_context_for_permit(packet, observed_now, None, progress)?
@@ -3454,7 +3474,7 @@ impl Node {
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn FnMut(ExecutionProgress) -> Result<()>,
     ) -> Result<Option<Hash>> {
         let task_before_work = self.owner_policy.is_some()
             || self.continuous_owner.is_some()
@@ -3462,7 +3482,9 @@ impl Node {
         if task_before_work {
             self.check_admission_context_with_progress(packet, observed_now, progress)
         } else {
-            self.check_admission_header_context(packet, observed_now, None)
+            self.check_admission_header_context(packet, observed_now, None, &mut || {
+                progress(ExecutionProgress::BeforeHeaderContext)
+            })
         }
     }
     fn check_admission_context_for_permit(
@@ -3470,13 +3492,19 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn FnMut(ExecutionProgress) -> Result<()>,
     ) -> Result<CheckedAdmissionContext> {
-        if let Some(id) = self.check_admission_header_context(packet, observed_now, reserved)? {
+        if let Some(id) =
+            self.check_admission_header_context(packet, observed_now, reserved, &mut || {
+                progress(ExecutionProgress::BeforeHeaderContext)
+            })?
+        {
             return Ok(CheckedAdmissionContext::Existing(id));
         }
         Ok(CheckedAdmissionContext::Parent(
-            self.check_admission_parent(packet, progress)?,
+            self.check_admission_parent(packet, &mut || {
+                progress(ExecutionProgress::BeforeParentBinding)
+            })?,
         ))
     }
     fn check_admission_header_context(
@@ -3484,6 +3512,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
+        progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
@@ -3497,72 +3526,111 @@ impl Node {
             h.network == self.settings.network() && h.parameters == self.settings.parameters(),
             "NETWORK",
         )?;
-        let previous: Option<Vec<u8>> = self
-            .db
-            .query_row(
-                "SELECT packet FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |r| r.get(0),
-            )
-            .optional()?;
-        if let Some(prior) = previous {
-            let bytes = packet.encode_for_settings(&self.settings)?;
-            ensure(prior == bytes, "DUPLICATE_CONTENT")?;
-            // Immutable work can be cached; a previous caller's clock cannot.
-            ensure(
-                h.timestamp as u128
-                    <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
-                "TIME_DEFERRED",
-            )?;
-            return Ok(Some(id));
-        }
-        if let Some(owner) = &self.owner_policy {
-            if owner.journal.borrow().work_operation_is_used(&owner.policy) {
-                // A reservation without a durable exact block is in-flight or
-                // uncertain/failed, not another authorization to reconstruct State.
-                let permit = reserved.ok_or("OWNER_TASK_OPERATION_USED")?;
-                permit.progress()?;
-                owner
-                    .journal
-                    .borrow()
-                    .recheck_before_commit(
-                        &owner.policy,
-                        &permit.reservation,
-                        &permit.facts,
-                        crate::operator_task_policy::now_ns().map_err(owner_error)?,
-                    )
-                    .map_err(owner_error)?;
+        // Preserve the original cheap profile/network refusal before invoking
+        // caller code. The following current-row work uses the original
+        // request's cancellation/CPU/deadline callback, including preflight.
+        let epoch = self.admission_state_epoch()?;
+        let mut checkpoint_failed = false;
+        let mut checkpoint = || {
+            let result = progress();
+            checkpoint_failed |= result.is_err();
+            result
+        };
+        let result = (|| -> Result<Option<Hash>> {
+            checkpoint()?;
+            let previous: Option<Vec<u8>> = self
+                .db
+                .query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |r| r.get(0),
+                )
+                .optional()?;
+            if let Some(prior) = previous {
+                let bytes = packet.encode_for_settings(&self.settings)?;
+                ensure(prior == bytes, "DUPLICATE_CONTENT")?;
+                // Immutable work can be cached; a previous caller's clock cannot.
+                ensure(
+                    h.timestamp as u128
+                        <= observed_now as u128
+                            + self.settings.limit("future_skew_seconds")? as u128,
+                    "TIME_DEFERRED",
+                )?;
+                checkpoint()?;
+                return Ok(Some(id));
             }
+            if let Some(owner) = &self.owner_policy {
+                if owner.journal.borrow().work_operation_is_used(&owner.policy) {
+                    // A reservation without a durable exact block is in-flight or
+                    // uncertain/failed, not another authorization to reconstruct State.
+                    let permit = reserved.ok_or("OWNER_TASK_OPERATION_USED")?;
+                    permit.progress()?;
+                    owner
+                        .journal
+                        .borrow()
+                        .recheck_before_commit(
+                            &owner.policy,
+                            &permit.reservation,
+                            &permit.facts,
+                            crate::operator_task_policy::now_ns().map_err(owner_error)?,
+                        )
+                        .map_err(owner_error)?;
+                }
+            }
+            let parent = self.record(h.parent)?;
+            ensure(
+                parent.height.checked_add(1) == Some(h.height) && h.height <= i64::MAX as u64,
+                "HEIGHT",
+            )?;
+            let height = consensus::BranchTargetHeight::after(parent.height)?;
+            let recent = self.recent_with_progress(h.parent, &mut checkpoint)?;
+            ensure(
+                h.target == self.target_from_recent(height, &recent)?,
+                "TARGET",
+            )?;
+            let times: Vec<_> = recent.iter().take(11).map(|p| p.0).collect();
+            consensus::check_time(
+                h.timestamp,
+                &times,
+                observed_now,
+                self.settings.limit("future_skew_seconds")?,
+            )?;
+            ensure(
+                h.transactions == sequence_root("transactions", &packet.transactions),
+                "ROOT",
+            )?;
+            // Encoding, TaskId and a claimed ticket need no parent State. Reject
+            // them before task lookup; a passing filter still requires full replay.
+            pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
+                .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
+            checkpoint()?;
+            // Only the unowned public preflight stops here. Final admission and
+            // local owner policies still run check_admission_parent afresh.
+            Ok(None)
+        })();
+        // Preserve the original cancellation/budget/permission refusal without
+        // starting another read after its resource owner has stopped the call.
+        if checkpoint_failed
+            || result.as_ref().is_err_and(|error| {
+                matches!(
+                    error.kind(),
+                    crate::ErrorKind::Cancelled
+                        | crate::ErrorKind::Capacity
+                        | crate::ErrorKind::PolicyRefusal
+                )
+            })
+        {
+            return result;
         }
-        let parent = self.record(h.parent)?;
+        // Fence failed row-dependent decisions as well as successful returns.
+        // A concurrent commit or callback write cannot turn a valid candidate
+        // into a HEIGHT/TARGET/ROOT refusal from mixed local observations.
+        // This is input freshness, not transaction identity or commit authority.
         ensure(
-            parent.height.checked_add(1) == Some(h.height) && h.height <= i64::MAX as u64,
-            "HEIGHT",
+            self.admission_state_epoch()? == epoch,
+            "ADMISSION_HEADER_EPOCH_CHANGED",
         )?;
-        ensure(h.target == self.expected_target(h.parent)?, "TARGET")?;
-        let times: Vec<_> = self
-            .recent(h.parent)?
-            .iter()
-            .take(11)
-            .map(|p| p.0)
-            .collect();
-        consensus::check_time(
-            h.timestamp,
-            &times,
-            observed_now,
-            self.settings.limit("future_skew_seconds")?,
-        )?;
-        ensure(
-            h.transactions == sequence_root("transactions", &packet.transactions),
-            "ROOT",
-        )?;
-        // Encoding, TaskId and a claimed ticket need no parent State. Reject
-        // them before task lookup; a passing filter still requires full replay.
-        pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
-            .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
-        // Only the unowned public preflight stops here. Final admission and
-        // local owner policies must also run check_admission_parent afresh.
-        Ok(None)
+        result
     }
     fn admission_state_epoch(&self) -> Result<AdmissionStateEpoch> {
         Ok(AdmissionStateEpoch {
@@ -4142,9 +4210,12 @@ impl Node {
         } = checked;
         // Recheck every header/owner predicate even when this same-owner,
         // same-epoch private continuation can retain its validated parent.
-        if let Some(id) =
-            self.check_admission_header_context(&packet, observed_now, owner_permit.as_ref())?
-        {
+        if let Some(id) = self.check_admission_header_context(
+            &packet,
+            observed_now,
+            owner_permit.as_ref(),
+            &mut || (control.progress)(ExecutionProgress::BeforeHeaderContext),
+        )? {
             return Ok(id);
         }
         let checked_parent = match prepared_parent {
@@ -4342,7 +4413,7 @@ impl Node {
                 // BEGIN IMMEDIATE excludes foreign SQLite writers before the last
                 // epoch/context check. An out-of-lock result is never authorized by
                 // an earlier counter read followed by an unprotected write gap.
-                fence.validate(self, &packet)?;
+                fence.validate(self, &packet, control)?;
             }
             ensure(
                 tx.execute(

@@ -119,6 +119,7 @@ error_codes! {
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
     PublicExecutionSnapshotCapacity => ("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY", Capacity),
+    AdmissionHeaderEpochChanged => ("ADMISSION_HEADER_EPOCH_CHANGED", StaleContext),
     OwnerDetachedExecutionContext => ("OWNER_DETACHED_EXECUTION_CONTEXT", LocalStructure),
     OwnerDetachedExecutionUnsupported => ("OWNER_DETACHED_EXECUTION_UNSUPPORTED", DependencyUnavailable),
     // Local service/Node budget binding, never invalid consensus Work.

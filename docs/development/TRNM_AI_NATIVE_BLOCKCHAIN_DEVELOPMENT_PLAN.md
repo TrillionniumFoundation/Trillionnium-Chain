@@ -6223,3 +6223,99 @@ Concrete quantum soundness, equivalent Node parent-state/A/B artifact binding,
 end-to-end benefit and production admission remain HOLD. Any new complete
 statement/image or accepted cryptographic profile requires its own actual proof,
 security argument and complete-cost evidence before the original path can change.
+
+
+### 2026-11-04 native header cost, request lifetime and original acceptance
+
+Continue the existing integration candidate with the
+[native liveness evidence](../../evidence/pon-native-liveness-20261104/README.md).
+GrowthV2 now shares one bounded ancestor window for target and median time
+inside each current admission context. Initial precheck, post-complete-W1 owner
+reacquisition and the immediate transaction each retain their own window and
+current-owner checks. A final epoch guard also fences duplicate and new-packet
+precheck returns. The v3 observer contract is three times min(height, 16)
+HeaderAncestor callbacks; explicit historical v2 input retains six. This callback
+change is not a measured reduction in total SQL, CPU or business latency.
+
+Ordinary PNP1 header admission now propagates the original ExecutionControl
+through typed header-context checkpoints before materialization and at each
+ancestor row. Target and time share the current bounded read. Local observation
+changes yield StaleContext, including duplicate and row-derived failure paths;
+original cancellation/capacity/policy errors keep their precedence. The existing
+authenticated transaction and readback obligations remain mandatory. This epoch
+fence is input freshness, not a substitute for exact transaction identity.
+
+Public v3 response encoding and PQ signing check the original request/service
+deadline and stop/cancellation state before starting additional work. Task,
+connection, accepted-socket and completed-output owners release buffers and
+permits before their final observations. Worker shutdown joins every started
+worker and preserves the first error before final resource snapshots. The
+reactor also refuses queued completions past the original work/total/service
+cutoff or after stop/cancellation before granting output time. It releases the
+Finished owner before the Connection owner and preserves already completed
+native acceptance and CPU observations. Five additional regressions cover exact
+cutoffs, timely outputs, live serialization, orphan results and real TCP/permit
+release ordering; the total new native inventory is 23 unexecuted tests. Started
+provider, hashing and SQLite stages remain cooperative and nonpreemptive; this
+does not establish complete end-to-end resource closure.
+
+The original four-second / 16-hostile-W1-producer / six-depth signed-confirmation
+selector actually ran at exact local source 2b4d7b46. Cargo returned zero for
+protocol/accounting invariants, while the unchanged business reader returned one:
+both no-attack and pressure phases confirmed zero of one business offer. Both
+receivers accepted seven of seven honest Submit requests and served sixteen of
+sixteen History requests. Each independent verifier refused all sixteen page
+replays with PUBLIC_HOST_KERNEL_PARENT. This is not evidence that all receiver
+service failed, or that PQ/W1/full-State cost caused the missing confirmation.
+
+The pressure record retains all 450 attack calls: 434 WORK:Transcript refusals,
+15 I/O failures and one FRAME_DEADLINE. All late calls remain in the denominator.
+The receiver performed 442 complete W1 calls, with 435 errors and seven honest
+successes; server and client counts have distinct boundaries. Confirmation time
+is null, so the run does not demonstrate independently confirmed business/W1
+overlap. The complete raw report is retained losslessly, along with the failed
+reader, build and lint attempts. The original executable is no longer retained;
+its digest remains unknown. The included Git bundle preserves the exact measured
+source commits rather than inventing a replacement executable or observation.
+
+The merged Cell/model/W1 source passed full-workspace/all-feature/all-target
+strict Clippy, formatting, locked Cargo graph checks, full tracked-source checks,
+reader/source controls and corpus/link checks at their recorded exact revisions.
+New native unit regressions remain NOT_RUN after the retained build failures;
+static checks are not their execution. The original fixed Host is unavailable,
+and the business gate remains unmet. Issue #639 stays open. This local Host refusal does not relabel the historical
+qualified-Host failure recorded in that issue.
+
+Full-State clone, root calculation, traversal and hot-path audit costs remain;
+incremental disk writes do not close that work. GrowthV2 unknown-parent History
+recovery, fixed reservations across consensus/query/history/Cell services and
+cost feedback, and the requested cold-start/late-attack/reorg/recovery/Cell/PQ
+campaign matrix remain open. Proof acceleration, public-WAN qualification,
+independent acceptance and production activation do not advance from this work.
+
+
+The final liveness composition with concurrent 33a170e8 is recorded at local
+0ba09db0. Raw source/format checks and 452 corpus pins pass, but fresh strict
+Clippy exits 101 with a getrandom build-script linker SIGBUS, and the Python
+control suite exits 120 with ENOSPC while creating test fixtures. Prior 229-test
+and Clippy successes remain bound to earlier sources. The source history bundle,
+raw failures and complete original business outcomes remain retained. The 23 new
+native regressions remain unexecuted; #639 and all activation gates remain open.
+
+
+The subsequent composition preserves 1c885019 in implementation checkpoint
+3e601d0c (tree 87f974c3). Header/epoch controls, incoming namespace ranges, Growth
+batch nonces and precise local Busy retry remain. The completion gate preserves
+work/total/service deadlines, stop/cancel and Finished-before-Connection cleanup.
+A real late encoding failure also retains secondary output event counts while
+Deadline/Cancelled remains primary; overlapping events do not add requests.
+All nine completion regressions remain present. This work's 23 plus four incoming
+completion tests are unexecuted on this composition, not a whole-PR test count.
+
+Fresh clean-source checks at 3e601d0c pass for 9,002 tracked entries / 946,597,739
+bytes, workspace formatting, 452 source pins and 2,605 links. Clippy, reader/source
+suite and native runtime were not rerun after the retained 0ba SIGBUS/ENOSPC.
+All 57 Cargo manifests/lockfiles match the earlier successful 0647 inputs; this
+does not turn earlier results into new executions. The publication bundle and
+reviews preserve the source and limits. Original 4s/16, #639 and activation gates
+remain open.

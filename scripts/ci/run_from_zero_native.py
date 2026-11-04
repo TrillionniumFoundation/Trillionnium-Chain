@@ -896,7 +896,12 @@ def summarize_confirmation_report(path: Path) -> dict:
                 and number(phase.get('workers')) == 16 * index, 'CONFIRMATION_PHASES')
         window = number(phase.get('requested_window_ns'))
         start = number(phase.get('business_started_ns'))
-        require(window == 4_000_000_000 and start < window, 'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW')
+        require(window == 4_000_000_000, 'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW')
+        # The native caller samples this after its start barrier and pressure
+        # wait. Scheduling or admission can consume the complete original
+        # window before any honest submission starts. Keep that failed offer
+        # in the denominator; only the strict acceptance path requires an
+        # in-window start and confirmation. Never restart or extend its clock.
         observed_ends = []
 
         def calls(rows, maximum):
@@ -988,6 +993,10 @@ def summarize_confirmation_report(path: Path) -> dict:
         output.append({
             'mode': phase['mode'], 'workers': phase['workers'], 'window_ns': window,
             'business': {'required_signed_transactions': 1,
+                         'business_start_delay_ns': start,
+                         'business_started_before_original_window_end': start < window,
+                         'original_window_remaining_at_business_start_ns': max(0, window - start),
+                         'pre_business_window_overrun_ns': max(0, start - window),
                          'reported_independently_confirmed_in_window': count,
                          'unconfirmed': 1 - count if count is not None else None,
                          'unknown': int(count is None),

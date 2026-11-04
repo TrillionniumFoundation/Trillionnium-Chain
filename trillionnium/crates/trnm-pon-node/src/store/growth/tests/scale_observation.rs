@@ -10,6 +10,9 @@ use std::time::Instant;
 const ACCOUNT_COUNTS: [usize; 3] = [64, 1024, 16_384];
 const HISTORY_LENGTHS: [usize; 3] = [0, 16, 128];
 const MEASURED_BLOCKS: usize = 8;
+// Exact current implementation structure, not a latency or total-SQL target.
+const HEADER_WINDOWS_PER_ADMISSION: u64 = 3;
+const HEADER_WINDOW_LIMIT: u64 = 16;
 const COUNTER_NAMES: [&str; 9] = [
     "context_checks",
     "header_ancestors",
@@ -419,7 +422,14 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
     append(
         &mut manifest,
         &json!({
-            "schema":"native-growth-fixed-owner-scale-observation-v2",
+            "schema":"native-growth-fixed-owner-scale-observation-v3",
+            "header_window_contract":{
+                "profile":"native-growth-single-header-window-v1",
+                "complete_admission_windows":HEADER_WINDOWS_PER_ADMISSION,
+                "maximum_ancestor_headers_per_window":HEADER_WINDOW_LIMIT,
+                "counter":"header_ancestors",
+                "scope":"HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU"
+            },
             "event":"run_started",
             "accounts":ACCOUNT_COUNTS,
             "warmup_history_blocks":HISTORY_LENGTHS,
@@ -452,6 +462,10 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
             );
             let setup_started = Instant::now();
             let settings = fixture(accounts);
+            assert_eq!(
+                settings.limit("retarget_interval").unwrap().max(11),
+                HEADER_WINDOW_LIMIT
+            );
             let dir = tempfile::tempdir().unwrap();
             let mut node =
                 Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
@@ -530,6 +544,13 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
                     &result,
                 );
                 let id = result.unwrap();
+                // Preserve the actual return above before rejecting a changed
+                // observation contract. These are header callbacks only: the
+                // current storage epoch/schema fences and all other SQL remain.
+                assert_eq!(
+                    admission_observation["checkpoints"]["header_ancestors"],
+                    HEADER_WINDOWS_PER_ADMISSION * parent_height.min(HEADER_WINDOW_LIMIT)
+                );
                 let changes_before = node.db.total_changes();
                 let activation = ProgressObservation::new();
                 let result =
@@ -633,6 +654,11 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
             );
             let error = result.unwrap_err();
             assert_eq!(error.to_string(), "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL");
+            assert_eq!(
+                cancellation_observation["checkpoints"]["header_ancestors"],
+                HEADER_WINDOWS_PER_ADMISSION
+                    * ((history + MEASURED_BLOCKS) as u64).min(HEADER_WINDOW_LIMIT)
+            );
             assert_eq!(rows(&node.db), before_rows);
             assert_eq!(node.active().unwrap(), active);
             assert_eq!(

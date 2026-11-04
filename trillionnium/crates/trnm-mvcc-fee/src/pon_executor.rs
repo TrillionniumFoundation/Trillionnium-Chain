@@ -115,8 +115,10 @@ struct StateInputs<'a> {
     experimental_skip_repeated_senders: bool,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
+/// Header context does not claim the separate parent State binding was read.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionProgress {
+    BeforeHeaderContext,
     BeforeParentBinding,
     BeforeStateClone,
     AfterMandatory,

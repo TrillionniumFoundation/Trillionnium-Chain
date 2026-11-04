@@ -4,9 +4,11 @@
 This reader checks a bounded observation set, not execution attestation. Its
 caller must separately require the exact native selector, successful process,
 original workspace artifact and unchanged source/binary before and after.
-Current v2 requires each actual native return and the separately timed
-cancellation. Retained v1 observations need explicit historical mode; missing
-historical return/cancellation timings remain unknown.
+Current v3 requires each actual native return, separately timed cancellation,
+and exactly three operation-local header windows. Retained v2 observations use
+six windows and need explicit historical-v2 mode; retained v1 observations need
+historical-v1 mode and missing return/cancellation timings remain unknown.
+Header callbacks are not total SQL reads, elapsed latency or CPU cost.
 """
 from __future__ import annotations
 
@@ -32,6 +34,13 @@ STAGE_TIMING_SCOPE_V2 = (
     "inclusive wall time; offsets and nested intervals must not be summed; "
     "BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement"
 )
+HEADER_WINDOW_CONTRACT_V3 = {
+    "profile": "native-growth-single-header-window-v1",
+    "complete_admission_windows": 3,
+    "maximum_ancestor_headers_per_window": 16,
+    "counter": "header_ancestors",
+    "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU",
+}
 RETURN_JOURNAL_SCOPE = (
     "one flushed record per returned measured admission, activation and deliberate cancellation; "
     "journal IO is outside native stage timings but remains campaign cost; "
@@ -105,7 +114,7 @@ def stage(value, admission, *, version=1, complete=True):
     require(type(value) is dict, "native stage")
     tail_key = ("final_guard_and_sqlite_commit_wall_ns" if version == 1
                 else "before_commit_to_return_wall_ns")
-    if version == 2:
+    if version >= 2:
         require(set(value) == {"wall_ns", "checkpoints", "before_persistence_offset_ns",
                 "before_commit_offset_ns", "persistence_and_readback_wall_ns", tail_key,
                 "thread_cpu_ns", "process_cpu_ns", "timing_scope"}, "v2 native stage shape")
@@ -135,7 +144,7 @@ def stage(value, admission, *, version=1, complete=True):
     if complete:
         require(commit is not None and (persistence is not None if admission else persistence is None),
                 "native persistence/commit observation")
-    if version == 2:
+    if version >= 2:
         require(counters["before_commit_checks"] == int(commit is not None),
                 "native BeforeCommit count/offset mismatch")
         require(admission or persistence is None, "activation has no admission persistence checkpoint")
@@ -226,7 +235,20 @@ def sql_rows(value, height):
     return value
 
 
-def check(directory, *, historical_v1=False):
+def check_header_ancestors(value, parent_height, version):
+    count = number(value)
+    if version == 1:
+        # Retain the original v1 reader's observation scope; it did not bind
+        # a specific source revision's complete-admission window count.
+        require((count == 0) == (parent_height == 0), "actual bounded ancestor lookup scope")
+    else:
+        windows = 3 if version == 3 else 6
+        require(count == windows * min(parent_height, 16),
+                "exact native header window count")
+
+
+def check(directory, *, historical_v1=False, historical_v2=False):
+    require(not (historical_v1 and historical_v2), "choose one historical observation version")
     directory = Path(directory)
     require(directory.is_dir() and not directory.is_symlink(), "observation directory")
     expected_files = {"run.jsonl"} | {
@@ -236,7 +258,7 @@ def check(directory, *, historical_v1=False):
     run, identity = read_rows(directory / "run.jsonl")
     require(len(run) == 2, "complete run start/end required")
     first, last = run
-    version = 1 if historical_v1 else 2
+    version = 1 if historical_v1 else 2 if historical_v2 else 3
     require(first["schema"] == f"native-growth-fixed-owner-scale-observation-v{version}"
             and first["event"] == "run_started" and last["event"] == "run_completed", "run context")
     require([number(value) for value in first["accounts"]] == list(ACCOUNTS)
@@ -246,6 +268,16 @@ def check(directory, *, historical_v1=False):
             and number(first["work_search_attempt_limit"]) == 4096, "frozen native workload")
     require(first["wall_time_acceptance_gate"] is False and first["completed"] is False,
             "start cannot claim completion")
+    if version == 3:
+        contract = first.get("header_window_contract")
+        require(type(contract) is dict and set(contract) == set(HEADER_WINDOW_CONTRACT_V3),
+                "current header window contract")
+        for key in ("complete_admission_windows", "maximum_ancestor_headers_per_window"):
+            number(contract[key])
+        require(contract == HEADER_WINDOW_CONTRACT_V3, "current header window contract")
+    else:
+        require("header_window_contract" not in first,
+                "historical observations cannot be relabelled with current header windows")
     if version == 1:
         require(first["setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings"] is True
                 and "native_stage_return_schema" not in first, "historical native timing scope")
@@ -310,7 +342,7 @@ def check(directory, *, historical_v1=False):
             times, query_reads, copied_nodes, witness_sizes = [], [], [], []
             for sample in range(SAMPLES):
                 begun = take("measurement_started")
-                if version == 2:
+                if version >= 2:
                     admission_return = returned_stage(take("native_stage_returned"),
                         purpose="measurement", operation="admission", sample=sample,
                         parent=hash_id(begun["parent"]))
@@ -332,7 +364,7 @@ def check(directory, *, historical_v1=False):
                 require(done["complete_state_reference_equal"] is True and done["p99_ns"] is None,
                         "complete state and unresolved p99")
                 parent, block = hash_id(begun["parent"]), hash_id(done["block"])
-                if version == 2:
+                if version >= 2:
                     require(admission_return["block"] == activation_return["block"] == block
                             and admission_return["native_stage"] == done["native_admission"]
                             and activation_return["native_stage"] == done["native_activation"]
@@ -356,8 +388,7 @@ def check(directory, *, historical_v1=False):
                 times.append(stage(done["native_admission"], admission=True, version=version))
                 stage(done["native_activation"], admission=False, version=version)
                 ancestors = done["native_admission"]["checkpoints"]["header_ancestors"]
-                require((ancestors == 0) == (history + sample == 0),
-                        "actual bounded ancestor lookup scope")
+                check_header_ancestors(ancestors, history + sample, version)
                 number(done["make_signed_packet_and_full_work_wall_ns"])
                 number(done["complete_state_reference_and_diagnostics_wall_ns"])
                 require(number(done["full_work_proof_bytes"]) == 49188, "complete original W1 proof width")
@@ -391,7 +422,7 @@ def check(directory, *, historical_v1=False):
                             number(done["sql_rows_before"][table]) + 1, "durable row denominator")
             cancellation_started = take("atomic_cancellation_started")
             cancellation_ns = None
-            if version == 2:
+            if version >= 2:
                 require(hash_id(cancellation_started["parent"]) == previous_block,
                         "cancelled admission parent identity")
                 cancellation_return = returned_stage(take("native_stage_returned"),
@@ -403,15 +434,17 @@ def check(directory, *, historical_v1=False):
                         and cancellation_return["block"] not in seen_blocks,
                         "original deliberate cancellation return")
                 cancellation_ns = stage(cancellation_return["native_stage"], admission=True, version=2)
-                require(cancellation_return["sql_total_changes"] > 0
-                        and cancellation_return["native_stage"]["checkpoints"]["header_ancestors"] > 0,
+                require(cancellation_return["sql_total_changes"] > 0,
                         "deliberate BeforeCommit cancellation retains actual writes and ancestor checks")
+                check_header_ancestors(
+                    cancellation_return["native_stage"]["checkpoints"]["header_ancestors"],
+                    history + SAMPLES, version)
                 returned_outcomes["rejected"] += 1
             cancel = take("atomic_cancellation_completed")
             require(cancel["error"] == "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL"
                     and cancel["all_sql_rows_equal"] is True
                     and cancel["active_generation_equal"] is True, "atomic cancellation")
-            if version == 2:
+            if version >= 2:
                 require(cancel["native_admission"] == cancellation_return["native_stage"]
                         and number(cancel["admission_sql_total_changes"]) == cancellation_return["sql_total_changes"],
                         "cancelled admission must retain its actual native return")
@@ -425,7 +458,7 @@ def check(directory, *, historical_v1=False):
                     and number(end["failed_unexpected_admissions"]) == 0
                     and number(end["cold_reopens"]) == 1
                     and end["cold_complete_reference_equal"] is True, "complete cohort denominator")
-            if version == 2:
+            if version >= 2:
                 require(number(end["returned_native_stages"]) == SAMPLES * 2 + 1
                         and number(end["cancelled_admission_wall_ns"]) == cancellation_ns,
                         "native return and cancellation denominator")
@@ -451,16 +484,18 @@ def check(directory, *, historical_v1=False):
     require(len(owner_sets) == 1 and last["fixed_witness_owner_set_observed"] is True
             and [list(row) for row in sorted(owner_sets)] == last["actual_distinct_witness_owner_sets"],
             "fixed actual touched owners not demonstrated")
-    returned_count = sum(returned_outcomes.values()) if version == 2 else None
-    if version == 2:
+    returned_count = sum(returned_outcomes.values()) if version >= 2 else None
+    if version >= 2:
         require(number(last["returned_native_stages"]) == returned_count == 153,
                 "complete planned native return denominator")
     return {"schema": f"native-growth-fixed-owner-scale-readback-v{version}", "result": "COMPLETE_LOCAL_OBSERVATION",
-            "historical_v1": historical_v1, "observation_schema": first["schema"],
+            "historical_v1": historical_v1, "historical_v2": historical_v2,
+            "observation_schema": first["schema"],
+            "header_window_contract": first.get("header_window_contract"),
             "completed_cohorts": 9, "measured_native_blocks": 72, "cancelled_admissions": 9,
             "returned_native_stages": returned_count,
-            "returned_native_outcomes": returned_outcomes if version == 2 else None,
-            "cancellation_stage_measurements_available": version == 2,
+            "returned_native_outcomes": returned_outcomes if version >= 2 else None,
+            "cancellation_stage_measurements_available": version >= 2,
             "native_stage_cpu_measurements_available": False,
             "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
             "cold_reopens": 9, "fixed_witness_owners": list(next(iter(owner_sets))),
@@ -472,11 +507,15 @@ def check(directory, *, historical_v1=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
-    parser.add_argument("--historical-v1", action="store_true",
-                        help="read only retained v1 observations; cancelled/failed stage timings remain unknown")
+    historical = parser.add_mutually_exclusive_group()
+    historical.add_argument("--historical-v1", action="store_true",
+                            help="read only retained v1 observations; cancelled/failed stage timings remain unknown")
+    historical.add_argument("--historical-v2", action="store_true",
+                            help="read only retained v2 observations with their original six header windows")
     args = parser.parse_args()
     try:
-        result = check(args.directory, historical_v1=args.historical_v1)
+        result = check(args.directory, historical_v1=args.historical_v1,
+                       historical_v2=args.historical_v2)
     except (OSError, ValueError, KeyError, TypeError, UnicodeError) as error:
         print(json.dumps({"result": "REFUSED", "error": str(error)}))
         return 1
