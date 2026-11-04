@@ -52,6 +52,34 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Quantum winner costs and stochastic DAA research — 2026-11-04
+
+Continue work package 2C on the existing PR #688 integration lineage from
+`a4a0e2b561f057cfa3189979c5bf11f3a0eb2353`. Add separate executable resource
+accounting and bounded event simulation to the retained quantum DAA package.
+Charge public-task preprocessing at its reuse scope, compute/uncompute and
+diffusion per coherent iteration, candidate checking after every measurement,
+and valid proof production and propagation after a winner. Missing complete W1
+circuits remain unknown. Conditional logical
+and physical resource budgets must retain their register, data-access, error,
+factory and hardware assumptions rather than infer QPU costs from classical time.
+
+The event experiment must preserve the exact current branch target, timestamp,
+integer chainwork, profile and equal-work tie rules while modeling independent
+classical arrivals, finite Grover trials, public-tip interruption, private-fork
+continuation, participation changes and network delay. Retain failed and censored
+work and finite-run fork/liveness observations. ASERT remains isolated research
+arithmetic. The CRYPTO 2026 parallel-chain Fast DAA backend remains unavailable
+until its complete protocol and theorem assumptions are mapped; a simple target
+aggregator must not impersonate that construction. Multi-resource weight results
+remain conditional theory, not a new chain score.
+
+The [research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) and
+[source-bound reproduction manifest](../../evidence/pon-quantum-event-resources-20261104/README.md)
+specify these boundaries. Native pure-PoN consensus and all original capacity,
+cryptographic, independent-review and activation obligations remain unchanged.
+No finite simulation or source check closes the quantum mining/DAA security gate.
+
 #### Evaluation integrity and weight-loading continuation — 2026-11-04
 
 Continue the PR #688 lineage from `93e207c8d2ccb8509f78566223abc371b9d8118b`.
