@@ -533,6 +533,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -701,6 +708,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -729,6 +757,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -754,6 +789,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs"
         )),
     ),
     (
@@ -5685,6 +5727,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5752,6 +5808,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs"
         )),
     ),
     (

@@ -3,7 +3,8 @@
 //! Ordinary witnesses omit SPKI; this module never invents their public keys.
 use crate::pq_frame::{
     ml_dsa_65_key_id_from_spki, payload_commitment, preflight_unverified, PqFrameExpectation,
-    ML_DSA_65_SPKI_BYTES, TPQ1_SIGNED_BYTES, TPQ1_UNSIGNED_BYTES,
+    ML_DSA_65_SPKI_BYTES, TPQ1_ALGORITHM, TPQ1_MAGIC, TPQ1_SIGNED_BYTES, TPQ1_UNSIGNED_BYTES,
+    TPQ1_VERSION,
 };
 use sha2::{Digest, Sha256, Sha384};
 
@@ -21,6 +22,11 @@ pub const MAX_TRANSACTIONS: usize = 256;
 pub const APPLICATION_MAX_BYTES: usize = 16_384;
 pub const APPLICATION_MAX_TRANSACTIONS: usize = 64;
 pub const APPLICATION_MAX_VERIFICATIONS: usize = 64;
+pub const TRANSFER_BASE_BYTES: usize = 42;
+pub const TRANSFER_MAX_MEMO_BYTES: usize = 512;
+pub const MAX_LEGACY_PAYLOAD_BYTES: usize = TRANSFER_BASE_BYTES + TRANSFER_MAX_MEMO_BYTES;
+pub const MAX_CONFLICT_ENVELOPE_BYTES: usize = 4096;
+pub const CONFLICT_EVIDENCE_VERIFICATIONS: usize = 2;
 pub const REGISTER: u8 = 0x80;
 pub const ROTATE: u8 = 0x81;
 pub const CLAIM: u8 = 0x82;
@@ -53,7 +59,7 @@ impl AccountProfile {
             Self::ApplicationV6 => b"PQP6\x06\0\0\0",
         }
     }
-    fn prefix(self) -> &'static [u8; 5] {
+    pub(crate) fn prefix(self) -> &'static [u8; 5] {
         match self {
             Self::AccountsV2 => b"NPQ2\x02",
             Self::QuotaV3 => b"NPQ3\x03",
@@ -62,7 +68,7 @@ impl AccountProfile {
             Self::ApplicationV6 => b"NPQ6\x06",
         }
     }
-    fn statement_domain(self) -> &'static [u8] {
+    pub(crate) fn statement_domain(self) -> &'static [u8] {
         match self {
             Self::AccountsV2 => b"TRNM/PoN/NativePQCommandStatement/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaStatement/v3\0",
@@ -71,7 +77,7 @@ impl AccountProfile {
             Self::ApplicationV6 => b"TRNM/PoN/NativePQApplicationStatement/v6\0",
         }
     }
-    fn context_domain(self) -> &'static [u8] {
+    pub(crate) fn context_domain(self) -> &'static [u8] {
         match self {
             Self::AccountsV2 => b"TRNM/PoN/NativePQAccountContext/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaContext/v3\0",
@@ -80,7 +86,7 @@ impl AccountProfile {
             Self::ApplicationV6 => b"TRNM/PoN/NativePQApplicationContext/v6\0",
         }
     }
-    fn wire_domain(self) -> &'static [u8] {
+    pub(crate) fn wire_domain(self) -> &'static [u8] {
         match self {
             Self::AccountsV2 => b"TRNM/PoN/NativePQCommandWire/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaWire/v3\0",
@@ -112,6 +118,17 @@ impl AccountProfile {
     }
     pub fn task_v5(self) -> bool {
         matches!(self, Self::TasksV5 | Self::ApplicationV6)
+    }
+    pub(crate) fn maximum_payload_bytes(self) -> usize {
+        if self == Self::ApplicationV6 {
+            APPLICATION_MAX_BYTES - PREFIX_BYTES - COMMON_BYTES - RESOLVED_WITNESS_BYTES
+        } else if self.task_v5() {
+            crate::qualified_work_task::pq_lifecycle_v5::ATOMIC_RENEW_TASK_BYTES
+        } else if self == Self::TasksV4 {
+            crate::qualified_work_task::pq_lifecycle_v4::TASK_REGISTRATION_BYTES
+        } else {
+            MAX_LEGACY_PAYLOAD_BYTES
+        }
     }
 }
 const _: () = assert!(RESOLVED_WITNESS_BYTES == 3_533 && CARRIED_WITNESS_BYTES == 5_507);
@@ -181,7 +198,7 @@ fn bytes<const N: usize>(raw: &[u8], at: usize) -> Result<[u8; N], Error> {
 fn number(raw: &[u8], at: usize) -> Result<u64, Error> {
     Ok(u64::from_be_bytes(bytes(raw, at)?))
 }
-fn roles(profile: AccountProfile, kind: u8) -> Result<&'static [(u8, bool)], Error> {
+pub(crate) fn roles(profile: AccountProfile, kind: u8) -> Result<&'static [(u8, bool)], Error> {
     match kind {
         6..=9 | 14..=17 | 23 | 24 if profile == AccountProfile::ApplicationV6 => Ok(&[(1, false)]),
         1..=5 => Ok(&[(1, false)]),
@@ -247,11 +264,14 @@ fn check(profile: AccountProfile, common: &Common, kind: u8, payload: &[u8]) -> 
             }
         }
         1 => {
-            if payload.len() < 42 || payload.len() > 554 {
+            if payload.len() < TRANSFER_BASE_BYTES || payload.len() > MAX_LEGACY_PAYLOAD_BYTES {
                 return Err(Error::Length);
             }
             let memo = u16::from_be_bytes(bytes(payload, 40)?) as usize;
-            if payload.len() != 42 + memo || memo > 512 || bytes::<32>(payload, 0)? == [0; 32] {
+            if payload.len() != TRANSFER_BASE_BYTES + memo
+                || memo > TRANSFER_MAX_MEMO_BYTES
+                || bytes::<32>(payload, 0)? == [0; 32]
+            {
                 return Err(Error::Encoding);
             }
         }
@@ -406,7 +426,7 @@ fn key_bytes(
         if key.generation != generation {
             return Err(Error::Key);
         }
-        let mut raw = vec![role, 0x65, 0, 0];
+        let mut raw = vec![role, TPQ1_ALGORITHM, 0, 0];
         raw.extend(key.generation.to_be_bytes());
         raw.extend(key.key_id);
         raw.extend(
@@ -488,7 +508,8 @@ pub fn signing_statement_for_profile(
     let core = signing_core_for_profile(profile, common, kind, payload, keys)?;
     let key = keys.get(index).ok_or(Error::Encoding)?;
     let mut raw = [0; TPQ1_UNSIGNED_BYTES];
-    raw[..8].copy_from_slice(&[b'T', b'P', b'Q', b'1', 1, 0x65, key.role, 0]);
+    raw[..4].copy_from_slice(TPQ1_MAGIC);
+    raw[4..8].copy_from_slice(&[TPQ1_VERSION, TPQ1_ALGORITHM, key.role, 0]);
     raw[8..40].copy_from_slice(&common.context.network);
     raw[40..72].copy_from_slice(&owner_context_for_profile(profile, common, kind, key.role)?);
     raw[72..104].copy_from_slice(&key.key_id);
@@ -539,15 +560,7 @@ impl<'a> UnverifiedEnvelope<'a> {
         let kind = raw[5];
         let expected = roles(profile, kind)?;
         let body_len = u32::from_be_bytes(bytes(raw, 8)?) as usize;
-        let max_payload = if profile == AccountProfile::ApplicationV6 {
-            APPLICATION_MAX_BYTES - PREFIX_BYTES - COMMON_BYTES - RESOLVED_WITNESS_BYTES
-        } else if profile.task_v5() {
-            crate::qualified_work_task::pq_lifecycle_v5::ATOMIC_RENEW_TASK_BYTES
-        } else if profile == AccountProfile::TasksV4 {
-            crate::qualified_work_task::pq_lifecycle_v4::TASK_REGISTRATION_BYTES
-        } else {
-            554
-        };
+        let max_payload = profile.maximum_payload_bytes();
         if raw[6] as usize != expected.len()
             || !(COMMON_BYTES..=COMMON_BYTES + max_payload).contains(&body_len)
         {
@@ -576,7 +589,7 @@ impl<'a> UnverifiedEnvelope<'a> {
             let descriptor = raw
                 .get(pos..pos + WITNESS_DESCRIPTOR_BYTES)
                 .ok_or(Error::Length)?;
-            if descriptor[..4] != [role, 0x65, 0, 0] {
+            if descriptor[..4] != [role, TPQ1_ALGORITHM, 0, 0] {
                 return Err(Error::Encoding);
             }
             let length = u16::from_be_bytes(bytes(descriptor, 44)?) as usize;
@@ -712,12 +725,14 @@ pub fn conflict_evidence(payload: &[u8]) -> Result<(&[u8], &[u8]), Error> {
         return Err(Error::Length);
     }
     let first_len = u16::from_le_bytes(bytes(payload, 32)?) as usize;
-    if !(MIN_BYTES..=4096).contains(&first_len) {
+    if !(MIN_BYTES..=MAX_CONFLICT_ENVELOPE_BYTES).contains(&first_len) {
         return Err(Error::Length);
     }
     let offset = 34_usize.checked_add(first_len).ok_or(Error::Length)?;
     let second_len = u16::from_le_bytes(bytes(payload, offset)?) as usize;
-    if !(MIN_BYTES..=4096).contains(&second_len) || payload.len() != offset + 2 + second_len {
+    if !(MIN_BYTES..=MAX_CONFLICT_ENVELOPE_BYTES).contains(&second_len)
+        || payload.len() != offset + 2 + second_len
+    {
         return Err(Error::Length);
     }
     Ok((&payload[34..offset], &payload[offset + 2..]))
@@ -728,7 +743,7 @@ impl UnverifiedEnvelope<'_> {
     pub fn verification_count(&self) -> usize {
         self.witnesses.len()
             + if self.profile == AccountProfile::ApplicationV6 && self.kind == 16 {
-                2
+                CONFLICT_EVIDENCE_VERIFICATIONS
             } else {
                 0
             }
