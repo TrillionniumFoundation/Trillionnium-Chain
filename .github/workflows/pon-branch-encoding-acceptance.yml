@@ -48,9 +48,11 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 65093afcdf1a777b03447ff8db2aaa7d9e14ed83
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 2bf225d0dbfbe82ab608bf05692937bbce5ea616
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = d15fdedabce6bf247311d1f75bf4d8370a8d33c1
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 6bd1deafeedef4955202a3fb76e87225b6989a75
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy

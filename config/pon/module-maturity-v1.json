@@ -922,6 +922,14 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
               "symbol": "apply_batch"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+              "symbol": "encode_for_cache_sharing"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+              "symbol": "prepare_snapshot_with_sharing"
             }
           ],
           "controlled_entrypoint": {
@@ -958,7 +966,20 @@
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_match_serial_versions_and_keep_every_insert_reachable",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_keep_original_parent_nonce_and_no_deletion_checks",
-            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover"
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_candidate_early_miss_retains_complete_late_validation",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_first_middle_and_last_mismatches_keep_original_preparation",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_deep_cloned_shrunk_and_grown_capacities_keep_exact_budgets",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_suffix_errors_and_discard_keep_original_error_priority",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_empty_state_keeps_the_final_workspace_fallback",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_prefix_slots_fit_the_original_workspace_reservation",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_materializes_fresh_prefix_without_reallocating_values",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_full_binding_cost"
           ],
           "remaining": "Optional authenticated native persistence closes the same-transaction state binding but does not remove full-State scans, full-history confirmation or global retention costs. Disposable caches and separate local MVCC stores confer no extra authority; physical power-loss, external effects and ordinary product integration remain unqualified."
         }
@@ -1123,6 +1144,18 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
               "symbol": "verify_inserted"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+              "symbol": "account_root_with_lifts"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+              "symbol": "root"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+              "symbol": "LiftCache::lift_parts"
             }
           ],
           "controlled_entrypoint": {
@@ -1156,7 +1189,11 @@
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
             "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::real_signed_packets_reject_omitted_and_late_modified_ancestry_before_commit",
             "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::restart_checks_exact_active_tip_row_set_including_genesis",
-            "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry"
+            "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_paired_complete_root_cost_observation"
           ],
           "remaining": "Authenticated-v1 is an explicit local backend; legacy-v2 stays default and consensus revisions are unchanged. Full State, linear non-account scans, full-history confirmation and retained-history storage remain. Public P2P, production mining/mempool lifecycle, physical power-loss, ordinary resource/effect integration and independent work acceptance remain unqualified."
         }
@@ -2321,6 +2358,14 @@
             {
               "path": "scripts/ci/check_zero_locality_cost.py",
               "symbol": "validate_zero_v2_report"
+            },
+            {
+              "path": "scripts/ci/check_growth_scale_observation.py",
+              "symbol": "check"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+              "symbol": "append_native_return"
             }
           ],
           "controlled_entrypoint": {
@@ -2653,7 +2698,15 @@
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory",
             "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit",
             "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two",
-            "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in"
+            "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in",
+            "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+            "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs::native_growth_scale_retains_admission_when_activation_returns_error",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_v2_retains_all_returns_and_keeps_cancellation_cost_outside_success_medians",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_historical_v1_requires_explicit_mode_and_missing_return_timings_stay_unknown",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_activation_failure_keeps_prior_admission_return_and_remains_failure",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_all_nine_cancellations_need_their_own_return_and_timing",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_cancellation_cannot_be_a_success_or_misnamed_durable_commit_measurement",
+            "scripts/ci/test_growth_scale_observation.py::GrowthReturnedStageReaderTests.test_unmeasured_stage_cpu_cannot_be_filled_with_zero_or_inferred_work"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

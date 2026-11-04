@@ -28,6 +28,9 @@ const MAP_ENTRY_CHARGE: usize = 1024;
 const COMPRESSED_NODE_CHARGE: usize = 256;
 const CHANGE_ENTRY_CHARGE: usize = 256;
 const EMPTY_TABLE_CHARGE: usize = 257 * 32;
+// A shared encoder requests at most one Vec header per actual key. Its
+// temporary slot array uses an existing map reservation, not a new allowance.
+const _: () = assert!(std::mem::size_of::<Vec<u8>>() <= MAP_ENTRY_CHARGE);
 
 /// Optional original sparse-tree arithmetic for a full-root fallback. Every use
 /// still encodes and hashes the complete actual State; no root, partial update
@@ -363,6 +366,125 @@ fn encode_for_cache(
     Ok((retained, current))
 }
 
+enum RetainedEncoding {
+    Shared(Vec<Vec<u8>>),
+    Owned(CanonicalValues),
+}
+
+/// Move the freshly encoded, fully verified prefix into the original map form.
+/// Every old key already matched this call's actual bytes and fresh capacity;
+/// the value buffers keep their allocations. Sequential insertion avoids a
+/// second collection/sort buffer, and the prefix slot array is gone on return.
+fn materialize_shared_prefix(previous: &CanonicalValues, prefix: Vec<Vec<u8>>) -> CanonicalValues {
+    debug_assert!(prefix.len() <= previous.len());
+    let mut values = BTreeMap::new();
+    for (encoded, key) in prefix.into_iter().zip(previous.keys()) {
+        values.insert(key.as_slice().to_vec(), encoded);
+    }
+    values
+}
+
+/// Perform the original fresh canonical encoding and capacity accounting once.
+/// Only map allocation is deferred. A shared prefix must match every current
+/// byte AND the original fresh key/value capacities. Keep those fresh values
+/// until sharing is decided, so a mismatch moves them into the original map
+/// without allocating/copying their bytes again. No mismatch restarts the
+/// complete canonical pass.
+fn encode_for_cache_sharing(
+    state: &State,
+    previous: &CanonicalValues,
+    limits: CacheLimits,
+) -> Result<(Option<RetainedEncoding>, Charges)> {
+    let count = state.len();
+    let nodes = count.saturating_mul(2).saturating_sub(1);
+    let mut retained = (count <= limits.max_keys && count <= 65_536).then(|| {
+        if previous.len() == count {
+            RetainedEncoding::Shared(Vec::new())
+        } else {
+            RetainedEncoding::Owned(BTreeMap::new())
+        }
+    });
+    let mut old = previous.iter();
+    let mut payload = 0usize;
+    let mut capacities = 0usize;
+    let mut within_wire = count <= 65_536;
+    for (index, (key, value)) in state.iter().enumerate() {
+        let encoded = pon_executor::canonical(value)?;
+        within_wire &= key.len() <= 160 && encoded.len() <= 4096;
+        payload = payload
+            .saturating_add(key.len())
+            .saturating_add(encoded.len());
+        capacities = capacities
+            .saturating_add(key.len())
+            .saturating_add(encoded.capacity());
+        let map = capacities.saturating_add(count.saturating_mul(MAP_ENTRY_CHARGE));
+        let tree = capacities
+            .saturating_add(nodes.saturating_mul(COMPRESSED_NODE_CHARGE))
+            .saturating_add(EMPTY_TABLE_CHARGE);
+        let minimum_workspace = map
+            .saturating_add(tree)
+            .saturating_mul(3)
+            .saturating_add(payload.saturating_mul(2));
+        if !within_wire
+            || payload > limits.max_payload_bytes
+            || minimum_workspace > limits.max_workspace_charge_bytes
+        {
+            // As in encode_for_cache, immediately drop accumulated encodings
+            // (including the prefix slot array), but finish the canonical pass.
+            retained = None;
+        }
+        if let Some(retained) = &mut retained {
+            match retained {
+                RetainedEncoding::Shared(prefix) => {
+                    let exact = old.next().is_some_and(|(old_key, old_value)| {
+                        old_key.as_slice() == key.as_bytes()
+                            && old_value.as_slice() == encoded.as_slice()
+                            && old_key.capacity() == key.len()
+                            && old_value.capacity() == encoded.capacity()
+                    });
+                    if exact {
+                        if prefix.capacity() == 0 {
+                            // The original incremental guard has passed. The
+                            // requested count * size_of::<Vec<u8>>() slots fit
+                            // one of its three map metadata reservations; the
+                            // fresh payload is moved, never duplicated during
+                            // materialization. Reserve once from empty, so no
+                            // old/new slot arrays overlap and pushes cannot
+                            // grow it. This is logical charge accounting, not
+                            // an allocator ABI/RSS bound. The final workspace
+                            // check still includes the full preceding charges.
+                            prefix.reserve_exact(count);
+                        }
+                        prefix.push(encoded);
+                    } else {
+                        debug_assert_eq!(prefix.len(), index);
+                        let mut values =
+                            materialize_shared_prefix(previous, std::mem::take(prefix));
+                        values.insert(key.as_bytes().to_vec(), encoded);
+                        *retained = RetainedEncoding::Owned(values);
+                    }
+                }
+                RetainedEncoding::Owned(values) => {
+                    values.insert(key.as_bytes().to_vec(), encoded);
+                }
+            }
+        }
+    }
+    if !within_wire {
+        return Err("LIMIT");
+    }
+    let current = Charges {
+        payload,
+        map: add(capacities, mul(count, MAP_ENTRY_CHARGE)?)?,
+        tree: add(
+            add(capacities, mul(nodes, COMPRESSED_NODE_CHARGE)?)?,
+            EMPTY_TABLE_CHARGE,
+        )?,
+        nodes,
+    };
+    Ok((retained, current))
+}
+
 /// Compare the actual successor directly with the already retained parent.
 /// At most one successor encoding is live; no second full successor map exists.
 fn visit_state_differences(
@@ -453,7 +575,21 @@ fn prepare_state_with_arithmetic(
     limits: CacheLimits,
     arithmetic: Option<&FullRootArithmetic>,
 ) -> Result<PreparedCommitment> {
-    let (values, current) = encode_for_cache(state, limits)?;
+    let encoded = encode_for_cache(state, limits)?;
+    prepare_encoded_state_with_arithmetic(state, prior, actual_before, limits, arithmetic, encoded)
+}
+
+/// Continue the original preparation after one complete encoding pass. Both
+/// encoders preserve fresh capacities, incremental discard and wire errors;
+/// a sharing miss must not repeat that pass before these original decisions.
+fn prepare_encoded_state_with_arithmetic(
+    state: &State,
+    prior: Option<&CheckedCommitment>,
+    actual_before: Option<&CanonicalValues>,
+    limits: CacheLimits,
+    arithmetic: Option<&FullRootArithmetic>,
+    (values, current): (Option<CanonicalValues>, Charges),
+) -> Result<PreparedCommitment> {
     limits.validate()?;
     if let Some(values) = values {
         return prepare_values(values, prior, actual_before, limits);
@@ -778,19 +914,16 @@ fn checked_snapshot_with_optional_arithmetic(
     limits: CacheLimits,
     arithmetic: Option<&FullRootArithmetic>,
 ) -> Result<PreparedCommitment> {
-    // The freshly supplied root and key count select calculation material only.
-    // A hit still canonically compares EVERY actual key/value below. Historical
-    // transitions with a different root retain the original single encoding
-    // pass; a misleading same-root hint takes that original path on mismatch.
-    let unchanged = prior
-        .filter(|previous| {
-            previous.root == expected_root && previous.values.len() == actual_state.len()
-        })
-        .map(|previous| prepare_unchanged_snapshot(actual_state, previous, limits))
-        .transpose()?
-        .flatten();
-    let prepared = match unchanged {
-        Some(prepared) => prepared,
+    // The fresh expected root selects calculation material only. Every actual
+    // value is still encoded once, with its original fresh capacity. A false
+    // same-root hint materializes the verified prefix instead of re-encoding
+    // the whole State. Different-root transitions keep the original entry.
+    let prepared = match prior.filter(|previous| {
+        previous.root == expected_root && previous.values.len() == actual_state.len()
+    }) {
+        Some(previous) => {
+            prepare_snapshot_with_sharing(actual_state, previous, limits, arithmetic)?
+        }
         None => prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?,
     };
     if prepared.root != expected_root {
@@ -799,60 +932,97 @@ fn checked_snapshot_with_optional_arithmetic(
     Ok(prepared)
 }
 
-/// Share a private immutable canonical map only after a complete fresh State
-/// comparison. Its retained Vec capacities are those of the same canonical
-/// encoder used by prepare_values; cloning the Arc does not shrink them. Keep
-/// the original software charges, empty-delta tree check and repair behavior.
-/// Refused budgets and invalid limit settings use the original path, including
-/// its canonical-error-before-limit ordering and optional full-root arithmetic.
+fn prepare_snapshot_with_sharing(
+    actual_state: &State,
+    previous: &CheckedCommitment,
+    limits: CacheLimits,
+    arithmetic: Option<&FullRootArithmetic>,
+) -> Result<PreparedCommitment> {
+    let (retained, current) = encode_for_cache_sharing(actual_state, &previous.values, limits)?;
+    match retained {
+        Some(RetainedEncoding::Shared(prefix)) => {
+            // Drop temporary fresh values and their slot array before the
+            // original workspace/tree/root/change preparation phases begin.
+            drop(prefix);
+            prepare_unchanged_snapshot(actual_state, previous, limits, current)
+        }
+        Some(RetainedEncoding::Owned(values)) => prepare_encoded_state_with_arithmetic(
+            actual_state,
+            Some(previous),
+            None,
+            limits,
+            arithmetic,
+            (Some(values), current),
+        ),
+        None => prepare_encoded_state_with_arithmetic(
+            actual_state,
+            Some(previous),
+            None,
+            limits,
+            arithmetic,
+            (None, current),
+        ),
+    }
+}
+
+/// Every actual key/value and fresh encoder capacity has just matched this
+/// private immutable map. Keep the original software charges, empty-delta tree
+/// check, allocation stages and full-root repair. Even an empty State must run
+/// the original final workspace decision after the complete canonical pass.
 fn prepare_unchanged_snapshot(
     actual_state: &State,
     previous: &CheckedCommitment,
     limits: CacheLimits,
-) -> Result<Option<PreparedCommitment>> {
-    let Ok(current) = charges(&previous.values) else {
-        return Ok(None);
-    };
-    let Ok(workspace) = workspace_charge(current, current, 0) else {
-        return Ok(None);
-    };
-    if limits.validate().is_err()
-        || fallback_reason(previous.keys(), current, workspace, true, 0, limits).is_some()
-    {
-        return Ok(None);
-    }
-    if !matches_unchanged_candidate(actual_state, &previous.values)? {
-        return Ok(None);
-    }
+    current: Charges,
+) -> Result<PreparedCommitment> {
+    limits.validate()?;
+    let preceding = charges(&previous.values)?;
+    let workspace = workspace_charge(current, preceding, 0)?;
+    let reason = fallback_reason(actual_state.len(), current, workspace, true, 0, limits);
     mark_stage("budget-selected");
     let mut observation = CommitmentObservation {
-        method: CommitmentMethod::CheckedApply,
+        method: CommitmentMethod::RebuiltTree,
         actual_keys: actual_state.len(),
         actual_payload_bytes: current.payload,
         changed_keys: 0,
         changed_payload_bytes: 0,
-        compressed_nodes: Some(current.nodes),
+        compressed_nodes: None,
         workspace_charge_bytes: workspace,
     };
+    if let Some(reason) = reason {
+        observation.method = CommitmentMethod::FullRoot(reason);
+        let root = state_root(&previous.values).map_err(|_| "LIMIT")?;
+        mark_stage("full-root-completed");
+        mark_stage("changes-allocation");
+        return Ok(PreparedCommitment {
+            root,
+            snapshot: None,
+            changes: Vec::new(),
+            observation,
+        });
+    }
     mark_stage("changes-allocation");
     let changes = Vec::new();
     mark_stage("tree-allocation");
     let tree = match previous.tree.apply(previous.root, &changes) {
-        Ok(tree) => tree,
+        Ok(tree) => {
+            observation.method = CommitmentMethod::CheckedApply;
+            tree
+        }
         Err(_) => {
             observation.method =
                 CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch);
-            observation.compressed_nodes = None;
-            return Ok(Some(PreparedCommitment {
+            return Ok(PreparedCommitment {
                 root: state_root(&previous.values).map_err(|_| "LIMIT")?,
                 snapshot: None,
                 changes,
                 observation,
-            }));
+            });
         }
     };
     let root = tree.root();
-    Ok(Some(PreparedCommitment {
+    observation.compressed_nodes = Some(current.nodes);
+    Ok(PreparedCommitment {
         root,
         snapshot: Some(CheckedCommitment {
             values: Arc::clone(&previous.values),
@@ -862,38 +1032,7 @@ fn prepare_unchanged_snapshot(
         }),
         changes,
         observation,
-    }))
-}
-
-/// A miss only declines this optional candidate: the caller then executes the
-/// complete original preparation path. It is therefore safe to stop at the
-/// first differing key/value; no rejection or checked State follows that miss.
-/// Keep matches_encoded's separate full-pass contract for all its other users.
-/// A successful candidate still checks every actual value and all wire bounds.
-fn matches_unchanged_candidate(state: &State, expected: &CanonicalValues) -> Result<bool> {
-    if state.len() != expected.len() {
-        return Ok(false);
-    }
-    let mut within_limits = state.len() <= 65_536;
-    let mut previous = expected.iter();
-    let mut actual = Vec::new();
-    for (key, value) in state {
-        let Some((old_key, old_value)) = previous.next() else {
-            return Ok(false);
-        };
-        if key.as_bytes() != old_key {
-            return Ok(false);
-        }
-        pon_executor::canonical_into(value, &mut actual)?;
-        within_limits &= key.len() <= 160 && actual.len() <= 4096;
-        if actual != *old_value {
-            return Ok(false);
-        }
-    }
-    if !within_limits {
-        return Err("LIMIT");
-    }
-    Ok(true)
+    })
 }
 /// Compute a successor commitment from complete actual state values. This is
 /// only a calculation: an admitted context must use checked_snapshot or compare

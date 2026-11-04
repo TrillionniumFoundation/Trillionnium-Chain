@@ -236,6 +236,8 @@ fn branch(left: Hash, right: Hash) -> Hash {
     // moves no stored-node, current-state, cancellation or authority decision.
     trnm_protocol::pon_wire::account_archive_branch_hash(left, right)
 }
+// Digest-only arithmetic adapter. Node::lift keeps its independent original
+// loop so the record-building reference can check this path differentially.
 fn lift_digest(
     path: &Hash,
     digest: Hash,
@@ -327,7 +329,15 @@ impl Node {
         Ok(result)
     }
     fn lift(&self, depth: usize, empty: &[Hash; 257]) -> Hash {
-        lift_digest(&self.path, self.digest, self.depth, depth, empty)
+        let mut value = self.digest;
+        for d in (depth..self.depth).rev() {
+            value = if bit(&self.path, d) {
+                branch(empty[d + 1], value)
+            } else {
+                branch(value, empty[d + 1])
+            };
+        }
+        value
     }
     fn encode(&self) -> Vec<u8> {
         match self.kind {

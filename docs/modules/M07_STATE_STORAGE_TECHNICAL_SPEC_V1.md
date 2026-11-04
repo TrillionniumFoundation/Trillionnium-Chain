@@ -192,6 +192,59 @@ long-term DA, physical power-loss evidence and independently operated WAN remain
 separate acceptance requirements. Hepta pairing must name this final source and
 its actual main-merge rather than borrow a parent result.
 
+## Complete account-root arithmetic without storage records
+
+The existing `M07.StageBranch` / `M07.OwnedInitialization` bindings also cover
+the complete account-root calculation in
+[`account_root_with_lifts`](../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs).
+Its private [digest builder](../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)
+retains only each subtree's actual path, depth and mathematical digest. It
+uses paths freshly derived from actual owners by `ordered_accounts` in the same
+call, checks the original collision, partition and fork relations, and lifts
+both child digests before hashing the parent. Storage-record encodings and
+record-ID hashes are omitted only from
+this calculation; no fake storage node or supplied root replaces checked input.
+
+The existing bounded `LiftCache` still compares the complete
+`(path, digest, source_depth, target_depth)` input. Its compiled empty hashes are
+immutable mathematical constants. Identity lifts retain no entry; collisions,
+full buckets and borrow conflicts retain the original mathematical fallback.
+No SQL row, authorization, current-generation or successful verification verdict
+is introduced into this cache. The ordinary record builder and its original
+`Node::lift` loop remain independent comparison paths, alongside M00's complete
+sparse-root oracle. Actual stored-node reads, State comparison, progress checks,
+transaction publication, nonce, liability and recovery rules remain unchanged.
+
+Every call still hashes, orders and rebuilds all current accounts. Complete tree
+arithmetic remains O(A) in the number of account nodes after the unchanged path
+sort; the sort retains its existing cost. This removes unused storage-record
+work and does not close the fixed-touched-set state/history requirement.
+
+The three ordinary controls have these exact source selectors:
+
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_original_traversal_cancellation_and_collision_order`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_keeps_fork_shape_and_all_lift_input_relations`.
+
+They compare complete roots, zero-balance existence and independent balance/nonce
+changes, the owner-derived ordered-row entry precondition, cancellation order
+and every fork depth from 0 through 255. Internal callback parity does not add cancellation checkpoints to
+the public root entry, whose original callback is a no-op.
+
+The additional cost selector is explicitly ignored in ordinary test runs:
+
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs::native_root_digest_paired_complete_root_cost_observation`.
+
+It requires a fresh `TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT` filename and an explicit
+`--exact --ignored` invocation under the original declared repository profile.
+It compares the original cached
+record-building path and the new cached digest path in the same binary with
+separate caches and alternating order. Account State parsing, complete State
+root construction, actual SQL graph checks, Host/PQ checks, network and client
+confirmation are outside that measured boundary. Registration is not execution
+evidence or a measured speedup; the original complete-business and independent
+acceptance gates remain separate and open.
+
 ## Bounded fixed-field SQL copies in ordinary readers
 
 The existing native storage owner uses one private `FixedSqlBlob` decoder for

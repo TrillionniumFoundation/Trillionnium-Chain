@@ -320,7 +320,7 @@
           "id": "M06.DeriveBranchDelta",
           "inputs": "before and after key/value maps",
           "output": "sorted changed-key before/after records",
-          "algorithm": "For sorted union of keys compare canonical values; emit only changed entries, encode absence as NULL and empty value as real bytes. Detach verifies after then restores before; attach checks before then writes after.",
+          "algorithm": "For sorted union of keys compare canonical values; emit only changed entries, encode absence as NULL and empty value as real bytes. Detach verifies after then restores before; attach checks before then writes after. Optional complete-State parent binding shares a private canonical map only after fresh byte-and-capacity comparison of every actual entry. Its bounded fresh prefix moves values into the original map on mismatch, and releases temporary slots before root/tree/change preparation; original software charges, budget decisions and complete canonical error ordering remain.",
           "commit": "Native admission writes block, complete ordered deltas and, only for the explicitly selected authenticated backend, immutable StateCommitment plus changed account paths in the same SQLite transaction. Complete parent/successor authority is rechecked before publication.",
           "errors": "UNDO_ROOT, ROOT",
           "limits": "keys160bytes,values4096bytes; no copied state claimed high throughput"
@@ -382,7 +382,8 @@
         "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -450,7 +451,10 @@
         "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
         "scripts/ci/ci_job.sh",
         "trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
-        "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs"
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
@@ -1007,7 +1011,10 @@
         "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
-        "scripts/ci/ci_job.sh"
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/check_growth_scale_observation.py",
+        "scripts/ci/test_growth_scale_observation.py",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs"
       ],
       "test_classes": [
         "CodecTests",

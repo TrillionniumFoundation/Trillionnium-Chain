@@ -364,3 +364,88 @@ M06.TwelveCommandEquivalence retains full prefix snapshots, ordered write overla
 - `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts`
 - `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks`
 - `trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets`
+
+## One-pass complete snapshot comparison
+
+The existing M06.DeriveBranchDelta and M06.TwelveCommandEquivalence bindings
+cover the optional sharing of a private immutable canonical map. A matching
+expected root and key count select only calculation material. Every current
+value still uses the original fresh canonical encoder once. Sharing also
+requires exact current key/value bytes and the original fresh capacities; no
+root, length, pointer, generation or previous success replaces that comparison.
+
+Matching fresh values stay in a `Vec<Vec<u8>>` until sharing is decided. The
+initial slot vector is empty. Only after the original incremental wire, payload
+and workspace guard passes does the first matching row request space for the
+actual key count N, once; at most N pushes follow. The first byte or capacity
+mismatch moves those fresh value buffers into a BTreeMap with the already
+verified keys, preserving every value pointer and capacity. Sequential insertion
+avoids another collection/sort buffer. The slot array is released before the
+original root/tree/change preparation; a complete match drops the fresh values
+and slots before sharing the immutable prior map.
+
+The original map charge is current key/value capacities plus `1024 * N` bytes.
+One Vec header per requested slot fits a map metadata reservation already
+included in `3 * (map + tree) + 2 * payload`; the fresh payload is moved without
+duplication during materialization. Tests compare observed slot capacities at
+N=0,1,2,3,4,17,257,65,536, the first-row budget boundary and moved buffer pointers.
+The request to reserve space is not an allocator ABI guarantee. The original
+incremental guard also does not include the complete preceding snapshot, so it
+does not bound all live allocations. Final workspace accounting still uses the
+original maxima of preceding/current charges. No limit or observation changes.
+
+An original incremental discard immediately drops the retained prefix or map
+and still completes canonical validation. Canonical-before-wire-before-cache
+error ordering, Owned/Discarded preparation and complete-root fallback remain.
+Empty input still reaches its final workspace decision. Internal tree damage
+still requires the original root repair; the expected root is checked after all
+computation. Nonmatching-root transitions and derive_snapshot retain their
+original entry path. The initial canonical pass is not restarted on mismatch;
+the original fallback may still perform its own complete-State work.
+
+The rejected [two-pass candidate](../../evidence/pon-complete-cost-continuation-20261104/retained-two-pass-candidate.patch)
+repeated complete canonical work on misleading same-root inputs. The later
+[single-pass copy-prefix candidate](../../evidence/pon-complete-cost-continuation-20261104/retained-single-pass-copy-prefix.patch)
+removed that extra pass but allocated and copied the matching prefix again on a
+late mismatch. Its provisional component observation exceeded the original 10%
+failure-tail bound while concurrent builds were active; it is not a qualification
+result. Both negative candidates retain their distinct source and reproduction
+identities. The actual parent `40a5ba25e40fd5eda5b04fc1c3811320d438de11`
+already shares unchanged inputs and stops its speculative comparison on the
+first mismatch. Its complete early-miss regression remains, using the original
+test-only comparison helper and the actual production entry for the final error.
+
+`unchanged-snapshot-full-binding-cost-v4` compares three arms: the original
+full-map preparation, the actual 40a parent and the fresh-prefix move candidate.
+The two reference arms copy their real old function bodies into test-only
+modules; shared helper/encoder/tree/wire sources match the originals. The
+original three cases, three sizes and twelve samples of eight bindings per arm
+remain. Six fixed permutations rotate twice, balancing every arm position and
+pairwise order. Each receipt includes the exact decision rule and hashes of its
+compiled production/test source; it does not relabel older measurements.
+
+Before v4 execution, the primary target against 40a is at least 5% paired-median
+improvement for each of the three late-mismatch sizes. Against the original
+full-map arm, each unchanged size retains its 5% target. Every one of the nine
+cells must also remain within 10% paired-median and p95 regression against both
+references. No aggregate or sample exclusion can hide a failed cell. The paired
+median uses each round's relative improvement; nearest-rank p95 for twelve
+samples is their maximum, without a statistical-confidence claim. Complete
+client-confirmation observations remain separately required.
+Complete State encoding remains O(K); software charges do not bound process RSS.
+
+The exact ordinary controls and explicitly ignored paired cost selector are:
+
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_shares_only_after_full_actual_bytes_match`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_candidate_early_miss_retains_complete_late_validation`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_first_middle_and_last_mismatches_keep_original_preparation`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_deep_cloned_shrunk_and_grown_capacities_keep_exact_budgets`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_suffix_errors_and_discard_keep_original_error_priority`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_empty_state_keeps_the_final_workspace_fallback`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_prefix_slots_fit_the_original_workspace_reservation`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::shared_encoding_materializes_fresh_prefix_without_reallocating_values`.
+- `trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs::unchanged_snapshot_full_binding_cost`.

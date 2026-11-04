@@ -1,4 +1,4 @@
-use super::super::{account_root, account_root_with_lifts, build_with_lift, hash, Node};
+use super::super::{account_root, account_root_with_lifts, build_with_lift, hash, path, Node};
 use super::*;
 
 // Retain the original record-building entry as a differential oracle. It
@@ -84,6 +84,34 @@ fn native_root_digest_matches_record_and_sparse_references_after_exact_input_cha
             );
         }
     }
+    // Zero balance does not erase account existence or its old nonce. Change
+    // each field independently with the same warm arithmetic owners.
+    let mut values = BTreeMap::new();
+    let absent = protocol_root(&values);
+    let owner = hash(b"native-root-digest-zero-owner-v1", &[]);
+    for (balance, nonce) in [
+        (0, 0),
+        (0, u64::MAX),
+        (u64::MAX, 0),
+        (u64::MAX, u64::MAX),
+        (1, 0),
+        (0, 1),
+    ] {
+        values.insert(owner, Account { balance, nonce });
+        let expected = protocol_root(&values);
+        assert_ne!(expected, absent);
+        assert_eq!(account_root(&values).unwrap(), expected);
+        assert_eq!(record_root(&values, &old_cache).unwrap(), expected);
+        assert_eq!(
+            account_root_with_lifts(&values, &new_cache).unwrap(),
+            expected
+        );
+    }
+    values.remove(&owner);
+    assert_eq!(
+        account_root_with_lifts(&values, &new_cache).unwrap(),
+        absent
+    );
 }
 
 #[test]
@@ -94,17 +122,77 @@ fn native_root_digest_keeps_original_traversal_cancellation_and_collision_order(
     repeated[16].0 = repeated[0].0;
     let mut reversed = valid.clone();
     reversed.reverse();
+    let mut mismatched_single = vec![valid[0]];
+    mismatched_single[0].0[0] ^= 0x80;
+    let mut swapped_owners = vec![valid[0], valid[16]];
+    let first_owner = swapped_owners[0].1;
+    swapped_owners[0].1 = swapped_owners[1].1;
+    swapped_owners[1].1 = first_owner;
+    let actual_common_prefix = valid
+        .windows(2)
+        .find(|rows| common(&rows[0].0, &rows[1].0) > 0)
+        .unwrap();
+    let mut false_shape = actual_common_prefix.to_vec();
+    false_shape[0].0 = [0; 32];
+    false_shape[1].0 = [0x80; 32];
+    // A caller supplies actual owners/accounts, never path/owner tuples. Even
+    // when such tuples are forged here, rebuilding that public input derives
+    // each path afresh before the private recursive builder can see any row.
+    // Test this entry precondition rather than adding a second owner hash to
+    // every production leaf for malformed tuples that cannot reach it.
+    let public_cache = LiftCache::default();
+    for (case, supplied) in [
+        ("mismatched singleton path", mismatched_single),
+        ("swapped owners", swapped_owners),
+        ("false supplied fork shape", false_shape),
+    ] {
+        assert!(
+            supplied
+                .iter()
+                .any(|(supplied_path, owner, _)| *supplied_path != path(*owner)),
+            "{case} must violate the internal row precondition"
+        );
+        let actual: BTreeMap<_, _> = supplied
+            .iter()
+            .map(|(_, owner, value)| (*owner, *value))
+            .collect();
+        let rebuilt = ordered_accounts(&actual).unwrap();
+        assert_eq!(rebuilt.len(), actual.len());
+        assert!(rebuilt.windows(2).all(|rows| rows[0].0 < rows[1].0));
+        for (derived_path, owner, value) in &rebuilt {
+            assert_eq!(*derived_path, path(*owner), "{case}");
+            let expected = actual.get(owner).unwrap();
+            assert_eq!(
+                (value.balance, value.nonce),
+                (expected.balance, expected.nonce),
+                "{case}"
+            );
+            assert_eq!(*derived_path, Node::account(*owner, *value).path, "{case}");
+        }
+        let expected = protocol_root(&actual);
+        assert_eq!(account_root(&actual).unwrap(), expected, "{case}");
+        assert_eq!(
+            account_root_with_lifts(&actual, &public_cache).unwrap(),
+            expected,
+            "{case}"
+        );
+    }
     // The production builder only receives ordered_accounts output. These
-    // malformed internal rows still keep the old collision/partition error.
-    for rows in [&valid, &repeated, &reversed] {
-        for cancel_at in 1..=2 * values.len() + 1 {
+    // retained malformed-row controls preserve the original collision and
+    // partition errors and every original cancellation point.
+    for (case, rows, expected_error) in [
+        ("valid", valid, None),
+        ("repeated path", repeated, Some(ArchiveError::KeyCollision)),
+        ("reversed rows", reversed, Some(ArchiveError::CorruptRecord)),
+    ] {
+        for cancel_at in 1..=2 * rows.len() + 1 {
             let old_cache = LiftCache::default();
             let new_cache = LiftCache::default();
             let mut old_visits = 0;
             let mut new_visits = 0;
             let old = build_with_lift(
                 None,
-                rows,
+                &rows,
                 &mut || {
                     old_visits += 1;
                     if old_visits == cancel_at {
@@ -117,7 +205,7 @@ fn native_root_digest_keeps_original_traversal_cancellation_and_collision_order(
             )
             .map(|node| node.map(|node| (node.path, node.depth, node.digest)));
             let new = build(
-                rows,
+                &rows,
                 &mut || {
                     new_visits += 1;
                     if new_visits == cancel_at {
@@ -129,8 +217,11 @@ fn native_root_digest_keeps_original_traversal_cancellation_and_collision_order(
                 &new_cache,
             )
             .map(|node| node.map(|node| (node.path, node.depth, node.digest)));
-            assert_eq!(new, old, "cancel at {cancel_at}");
+            assert_eq!(new, old, "{case}, cancel at {cancel_at}");
             assert_eq!(new_visits, old_visits);
+            if cancel_at > 2 * rows.len() {
+                assert_eq!(new.as_ref().err(), expected_error.as_ref(), "{case}");
+            }
         }
     }
     let mut visits = 0;
@@ -150,51 +241,76 @@ fn native_root_digest_keeps_original_traversal_cancellation_and_collision_order(
 #[test]
 fn native_root_digest_keeps_fork_shape_and_all_lift_input_relations() {
     let rows = ordered_accounts(&accounts(2)).unwrap();
-    let left = Node::account(rows[0].1, rows[0].2);
-    let right = Node::account(rows[1].1, rows[1].2);
-    let depth = common(&left.path, &right.path);
+    let seed_left = Node::account(rows[0].1, rows[0].2);
+    let seed_right = Node::account(rows[1].1, rows[1].2);
     let cache = LiftCache::default();
-    for variant in 0..6 {
-        let mut left = left.clone();
-        let mut right = right.clone();
-        let selected_depth = match variant {
-            0 => depth,
-            1 => 256,
-            2 => {
-                left.depth = depth;
-                depth
-            }
-            3 => {
-                right.depth = depth;
-                depth
-            }
-            4 => {
-                std::mem::swap(&mut left, &mut right);
-                depth
-            }
-            _ => {
-                right.path = left.path;
-                depth
-            }
-        };
-        let old = Node::fork_with_lift(selected_depth, &left, &right, &|node, depth| {
-            cache.lift(node, depth)
-        })
-        .map(|node| (node.path, node.depth, node.digest));
-        let project = |node: &Node| RootDigest {
-            path: node.path,
-            depth: node.depth,
-            digest: node.digest,
-        };
-        let new = RootDigest::fork(selected_depth, &project(&left), &project(&right), &cache)
-            .map(|node| (node.path, node.depth, node.digest));
-        assert_eq!(new, old, "fork variant {variant}");
-        assert_eq!(new.is_ok(), variant == 0);
-    }
     let empty = empty_hashes();
+    for depth in 0usize..256 {
+        // Synthetic mathematical subtrees cover every divergence bit without
+        // assuming an ability to find chosen-prefix account-key hash preimages.
+        // The reference retains its independent original Node::lift body.
+        let mut left = seed_left.clone();
+        let mut right = seed_right.clone();
+        left.path = hash(b"native-root-fork-path-v1", &[&depth.to_le_bytes()]);
+        let mask = 0x80u8 >> (depth % 8);
+        left.path[depth / 8] &= !mask;
+        right.path = left.path;
+        right.path[depth / 8] |= mask;
+        right.path[depth / 8 + 1..].fill(0xa5);
+        assert_eq!(common(&left.path, &right.path), depth);
+        for (left_depth, right_depth) in [
+            (depth + 1, depth + 1),
+            (depth + 1, 256),
+            (256, depth + 1),
+            (256, 256),
+        ] {
+            left.depth = left_depth;
+            right.depth = right_depth;
+            for variant in 0..7 {
+                let mut left = left.clone();
+                let mut right = right.clone();
+                let selected_depth = match variant {
+                    0 => depth,
+                    1 => 256,
+                    2 => {
+                        left.depth = depth;
+                        depth
+                    }
+                    3 => {
+                        right.depth = depth;
+                        depth
+                    }
+                    4 => {
+                        std::mem::swap(&mut left, &mut right);
+                        depth
+                    }
+                    5 => {
+                        right.path = left.path;
+                        depth
+                    }
+                    _ => depth + 1,
+                };
+                let old = Node::fork(selected_depth, &left, &right, &empty)
+                    .map(|node| (node.path, node.depth, node.digest));
+                let project = |node: &Node| RootDigest {
+                    path: node.path,
+                    depth: node.depth,
+                    digest: node.digest,
+                };
+                let new =
+                    RootDigest::fork(selected_depth, &project(&left), &project(&right), &cache)
+                        .map(|node| (node.path, node.depth, node.digest));
+                assert_eq!(
+                    new, old,
+                    "fork depth {depth}, children {left_depth}/{right_depth}, variant {variant}"
+                );
+                assert_eq!(new.is_ok(), variant == 0);
+            }
+        }
+    }
     for source_depth in [0, 1, 7, 8, 63, 64, 128, 255, 256] {
         for salt in [0, 1, 255] {
-            let mut node = left.clone();
+            let mut node = seed_left.clone();
             node.path.fill(salt);
             node.digest = hash(b"native-root-lift-input-v1", &[&[salt]]);
             node.depth = source_depth;

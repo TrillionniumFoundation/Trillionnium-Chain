@@ -333,11 +333,21 @@ jobs:
             "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
             "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
             "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_first_middle_and_last_mismatches_keep_original_preparation",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_deep_cloned_shrunk_and_grown_capacities_keep_exact_budgets",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_suffix_errors_and_discard_keep_original_error_priority",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_empty_state_keeps_the_final_workspace_fallback",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_prefix_slots_fit_the_original_workspace_reservation",
+            "pon_commitment::unchanged_snapshot_tests::shared_encoding_materializes_fresh_prefix_without_reallocating_values",
         ])
         exact("node", "account-root-digest", [
             "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
             "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
             "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
+        ])
+        exact("node", "growth-return-observations", [
+            "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+            "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
         ])
         exact("m06", "canonical-ascii", [
             "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
