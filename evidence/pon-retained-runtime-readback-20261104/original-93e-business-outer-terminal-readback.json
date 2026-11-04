@@ -1,0 +1,900 @@
+{
+  "schema": "trnm-original-business-outer-terminal-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "observed_utc": "2026-11-04T10:17:28Z",
+  "head": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+  "actual_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+  "tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+  "tracked_entries": 8761,
+  "tracked_bytes": 940655430,
+  "scope": "Complete original terminal console logs plus actual job/artifact API metadata; redirected inner business files remain unread. No native rerun, native PASS, complete confirmation denominator or accepted performance is inferred.",
+  "lanes": [
+    {
+      "scope": "F0 original outer execution and finalization",
+      "job": 126495361302,
+      "run": 41806693160,
+      "key": "f0",
+      "artifact": 13310800965,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160/job/126495361302",
+      "original_job_metadata": {
+        "id": 126495361302,
+        "run_id": 41806693160,
+        "workflow_name": "PoN fixed Host ROOT F0 diagnostic",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdc7YJFg",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126495361302",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160/job/126495361302",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:39Z",
+        "started_at": "2026-11-04T09:20:43Z",
+        "completed_at": "2026-11-04T09:27:30Z",
+        "name": "F0 (x64, head, one baseline and one ROOT phase)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T09:20:44Z",
+            "completed_at": "2026-11-04T09:20:45Z"
+          },
+          {
+            "name": "Freeze all denominators before checkout or preparation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:20:45Z"
+          },
+          {
+            "name": "Checkout exactly the event head without retained credentials",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:21:58Z"
+          },
+          {
+            "name": "Verify the exact source and all independent parser controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T09:21:58Z",
+            "completed_at": "2026-11-04T09:22:01Z"
+          },
+          {
+            "name": "Install source-pinned compiler and fetch the locked graph",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T09:22:01Z",
+            "completed_at": "2026-11-04T09:22:12Z"
+          },
+          {
+            "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T09:22:12Z",
+            "completed_at": "2026-11-04T09:26:02Z"
+          },
+          {
+            "name": "Arm a previously absent exact controller service",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T09:26:02Z",
+            "completed_at": "2026-11-04T09:26:02Z"
+          },
+          {
+            "name": "Run exactly one pair in the declared controller and public Host",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 8,
+            "started_at": "2026-11-04T09:26:02Z",
+            "completed_at": "2026-11-04T09:27:21Z"
+          },
+          {
+            "name": "Always retain denominators and inspect only exact owned services",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 9,
+            "started_at": "2026-11-04T09:27:21Z",
+            "completed_at": "2026-11-04T09:27:21Z"
+          },
+          {
+            "name": "Retain final source, workflow outcomes and every regular partial artifact",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T09:27:21Z",
+            "completed_at": "2026-11-04T09:27:23Z"
+          },
+          {
+            "name": "Upload all available success, failure and unobserved evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T09:27:23Z",
+            "completed_at": "2026-11-04T09:27:27Z"
+          },
+          {
+            "name": "Post Checkout exactly the event head without retained credentials",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-11-04T09:27:27Z",
+            "completed_at": "2026-11-04T09:27:27Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23,
+            "started_at": "2026-11-04T09:27:27Z",
+            "completed_at": "2026-11-04T09:27:27Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126495361302",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340605,
+        "runner_name": "GitHub Actions 1000340605",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "complete_console": {
+        "utf8_bytes": 223455,
+        "sha256": "b03fff84d514702aaec7dc131e521f850e1bfa9dbf0b3ba21bc84dd0b428a479",
+        "clean_line_count": 1885,
+        "timestamp_normalization": "Strip optional initial BOM, per-line ISO UTC prefix and ANSI SGR; line numbers below refer to this clean form."
+      },
+      "literal_source_receipts": [],
+      "literal_audit": {
+        "clean_line": 946,
+        "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe"
+      },
+      "original_artifact_metadata": {
+        "id": 13310800965,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMxMDgwMDk2NQ==",
+        "name": "pon-fixed-host-root-f0-x64-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1",
+        "size_in_bytes": 16348465,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13310800965",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13310800965/zip",
+        "expired": false,
+        "digest": "sha256:e85f77ebb5645473de6af3f5b7c144dd571445ce63c94e60c6890c86c3ba4a8c",
+        "created_at": "2026-11-04T09:27:27Z",
+        "updated_at": "2026-11-04T09:27:27Z",
+        "expires_at": "2026-12-04T09:27:24Z",
+        "workflow_run": {
+          "id": 41806693160,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b"
+        }
+      },
+      "upload_receipts": [
+        {
+          "clean_line": 1866,
+          "text": "SHA256 digest of uploaded artifact zip is e85f77ebb5645473de6af3f5b7c144dd571445ce63c94e60c6890c86c3ba4a8c"
+        },
+        {
+          "clean_line": 1868,
+          "text": "Artifact pon-fixed-host-root-f0-x64-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1.zip successfully finalized. Artifact ID 13310800965"
+        },
+        {
+          "clean_line": 1869,
+          "text": "Artifact pon-fixed-host-root-f0-x64-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1 has been successfully uploaded! Final size is 16348465 bytes. Artifact ID is 13310800965"
+        },
+        {
+          "clean_line": 1870,
+          "text": "Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160/artifacts/13310800965"
+        }
+      ],
+      "inner_confirmed": null,
+      "inner_unconfirmed": null,
+      "inner_unobserved": null,
+      "inner_native_test_summary": null,
+      "original_cost_records": null,
+      "source_receipts_not_test_execution": true,
+      "literal_failed_command_groups": [
+        {
+          "first_clean_line": 1228,
+          "last_clean_line": 1270,
+          "sha256": "4102539eeda2e31a5120aace3b1d2fd4355fc42963a46848dca74e449ddbb10e",
+          "text": "##[group]Run set -euo pipefail\nset -euo pipefail\ntest \"$(id -u)\" -ne 0\ntest -d /run/systemd/system\ntest -f /sys/fs/cgroup/cgroup.controllers\nsystemd-run --version > \"$OUT/systemd-version.txt\"\nrustup_home=\"$(rustup show home)\"\n# The always finalizer handles both controller and separately owned\n# public services, after exact receipt/manager/invocation validation.\nsudo -n systemd-run --unit=\"$F0_UNIT\" --description=\"$F0_DESCRIPTION\" --wait --pipe --collect \\\n  --service-type=exec --expand-environment=no \\\n  --uid=\"$(id -u)\" --gid=\"$(id -g)\" --working-directory=\"$GITHUB_WORKSPACE\" \\\n  --property=CPUAccounting=yes --property=MemoryAccounting=yes \\\n  --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \\\n  --property=MemoryMax=17179869184 --property=Nice=10 \\\n  --property=KillMode=control-group --property=TimeoutStopSec=20s --property=RuntimeMaxSec=600s \\\n  --setenv=\"PATH=$PATH\" --setenv=\"CARGO_HOME=$CARGO_HOME\" \\\n  --setenv=\"CARGO_TARGET_DIR=$CARGO_TARGET_DIR\" --setenv=\"RUSTUP_HOME=$rustup_home\" \\\n  --setenv=CARGO_INCREMENTAL=0 --setenv=CARGO_BUILD_JOBS=2 --setenv=RUST_TEST_THREADS=1 \\\n  --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=CI=true --setenv=GITHUB_ACTIONS=true \\\n  --setenv=\"GITHUB_WORKSPACE=$GITHUB_WORKSPACE\" --setenv=\"GITHUB_RUN_ID=$GITHUB_RUN_ID\" \\\n  --setenv=\"GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT\" --setenv=\"GITHUB_JOB=$GITHUB_JOB\" \\\n  /usr/bin/python3 \"$GITHUB_WORKSPACE/scripts/run_fixed_host_root_f0.py\" execute \\\n  --out \"$OUT/execution\" --expected-head \"$EXPECTED_HEAD\" --expected-tree \"$EXPECTED_TREE\" \\\n  --prepared \"$OUT/prepared/prepared.json\" --prepared-sha256 \"$PREPARED_SHA\" --unit \"$F0_UNIT\" \\\n  > \"$OUT/systemd-run.stdout.log\" 2> \"$OUT/systemd-run.stderr.log\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CI: true\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 93e207c8d2ccb8509f78566223abc371b9d8118b\n  OUT: /home/runner/work/_temp/pon-fixed-host-root-f0-41806693160-1\n  CARGO_HOME: /home/runner/work/_temp/cargo-fixed-host-root-f0\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-fixed-host-root-f0\n  EXPECTED_TREE: 1066c67970802b52070ece6fcc77bc9b2806a4e1\n  F0_UNIT: trnm-fixed-root-f0-41806693160-1-fixed-host-root-f0.service\n  F0_DESCRIPTION: Trillionnium F0 controller head 93e207c8d2ccb8509f78566223abc371b9d8118b prepared 117ec412dc69bfcd5692392c6de77f03e86e14030162dfc5de3d447e0a9e40d3\n  PREPARED_SHA: 117ec412dc69bfcd5692392c6de77f03e86e14030162dfc5de3d447e0a9e40d3\n##[endgroup]\n##[error]Process completed with exit code 1."
+        },
+        {
+          "first_clean_line": 1271,
+          "last_clean_line": 1312,
+          "sha256": "4d1191e4b33c1be8e777dc6aab7a581fe20c5aa9788ac5be5cb1a76ade9d4e83",
+          "text": "##[group]Run set -uo pipefail\nset -uo pipefail\nif [ \"$VERIFIED_SOURCE_OUTCOME\" = success ] && [ -n \"${EXPECTED_TREE:-}\" ]; then\n  python3 scripts/ci/finalize_fixed_root_f0.py finalize --out \"$OUT\" \\\n    --expected-head \"$EXPECTED_HEAD\" --expected-tree \"$EXPECTED_TREE\" \\\n    > \"$OUT/finalization.stdout.log\" 2> \"$OUT/finalization.stderr.log\"\n  finalization_status=$?\nelse\n  # No unverified checkout code or guessed unit receives cleanup authority.\n  python3 - <<'PY'\nimport json, os\nfrom pathlib import Path\nout = Path(os.environ['OUT'])\nprior = json.loads((out/'workflow-predeclared.json').read_text())\nwith (out/'finalization-not-run.json').open('x') as stream:\n    json.dump({'source_unverified': True, 'cleanup_attempted': False,\n               'service_remaining': 'unknown', 'complete_success': False,\n               'denominator': prior}, stream, indent=2, sort_keys=True)\n    stream.write('\\n')\nPY\n  finalization_status=1\nfi\nprintf 'exit_code=%s\\n' \"$finalization_status\" > \"$OUT/finalization-status.txt\"\nexit \"$finalization_status\"\nshell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\nenv:\n  CI: true\n  CARGO_INCREMENTAL: 0\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  PYTHONDONTWRITEBYTECODE: 1\n  EXPECTED_HEAD: 93e207c8d2ccb8509f78566223abc371b9d8118b\n  OUT: /home/runner/work/_temp/pon-fixed-host-root-f0-41806693160-1\n  CARGO_HOME: /home/runner/work/_temp/cargo-fixed-host-root-f0\n  CARGO_TARGET_DIR: /home/runner/work/_temp/target-fixed-host-root-f0\n  EXPECTED_TREE: 1066c67970802b52070ece6fcc77bc9b2806a4e1\n  F0_UNIT: trnm-fixed-root-f0-41806693160-1-fixed-host-root-f0.service\n  F0_DESCRIPTION: Trillionnium F0 controller head 93e207c8d2ccb8509f78566223abc371b9d8118b prepared 117ec412dc69bfcd5692392c6de77f03e86e14030162dfc5de3d447e0a9e40d3\n  PREPARED_SHA: 117ec412dc69bfcd5692392c6de77f03e86e14030162dfc5de3d447e0a9e40d3\n  VERIFIED_SOURCE_OUTCOME: success\n##[endgroup]\n##[error]Process completed with exit code 1."
+        }
+      ],
+      "observed": {
+        "execution_step_exit": 1,
+        "finalization_step_exit": 1,
+        "execution_step_number": 8,
+        "finalization_step_number": 9,
+        "source_verification_step": "success",
+        "final_source_and_artifacts_step": "success",
+        "raw_source_before": null,
+        "raw_source_after": null,
+        "native_exit_code": null,
+        "execution_manifest": null,
+        "finalization_manifest": null,
+        "final_services_empty": null,
+        "fixture_outputs_excluded": true,
+        "fixture_exclusion_reason": "The two printed complete_success=false rows at clean lines 1038/1039 refer to /tmp/fixed-root-f0-source-controls-* fixtures executed in parser controls. They are not actual F0 execution/finalization observations."
+      }
+    },
+    {
+      "scope": "three original native campaign attempts",
+      "job": 126495362295,
+      "run": 41806693023,
+      "key": "campaign",
+      "artifact": 13309959342,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023/job/126495362295",
+      "original_job_metadata": {
+        "id": 126495362295,
+        "run_id": 41806693023,
+        "workflow_name": "PoN original native campaign",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdc7YM9w",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126495362295",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023/job/126495362295",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:39Z",
+        "started_at": "2026-11-04T09:20:43Z",
+        "completed_at": "2026-11-04T09:30:15Z",
+        "name": "original native campaign (x64, head, release)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T09:20:44Z",
+            "completed_at": "2026-11-04T09:20:45Z"
+          },
+          {
+            "name": "Reserve new output and isolated Cargo directories",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:20:45Z"
+          },
+          {
+            "name": "Checkout the immutable candidate head",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:21:14Z"
+          },
+          {
+            "name": "Verify actual tracked bytes and original source boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T09:21:14Z",
+            "completed_at": "2026-11-04T09:21:16Z"
+          },
+          {
+            "name": "Install the source-pinned compiler and fetch locked dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T09:21:16Z",
+            "completed_at": "2026-11-04T09:21:25Z"
+          },
+          {
+            "name": "Prepare the exact original test runner without changing source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T09:21:25Z",
+            "completed_at": "2026-11-04T09:21:25Z"
+          },
+          {
+            "name": "Run three original campaigns under verified actual limits",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 7,
+            "started_at": "2026-11-04T09:21:25Z",
+            "completed_at": "2026-11-04T09:30:03Z"
+          },
+          {
+            "name": "Preserve final source verification and all partial artifact hashes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T09:30:03Z",
+            "completed_at": "2026-11-04T09:30:04Z"
+          },
+          {
+            "name": "Upload successful, failed and partial observations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T09:30:04Z",
+            "completed_at": "2026-11-04T09:30:13Z"
+          },
+          {
+            "name": "Post Checkout the immutable candidate head",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18,
+            "started_at": "2026-11-04T09:30:13Z",
+            "completed_at": "2026-11-04T09:30:13Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-11-04T09:30:13Z",
+            "completed_at": "2026-11-04T09:30:13Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126495362295",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340615,
+        "runner_name": "GitHub Actions 1000340615",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "complete_console": {
+        "utf8_bytes": 177946,
+        "sha256": "1a92aef2bea083a764713c10371035ed860dc513660872f49a40360b5828f5b9",
+        "clean_line_count": 1505,
+        "timestamp_normalization": "Strip optional initial BOM, per-line ISO UTC prefix and ANSI SGR; line numbers below refer to this clean form."
+      },
+      "literal_source_receipts": [
+        {
+          "clean_line": 900,
+          "raw_json": "{\n  \"base\": null,\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}",
+          "sha256": "68883b2a1a4bebdf7e2f2c609c89c686471ff9d2d52f08ca96200a7c952ff718"
+        }
+      ],
+      "literal_audit": {
+        "clean_line": 913,
+        "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe"
+      },
+      "original_artifact_metadata": {
+        "id": 13309959342,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwOTk1OTM0Mg==",
+        "name": "pon-native-campaign-x64-head-release-93e207c8d2ccb8509f78566223abc371b9d8118b-1",
+        "size_in_bytes": 56708044,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309959342",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309959342/zip",
+        "expired": false,
+        "digest": "sha256:fc33a1681edcf53f0cfcbda2744eaaeb0a261e81c121c810fb63f83ea75f1ca7",
+        "created_at": "2026-11-04T09:30:12Z",
+        "updated_at": "2026-11-04T09:30:12Z",
+        "expires_at": "2026-12-04T09:30:05Z",
+        "workflow_run": {
+          "id": 41806693023,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b"
+        }
+      },
+      "upload_receipts": [
+        {
+          "clean_line": 1486,
+          "text": "SHA256 digest of uploaded artifact zip is fc33a1681edcf53f0cfcbda2744eaaeb0a261e81c121c810fb63f83ea75f1ca7"
+        },
+        {
+          "clean_line": 1488,
+          "text": "Artifact pon-native-campaign-x64-head-release-93e207c8d2ccb8509f78566223abc371b9d8118b-1.zip successfully finalized. Artifact ID 13309959342"
+        },
+        {
+          "clean_line": 1489,
+          "text": "Artifact pon-native-campaign-x64-head-release-93e207c8d2ccb8509f78566223abc371b9d8118b-1 has been successfully uploaded! Final size is 56708044 bytes. Artifact ID is 13309959342"
+        },
+        {
+          "clean_line": 1490,
+          "text": "Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023/artifacts/13309959342"
+        }
+      ],
+      "inner_confirmed": null,
+      "inner_unconfirmed": null,
+      "inner_unobserved": null,
+      "inner_native_test_summary": null,
+      "original_cost_records": null,
+      "source_receipts_not_test_execution": true,
+      "literal_campaign": {
+        "clean_line": 1402,
+        "sha256": "ace8304c0eac9c0e9db97fae7222608bf9dbc76efde07cc3472a038e6e334078",
+        "raw_json": "{\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"1e5c2b32f47cba29a725aae3cf5a0ee1af807ecd4e48ca48359b20a735e7c3be\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 112132358638, \"elapsed_seconds\": 112.132358638, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"6581031255a59444a9c7345fde6fbcd6b2bf57e8e021e92feeb56885739b7e32\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"459040a1923ee47e249c4eacd9f323ed0760da14ea4f9e750ef5741c856e6705\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"fa97c28ec26df8352818280b9567b4730f794fc7fd4364680f4d271995f17bea\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 111891432002, \"elapsed_seconds\": 111.891432002, \"error\": null, \"name\": \"run-2\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-2.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"92f765d9c0ff9d1efc6e44d2c89a4dca07ea4a18fc939e4835764d2c796a0c4d\", \"stderr_truncated\": false, \"stdout\": \"run-2.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"809926b7492ab53e1f88952321cf23e5e0c6dcd9512c83093cb7a16c17bee9c6\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 3, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-3-raw\", \"report_sha256\": \"69d69c5e51b35187cab066e22fd7fad2f7b5a3be6ee19c01f00247a96173e4bd\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 112005188221, \"elapsed_seconds\": 112.005188221, \"error\": null, \"name\": \"run-3\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-3.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"dcbacc1fe3ec87fd59758a95b13727b8b18e0601894254a2e88653b43b2f9b5c\", \"stderr_truncated\": false, \"stdout\": \"run-3.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"4844bb1efdd0b0a4593d72c950a6b7560102ea16d04f0c32228ca30eece0a510\", \"stdout_truncated\": false}}], \"binary\": {\"actual_compiler_artifact_profile\": {\"debug_assertions\": false, \"debuginfo\": 0, \"opt_level\": \"3\", \"overflow_checks\": false, \"test\": true}, \"build_artifact\": \"/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-407806f7087de5f8\", \"build_separate_from_measured_campaign\": true, \"bytes\": 11584136, \"execution\": \"original cargo test command using the checked build artifact\", \"retained\": \"public_v3_multiprocess.bin\", \"sha256_after\": \"25201e15e6f9f880c9dba689a0fdf27e65c588c989d1d6eea8bb6cb1cd24fa2e\", \"sha256_before\": \"25201e15e6f9f880c9dba689a0fdf27e65c588c989d1d6eea8bb6cb1cd24fa2e\"}, \"build\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"--no-run\", \"--message-format=json\"], \"complete_success\": true, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 172206683027, \"elapsed_seconds\": 172.206683027, \"error\": null, \"name\": \"build\", \"outer_stage_timeout_seconds\": 1800, \"returncode\": 0, \"stderr\": \"build.stderr.log\", \"stderr_bytes\": 4021, \"stderr_sha256\": \"9515936be69f3adae4e7de8dd18e904e9472fd4e685efa0331b3634e1212a60a\", \"stderr_truncated\": false, \"stdout\": \"build.stdout.log\", \"stdout_bytes\": 111538, \"stdout_sha256\": \"ad9ae62d6f15f65611914b8aa2b47c0b1170676ebda94c4cc3ba927f3deb1a1d\", \"stdout_truncated\": false}, \"build_timeout_seconds\": 1800, \"complete_success\": false, \"completed_utc\": \"2026-11-04T09:30:03.159323+00:00\", \"expected_head\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"expected_public_policy_id\": \"6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f\", \"expected_resources\": {\"cpu_max\": \"400000 100000\", \"memory_max\": \"17179869184\", \"nice\": 10}, \"expected_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"failure\": \"ORIGINAL_THREE_RUN_CAMPAIGN_FAILED\", \"finalization_failures\": [], \"original_campaign_outer_timeout_seconds\": 600, \"original_inputs\": {\"attacker_processes\": [0, 24, 24], \"business_blocks\": 21, \"modes\": [\"baseline\", \"from-zero\", \"late-product\"], \"phase_seconds\": 30, \"seed_blocks\": 4, \"seed_transfers\": 1024}, \"planned_complete_runs\": 3, \"profile\": \"release\", \"public_phase_placement\": {\"attacker_processes_remain_in_original_controller_domain\": true, \"fixed_parent\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"original_3x3_workload_and_depletion_predicates_changed\": false, \"profile\": \"fixed-public-phase-external-actors-v1\", \"receiver_and_verifier_cpu_max\": \"25000 100000\", \"receiver_and_verifier_memory_max\": \"2147483648\"}, \"runner_sha256\": \"c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0\", \"schema\": \"pon-original-native-campaign-ci-v1\", \"scope\": \"same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification\", \"source_after\": {\"base\": null, \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 940655430, \"tracked_entries\": 8761, \"tracked_worktree_verified\": true}, \"source_kind\": \"head\", \"started_utc\": \"2026-11-04T09:21:25.821515+00:00\", \"state_backend\": \"authenticated-v1\", \"toolchain\": \"1.95.0\"}"
+      },
+      "observed": {
+        "complete_success": false,
+        "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+        "source_before_after_equal": true,
+        "finalization_failures": [],
+        "build_returncode": 0,
+        "build_complete_success": true,
+        "actual_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "retained_binary_before_after_sha256_equal": true,
+        "attempts": [
+          {
+            "number": 1,
+            "returncode": 101,
+            "complete_success": false,
+            "original_criteria_met": false,
+            "phase_startup_errors": [],
+            "report_validation_failure": null,
+            "error": null,
+            "elapsed_ns": 112132358638,
+            "original_outer_timeout_seconds": 600,
+            "stdout_sha256": "459040a1923ee47e249c4eacd9f323ed0760da14ea4f9e750ef5741c856e6705",
+            "stderr_sha256": "6581031255a59444a9c7345fde6fbcd6b2bf57e8e021e92feeb56885739b7e32",
+            "report_sha256": "1e5c2b32f47cba29a725aae3cf5a0ee1af807ecd4e48ca48359b20a735e7c3be"
+          },
+          {
+            "number": 2,
+            "returncode": 101,
+            "complete_success": false,
+            "original_criteria_met": false,
+            "phase_startup_errors": [],
+            "report_validation_failure": null,
+            "error": null,
+            "elapsed_ns": 111891432002,
+            "original_outer_timeout_seconds": 600,
+            "stdout_sha256": "809926b7492ab53e1f88952321cf23e5e0c6dcd9512c83093cb7a16c17bee9c6",
+            "stderr_sha256": "92f765d9c0ff9d1efc6e44d2c89a4dca07ea4a18fc939e4835764d2c796a0c4d",
+            "report_sha256": "fa97c28ec26df8352818280b9567b4730f794fc7fd4364680f4d271995f17bea"
+          },
+          {
+            "number": 3,
+            "returncode": 101,
+            "complete_success": false,
+            "original_criteria_met": false,
+            "phase_startup_errors": [],
+            "report_validation_failure": null,
+            "error": null,
+            "elapsed_ns": 112005188221,
+            "original_outer_timeout_seconds": 600,
+            "stdout_sha256": "4844bb1efdd0b0a4593d72c950a6b7560102ea16d04f0c32228ca30eece0a510",
+            "stderr_sha256": "dcbacc1fe3ec87fd59758a95b13727b8b18e0601894254a2e88653b43b2f9b5c",
+            "report_sha256": "69d69c5e51b35187cab066e22fd7fad2f7b5a3be6ee19c01f00247a96173e4bd"
+          }
+        ],
+        "native_summary_body": null,
+        "confirmation_report_bodies": null
+      }
+    },
+    {
+      "scope": "W1 fresh-service head outer controller",
+      "job": 126495364919,
+      "run": 41806693679,
+      "key": "w1",
+      "artifact": 13309739790,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/job/126495364919",
+      "original_job_metadata": {
+        "id": 126495364919,
+        "run_id": 41806693679,
+        "workflow_name": "PoN W1 work security observations",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdc7YXNw",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126495364919",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/job/126495364919",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:39Z",
+        "started_at": "2026-11-04T09:20:44Z",
+        "completed_at": "2026-11-04T09:25:28Z",
+        "name": "W1 fresh challenge service (x64, head)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:20:45Z"
+          },
+          {
+            "name": "Checkout exact observed source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T09:20:45Z",
+            "completed_at": "2026-11-04T09:21:09Z"
+          },
+          {
+            "name": "Reserve observations and verify ordered source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T09:21:09Z",
+            "completed_at": "2026-11-04T09:21:10Z"
+          },
+          {
+            "name": "Install original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T09:21:10Z",
+            "completed_at": "2026-11-04T09:21:19Z"
+          },
+          {
+            "name": "Run refusal controls for original Host and fresh successor",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T09:21:19Z",
+            "completed_at": "2026-11-04T09:21:34Z"
+          },
+          {
+            "name": "Execute original and fresh service with original Host resources",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:21:34Z",
+            "completed_at": "2026-11-04T09:25:22Z"
+          },
+          {
+            "name": "Verify observed source after execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T09:25:22Z",
+            "completed_at": "2026-11-04T09:25:23Z"
+          },
+          {
+            "name": "Retain both service outcomes and original Host evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T09:25:23Z",
+            "completed_at": "2026-11-04T09:25:25Z"
+          },
+          {
+            "name": "Post Checkout exact observed source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16,
+            "started_at": "2026-11-04T09:25:25Z",
+            "completed_at": "2026-11-04T09:25:26Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17,
+            "started_at": "2026-11-04T09:25:26Z",
+            "completed_at": "2026-11-04T09:25:26Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126495364919",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340640,
+        "runner_name": "GitHub Actions 1000340640",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "complete_console": {
+        "utf8_bytes": 157133,
+        "sha256": "886d1676dd18a8e5f3dd3b450055136b6135963fa422ce688caf130bbfbdc314",
+        "clean_line_count": 1189,
+        "timestamp_normalization": "Strip optional initial BOM, per-line ISO UTC prefix and ANSI SGR; line numbers below refer to this clean form."
+      },
+      "literal_source_receipts": [
+        {
+          "clean_line": 888,
+          "raw_json": "{\n  \"base\": null,\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}",
+          "sha256": "68883b2a1a4bebdf7e2f2c609c89c686471ff9d2d52f08ca96200a7c952ff718"
+        },
+        {
+          "clean_line": 1122,
+          "raw_json": "{\n  \"base\": null,\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}",
+          "sha256": "68883b2a1a4bebdf7e2f2c609c89c686471ff9d2d52f08ca96200a7c952ff718"
+        }
+      ],
+      "literal_audit": {
+        "clean_line": 901,
+        "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe"
+      },
+      "original_artifact_metadata": {
+        "id": 13309739790,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwOTczOTc5MA==",
+        "name": "w1-fresh-service-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1",
+        "size_in_bytes": 5295198,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309739790",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309739790/zip",
+        "expired": false,
+        "digest": "sha256:df3c4b375bada7baafa983bed982cf4bc2d23a53910f308f5ad27f9338217944",
+        "created_at": "2026-11-04T09:25:25Z",
+        "updated_at": "2026-11-04T09:25:25Z",
+        "expires_at": "2026-12-04T09:25:23Z",
+        "workflow_run": {
+          "id": 41806693679,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b"
+        }
+      },
+      "upload_receipts": [
+        {
+          "clean_line": 1170,
+          "text": "SHA256 digest of uploaded artifact zip is df3c4b375bada7baafa983bed982cf4bc2d23a53910f308f5ad27f9338217944"
+        },
+        {
+          "clean_line": 1172,
+          "text": "Artifact w1-fresh-service-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1.zip successfully finalized. Artifact ID 13309739790"
+        },
+        {
+          "clean_line": 1173,
+          "text": "Artifact w1-fresh-service-head-93e207c8d2ccb8509f78566223abc371b9d8118b-1 has been successfully uploaded! Final size is 5295198 bytes. Artifact ID is 13309739790"
+        },
+        {
+          "clean_line": 1174,
+          "text": "Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/artifacts/13309739790"
+        }
+      ],
+      "inner_confirmed": null,
+      "inner_unconfirmed": null,
+      "inner_unobserved": null,
+      "inner_native_test_summary": null,
+      "original_cost_records": null,
+      "source_receipts_not_test_execution": true,
+      "literal_controller": {
+        "clean_line": 1095,
+        "sha256": "08b13cc74da153323d52d6c28fbaecc43652cf85f3b569232cc224b202f2c23f",
+        "raw_json": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_w1_fresh_service_v1.py\", \"--out\", \"/home/runner/work/_temp/w1-fresh-service-head-41806693679-1/fresh-service\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2599.service\", \"current_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2599.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"cc2999f2-e53a-44fe-8ca1-d30e437d83c3\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6942, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793784263151524862, \"device\": 29, \"inode\": 1517, \"mtime_ns\": 1793784263151524862, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793784264555975148, \"device\": 29, \"inode\": 1563, \"mtime_ns\": 1793784264555975148, \"path\": \"/run/trnm-public-fixture-41806693679-1-fresh-challenge-service/parent.json\", \"sha256\": \"7b22991799941bf618434700d9d7595aa4e2205e775c47d3a7fd3266787e3f90\", \"size_bytes\": 3302}, \"seal_sha256\": \"7b22991799941bf618434700d9d7595aa4e2205e775c47d3a7fd3266787e3f90\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2599.service\", \"current_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2599.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"cc2999f2-e53a-44fe-8ca1-d30e437d83c3\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6942, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793784263151524862, \"device\": 29, \"inode\": 1517, \"mtime_ns\": 1793784263151524862, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793784264555975148, \"device\": 29, \"inode\": 1563, \"mtime_ns\": 1793784264555975148, \"path\": \"/run/trnm-public-fixture-41806693679-1-fresh-challenge-service/parent.json\", \"sha256\": \"7b22991799941bf618434700d9d7595aa4e2205e775c47d3a7fd3266787e3f90\", \"size_bytes\": 3302}, \"seal_sha256\": \"7b22991799941bf618434700d9d7595aa4e2205e775c47d3a7fd3266787e3f90\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-f71c026b204518da\", \"binary_sha256\": \"8b677c8a52ddf890d9c085d047779d514a24ffa83f89e5f5460c226d324e6ad0\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-w1-fresh\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-w1-fresh\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 322349408000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 3157, \"major_faults\": 2006, \"max_rss_kib\": 1396816, \"minor_faults\": 3714105, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"ea6291089afac789860dbb8e0d16ffc362894f95f8f106b2f2859cbd29a28815\", \"stdout_sha256\": \"9a12c9aea66ee64c16b403c26768e202e4369abad603a61dd0ee1f5064ceb9ad\", \"system_cpu_ns\": 11969965000, \"timed_out\": false, \"user_cpu_ns\": 310379443000, \"voluntary_switches\": 16348, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 165577435871}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"test_sha256\": \"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 940655430, \"tracked_entries\": 8761, \"tracked_worktree_verified\": true}, \"tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\"}, \"source_before\": {\"commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"test_sha256\": \"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\", \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 940655430, \"tracked_entries\": 8761, \"tracked_worktree_verified\": true}, \"tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2599.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "observed": {
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "source_before_after_equal": true,
+        "native_exit_code": null,
+        "native_summary_body": null,
+        "exact_business_failure": null,
+        "raw_parent_file_stat_values_preserved_in_literal": true
+      }
+    },
+    {
+      "scope": "W1 fresh-service actual-merge outer controller",
+      "job": 126495365320,
+      "run": 41806693679,
+      "key": "w1",
+      "artifact": 13309968297,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/job/126495365320",
+      "original_job_metadata": {
+        "id": 126495365320,
+        "run_id": 41806693679,
+        "workflow_name": "PoN W1 work security observations",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdc7YYyA",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126495365320",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/job/126495365320",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T09:20:39Z",
+        "started_at": "2026-11-04T09:20:43Z",
+        "completed_at": "2026-11-04T09:24:28Z",
+        "name": "W1 fresh challenge service (x64, prospective-merge)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T09:20:44Z",
+            "completed_at": "2026-11-04T09:20:44Z"
+          },
+          {
+            "name": "Checkout exact observed source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T09:20:44Z",
+            "completed_at": "2026-11-04T09:21:05Z"
+          },
+          {
+            "name": "Reserve observations and verify ordered source identity",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T09:21:05Z",
+            "completed_at": "2026-11-04T09:21:06Z"
+          },
+          {
+            "name": "Install original pinned compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T09:21:06Z",
+            "completed_at": "2026-11-04T09:21:13Z"
+          },
+          {
+            "name": "Run refusal controls for original Host and fresh successor",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T09:21:13Z",
+            "completed_at": "2026-11-04T09:21:29Z"
+          },
+          {
+            "name": "Execute original and fresh service with original Host resources",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:21:29Z",
+            "completed_at": "2026-11-04T09:24:23Z"
+          },
+          {
+            "name": "Verify observed source after execution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T09:24:23Z",
+            "completed_at": "2026-11-04T09:24:24Z"
+          },
+          {
+            "name": "Retain both service outcomes and original Host evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T09:24:24Z",
+            "completed_at": "2026-11-04T09:24:25Z"
+          },
+          {
+            "name": "Post Checkout exact observed source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16,
+            "started_at": "2026-11-04T09:24:25Z",
+            "completed_at": "2026-11-04T09:24:25Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17,
+            "started_at": "2026-11-04T09:24:25Z",
+            "completed_at": "2026-11-04T09:24:26Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126495365320",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000340643,
+        "runner_name": "GitHub Actions 1000340643",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "complete_console": {
+        "utf8_bytes": 157375,
+        "sha256": "e8dd4f91980f88179bb92414f90c6db5186e2f2767b84ed5f83f99fa80300d05",
+        "clean_line_count": 1182,
+        "timestamp_normalization": "Strip optional initial BOM, per-line ISO UTC prefix and ANSI SGR; line numbers below refer to this clean form."
+      },
+      "literal_source_receipts": [
+        {
+          "clean_line": 881,
+          "raw_json": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}",
+          "sha256": "007624ff26bbf803130925f3f53dd713d622a6e71351b051355e4a2813c0d9d1"
+        },
+        {
+          "clean_line": 1115,
+          "raw_json": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"93e207c8d2ccb8509f78566223abc371b9d8118b\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\",\n  \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 940655430,\n  \"tracked_entries\": 8761,\n  \"tracked_worktree_verified\": true\n}",
+          "sha256": "007624ff26bbf803130925f3f53dd713d622a6e71351b051355e4a2813c0d9d1"
+        }
+      ],
+      "literal_audit": {
+        "clean_line": 894,
+        "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+        "sha256": "82110281d22e389c527b99e42967f54d0bc175318bd28fd3ae120c444a7693fe"
+      },
+      "original_artifact_metadata": {
+        "id": 13309968297,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwOTk2ODI5Nw==",
+        "name": "w1-fresh-service-prospective-merge-5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e-1",
+        "size_in_bytes": 5478924,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309968297",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13309968297/zip",
+        "expired": false,
+        "digest": "sha256:6e17cd4bd2440db274520e8350226c21a179efe3c6dd931bd9e75dc187656eac",
+        "created_at": "2026-11-04T09:24:25Z",
+        "updated_at": "2026-11-04T09:24:25Z",
+        "expires_at": "2026-12-04T09:24:24Z",
+        "workflow_run": {
+          "id": 41806693679,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b"
+        }
+      },
+      "upload_receipts": [
+        {
+          "clean_line": 1163,
+          "text": "SHA256 digest of uploaded artifact zip is 6e17cd4bd2440db274520e8350226c21a179efe3c6dd931bd9e75dc187656eac"
+        },
+        {
+          "clean_line": 1165,
+          "text": "Artifact w1-fresh-service-prospective-merge-5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e-1.zip successfully finalized. Artifact ID 13309968297"
+        },
+        {
+          "clean_line": 1166,
+          "text": "Artifact w1-fresh-service-prospective-merge-5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e-1 has been successfully uploaded! Final size is 5478924 bytes. Artifact ID is 13309968297"
+        },
+        {
+          "clean_line": 1167,
+          "text": "Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679/artifacts/13309968297"
+        }
+      ],
+      "inner_confirmed": null,
+      "inner_unconfirmed": null,
+      "inner_unobserved": null,
+      "inner_native_test_summary": null,
+      "original_cost_records": null,
+      "source_receipts_not_test_execution": true,
+      "literal_controller": {
+        "clean_line": 1088,
+        "sha256": "4f159c359edd26484869281f9950fef30de1c781641096094900df030f6f21c8",
+        "raw_json": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_w1_fresh_service_v1.py\", \"--out\", \"/home/runner/work/_temp/w1-fresh-service-prospective-merge-41806693679-1/fresh-service\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2316.service\", \"current_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2316.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"47656a62-be60-4176-951e-7f66ba347dd9\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6942, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793784215308370396, \"device\": 29, \"inode\": 1462, \"mtime_ns\": 1793784215308370396, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793784216392900145, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1793784216392900145, \"path\": \"/run/trnm-public-fixture-41806693679-1-fresh-challenge-service/parent.json\", \"sha256\": \"cdf5723129cca608088eb93275ef133c6904d33aa1a6a092c93ad700543ae332\", \"size_bytes\": 3458}, \"seal_sha256\": \"cdf5723129cca608088eb93275ef133c6904d33aa1a6a092c93ad700543ae332\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2316.service\", \"current_service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2316.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"47656a62-be60-4176-951e-7f66ba347dd9\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6942, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793784215308370396, \"device\": 29, \"inode\": 1462, \"mtime_ns\": 1793784215308370396, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793784216392900145, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1793784216392900145, \"path\": \"/run/trnm-public-fixture-41806693679-1-fresh-challenge-service/parent.json\", \"sha256\": \"cdf5723129cca608088eb93275ef133c6904d33aa1a6a092c93ad700543ae332\", \"size_bytes\": 3458}, \"seal_sha256\": \"cdf5723129cca608088eb93275ef133c6904d33aa1a6a092c93ad700543ae332\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-f71c026b204518da\", \"binary_sha256\": \"8b677c8a52ddf890d9c085d047779d514a24ffa83f89e5f5460c226d324e6ad0\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-w1-fresh\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-w1-fresh\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 239976819000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 2534, \"major_faults\": 2104, \"max_rss_kib\": 1411928, \"minor_faults\": 3743774, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"630b755bbfb3c9767ebdffc157e86667d994903149e7d72eece7003d42f5db85\", \"stdout_sha256\": \"caff5ee3d97727f9a67c562764b6c1462f0447a3c0811f38ce2275535ce58cfa\", \"system_cpu_ns\": 9862257000, \"timed_out\": false, \"user_cpu_ns\": 230114562000, \"voluntary_switches\": 16210, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 123318582170}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"test_sha256\": \"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 940655430, \"tracked_entries\": 8761, \"tracked_worktree_verified\": true}, \"tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\"}, \"source_before\": {\"commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"test_sha256\": \"7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e\", \"tested_tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 940655430, \"tracked_entries\": 8761, \"tracked_worktree_verified\": true}, \"tree\": \"1066c67970802b52070ece6fcc77bc9b2806a4e1\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41806693679-1-fresh-challenge-service-2316.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "observed": {
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "source_before_after_equal": true,
+        "native_exit_code": null,
+        "native_summary_body": null,
+        "exact_business_failure": null,
+        "raw_parent_file_stat_values_preserved_in_literal": true
+      }
+    }
+  ],
+  "original_artifact_bytes_read": false,
+  "original_failure_denominators_rewritten": false,
+  "production_activation": false,
+  "public_network_ready": false
+}

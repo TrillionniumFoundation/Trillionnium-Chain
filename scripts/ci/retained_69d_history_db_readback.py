@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read two fixed 69d ARM History post-cleanup snapshots; never reopen a Node."""
+"""Stream two exact retained 69d main databases under explicit diagnostic-only caps."""
 import hashlib
 import json
 import os
@@ -12,6 +12,7 @@ import urllib.parse
 import urllib.request
 import uuid
 import zipfile
+import zlib
 from pathlib import Path, PurePosixPath
 
 REPO = "TrillionniumFoundation/Trillionnium-Chain"
@@ -30,6 +31,17 @@ MAX_STDOUT = 70000
 MAX_NODES = 200000
 MAX_SQL_VM_STEPS = 200000
 MAX_SQL_SECONDS = 5
+STREAM_CHUNK = 1024 * 1024
+EXACT_MAIN_DATABASES = {
+    13311000045: {"bytes": 220749824, "compressed_bytes": 22920177},
+    13311101182: {"bytes": 220811264, "compressed_bytes": 22931478},
+}
+PRIOR_GENERIC_REFUSAL = {
+    "run": 41812595146, "job": 126515293786,
+    "evidence_blob": "4a82c6a726841179196204ac1ae0ca419fb60a54",
+    "snapshot_status": "unavailable",
+    "reason": "Both exact main databases exceeded the unchanged generic member bound.",
+}
 PREFIX = "history-native/long-history/confirmer/"
 DB_NAME = PREFIX + "native.sqlite"
 DB_MEMBERS = (DB_NAME, DB_NAME + "-wal", DB_NAME + "-shm", DB_NAME + "-journal")
@@ -163,6 +175,7 @@ require(os.environ["GITHUB_REF"] == "refs/heads/" + BRANCH, "REF")
 require(os.environ["GITHUB_EVENT_NAME"] == "push", "EVENT")
 require(len(TARGETS) == len({row["id"] for row in TARGETS}) == 2, "TARGETS")
 require(all(row["family"] == "history" for row in TARGETS), "FAMILIES")
+require({row["id"] for row in TARGETS} == set(EXACT_MAIN_DATABASES), "FIXED_DATABASE_TARGETS")
 require(ROOT.is_dir() and ROOT.is_absolute(), "OUTPUT_DIRECTORY")
 
 
@@ -193,6 +206,45 @@ def digest_file(path, limit=MAX_MEMBER):
             require(total <= limit, "RETAINED_FILE_LIMIT")
             digest.update(chunk)
     return {"bytes": total, "sha256": digest.hexdigest()}
+
+
+def retained_limit(name, target):
+    # Only the one fixed basename under either already authenticated ZIP gets
+    # its observed exact cap. All other selected members retain MAX_MEMBER.
+    return EXACT_MAIN_DATABASES[target["id"]]["bytes"] if name == DB_NAME else MAX_MEMBER
+
+
+def stream_fixed_database(bundle, info, destination, target):
+    fixed = EXACT_MAIN_DATABASES[target["id"]]
+    require(info.filename == DB_NAME and info.file_size == fixed["bytes"]
+            and info.compress_size == fixed["compressed_bytes"], "EXACT_DATABASE_DIRECTORY_ENTRY")
+    require(not destination.exists(), "DATABASE_DESTINATION_EXISTS")
+    partial = destination.with_name(destination.name + ".readback-partial")
+    digest = hashlib.sha256()
+    total = 0
+    crc = 0
+    # ZipExtFile validates ZIP decoding; the explicit CRC check below also
+    # binds every decompressed byte. No whole-database bytes object is created.
+    with bundle.open(info) as source, partial.open("xb") as output:
+        while True:
+            block = source.read(STREAM_CHUNK)
+            require(len(block) <= STREAM_CHUNK, "DATABASE_STREAM_CHUNK")
+            if not block:
+                break
+            total += len(block)
+            require(total <= fixed["bytes"], "EXACT_DATABASE_SIZE_OVERRUN")
+            output.write(block)
+            digest.update(block)
+            crc = zlib.crc32(block, crc)
+        require(total == fixed["bytes"] == info.file_size, "EXACT_DATABASE_EOF")
+        require((crc & 0xffffffff) == info.CRC, "EXACT_DATABASE_CRC")
+    partial.chmod(0o444)
+    partial.rename(destination)
+    return {"member": info.filename, "bytes": total, "sha256": digest.hexdigest(),
+            "compressed_bytes": info.compress_size,
+            "crc32_expected": info.CRC, "crc32_observed": crc & 0xffffffff,
+            "crc32_verified": True, "stream_chunk_max_bytes": STREAM_CHUNK,
+            "budget_scope": "explicit-fixed-main-database-diagnostic"}
 
 
 def table_authorizer(action, first, second, database, context):
@@ -411,10 +463,21 @@ def verified_origin(raw, target):
 
 
 def inspect_one(target, output):
-    result = {"schema": "trnm-retained-history-post-cleanup-snapshot-v1", "target": target,
+    result = {"schema": "trnm-retained-history-post-cleanup-snapshot-v2", "target": target,
               "reader_status": "failed", "snapshot_status": "unavailable",
               "scope": "Frozen retained bytes after the original call returned, Node drop and Host cleanup. "
                        "SQL observations are not the original failure-time cursor or a recovered Node state.",
+              "diagnostic_budget_scope": {
+                  "prior_generic_bound_refusal": PRIOR_GENERIC_REFUSAL,
+                  "database_member": DB_NAME,
+                  "database_exact_budget": EXACT_MAIN_DATABASES[target["id"]],
+                  "generic_member_limit_unchanged": MAX_MEMBER,
+                  "non_database_selected_limit_unchanged": MAX_SELECTED,
+                  "combined_selected_cap": EXACT_MAIN_DATABASES[target["id"]]["bytes"] + MAX_SELECTED,
+                  "stream_chunk_max_bytes": STREAM_CHUNK,
+                  "original_native_budgets_changed": False,
+                  "original_reader_refusal_reclassified": False,
+              },
               "original_failure_location": None, "origin": None, "snapshot": None,
               "fixed_database_members": None, "selected_members": [], "unavailable_reasons": [],
               "files_before_query": None, "files_after_query": None,
@@ -438,7 +501,8 @@ def inspect_one(target, output):
     result["downloaded_zip_bytes"] = archive(target, output / "original.zip")
     result["downloaded_zip_sha256"] = target["digest"].split(":", 1)[1]
     (output / "original.zip").chmod(0o444)
-    selected_total = 0
+    non_database_selected_bytes = 0
+    database_selected_bytes = 0
     raw_text = {}
     paths = {}
     frozen = output / "original-members"
@@ -481,29 +545,43 @@ def inspect_one(target, output):
             if info.is_dir() or stat.S_IFMT((info.external_attr >> 16) & 0xffff) not in (0, stat.S_IFREG):
                 result["unavailable_reasons"].append("NOT_REGULAR:" + name)
                 continue
-            if info.file_size > MAX_MEMBER or selected_total + info.file_size > MAX_SELECTED:
-                result["unavailable_reasons"].append("BOUNDED_SIZE:" + name)
-                continue
-            with bundle.open(info) as stream:
-                raw = stream.read(MAX_MEMBER + 1)
-                require(len(raw) == info.file_size and len(raw) <= MAX_MEMBER
-                        and stream.read(1) == b"", "MEMBER_SIZE")
-            selected_total += len(raw)
             destination = frozen.joinpath(*PurePosixPath(name).parts)
             destination.parent.mkdir(parents=True, exist_ok=True)
-            with destination.open("xb") as stream:
-                stream.write(raw)
-            destination.chmod(0o444)
+            if name == DB_NAME:
+                # Identity/source checks precede the large, exact-budget stream.
+                if not all(member in raw_text for member in TEXT_MEMBERS):
+                    result["unavailable_reasons"].append("DATABASE_SOURCE_BINDING_UNAVAILABLE")
+                    continue
+                origin = verified_origin(raw_text, target)
+                result["origin"] = origin
+                result["original_failure_location"] = origin["original_failure_location"]
+                observation = stream_fixed_database(bundle, info, destination, target)
+                database_selected_bytes += observation["bytes"]
+            else:
+                if (info.file_size > MAX_MEMBER
+                        or non_database_selected_bytes + info.file_size > MAX_SELECTED):
+                    result["unavailable_reasons"].append("BOUNDED_SIZE:" + name)
+                    continue
+                with bundle.open(info) as stream:
+                    raw = stream.read(MAX_MEMBER + 1)
+                    require(len(raw) == info.file_size and len(raw) <= MAX_MEMBER
+                            and stream.read(1) == b"", "MEMBER_SIZE")
+                non_database_selected_bytes += len(raw)
+                with destination.open("xb") as stream:
+                    stream.write(raw)
+                destination.chmod(0o444)
+                observation = {"member": name, "bytes": len(raw),
+                               "sha256": hashlib.sha256(raw).hexdigest(),
+                               "budget_scope": "unchanged-generic-member"}
+                if name in TEXT_MEMBERS:
+                    raw_text[name] = raw
             paths[name] = destination
-            observation = {"member": name, "bytes": len(raw),
-                           "sha256": hashlib.sha256(raw).hexdigest()}
             result["selected_members"].append(observation)
-            if name in TEXT_MEMBERS:
-                raw_text[name] = raw
         if all(name in raw_text for name in TEXT_MEMBERS):
-            origin = verified_origin(raw_text, target)
-            result["origin"] = origin
-            result["original_failure_location"] = origin["original_failure_location"]
+            if result["origin"] is None:
+                origin = verified_origin(raw_text, target)
+                result["origin"] = origin
+                result["original_failure_location"] = origin["original_failure_location"]
         else:
             result["unavailable_reasons"].append("ORIGINAL_BINDING_MEMBERS_UNAVAILABLE")
         wal_present = DB_NAME + "-wal" in by_name
@@ -514,8 +592,20 @@ def inspect_one(target, output):
             result["unavailable_reasons"].append("NONEMPTY_ROLLBACK_JOURNAL")
         if any(name in by_name and name not in paths for name in DB_MEMBERS):
             result["unavailable_reasons"].append("DATABASE_MEMBER_UNREAD")
-    result["selected_bytes"] = selected_total
-    result["files_before_query"] = {name: digest_file(path) for name, path in paths.items()}
+    require(database_selected_bytes in (0, EXACT_MAIN_DATABASES[target["id"]]["bytes"]),
+            "FIXED_DATABASE_SELECTED_TOTAL")
+    require(non_database_selected_bytes <= MAX_SELECTED, "GENERIC_SELECTED_TOTAL")
+    result["database_selected_bytes"] = database_selected_bytes
+    result["non_database_selected_bytes"] = non_database_selected_bytes
+    result["selected_bytes"] = database_selected_bytes + non_database_selected_bytes
+    require(result["selected_bytes"] <= EXACT_MAIN_DATABASES[target["id"]]["bytes"] + MAX_SELECTED,
+            "COMBINED_SELECTED_TOTAL")
+    result["files_before_query"] = {
+        name: digest_file(path, retained_limit(name, target)) for name, path in paths.items()}
+    for observation in result["selected_members"]:
+        require(result["files_before_query"][observation["member"]] == {
+            "bytes": observation["bytes"], "sha256": observation["sha256"]},
+            "RETAINED_INPUT_CHANGED_BEFORE_QUERY")
     if not result["unavailable_reasons"]:
         with paths[DB_NAME].open("rb") as stream:
             header = stream.read(100)
@@ -552,7 +642,8 @@ def inspect_one(target, output):
         result["snapshot_status"] = result["snapshot"]["status"]
         if result["snapshot_status"] != "observed":
             result["unavailable_reasons"].append("SQLITE_READ_UNAVAILABLE")
-    result["files_after_query"] = {name: digest_file(path) for name, path in paths.items()}
+    result["files_after_query"] = {
+        name: digest_file(path, retained_limit(name, target)) for name, path in paths.items()}
     require(result["files_before_query"] == result["files_after_query"], "RETAINED_INPUT_CHANGED")
     require(result.get("snapshot_directory_entries_before") == result.get("snapshot_directory_entries_after"),
             "SNAPSHOT_DIRECTORY_CHANGED")
@@ -573,7 +664,7 @@ for target in TARGETS:
         result = inspect_one(target, output)
     except Exception as error:
         had_error = True
-        result = {"schema": "trnm-retained-history-post-cleanup-snapshot-v1",
+        result = {"schema": "trnm-retained-history-post-cleanup-snapshot-v2",
                   "target": target, "reader_status": "failed", "snapshot_status": "unavailable",
                   "error_type": type(error).__name__,
                   "reason": str(error)[:500] if isinstance(error, (Refused, sqlite3.Error)) else None,
@@ -593,7 +684,7 @@ for target in TARGETS:
     print(rendered, flush=True)
     print("::" + token + "::", flush=True)
     results.append(result)
-write_json(ROOT / "readback.json", {"schema": "trnm-retained-history-post-cleanup-cohort-v1",
+write_json(ROOT / "readback.json", {"schema": "trnm-retained-history-post-cleanup-cohort-v2",
     "planned_archives": 2, "results": results, "source_tests_executed": False,
     "archive_code_executed": False, "acceptance_granted": False, "production_activation": False})
 raise SystemExit(1 if had_error else 0)

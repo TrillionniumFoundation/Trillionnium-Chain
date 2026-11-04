@@ -1,5 +1,8 @@
 # Retained runtime failures, native follow-up and complete cost readback
 
+> **Dated source/status observation, 2026-11-04 10:25:54 UTC:** integration is 93e207c8. Its four original Node/PQ lanes each pass 992/0/27; original F0, campaign and W1 workflows still fail, with priority/baseline running. [Current source and metadata](93e-current-source-workflow-status.json), [complete Node/PQ scope](93e-pq-four-lane-terminal-readback.json), [current business outer failures](original-93e-business-outer-terminal-readback.json) and [the completed generic-bound DB refusal](original-69d-arm-retained-database-readback.json) are retained separately. Overall HOLD remains.
+
+
 This directory records already executed work on exact frozen sources. It is evidence under the sole development plan, not a new plan or a release qualification. The integration branch has continued to advance; each section below names its exact measured source and observation time. Later revisions do not inherit earlier results.
 
 ## Latest retained results and current diagnostic source
@@ -503,3 +506,38 @@ A separate bounded reader is prepared for the two original ARM post-cleanup conf
 At 09:49:09 UTC the concurrent integration head is 93e207c8, whose sole parent is 69d2. Root verifies actual merge 5afe5dd2 has ordered parents dd6e1c3c and 93e207c8 and the same complete tree: 8,761 files / 940,655,430 bytes, with no truncated recursive listing. The 93e workflow snapshot contains 10 success, three failure and three in progress. Its own F0 41806693160, campaign 41806693023 and W1 41806693679 already fail; inner causes/counts remain unread in this metadata record. PQ, priority and required baseline remain in progress at that observation time.
 
 All older source-bound results are preserved without assigning them to 93e. The concurrent source changes and its separately published evidence are preserved; this update does not review or overwrite their runtime implementation. Overall public-service, long-History and independent qualification HOLD remains.
+
+## 93e complete Node/PQ terminal and current business outer failures
+
+[The original 93e four-lane Node/PQ record](93e-pq-four-lane-terminal-readback.json) binds run 41806692746 to head 93e207c8 and actual merge 5afe5dd2, common tree 1066c679. Every lane directly prints the outer result 992 PASS / 0 FAIL / 27 ignored, zero filtered. Its inferred registered scope is 1,019; two nested one-test child summaries are not added. Every lane separately executes the 49 original PQ controls, 13 distinct transaction-scope controls and four original cost selectors. The four costs each have their own 1/0/0 terminal. The original fail-accumulating named-test checker loops and steps pass; raw individual logs/checker JSON remain unread inside ZIPs.
+
+| Original 93e lane | Job | Full Node elapsed, seconds | Outer result |
+| --- | --- | ---: | --- |
+| x64 actual merge | 126495360050 | 894.53 | 992 / 0 / 27 |
+| x64 head | 126495360276 | 1,364.35 | 992 / 0 / 27 |
+| ARM actual merge | 126495360520 | 1,324.77 | 992 / 0 / 27 |
+| ARM head | 126495360593 | 1,324.56 | 992 / 0 / 27 |
+
+Root independently reads all four full original console logs, all four exact source files and original job/artifact metadata. It matches 116 hash-bound ranges, 88 literal ranges, 324 distinct successful command receipts and all eight artifact upload/API identities. The exact source guards and actual audits pass. Format, original build, locked graph and strict Node Clippy receipts succeed. Raw per-command before/after source files, full Node compiler-artifact/ELF records and the ignored individual roster remain null/unread; per-command equality is supported by the exact recorder and actual success receipts. Unequal lane durations are not a controlled speedup comparison.
+
+[The dated 93e status snapshot](93e-current-source-workflow-status.json) is first observed at 10:13:06 UTC. Its 16 pull_request runs contain 11 success, three failure and two in progress; one additional dynamic CodeQL success makes 17 all-event runs. Root's later 10:25:54 source/run read confirms the same head/main and coarse counts. F0, campaign and W1 remain failures. Priority and required baseline remain in progress; priority's four service-model jobs are already metadata failures at original step 6, while their inner native results remain unread in that status record.
+
+[Four original failed business outer logs](original-93e-business-outer-terminal-readback.json) add a separate direct terminal readback. All four actual audits pass and all four uploaded artifact identities match the original-run API:
+
+- F0 job 126495361302 fails original execution step 8 and finalization step 9, each with outer exit 1. The redirected actual execution/finalization manifests, native exit and confirmation counts remain unread/null. Two console rows under /tmp/fixed-root-f0-source-controls-* are parser fixtures and are explicitly excluded from actual F0 results.
+- Campaign job 126495362295 directly prints all three actual native return codes 101 and original_criteria_met=false, with 112.132358638 / 111.891432002 / 112.005188221 seconds elapsed. The original outer cap remains 600 seconds. Phase startup errors and finalization failures are empty; empty errors do not make the original criteria pass. Build exits 0, the original binary before/after digest agrees and source-before equals the nested source-after. The original confirmation report bodies and counts remain unread/null.
+- W1 fresh-service jobs 126495364919 and 126495365320 directly report systemd_run_exit=1, passed=false, failure=null, final_host_errors=[] and identical complete before/after source receipts. Their inner native summaries and exact business-failure cause remain unread/null at this outer boundary.
+
+These current-source failures are not assigned the historical 73ab denominators. The 992 component PASS and 13 separate transaction controls close their measured engineering scopes only; original public confirmation and independent qualification remain open.
+
+## Original 69d retained databases: actual generic-bound refusal and fixed-member follow-up
+
+[The first original two-ARM database readback](original-69d-arm-retained-database-readback.json) preserves actual reader run 41812595146 / job 126515293786, source 7a85995c / tree 8175c1e9 / 8,050 entries / 935,110,411 bytes. The job succeeds, both actual audits pass and complete source-before/source-after are identical. Both snapshot outcomes are nevertheless unavailable, with snapshot=null and no SQLite query executed.
+
+The original ZIP indexes list the exact confirmer/native.sqlite members: head 220,749,824 bytes (compressed 22,920,177), merge 220,811,264 bytes (compressed 22,931,478). Both exceed the reader's existing 32 MiB/member and 160 MiB/selected bounds. Both original outcomes retain BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite and DATABASE_MEMBER_UNREAD. Fixed WAL, SHM and rollback-journal names are absent in the original ZIP directories. That archive-index fact does not establish database integrity, activation entry or any cursor.
+
+The reader authenticates both original ZIPs / 122,282,461 bytes and all 12 small binding members / 21,763 bytes, with unchanged before/after input hashes. Root independently verifies the full 40,268-byte original console, its literal result/source/audit records, original failure-location objects and output artifact API/upload identity. Original failure-time activation_cursor and durable_committed_blocks remain null. The main database's individual digest, SQL schema and rows have not yet been observed in this original bounded run.
+
+A separate diagnostic revision adds only a fixed main-database allocation for these two already authenticated original archives and their exact path/observed sizes: 220,749,824 and 220,811,264 bytes, 441,561,088 combined. It streams at most 1 MiB per read, checks complete length/EOF/CRC and hashes every copied byte. Generic 32 MiB/member and 160 MiB/selected bounds continue to cover all non-main-DB members, including sidecars; database and non-database totals are reported separately. No generic 256 MiB allowance is introduced.
+
+The revision keeps all original source/ZIP checks, fixed read-only SQL/schema/authorizer checks, immutable handling only for sidecar-free frozen copies, input and directory rechecks, the approximate five-second/200k callback thresholds and ten-minute diagnostic workflow. This is a separately declared evidence-reading allocation, not a changed native performance budget or an accepted speedup. The original bound refusal above remains unchanged. The follow-up's SQL availability and any post-cleanup cursor require its own actual terminal evidence.

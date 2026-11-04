@@ -1,0 +1,705 @@
+{
+  "schema": "93e-bounded-current-ref-and-original-workflow-status-v1",
+  "initial_ref_PR_main_runs_snapshot_utc": "2026-11-04 10:13:06 UTC",
+  "evidence_packaging_time_utc": "2026-11-04 10:20:37 UTC",
+  "metadata_repolled_during_packaging": false,
+  "readback_mode": "One bounded metadata batch plus first complete terminal PQ console readback; no running job log requests, archive downloads or new CI.",
+  "integration": {
+    "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+    "sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+    "ordered_parents": [
+      "69d2e06c48bbbd1e22432f9b557727b140aba361"
+    ]
+  },
+  "main": {
+    "ref": "refs/heads/main",
+    "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+  },
+  "pr": {
+    "number": 688,
+    "state": "open",
+    "draft": true,
+    "head_ref": "fix/chain-six-axis-performance-20261103",
+    "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "base_ref": "main",
+    "base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "actual_merge": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/688",
+    "updated_at": "2026-11-04T09:21:37Z",
+    "body_not_embedded_or_modified": true
+  },
+  "actual_merge": {
+    "sha": "5afe5dd267578fe96d91f3800b4c1cd6dda1ef5e",
+    "tree": "1066c67970802b52070ece6fcc77bc9b2806a4e1",
+    "ordered_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "93e207c8d2ccb8509f78566223abc371b9d8118b"
+    ],
+    "same_tree_as_head": true
+  },
+  "workflow_counts": {
+    "total_count": 17,
+    "returned": 17,
+    "all_events": {
+      "success": 12,
+      "failure": 3,
+      "in_progress": 2
+    },
+    "pull_request": {
+      "count": 16,
+      "success": 11,
+      "failure": 3,
+      "in_progress": 2
+    },
+    "other_events": [
+      {
+        "id": 41806682131,
+        "event": "dynamic",
+        "name": "PR #688",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "original_workflows": [
+    {
+      "id": 41806693191,
+      "name": "PoN parent-bound model evidence",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:21:33Z",
+      "workflow_id": 381968354,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693191"
+    },
+    {
+      "id": 41806692879,
+      "name": "PoN isolated cloud build inputs",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-cloud-build-inputs.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:23:16Z",
+      "workflow_id": 394876294,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692879"
+    },
+    {
+      "id": 41806693197,
+      "name": "PoN owned process cleanup",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:24:04Z",
+      "workflow_id": 381802523,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693197"
+    },
+    {
+      "id": 41806693092,
+      "name": "Release finality reference and native baseline",
+      "event": "pull_request",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:25:06Z",
+      "workflow_id": 384076239,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693092"
+    },
+    {
+      "id": 41806692845,
+      "name": "PoN baseline diagnostic readback",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:27:04Z",
+      "workflow_id": 379262275,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692845"
+    },
+    {
+      "id": 41806693160,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:27:31Z",
+      "workflow_id": 399731485,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693160"
+    },
+    {
+      "id": 41806693133,
+      "name": "PoN original large-state CPU acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:26:50Z",
+      "workflow_id": 403449877,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693133"
+    },
+    {
+      "id": 41806693207,
+      "name": "PoN priority acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:28:15Z",
+      "workflow_id": 378180520,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693207"
+    },
+    {
+      "id": 41806693023,
+      "name": "PoN original native campaign",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:30:16Z",
+      "workflow_id": 391170410,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693023"
+    },
+    {
+      "id": 41806692746,
+      "name": "PoN PQ network and rollback witness",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:59:44Z",
+      "workflow_id": 403755130,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692746"
+    },
+    {
+      "id": 41806692765,
+      "name": "PoN recent batch exact-source acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:32:10Z",
+      "workflow_id": 379339707,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692765"
+    },
+    {
+      "id": 41806693043,
+      "name": "CodeQL exact-source analysis export",
+      "event": "pull_request",
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:34:17Z",
+      "workflow_id": 391170411,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693043"
+    },
+    {
+      "id": 41806692981,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:44:51Z",
+      "workflow_id": 403747290,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692981"
+    },
+    {
+      "id": 41806692839,
+      "name": "PoN branch encoding exact-source acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:37:50Z",
+      "workflow_id": 379587106,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806692839"
+    },
+    {
+      "id": 41806693078,
+      "name": "trnm-required-baseline",
+      "event": "pull_request",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:54:17Z",
+      "workflow_id": 345677268,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693078"
+    },
+    {
+      "id": 41806693679,
+      "name": "PoN W1 work security observations",
+      "event": "pull_request",
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-04T09:20:38Z",
+      "run_started_at": "2026-11-04T09:20:38Z",
+      "updated_at": "2026-11-04T09:40:57Z",
+      "workflow_id": 403419146,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806693679"
+    },
+    {
+      "id": 41806682131,
+      "name": "PR #688",
+      "event": "dynamic",
+      "path": "dynamic/github-code-scanning/codeql",
+      "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "head_branch": "refs/pull/688/head",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T09:20:34Z",
+      "run_started_at": "2026-11-04T09:20:34Z",
+      "updated_at": "2026-11-04T09:33:22Z",
+      "workflow_id": 351261903,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41806682131"
+    }
+  ],
+  "priority": {
+    "run_id": 41806693207,
+    "run_status": "in_progress",
+    "run_conclusion": null,
+    "job_metadata": [
+      {
+        "id": 126498899260,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 20,
+            "started_at": "2026-11-04T09:31:35Z",
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 126498899521,
+        "name": "native priorities (ubuntu-24.04, head, state)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 16,
+            "started_at": "2026-11-04T09:34:13Z",
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 126498899640,
+        "name": "native priorities (ubuntu-24.04-arm, head, history)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:15Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 20,
+            "started_at": "2026-11-04T09:31:41Z",
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 126498899698,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": "2026-11-04T09:47:15Z",
+        "failed_steps": [
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:29:05Z",
+            "completed_at": "2026-11-04T09:33:20Z"
+          }
+        ],
+        "running_steps": []
+      },
+      {
+        "id": 126498899720,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 16,
+            "started_at": "2026-11-04T09:33:53Z",
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 126498899734,
+        "name": "retained-pressure-failure",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": "2026-11-04T09:28:16Z",
+        "failed_steps": [],
+        "running_steps": []
+      },
+      {
+        "id": 126498899740,
+        "name": "native priorities (ubuntu-24.04, head, history)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 20,
+            "started_at": "2026-11-04T09:31:51Z",
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 126498899741,
+        "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-04T09:28:14Z",
+        "completed_at": "2026-11-04T09:47:24Z",
+        "failed_steps": [
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:29:01Z",
+            "completed_at": "2026-11-04T09:33:05Z"
+          }
+        ],
+        "running_steps": []
+      },
+      {
+        "id": 126498899749,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:28:15Z",
+        "completed_at": "2026-11-04T10:09:40Z",
+        "failed_steps": [],
+        "running_steps": []
+      },
+      {
+        "id": 126498899779,
+        "name": "native priorities (ubuntu-24.04, head, service-model)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-04T09:28:12Z",
+        "completed_at": "2026-11-04T09:47:22Z",
+        "failed_steps": [
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:29:07Z",
+            "completed_at": "2026-11-04T09:33:22Z"
+          }
+        ],
+        "running_steps": []
+      },
+      {
+        "id": 126498899882,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-04T09:28:14Z",
+        "completed_at": "2026-11-04T09:47:22Z",
+        "failed_steps": [
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-11-04T09:28:58Z",
+            "completed_at": "2026-11-04T09:33:00Z"
+          }
+        ],
+        "running_steps": []
+      },
+      {
+        "id": 126498899912,
+        "name": "native priorities (ubuntu-24.04-arm, head, state)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-04T09:28:14Z",
+        "completed_at": "2026-11-04T10:09:17Z",
+        "failed_steps": [],
+        "running_steps": []
+      },
+      {
+        "id": 126498900092,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+        "head_sha": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+        "run_attempt": 1,
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-04T09:28:14Z",
+        "completed_at": null,
+        "failed_steps": [],
+        "running_steps": [
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 20,
+            "started_at": "2026-11-04T09:31:38Z",
+            "completed_at": null
+          }
+        ]
+      }
+    ],
+    "interpretation": "Four service-model jobs have terminal failure metadata at original release from-zero step 6; four History jobs and two x64 state/capacity jobs remain in progress in this batch. Two ARM state jobs completed success. No native result, assertion, count or cause is inferred from these step colors; priority job logs were not read in this bounded task because the run remains active.",
+    "actual_inner_failure_reason": null,
+    "actual_native_counts": null,
+    "terminal_job_logs_read_in_this_task": false
+  },
+  "pq_terminal": {
+    "run_id": 41806692746,
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "four_job_ids": [
+      126495360050,
+      126495360276,
+      126495360520,
+      126495360593
+    ],
+    "actual_full_Node_per_lane": {
+      "passed": 992,
+      "failed": 0,
+      "ignored": 27,
+      "outer_registration_count_inferred": 1019
+    },
+    "original_control_groups_separate": {
+      "pq_selected_per_lane": 49,
+      "transaction_scope_selected_per_lane": 13,
+      "cost_named_per_lane": 4
+    },
+    "each_lane_recorded_command_successes": 81,
+    "all_source_bindings_match_head_or_actual_merge": true,
+    "detailed_evidence_path": "evidence/pon-retained-runtime-readback-20261104/93e-pq-four-lane-terminal-readback.json",
+    "detailed_evidence_blob": "84a7f9ed75ea1c560310c411d633793eac098cc7",
+    "detailed_evidence_sha256": "181c518daeb7d4cf532a1884c1bd6036c6935dd2f5988bc9837248b0a54fa0f6",
+    "detailed_evidence_UTF8_bytes": 256283,
+    "source_pair_raw_JSON": null,
+    "compiler_artifact_JSON": null,
+    "full_Node_ELF_SHA256": null
+  },
+  "bounds": [
+    "The sixteen pull_request runs are separate from one dynamic CodeQL run; seventeen is the all-events count.",
+    "Completed workflow success is metadata except where the separate current-source terminal PQ document records actual command/native results.",
+    "F0, campaign and W1 failure metadata are not native denominator or cause evidence here; root separately owns their original outer readbacks.",
+    "Pending/running scopes remain incomplete, with no predicted deadline reported as a result. No prior 69d or other cohort result qualifies 93e.",
+    "No reference, PR, source, assertion, budget, workflow run or cancellation was changed by this collector."
+  ],
+  "raw_API_response_bindings": [
+    {
+      "name": "pr",
+      "utf8_bytes": 79426,
+      "sha256": "5c2a8a09f2714ea968faace783818f6c091c4968e9d49eaf908ce30e53f13fc1",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "main-ref",
+      "utf8_bytes": 380,
+      "sha256": "f01fbe0c6105d065f8f920e6d65c6c916fb85bb658e21d79cc7e3c079627c9a5",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "runs",
+      "utf8_bytes": 268279,
+      "sha256": "5eedcf3cfc3cddf67094f3bb23a70c3f387fcdf99004687b9812108a7259c506",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "integration-ref",
+      "utf8_bytes": 499,
+      "sha256": "0a8654c097256a13aa907744e4af221e3d6d8bada45ea6f86fa71d4725470a9e",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "head-commit",
+      "utf8_bytes": 1915,
+      "sha256": "8262abcb50a434f581e1953f19860bb4b230c1ecda41ac0ea195fbd38a0b11d6",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "merge-commit",
+      "utf8_bytes": 2820,
+      "sha256": "bec365e663b6858aed2322eae8747f4cfe2b64071849780d9097d9d99a4b74f8",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "pq-jobs",
+      "utf8_bytes": 16324,
+      "sha256": "aeb4c888f1c5ce6a87da77b95b494808cea3a9e3103b14e6961965ce94a19087",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "pq-artifacts",
+      "utf8_bytes": 6667,
+      "sha256": "66bcd01be4fbf8a83c2e667a0a1422ab1ca7424b03c630772f9742478cf1126d",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    },
+    {
+      "name": "priority-jobs",
+      "utf8_bytes": 68178,
+      "sha256": "84eb888811c81e5242388f2fcac4905fd8528e489af6f52ceb2fa8baffedea0c",
+      "complete_response_retained_in_session": true,
+      "embedded_projection_not_complete_raw_response": true
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false,
+  "business_SLO_qualified": false,
+  "all_remaining_blockers_closed": false
+}

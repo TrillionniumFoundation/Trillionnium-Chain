@@ -1,0 +1,682 @@
+{
+  "schema": "trnm-original-69d-arm-retained-sqlite-bounded-readback-v1",
+  "generated_utc": "2026-11-04 10:23:36 UTC",
+  "scope": "Actual successful readback of two original 69d ARM History archives under the original 32 MiB generic-member and 160 MiB selected limits. Both SQLite snapshots remain unavailable. This records a correct size-bound refusal, not a native test result or a successful database query.",
+  "measured_source": {
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+    "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+    "tracked_entries": 8127,
+    "tracked_bytes": 933472602,
+    "original_run": 41799271270,
+    "original_attempt": 1
+  },
+  "reader": {
+    "run": {
+      "id": 41812595146,
+      "name": "69d retained History SQLite evidence (read only)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41812595146",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "7a85995c8376f18e391449230885310c2f52f8f7",
+      "run_attempt": 1,
+      "created_at": "2026-11-04T10:12:10Z",
+      "updated_at": "2026-11-04T10:17:06Z",
+      "path": ".github/workflows/pon-retained-69d-history-db-readback-20261104.yml"
+    },
+    "job_metadata_from_run_jobs_tool": {
+      "id": 126515293786,
+      "name": "readback",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41812595146,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Verify diagnostic source and project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Read two fixed post-cleanup databases without executing archived code",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Recheck unchanged diagnostic source and project boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Retain original ZIPs, selected bytes, queries and unavailable outcomes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    "source": {
+      "base": null,
+      "candidate": "7a85995c8376f18e391449230885310c2f52f8f7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "7a85995c8376f18e391449230885310c2f52f8f7",
+      "tested_tree": "8175c1e9a833215950a61b2706c89abee9726524",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 935110411,
+      "tracked_entries": 8050,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "reader_log_first_line": 207,
+      "reader_log_last_line": 219,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n  \"tested_tree\": \"8175c1e9a833215950a61b2706c89abee9726524\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 935110411,\n  \"tracked_entries\": 8050,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_after": {
+      "reader_log_first_line": 245,
+      "reader_log_last_line": 257,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n  \"tested_tree\": \"8175c1e9a833215950a61b2706c89abee9726524\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 935110411,\n  \"tracked_entries\": 8050,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_before_after_literal_equal": true,
+    "actual_audits": [
+      {
+        "reader_log_line": 220,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      {
+        "reader_log_line": 258,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      }
+    ],
+    "source_files": [
+      {
+        "path": "scripts/ci/retained_69d_history_db_readback.py",
+        "commit": "7a85995c8376f18e391449230885310c2f52f8f7",
+        "git_blob": "9fdb92952eee1565a1df4ae70a7857ef2fe8a089",
+        "utf8_bytes": 34398,
+        "sha256": "2f82664922e80fa3754b9e1e81ac73557d90fcfce3f9761590a1ddde1b0b4e27"
+      },
+      {
+        "path": ".github/workflows/pon-retained-69d-history-db-readback-20261104.yml",
+        "commit": "7a85995c8376f18e391449230885310c2f52f8f7",
+        "git_blob": "4af3fa5032217273623a00bb1f7d49b3f8ea5afe",
+        "utf8_bytes": 2538,
+        "sha256": "71187190c4caa9c610d27dc0e660af8809ee60307e0acd328ae673760fbdf796"
+      }
+    ],
+    "bound_source_files_independently_fetched_from_reader_commit": true,
+    "workflow_timeout_minutes": 10,
+    "original_generic_limits": {
+      "metadata_bytes": 2097152,
+      "member_bytes": 33554432,
+      "selected_bytes": 167772160,
+      "members": 25000,
+      "json_nodes": 200000,
+      "stdout_characters_per_artifact": 70000
+    },
+    "sqlite_callback_budget_configured_but_not_entered": {
+      "callback_interval": 1000,
+      "callback_units_threshold": 200000,
+      "elapsed_seconds_threshold": 5,
+      "scope": "Approximate callback accounting and elapsed checks, not hard preemption; no SQLite query was entered in this run."
+    },
+    "output_artifact": {
+      "id": 13313576367,
+      "name": "69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1",
+      "size_in_bytes": 107247807,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313576367",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13313576367/zip",
+      "expired": false,
+      "created_at": "2026-11-04T10:17:03Z",
+      "expires_at": "2026-12-04T10:16:58Z",
+      "updated_at": "2026-11-04T10:17:03Z",
+      "digest": "sha256:9f57f695487676ed781e21f9f0089aeeea3a558602cc8762ee808d649ede25d5",
+      "workflow_run": {
+        "id": 41812595146,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "7a85995c8376f18e391449230885310c2f52f8f7"
+      }
+    },
+    "output_upload_literal": {
+      "reader_log_first_line": 292,
+      "reader_log_last_line": 296,
+      "text": "SHA256 digest of uploaded artifact zip is 9f57f695487676ed781e21f9f0089aeeea3a558602cc8762ee808d649ede25d5\nFinalizing artifact upload\nArtifact 69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1.zip successfully finalized. Artifact ID 13313576367\nArtifact 69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1 has been successfully uploaded! Final size is 107247807 bytes. Artifact ID is 13313576367\nArtifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41812595146/artifacts/13313576367"
+    },
+    "source_tests_executed": false,
+    "archive_code_executed": false,
+    "acceptance_granted": false,
+    "production_activation": false
+  },
+  "findings": {
+    "retained_database_presence": "Both exact confirmer/native.sqlite members are present in their original ZIP central directories. Main-file bytes were not decompressed, hashed individually, opened or queried.",
+    "bound_refusal": "The two main files are 220749824 and 220811264 bytes, exceeding the unchanged 33554432-byte member bound and individually exceeding the 167772160-byte selected bound. BOUNDED_SIZE and DATABASE_MEMBER_UNREAD are the actual outcomes.",
+    "sidecars": "WAL, SHM and rollback-journal fixed names are absent from both observed original ZIP directories. This is an archive-index fact; it does not independently establish complete database integrity or the original activation state.",
+    "source_and_inputs": "The actual reader verified both fixed original ZIP sizes and SHA256 values, original source receipts and native before/after source bindings. Twelve selected small members and the two complete original ZIPs have equal before/after input digests.",
+    "query_result": "snapshot is null in both original result records. No SQLite opening mode, engine version, schema, reorg row, lifecycle row or cursor was observed.",
+    "native_failure_preservation": "The earlier actual 69d diagnostic remains 4104 successful import returns followed by the final one-packet import-call-expression deadline. The original activation_cursor and durable_committed_blocks remain null. This reader did not execute the original native selector.",
+    "qualification": "Reader job SUCCESS and reader_status completed do not imply snapshot observed, activation entered, native acceptance, recovery qualification or any current-source improvement.",
+    "reader_repair_assessment": "No parser, source-binding or SQL execution failure was observed. The reader correctly applied its configured generic size boundary. Any separately authorized larger fixed-database diagnostic must keep this refusal as its own completed historical result.",
+    "precision_policy": "Original console JSON lines are preserved as literal strings. The full decoded original job log is retained below and hash-bound. Derived summaries copy bounded counters/durations and digest strings; no JSON reserialization is represented as original member bytes.",
+    "retained_content_boundary": "The successful output artifact retains both original ZIPs, full member indexes, twelve selected small files and results. The main SQLite files remain inside the original ZIPs. This document did not download that output artifact or read the main database contents.",
+    "source_scope": "This is fixed 69d/its bfdf prospective-merge evidence. No result is inherited by the later 93e source or any other cohort."
+  },
+  "totals": {
+    "fixed_archives": 2,
+    "reader_completed": 2,
+    "snapshots_observed": 0,
+    "snapshots_unavailable": 2,
+    "main_databases_listed": 2,
+    "main_databases_materialized": 0,
+    "sqlite_queries_executed": 0,
+    "original_zip_bytes": 122282461,
+    "main_database_uncompressed_bytes_listed": 441561088,
+    "main_database_compressed_bytes_listed": 45851655,
+    "selected_small_members": 12,
+    "selected_small_member_bytes": 21763,
+    "original_native_or_benchmark_executions_by_reader": 0
+  },
+  "summaries": [
+    {
+      "target": {
+        "digest": "sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5",
+        "family": "history",
+        "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "id": 13311000045,
+        "job": 126471217803,
+        "kind": "head",
+        "last_successful_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "name": "priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+        "pinned_tip": "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598",
+        "run": 41799271270,
+        "size": 61135040,
+        "tested": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b"
+      },
+      "reader_log_line": 231,
+      "reader_status": "completed",
+      "snapshot_status": "unavailable",
+      "database_member": {
+        "bytes": 220749824,
+        "compressed_bytes": 22920177,
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "present": true
+      },
+      "database_main_file_sha256": null,
+      "database_bytes_materialized": 0,
+      "sqlite_opened": false,
+      "sqlite_queries_executed": false,
+      "sqlite_engine_version": null,
+      "sqlite_open_mode": null,
+      "sqlite_schema_verified": null,
+      "sqlite_rows": null,
+      "sidecar_index": [
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-wal",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-shm",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-journal",
+          "present": false
+        }
+      ],
+      "unavailable_reasons": [
+        "BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite",
+        "DATABASE_MEMBER_UNREAD"
+      ],
+      "member_index_sha256": "63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25",
+      "selected_small_member_count": 6,
+      "selected_small_member_bytes": 10748,
+      "selected_members": [
+        {
+          "bytes": 421,
+          "member": "source.json",
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        },
+        {
+          "bytes": 4880,
+          "member": "history-native/manifest.json",
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        {
+          "bytes": 4056,
+          "member": "history-native/history.log",
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        {
+          "bytes": 632,
+          "member": "history-native/long-history/config.json",
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        {
+          "bytes": 514,
+          "member": "history-native/long-history/source.json",
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        {
+          "bytes": 245,
+          "member": "history-native/long-history/summary.json",
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        }
+      ],
+      "files_before_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 4880,
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        "source.json": {
+          "bytes": 421,
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        }
+      },
+      "files_after_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 4880,
+          "sha256": "ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83"
+        },
+        "source.json": {
+          "bytes": 421,
+          "sha256": "1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b"
+        }
+      },
+      "retained_zip_after_query": {
+        "bytes": 61135040,
+        "sha256": "21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5"
+      },
+      "all_retained_input_digests_unchanged": true,
+      "original_source": {
+        "base": null,
+        "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 933472602,
+        "tracked_entries": 8127,
+        "tracked_worktree_verified": true
+      },
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "original_manifest_passed": false,
+      "original_native_execution_authenticated": false,
+      "original_failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6273684,
+        "last_history_rpc_elapsed_ns": 7754563,
+        "last_import_call_expression_elapsed_ns": 30000693324,
+        "last_requested_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "last_successful_after": "2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c",
+        "pinned_tip": "4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "original_sync_json_literal": "{\"elapsed_ns\":3236381521398,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}",
+      "post_cleanup_observation_scope": "The fixed original ZIP directory lists the retained main SQLite file. Its uncompressed size exceeded this reader's unchanged generic member bound, so its contents and SQLite rows were not read. No original failure-time null is filled.",
+      "unknown": {
+        "activation_entered": null,
+        "activation_cursor": null,
+        "reorg_intent": null,
+        "reorg_done": null,
+        "cancelled_cursor": null,
+        "lifecycle_outcome": null,
+        "durable_committed_blocks": null
+      },
+      "source_tests_executed": false,
+      "archive_code_executed": false,
+      "acceptance_granted": false,
+      "production_activation": false
+    },
+    {
+      "target": {
+        "digest": "sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26",
+        "family": "history",
+        "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "id": 13311101182,
+        "job": 126471218057,
+        "kind": "prospective-merge",
+        "last_successful_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1",
+        "pinned_tip": "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc",
+        "run": 41799271270,
+        "size": 61147421,
+        "tested": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b"
+      },
+      "reader_log_line": 234,
+      "reader_status": "completed",
+      "snapshot_status": "unavailable",
+      "database_member": {
+        "bytes": 220811264,
+        "compressed_bytes": 22931478,
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "present": true
+      },
+      "database_main_file_sha256": null,
+      "database_bytes_materialized": 0,
+      "sqlite_opened": false,
+      "sqlite_queries_executed": false,
+      "sqlite_engine_version": null,
+      "sqlite_open_mode": null,
+      "sqlite_schema_verified": null,
+      "sqlite_rows": null,
+      "sidecar_index": [
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-wal",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-shm",
+          "present": false
+        },
+        {
+          "bytes": null,
+          "compressed_bytes": null,
+          "name": "history-native/long-history/confirmer/native.sqlite-journal",
+          "present": false
+        }
+      ],
+      "unavailable_reasons": [
+        "BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite",
+        "DATABASE_MEMBER_UNREAD"
+      ],
+      "member_index_sha256": "781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6",
+      "selected_small_member_count": 6,
+      "selected_small_member_bytes": 11015,
+      "selected_members": [
+        {
+          "bytes": 510,
+          "member": "source.json",
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        },
+        {
+          "bytes": 5058,
+          "member": "history-native/manifest.json",
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        {
+          "bytes": 4056,
+          "member": "history-native/history.log",
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        {
+          "bytes": 632,
+          "member": "history-native/long-history/config.json",
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        {
+          "bytes": 514,
+          "member": "history-native/long-history/source.json",
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        {
+          "bytes": 245,
+          "member": "history-native/long-history/summary.json",
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        }
+      ],
+      "files_before_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 5058,
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        "source.json": {
+          "bytes": 510,
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        }
+      },
+      "files_after_query": {
+        "history-native/history.log": {
+          "bytes": 4056,
+          "sha256": "1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf"
+        },
+        "history-native/long-history/config.json": {
+          "bytes": 632,
+          "sha256": "fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163"
+        },
+        "history-native/long-history/source.json": {
+          "bytes": 514,
+          "sha256": "59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6"
+        },
+        "history-native/long-history/summary.json": {
+          "bytes": 245,
+          "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+        },
+        "history-native/manifest.json": {
+          "bytes": 5058,
+          "sha256": "49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042"
+        },
+        "source.json": {
+          "bytes": 510,
+          "sha256": "c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0"
+        }
+      },
+      "retained_zip_after_query": {
+        "bytes": 61147421,
+        "sha256": "7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26"
+      },
+      "all_retained_input_digests_unchanged": true,
+      "original_source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+        "kind": "prospective-merge",
+        "prospective_merge": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4",
+        "tested_tree": "d9327a589886a3fbf105b268c0bcff70a9852e6b",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 933472602,
+        "tracked_entries": 8127,
+        "tracked_worktree_verified": true
+      },
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "original_manifest_passed": false,
+      "original_native_execution_authenticated": false,
+      "original_failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": true,
+        "completed_import_calls": 4104,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6608022,
+        "last_history_rpc_elapsed_ns": 8627527,
+        "last_import_call_expression_elapsed_ns": 30069217869,
+        "last_requested_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "last_successful_after": "2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee",
+        "pinned_tip": "a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "import-call-expression"
+      },
+      "original_sync_json_literal": "{\"elapsed_ns\":3288035731126,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}",
+      "post_cleanup_observation_scope": "The fixed original ZIP directory lists the retained main SQLite file. Its uncompressed size exceeded this reader's unchanged generic member bound, so its contents and SQLite rows were not read. No original failure-time null is filled.",
+      "unknown": {
+        "activation_entered": null,
+        "activation_cursor": null,
+        "reorg_intent": null,
+        "reorg_done": null,
+        "cancelled_cursor": null,
+        "lifecycle_outcome": null,
+        "durable_committed_blocks": null
+      },
+      "source_tests_executed": false,
+      "archive_code_executed": false,
+      "acceptance_granted": false,
+      "production_activation": false
+    }
+  ],
+  "prior_exact_failure_evidence": {
+    "path": "evidence/pon-retained-runtime-readback-20261104/original-69d-four-lane-history-failures.json",
+    "git_blob": "b102509377bd4b99adf5eb8f34d8a0cedac739ce",
+    "original_reader_run": 41808704638,
+    "original_reader_job": 126502124623,
+    "scope": "Only the identical two ARM artifacts and failure_location literals are cross-checked; no other cohort is inherited."
+  },
+  "original_console_json_lines": [
+    {
+      "reader_log_line": 220,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    },
+    {
+      "reader_log_line": 231,
+      "original_json": "{\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"downloaded_zip_bytes\":61135040,\"downloaded_zip_sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"fixed_database_members\":[{\"bytes\":220749824,\"compressed_bytes\":22920177,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25\",\"origin\":{\"genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3236381521398,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6273684,\\\"last_history_rpc_elapsed_ns\\\":7754563,\\\"last_import_call_expression_elapsed_ns\\\":30000693324,\\\"last_requested_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"last_successful_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"pinned_tip\\\":\\\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":null,\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61135040,\"sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v1\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":10748,\"selected_members\":[{\"bytes\":421,\"member\":\"source.json\",\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"},{\"bytes\":4880,\"member\":\"history-native/manifest.json\",\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},{\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},{\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},{\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"}],\"snapshot\":null,\"snapshot_status\":\"unavailable\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311000045,\"job\":126471217803,\"kind\":\"head\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"name\":\"priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"run\":41799271270,\"size\":61135040,\"tested\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[\"BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite\",\"DATABASE_MEMBER_UNREAD\"]}"
+    },
+    {
+      "reader_log_line": 234,
+      "original_json": "{\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"downloaded_zip_bytes\":61147421,\"downloaded_zip_sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"fixed_database_members\":[{\"bytes\":220811264,\"compressed_bytes\":22931478,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6\",\"origin\":{\"genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3288035731126,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6608022,\\\"last_history_rpc_elapsed_ns\\\":8627527,\\\"last_import_call_expression_elapsed_ns\\\":30069217869,\\\"last_requested_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"last_successful_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"pinned_tip\\\":\\\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61147421,\"sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v1\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":11015,\"selected_members\":[{\"bytes\":510,\"member\":\"source.json\",\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"},{\"bytes\":5058,\"member\":\"history-native/manifest.json\",\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},{\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},{\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},{\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"}],\"snapshot\":null,\"snapshot_status\":\"unavailable\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311101182,\"job\":126471218057,\"kind\":\"prospective-merge\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"name\":\"priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"run\":41799271270,\"size\":61147421,\"tested\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[\"BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite\",\"DATABASE_MEMBER_UNREAD\"]}"
+    },
+    {
+      "reader_log_line": 258,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    }
+  ],
+  "original_job_log": {
+    "utf8_bytes": 40268,
+    "sha256": "69efb2d6535ef8967799bc94135b9b9b0fd9e9b424fa4d02031db5a37de1be77",
+    "cleaned_line_count": 311,
+    "raw_text": "﻿2026-11-04T10:12:16.3038841Z Current runner version: '2.338.2'\n2026-11-04T10:12:16.3064199Z ##[group]Runner Image Provisioner\n2026-11-04T10:12:16.3065169Z Hosted Compute Agent\n2026-11-04T10:12:16.3065764Z Version: 20261021.618\n2026-11-04T10:12:16.3066504Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e\n2026-11-04T10:12:16.3067230Z Build Date: 2026-10-21T00:45:21Z\n2026-11-04T10:12:16.3068340Z Worker ID: {4babd828-d9fd-4a50-b0e1-2216ddf4f3f1}\n2026-11-04T10:12:16.3069121Z Region: westus\n2026-11-04T10:12:16.3069682Z Cloud: Azure\n2026-11-04T10:12:16.3070269Z ##[endgroup]\n2026-11-04T10:12:16.3071768Z ##[group]Operating System\n2026-11-04T10:12:16.3072445Z Ubuntu\n2026-11-04T10:12:16.3073127Z 24.04.5\n2026-11-04T10:12:16.3073638Z LTS\n2026-11-04T10:12:16.3074476Z ##[endgroup]\n2026-11-04T10:12:16.3075049Z ##[group]Runner Image\n2026-11-04T10:12:16.3075677Z Image: ubuntu-24.04\n2026-11-04T10:12:16.3076312Z Version: 20261025.353.1\n2026-11-04T10:12:16.3077642Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md\n2026-11-04T10:12:16.3079273Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353\n2026-11-04T10:12:16.3080274Z ##[endgroup]\n2026-11-04T10:12:16.3081553Z ##[group]GITHUB_TOKEN Permissions\n2026-11-04T10:12:16.3083667Z Actions: read\n2026-11-04T10:12:16.3084668Z Contents: read\n2026-11-04T10:12:16.3085294Z Metadata: read\n2026-11-04T10:12:16.3085892Z ##[endgroup]\n2026-11-04T10:12:16.3088457Z Secret source: Actions\n2026-11-04T10:12:16.3089479Z Cache mode: write\n2026-11-04T10:12:16.3090438Z Prepare workflow directory\n2026-11-04T10:12:16.3505989Z Prepare all required actions\n2026-11-04T10:12:16.3556301Z Getting action download info\n2026-11-04T10:12:16.7341756Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)\n2026-11-04T10:12:16.8550655Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)\n2026-11-04T10:12:17.0636090Z Complete job name: readback\n2026-11-04T10:12:17.1521447Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n2026-11-04T10:12:17.1522541Z with:\n2026-11-04T10:12:17.1523029Z   ref: 7a85995c8376f18e391449230885310c2f52f8f7\n2026-11-04T10:12:17.1523617Z   fetch-depth: 1\n2026-11-04T10:12:17.1524307Z   persist-credentials: false\n2026-11-04T10:12:17.1524931Z   repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:12:17.1528668Z   token: ***\n2026-11-04T10:12:17.1529102Z   ssh-strict: true\n2026-11-04T10:12:17.1529547Z   ssh-user: git\n2026-11-04T10:12:17.1529960Z   clean: true\n2026-11-04T10:12:17.1530404Z   sparse-checkout-cone-mode: true\n2026-11-04T10:12:17.1530933Z   fetch-tags: false\n2026-11-04T10:12:17.1531373Z   show-progress: true\n2026-11-04T10:12:17.1531819Z   lfs: false\n2026-11-04T10:12:17.1532235Z   submodules: false\n2026-11-04T10:12:17.1532681Z   set-safe-directory: true\n2026-11-04T10:12:17.1533181Z   allow-unsafe-pr-checkout: false\n2026-11-04T10:12:17.1534152Z env:\n2026-11-04T10:12:17.1534646Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:12:17.1535148Z ##[endgroup]\n2026-11-04T10:12:17.4442406Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:12:17.4445046Z ##[group]Getting Git version info\n2026-11-04T10:12:17.4445975Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T10:12:17.4447162Z [command]/usr/bin/git version\n2026-11-04T10:12:17.4548079Z git version 2.56.0\n2026-11-04T10:12:17.4574181Z ##[endgroup]\n2026-11-04T10:12:17.4622508Z Temporarily overriding HOME='/home/runner/work/_temp/a54c0b91-0103-4450-981f-738ac8c532df' before making global git config changes\n2026-11-04T10:12:17.4625922Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T10:12:17.4629509Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:12:17.4692130Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'\n2026-11-04T10:12:17.4696367Z ##[group]Initializing the repository\n2026-11-04T10:12:17.4700551Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:12:17.4814492Z hint: Using 'master' as the name for the initial branch. This default branch name\n2026-11-04T10:12:17.4816434Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name\n2026-11-04T10:12:17.4818269Z hint: to use in all of your new repositories, which will suppress this warning,\n2026-11-04T10:12:17.4819589Z hint: call:\n2026-11-04T10:12:17.4820304Z hint:\n2026-11-04T10:12:17.4821274Z hint: \tgit config --global init.defaultBranch <name>\n2026-11-04T10:12:17.4822525Z hint:\n2026-11-04T10:12:17.4823542Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\n2026-11-04T10:12:17.4825412Z hint: 'development'. The just-created branch can be renamed via this command:\n2026-11-04T10:12:17.4826776Z hint:\n2026-11-04T10:12:17.4827515Z hint: \tgit branch -m <name>\n2026-11-04T10:12:17.4828397Z hint:\n2026-11-04T10:12:17.4829562Z hint: Disable this message with \"git config set advice.defaultBranchName false\"\n2026-11-04T10:12:17.4831587Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/\n2026-11-04T10:12:17.4840488Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:12:17.4926693Z ##[endgroup]\n2026-11-04T10:12:17.4928179Z ##[group]Disabling automatic garbage collection\n2026-11-04T10:12:17.4931221Z [command]/usr/bin/git config --local gc.auto 0\n2026-11-04T10:12:17.4972909Z ##[endgroup]\n2026-11-04T10:12:17.4974576Z ##[group]Setting up auth\n2026-11-04T10:12:17.4981804Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:12:17.5033981Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:12:17.5456436Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:12:17.5504715Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:12:17.5758685Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:12:17.5807767Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:12:17.6062635Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***\n2026-11-04T10:12:17.6118612Z ##[endgroup]\n2026-11-04T10:12:17.6120092Z ##[group]Fetching the repository\n2026-11-04T10:12:17.6133303Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 7a85995c8376f18e391449230885310c2f52f8f7\n2026-11-04T10:12:25.8982822Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n2026-11-04T10:12:25.8994083Z  * branch            7a85995c8376f18e391449230885310c2f52f8f7 -> FETCH_HEAD\n2026-11-04T10:12:25.8998538Z ##[endgroup]\n2026-11-04T10:12:25.9000004Z ##[group]Determining the checkout info\n2026-11-04T10:12:25.9001380Z ##[endgroup]\n2026-11-04T10:12:25.9004331Z [command]/usr/bin/git sparse-checkout disable\n2026-11-04T10:12:25.9073089Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig\n2026-11-04T10:12:25.9119663Z ##[group]Checking out the ref\n2026-11-04T10:12:25.9123466Z [command]/usr/bin/git checkout --progress --force 7a85995c8376f18e391449230885310c2f52f8f7\n2026-11-04T10:12:26.9871789Z Updating files:  42% (3399/8050)\n2026-11-04T10:12:27.0422344Z Updating files:  43% (3462/8050)\n2026-11-04T10:12:27.0613746Z Updating files:  44% (3542/8050)\n2026-11-04T10:12:27.0915727Z Updating files:  45% (3623/8050)\n2026-11-04T10:12:27.1993624Z Updating files:  46% (3703/8050)\n2026-11-04T10:12:27.2329277Z Updating files:  47% (3784/8050)\n2026-11-04T10:12:27.2435405Z Updating files:  48% (3864/8050)\n2026-11-04T10:12:27.2495328Z Updating files:  49% (3945/8050)\n2026-11-04T10:12:27.2565293Z Updating files:  50% (4025/8050)\n2026-11-04T10:12:27.2721815Z Updating files:  51% (4106/8050)\n2026-11-04T10:12:27.3147561Z Updating files:  52% (4186/8050)\n2026-11-04T10:12:27.3231289Z Updating files:  53% (4267/8050)\n2026-11-04T10:12:27.3286554Z Updating files:  54% (4347/8050)\n2026-11-04T10:12:27.3325701Z Updating files:  55% (4428/8050)\n2026-11-04T10:12:27.3783249Z Updating files:  56% (4508/8050)\n2026-11-04T10:12:27.4123788Z Updating files:  57% (4589/8050)\n2026-11-04T10:12:27.4193452Z Updating files:  58% (4669/8050)\n2026-11-04T10:12:27.4223470Z Updating files:  59% (4750/8050)\n2026-11-04T10:12:27.4355459Z Updating files:  60% (4830/8050)\n2026-11-04T10:12:27.4398688Z Updating files:  61% (4911/8050)\n2026-11-04T10:12:27.4438292Z Updating files:  62% (4991/8050)\n2026-11-04T10:12:27.4520150Z Updating files:  63% (5072/8050)\n2026-11-04T10:12:27.4629391Z Updating files:  64% (5152/8050)\n2026-11-04T10:12:27.4956140Z Updating files:  65% (5233/8050)\n2026-11-04T10:12:27.5014588Z Updating files:  66% (5313/8050)\n2026-11-04T10:12:27.5070668Z Updating files:  67% (5394/8050)\n2026-11-04T10:12:27.5187879Z Updating files:  68% (5474/8050)\n2026-11-04T10:12:27.6151153Z Updating files:  69% (5555/8050)\n2026-11-04T10:12:27.6205105Z Updating files:  70% (5635/8050)\n2026-11-04T10:12:27.6245610Z Updating files:  71% (5716/8050)\n2026-11-04T10:12:27.6330318Z Updating files:  72% (5796/8050)\n2026-11-04T10:12:27.6502726Z Updating files:  73% (5877/8050)\n2026-11-04T10:12:27.6558594Z Updating files:  74% (5957/8050)\n2026-11-04T10:12:27.6630005Z Updating files:  75% (6038/8050)\n2026-11-04T10:12:27.6658829Z Updating files:  76% (6118/8050)\n2026-11-04T10:12:27.6721599Z Updating files:  77% (6199/8050)\n2026-11-04T10:12:27.6789584Z Updating files:  78% (6279/8050)\n2026-11-04T10:12:27.6862022Z Updating files:  79% (6360/8050)\n2026-11-04T10:12:27.6916542Z Updating files:  80% (6440/8050)\n2026-11-04T10:12:27.6982219Z Updating files:  81% (6521/8050)\n2026-11-04T10:12:27.7060817Z Updating files:  82% (6601/8050)\n2026-11-04T10:12:27.7137131Z Updating files:  83% (6682/8050)\n2026-11-04T10:12:27.7224507Z Updating files:  84% (6762/8050)\n2026-11-04T10:12:27.7275389Z Updating files:  85% (6843/8050)\n2026-11-04T10:12:27.7406086Z Updating files:  86% (6923/8050)\n2026-11-04T10:12:27.7481297Z Updating files:  87% (7004/8050)\n2026-11-04T10:12:27.7520514Z Updating files:  88% (7084/8050)\n2026-11-04T10:12:27.7554763Z Updating files:  89% (7165/8050)\n2026-11-04T10:12:27.7631156Z Updating files:  90% (7245/8050)\n2026-11-04T10:12:27.7714997Z Updating files:  91% (7326/8050)\n2026-11-04T10:12:27.7822160Z Updating files:  92% (7406/8050)\n2026-11-04T10:12:27.7929511Z Updating files:  93% (7487/8050)\n2026-11-04T10:12:27.8015085Z Updating files:  94% (7567/8050)\n2026-11-04T10:12:27.8084011Z Updating files:  95% (7648/8050)\n2026-11-04T10:12:27.8151200Z Updating files:  96% (7728/8050)\n2026-11-04T10:12:27.8194493Z Updating files:  97% (7809/8050)\n2026-11-04T10:12:27.8240489Z Updating files:  98% (7889/8050)\n2026-11-04T10:12:27.8276248Z Updating files:  99% (7970/8050)\n2026-11-04T10:12:27.8277142Z Updating files: 100% (8050/8050)\n2026-11-04T10:12:27.8277519Z Updating files: 100% (8050/8050), done.\n2026-11-04T10:12:27.8365627Z Note: switching to '7a85995c8376f18e391449230885310c2f52f8f7'.\n2026-11-04T10:12:27.8365929Z \n2026-11-04T10:12:27.8366150Z You are in 'detached HEAD' state. You can look around, make experimental\n2026-11-04T10:12:27.8366670Z changes and commit them, and you can discard any commits you make in this\n2026-11-04T10:12:27.8367324Z state without impacting any branches by switching back to a branch.\n2026-11-04T10:12:27.8367836Z \n2026-11-04T10:12:27.8368166Z If you want to create a new branch to retain commits you create, you may\n2026-11-04T10:12:27.8368968Z do so (now or later) by using -c with the switch command. Example:\n2026-11-04T10:12:27.8369924Z \n2026-11-04T10:12:27.8370147Z   git switch -c <new-branch-name>\n2026-11-04T10:12:27.8370467Z \n2026-11-04T10:12:27.8370636Z Or undo this operation with:\n2026-11-04T10:12:27.8370879Z \n2026-11-04T10:12:27.8371023Z   git switch -\n2026-11-04T10:12:27.8371222Z \n2026-11-04T10:12:27.8371573Z Turn off this advice by setting config variable advice.detachedHead to false\n2026-11-04T10:12:27.8372111Z \n2026-11-04T10:12:27.8372553Z HEAD is now at 7a85995 ci: retain exact 69d History failures and read frozen ARM cancellation state\n2026-11-04T10:12:27.8510494Z ##[endgroup]\n2026-11-04T10:12:27.8568323Z [command]/usr/bin/git log -1 --format=%H\n2026-11-04T10:12:27.8605064Z 7a85995c8376f18e391449230885310c2f52f8f7\n2026-11-04T10:12:27.8617144Z ##[group]Removing auth\n2026-11-04T10:12:27.8621679Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:12:27.8665114Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:12:27.8931088Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:12:27.8971420Z http.https://github.com/.extraheader\n2026-11-04T10:12:27.8979574Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader\n2026-11-04T10:12:27.9026458Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:12:27.9297251Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:12:27.9343635Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:12:27.9603388Z ##[endgroup]\n2026-11-04T10:12:27.9853138Z ##[group]Run set -euo pipefail\n2026-11-04T10:12:27.9853582Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:12:27.9854100Z \u001b[36;1mmkdir \"$READBACK_OUT\"\u001b[0m\n2026-11-04T10:12:27.9854703Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$GITHUB_SHA\" --output \"$READBACK_OUT/source-before.json\"\u001b[0m\n2026-11-04T10:12:27.9855370Z \u001b[36;1mbash scripts/project-preflight.sh --audit\u001b[0m\n2026-11-04T10:12:27.9879859Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:12:27.9880216Z env:\n2026-11-04T10:12:27.9880429Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:12:27.9880817Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41812595146-1\n2026-11-04T10:12:27.9881214Z ##[endgroup]\n2026-11-04T10:12:29.8780576Z {\n2026-11-04T10:12:29.8780960Z   \"base\": null,\n2026-11-04T10:12:29.8782945Z   \"candidate\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n2026-11-04T10:12:29.8783498Z   \"kind\": \"head\",\n2026-11-04T10:12:29.8784159Z   \"prospective_merge\": null,\n2026-11-04T10:12:29.8784662Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T10:12:29.8785197Z   \"tested_commit\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n2026-11-04T10:12:29.8785837Z   \"tested_tree\": \"8175c1e9a833215950a61b2706c89abee9726524\",\n2026-11-04T10:12:29.8786414Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T10:12:29.8786837Z   \"tracked_bytes\": 935110411,\n2026-11-04T10:12:29.8787080Z   \"tracked_entries\": 8050,\n2026-11-04T10:12:29.8787332Z   \"tracked_worktree_verified\": true\n2026-11-04T10:12:29.8787574Z }\n2026-11-04T10:12:29.9559733Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T10:12:29.9677983Z ##[group]Run set -euo pipefail\n2026-11-04T10:12:29.9678350Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:12:29.9678697Z \u001b[36;1mpython3 -B scripts/ci/retained_69d_history_db_readback.py\u001b[0m\n2026-11-04T10:12:29.9702074Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:12:29.9702458Z env:\n2026-11-04T10:12:29.9702681Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:12:29.9703284Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41812595146-1\n2026-11-04T10:12:29.9706394Z   GH_TOKEN: ***\n2026-11-04T10:12:29.9706622Z ##[endgroup]\n2026-11-04T10:16:52.1228158Z ::stop-commands::***\n2026-11-04T10:16:52.1259667Z {\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"downloaded_zip_bytes\":61135040,\"downloaded_zip_sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":4880,\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},\"source.json\":{\"bytes\":421,\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"}},\"fixed_database_members\":[{\"bytes\":220749824,\"compressed_bytes\":22920177,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"63aaef3f35c4eddb2cfa3bcb01842fb08e8110b2ede45359498e374292bb5c25\",\"origin\":{\"genesis\":\"2b11ba4644063288966013dd93e03078efafc8311cd5d9e6ce12e707f642a4ae\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3236381521398,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6273684,\\\"last_history_rpc_elapsed_ns\\\":7754563,\\\"last_import_call_expression_elapsed_ns\\\":30000693324,\\\"last_requested_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"last_successful_after\\\":\\\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\\\",\\\"pinned_tip\\\":\\\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":null,\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6273684,\"last_history_rpc_elapsed_ns\":7754563,\"last_import_call_expression_elapsed_ns\":30000693324,\"last_requested_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61135040,\"sha256\":\"21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v1\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":10748,\"selected_members\":[{\"bytes\":421,\"member\":\"source.json\",\"sha256\":\"1df874833a64c194319c38f58e4acfe01eed40473c927c08d599ec3e4edb511b\"},{\"bytes\":4880,\"member\":\"history-native/manifest.json\",\"sha256\":\"ddb47772dce1d837c40f99d9fa9506dc9364020e7ca416b6b3df89a5d71bfe83\"},{\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"74f79483fb789acc06e68cb81b3011a7bb08312018355ff74423d78943ca5bc9\"},{\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"066de98ba38fdb2e0de780ec4c442ffc0c7ebb13ff3adb6abf2c655351c71693\"},{\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"}],\"snapshot\":null,\"snapshot_status\":\"unavailable\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:21c716dbe9afccf8f7dea9073ec6beaa13e3bd7c46e20a011e3520f03cc2c6e5\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311000045,\"job\":126471217803,\"kind\":\"head\",\"last_successful_after\":\"2f381967b64813bdc9b37dd4f41a84199baae3f038af334f68e1fa10766d298c\",\"name\":\"priority-ubuntu-24.04-arm-head-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"4ec7ceacfab64f69595ededeabe5d664e2c2f637f283bd6bd1a5e15d4005d598\",\"run\":41799271270,\"size\":61135040,\"tested\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[\"BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite\",\"DATABASE_MEMBER_UNREAD\"]}\n2026-11-04T10:16:52.1289721Z ::***::\n2026-11-04T10:16:57.1578153Z ::stop-commands::***\n2026-11-04T10:16:57.1612233Z {\"acceptance_granted\":false,\"all_retained_input_digests_unchanged\":true,\"archive_code_executed\":false,\"downloaded_zip_bytes\":61147421,\"downloaded_zip_sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"files_after_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"files_before_query\":{\"history-native/history.log\":{\"bytes\":4056,\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},\"history-native/long-history/config.json\":{\"bytes\":632,\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},\"history-native/long-history/source.json\":{\"bytes\":514,\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},\"history-native/long-history/summary.json\":{\"bytes\":245,\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"},\"history-native/manifest.json\":{\"bytes\":5058,\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},\"source.json\":{\"bytes\":510,\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"}},\"fixed_database_members\":[{\"bytes\":220811264,\"compressed_bytes\":22931478,\"name\":\"history-native/long-history/confirmer/native.sqlite\",\"present\":true},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-wal\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-shm\",\"present\":false},{\"bytes\":null,\"compressed_bytes\":null,\"name\":\"history-native/long-history/confirmer/native.sqlite-journal\",\"present\":false}],\"member_index_sha256\":\"781afeeedfd2e1cdbf9f765c7d2a601f7f1a811b57b3d87d6793c8a2a4a4b5f6\",\"origin\":{\"genesis\":\"c461de6f1c2f135bf9033313bd10b3046bb0a225964b08d649dc405a395082a3\",\"manifest_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"original_manifest_passed\":false,\"original_native_execution_authenticated\":false,\"original_sync_json_literal\":\"{\\\"elapsed_ns\\\":3288035731126,\\\"failure_location\\\":{\\\"activation_cursor\\\":null,\\\"advertised_page_complete\\\":true,\\\"completed_import_calls\\\":4104,\\\"durable_committed_blocks\\\":null,\\\"head_rpc_elapsed_ns\\\":6608022,\\\"last_history_rpc_elapsed_ns\\\":8627527,\\\"last_import_call_expression_elapsed_ns\\\":30069217869,\\\"last_requested_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"last_successful_after\\\":\\\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\\\",\\\"pinned_tip\\\":\\\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\\\",\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-failure-location-v1\\\",\\\"scope\\\":\\\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\\\",\\\"stage\\\":\\\"import-call-expression\\\"},\\\"production_activation\\\":false,\\\"schema\\\":\\\"native-ancestry-independent-sync-exit-evidence-v1\\\",\\\"scope\\\":\\\"observed signed full-history replay, not a qualification verdict\\\",\\\"sync_error\\\":\\\"PUBLIC_REQUEST_DEADLINE\\\"}\",\"source\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tested_tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":933472602,\"tracked_entries\":8127,\"tracked_worktree_verified\":true}},\"original_failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":true,\"completed_import_calls\":4104,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6608022,\"last_history_rpc_elapsed_ns\":8627527,\"last_import_call_expression_elapsed_ns\":30069217869,\"last_requested_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"import-call-expression\"},\"production_activation\":false,\"reader_status\":\"completed\",\"retained_zip_after_query\":{\"bytes\":61147421,\"sha256\":\"7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\"},\"schema\":\"trnm-retained-history-post-cleanup-snapshot-v1\",\"scope\":\"Frozen retained bytes after the original call returned, Node drop and Host cleanup. SQL observations are not the original failure-time cursor or a recovered Node state.\",\"selected_bytes\":11015,\"selected_members\":[{\"bytes\":510,\"member\":\"source.json\",\"sha256\":\"c8e661e6fa408a7a65117e9d01c59ca4b15bca439eb8bd5551df7af6ac1d73c0\"},{\"bytes\":5058,\"member\":\"history-native/manifest.json\",\"sha256\":\"49a4e047d621faf1e159595e4cb7a7d067de1f9a62072fb3a79ccc72cd530042\"},{\"bytes\":4056,\"member\":\"history-native/history.log\",\"sha256\":\"1bbe4f2656915e11597d7a86695e031d8c1a705008998ad91bab6b0e3f21c4bf\"},{\"bytes\":632,\"member\":\"history-native/long-history/config.json\",\"sha256\":\"fe0477cc8964bb1bd73ddc9b20a48db95305fa47e8dca9576aff2c5fdd452163\"},{\"bytes\":514,\"member\":\"history-native/long-history/source.json\",\"sha256\":\"59bd3758c9a7744e4cf1a92a70a419c3ba3c71251ed34280610ff2a005f695c6\"},{\"bytes\":245,\"member\":\"history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\"}],\"snapshot\":null,\"snapshot_status\":\"unavailable\",\"source_tests_executed\":false,\"target\":{\"digest\":\"sha256:7242a8e2938718e9b582d6680208d4421d0a32756e6775f25e6b5328eaabfd26\",\"family\":\"history\",\"head\":\"69d2e06c48bbbd1e22432f9b557727b140aba361\",\"id\":13311101182,\"job\":126471218057,\"kind\":\"prospective-merge\",\"last_successful_after\":\"2173b7c7d191d68644aa9dd436bea615ff2d51d5689f34395f8fa14b1c7692ee\",\"name\":\"priority-ubuntu-24.04-arm-prospective-merge-history-69d2e06c48bbbd1e22432f9b557727b140aba361-1\",\"pinned_tip\":\"a865f5ab93295f1eaa30353bb8259f8da3485540e7535721680a2654394e5fbc\",\"run\":41799271270,\"size\":61147421,\"tested\":\"bfdfc2bfd4f8ff9cffb6a1711384464abd469ea4\",\"tree\":\"d9327a589886a3fbf105b268c0bcff70a9852e6b\"},\"unavailable_reasons\":[\"BOUNDED_SIZE:history-native/long-history/confirmer/native.sqlite\",\"DATABASE_MEMBER_UNREAD\"]}\n2026-11-04T10:16:57.1642382Z ::***::\n2026-11-04T10:16:57.1733571Z ##[group]Run set -euo pipefail\n2026-11-04T10:16:57.1734329Z \u001b[36;1mset -euo pipefail\u001b[0m\n2026-11-04T10:16:57.1734914Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$GITHUB_SHA\" --output \"$READBACK_OUT/source-after.json\"\u001b[0m\n2026-11-04T10:16:57.1735585Z \u001b[36;1mbash scripts/project-preflight.sh --audit\u001b[0m\n2026-11-04T10:16:57.1755804Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\n2026-11-04T10:16:57.1756164Z env:\n2026-11-04T10:16:57.1756378Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:16:57.1756773Z   READBACK_OUT: /home/runner/work/_temp/69d-history-db-readback-41812595146-1\n2026-11-04T10:16:57.1757202Z ##[endgroup]\n2026-11-04T10:16:58.2769753Z {\n2026-11-04T10:16:58.2770153Z   \"base\": null,\n2026-11-04T10:16:58.2770565Z   \"candidate\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n2026-11-04T10:16:58.2770913Z   \"kind\": \"head\",\n2026-11-04T10:16:58.2771146Z   \"prospective_merge\": null,\n2026-11-04T10:16:58.2771414Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T10:16:58.2771827Z   \"tested_commit\": \"7a85995c8376f18e391449230885310c2f52f8f7\",\n2026-11-04T10:16:58.2772222Z   \"tested_tree\": \"8175c1e9a833215950a61b2706c89abee9726524\",\n2026-11-04T10:16:58.2772568Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T10:16:58.2772880Z   \"tracked_bytes\": 935110411,\n2026-11-04T10:16:58.2773136Z   \"tracked_entries\": 8050,\n2026-11-04T10:16:58.2773378Z   \"tracked_worktree_verified\": true\n2026-11-04T10:16:58.2773625Z }\n2026-11-04T10:16:58.3342619Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}\n2026-11-04T10:16:58.3477883Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n2026-11-04T10:16:58.3478342Z with:\n2026-11-04T10:16:58.3478680Z   name: 69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1\n2026-11-04T10:16:58.3479199Z   path: /home/runner/work/_temp/69d-history-db-readback-41812595146-1/\n2026-11-04T10:16:58.3479584Z   if-no-files-found: error\n2026-11-04T10:16:58.3479831Z   retention-days: 30\n2026-11-04T10:16:58.3480057Z   compression-level: 6\n2026-11-04T10:16:58.3480280Z   overwrite: false\n2026-11-04T10:16:58.3480505Z   include-hidden-files: false\n2026-11-04T10:16:58.3480764Z env:\n2026-11-04T10:16:58.3480974Z   PYTHONDONTWRITEBYTECODE: 1\n2026-11-04T10:16:58.3481214Z ##[endgroup]\n2026-11-04T10:16:58.5303503Z (node:2596) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n2026-11-04T10:16:58.5305283Z (Use `node --trace-deprecation ...` to show where the warning was created)\n2026-11-04T10:16:58.5455292Z With the provided path, there will be 27 files uploaded\n2026-11-04T10:16:58.5462887Z Artifact name is valid!\n2026-11-04T10:16:58.5463617Z Root directory input is valid!\n2026-11-04T10:16:58.9526612Z Beginning upload of artifact content to blob storage\n2026-11-04T10:16:59.2825106Z (node:2596) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n2026-11-04T10:17:00.1793111Z Uploaded bytes 8388608\n2026-11-04T10:17:00.4932617Z Uploaded bytes 16777216\n2026-11-04T10:17:00.7052294Z Uploaded bytes 25165824\n2026-11-04T10:17:00.8549518Z Uploaded bytes 33554432\n2026-11-04T10:17:01.1117836Z Uploaded bytes 41943040\n2026-11-04T10:17:01.1487518Z Uploaded bytes 50331648\n2026-11-04T10:17:01.3715255Z Uploaded bytes 58720256\n2026-11-04T10:17:01.6532380Z Uploaded bytes 67108864\n2026-11-04T10:17:01.9667679Z Uploaded bytes 75497472\n2026-11-04T10:17:02.2696490Z Uploaded bytes 83886080\n2026-11-04T10:17:02.5676303Z Uploaded bytes 92274688\n2026-11-04T10:17:02.9004383Z Uploaded bytes 100663296\n2026-11-04T10:17:03.1743667Z Uploaded bytes 107247807\n2026-11-04T10:17:03.2538500Z Finished uploading artifact content to blob storage!\n2026-11-04T10:17:03.2541732Z SHA256 digest of uploaded artifact zip is 9f57f695487676ed781e21f9f0089aeeea3a558602cc8762ee808d649ede25d5\n2026-11-04T10:17:03.2544727Z Finalizing artifact upload\n2026-11-04T10:17:03.7406046Z Artifact 69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1.zip successfully finalized. Artifact ID 13313576367\n2026-11-04T10:17:03.7407601Z Artifact 69d-history-db-readback-7a85995c8376f18e391449230885310c2f52f8f7-1 has been successfully uploaded! Final size is 107247807 bytes. Artifact ID is 13313576367\n2026-11-04T10:17:03.7416704Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41812595146/artifacts/13313576367\n2026-11-04T10:17:03.7805336Z Post job cleanup.\n2026-11-04T10:17:03.8817166Z [command]/usr/bin/git version\n2026-11-04T10:17:03.8867815Z git version 2.56.0\n2026-11-04T10:17:03.8923208Z Temporarily overriding HOME='/home/runner/work/_temp/8b1f2a77-f7a3-45ae-97bf-93bad38a5fb0' before making global git config changes\n2026-11-04T10:17:03.8925561Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-04T10:17:03.8930698Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain\n2026-11-04T10:17:03.8987136Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-04T10:17:03.9032839Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-04T10:17:03.9403731Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-04T10:17:03.9459224Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-04T10:17:03.9876325Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-04T10:17:03.9947368Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-04T10:17:04.0586474Z Cleaning up orphan processes\n2026-11-04T10:17:04.0997614Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\n",
+    "hash_scope": "Complete original decoded tool log, including GitHub timestamps, BOM and original newlines."
+  },
+  "source_references": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "e4c01b37441886f1359c016efb30f190eda98aa0",
+      "lines": "275; 337-408; 428-453",
+      "scope": "Confirmer namespace, original returned-call diagnostic and retained output directory."
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "lines": "282-341",
+      "scope": "Original runner fixes long-history evidence directory and retains failure observations."
+    },
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "git_blob": "560efaa34806ca4687f8ffc8c540bc462536b458",
+      "lines": "288-312",
+      "scope": "Original invocation and upload root."
+    }
+  ],
+  "collector_actions": {
+    "original_reader_log_reads": 1,
+    "original_output_zip_downloaded": false,
+    "original_native_rerun": false,
+    "new_runtime_or_benchmark": false,
+    "original_limits_changed": false,
+    "native_source_or_gate_changes": false,
+    "ref_or_pr_updates": false
+  }
+}
