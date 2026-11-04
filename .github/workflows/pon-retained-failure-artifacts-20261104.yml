@@ -31,7 +31,7 @@ jobs:
           echo "READBACK_OUT=$READBACK_OUT" >> "$GITHUB_ENV"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
           bash scripts/project-preflight.sh --audit
-      - name: Read nine exact original artifacts without executing their contents
+      - name: Read eleven exact original artifacts without executing their contents
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -43,7 +43,7 @@ jobs:
           
           REPO = "TrillionniumFoundation/Trillionnium-Chain"
           BRANCH = "fix/chain-retained-failure-readback-20261104"
-          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13290599543,"name":"pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1","size":56503959,"digest":"sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771","run":41760813065,"job":126349481887,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13291962180,"name":"pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":15793484,"digest":"sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a","run":41760812979,"job":126353223160,"head":"01627151f3ab50750eac2adeb46d8883a601265f"}]''')
+          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13290599543,"name":"pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1","size":56503959,"digest":"sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771","run":41760813065,"job":126349481887,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13291962180,"name":"pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":15793484,"digest":"sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a","run":41760812979,"job":126353223160,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036116,"name":"w1-fresh-service-prospective-merge-554a76fb8e21f160806692c753ca3ea6ad53a42f-1","size":5292126,"digest":"sha256:57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932","run":41760812907,"job":126358234949,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036964,"name":"w1-fresh-service-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":5289751,"digest":"sha256:586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9","run":41760812907,"job":126358235097,"head":"01627151f3ab50750eac2adeb46d8883a601265f"}]''')
           ROOT = Path(os.environ["READBACK_OUT"])
           API = "https://api.github.com/repos/" + REPO
           TOKEN = os.environ["GH_TOKEN"]
@@ -63,7 +63,7 @@ jobs:
           require(os.environ["GITHUB_REPOSITORY"] == REPO, "REPOSITORY")
           require(os.environ["GITHUB_REF"] == "refs/heads/" + BRANCH, "REF")
           require(os.environ["GITHUB_EVENT_NAME"] == "push", "EVENT")
-          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 9, "TARGETS")
+          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 11, "TARGETS")
           
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -135,6 +135,22 @@ jobs:
               r"|deadline|cancelled|pending|unknown|elapsed|duration|host_errors"
               r"|observed|scheduled|within|before_original|slo|success|known_empty|^mode$|^number$|^code$|^kind$"
               r"|^schema$|^status$|^phase$|^name$|^label$|^reason$|^error$")
+          W1_FRESH_TARGET_IDS = frozenset((13293036116, 13293036964))
+          W1_FRESH_MEMBERS = frozenset((
+              "source.json", "source-after.json", "preflight.log",
+              "original-host-controls.log", "original-native-controls.log", "fresh-service-controls.log",
+              "fresh-service/manifest.json", "fresh-service/original.log",
+              "fresh-service/fresh.log", "fresh-service/build.log",
+              "fresh-service-host/controller-result.json", "fresh-service-host/child-result.json",
+              "fresh-service-host/prepare-build.json", "fresh-service-host/inside-before.json",
+              "fresh-service-host/inside-after.json", "fresh-service-host/outside-after.json",
+              "fresh-service-host/systemd-run.log",
+          ))
+          W1_FRESH_EXTRA_KEY = re.compile(
+              r"^(?:finite_target_met|last_history_replay|history_call_index|replay_accepted|replay_error"
+              r"|execution_finished|source_recompiled|source_verified|source_expected|commit"
+              r"|binary_sha256_before|binary_sha256_after|requested_window_ns|attack_workers"
+              r"|systemd_run_exit|cleanup)$")
           NATIVE_REPORTS = {
               13288600275: {
                   "run-1-raw/report.json": (24004285, "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593"),
@@ -163,6 +179,8 @@ jobs:
               "client_native_history_arithmetic_before", "client_native_history_arithmetic_after",
           )
           def selected(name, target):
+              if target["id"] in W1_FRESH_TARGET_IDS:
+                  return name in W1_FRESH_MEMBERS
               if name in NATIVE_REPORTS.get(target["id"], {}):
                   return True
               # Read the original failed command and bounded terminal/derived
@@ -193,14 +211,74 @@ jobs:
               if any(name in reports for reports in NATIVE_REPORTS.values()):
                   return (-1, name)
               if name in ("node-lib.log", "node-lib.json", "finalization/result.json",
-                          "execution/results.json", "results.json"):
+                          "execution/results.json", "results.json",
+                          "fresh-service/manifest.json", "fresh-service-host/controller-result.json",
+                          "fresh-service-host/child-result.json"):
                   return (0, name)
+              if name in ("fresh-service/original.log", "fresh-service/fresh.log",
+                          "fresh-service-host/systemd-run.log"):
+                  return (1, name)
               if re.fullmatch(r"run-[123]-phase-readback\.json", name):
                   return (1, name)
               if re.fullmatch(r"run-[123]\.(?:stdout|stderr)\.log", name):
                   return (2, name)
               return (3, name)
           
+          def f0_terminal_projection(value, target, record):
+              # Copy the current F0 producer's six fixed rows and cleanup facts.
+              # These are original observations, not newly recomputed verdicts.
+              require(isinstance(value, dict), "F0_TERMINAL_OBJECT")
+              final = record["member"] == "finalization/result.json"
+              expected = "fixed-host-root-f0-finalization-v1" if final else "pon-fixed-host-root-f0-execution-v1"
+              require(value.get("schema") == expected, "F0_TERMINAL_SCHEMA")
+              denominator = value.get("denominator") if final else value
+              denominator = denominator if isinstance(denominator, dict) else {}
+              raw_rounds = denominator.get("all_planned_rounds")
+              round_fields = (
+                  "phase", "round", "scheduled_offset_ns", "actual_started_ns", "actual_ended_ns",
+                  "elapsed_from_scheduled_ns", "start_lateness_from_schedule_ns",
+                  "end_lateness_from_four_second_deadline_ns", "observed_exactly_once",
+                  "confirmed_inside_original_window", "four_second_slo_met",
+              )
+              rounds_available = (isinstance(raw_rounds, list) and len(raw_rounds) == 6
+                                  and all(isinstance(row, dict) for row in raw_rounds))
+              raw_services = value.get("services")
+              service_fields = (
+                  "phase", "service", "ownership_validated", "cleanup_attempted", "remaining",
+                  "known_empty", "failure", "observed_empty_at_readback",
+                  "controller_terminal_before_phase_observation",
+              )
+              services_available = (isinstance(raw_services, list) and len(raw_services) == 3
+                                    and all(isinstance(row, dict) for row in raw_services))
+              projection = {
+                  "schema": "trnm-retained-f0-terminal-readback-v1",
+                  "artifact": target["id"], "measured_head": target["head"],
+                  "measured_run": target["run"], "measured_job": target["job"],
+                  "member": record["member"], "member_bytes": record["bytes"], "member_sha256": record["sha256"],
+                  "original_fields": {key: value.get(key) for key in (
+                      "schema", "head", "tree", "failure", "native_result_failure", "report_validation_failure",
+                      "complete_success", "controller_resources_complete", "all_services_known_empty")},
+                  "denominator_fields": {key: denominator.get(key) for key in (
+                      "planned_confirmations", "planned_business_packet_exposures", "four_second_slo_successes",
+                      "report_observed", "native_result_observed", "native_complete_success",
+                      "controller_resources_complete", "controller_resource_failure",
+                      "report_failure", "native_result_failure")},
+                  "step_returncode": (value["step"].get("returncode")
+                                      if isinstance(value.get("step"), dict) else None),
+                  "rounds_available": rounds_available,
+                  "all_planned_rounds": [{key: row.get(key) for key in round_fields} for row in raw_rounds]
+                                        if rounds_available else None,
+                  "services_available": services_available,
+                  "services": [{key: row.get(key) for key in service_fields} for row in raw_services]
+                              if services_available else None,
+                  "source_tests_executed": False, "acceptance_granted": False, "production_activation": False,
+                  "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+              }
+              scalar_fields(projection)
+              rendered = json.dumps(projection, sort_keys=True, separators=(",", ":")) + "\n"
+              require(len(rendered) <= 12000, "F0_CONSOLE_LIMIT")
+              return projection, rendered
+
           def console_json(target, name, fields):
               # Console limits affect presentation only. Every selected field and
               # the exact original member remain in the retained readback/archive.
@@ -247,7 +325,7 @@ jobs:
               require(len(rendered) <= remaining, "CONSOLE_BOUND")
               return rendered, len(kept), omitted
           
-          def scalar_fields(value):
+          def scalar_fields(value, extra_key=None):
               found = []
               stack = [("", value)]
               visited = 0
@@ -260,7 +338,7 @@ jobs:
                           point = path + "/" + key.replace("~", "~0").replace("/", "~1")
                           if isinstance(child, (dict, list)):
                               stack.append((point, child))
-                          elif KEY.search(key):
+                          elif KEY.search(key) or (extra_key is not None and extra_key.search(key)):
                               found.append({"pointer": point, "value": child})
                   elif isinstance(item, list):
                       for index in range(len(item) - 1, -1, -1):
@@ -479,11 +557,17 @@ jobs:
                                       excerpt = json.dumps(projection, sort_keys=True) + "\n"
                                       console_excerpt = json.dumps(compact, sort_keys=True, separators=(",", ":")) + "\n"
                                   else:
-                                      fields = scalar_fields(value)
+                                      extra_key = W1_FRESH_EXTRA_KEY if target["id"] in W1_FRESH_TARGET_IDS else None
+                                      fields = scalar_fields(value, extra_key)
                                       record["scalar_fields"] = fields
                                       excerpt = json.dumps({"artifact": target["id"], "member": info.filename,
                                                             "fields": fields}, sort_keys=True) + "\n"
-                                      console_excerpt = console_json(target, info.filename, fields)
+                                      if target["id"] == 13291962180 and info.filename in (
+                                              "execution/results.json", "finalization/result.json"):
+                                          projection, console_excerpt = f0_terminal_projection(value, target, record)
+                                          record["f0_terminal_projection"] = projection
+                                      else:
+                                          console_excerpt = console_json(target, info.filename, fields)
                               else:
                                   lines = content.splitlines()
                                   picked = set()
@@ -525,6 +609,8 @@ jobs:
                                   console_excerpt, MAX_STDOUT - printed, target, info.filename)
                               if native_report:
                                   require(omitted_lines == 0, "NATIVE_COST_CONSOLE_LIMIT")
+                              if "f0_terminal_projection" in record:
+                                  require(omitted_lines == 0, "F0_TERMINAL_CONSOLE_LIMIT")
                               record["stdout_emitted"] = displayed_lines > 0
                               record["stdout_lines_emitted"] = displayed_lines
                               record["stdout_lines_omitted"] = omitted_lines
@@ -540,7 +626,7 @@ jobs:
                   finally:
                       print("::" + command_token + "::", flush=True)
                   result = {
-                      "schema": "trnm-retained-failure-artifact-readback-v4",
+                      "schema": "trnm-retained-failure-artifact-readback-v5",
                       "target": target, "downloaded_zip_bytes": received,
                       "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
                       "member_index_sha256": index_sha,
@@ -571,7 +657,7 @@ jobs:
                   results.append(result)
           
           write_json(ROOT / "readback.json", {
-              "schema": "trnm-retained-failure-readback-cohort-v3",
+              "schema": "trnm-retained-failure-readback-cohort-v4",
               "planned_artifacts": len(TARGETS), "results": results,
               "source_tests_executed": False, "acceptance_granted": False,
               "production_activation": False})
@@ -588,6 +674,6 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: retained-failure-readback-${{ github.sha }}-${{ github.run_attempt }}
-          path: ${{ env.READBACK_OUT }}/
+          path: ${{ runner.temp }}/retained-failure-readback-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
