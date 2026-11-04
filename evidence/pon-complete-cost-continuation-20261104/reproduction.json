@@ -1,0 +1,1621 @@
+{
+  "schema": "pon-complete-cost-continuation-reproduction-v1",
+  "status": "M06_FRESH_PREFIX_HOLD_DEFAULT_RESTORED_FINAL_NODE_VALIDATION_PENDING",
+  "updated_utc": "2026-11-04T07:19:27.659153+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pull_request": 688,
+  "draft_provenance": {
+    "path": "/workspace/scratch/850bfac2502c/validation/main-reproduction-draft.json",
+    "bytes": 49469,
+    "sha256": "10a129febc545bc7cd1d16d03688f83e860679a02e0cc71e9003c7161a1a3e2a",
+    "scope": "Prior draft retained as provenance only; its dirty input snapshot and unexecuted fields are not final-source attestations."
+  },
+  "source": {
+    "original_baseline_commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+    "original_baseline_tree": "f82a65891b8c5d094ad9a67450751253ec150910",
+    "actual_comparison_parent_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "measured_m06_candidate_commit": "7dfee35b293cfc2964c4fd8e025c6e92355f02c2",
+    "measured_m06_candidate_tree": "dfac579e471a4171b9151fe86d4c92609ada562a",
+    "measured_source_clean_before_and_after": true,
+    "measured_inputs_sha256": {
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "e55b7972cb84e3a62b7d670188c501d134f9efe21cc39a9ab799947a31c50740",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": "0f0c29f74dd84a99b5387a3033f837bef39cbb32757a7ac2b71e5fa94459d110",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/Cargo.lock": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+    },
+    "planned_concurrent_integration": {
+      "commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+      "previous_concurrent_commit": "faae36cfaa3332ef20c7f94ac5e816641a1ee884",
+      "previous_concurrent_tree": "202703393b317471d9b2fac9def99910184e8dfc",
+      "basis": "Parent reports all 23 incoming files integrated, including six added release-finality workflow lines after faae. Final continuation checkpoint and Node binary remain pending. The 7dfee primary experiment identity is unchanged."
+    },
+    "final_continuation_commit": null,
+    "final_continuation_tree": null,
+    "final_source_and_binary_qualified": false,
+    "retained_node_inputs_before_final_integration": {
+      "scripts/ci/check_growth_scale_observation.py": {
+        "bytes": 28163,
+        "sha256": "47c78cd1c021d06d85ddc7346cb5fab1f930a8fa8c68008aeb3393314168f079"
+      },
+      "scripts/ci/test_growth_scale_observation.py": {
+        "bytes": 40098,
+        "sha256": "139c3979138d4c0bcaa6ac332ce2f29f3b3c4a4129f191cc458b3ef93d0cf7b2"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs": {
+        "bytes": 48039,
+        "sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs": {
+        "bytes": 3228,
+        "sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs": {
+        "bytes": 17230,
+        "sha256": "93db686c615d86035484c64321095105ea8dc97e3fc6c51491f45b3b0f0f1700"
+      },
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+        "bytes": 45563,
+        "sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs": {
+        "bytes": 31164,
+        "sha256": "f1663453ea68d398459373fdbc5cd6ecd350480ac7704099f6dedc69ee767925"
+      }
+    },
+    "selected_input_scope": "Selected continuation code only; not a transitive source closure and not final-source build evidence.",
+    "incoming_source_binding_preservation": {
+      "input_pins_retained": 389,
+      "required_sources_retained": 301,
+      "basis": "Parent reports the complete incoming 301-source required set restored, including two account files absent from the prior 7dfee 299-entry set, with current blob identities updated. No required-source reduction is claimed."
+    }
+  },
+  "scope": {
+    "account_root": "Retain the 40a digest-only production root, independent original Node::lift oracle, full fork-depth/error/cancellation controls and owner-derived ordered rows. Complete sorting/traversal and O(A) arithmetic remain; no fixed-touched-set complexity closure.",
+    "canonical_state": "The measured fresh-prefix optimization failed its preregistered nonregression rule. Default production and unchanged-snapshot tests are restored byte-for-byte to 40a; the rejected candidate remains recoverable as a patch and exact 7dfee commit.",
+    "growth_returns": "Retain v2 actual admission/activation/cancellation return wall timing and full error/rollback behavior. Thread and process CPU per stage remain null, not zero.",
+    "public_throughput_qualified": false,
+    "isolated_benchmark": false,
+    "authority_cache_changed": false
+  },
+  "m06_primary_v4": {
+    "status": "HOLD",
+    "candidate_enabled_as_default": false,
+    "deployment_or_release_authorized": false,
+    "artifact_identities": [
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary.json",
+        "bytes": 1859,
+        "sha256": "4577aa130b4980751a468b0e4fa9ebe9aa585227a0dce4e387eade9de6534c51"
+      },
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-source-before.json",
+        "bytes": 908,
+        "sha256": "6241d7a23dc585e2496b1091f6ede415d526916fa95a5e0027510fd9c3206988"
+      },
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-source-after.json",
+        "bytes": 1536,
+        "sha256": "8edcc2fb49be24fe7081fcaddcea9c69ba7e766f7bf4c47b489d44aa1af3ab20"
+      },
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-initial-readback.json",
+        "bytes": 15017,
+        "sha256": "9ebe0ba94bb66ade73d4003bd8e5cb954f396959a97c24cf88974ffaa5bfd464"
+      },
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-three-arm-v4-build.jsonl",
+        "bytes": 104955,
+        "sha256": "a2a3a83cea332299349837a97f0426cf6098b16f813725dbdf0db88541565136"
+      },
+      {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-committed-semantics.json",
+        "bytes": 1761,
+        "sha256": "6245da9f70f42b88977b686781147f7677203ca136d240fa8b1a24cc7b95cc3e"
+      }
+    ],
+    "process_receipt": {
+      "schema": "local-component-process-receipt-v1",
+      "command": [
+        "bash",
+        "/workspace/scratch/850bfac2502c/run-task.sh",
+        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+        "--exact",
+        "--ignored",
+        "--test-threads=1",
+        "--show-output"
+      ],
+      "started_utc": "2026-11-04T07:09:20.585732+00:00",
+      "ended_utc": "2026-11-04T07:09:38.064039+00:00",
+      "exit_code": 0,
+      "command_wall_ns": 17419889559,
+      "child_process_user_cpu_s": 17.041425,
+      "child_process_system_cpu_s": 0.35483699999999996,
+      "child_peak_rss_kib_linux": 30852,
+      "input_blocks": 16,
+      "output_blocks": 72,
+      "voluntary_context_switches": 5,
+      "involuntary_context_switches": 383,
+      "binary_before": {
+        "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "bytes": 74484032,
+        "sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290"
+      },
+      "binary_after": {
+        "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "bytes": 74484032,
+        "sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290"
+      },
+      "binary_identity_stable": true,
+      "stdout": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary.stdout",
+        "bytes": 30721,
+        "sha256": "e51a5a0f4e3c22815baea25dd00f7ba2d1aeb2f859b6be7a77f1b500d2bec359"
+      },
+      "stderr": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+      "production_acceptance": false
+    },
+    "compiler_artifact": {
+      "metadata_source": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-three-arm-v4-build.jsonl",
+        "bytes": 104955,
+        "sha256": "a2a3a83cea332299349837a97f0426cf6098b16f813725dbdf0db88541565136"
+      },
+      "target_name": "trnm_mvcc_fee",
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "executable": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+      "scope": "Actual component compiler artifact; successful compilation is not full-workspace execution or production acceptance."
+    },
+    "semantic_execution": {
+      "receipt": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-committed-semantics.json",
+        "bytes": 1761,
+        "sha256": "6245da9f70f42b88977b686781147f7677203ca136d240fa8b1a24cc7b95cc3e"
+      },
+      "binary_sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290",
+      "command": [
+        "bash",
+        "/workspace/scratch/850bfac2502c/run-task.sh",
+        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_mvcc_fee-5f584199a960bb80",
+        "--test-threads=1",
+        "--show-output"
+      ],
+      "exit_code": 0,
+      "passed": 119,
+      "failed": 0,
+      "ignored": 7,
+      "filtered_out": 0,
+      "stdout": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-committed-semantics.stdout",
+        "bytes": 29141,
+        "sha256": "418f514e814e85b3c4691769bdf1f2ec2b7e3cd40c740530e5a885aaf3e0552e"
+      },
+      "scope": "Entire candidate M06 library under the recorded component binary; semantic success does not override the performance HOLD."
+    },
+    "preregistration": {
+      "path": "evidence/pon-complete-cost-continuation-20261104/comparison-preregistration.json",
+      "bytes": 5941,
+      "sha256": "fd5572bc61f693fb3dde59b4afe05507f78afaa7204508323052f7f8a6a2161d",
+      "initial_preregistration_sha256": "bd4b8808c661551eb7456082b9c2734fba47edfe9e0b71d12617465ba6669092",
+      "registered_before_v4_execution_utc": "2026-11-04T06:45:24.374405+00:00",
+      "decision_unchanged_from_original_registration": true,
+      "six_permutation_order": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          2,
+          0
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ],
+      "permutation_repetitions": 2,
+      "samples_per_arm": 12,
+      "bindings_per_sample": 8,
+      "decision_location": "m06_primary_v4.readback.decision; exact equality to both original and portable preregistrations verified"
+    },
+    "readback": {
+      "comparisons": [
+        {
+          "candidate_median_ns_per_binding": 71344.0625,
+          "case": "unchanged",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-132620/998569",
+          "p95_regression_fraction": -0.1328100511832432,
+          "paired_median_improvement_exact": "3470724884/12420542075",
+          "paired_median_improvement_fraction": 0.27943425198694477,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 103559.5625,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 71344.0625,
+          "case": "unchanged",
+          "median_nonregression_pass": false,
+          "p95_nonregression_pass": false,
+          "p95_regression_exact": "284691/581258",
+          "p95_regression_fraction": 0.48978422662569804,
+          "paired_median_improvement_exact": "-3695544523/22367166938",
+          "paired_median_improvement_fraction": -0.1652218420528516,
+          "pass": false,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 62175.25,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 142611.8125,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-106931/1321827",
+          "p95_regression_fraction": -0.0808963654093917,
+          "paired_median_improvement_exact": "26841522017/1263163679516",
+          "paired_median_improvement_fraction": 0.021249440949160862,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 144425.125,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 142611.8125,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-205921/1420817",
+          "p95_regression_fraction": -0.14493140214397773,
+          "paired_median_improvement_exact": "16650859717/326527298474",
+          "paired_median_improvement_fraction": 0.050993775389734645,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 146999.625,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 149244.9375,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-213087/903235",
+          "p95_regression_fraction": -0.23591534871877198,
+          "paired_median_improvement_exact": "-6682367693/494430414959",
+          "paired_median_improvement_fraction": -0.013515284438062183,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 152077.3125,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 149244.9375,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-259387/949535",
+          "p95_regression_fraction": -0.27317265819585373,
+          "paired_median_improvement_exact": "79276586686/261490028045",
+          "paired_median_improvement_fraction": 0.30317250443048344,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 216064.0,
+          "state_keys": 128,
+          "value_width": 64
+        },
+        {
+          "candidate_median_ns_per_binding": 2673949.25,
+          "case": "unchanged",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "90757/29677244",
+          "p95_regression_fraction": 0.003058134373933105,
+          "paired_median_improvement_exact": "115841635749077/1149396452351138",
+          "paired_median_improvement_fraction": 0.10078475143377913,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 3042281.3125,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 2673949.25,
+          "case": "unchanged",
+          "median_nonregression_pass": false,
+          "p95_nonregression_pass": false,
+          "p95_regression_exact": "5097172/24670829",
+          "p95_regression_fraction": 0.2066072445315883,
+          "paired_median_improvement_exact": "-15057672058983/123601611202636",
+          "paired_median_improvement_fraction": -0.12182423766545425,
+          "pass": false,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 2407114.75,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 3013727.0625,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-1799296/14981725",
+          "p95_regression_fraction": -0.12009938775408038,
+          "paired_median_improvement_exact": "196039962979/38069077886325",
+          "paired_median_improvement_fraction": 0.005149585276648389,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 3036475.375,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 3013727.0625,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-1138159/5532302",
+          "p95_regression_fraction": -0.20572973058954483,
+          "paired_median_improvement_exact": "-219233160273/117111168267614",
+          "paired_median_improvement_fraction": -0.0018720089938136745,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 3021205.8125,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 3140876.3125,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": false,
+          "p95_regression_exact": "5015648/26263415",
+          "p95_regression_fraction": 0.1909747075922914,
+          "paired_median_improvement_exact": "-11125045467043/554321434596070",
+          "paired_median_improvement_fraction": -0.020069664950174152,
+          "pass": false,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 2989869.6875,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 3140876.3125,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-20016350/51295413",
+          "p95_regression_fraction": -0.3902171525551417,
+          "paired_median_improvement_exact": "137933354688725/304374680745464",
+          "paired_median_improvement_fraction": 0.4531696077706049,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 5406337.3125,
+          "state_keys": 1024,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 12553558.875,
+          "case": "unchanged",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-2655362/81125751",
+          "p95_regression_fraction": -0.032731431971581994,
+          "paired_median_improvement_exact": "432418265171663/2835951903018990",
+          "paired_median_improvement_fraction": 0.15247729156172768,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 14458601.1875,
+          "state_keys": 4096,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 12553558.875,
+          "case": "unchanged",
+          "median_nonregression_pass": false,
+          "p95_nonregression_pass": false,
+          "p95_regression_exact": "22115848/56354541",
+          "p95_regression_fraction": 0.3924412763826787,
+          "paired_median_improvement_exact": "-622576051258957/4147201155658341",
+          "paired_median_improvement_fraction": -0.15011956929302292,
+          "pass": false,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 11207120.9375,
+          "state_keys": 4096,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 14044108.0,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-1757252/35765423",
+          "p95_regression_fraction": -0.049132705630239575,
+          "paired_median_improvement_exact": "460033140822579/25005216730316620",
+          "paired_median_improvement_fraction": 0.018397486643850176,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 14020463.375,
+          "state_keys": 4096,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 14044108.0,
+          "case": "same_root_hint_first_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-1758009/47102237",
+          "p95_regression_fraction": -0.037323259190428684,
+          "paired_median_improvement_exact": "394772585357939/13839868644256380",
+          "paired_median_improvement_fraction": 0.028524301458726038,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 14706548.0,
+          "state_keys": 4096,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 16413116.4375,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-1047695/19529197",
+          "p95_regression_fraction": -0.053647623094794934,
+          "paired_median_improvement_exact": "5259433416439/12710925590424328",
+          "paired_median_improvement_fraction": 0.00041377265400728574,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": false,
+          "reference": "original_full_map_ns",
+          "reference_median_ns_per_binding": 15908490.4375,
+          "state_keys": 4096,
+          "value_width": 512
+        },
+        {
+          "candidate_median_ns_per_binding": 16413116.4375,
+          "case": "same_root_hint_last_value_changed",
+          "median_nonregression_pass": true,
+          "p95_nonregression_pass": true,
+          "p95_regression_exact": "-150667359/298519375",
+          "p95_regression_fraction": -0.5047155113466253,
+          "paired_median_improvement_exact": "280757527907345/703187114507942",
+          "paired_median_improvement_fraction": 0.3992643239826802,
+          "pass": true,
+          "primary_target_pass": true,
+          "primary_target_required": true,
+          "reference": "parent_40a_shared_map_ns",
+          "reference_median_ns_per_binding": 26989270.0,
+          "state_keys": 4096,
+          "value_width": 512
+        }
+      ],
+      "decision": {
+        "all_nine_cells_against_each_reference_required": true,
+        "candidate": "checked_shared_map_ns",
+        "expected_results": {
+          "same_root_hint_first_value_changed": "COMMITMENT_ROOT",
+          "same_root_hint_last_value_changed": "COMMITMENT_ROOT",
+          "unchanged": "Ok with expected root"
+        },
+        "maximum_missing_or_unexpected_result_bindings": 0,
+        "maximum_p95_regression_fraction": 0.1,
+        "maximum_paired_median_regression_fraction": 0.1,
+        "no_cell_aggregation_or_sample_exclusion": true,
+        "p95_definition": "nearest rank ceil(0.95 * N); N=12 gives order statistic twelve, the maximum; no confidence or full-chain latency claim",
+        "paired_median_definition": "median of round-matched (reference_ns - candidate_ns) / reference_ns; midpoint of central two values for twelve samples",
+        "physical_memory_qualification": false,
+        "primary_targets": [
+          {
+            "case": "same_root_hint_last_value_changed",
+            "minimum_paired_median_improvement_fraction": 0.05,
+            "reference": "parent_40a_shared_map_ns",
+            "state_keys": [
+              128,
+              1024,
+              4096
+            ]
+          },
+          {
+            "case": "unchanged",
+            "minimum_paired_median_improvement_fraction": 0.05,
+            "reference": "original_full_map_ns",
+            "state_keys": [
+              128,
+              1024,
+              4096
+            ]
+          }
+        ],
+        "public_business_gate_replaced": false,
+        "schema": "unchanged-snapshot-three-arm-decision-v1"
+      },
+      "expected_commitment_root_error_bindings": 1728,
+      "expected_ok_bindings": 864,
+      "native_execution_verified": false,
+      "p95_is_twelve_sample_maximum": true,
+      "planned_bindings": 2592,
+      "preregistration_sha256": "fd5572bc61f693fb3dde59b4afe05507f78afaa7204508323052f7f8a6a2161d",
+      "public_business_gate_replaced": false,
+      "raw_log_sha256": "e51a5a0f4e3c22815baea25dd00f7ba2d1aeb2f859b6be7a77f1b500d2bec359",
+      "requires_separate_source_binary_and_native_exit_verification": true,
+      "schema": "unchanged-snapshot-v4-preregistered-readback-v1",
+      "source_identity": {
+        "compiled_production_source_sha256": "e55b7972cb84e3a62b7d670188c501d134f9efe21cc39a9ab799947a31c50740",
+        "compiled_test_source_sha256": "0f0c29f74dd84a99b5387a3033f837bef39cbb32757a7ac2b71e5fa94459d110",
+        "original_full_map_commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "original_reference_source_sha256": "18ed1e6582e34bdbf9b2a376171fccf27fc59eff8b6786bd44dfd525b25e5c01",
+        "parent_reference_source_sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+        "parent_shared_map_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "scope": "pinned old function bodies in one current test binary; identical shared helpers, canonical encoder, tree and wire source"
+      },
+      "statistical_confidence_established": false,
+      "status": "HOLD",
+      "unexpected_or_missing_bindings": 0
+    },
+    "readback_review_scope": "All 18 comparisons and exact fractions retained from the fixed nine raw cells. The completed strict reader produced identical comparisons and HOLD without another native run or sample exclusion. Native source/binary/exit verification remains separate.",
+    "strict_reader_final_receipts": [
+      {
+        "readback": {
+          "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-readback.json",
+          "bytes": 15127,
+          "sha256": "454bf1b84db1ec108eeb1242d5963fc0ab83f02412346c9c6d76ec4b7189a4fc"
+        },
+        "reader_source": {
+          "path": "evidence/pon-complete-cost-continuation-20261104/compare_v4.py",
+          "bytes": 10535,
+          "sha256": "ba1c7bed4889d675a9bf30998b59f30ab1af0b49433df4b137fafc2620a5ba45"
+        },
+        "reader_controls_source": {
+          "path": "evidence/pon-complete-cost-continuation-20261104/test_compare_v4.py",
+          "bytes": 9353,
+          "sha256": "2d88e094675e59b19ca35c6a23ba3083098bbe7f9aebc340d395cce9e8efb23f"
+        },
+        "controls_passed": 11,
+        "control_execution_basis": "Parent reports the completed 11-control reader suite; native source/binary/exit verification remains the separate recorded receipt.",
+        "same_fixed_raw_log": true,
+        "comparison_results_unchanged": true,
+        "benchmark_rerun": false
+      }
+    ],
+    "comparison_count": 18,
+    "passing_comparisons": 14,
+    "failing_comparisons": 4,
+    "all_six_primary_improvement_targets_passed": true,
+    "statistical_scope": "Twelve correlated finite shared-container samples per arm; nearest-rank p95 is the maximum. No confidence bound, isolated CPU, physical-memory proof or full-chain latency claim.",
+    "candidate_retained_patch": {
+      "path": "evidence/pon-complete-cost-continuation-20261104/retained-three-arm-fresh-prefix.patch",
+      "bytes": 50848,
+      "sha256": "cc17d7b87ccdd134c3994fdb23313ffa6f7fa57f87d6fbc257467f9903313ae3",
+      "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "candidate_commit": "7dfee35b293cfc2964c4fd8e025c6e92355f02c2",
+      "applied_as_current_default": false
+    },
+    "restored_default": {
+      "status": "RESTORED_AND_BYTE_VERIFIED",
+      "source_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "files": {
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "bytes": 111069,
+          "sha256": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+          "git_blob": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd",
+          "equals_parent_bytes": true
+        },
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+          "bytes": 16596,
+          "sha256": "109ee5f1194df9b78d7fd39f667ab8965a35247b761502be72bac0c2295b0be8",
+          "git_blob": "0c1e8cc5c1e577865791521ca822dd26021d1769",
+          "equals_parent_bytes": true
+        }
+      },
+      "validation_on_final_integrated_binary": "pending"
+    },
+    "future_changes_require_new_source_bound_experiment": true,
+    "source_receipts": {
+      "before": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-source-before.json",
+        "bytes": 908,
+        "sha256": "6241d7a23dc585e2496b1091f6ede415d526916fa95a5e0027510fd9c3206988"
+      },
+      "after": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-source-after.json",
+        "bytes": 1536,
+        "sha256": "8edcc2fb49be24fe7081fcaddcea9c69ba7e766f7bf4c47b489d44aa1af3ab20"
+      },
+      "input_hashes_are_in_source_section": true,
+      "clean_before_and_after": true,
+      "same_five_input_hashes_before_and_after": true,
+      "concurrency_as_recorded": "All cargo/native/heavy Python tasks started by this root are finished. Shared-container global isolation is not asserted; process inventory unavailable."
+    },
+    "failed_comparison_indices_zero_based": [
+      1,
+      7,
+      10,
+      13
+    ],
+    "native_source_exit_verification": {
+      "identity": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-v4-primary-native-verification.json",
+        "bytes": 916,
+        "sha256": "84aa2abc4e3c818da285a460c9543360da45d8208eaeb026801de7b415a9abc5"
+      },
+      "receipt": {
+        "schema": "m06-v4-native-source-exit-verification-v1",
+        "candidate_commit": "7dfee35b293cfc2964c4fd8e025c6e92355f02c2",
+        "candidate_tree": "dfac579e471a4171b9151fe86d4c92609ada562a",
+        "clean_source_before_and_after": true,
+        "recorded_inputs_match_git_commit": true,
+        "compiled_row_inputs_match_recorded_git_commit": true,
+        "native_exit_code": 0,
+        "exact_native_selector_passed": true,
+        "binary_before_after_equal": true,
+        "binary_sha256": "b94b2a9bc3f7aa84738251a7f9a8eca9b7a023e9fba9ce5d8ae52408df97a290",
+        "raw_log_sha256": "e51a5a0f4e3c22815baea25dd00f7ba2d1aeb2f859b6be7a77f1b500d2bec359",
+        "raw_rows": 9,
+        "scope": "Verification of original locally captured source, binary and exit receipts, separate from reader data validation; no process execution attestation or isolated host claim",
+        "performance_decision": "HOLD",
+        "candidate_adopted": false,
+        "public_business_gate_replaced": false
+      }
+    }
+  },
+  "retained_negative_observations": {
+    "historical_dirty_44d_two_pass": {
+      "status": "RETAINED_NEGATIVE_PERFORMANCE_OBSERVATION_NOT_CURRENT_SOURCE_EVIDENCE",
+      "patch": {
+        "path": "evidence/pon-complete-cost-continuation-20261104/retained-two-pass-candidate.patch",
+        "bytes": 22939,
+        "sha256": "26655bbd71d79f3ef21c9a9c4592534db471ef63660c5567d81de33fc0dc4bf3",
+        "affected_files": [
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs"
+        ],
+        "applied_to_current_checkout": false,
+        "patch_is_not_full_historical_source_attestation": true
+      },
+      "original_summary": {
+        "path": "/workspace/scratch/7318d5f890d1/throughput-validation/state-unchanged-binding-cost-summary.json",
+        "bytes": 3162,
+        "sha256": "770e8ed5f9745ce9c4355e85a1a2a6a9901de3bdaf36dba18e1202465a8ab655"
+      },
+      "original_cost_log": {
+        "path": "/workspace/scratch/7318d5f890d1/throughput-validation/state-unchanged-binding-cost.log",
+        "bytes": 8123,
+        "sha256": "e79cf21bc6d473df129ec7e5fa88ae77b530a81d1b59b5ae53ca77bc9bbfc14a"
+      },
+      "original_semantic_log": {
+        "path": "/workspace/scratch/7318d5f890d1/throughput-validation/state-pon-commitment.log",
+        "bytes": 13072,
+        "sha256": "3855c740a768d0c993af904527a8cba187b5d4d2f794b790ec726cb0f6fd118f"
+      },
+      "source_head_as_recorded": "44d3def32f515b98fc41f074fe1b88e97f046191",
+      "source_dirty_as_recorded": true,
+      "profile_label_as_recorded": "test unoptimized",
+      "source_binding_limit": "The original summary declares dirty 44d3def. A later corrected summary in the same directory relabels these same numbers as a10; it is not used here. Do not assign this historical run to a10/current, or infer exact compiler/package profile flags from the original shorthand label.",
+      "recorded_exact_argv": null,
+      "new_execution_on_current_source": false,
+      "libtest_suite": {
+        "passed": 35,
+        "failed": 0,
+        "ignored": 6,
+        "filtered": 78,
+        "test_seconds": 18.55
+      },
+      "cost_selector_libtest": {
+        "passed": 1,
+        "failed": 0,
+        "test_seconds": 13.06
+      },
+      "unchanged_median_improvement_cohorts": 3,
+      "mismatch_regression_cohorts": 6,
+      "mismatch_accepted_by_candidate": false,
+      "interpretation": "Six cost regressions are rejected performance evidence, distinct from libtest failures (zero). Both component arms returned equal original errors/results.",
+      "raw_design": {
+        "cohorts": 9,
+        "samples_per_arm": 12,
+        "bindings_per_sample": 8,
+        "arms": 2,
+        "order": "alternating paired arms",
+        "failure_return_cohorts": 6,
+        "timed_error_result_bindings_across_both_arms": 1152,
+        "timed_ok_result_bindings_across_both_arms": 576,
+        "these_are_bindings_not_unique_blocks_or_client_confirmations": true
+      },
+      "rows": [
+        {
+          "keys": 128,
+          "value_width": 64,
+          "case": "unchanged",
+          "original_median_ms_per_binding": 0.1324495,
+          "changed_median_ms_per_binding": 0.0780034375,
+          "ratio_new_over_original": 0.5889296486585454,
+          "change_percent": -41.10703513414546
+        },
+        {
+          "keys": 128,
+          "value_width": 64,
+          "case": "same_root_hint_first_value_changed",
+          "original_median_ms_per_binding": 0.142203,
+          "changed_median_ms_per_binding": 0.2181803125,
+          "ratio_new_over_original": 1.5342876908363396,
+          "change_percent": 53.428769083633966
+        },
+        {
+          "keys": 128,
+          "value_width": 64,
+          "case": "same_root_hint_last_value_changed",
+          "original_median_ms_per_binding": 0.1478959375,
+          "changed_median_ms_per_binding": 0.2087073125,
+          "ratio_new_over_original": 1.4111767775906623,
+          "change_percent": 41.117677759066225
+        },
+        {
+          "keys": 1024,
+          "value_width": 512,
+          "case": "unchanged",
+          "original_median_ms_per_binding": 3.3082735,
+          "changed_median_ms_per_binding": 2.46443975,
+          "ratio_new_over_original": 0.7449322886998309,
+          "change_percent": -25.506771130016915
+        },
+        {
+          "keys": 1024,
+          "value_width": 512,
+          "case": "same_root_hint_first_value_changed",
+          "original_median_ms_per_binding": 3.2513918125,
+          "changed_median_ms_per_binding": 5.698122875,
+          "ratio_new_over_original": 1.7525180610634266,
+          "change_percent": 75.25180610634266
+        },
+        {
+          "keys": 1024,
+          "value_width": 512,
+          "case": "same_root_hint_last_value_changed",
+          "original_median_ms_per_binding": 3.1745588125,
+          "changed_median_ms_per_binding": 5.650356125,
+          "ratio_new_over_original": 1.7798870516279024,
+          "change_percent": 77.98870516279024
+        },
+        {
+          "keys": 4096,
+          "value_width": 512,
+          "case": "unchanged",
+          "original_median_ms_per_binding": 13.9286035,
+          "changed_median_ms_per_binding": 9.719267,
+          "ratio_new_over_original": 0.6977919214944988,
+          "change_percent": -30.220807850550123
+        },
+        {
+          "keys": 4096,
+          "value_width": 512,
+          "case": "same_root_hint_first_value_changed",
+          "original_median_ms_per_binding": 13.647925625,
+          "changed_median_ms_per_binding": 24.64794175,
+          "ratio_new_over_original": 1.8059844717244349,
+          "change_percent": 80.59844717244349
+        },
+        {
+          "keys": 4096,
+          "value_width": 512,
+          "case": "same_root_hint_last_value_changed",
+          "original_median_ms_per_binding": 14.1220324375,
+          "changed_median_ms_per_binding": 24.6057205,
+          "ratio_new_over_original": 1.742363969839168,
+          "change_percent": 74.23639698391679
+        }
+      ],
+      "current_performance_improvement_qualified": false
+    },
+    "provisional_dirty_a10_single_pass_copy_prefix": {
+      "status": "RETAINED_REJECTED_PROVISIONAL_OBSERVATION_NOT_FINAL_SOURCE",
+      "summary_identity": {
+        "path": "/workspace/scratch/850bfac2502c/validation/m06-provisional-cost-summary.json",
+        "bytes": 3999,
+        "sha256": "3529c623d2c3406a22c33ddf820cc191ead7785d8054700e5dfe0636da8fbddc"
+      },
+      "summary": {
+        "schema": "retained-single-pass-copy-prefix-cost-summary-v1",
+        "scope": "provisional dirty a10 component diagnosis with concurrent compilation; not final performance qualification",
+        "raw_sha256": "c8c6330eff9d97192b48dfebfd4f1891ae75c329420a61fe04def9b600183aa6",
+        "rows": [
+          {
+            "keys": 128,
+            "case": "unchanged",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 0.1001700625,
+            "candidate_median_ms_per_binding": 0.0691695,
+            "ratio_of_arm_medians": 0.6905206832630258,
+            "median_paired_regression_fraction": -0.3119525131987761,
+            "p95_regression_fraction": -0.3297893520422075
+          },
+          {
+            "keys": 128,
+            "case": "same_root_hint_first_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 0.1414174375,
+            "candidate_median_ms_per_binding": 0.1408371875,
+            "ratio_of_arm_medians": 0.9958968992066484,
+            "median_paired_regression_fraction": 0.004359315684311971,
+            "p95_regression_fraction": -0.06983325320474676
+          },
+          {
+            "keys": 128,
+            "case": "same_root_hint_last_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 0.143309,
+            "candidate_median_ms_per_binding": 0.157604375,
+            "ratio_of_arm_medians": 1.0997521090789832,
+            "median_paired_regression_fraction": 0.10496646631760997,
+            "p95_regression_fraction": 0.041034013800725466
+          },
+          {
+            "keys": 1024,
+            "case": "unchanged",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 3.007767375,
+            "candidate_median_ms_per_binding": 2.5802978125,
+            "ratio_of_arm_medians": 0.8578781171532589,
+            "median_paired_regression_fraction": -0.1478664487939566,
+            "p95_regression_fraction": -0.1764666883641317
+          },
+          {
+            "keys": 1024,
+            "case": "same_root_hint_first_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 3.354527875,
+            "candidate_median_ms_per_binding": 3.4007871875,
+            "ratio_of_arm_medians": 1.013790111223923,
+            "median_paired_regression_fraction": 0.006711612173563086,
+            "p95_regression_fraction": -0.0043976890141155245
+          },
+          {
+            "keys": 1024,
+            "case": "same_root_hint_last_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 3.812511125,
+            "candidate_median_ms_per_binding": 4.2469525,
+            "ratio_of_arm_medians": 1.1139515035513503,
+            "median_paired_regression_fraction": 0.07827556871878127,
+            "p95_regression_fraction": 0.07171850975993777
+          },
+          {
+            "keys": 4096,
+            "case": "unchanged",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 15.9902639375,
+            "candidate_median_ms_per_binding": 12.81004125,
+            "ratio_of_arm_medians": 0.8011150597682246,
+            "median_paired_regression_fraction": -0.23744128684080706,
+            "p95_regression_fraction": -0.1687562000254923
+          },
+          {
+            "keys": 4096,
+            "case": "same_root_hint_first_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 19.4103166875,
+            "candidate_median_ms_per_binding": 20.34551075,
+            "ratio_of_arm_medians": 1.048180257826615,
+            "median_paired_regression_fraction": 0.014512592240213618,
+            "p95_regression_fraction": 0.009617720294805565
+          },
+          {
+            "keys": 4096,
+            "case": "same_root_hint_last_value_changed",
+            "samples_per_arm": 12,
+            "bindings_per_sample": 8,
+            "original_median_ms_per_binding": 14.8455639375,
+            "candidate_median_ms_per_binding": 17.870389125,
+            "ratio_of_arm_medians": 1.2037527978212583,
+            "median_paired_regression_fraction": 0.1285379365908118,
+            "p95_regression_fraction": 0.14101885170341055
+          }
+        ]
+      },
+      "patch": {
+        "path": "evidence/pon-complete-cost-continuation-20261104/retained-single-pass-copy-prefix.patch",
+        "bytes": 37149,
+        "sha256": "c0b72994c05e858f7cf41d63f5d3f7576974952ea80bf441b6a0444783f039bb"
+      },
+      "rejection_reason": "The 4096-key last mismatch p95 regression is 14.101885170341055%, exceeding 10%. Its ratio of arm medians is +20.37527978212583%; paired median regression is +12.85379365908118%. These are different statistics and are not interchanged.",
+      "concurrency_scope": "Concurrent compilation in the shared container; this source and binary are not the later 7dfee v4 experiment.",
+      "applied_as_current_default": false,
+      "identity_record": {
+        "path": "/workspace/scratch/850bfac2502c/validation/retained-single-pass-copy-prefix.json",
+        "bytes": 980,
+        "sha256": "7ae6e3623b43e29081944def4a11f4a63260c0566987f6aefd87365800d49d79"
+      },
+      "base_commit_as_recorded": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "source_files_as_recorded": {
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "8401818157dcc2c1d10fe636f7ae5e3c7623631c4ff8ee3c889db5f13a5e15c5",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": "31a3c29f74541250a2479ffd80d3d28cf504ebd5db484d85edacc33ed7df5f99"
+      },
+      "provisional_cost_log_as_recorded": {
+        "bytes": 7945,
+        "file": "m06-provisional-cost.log",
+        "sha256": "c8c6330eff9d97192b48dfebfd4f1891ae75c329420a61fe04def9b600183aa6"
+      },
+      "4096_last_mismatch_row_index_zero_based": 8
+    }
+  },
+  "provisional_initial_node_grid": {
+    "status": "PROVISIONAL_OLD_SOURCE_NOT_FINAL_CONTINUATION_EVIDENCE",
+    "source_commit_attested_for_final_continuation": null,
+    "source_limit": "Old provisional Node binary with no final-source commitment in this receipt; do not attribute it to 7dfee, the integrated 73ab parent, or the final continuation commit.",
+    "process_receipt_identity": {
+      "path": "/workspace/scratch/850bfac2502c/validation/growth-v2-initial-process.json",
+      "bytes": 2035,
+      "sha256": "b3fe18f69222ba05da4a35cce610b628d8aae8936be075db3a830daddc7de25a"
+    },
+    "readback_identity": {
+      "path": "/workspace/scratch/850bfac2502c/validation/growth-v2-initial-readback.json",
+      "bytes": 7163,
+      "sha256": "c1d802a7a205b3add9d94e69371d8f749ef909b5c33724d7256cb1f8ecc4b16f"
+    },
+    "readback_result_as_recorded": "COMPLETE_LOCAL_OBSERVATION",
+    "completed_cohorts": 9,
+    "native_blocks": 72,
+    "returned_native_stages": 153,
+    "returned_native_outcomes": {
+      "accepted": 144,
+      "rejected": 9
+    },
+    "cancelled_admissions": 9,
+    "cold_reopens": 9,
+    "fixed_witness_owners": [
+      "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+    ],
+    "native_stage_cpu_measurements_available": false,
+    "thread_cpu_ns": null,
+    "process_cpu_ns": null,
+    "p99_ns": null,
+    "final_source_qualification": false,
+    "throughput_qualified": false,
+    "whole_process_cpu_is_not_per_stage_cpu": true,
+    "process_execution": {
+      "command": [
+        "bash",
+        "/workspace/scratch/850bfac2502c/run-task.sh",
+        "env",
+        "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/850bfac2502c/validation/growth-v2-initial",
+        "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+        "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+        "--exact",
+        "--ignored",
+        "--test-threads=1",
+        "--show-output"
+      ],
+      "started_utc": "2026-11-04T06:28:42.101711+00:00",
+      "ended_utc": "2026-11-04T06:33:38.607552+00:00",
+      "exit_code": 0,
+      "command_wall_ns": 296204227917,
+      "child_process_user_cpu_s": 293.736939,
+      "child_process_system_cpu_s": 0.9394699999999999,
+      "child_peak_rss_kib_linux": 203512,
+      "binary_before": {
+        "path": "/workspace/scratch/66671f1fe103/target-candidate/debug/deps/trnm_pon_node-7096807fe6f981f1",
+        "bytes": 413344512,
+        "sha256": "b66d5fc942d52c5c3df037ec982707be513aa7e74008dadc92a71f67cbea20da"
+      },
+      "binary_identity_stable": true,
+      "stdout": {
+        "path": "/workspace/scratch/850bfac2502c/validation/growth-v2-initial-process.stdout",
+        "bytes": 479682,
+        "sha256": "1a8bce7b0d3d8fc93375f81ebc6194088b28c0f3086c686a1c0564a52b39033f"
+      },
+      "stderr": {
+        "path": "/workspace/scratch/850bfac2502c/validation/growth-v2-initial-process.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+      "production_acceptance": false
+    },
+    "binary_after_same_sha256": "b66d5fc942d52c5c3df037ec982707be513aa7e74008dadc92a71f67cbea20da",
+    "raw_file_identities_location": "The identity-bound provisional readback records all 10 raw files; no raw files are copied into this repository."
+  },
+  "final_node_validation": {
+    "status": "PENDING_FINAL_INTEGRATED_SOURCE_AND_BINARY",
+    "source_commit": null,
+    "source_tree": null,
+    "compiled_binaries": [],
+    "native_execution_receipts": [],
+    "paired_digest_cost_results": [],
+    "growth_v2_runs": [],
+    "actual_growth_return_counts": null,
+    "actual_completed_cohorts": null,
+    "native_result": null,
+    "planned_growth_v2_contract": {
+      "observation_schema": "native-growth-fixed-owner-scale-observation-v2",
+      "reader_schema": "native-growth-fixed-owner-scale-readback-v2",
+      "return_schema": "native-growth-stage-return-v1",
+      "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "accounts": [
+        64,
+        1024,
+        16384
+      ],
+      "warmup_history_blocks": [
+        0,
+        16,
+        128
+      ],
+      "planned_cohorts": 9,
+      "measured_successful_blocks_per_cohort": 8,
+      "planned_successful_admission_returns": 72,
+      "planned_successful_activation_returns": 72,
+      "planned_cancelled_admission_returns": 9,
+      "planned_total_native_returns": 153,
+      "actual_return_counts": null,
+      "actual_completed_cohorts": null,
+      "actual_result": null,
+      "cancellation": "one actual BeforeCommit cancellation per cohort; its wall duration is separate from eight successful-block samples; rollback/unchanged authority checks retained",
+      "cpu": {
+        "thread_cpu_ns": null,
+        "process_cpu_ns": null,
+        "availability": "unmeasured in all v2 stage returns; null is not zero; unrelated digest-cost thread CPU fields have a different scope"
+      },
+      "stage_scope": "inclusive wall offsets; no summing nested spans. BeforeCommit-to-return includes actual success/error return, and does not isolate durable commit.",
+      "journal_scope": "serialization, flush and sync occur after the native interval ends; retain as whole-campaign cost, not silently excluded from total cost",
+      "nonreturning_scope": "panic, kill, abandoned/nonreturning call has no invented receipt; incomplete/failed artifacts retained",
+      "fixed_owner_set": "must be actual identical witness owner set across every cohort; preallocated dormant accounts do not replace signed growth gate",
+      "history_limit": "H=0/16/128 observations do not qualify >4096 deep history or permanent bounded storage",
+      "p99_ns": null,
+      "p99_limit": "eight successful blocks per cohort, 72 total correlated finite local blocks; below 100 completed independent-block floor for an empirical block p99",
+      "historical_v1": "requires explicit --historical-v1; missing return/cancellation costs remain unknown",
+      "throughput_qualified": false
+    },
+    "performance_qualified": false
+  },
+  "replay": {
+    "measured_m06_command_is_in_primary_receipt": true,
+    "m06_replay_source_requirement": "The three-arm selector and candidate source belong to immutable 7dfee, not the restored 40a default. Retained fixed raw data are authoritative for this decision; no rerun selects a more favorable observation.",
+    "launcher": {
+      "path": "/workspace/scratch/850bfac2502c/run-task.sh",
+      "bytes": 588,
+      "sha256": "758b4cae5165cf5e684b5b8e251bc5fce2e46536816bac7eb8c1eaf3fc63fdfa",
+      "scope": "Local runtime launcher; repository toolchain and original package profile remain required."
+    },
+    "runtime_environment_required": {
+      "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_INCREMENTAL": "0",
+      "RUST_TEST_THREADS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "CARGO_HOME": "/workspace/scratch/66671f1fe103/toolchain/cargo",
+      "RUSTUP_HOME": "/workspace/scratch/66671f1fe103/toolchain/rustup",
+      "CARGO_TARGET_DIR": "/workspace/scratch/66671f1fe103/target-candidate"
+    },
+    "profile": "original repository test profile; no --release or environment profile override in these local replay commands",
+    "source_test_package_profiles": {
+      "curve25519-dalek": {
+        "opt-level": 3
+      },
+      "ed25519-dalek": {
+        "opt-level": 3
+      },
+      "sha2": {
+        "opt-level": 3,
+        "debug-assertions": true,
+        "overflow-checks": true
+      },
+      "trnm-protocol": {
+        "opt-level": 3,
+        "debug-assertions": true,
+        "overflow-checks": true
+      },
+      "trnm-mvcc-fee": {
+        "opt-level": 1,
+        "debug-assertions": true,
+        "overflow-checks": true
+      },
+      "trnm-crypto-primitives": {
+        "opt-level": 3,
+        "debug-assertions": true,
+        "overflow-checks": true
+      },
+      "trnm-pon-node": {
+        "opt-level": 3,
+        "debug-assertions": true,
+        "overflow-checks": true
+      }
+    },
+    "dependency_resolution": "--locked --offline for cargo metadata/test/clippy; no network dependency resolution",
+    "full_workspace_artifact_rule": {
+      "workflow": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "must_select": "one actual ELF each for trnm_pon_node and trnm_mvcc_fee from the completed original-workspace compiler JSON; require original opt_level 3/1, debug assertions and overflow checks true, and features [default,pq-native-openssl]",
+      "direct_binary_argv_template": [
+        "<verified-original-workspace-test-ELF>",
+        "<exact selector>",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "ignored_cost_additional_argument": "--ignored",
+      "package_cwd_required": true,
+      "binary_sha256_before_after_required": true
+    },
+    "pending_final_source_commands": [
+      {
+        "id": "original-workspace-build",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "receipt": "capture compiler artifact/profile/features and final build-finished; a successful compilation alone is not test execution"
+      },
+      {
+        "id": "format",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ]
+      },
+      {
+        "id": "strict-clippy",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ]
+      },
+      {
+        "id": "growth-reader-controls",
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_growth_scale_observation.py",
+          "-v"
+        ]
+      },
+      {
+        "id": "node-digest-controls",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "account_archive_prototype::native_root_digest::tests::",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ]
+      },
+      {
+        "id": "node-lift-cache-controls",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "account_archive_prototype::native_store::tests::",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ]
+      },
+      {
+        "id": "growth-return-controls",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::growth::tests::scale_observation::",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ]
+      },
+      {
+        "id": "digest-paired-cost",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+          "--",
+          "--exact",
+          "--ignored",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "env": {
+          "TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT": "/workspace/scratch/850bfac2502c/validation/native-root-digest-current.jsonl"
+        },
+        "output_must_not_exist": true
+      },
+      {
+        "id": "growth-v2-observation",
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "env": {
+          "TRNM_GROWTH_SCALE_OBSERVATION_DIR": "/workspace/scratch/850bfac2502c/validation/growth-scale-current-v2"
+        },
+        "output_must_not_exist": true
+      },
+      {
+        "id": "growth-v2-readback",
+        "argv": [
+          "python3",
+          "scripts/ci/check_growth_scale_observation.py",
+          "/workspace/scratch/850bfac2502c/validation/growth-scale-current-v2"
+        ],
+        "requires": "successful exact selector, source/binary before-after and complete original workspace artifact; JSON readback alone is not native attestation"
+      }
+    ],
+    "pending_commands_cwd": "/workspace/scratch/850bfac2502c/chain",
+    "pending_command_status": "PENDING_ON_FINAL_INTEGRATED_SOURCE; proposed commands are not execution receipts"
+  },
+  "host_sample": {
+    "sampled_utc": "2026-11-04T06:19:59.569559+00:00",
+    "source_draft_sha256": "10a129febc545bc7cd1d16d03688f83e860679a02e0cc71e9003c7161a1a3e2a",
+    "os_release": {
+      "PRETTY_NAME": "Ubuntu 24.04.3 LTS",
+      "VERSION_ID": "24.04"
+    },
+    "kernel": "6.18.57",
+    "machine": "x86_64",
+    "libc": [
+      "glibc",
+      "2.39"
+    ],
+    "cpu": {
+      "model": "AMD EPYC 9V74 80-Core Processor",
+      "visible_logical_cpus": 9,
+      "process_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "cgroup_cpu_max": "800000 100000",
+      "cgroup_cpuset_effective": "0-8"
+    },
+    "memory_at_sample": {
+      "MemTotal": 10451427328,
+      "MemAvailable": 7197212672,
+      "SwapTotal": 0,
+      "SwapFree": 0,
+      "cgroup_max_bytes": "8589934592",
+      "cgroup_current_bytes": "8589152256"
+    },
+    "filesystems": [
+      {
+        "path": "/workspace/scratch/850bfac2502c/chain",
+        "mount": {
+          "filesystems": [
+            {
+              "target": "/",
+              "source": "overlay",
+              "fstype": "overlay"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tmp",
+        "mount": {
+          "filesystems": [
+            {
+              "target": "/",
+              "source": "overlay",
+              "fstype": "overlay"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/dev/shm",
+        "mount": {
+          "filesystems": [
+            {
+              "target": "/dev/shm",
+              "source": "shm",
+              "fstype": "tmpfs"
+            },
+            {
+              "target": "/dev/shm",
+              "source": "shm",
+              "fstype": "tmpfs"
+            }
+          ]
+        }
+      }
+    ],
+    "runtime": {
+      "python": "3.12.14",
+      "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "rustc_vv": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+      "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "native_pq_provider_version": "3.5.9",
+      "native_pq_provider_binary_sha256": "1a4a170d3bbd19bb231e768581b5e668d36a1f56a83a3c0739a18ea219815314",
+      "cargo_embedded_transport_ssl_is_not_native_pq_provider": true
+    },
+    "concurrency_at_sample": {
+      "shared_container": true,
+      "isolated_benchmark": false,
+      "other_independent_build_present_in_session": true,
+      "other_build_evidence": "parent reports another independent build sharing container resources; process list visibility here is scoped and does not establish absence",
+      "visible_build_processes_in_this_exec_sample": [],
+      "benchmark_exclusive_ownership_measured": false
+    },
+    "primary_run_concurrency_as_recorded": "All cargo/native/heavy Python tasks started by this root are finished. Shared-container global isolation is not asserted; process inventory unavailable.",
+    "scope": "Hardware/filesystem/runtime sample taken at its recorded 06:19 UTC timestamp; not a process inventory at the later primary run.",
+    "resource_limits_scope": "sampled container resource limits are not the stricter original public Host workload budget; this snapshot is not per-operation peak RSS/CPU/disk/WAL instrumentation",
+    "primary_process_metrics_scope": "whole child command in a shared container; CPU and peak RSS are not per-stage or isolated-host measurements",
+    "per_operation_cpu_rss_wal_or_gpu_sample": false
+  },
+  "baseline_public_acceptance": {
+    "scope": "Historical exact a10 hosted observations only; not current-source qualification.",
+    "runs": [
+      {
+        "run_id": 41780586086,
+        "name": "PoN fixed Host ROOT F0 diagnostic",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780586086",
+        "attempt": 1
+      },
+      {
+        "run_id": 41780585984,
+        "name": "PoN original native campaign",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585984",
+        "attempt": 1
+      },
+      {
+        "run_id": 41780585894,
+        "name": "PoN original large-state CPU acceptance",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585894",
+        "attempt": 1
+      },
+      {
+        "run_id": 41780585931,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585931",
+        "attempt": 1
+      },
+      {
+        "run_id": 41780585916,
+        "name": "PoN recent batch exact-source acceptance",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585916",
+        "attempt": 1
+      },
+      {
+        "run_id": 41780585786,
+        "name": "PoN branch encoding exact-source acceptance",
+        "head_sha": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585786",
+        "attempt": 1
+      }
+    ],
+    "original_campaign": {
+      "run_id": 41780585984,
+      "job_id": 126410972282,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41780585984/job/126410972282",
+      "tested_head": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "tested_tree": "f82a65891b8c5d094ad9a67450751253ec150910",
+      "planned_complete_runs": 3,
+      "actual_attempts": 3,
+      "campaigns_meeting_original_criteria": 0,
+      "native_failures": 3,
+      "report_validation_failures": 0,
+      "phase_startup_errors": 0,
+      "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "complete_success": false,
+      "actual_per_round_confirmations": null,
+      "actual_stage_costs": null
+    },
+    "fixed_host_f0": {
+      "run_id": 41780586086,
+      "conclusion": "failure",
+      "actual_confirmation_denominator": null,
+      "actual_stage_costs": null,
+      "scope": "Actual raw report was not fetched; synthetic parser counts are not native observations."
+    }
+  },
+  "original_public_business_gate": {
+    "window_ns": 4000000000,
+    "hostile_workers": 16,
+    "required_unique_confirmed_transactions": 1,
+    "confirmation_depth": 6,
+    "host_cpu_quota_ns_per_second": 250000000,
+    "host_memory_bytes": 2147483648,
+    "native_runner": "scripts/ci/run_from_zero_native.py"
+  },
+  "remaining_unqualified": [
+    "Final integrated Node build, selected original-workspace artifacts and exact source/binary custody remain pending.",
+    "Final Node ordinary root/cancellation/cache controls, digest paired costs and v2 3x3 native grid remain pending.",
+    "The M06 fresh-prefix candidate is HOLD and withdrawn; 14/18 comparisons or six primary gains cannot override four nonregression failures.",
+    "Original public four-second confirmation, hostile-worker and strict Host-resource gate is not replaced or newly passed.",
+    "Original signed 65,536 growth and deep history/cold recovery acceptance remains separate; O(A)/O(H) work is not certified touched-set bounded.",
+    "Full final-source workspace runtime, Clippy/fmt, source-negative, x64/ARM64 and prospective-merge workflows still need their own exact evidence.",
+    "Parallel atomic publication, authorization/revocation/nonce/liability semantics, bounded batch retry/drain and model-resource budgets are not qualified by these component observations.",
+    "WAN, physical power-loss, independent review, whole-chain PQ and product/business acceptance remain unqualified."
+  ],
+  "authority": {
+    "production_activation": false,
+    "public_network_ready": false,
+    "whole_chain_post_quantum_qualified": false,
+    "independent_accepted": false,
+    "original_business_gate_passed": false,
+    "current_performance_improvement_qualified": false
+  },
+  "raw_artifacts_copied_into_repository": false,
+  "final_fields_owner": "Root will append final integrated source and Node build/measurement receipts; empty pending fields are not passes."
+}

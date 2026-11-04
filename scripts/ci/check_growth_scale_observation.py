@@ -4,6 +4,9 @@
 This reader checks a bounded observation set, not execution attestation. Its
 caller must separately require the exact native selector, successful process,
 original workspace artifact and unchanged source/binary before and after.
+Current v2 requires each actual native return and the separately timed
+cancellation. Retained v1 observations need explicit historical mode; missing
+historical return/cancellation timings remain unknown.
 """
 from __future__ import annotations
 
@@ -25,6 +28,15 @@ COUNTERS = {
     "execution_checkpoints", "cow_account_node_checkpoints", "reorg_ancestors",
     "reorg_writes", "reorg_readbacks", "before_commit_checks",
 }
+STAGE_TIMING_SCOPE_V2 = (
+    "inclusive wall time; offsets and nested intervals must not be summed; "
+    "BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement"
+)
+RETURN_JOURNAL_SCOPE = (
+    "one flushed record per returned measured admission, activation and deliberate cancellation; "
+    "journal IO is outside native stage timings but remains campaign cost; "
+    "panic, kill and nonreturning calls have no invented return receipt"
+)
 
 
 def require(ok, message):
@@ -89,31 +101,48 @@ def owners(value, allow_empty=False):
     return tuple(value)
 
 
-def stage(value, admission):
+def stage(value, admission, *, version=1, complete=True):
     require(type(value) is dict, "native stage")
+    tail_key = ("final_guard_and_sqlite_commit_wall_ns" if version == 1
+                else "before_commit_to_return_wall_ns")
+    if version == 2:
+        require(set(value) == {"wall_ns", "checkpoints", "before_persistence_offset_ns",
+                "before_commit_offset_ns", "persistence_and_readback_wall_ns", tail_key,
+                "thread_cpu_ns", "process_cpu_ns", "timing_scope"}, "v2 native stage shape")
+        require(value["timing_scope"] == STAGE_TIMING_SCOPE_V2,
+                "native return timing is not durable commit evidence")
+        require(value["thread_cpu_ns"] is None and value["process_cpu_ns"] is None,
+                "unmeasured native stage CPU remains unknown")
     wall = number(value["wall_ns"])
     counters = value["checkpoints"]
     require(type(counters) is dict and set(counters) == COUNTERS, "checkpoint inventory")
     for count in counters.values():
         number(count)
-    require(counters["before_commit_checks"] == 1, "native durable commit checkpoint")
-    if admission:
-        require(all(counters[key] > 0 for key in ("context_checks",
-                    "full_work_checkpoints", "execution_checkpoints", "cow_account_node_checkpoints")),
-                "complete native admission checkpoints")
-    else:
-        require(counters["reorg_ancestors"] == counters["reorg_writes"] == 1
-                and counters["reorg_readbacks"] > 0, "native straight activation checkpoints")
+    if complete:
+        require(counters["before_commit_checks"] == 1, "native BeforeCommit checkpoint")
+        if admission:
+            require(all(counters[key] > 0 for key in ("context_checks",
+                        "full_work_checkpoints", "execution_checkpoints", "cow_account_node_checkpoints")),
+                    "complete native admission checkpoints")
+        else:
+            require(counters["reorg_ancestors"] == counters["reorg_writes"] == 1
+                    and counters["reorg_readbacks"] > 0, "native straight activation checkpoints")
     offsets = [value[key] for key in ("before_persistence_offset_ns", "before_commit_offset_ns")]
     for offset in offsets:
         if offset is not None:
             require(number(offset) <= wall, "stage offset outside inclusive wall time")
     persistence, commit = offsets
-    require(commit is not None and (persistence is not None if admission else persistence is None),
-            "native persistence/commit observation")
-    require(not admission or persistence <= commit, "native persistence order")
+    if complete:
+        require(commit is not None and (persistence is not None if admission else persistence is None),
+                "native persistence/commit observation")
+    if version == 2:
+        require(counters["before_commit_checks"] == int(commit is not None),
+                "native BeforeCommit count/offset mismatch")
+        require(admission or persistence is None, "activation has no admission persistence checkpoint")
+    if persistence is not None and commit is not None:
+        require(persistence <= commit, "native persistence order")
     nested = value["persistence_and_readback_wall_ns"]
-    tail = value["final_guard_and_sqlite_commit_wall_ns"]
+    tail = value[tail_key]
     require(nested == (commit - persistence if persistence is not None and commit is not None
                        and commit >= persistence else None), "nested persistence interval")
     require(tail == (wall - commit if commit is not None else None), "commit tail interval")
@@ -122,6 +151,46 @@ def stage(value, admission):
     if tail is not None:
         number(tail)
     return wall
+
+
+def returned_stage(row, *, purpose, operation, sample, parent, block=None):
+    """Check a returned outcome, including a failed/partial stage, without accepting a run."""
+    require(type(row) is dict and set(row) == {"schema", "event", "purpose", "sample",
+            "parent", "block", "operation", "accepted", "returned_block", "error",
+            "error_code", "native_stage", "sql_total_changes"}, "native return receipt shape")
+    require(row["schema"] == "native-growth-stage-return-v1"
+            and row["event"] == "native_stage_returned"
+            and row["purpose"] == purpose and row["operation"] == operation,
+            "native return receipt identity")
+    require(purpose in ("measurement", "atomic_cancellation")
+            and operation in ("admission", "activation"), "native return operation")
+    require((purpose == "measurement") is (sample is not None)
+            and (purpose != "atomic_cancellation" or operation == "admission"),
+            "native return purpose/sample binding")
+    if sample is None:
+        require(row["sample"] is None, "cancellation is separate from successful samples")
+    else:
+        require(number(row["sample"]) == sample < SAMPLES, "native return sample identity")
+    require(hash_id(row["parent"]) == parent, "native return parent identity")
+    observed_block = hash_id(row["block"])
+    require(observed_block != parent and (block is None or observed_block == block),
+            "native return block identity")
+    accepted = row["accepted"]
+    require(type(accepted) is bool, "native return outcome")
+    if accepted:
+        require(hash_id(row["returned_block"]) == observed_block
+                and row["error"] is None and row["error_code"] is None,
+                "successful native return identity")
+    else:
+        require(row["returned_block"] is None and type(row["error"]) is str
+                and 0 < len(row["error"].encode("utf-8")) <= 256 * 1024,
+                "failed native return requires its actual error")
+        code = row["error_code"]
+        require(code is None or (type(code) is str and re.fullmatch(r"[A-Z][A-Z0-9_]*", code)),
+                "typed native error is separate from diagnostic text")
+    number(row["sql_total_changes"])
+    stage(row["native_stage"], admission=operation == "admission", version=2, complete=accepted)
+    return row
 
 
 def working(value):
@@ -157,7 +226,7 @@ def sql_rows(value, height):
     return value
 
 
-def check(directory):
+def check(directory, *, historical_v1=False):
     directory = Path(directory)
     require(directory.is_dir() and not directory.is_symlink(), "observation directory")
     expected_files = {"run.jsonl"} | {
@@ -167,7 +236,8 @@ def check(directory):
     run, identity = read_rows(directory / "run.jsonl")
     require(len(run) == 2, "complete run start/end required")
     first, last = run
-    require(first["schema"] == "native-growth-fixed-owner-scale-observation-v1"
+    version = 1 if historical_v1 else 2
+    require(first["schema"] == f"native-growth-fixed-owner-scale-observation-v{version}"
             and first["event"] == "run_started" and last["event"] == "run_completed", "run context")
     require([number(value) for value in first["accounts"]] == list(ACCOUNTS)
             and [number(value) for value in first["warmup_history_blocks"]] == list(HISTORY)
@@ -176,8 +246,20 @@ def check(directory):
             and number(first["work_search_attempt_limit"]) == 4096, "frozen native workload")
     require(first["wall_time_acceptance_gate"] is False and first["completed"] is False,
             "start cannot claim completion")
-    require(first["setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings"] is True,
-            "native timing scope")
+    if version == 1:
+        require(first["setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings"] is True
+                and "native_stage_return_schema" not in first, "historical native timing scope")
+    else:
+        require(all(first[key] is True for key in (
+                    "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings",
+                    "returned_native_stages_recorded_before_assertions",
+                    "cancelled_admission_timing_separate_from_successful_samples",
+                    "sql_total_changes_include_rolled_back_writes"))
+                and first["native_stage_return_schema"] == "native-growth-stage-return-v1"
+                and first["native_stage_timing_scope"] == "wall only; no thread or process CPU measurement"
+                and first["return_journal_scope"] == RETURN_JOURNAL_SCOPE
+                and "setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings" not in first,
+                "v2 native return and cancellation timing scope")
     declared_owners = first["declared_transaction_owners"]
     require(type(declared_owners) is list and len(declared_owners) == 3,
             "fixed transaction owner inventory")
@@ -189,6 +271,7 @@ def check(directory):
     require(number(last["completed_cohorts"]) == 9
             and number(last["completed_measurements"]) == 72, "planned denominator")
     source_files, cohorts, owner_sets = [identity], [], set()
+    returned_outcomes = {"accepted": 0, "rejected": 0}
     contexts_by_accounts = {}
     for accounts in ACCOUNTS:
         for history in HISTORY:
@@ -226,7 +309,20 @@ def check(directory):
             seen_blocks = set()
             times, query_reads, copied_nodes, witness_sizes = [], [], [], []
             for sample in range(SAMPLES):
-                begun, done = take("measurement_started"), take("measurement_completed")
+                begun = take("measurement_started")
+                if version == 2:
+                    admission_return = returned_stage(take("native_stage_returned"),
+                        purpose="measurement", operation="admission", sample=sample,
+                        parent=hash_id(begun["parent"]))
+                    require(admission_return["accepted"] is True,
+                            "unexpected admission failure remains a failed campaign")
+                    activation_return = returned_stage(take("native_stage_returned"),
+                        purpose="measurement", operation="activation", sample=sample,
+                        parent=hash_id(begun["parent"]), block=admission_return["block"])
+                    require(activation_return["accepted"] is True,
+                            "unexpected activation failure remains a failed campaign")
+                    returned_outcomes["accepted"] += 2
+                done = take("measurement_completed")
                 require(number(begun["sample"]) == number(done["sample"]) == sample,
                         "missing or duplicated planned sample")
                 require(number(begun["history_blocks_before"]) == history + sample
@@ -236,6 +332,13 @@ def check(directory):
                 require(done["complete_state_reference_equal"] is True and done["p99_ns"] is None,
                         "complete state and unresolved p99")
                 parent, block = hash_id(begun["parent"]), hash_id(done["block"])
+                if version == 2:
+                    require(admission_return["block"] == activation_return["block"] == block
+                            and admission_return["native_stage"] == done["native_admission"]
+                            and activation_return["native_stage"] == done["native_activation"]
+                            and number(done["admission_sql_total_changes"]) == admission_return["sql_total_changes"]
+                            and number(done["activation_sql_total_changes"]) == activation_return["sql_total_changes"],
+                            "completed sample must retain both actual native returns")
                 require(previous_block is None or parent == previous_block, "native block continuity")
                 require(block != parent and block not in seen_blocks, "unique measured native blocks")
                 seen_blocks.add(block)
@@ -250,8 +353,8 @@ def check(directory):
                 require(set(current_owners) == declared_owners | mandatory, "complete actual mandatory touched set")
                 previous_working = done["successor_working"]
                 owner_sets.add(current_owners)
-                times.append(stage(done["native_admission"], admission=True))
-                stage(done["native_activation"], admission=False)
+                times.append(stage(done["native_admission"], admission=True, version=version))
+                stage(done["native_activation"], admission=False, version=version)
                 ancestors = done["native_admission"]["checkpoints"]["header_ancestors"]
                 require((ancestors == 0) == (history + sample == 0),
                         "actual bounded ancestor lookup scope")
@@ -286,11 +389,32 @@ def check(directory):
                 for table in ("blocks", "growth_states", "events"):
                     require(number(done["sql_rows_after"][table]) ==
                             number(done["sql_rows_before"][table]) + 1, "durable row denominator")
-            take("atomic_cancellation_started")
+            cancellation_started = take("atomic_cancellation_started")
+            cancellation_ns = None
+            if version == 2:
+                require(hash_id(cancellation_started["parent"]) == previous_block,
+                        "cancelled admission parent identity")
+                cancellation_return = returned_stage(take("native_stage_returned"),
+                    purpose="atomic_cancellation", operation="admission", sample=None,
+                    parent=previous_block)
+                require(cancellation_return["accepted"] is False
+                        and cancellation_return["error"] == "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL"
+                        and cancellation_return["error_code"] is None
+                        and cancellation_return["block"] not in seen_blocks,
+                        "original deliberate cancellation return")
+                cancellation_ns = stage(cancellation_return["native_stage"], admission=True, version=2)
+                require(cancellation_return["sql_total_changes"] > 0
+                        and cancellation_return["native_stage"]["checkpoints"]["header_ancestors"] > 0,
+                        "deliberate BeforeCommit cancellation retains actual writes and ancestor checks")
+                returned_outcomes["rejected"] += 1
             cancel = take("atomic_cancellation_completed")
             require(cancel["error"] == "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL"
                     and cancel["all_sql_rows_equal"] is True
                     and cancel["active_generation_equal"] is True, "atomic cancellation")
+            if version == 2:
+                require(cancel["native_admission"] == cancellation_return["native_stage"]
+                        and number(cancel["admission_sql_total_changes"]) == cancellation_return["sql_total_changes"],
+                        "cancelled admission must retain its actual native return")
             take("cold_reopen_started")
             end = take("cohort_completed")
             require(pos == len(rows), "trailing cohort observations")
@@ -301,6 +425,10 @@ def check(directory):
                     and number(end["failed_unexpected_admissions"]) == 0
                     and number(end["cold_reopens"]) == 1
                     and end["cold_complete_reference_equal"] is True, "complete cohort denominator")
+            if version == 2:
+                require(number(end["returned_native_stages"]) == SAMPLES * 2 + 1
+                        and number(end["cancelled_admission_wall_ns"]) == cancellation_ns,
+                        "native return and cancellation denominator")
             journal = end["separate_post_open_journal_differential"]
             for key in ("wall_ns", "latest_steps", "latest_events", "peak_event_rows"):
                 number(journal[key])
@@ -318,12 +446,23 @@ def check(directory):
                             "separate_query_point_reads_min_max": [min(query_reads), max(query_reads)],
                             "copied_nodes_min_max": [min(copied_nodes), max(copied_nodes)],
                             "witness_bytes_min_max": [min(witness_sizes), max(witness_sizes)],
+                            "cancelled_admission_wall_ns": cancellation_ns,
                             "cold_reopen_wall_ns": number(end["cold_reopen_wall_ns"]), "p99_ns": None})
     require(len(owner_sets) == 1 and last["fixed_witness_owner_set_observed"] is True
             and [list(row) for row in sorted(owner_sets)] == last["actual_distinct_witness_owner_sets"],
             "fixed actual touched owners not demonstrated")
-    return {"schema": "native-growth-fixed-owner-scale-readback-v1", "result": "COMPLETE_LOCAL_OBSERVATION",
+    returned_count = sum(returned_outcomes.values()) if version == 2 else None
+    if version == 2:
+        require(number(last["returned_native_stages"]) == returned_count == 153,
+                "complete planned native return denominator")
+    return {"schema": f"native-growth-fixed-owner-scale-readback-v{version}", "result": "COMPLETE_LOCAL_OBSERVATION",
+            "historical_v1": historical_v1, "observation_schema": first["schema"],
             "completed_cohorts": 9, "measured_native_blocks": 72, "cancelled_admissions": 9,
+            "returned_native_stages": returned_count,
+            "returned_native_outcomes": returned_outcomes if version == 2 else None,
+            "cancellation_stage_measurements_available": version == 2,
+            "native_stage_cpu_measurements_available": False,
+            "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
             "cold_reopens": 9, "fixed_witness_owners": list(next(iter(owner_sets))),
             "cohorts": cohorts, "files": source_files, "p99_ns": None,
             "requires_separate_source_binary_and_native_exit_verification": True,
@@ -333,9 +472,11 @@ def check(directory):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
+    parser.add_argument("--historical-v1", action="store_true",
+                        help="read only retained v1 observations; cancelled/failed stage timings remain unknown")
     args = parser.parse_args()
     try:
-        result = check(args.directory)
+        result = check(args.directory, historical_v1=args.historical_v1)
     except (OSError, ValueError, KeyError, TypeError, UnicodeError) as error:
         print(json.dumps({"result": "REFUSED", "error": str(error)}))
         return 1

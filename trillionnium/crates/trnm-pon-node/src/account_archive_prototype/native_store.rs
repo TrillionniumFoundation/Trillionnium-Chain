@@ -743,6 +743,10 @@ mod tests {
         let empty = empty_hashes();
         for depth in [0, 1, 7, 63, 128, 255, 256] {
             assert_eq!(cache.lift(&node, depth), node.lift(depth, &empty));
+            assert_eq!(
+                cache.lift_parts(node.path, node.digest, node.depth, depth),
+                node.lift(depth, &empty)
+            );
             assert_eq!(cache.lift(&node, depth), node.lift(depth, &empty));
         }
         for mutation in 0..3 {
@@ -826,10 +830,23 @@ mod tests {
         );
         let locked = cache.0.borrow_mut();
         assert_eq!(cache.lift(&other, 255), other.lift(255, &empty));
+        assert_eq!(
+            cache.lift_parts(other.path, other.digest, other.depth, 255),
+            other.lift(255, &empty)
+        );
+        assert_eq!(
+            cache.lift_parts(other.path, other.digest, other.depth, other.depth),
+            other.digest
+        );
         assert_eq!(locked.len(), LIFT_WAYS + 1);
         drop(locked);
         let independent = LiftCache::default();
         assert_eq!(independent.0.borrow().len(), 0);
+        assert!(independent.0.borrow().slots.is_none());
+        assert_eq!(
+            independent.lift_parts(other.path, other.digest, other.depth, other.depth),
+            other.digest
+        );
         assert!(independent.0.borrow().slots.is_none());
         assert_eq!(independent.lift(&other, other.depth), other.digest);
         assert!(independent.0.borrow().slots.is_none());

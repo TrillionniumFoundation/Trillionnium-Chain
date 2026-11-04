@@ -339,6 +339,10 @@ jobs:
             "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
             "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations",
         ])
+        exact("node", "growth-return-observations", [
+            "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+            "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+        ])
         exact("m06", "canonical-ascii", [
             "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
             "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",

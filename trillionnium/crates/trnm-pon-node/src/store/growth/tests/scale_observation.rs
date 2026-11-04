@@ -77,14 +77,50 @@ impl ProgressObservation {
         let commit = self.before_commit_ns.load(Ordering::Relaxed);
         json!({
             "wall_ns": wall_ns,
+            "thread_cpu_ns": null,"process_cpu_ns": null,
             "checkpoints": counters,
             "before_persistence_offset_ns": (persistence != 0).then_some(persistence),
             "before_commit_offset_ns": (commit != 0).then_some(commit),
             "persistence_and_readback_wall_ns": (persistence != 0 && commit >= persistence).then(|| commit - persistence),
-            "final_guard_and_sqlite_commit_wall_ns": (commit != 0 && wall_ns >= commit).then(|| wall_ns - commit),
-            "timing_scope": "inclusive wall time; offsets and nested intervals must not be summed"
+            "before_commit_to_return_wall_ns": (commit != 0 && wall_ns >= commit).then(|| wall_ns - commit),
+            "timing_scope": "inclusive wall time; offsets and nested intervals must not be summed; BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement"
         })
     }
+}
+
+struct AttemptIdentity {
+    purpose: &'static str,
+    sample: Option<usize>,
+    parent: Hash,
+    block: Hash,
+}
+
+/// Retain each actual native return before the original unwrap/assertions.
+/// Appending and syncing are outside the already-ended native interval. In
+/// particular, a later activation failure cannot erase a successful admission.
+fn append_native_return(
+    file: &mut File,
+    attempt: &AttemptIdentity,
+    operation: &str,
+    native_stage: Value,
+    sql_total_changes: u64,
+    result: &Result<Hash>,
+) -> Value {
+    append(
+        file,
+        &json!({
+            "schema":"native-growth-stage-return-v1",
+            "event":"native_stage_returned",
+            "purpose":attempt.purpose,"sample":attempt.sample,
+            "parent":hex::encode(attempt.parent),"block":hex::encode(attempt.block),
+            "operation":operation,"accepted":result.is_ok(),
+            "returned_block":result.as_ref().ok().map(hex::encode),
+            "error":result.as_ref().err().map(ToString::to_string),
+            "error_code":result.as_ref().err().and_then(|error| error.code()).map(ErrorCode::as_str),
+            "native_stage":&native_stage,"sql_total_changes":sql_total_changes
+        }),
+    );
+    native_stage
 }
 
 fn elapsed_ns(started: Instant) -> u64 {
@@ -211,6 +247,166 @@ fn verify_complete_reference(node: &Node, id: Hash, expected: &State, accounts: 
 }
 
 #[test]
+fn native_growth_scale_retains_rejected_and_cancelled_admission_returns() {
+    let settings = fixture(64);
+    let dir = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    let path = output.path().join("returns.jsonl");
+    let mut report = create(&path);
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let parent = settings.genesis();
+    let packet = make(&node, parent, vec![transfer(&settings, 0, 1, public(1), 1)]);
+    let original = rows(&node.db);
+    let active = node.active().unwrap();
+    for cancelled in [false, true] {
+        let mut attempted = packet.clone();
+        if !cancelled {
+            attempted.header.ledger.network[0] ^= 1;
+        }
+        let attempt = AttemptIdentity {
+            purpose: if cancelled {
+                "atomic_cancellation"
+            } else {
+                "measurement"
+            },
+            sample: (!cancelled).then_some(0),
+            parent,
+            block: attempted.id().unwrap(),
+        };
+        let changes_before = node.db.total_changes();
+        let observation = ProgressObservation::new();
+        let result = node.admit_growth_with_progress(&attempted, 100_000, &|point| {
+            observation.progress(point)?;
+            if cancelled && point == GrowthProgress::BeforeCommit {
+                return Err("SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL".into());
+            }
+            Ok(())
+        });
+        let wall_ns = elapsed_ns(observation.started);
+        let changes = node.db.total_changes() - changes_before;
+        append_native_return(
+            &mut report,
+            &attempt,
+            "admission",
+            observation.finish(wall_ns),
+            changes,
+            &result,
+        );
+        let error = result.unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            if cancelled {
+                "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL"
+            } else {
+                "NETWORK"
+            }
+        );
+        // The failed call's receipt is already readable before correctness
+        // assertions; rollback preserves all actual rows and active authority.
+        let recorded: Vec<Value> = fs::read_to_string(&path)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(recorded.len(), if cancelled { 2 } else { 1 });
+        let returned = recorded.last().unwrap();
+        assert_eq!(returned["accepted"], false);
+        assert!(returned["returned_block"].is_null());
+        assert_eq!(returned["error"], error.to_string());
+        assert_eq!(returned["native_stage"]["wall_ns"], wall_ns);
+        assert!(returned["native_stage"]["thread_cpu_ns"].is_null());
+        assert!(returned["native_stage"]["process_cpu_ns"].is_null());
+        assert!(returned["native_stage"]
+            .get("final_guard_and_sqlite_commit_wall_ns")
+            .is_none());
+        assert_eq!(
+            returned["native_stage"]["checkpoints"]["before_commit_checks"],
+            u64::from(cancelled)
+        );
+        assert_eq!(
+            returned["native_stage"]["before_commit_to_return_wall_ns"].is_null(),
+            !cancelled
+        );
+        assert_eq!(rows(&node.db), original);
+        assert_eq!(node.active().unwrap(), active);
+        assert_eq!(changes > 0, cancelled);
+    }
+}
+
+#[test]
+fn native_growth_scale_retains_admission_when_activation_returns_error() {
+    let settings = fixture(64);
+    let dir = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    let path = output.path().join("returns.jsonl");
+    let mut report = create(&path);
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let parent = settings.genesis();
+    let packet = make(&node, parent, vec![transfer(&settings, 0, 1, public(1), 1)]);
+    let attempt = AttemptIdentity {
+        purpose: "measurement",
+        sample: Some(0),
+        parent,
+        block: packet.id().unwrap(),
+    };
+    let changes_before = node.db.total_changes();
+    let observation = ProgressObservation::new();
+    let result =
+        node.admit_growth_with_progress(&packet, 100_000, &|point| observation.progress(point));
+    let wall_ns = elapsed_ns(observation.started);
+    append_native_return(
+        &mut report,
+        &attempt,
+        "admission",
+        observation.finish(wall_ns),
+        node.db.total_changes() - changes_before,
+        &result,
+    );
+    let id = result.unwrap();
+    let admitted = rows(&node.db);
+    let active = node.active().unwrap();
+    let changes_before = node.db.total_changes();
+    let observation = ProgressObservation::new();
+    let result = node.growth_activate_with_progress(id, &|point| {
+        observation.progress(point)?;
+        if point == GrowthProgress::BeforeCommit {
+            return Err(Error::new(ErrorCode::PublicRequestCancelled));
+        }
+        Ok(())
+    });
+    let wall_ns = elapsed_ns(observation.started);
+    append_native_return(
+        &mut report,
+        &attempt,
+        "activation",
+        observation.finish(wall_ns),
+        node.db.total_changes() - changes_before,
+        &result,
+    );
+    assert!(result.unwrap_err().is(ErrorCode::PublicRequestCancelled));
+    let recorded: Vec<Value> = fs::read_to_string(&path)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    assert_eq!(recorded.len(), 2);
+    assert_eq!(recorded[0]["operation"], "admission");
+    assert_eq!(recorded[0]["accepted"], true);
+    assert_eq!(recorded[0]["returned_block"], hex::encode(id));
+    assert_eq!(recorded[1]["operation"], "activation");
+    assert_eq!(recorded[1]["accepted"], false);
+    assert!(recorded[1]["returned_block"].is_null());
+    assert_eq!(recorded[1]["error"], "PUBLIC_REQUEST_CANCELLED");
+    assert_eq!(recorded[1]["error_code"], "PUBLIC_REQUEST_CANCELLED");
+    assert_eq!(recorded[1]["block"], hex::encode(id));
+    assert_eq!(recorded[1]["native_stage"]["wall_ns"], wall_ns);
+    assert_eq!(rows(&node.db), admitted);
+    assert_eq!(node.active().unwrap(), active);
+}
+
+#[test]
 #[ignore = "explicit native A/H observation: full State reference, real W1/signed admission, atomic cancellation and cold reopen"]
 fn native_growth_v2_fixed_owner_account_history_scale_observation() {
     let output = std::env::var_os("TRNM_GROWTH_SCALE_OBSERVATION_DIR").expect(
@@ -223,7 +419,7 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
     append(
         &mut manifest,
         &json!({
-            "schema":"native-growth-fixed-owner-scale-observation-v1",
+            "schema":"native-growth-fixed-owner-scale-observation-v2",
             "event":"run_started",
             "accounts":ACCOUNT_COUNTS,
             "warmup_history_blocks":HISTORY_LENGTHS,
@@ -234,7 +430,13 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
             "work_search_attempt_limit":4096,
             "fixture_scope":"preallocated dormant accounts; real empty maintenance warmup history; original 65,536 signed growth gate remains separate",
             "measurement_scope":"direct native Node only; no WAN, client confirmation, public admission qualification or throughput claim",
-            "setup_reference_diagnostics_and_cancellation_excluded_from_native_stage_timings":true,
+            "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings":true,
+            "returned_native_stages_recorded_before_assertions":true,
+            "cancelled_admission_timing_separate_from_successful_samples":true,
+            "sql_total_changes_include_rolled_back_writes":true,
+            "native_stage_return_schema":"native-growth-stage-return-v1",
+            "native_stage_timing_scope":"wall only; no thread or process CPU measurement",
+            "return_journal_scope":"one flushed record per returned measured admission, activation and deliberate cancellation; journal IO is outside native stage timings but remains campaign cost; panic, kill and nonreturning calls have no invented return receipt",
             "p99_ns":null,
             "wall_time_acceptance_gate":false,
             "completed":false
@@ -306,24 +508,43 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
                     .map(|account| hex::encode(account.owner))
                     .collect();
                 all_owner_sets.insert(owners.clone());
+                let attempt = AttemptIdentity {
+                    purpose: "measurement",
+                    sample: Some(sample),
+                    parent,
+                    block: packet.id().unwrap(),
+                };
                 let changes_before = node.db.total_changes();
                 let admission = ProgressObservation::new();
-                let id = node
-                    .admit_growth_with_progress(&packet, 100_000, &|point| {
-                        admission.progress(point)
-                    })
-                    .unwrap();
+                let result = node.admit_growth_with_progress(&packet, 100_000, &|point| {
+                    admission.progress(point)
+                });
                 let admission_ns = elapsed_ns(admission.started);
                 let admission_changes = node.db.total_changes() - changes_before;
+                let admission_observation = append_native_return(
+                    &mut report,
+                    &attempt,
+                    "admission",
+                    admission.finish(admission_ns),
+                    admission_changes,
+                    &result,
+                );
+                let id = result.unwrap();
                 let changes_before = node.db.total_changes();
                 let activation = ProgressObservation::new();
-                assert_eq!(
-                    node.growth_activate_with_progress(id, &|point| activation.progress(point))
-                        .unwrap(),
-                    id
-                );
+                let result =
+                    node.growth_activate_with_progress(id, &|point| activation.progress(point));
                 let activation_ns = elapsed_ns(activation.started);
                 let activation_changes = node.db.total_changes() - changes_before;
+                let activation_observation = append_native_return(
+                    &mut report,
+                    &attempt,
+                    "activation",
+                    activation.finish(activation_ns),
+                    activation_changes,
+                    &result,
+                );
+                assert_eq!(result.unwrap(), id);
                 admission_times.push(admission_ns);
                 let started = Instant::now();
                 full = reference(&settings, &full, &packet);
@@ -351,7 +572,7 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
                         "witness_bytes":packet.accounts.encoded_len().unwrap(),"witness_frontier_nodes":packet.accounts.frontier.len(),
                         "packet_bytes":packet.encode().unwrap().len(),"full_work_proof_bytes":packet.proof.len(),
                         "make_signed_packet_and_full_work_wall_ns":make_ns,
-                        "native_admission":admission.finish(admission_ns),"native_activation":activation.finish(activation_ns),
+                        "native_admission":admission_observation,"native_activation":activation_observation,
                         "admission_sql_total_changes":admission_changes,"activation_sql_total_changes":activation_changes,
                         "retained_cow_nodes_added":after["archive_nodes"] - before["archive_nodes"],
                         "retained_delta_rows_added":after["deltas"] - before["deltas"],
@@ -366,8 +587,12 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
                 parent = id;
             }
             // One extra attempted block is deliberately cancelled before the
-            // durable commit. Its full row comparison is outside measurements.
-            append(&mut report, &json!({"event":"atomic_cancellation_started"}));
+            // durable commit. Time the actual cancelled return separately;
+            // packet construction and full row comparison remain outside it.
+            append(
+                &mut report,
+                &json!({"event":"atomic_cancellation_started","parent":hex::encode(parent)}),
+            );
             let packet = make(
                 &node,
                 parent,
@@ -381,14 +606,32 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
             );
             let before_rows = rows(&node.db);
             let active = node.active().unwrap();
-            let error = node
-                .admit_growth_with_progress(&packet, 100_000, &|point| {
-                    if point == GrowthProgress::BeforeCommit {
-                        return Err("SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL".into());
-                    }
-                    Ok(())
-                })
-                .unwrap_err();
+            let attempt = AttemptIdentity {
+                purpose: "atomic_cancellation",
+                sample: None,
+                parent,
+                block: packet.id().unwrap(),
+            };
+            let changes_before = node.db.total_changes();
+            let cancellation = ProgressObservation::new();
+            let result = node.admit_growth_with_progress(&packet, 100_000, &|point| {
+                cancellation.progress(point)?;
+                if point == GrowthProgress::BeforeCommit {
+                    return Err("SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL".into());
+                }
+                Ok(())
+            });
+            let cancellation_ns = elapsed_ns(cancellation.started);
+            let cancellation_changes = node.db.total_changes() - changes_before;
+            let cancellation_observation = append_native_return(
+                &mut report,
+                &attempt,
+                "admission",
+                cancellation.finish(cancellation_ns),
+                cancellation_changes,
+                &result,
+            );
+            let error = result.unwrap_err();
             assert_eq!(error.to_string(), "SCALE_OBSERVATION_BEFORE_COMMIT_CANCEL");
             assert_eq!(rows(&node.db), before_rows);
             assert_eq!(node.active().unwrap(), active);
@@ -399,7 +642,12 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
             drop(before_rows);
             append(
                 &mut report,
-                &json!({"event":"atomic_cancellation_completed","error":error.to_string(),"all_sql_rows_equal":true,"active_generation_equal":true}),
+                &json!({
+                    "event":"atomic_cancellation_completed","error":error.to_string(),
+                    "all_sql_rows_equal":true,"active_generation_equal":true,
+                    "native_admission":cancellation_observation,
+                    "admission_sql_total_changes":cancellation_changes
+                }),
             );
             let rows_before_reopen = sql_counts(&node);
             let before_close = disk_sample(dir.path());
@@ -429,6 +677,8 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
                     "event":"cohort_completed","accounts":accounts,"warmup_history_blocks":history,
                     "measured_blocks":MEASURED_BLOCKS,"successful_native_admissions":history + MEASURED_BLOCKS,
                     "deliberately_cancelled_admissions":1,"failed_unexpected_admissions":0,
+                    "returned_native_stages":MEASURED_BLOCKS * 2 + 1,
+                    "cancelled_admission_wall_ns":cancellation_ns,
                     "cold_reopens":1,"cold_reopen_wall_ns":reopen_ns,"cold_complete_reference_equal":true,
                     "separate_post_open_journal_differential":{"wall_ns":separate_journal_ns,"typed_events":journal.typed_events,"semantic_events":journal.semantic_events,"latest_steps":journal.latest_steps,"latest_events":journal.latest_events,"peak_event_rows":journal.peak_event_rows},
                     "admission_median_interval_ns":[admission_times[MEASURED_BLOCKS / 2 - 1],admission_times[MEASURED_BLOCKS / 2]],
@@ -444,6 +694,7 @@ fn native_growth_v2_fixed_owner_account_history_scale_observation() {
         &json!({
             "event":"run_completed","completed_cohorts":ACCOUNT_COUNTS.len() * HISTORY_LENGTHS.len(),
             "completed_measurements":ACCOUNT_COUNTS.len() * HISTORY_LENGTHS.len() * MEASURED_BLOCKS,
+            "returned_native_stages":ACCOUNT_COUNTS.len() * HISTORY_LENGTHS.len() * (MEASURED_BLOCKS * 2 + 1),
             "actual_distinct_witness_owner_sets":all_owner_sets,
             "fixed_witness_owner_set_observed":all_owner_sets.len() == 1,
             "p99_ns":null,"throughput_claim":false,"production_qualified":false
