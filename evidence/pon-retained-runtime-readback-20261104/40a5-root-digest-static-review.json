@@ -1,0 +1,384 @@
+{
+  "schema": "trnm-root-digest-static-peer-v1",
+  "reviewed_source": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "parent_source": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+  "review_scope": "Finite static review of four named blobs, with exact previous account_archive_prototype.rs and native_store.rs blobs. No compilation, native execution, benchmark or whole-commit qualification.",
+  "source_bindings": [
+    {
+      "name": "native_root_digest",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+      "bytes": 3228,
+      "sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080",
+      "git_blob_sha": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+      "lines": 89
+    },
+    {
+      "name": "native_root_digest_tests",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/0f12751213809ee79182db061c657f93a5993444",
+      "bytes": 12150,
+      "sha256": "c41936fbc7d4b4e9fbc562eab55faa3eba9bb3edd964277c7ea8d46a630d8b84",
+      "git_blob_sha": "0f12751213809ee79182db061c657f93a5993444",
+      "lines": 312
+    },
+    {
+      "name": "account_archive",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/65093afcdf1a777b03447ff8db2aaa7d9e14ed83",
+      "bytes": 47682,
+      "sha256": "0569202aef2d858c9ed7d85473cb4d084a5616137655f31f67e73b7cc6432078",
+      "git_blob_sha": "65093afcdf1a777b03447ff8db2aaa7d9e14ed83",
+      "lines": 1383
+    },
+    {
+      "name": "native_store",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/d15fdedabce6bf247311d1f75bf4d8370a8d33c1",
+      "bytes": 44926,
+      "sha256": "08528bfeee465e653f48b84492bfe2aecb1dcfe7cd1bde917c07fde710a93ea0",
+      "git_blob_sha": "d15fdedabce6bf247311d1f75bf4d8370a8d33c1",
+      "lines": 1159
+    },
+    {
+      "name": "account_archive_old",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/45c458780452e82c2e59ac34ae8a200a167a6647",
+      "bytes": 47683,
+      "sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f",
+      "git_blob_sha": "45c458780452e82c2e59ac34ae8a200a167a6647",
+      "lines": 1377
+    },
+    {
+      "name": "native_store_old",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/add62202c8038776d0db254c066c619dd8fe4620",
+      "bytes": 44516,
+      "sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a",
+      "git_blob_sha": "add62202c8038776d0db254c066c619dd8fe4620",
+      "lines": 1147
+    }
+  ],
+  "agents": {
+    "binding": {
+      "name": "agents",
+      "url": "https://raw.githubusercontent.com/TrillionniumFoundation/Trillionnium-Chain/40a5ba25e40fd5eda5b04fc1c3811320d438de11/AGENTS.md",
+      "bytes": 1286,
+      "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91",
+      "git_blob_sha": "702727dcf00f032b16d593519b7b74894da40e17",
+      "lines": 21
+    },
+    "read": true,
+    "pre_edit_preflight_required": true,
+    "source_edited": false,
+    "no_preflight_execution_for_read_only_review": true
+  },
+  "conclusion": {
+    "production_semantic_blocker_found": false,
+    "native_pass_asserted": false,
+    "performance_pass_asserted": false,
+    "current_service_slo_qualified": false,
+    "touched_set_complexity_qualified": false
+  },
+  "findings": [],
+  "evidence": [
+    {
+      "topic": "Root versus storage ID",
+      "result": "Node::account and Node::fork_with_lift compute mathematical path/depth/digest before an independent storage-record ID. Child IDs feed only encoded record pointers; no root digest or lift uses them. The replaced production entry previously called build_with_lift with db=None; RootDigest has no ID, Kind, encoder or database. Persistent Node and graph builders remain present.",
+      "refs": [
+        "account_archive:276-327",
+        "account_archive:1047-1051",
+        "account_archive:1201-1232",
+        "native_root_digest:14-42"
+      ]
+    },
+    {
+      "topic": "Complete input and duplicate path work",
+      "result": "ordered_accounts remains byte-identical, traverses all owners, hashes every path, sorts and rejects colliding paths. The new leaf uses that same-call path instead of hashing the owner a second time; leaf hash still binds exact owner, balance and nonce. No touched-set or authority cache is introduced.",
+      "refs": [
+        "account_archive:210-232",
+        "account_archive:1024-1034",
+        "native_root_digest:46-83"
+      ]
+    },
+    {
+      "topic": "Fork and lift equivalence",
+      "result": "The five fork short-circuit checks are text-identical and precede both child lifts. Old lift body equals extracted lift_digest after only replacing self fields with parameters and whitespace. LiftCache retains exact path/digest/source-depth/target-depth tuple, exact equality after bucket indexing, identity case, 8192 limit and same replacement algorithm.",
+      "refs": [
+        "native_root_digest:25-42",
+        "account_archive:239-255",
+        "native_store:24-142"
+      ]
+    },
+    {
+      "topic": "Depth and cancellation order",
+      "result": "Empty input returns before callback; each nonempty subtree calls progress before leaf/depth validation, then recurses left, right, fork in the original order. Production root entries both use a no-op callback. Stored paths retain original progress checks. This does not add cancellation capability or prove equal wall-clock cancellation outcomes.",
+      "refs": [
+        "native_root_digest:46-83",
+        "account_archive:1201-1232",
+        "native_store:476-536"
+      ]
+    },
+    {
+      "topic": "SQL and Host boundary",
+      "result": "Both compared files retain identical SQL literal lines. Every byte of native_store after LiftCache is unchanged (39376 bytes), including seed, apply, verify, graph walk, current-account projection and child validation. No Host, resource, transaction-commit or service policy is added to the new digest module. This statement is limited to these reviewed changes, not unrelated changes in the same commit.",
+      "refs": [
+        "native_store:145-1159",
+        "native_root_digest:1-89"
+      ]
+    },
+    {
+      "topic": "Tests inspected, not executed",
+      "result": "Three new non-ignored tests compare record-building and independent sparse roots across 0/1/2/3/17/65/513 accounts and owner/balance/nonce changes; compare 35 cancellation positions for valid/repeated/reversed rows; compare six fork variants and boundary lift depths. One explicitly ignored cost observation preserves create-new output and source hashes, two cold plus 100 warm observations per arm/size, with business qualification false. No actual test result is inferred.",
+      "refs": [
+        "native_root_digest_tests:1-311"
+      ]
+    }
+  ],
+  "important_production_invariant": {
+    "statement": "RootDigest::build is private and production root() passes only ordered_accounts(values). RootDigest leaves trust rows[0].0 == path(rows[0].1).",
+    "limit": "Arbitrary malformed internal tuples with an owner/path mismatch are not generally equivalent to old Node::account, which recomputes path(owner). The supplied production route cannot provide such tuples; this is not a reachable production blocker or a claim of equivalence for every possible private build argument."
+  },
+  "mechanical_checks": {
+    "fork_condition_exact_equal": true,
+    "lift_body_normalized_equal": true,
+    "cache_and_storage_equality": {
+      "exact_cache_input_index_capacity_replacement_grammar_equal": true,
+      "all_native_store_after_lift_impl_byte_equal": true,
+      "after_lift_suffix_bytes": 39376,
+      "after_lift_suffix_sha256": "9f2ed11d4d3350d104be9616fe00fec2199c4f8d21d20f24ffcff791ac3cc70e"
+    },
+    "unchanged_function_bodies": [
+      {
+        "file": "account_archive",
+        "fn": "ordered_accounts",
+        "equal": true,
+        "old_lines": [
+          1014,
+          1024
+        ],
+        "new_lines": [
+          1024,
+          1034
+        ],
+        "sha256": "b8e41ad042acbafd542fd72e90c00498b5a970116b55b7f758923494a31eb81a"
+      },
+      {
+        "file": "account_archive",
+        "fn": "accounts",
+        "equal": true,
+        "old_lines": [
+          986,
+          1013
+        ],
+        "new_lines": [
+          996,
+          1023
+        ],
+        "sha256": "33e2c186b1031cb1c02296acc5f6105badb950028664ac1492146c6dc0b14c9a"
+      },
+      {
+        "file": "account_archive",
+        "fn": "account_root",
+        "equal": true,
+        "old_lines": [
+          1027,
+          1033
+        ],
+        "new_lines": [
+          1037,
+          1043
+        ],
+        "sha256": "8a78ac5fc86f85fd9eec248cf7a9af077a17d18e3f8748e20d8557259be49e26"
+      },
+      {
+        "file": "account_archive",
+        "fn": "build_with_lift",
+        "equal": true,
+        "old_lines": [
+          1195,
+          1226
+        ],
+        "new_lines": [
+          1201,
+          1232
+        ],
+        "sha256": "140576ee16f590af1675254a7b3674364c09aace91641aeb3e43591024720da4"
+      },
+      {
+        "file": "account_archive",
+        "fn": "load_node",
+        "equal": true,
+        "old_lines": [
+          1088,
+          1090
+        ],
+        "new_lines": [
+          1094,
+          1096
+        ],
+        "sha256": "06e0c125bfbe20a8fa0e392bf10cd64596884f693ac37a8af4df214cede19343"
+      },
+      {
+        "file": "account_archive",
+        "fn": "save_node",
+        "equal": true,
+        "old_lines": [
+          1071,
+          1087
+        ],
+        "new_lines": [
+          1077,
+          1093
+        ],
+        "sha256": "d4b98cccb73dbd8b3ac2a173470dc27b13a3e07ecbb0c82f2495f3879ad4185c"
+      },
+      {
+        "file": "account_archive",
+        "fn": "checked_root",
+        "equal": true,
+        "old_lines": [
+          1152,
+          1165
+        ],
+        "new_lines": [
+          1158,
+          1171
+        ],
+        "sha256": "8860e0ecb0b91f5bba11a9d6818aecd90552271110d531aab5d4d38e30eea625"
+      },
+      {
+        "file": "account_archive",
+        "fn": "insert",
+        "equal": true,
+        "old_lines": [
+          1227,
+          1279
+        ],
+        "new_lines": [
+          1233,
+          1285
+        ],
+        "sha256": "617fdcedad43b8396b3b2584fffa08973e03c524eaea75a0cfa376507f69d183"
+      },
+      {
+        "file": "native_store",
+        "fn": "verify_with_lifts",
+        "equal": true,
+        "old_lines": [
+          432,
+          442
+        ],
+        "new_lines": [
+          444,
+          454
+        ],
+        "sha256": "3e10b457939db76222bae6c5bb60c16a4b2acb2d029ec51ebf191f3be4572926"
+      },
+      {
+        "file": "native_store",
+        "fn": "verify_with_current_accounts",
+        "equal": true,
+        "old_lines": [
+          447,
+          462
+        ],
+        "new_lines": [
+          459,
+          474
+        ],
+        "sha256": "efac107c414e3abb8bc44dcde59e639ad728ea018a8e9814436f8e28903b9688"
+      },
+      {
+        "file": "native_store",
+        "fn": "verify_account_values",
+        "equal": true,
+        "old_lines": [
+          464,
+          524
+        ],
+        "new_lines": [
+          476,
+          536
+        ],
+        "sha256": "b576d377c7d39e2096fc4839378f3ebd948f2801763df45a79a645035533b703"
+      },
+      {
+        "file": "native_store",
+        "fn": "child_with_lifts",
+        "equal": true,
+        "old_lines": [
+          526,
+          556
+        ],
+        "new_lines": [
+          538,
+          568
+        ],
+        "sha256": "6e3e2a66a4ff99a7be4a43981928a067d91f2fd0333e1e75b1ff57fc5918863b"
+      },
+      {
+        "file": "native_store",
+        "fn": "apply_batch",
+        "equal": true,
+        "old_lines": [
+          256,
+          319
+        ],
+        "new_lines": [
+          268,
+          331
+        ],
+        "sha256": "21989ddda92b0aeb9ea027d7c7b3d4eb20d2dafcff7f0cdc55a365c7d1acc458"
+      },
+      {
+        "file": "native_store",
+        "fn": "apply_bounded",
+        "equal": true,
+        "old_lines": [
+          347,
+          406
+        ],
+        "new_lines": [
+          359,
+          418
+        ],
+        "sha256": "c7012293582228c386f9e19446a8311a1f4cad01bba570d072ceaa646b4d73f2"
+      },
+      {
+        "file": "native_store",
+        "fn": "seed",
+        "equal": true,
+        "old_lines": [
+          187,
+          210
+        ],
+        "new_lines": [
+          199,
+          222
+        ],
+        "sha256": "674baa0ab07dbd7b04534f50a3809586884814627851e3398b5abd0928ef2fa3"
+      },
+      {
+        "file": "native_store",
+        "fn": "lookup",
+        "equal": true,
+        "old_lines": [
+          212,
+          240
+        ],
+        "new_lines": [
+          224,
+          252
+        ],
+        "sha256": "c78cfff7e2b3a2bc2be53d909b38bbbb65990261b60a39ab4a9291be242992a1"
+      }
+    ],
+    "current_parent_diff_hunks": {
+      "account_archive": 4,
+      "native_store": 1
+    }
+  },
+  "actions": {
+    "github_get_only": true,
+    "no_source_writes": true,
+    "no_native_or_benchmark": true,
+    "no_ci_or_ref_mutation": true,
+    "no_blob_created_for_this_review": true,
+    "filesystem_written": false
+  }
+}

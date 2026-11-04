@@ -1,0 +1,3063 @@
+{
+  "schema": "trnm-original-44d-four-lane-history-failures-v1",
+  "scope": "Readback of four original 44d History lane archives from run 41778472816. Each lane remains bound to its own original job, tested commit and artifact. The reader executes no original source tests and grants no native acceptance. No old 016 cause or later-source result is inherited.",
+  "reader": {
+    "run": 41787024926,
+    "job": 126431400722,
+    "attempt": 1,
+    "head": "72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e",
+    "tree": "619cee0358a6c1d5e48530cad44292fb2486564d",
+    "workflow": ".github/workflows/pon-44d-history-failure-readback-20261104.yml",
+    "workflow_blob": "41731d66e67c0d9e691a45a2cb2d7f846cafac86",
+    "conclusion": "success",
+    "audit_before": "PASS",
+    "audit_after": "PASS",
+    "audit_packages": 26,
+    "audit_log_lines": [
+      221,
+      1079
+    ],
+    "source_before_after_equal": true,
+    "tracked_entries": 8007,
+    "tracked_bytes": 930890238,
+    "diagnostic_log_characters": 178272,
+    "diagnostic_log_lines": 1144,
+    "complete_archives": 4,
+    "selected_records": 48,
+    "selected_text_bytes": 107684,
+    "omitted_members": 0,
+    "absent_fixed_small_members": 0,
+    "unverified_required_source_members": 0,
+    "source_mismatches": 0,
+    "source_unknown": 0,
+    "console_truncations": 0,
+    "native_code_executed": false,
+    "native_acceptance_granted": false,
+    "output_artifact": {
+      "id": 13302175606,
+      "name": "44d-history-failure-readback-72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e-1",
+      "size_in_bytes": 195379215,
+      "digest": "sha256:25c0803ff1ac4e6c4271a559ffa2b36d41efdccd24ca8733002d2d28e1c1d9f7",
+      "expired": false,
+      "api_matches_upload_stdout": true
+    }
+  },
+  "precision_and_retention": {
+    "literal_json": "All 42 single-line JSON values printed by the reader are copied below as exact strings after removal of the GitHub timestamp prefix. They are not reconstructed from JavaScript-parsed numbers; original binary/file stat nanoseconds above 2^53 remain exact inside these strings.",
+    "literal_native_logs": "All 284 artifact-prefixed native/Host/resource console lines are copied below verbatim after removal of the GitHub timestamp prefix, with diagnostic log line numbers. The four native history.log sets are contiguous from line 1 through 37, 37, 41, and 41 respectively.",
+    "complete_original_data": "The reader output artifact retains each original frozen ZIP, complete selected original JSON in readback records, complete member index, and excerpts. The literal console JSON here is the reader projection, not a claim that every original JSON field was printed.",
+    "summaries": "Structured summaries deliberately omit file stat timestamp objects; identity and integer values retained structurally are within exact JavaScript integer range. Original null fields remain null.",
+    "result_boundaries": "Four lane executions repeat one original selector. Reader success, native process return, libtest counts, original manifest authentication, complete-history acceptance and production readiness remain separate. Last progress milestones are not exact final state counters."
+  },
+  "source_before_literal_json": "{\n  \"base\": null,\n  \"candidate\": \"72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e\",\n  \"tested_tree\": \"619cee0358a6c1d5e48530cad44292fb2486564d\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 930890238,\n  \"tracked_entries\": 8007,\n  \"tracked_worktree_verified\": true\n}",
+  "source_after_literal_json": "{\n  \"base\": null,\n  \"candidate\": \"72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e\",\n  \"tested_tree\": \"619cee0358a6c1d5e48530cad44292fb2486564d\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 930890238,\n  \"tracked_entries\": 8007,\n  \"tracked_worktree_verified\": true\n}",
+  "denominator": {
+    "unique_original_selector_count": 1,
+    "original_lane_invocations": 4,
+    "observed_libtest_passed": 0,
+    "observed_libtest_failed": 4,
+    "new_native_tests_executed_by_reader": 0,
+    "scope": "Four original lane executions of one existing selector; no increase to the unique-test denominator."
+  },
+  "deadline_source_review": {
+    "frozen_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+    "server_lifetime_seconds": 1800,
+    "public_policy_solution_lifetime_seconds": 2,
+    "rpc_overall_ms": 30000,
+    "server_task_work_ms": 10000,
+    "server_output_ms": 5000,
+    "client_response_frame_cap_ms": 15000,
+    "page_import_budget_seconds": 30,
+    "whole_history_sync_deadline_supplied_by_this_selector": false,
+    "scope": "These are separate original boundaries. The no-outer-deadline RPC wrapper starts its own overall window for each call. A subsequent public page import starts a distinct 30-second cap that includes its Host checks and native work. No larger shared 4105-block full-sync deadline or 300-second SYNC_BUDGET wrapper is supplied by this selector.",
+    "measured_deadline_attribution": "The original logs identify PUBLIC_REQUEST_DEADLINE and preserve the server loop condition, but do not include a per-page phase trace. The precise emitting checkpoint, page number, final committed height, and whether a particular durable commit preceded an import time fence remain unknown. The ARM logs show stop_requested with lifetime_reached_before_shutdown=false; they do not show server lifetime expiration.",
+    "source_references": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "blob": "ed1213d2d850ab0a8634e24ba7dd8d67cc1ee786",
+        "observations": [
+          "BLOCKS=4105 at line 39; run elapsed origin at line 113 precedes construction.",
+          "PublicPolicy(8, 2 seconds) at line 227; service lifetime 1800 seconds at line 234.",
+          "Head and each History RPC call the no-outer-deadline public_v2 wrapper at lines 267 and 283.",
+          "Each public page is imported at lines 309-316; count increments only after that wrapper returns at line 317; progress prints every 500 at lines 321-324.",
+          "Sync error is printed before stop.store(true) at lines 342-352; failure summary and original result.unwrap are lines 386-399."
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+        "blob": "e359ba90bb714c6e04233f32cdd12e817a09ed8b",
+        "observations": [
+          "PREFIX_MS=2000, CHALLENGE_MS=2000, BODY_MS=5000, OVERALL_MS=30000, OUTPUT_MS=5000, WORK_MS=10000 at lines 41-47.",
+          "call_public_protected_v2 passes outer_deadline=None at lines 1397-1404; each call creates its own overall deadline at lines 1420-1424.",
+          "Client response framing uses min(total_deadline, now + WORK_MS + OUTPUT_MS) at line 1526.",
+          "Server queued task deadline is min(connection total_deadline, now + WORK_MS) at lines 1229-1231; task_alive can use PUBLIC_REQUEST_DEADLINE for time expiry or shared stop at lines 584-592.",
+          "A remote unsuccessful History reply is wrapped by the test as PUBLIC_HISTORY_REFUSED; the observed aggregate log has no RPC/import phase marker."
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "blob": "7c1ceca413da2f7004603b17cb19713b9bf681c6",
+        "observations": [
+          "receive_public_page_from starts a fresh now + PAGE_BUDGET at lines 2516-2523, after the corresponding RPC has returned.",
+          "The same deadline is passed through initial Host resolution/check, native import, and final Host check at lines 2553-2584.",
+          "The imported page wrapper adds no retry or renewed deadline to the original invocation."
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "blob": "742c236acf5c80fa694c1a6061b7cd4ead2576d3",
+        "observations": [
+          "PAGE_BUDGET=30 seconds and SYNC_BUDGET=300 seconds at lines 19-20; this selector uses the per-page wrapper rather than the shared SYNC_BUDGET wrapper.",
+          "Control::alive emits PUBLIC_REQUEST_DEADLINE at line 28. The deadline is bound into metered work at line 209 and checked after settlement at lines 221-224.",
+          "finish_with_resource preserves original error priority and checks the same deadline after final Host verification at lines 40-49; a returned deadline does not by itself prove that a durable commit was absent."
+        ]
+      }
+    ]
+  },
+  "cohorts": [
+    {
+      "lane": "x64 head",
+      "target": {
+        "id": 13301001762,
+        "name": "priority-ubuntu-24.04-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size": 50815213,
+        "digest": "sha256:0e76ff23b238cb937775ca725a15d2499e4f28ac1e9c9262b1570e198c1ceba2",
+        "run": 41778472816,
+        "job": 126407622538,
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "head",
+        "tested": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "family": "history"
+      },
+      "reader_status": "completed",
+      "selected_records": 12,
+      "selected_text_bytes": 26475,
+      "member_index_sha256": "30c9b0a5ed424bc2b2c22c122fc382ed4a18f1188c30f2ed345c858d47050f21",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "source_identity": {
+        "base": null,
+        "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 932581466,
+        "tracked_entries": 8095,
+        "tracked_worktree_verified": true
+      },
+      "source_guard_verified": true,
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "preparation_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "manifest_member": {
+        "member": "history-native/manifest.json",
+        "bytes": 4894,
+        "sha256": "c9bd4c033b819ba86e465b5928880d62374129f508442cd49234795dc22f0fad",
+        "diagnostic_log_line": 763
+      },
+      "preparation_member": {
+        "member": "history-native/preparation.json",
+        "bytes": 3468,
+        "sha256": "130888dd3520cc709b74d89f4c5783606aa6709054064ddb21b86b5773dab166",
+        "diagnostic_log_line": 803
+      },
+      "source_member": {
+        "member": "source.json",
+        "bytes": 421,
+        "sha256": "5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25",
+        "diagnostic_log_line": 764
+      },
+      "original_manifest": {
+        "schema": "trnm-ci-history-native-execution-v1",
+        "target": "ancestry_long_sync",
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "job": {
+          "GITHUB_JOB": "native-priorities",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41778472816"
+        },
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "/usr/bin/time",
+            "-v",
+            "-o",
+            "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+            "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393",
+            "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+            "--exact",
+            "--ignored",
+            "--show-output"
+          ],
+          "exit_code": 101,
+          "failure": null,
+          "pid": 5235,
+          "started": true
+        },
+        "failures": [
+          "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+          "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+          "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+        ],
+        "passed": false,
+        "completed": null,
+        "named_execution": null,
+        "native_execution_authenticated": false,
+        "native_tests_executed": null,
+        "compilation_in_native_measurement": false,
+        "whole_test_command_preserved": true,
+        "summary": {
+          "error": "IO: Connection refused (os error 111)",
+          "hardness_accepted": false,
+          "independent_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "public_network_ready": false,
+          "schema": "native-ancestry-long-sync-observation-v1"
+        },
+        "binary_sha256_before": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+        "binary_sha256_after": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+        "binary_bytes_before": 9650880,
+        "binary_bytes_after": 9650880,
+        "log_sha256": "97d274240955ef0045483c7a3111800121e6dce8425a9b64a575b5a37ed72dd1",
+        "log_bytes": 2867,
+        "summary_file_sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+        "summary_file_bytes": 259,
+        "preparation_sha256": "130888dd3520cc709b74d89f4c5783606aa6709054064ddb21b86b5773dab166"
+      },
+      "original_preparation": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "native_tests_executed": false,
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2813,
+          "started": true
+        },
+        "failures": [],
+        "service_resource_observation": false
+      },
+      "observed_native_harness": {
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "running_tests": 1,
+        "result": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "elapsed_seconds_literal": "3243.28",
+        "original_terminal_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3243.28s",
+        "member_line": 36,
+        "diagnostic_log_line": 731,
+        "scope": "One original selector invocation in this lane. This observation does not fill the original manifest's null named_execution or native_tests_executed fields."
+      },
+      "original_failure": {
+        "summary_error": "IO: Connection refused (os error 111)",
+        "sync_exit_error": "IO: Connection refused (os error 111)",
+        "panic_lines": [
+          {
+            "member_line": 28,
+            "diagnostic_log_line": 728,
+            "original_text": "thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (5237) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+          },
+          {
+            "member_line": 29,
+            "diagnostic_log_line": 729,
+            "original_text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }"
+          }
+        ],
+        "precise_deadline_origin": null,
+        "precise_deadline_checkpoint": null,
+        "failing_page_number": null
+      },
+      "history_progress": {
+        "planned_blocks_from_frozen_test": 4105,
+        "last_reported_generation": {
+          "kind": "actual-pnw1-progress",
+          "height": 4000,
+          "elapsed_ns": 1379383722254,
+          "member_line": 19,
+          "diagnostic_log_line": 748
+        },
+        "last_reported_fullsync": {
+          "kind": "independent-native-fullsync-progress",
+          "height": 2000,
+          "elapsed_ns": 2996995288342,
+          "member_line": 23,
+          "diagnostic_log_line": 752
+        },
+        "exact_final_imported_height": null,
+        "exact_final_committed_height": null,
+        "accepted_complete_history_test": false,
+        "progress": [
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 500,
+            "elapsed_ns": 61699487197,
+            "member_line": 12,
+            "diagnostic_log_line": 741
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1000,
+            "elapsed_ns": 157593069232,
+            "member_line": 13,
+            "diagnostic_log_line": 742
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1500,
+            "elapsed_ns": 285682921121,
+            "member_line": 14,
+            "diagnostic_log_line": 743
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2000,
+            "elapsed_ns": 444676855583,
+            "member_line": 15,
+            "diagnostic_log_line": 744
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2500,
+            "elapsed_ns": 632391943759,
+            "member_line": 16,
+            "diagnostic_log_line": 745
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3000,
+            "elapsed_ns": 852080607194,
+            "member_line": 17,
+            "diagnostic_log_line": 746
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3500,
+            "elapsed_ns": 1100795511518,
+            "member_line": 18,
+            "diagnostic_log_line": 747
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 4000,
+            "elapsed_ns": 1379383722254,
+            "member_line": 19,
+            "diagnostic_log_line": 748
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 500,
+            "elapsed_ns": 1824086346984,
+            "member_line": 20,
+            "diagnostic_log_line": 749
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1000,
+            "elapsed_ns": 2214081589533,
+            "member_line": 21,
+            "diagnostic_log_line": 750
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1500,
+            "elapsed_ns": 2606491049644,
+            "member_line": 22,
+            "diagnostic_log_line": 751
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2000,
+            "elapsed_ns": 2996995288342,
+            "member_line": 23,
+            "diagnostic_log_line": 752
+          }
+        ],
+        "scope": "The last recorded progress is a 500-block output milestone, not the final imported or committed height. The failing original summary has no exact final count. Progress elapsed_ns starts at run() before chain construction."
+      },
+      "original_sync_exit": {
+        "elapsed_ns": 3243282337794,
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+        "scope": "observed signed full-history replay, not a qualification verdict",
+        "sync_error": "IO: Connection refused (os error 111)",
+        "member_line": 25,
+        "diagnostic_log_line": 754
+      },
+      "original_server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1800000413517,
+          "lifetime_reached_before_shutdown": true,
+          "reason": "lifetime_expired",
+          "stop_requested_before_shutdown": false
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1800001141943,
+        "stop_requested_when_exited": true,
+        "member_line": 24,
+        "diagnostic_log_line": 753
+      },
+      "native_log_coverage": {
+        "first_member_line": 1,
+        "last_member_line": 37,
+        "emitted_lines": 37,
+        "all_line_numbers_contiguous": true,
+        "console_truncation": false
+      },
+      "original_resource_literals": {
+        "user_seconds": "345.61",
+        "system_seconds": "465.14",
+        "cpu_percent": "24%",
+        "elapsed_wall_hms": "54:03.28",
+        "max_rss_kbytes": "15892",
+        "exit_status": "101",
+        "scope": "Literal original /usr/bin/time output for the whole native command; not a per-import or server-exclusive timing."
+      },
+      "host": {
+        "controller_member": {
+          "member": "history-native-host/controller-result.json",
+          "bytes": 7725,
+          "sha256": "db95cecbdaecb40351b84a0a0b139f22c925c15c3c279b8fcef01baf59db41d7",
+          "diagnostic_log_line": 766
+        },
+        "child_member": {
+          "member": "history-native-host/child-result.json",
+          "bytes": 335,
+          "sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "diagnostic_log_line": 765
+        },
+        "controller": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "failure": null,
+          "final_host_errors": [],
+          "final_parent_lease_error": null,
+          "host_readiness_only": true,
+          "parent_reused": false,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "child": {
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "host_errors": [],
+          "host_readiness_only": true,
+          "native_child_exit": 1,
+          "schema": "trnm-ci-original-public-host-child-v1"
+        }
+      },
+      "native_scope_acceptance": false,
+      "public_network_ready": false,
+      "independent_accepted": false,
+      "production_activation": false
+    },
+    {
+      "lane": "x64 prospective-merge",
+      "target": {
+        "id": 13300674098,
+        "name": "priority-ubuntu-24.04-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size": 50781415,
+        "digest": "sha256:a9260767a0dea64b75c0c13f975f0ee6c06cd4872b5331104eb2d97a3d4b9db1",
+        "run": 41778472816,
+        "job": 126407622526,
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "prospective-merge",
+        "tested": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "family": "history"
+      },
+      "reader_status": "completed",
+      "selected_records": 12,
+      "selected_text_bytes": 27098,
+      "member_index_sha256": "25a00c6cf9460b4521d453f69d3a17c5866a13c3b7d52b17eba9da956e7684c6",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "source_identity": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "prospective-merge",
+        "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 932581466,
+        "tracked_entries": 8095,
+        "tracked_worktree_verified": true
+      },
+      "source_guard_verified": true,
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "preparation_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "manifest_member": {
+        "member": "history-native/manifest.json",
+        "bytes": 5072,
+        "sha256": "dab3ff236c4d6406de76f66f7ea97d83fcb08f2a485567879b5e4b289b16480e",
+        "diagnostic_log_line": 844
+      },
+      "preparation_member": {
+        "member": "history-native/preparation.json",
+        "bytes": 3646,
+        "sha256": "8b879ecde4de43db93f6ecdc24bcf0dddce31a5e8c40028a4b83a6894346619e",
+        "diagnostic_log_line": 884
+      },
+      "source_member": {
+        "member": "source.json",
+        "bytes": 510,
+        "sha256": "cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402",
+        "diagnostic_log_line": 845
+      },
+      "original_manifest": {
+        "schema": "trnm-ci-history-native-execution-v1",
+        "target": "ancestry_long_sync",
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "job": {
+          "GITHUB_JOB": "native-priorities",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41778472816"
+        },
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "/usr/bin/time",
+            "-v",
+            "-o",
+            "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+            "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393",
+            "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+            "--exact",
+            "--ignored",
+            "--show-output"
+          ],
+          "exit_code": 101,
+          "failure": null,
+          "pid": 5090,
+          "started": true
+        },
+        "failures": [
+          "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+          "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+          "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+        ],
+        "passed": false,
+        "completed": null,
+        "named_execution": null,
+        "native_execution_authenticated": false,
+        "native_tests_executed": null,
+        "compilation_in_native_measurement": false,
+        "whole_test_command_preserved": true,
+        "summary": {
+          "error": "IO: Connection refused (os error 111)",
+          "hardness_accepted": false,
+          "independent_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "public_network_ready": false,
+          "schema": "native-ancestry-long-sync-observation-v1"
+        },
+        "binary_sha256_before": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+        "binary_sha256_after": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+        "binary_bytes_before": 9650880,
+        "binary_bytes_after": 9650880,
+        "log_sha256": "11cdefe22743b8234b64195799abc91cc7be1d9ddd6ec4e303160e6d6e536dba",
+        "log_bytes": 2867,
+        "summary_file_sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+        "summary_file_bytes": 259,
+        "preparation_sha256": "8b879ecde4de43db93f6ecdc24bcf0dddce31a5e8c40028a4b83a6894346619e"
+      },
+      "original_preparation": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "native_tests_executed": false,
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2654,
+          "started": true
+        },
+        "failures": [],
+        "service_resource_observation": false
+      },
+      "observed_native_harness": {
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "running_tests": 1,
+        "result": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "elapsed_seconds_literal": "3267.49",
+        "original_terminal_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3267.49s",
+        "member_line": 36,
+        "diagnostic_log_line": 812,
+        "scope": "One original selector invocation in this lane. This observation does not fill the original manifest's null named_execution or native_tests_executed fields."
+      },
+      "original_failure": {
+        "summary_error": "IO: Connection refused (os error 111)",
+        "sync_exit_error": "IO: Connection refused (os error 111)",
+        "panic_lines": [
+          {
+            "member_line": 28,
+            "diagnostic_log_line": 809,
+            "original_text": "thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (5092) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+          },
+          {
+            "member_line": 29,
+            "diagnostic_log_line": 810,
+            "original_text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }"
+          }
+        ],
+        "precise_deadline_origin": null,
+        "precise_deadline_checkpoint": null,
+        "failing_page_number": null
+      },
+      "history_progress": {
+        "planned_blocks_from_frozen_test": 4105,
+        "last_reported_generation": {
+          "kind": "actual-pnw1-progress",
+          "height": 4000,
+          "elapsed_ns": 1402070427360,
+          "member_line": 19,
+          "diagnostic_log_line": 829
+        },
+        "last_reported_fullsync": {
+          "kind": "independent-native-fullsync-progress",
+          "height": 2000,
+          "elapsed_ns": 3018189131421,
+          "member_line": 23,
+          "diagnostic_log_line": 833
+        },
+        "exact_final_imported_height": null,
+        "exact_final_committed_height": null,
+        "accepted_complete_history_test": false,
+        "progress": [
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 500,
+            "elapsed_ns": 62971041019,
+            "member_line": 12,
+            "diagnostic_log_line": 822
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1000,
+            "elapsed_ns": 160088195006,
+            "member_line": 13,
+            "diagnostic_log_line": 823
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1500,
+            "elapsed_ns": 289277939864,
+            "member_line": 14,
+            "diagnostic_log_line": 824
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2000,
+            "elapsed_ns": 448487827078,
+            "member_line": 15,
+            "diagnostic_log_line": 825
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2500,
+            "elapsed_ns": 639467866968,
+            "member_line": 16,
+            "diagnostic_log_line": 826
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3000,
+            "elapsed_ns": 862078622222,
+            "member_line": 17,
+            "diagnostic_log_line": 827
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3500,
+            "elapsed_ns": 1117478231816,
+            "member_line": 18,
+            "diagnostic_log_line": 828
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 4000,
+            "elapsed_ns": 1402070427360,
+            "member_line": 19,
+            "diagnostic_log_line": 829
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 500,
+            "elapsed_ns": 1848975800431,
+            "member_line": 20,
+            "diagnostic_log_line": 830
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1000,
+            "elapsed_ns": 2237280825177,
+            "member_line": 21,
+            "diagnostic_log_line": 831
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1500,
+            "elapsed_ns": 2627883223387,
+            "member_line": 22,
+            "diagnostic_log_line": 832
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2000,
+            "elapsed_ns": 3018189131421,
+            "member_line": 23,
+            "diagnostic_log_line": 833
+          }
+        ],
+        "scope": "The last recorded progress is a 500-block output milestone, not the final imported or committed height. The failing original summary has no exact final count. Progress elapsed_ns starts at run() before chain construction."
+      },
+      "original_sync_exit": {
+        "elapsed_ns": 3267488435757,
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+        "scope": "observed signed full-history replay, not a qualification verdict",
+        "sync_error": "IO: Connection refused (os error 111)",
+        "member_line": 25,
+        "diagnostic_log_line": 835
+      },
+      "original_server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1800000972606,
+          "lifetime_reached_before_shutdown": true,
+          "reason": "lifetime_expired",
+          "stop_requested_before_shutdown": false
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1800001526073,
+        "stop_requested_when_exited": true,
+        "member_line": 24,
+        "diagnostic_log_line": 834
+      },
+      "native_log_coverage": {
+        "first_member_line": 1,
+        "last_member_line": 37,
+        "emitted_lines": 37,
+        "all_line_numbers_contiguous": true,
+        "console_truncation": false
+      },
+      "original_resource_literals": {
+        "user_seconds": "349.96",
+        "system_seconds": "466.85",
+        "cpu_percent": "24%",
+        "elapsed_wall_hms": "54:27.49",
+        "max_rss_kbytes": "16460",
+        "exit_status": "101",
+        "scope": "Literal original /usr/bin/time output for the whole native command; not a per-import or server-exclusive timing."
+      },
+      "host": {
+        "controller_member": {
+          "member": "history-native-host/controller-result.json",
+          "bytes": 7903,
+          "sha256": "43498a7c67018eb7f2d092728d0530a3f0900e4b7f1e9c94a56ffbe738258c74",
+          "diagnostic_log_line": 847
+        },
+        "child_member": {
+          "member": "history-native-host/child-result.json",
+          "bytes": 335,
+          "sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "diagnostic_log_line": 846
+        },
+        "controller": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "failure": null,
+          "final_host_errors": [],
+          "final_parent_lease_error": null,
+          "host_readiness_only": true,
+          "parent_reused": false,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "child": {
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "host_errors": [],
+          "host_readiness_only": true,
+          "native_child_exit": 1,
+          "schema": "trnm-ci-original-public-host-child-v1"
+        }
+      },
+      "native_scope_acceptance": false,
+      "public_network_ready": false,
+      "independent_accepted": false,
+      "production_activation": false
+    },
+    {
+      "lane": "ARM head",
+      "target": {
+        "id": 13301057078,
+        "name": "priority-ubuntu-24.04-arm-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size": 61209394,
+        "digest": "sha256:ff19ed08e168311405d18c60da95099338e399d747c74bc3c53ffe294e02df0e",
+        "run": 41778472816,
+        "job": 126407622438,
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "head",
+        "tested": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "family": "history"
+      },
+      "reader_status": "completed",
+      "selected_records": 12,
+      "selected_text_bytes": 26769,
+      "member_index_sha256": "cb9dc30ce11c88f7919bec21d10826cdb44fcd95f9f7baf4e482824f4fb598c0",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "source_identity": {
+        "base": null,
+        "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 932581466,
+        "tracked_entries": 8095,
+        "tracked_worktree_verified": true
+      },
+      "source_guard_verified": true,
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "preparation_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "manifest_member": {
+        "member": "history-native/manifest.json",
+        "bytes": 4880,
+        "sha256": "8c55b97657c6b05d4a5e9645f3cf5dbe1e62159053b08a52473020fc341eb7b6",
+        "diagnostic_log_line": 929
+      },
+      "preparation_member": {
+        "member": "history-native/preparation.json",
+        "bytes": 3468,
+        "sha256": "d0a4f2e19838674d358f4bd85e231d80b5a1418b70f9ae2d4585377de4c8dc09",
+        "diagnostic_log_line": 969
+      },
+      "source_member": {
+        "member": "source.json",
+        "bytes": 421,
+        "sha256": "5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25",
+        "diagnostic_log_line": 930
+      },
+      "original_manifest": {
+        "schema": "trnm-ci-history-native-execution-v1",
+        "target": "ancestry_long_sync",
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "job": {
+          "GITHUB_JOB": "native-priorities",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41778472816"
+        },
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "/usr/bin/time",
+            "-v",
+            "-o",
+            "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+            "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da",
+            "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+            "--exact",
+            "--ignored",
+            "--show-output"
+          ],
+          "exit_code": 101,
+          "failure": null,
+          "pid": 4920,
+          "started": true
+        },
+        "failures": [
+          "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+          "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+          "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+        ],
+        "passed": false,
+        "completed": null,
+        "named_execution": null,
+        "native_execution_authenticated": false,
+        "native_tests_executed": null,
+        "compilation_in_native_measurement": false,
+        "whole_test_command_preserved": true,
+        "summary": {
+          "error": "PUBLIC_REQUEST_DEADLINE",
+          "hardness_accepted": false,
+          "independent_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "public_network_ready": false,
+          "schema": "native-ancestry-long-sync-observation-v1"
+        },
+        "binary_sha256_before": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+        "binary_sha256_after": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+        "binary_bytes_before": 8629568,
+        "binary_bytes_after": 8629568,
+        "log_sha256": "9f244199b0070855624afd991c5311023d32ed58814175523377f9d154b60b27",
+        "log_bytes": 3128,
+        "summary_file_sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+        "summary_file_bytes": 245,
+        "preparation_sha256": "d0a4f2e19838674d358f4bd85e231d80b5a1418b70f9ae2d4585377de4c8dc09"
+      },
+      "original_preparation": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "native_tests_executed": false,
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2572,
+          "started": true
+        },
+        "failures": [],
+        "service_resource_observation": false
+      },
+      "observed_native_harness": {
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "running_tests": 1,
+        "result": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "elapsed_seconds_literal": "3161.00",
+        "original_terminal_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3161.00s",
+        "member_line": 40,
+        "diagnostic_log_line": 893,
+        "scope": "One original selector invocation in this lane. This observation does not fill the original manifest's null named_execution or native_tests_executed fields."
+      },
+      "original_failure": {
+        "summary_error": "PUBLIC_REQUEST_DEADLINE",
+        "sync_exit_error": "PUBLIC_REQUEST_DEADLINE",
+        "panic_lines": [
+          {
+            "member_line": 32,
+            "diagnostic_log_line": 890,
+            "original_text": "thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4922) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+          },
+          {
+            "member_line": 33,
+            "diagnostic_log_line": 891,
+            "original_text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicRequestDeadline), kind: Cancelled, message: \"PUBLIC_REQUEST_DEADLINE\", source: None, request_history_budget: false }"
+          }
+        ],
+        "precise_deadline_origin": null,
+        "precise_deadline_checkpoint": null,
+        "failing_page_number": null
+      },
+      "history_progress": {
+        "planned_blocks_from_frozen_test": 4105,
+        "last_reported_generation": {
+          "kind": "actual-pnw1-progress",
+          "height": 4000,
+          "elapsed_ns": 1374386402361,
+          "member_line": 19,
+          "diagnostic_log_line": 910
+        },
+        "last_reported_fullsync": {
+          "kind": "independent-native-fullsync-progress",
+          "height": 4000,
+          "elapsed_ns": 3084288767499,
+          "member_line": 27,
+          "diagnostic_log_line": 918
+        },
+        "exact_final_imported_height": null,
+        "exact_final_committed_height": null,
+        "accepted_complete_history_test": false,
+        "progress": [
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 500,
+            "elapsed_ns": 57879920132,
+            "member_line": 12,
+            "diagnostic_log_line": 903
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1000,
+            "elapsed_ns": 150391165893,
+            "member_line": 13,
+            "diagnostic_log_line": 904
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1500,
+            "elapsed_ns": 277291497371,
+            "member_line": 14,
+            "diagnostic_log_line": 905
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2000,
+            "elapsed_ns": 438383125122,
+            "member_line": 15,
+            "diagnostic_log_line": 906
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2500,
+            "elapsed_ns": 627384117602,
+            "member_line": 16,
+            "diagnostic_log_line": 907
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3000,
+            "elapsed_ns": 842484618777,
+            "member_line": 17,
+            "diagnostic_log_line": 908
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3500,
+            "elapsed_ns": 1093777009018,
+            "member_line": 18,
+            "diagnostic_log_line": 909
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 4000,
+            "elapsed_ns": 1374386402361,
+            "member_line": 19,
+            "diagnostic_log_line": 910
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 500,
+            "elapsed_ns": 1634894807910,
+            "member_line": 20,
+            "diagnostic_log_line": 911
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1000,
+            "elapsed_ns": 1839096369463,
+            "member_line": 21,
+            "diagnostic_log_line": 912
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1500,
+            "elapsed_ns": 2043585466056,
+            "member_line": 22,
+            "diagnostic_log_line": 913
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2000,
+            "elapsed_ns": 2252177755547,
+            "member_line": 23,
+            "diagnostic_log_line": 914
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2500,
+            "elapsed_ns": 2459982769784,
+            "member_line": 24,
+            "diagnostic_log_line": 915
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 3000,
+            "elapsed_ns": 2667392477450,
+            "member_line": 25,
+            "diagnostic_log_line": 916
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 3500,
+            "elapsed_ns": 2876180922237,
+            "member_line": 26,
+            "diagnostic_log_line": 917
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 4000,
+            "elapsed_ns": 3084288767499,
+            "member_line": 27,
+            "diagnostic_log_line": 918
+          }
+        ],
+        "scope": "The last recorded progress is a 500-block output milestone, not the final imported or committed height. The failing original summary has no exact final count. Progress elapsed_ns starts at run() before chain construction."
+      },
+      "original_sync_exit": {
+        "elapsed_ns": 3161000112275,
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+        "scope": "observed signed full-history replay, not a qualification verdict",
+        "sync_error": "PUBLIC_REQUEST_DEADLINE",
+        "member_line": 28,
+        "diagnostic_log_line": 919
+      },
+      "original_server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1723402197490,
+          "lifetime_reached_before_shutdown": false,
+          "reason": "stop_requested",
+          "stop_requested_before_shutdown": true
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1723402629880,
+        "stop_requested_when_exited": true,
+        "member_line": 29,
+        "diagnostic_log_line": 920
+      },
+      "native_log_coverage": {
+        "first_member_line": 1,
+        "last_member_line": 41,
+        "emitted_lines": 41,
+        "all_line_numbers_contiguous": true,
+        "console_truncation": false
+      },
+      "original_resource_literals": {
+        "user_seconds": "357.98",
+        "system_seconds": "432.17",
+        "cpu_percent": "24%",
+        "elapsed_wall_hms": "52:41.00",
+        "max_rss_kbytes": "14512",
+        "exit_status": "101",
+        "scope": "Literal original /usr/bin/time output for the whole native command; not a per-import or server-exclusive timing."
+      },
+      "host": {
+        "controller_member": {
+          "member": "history-native-host/controller-result.json",
+          "bytes": 7725,
+          "sha256": "e30fc990834384b28295faaab72169f24739619da3f59b3ebd13d0b5517df90e",
+          "diagnostic_log_line": 932
+        },
+        "child_member": {
+          "member": "history-native-host/child-result.json",
+          "bytes": 335,
+          "sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "diagnostic_log_line": 931
+        },
+        "controller": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "failure": null,
+          "final_host_errors": [],
+          "final_parent_lease_error": null,
+          "host_readiness_only": true,
+          "parent_reused": false,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "child": {
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "host_errors": [],
+          "host_readiness_only": true,
+          "native_child_exit": 1,
+          "schema": "trnm-ci-original-public-host-child-v1"
+        }
+      },
+      "native_scope_acceptance": false,
+      "public_network_ready": false,
+      "independent_accepted": false,
+      "production_activation": false
+    },
+    {
+      "lane": "ARM prospective-merge",
+      "target": {
+        "id": 13301027311,
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size": 61225934,
+        "digest": "sha256:5516bc2f70bfc3ca4a2526812dbab4a9bb74f8d9760f7d622b7dab229699f065",
+        "run": 41778472816,
+        "job": 126407622328,
+        "head": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "prospective-merge",
+        "tested": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "family": "history"
+      },
+      "reader_status": "completed",
+      "selected_records": 12,
+      "selected_text_bytes": 27342,
+      "member_index_sha256": "c537189d2ffcb0ce176c364622ca80195f9ed42c55ade16c59c93e82bf0f2810",
+      "identity_and_availability": {
+        "native_source_mismatches": [],
+        "native_source_unknown": [],
+        "required_members_unread_or_absent": [],
+        "required_source_members_unverified": []
+      },
+      "source_identity": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "kind": "prospective-merge",
+        "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+        "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 932581466,
+        "tracked_entries": 8095,
+        "tracked_worktree_verified": true
+      },
+      "source_guard_verified": true,
+      "native_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "preparation_source_binding": {
+        "after": "verified",
+        "before": "verified",
+        "before_after_equal": true,
+        "scope": "Exact original commit/tree and tracked source receipt; missing observations remain unknown.",
+        "status": "verified"
+      },
+      "manifest_member": {
+        "member": "history-native/manifest.json",
+        "bytes": 5058,
+        "sha256": "06d72e20d0fc6b664cb961f5d5817b40da035929a71c0b35e6c8640463ed1480",
+        "diagnostic_log_line": 1014
+      },
+      "preparation_member": {
+        "member": "history-native/preparation.json",
+        "bytes": 3646,
+        "sha256": "630f90fbd3c4d51f1670daa1c3f05cc07caf08fcfd6aaf9cfb9f2f50c4f665f4",
+        "diagnostic_log_line": 1054
+      },
+      "source_member": {
+        "member": "source.json",
+        "bytes": 510,
+        "sha256": "cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402",
+        "diagnostic_log_line": 1015
+      },
+      "original_manifest": {
+        "schema": "trnm-ci-history-native-execution-v1",
+        "target": "ancestry_long_sync",
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "job": {
+          "GITHUB_JOB": "native-priorities",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "41778472816"
+        },
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "/usr/bin/time",
+            "-v",
+            "-o",
+            "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+            "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da",
+            "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+            "--exact",
+            "--ignored",
+            "--show-output"
+          ],
+          "exit_code": 101,
+          "failure": null,
+          "pid": 4920,
+          "started": true
+        },
+        "failures": [
+          "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+          "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+          "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+        ],
+        "passed": false,
+        "completed": null,
+        "named_execution": null,
+        "native_execution_authenticated": false,
+        "native_tests_executed": null,
+        "compilation_in_native_measurement": false,
+        "whole_test_command_preserved": true,
+        "summary": {
+          "error": "PUBLIC_REQUEST_DEADLINE",
+          "hardness_accepted": false,
+          "independent_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "public_network_ready": false,
+          "schema": "native-ancestry-long-sync-observation-v1"
+        },
+        "binary_sha256_before": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+        "binary_sha256_after": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+        "binary_bytes_before": 8629568,
+        "binary_bytes_after": 8629568,
+        "log_sha256": "4d3079d5338126db256b7b0a2dbffda5e371007f1f5226c4e365072ce2f148d1",
+        "log_bytes": 3128,
+        "summary_file_sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+        "summary_file_bytes": 245,
+        "preparation_sha256": "630f90fbd3c4d51f1670daa1c3f05cc07caf08fcfd6aaf9cfb9f2f50c4f665f4"
+      },
+      "original_preparation": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "native_tests_executed": false,
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2570,
+          "started": true
+        },
+        "failures": [],
+        "service_resource_observation": false
+      },
+      "observed_native_harness": {
+        "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "running_tests": 1,
+        "result": "FAILED",
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0,
+        "elapsed_seconds_literal": "3229.50",
+        "original_terminal_line": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3229.50s",
+        "member_line": 40,
+        "diagnostic_log_line": 978,
+        "scope": "One original selector invocation in this lane. This observation does not fill the original manifest's null named_execution or native_tests_executed fields."
+      },
+      "original_failure": {
+        "summary_error": "PUBLIC_REQUEST_DEADLINE",
+        "sync_exit_error": "PUBLIC_REQUEST_DEADLINE",
+        "panic_lines": [
+          {
+            "member_line": 32,
+            "diagnostic_log_line": 975,
+            "original_text": "thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4922) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+          },
+          {
+            "member_line": 33,
+            "diagnostic_log_line": 976,
+            "original_text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicRequestDeadline), kind: Cancelled, message: \"PUBLIC_REQUEST_DEADLINE\", source: None, request_history_budget: false }"
+          }
+        ],
+        "precise_deadline_origin": null,
+        "precise_deadline_checkpoint": null,
+        "failing_page_number": null
+      },
+      "history_progress": {
+        "planned_blocks_from_frozen_test": 4105,
+        "last_reported_generation": {
+          "kind": "actual-pnw1-progress",
+          "height": 4000,
+          "elapsed_ns": 1410211222543,
+          "member_line": 19,
+          "diagnostic_log_line": 995
+        },
+        "last_reported_fullsync": {
+          "kind": "independent-native-fullsync-progress",
+          "height": 4000,
+          "elapsed_ns": 3151523593949,
+          "member_line": 27,
+          "diagnostic_log_line": 1003
+        },
+        "exact_final_imported_height": null,
+        "exact_final_committed_height": null,
+        "accepted_complete_history_test": false,
+        "progress": [
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 500,
+            "elapsed_ns": 58106296669,
+            "member_line": 12,
+            "diagnostic_log_line": 988
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1000,
+            "elapsed_ns": 152212773166,
+            "member_line": 13,
+            "diagnostic_log_line": 989
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 1500,
+            "elapsed_ns": 281402890445,
+            "member_line": 14,
+            "diagnostic_log_line": 990
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2000,
+            "elapsed_ns": 441223825364,
+            "member_line": 15,
+            "diagnostic_log_line": 991
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 2500,
+            "elapsed_ns": 635419193691,
+            "member_line": 16,
+            "diagnostic_log_line": 992
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3000,
+            "elapsed_ns": 862900872427,
+            "member_line": 17,
+            "diagnostic_log_line": 993
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 3500,
+            "elapsed_ns": 1119712108365,
+            "member_line": 18,
+            "diagnostic_log_line": 994
+          },
+          {
+            "kind": "actual-pnw1-progress",
+            "height": 4000,
+            "elapsed_ns": 1410211222543,
+            "member_line": 19,
+            "diagnostic_log_line": 995
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 500,
+            "elapsed_ns": 1678222045806,
+            "member_line": 20,
+            "diagnostic_log_line": 996
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1000,
+            "elapsed_ns": 1885203877818,
+            "member_line": 21,
+            "diagnostic_log_line": 997
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 1500,
+            "elapsed_ns": 2093619172360,
+            "member_line": 22,
+            "diagnostic_log_line": 998
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2000,
+            "elapsed_ns": 2303815545747,
+            "member_line": 23,
+            "diagnostic_log_line": 999
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 2500,
+            "elapsed_ns": 2515704330888,
+            "member_line": 24,
+            "diagnostic_log_line": 1000
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 3000,
+            "elapsed_ns": 2727420109719,
+            "member_line": 25,
+            "diagnostic_log_line": 1001
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 3500,
+            "elapsed_ns": 2939708922509,
+            "member_line": 26,
+            "diagnostic_log_line": 1002
+          },
+          {
+            "kind": "independent-native-fullsync-progress",
+            "height": 4000,
+            "elapsed_ns": 3151523593949,
+            "member_line": 27,
+            "diagnostic_log_line": 1003
+          }
+        ],
+        "scope": "The last recorded progress is a 500-block output milestone, not the final imported or committed height. The failing original summary has no exact final count. Progress elapsed_ns starts at run() before chain construction."
+      },
+      "original_sync_exit": {
+        "elapsed_ns": 3229502662071,
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+        "scope": "observed signed full-history replay, not a qualification verdict",
+        "sync_error": "PUBLIC_REQUEST_DEADLINE",
+        "member_line": 28,
+        "diagnostic_log_line": 1004
+      },
+      "original_server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1752985776786,
+          "lifetime_reached_before_shutdown": false,
+          "reason": "stop_requested",
+          "stop_requested_before_shutdown": true
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1752986352332,
+        "stop_requested_when_exited": true,
+        "member_line": 29,
+        "diagnostic_log_line": 1005
+      },
+      "native_log_coverage": {
+        "first_member_line": 1,
+        "last_member_line": 41,
+        "emitted_lines": 41,
+        "all_line_numbers_contiguous": true,
+        "console_truncation": false
+      },
+      "original_resource_literals": {
+        "user_seconds": "365.93",
+        "system_seconds": "441.27",
+        "cpu_percent": "24%",
+        "elapsed_wall_hms": "53:49.54",
+        "max_rss_kbytes": "14800",
+        "exit_status": "101",
+        "scope": "Literal original /usr/bin/time output for the whole native command; not a per-import or server-exclusive timing."
+      },
+      "host": {
+        "controller_member": {
+          "member": "history-native-host/controller-result.json",
+          "bytes": 7903,
+          "sha256": "0d057a5a99da857a76118eedd37a7dc7c6de77589cb5efafe16bd0a53e692b40",
+          "diagnostic_log_line": 1017
+        },
+        "child_member": {
+          "member": "history-native-host/child-result.json",
+          "bytes": 335,
+          "sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "diagnostic_log_line": 1016
+        },
+        "controller": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "failure": null,
+          "final_host_errors": [],
+          "final_parent_lease_error": null,
+          "host_readiness_only": true,
+          "parent_reused": false,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "child": {
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_history_native.py",
+            "--out",
+            "/home/runner/work/_temp/priority-observations/history-native"
+          ],
+          "consensus_or_model_authority": false,
+          "host_errors": [],
+          "host_readiness_only": true,
+          "native_child_exit": 1,
+          "schema": "trnm-ci-original-public-host-child-v1"
+        }
+      },
+      "native_scope_acceptance": false,
+      "public_network_ready": false,
+      "independent_accepted": false,
+      "production_activation": false
+    }
+  ],
+  "literal_reader_console_json_lines": [
+    {
+      "diagnostic_log_line": 221,
+      "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    },
+    {
+      "diagnostic_log_line": 763,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native/manifest.json\",\"member_bytes\":4894,\"member_sha256\":\"c9bd4c033b819ba86e465b5928880d62374129f508442cd49234795dc22f0fad\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793770357134524034,\"device\":2049,\"inode\":9192494,\"mtime_ns\":1793770357132524032,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"binary_before\":{\"ctime_ns\":1793770357134524034,\"device\":2049,\"inode\":9192494,\"mtime_ns\":1793770357132524032,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":{\"ctime_ns\":1793773615730515509,\"device\":2049,\"inode\":9192487,\"mtime_ns\":1793773615730515509,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"97d274240955ef0045483c7a3111800121e6dce8425a9b64a575b5a37ed72dd1\",\"size_bytes\":2867},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"130888dd3520cc709b74d89f4c5783606aa6709054064ddb21b86b5773dab166\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":5235,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793773615731515507,\"device\":2049,\"inode\":9192488,\"mtime_ns\":1793773615731515507,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"fd456bdb20af14b7e269913675a0d7b5a22f1b0024b41c1b7219f0032a50431f\",\"size_bytes\":972},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793773615730515509,\"device\":2049,\"inode\":9437245,\"mtime_ns\":1793773615730515509,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 764,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 765,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 766,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7725,\"member_sha256\":\"db95cecbdaecb40351b84a0a0b139f22c925c15c3c279b8fcef01baf59db41d7\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 767,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"b42f7108be78f67044463a02a8fa741a6bc0dbdf48379870321bb1c45fadde6a\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 768,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1688,\"member_sha256\":\"fe82d9f5f2d59977f71eb8920645d5285b6f6360f9c519473cd93292b2d67a3c\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 769,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"c97a5cb06cd028849d1e772ebb6aac3c77b763297c73d97d686cacc73a4c8a6e\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 778,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 803,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301001762,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622538,\"measured_run\":41778472816,\"member\":\"history-native/preparation.json\",\"member_bytes\":3468,\"member_sha256\":\"130888dd3520cc709b74d89f4c5783606aa6709054064ddb21b86b5773dab166\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793770357134524034,\"device\":2049,\"inode\":9192494,\"mtime_ns\":1793770357132524032,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2813,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 805,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 50815213, \"downloaded_zip_sha256\": \"0e76ff23b238cb937775ca725a15d2499e4f28ac1e9c9262b1570e198c1ceba2\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": []}, \"member_index_sha256\": \"30c9b0a5ed424bc2b2c22c122fc382ed4a18f1188c30f2ed345c858d47050f21\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 12, \"schema\": \"trnm-history-w1-failure-artifact-readback-v1\", \"selected_text_bytes\": 26475, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:0e76ff23b238cb937775ca725a15d2499e4f28ac1e9c9262b1570e198c1ceba2\", \"family\": \"history\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13301001762, \"job\": 126407622538, \"kind\": \"head\", \"name\": \"priority-ubuntu-24.04-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 50815213, \"tested\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 844,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native/manifest.json\",\"member_bytes\":5072,\"member_sha256\":\"dab3ff236c4d6406de76f66f7ea97d83fcb08f2a485567879b5e4b289b16480e\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793770349850614011,\"device\":2049,\"inode\":9444283,\"mtime_ns\":1793770349848613989,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"binary_before\":{\"ctime_ns\":1793770349850614011,\"device\":2049,\"inode\":9444283,\"mtime_ns\":1793770349848613989,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":{\"ctime_ns\":1793773632938711874,\"device\":2049,\"inode\":9444288,\"mtime_ns\":1793773632938711874,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"11cdefe22743b8234b64195799abc91cc7be1d9ddd6ec4e303160e6d6e536dba\",\"size_bytes\":2867},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"8b879ecde4de43db93f6ecdc24bcf0dddce31a5e8c40028a4b83a6894346619e\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":5090,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793773632939711883,\"device\":2049,\"inode\":9444289,\"mtime_ns\":1793773632939711883,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"e9f00e27481da8a3c7e97b12230019fb6a06197cb85c379024fa87aea2bf406f\",\"size_bytes\":972},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793773632938711874,\"device\":2049,\"inode\":9444298,\"mtime_ns\":1793773632938711874,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17\",\"size_bytes\":259},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 845,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 846,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 847,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7903,\"member_sha256\":\"43498a7c67018eb7f2d092728d0530a3f0900e4b7f1e9c94a56ffbe738258c74\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 848,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"92b41c4a35ed4d18d653814988a0385967c4ce9f86dd8bb49fcf5c9b84b4be32\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 849,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1688,\"member_sha256\":\"ca86712dc7e8d838cdef6275886e3d60bc610e1e4caec47e9270f97d9efc97cb\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 850,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"cb70b861ddfe1d8725a1d1052ba7a6d17f31aa14a89186cd08be5e0ba893465a\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 859,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 884,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13300674098,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622526,\"measured_run\":41778472816,\"member\":\"history-native/preparation.json\",\"member_bytes\":3646,\"member_sha256\":\"8b879ecde4de43db93f6ecdc24bcf0dddce31a5e8c40028a4b83a6894346619e\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793770349850614011,\"device\":2049,\"inode\":9444283,\"mtime_ns\":1793770349848613989,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\",\"sha256\":\"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\",\"size_bytes\":9650880},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2654,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 886,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 50781415, \"downloaded_zip_sha256\": \"a9260767a0dea64b75c0c13f975f0ee6c06cd4872b5331104eb2d97a3d4b9db1\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": []}, \"member_index_sha256\": \"25a00c6cf9460b4521d453f69d3a17c5866a13c3b7d52b17eba9da956e7684c6\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 12, \"schema\": \"trnm-history-w1-failure-artifact-readback-v1\", \"selected_text_bytes\": 27098, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:a9260767a0dea64b75c0c13f975f0ee6c06cd4872b5331104eb2d97a3d4b9db1\", \"family\": \"history\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13300674098, \"job\": 126407622526, \"kind\": \"prospective-merge\", \"name\": \"priority-ubuntu-24.04-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 50781415, \"tested\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 929,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native/manifest.json\",\"member_bytes\":4880,\"member_sha256\":\"8c55b97657c6b05d4a5e9645f3cf5dbe1e62159053b08a52473020fc341eb7b6\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793770350256096562,\"device\":2049,\"inode\":6058882,\"mtime_ns\":1793770350255150762,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"binary_before\":{\"ctime_ns\":1793770350256096562,\"device\":2049,\"inode\":6058882,\"mtime_ns\":1793770350255150762,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":{\"ctime_ns\":1793773524971163980,\"device\":2049,\"inode\":6058884,\"mtime_ns\":1793773524971163980,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"9f244199b0070855624afd991c5311023d32ed58814175523377f9d154b60b27\",\"size_bytes\":3128},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"d0a4f2e19838674d358f4bd85e231d80b5a1418b70f9ae2d4585377de4c8dc09\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4920,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793773524972164013,\"device\":2049,\"inode\":6058885,\"mtime_ns\":1793773524972164013,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"ce57dacedd90eacbbb067750f48dfabe7992369891b02a784d02c8cfcfcfe3d1\",\"size_bytes\":971},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"PUBLIC_REQUEST_DEADLINE\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793773524971163980,\"device\":2049,\"inode\":6291645,\"mtime_ns\":1793773524971163980,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\",\"size_bytes\":245},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 930,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":421,\"member_sha256\":\"5179f5b82eedd8571dfd0b28ca5310674f9d86e52f7a22acc313a919ade8aa25\",\"native_source_binding\":null,\"original_fields\":{\"base\":null,\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"head\",\"prospective_merge\":null,\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 931,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 932,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7725,\"member_sha256\":\"e30fc990834384b28295faaab72169f24739619da3f59b3ebd13d0b5517df90e\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 933,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"31f7f33376548e3c990d8dfeacc6c76e30997acdb04e7ad5361449d78c75ea2e\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 934,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1687,\"member_sha256\":\"5253ae20c8e509452f6c23dfbb78842fabafbaae7c3e9c9466d589a1a9d53fd7\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 935,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"9bed03ea5a7ddae81a07ee93330e3ff0a4bb6bce1f4b6ea7660717e533890d89\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 944,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 969,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301057078,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622438,\"measured_run\":41778472816,\"member\":\"history-native/preparation.json\",\"member_bytes\":3468,\"member_sha256\":\"d0a4f2e19838674d358f4bd85e231d80b5a1418b70f9ae2d4585377de4c8dc09\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793770350256096562,\"device\":2049,\"inode\":6058882,\"mtime_ns\":1793770350255150762,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2572,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 971,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 61209394, \"downloaded_zip_sha256\": \"ff19ed08e168311405d18c60da95099338e399d747c74bc3c53ffe294e02df0e\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": []}, \"member_index_sha256\": \"cb9dc30ce11c88f7919bec21d10826cdb44fcd95f9f7baf4e482824f4fb598c0\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 12, \"schema\": \"trnm-history-w1-failure-artifact-readback-v1\", \"selected_text_bytes\": 26769, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:ff19ed08e168311405d18c60da95099338e399d747c74bc3c53ffe294e02df0e\", \"family\": \"history\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13301057078, \"job\": 126407622438, \"kind\": \"head\", \"name\": \"priority-ubuntu-24.04-arm-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 61209394, \"tested\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 1014,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native/manifest.json\",\"member_bytes\":5058,\"member_sha256\":\"06d72e20d0fc6b664cb961f5d5817b40da035929a71c0b35e6c8640463ed1480\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":null,\"binary_after\":{\"ctime_ns\":1793770346062428579,\"device\":2049,\"inode\":6058880,\"mtime_ns\":1793770346061216572,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"binary_before\":{\"ctime_ns\":1793770346062428579,\"device\":2049,\"inode\":6058880,\"mtime_ns\":1793770346061216572,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"compilation_in_native_measurement\":false,\"completed\":null,\"failures\":[\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\",\"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\",\"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"],\"hardness_accepted\":false,\"independent_accepted\":false,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":{\"ctime_ns\":1793773589099834224,\"device\":2049,\"inode\":6058882,\"mtime_ns\":1793773589099834224,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history.log\",\"sha256\":\"4d3079d5338126db256b7b0a2dbffda5e371007f1f5226c4e365072ce2f148d1\",\"size_bytes\":3128},\"named_execution\":null,\"native_execution_authenticated\":false,\"native_tests_executed\":null,\"passed\":false,\"preparation_sha256\":\"630f90fbd3c4d51f1670daa1c3f05cc07caf08fcfd6aaf9cfb9f2f50c4f665f4\",\"process\":{\"cleanup_errors\":[],\"command\":[\"/usr/bin/time\",\"-v\",\"-o\",\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"--exact\",\"--ignored\",\"--show-output\"],\"exit_code\":101,\"failure\":null,\"pid\":4920,\"started\":true},\"production_activation\":false,\"public_network_ready\":false,\"resources\":{\"ctime_ns\":1793773589100834257,\"device\":2049,\"inode\":6058883,\"mtime_ns\":1793773589100834257,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/history-resources.txt\",\"sha256\":\"383dc0740e5546cbd404ecff2357103895732908f16fd142c7f414ef040fcee4\",\"size_bytes\":971},\"schema\":\"trnm-ci-history-native-execution-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":null,\"summary\":{\"error\":\"PUBLIC_REQUEST_DEADLINE\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"},\"summary_file\":{\"ctime_ns\":1793773589099834224,\"device\":2049,\"inode\":6291651,\"mtime_ns\":1793773589099834224,\"path\":\"/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json\",\"sha256\":\"9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb\",\"size_bytes\":245},\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1015,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"source.json\",\"member_bytes\":510,\"member_sha256\":\"cd630f87a4cb1a1d6256f29a518ceab41c18f62ef8ba9c4b321f813d9e40a402\",\"native_source_binding\":null,\"original_fields\":{\"base\":\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\"candidate\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"kind\":\"prospective-merge\",\"prospective_merge\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"schema\":\"trnm-ci-source-v1\",\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\",\"tests_executed_by_identity_check\":false,\"tracked_bytes\":932581466,\"tracked_entries\":8095,\"tracked_worktree_verified\":true},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":true,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1016,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native-host/child-result.json\",\"member_bytes\":335,\"member_sha256\":\"bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a\",\"native_source_binding\":null,\"original_fields\":{\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"host_errors\":[],\"host_readiness_only\":true,\"native_child_exit\":1,\"schema\":\"trnm-ci-original-public-host-child-v1\"},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1017,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native-host/controller-result.json\",\"member_bytes\":7903,\"member_sha256\":\"0d057a5a99da857a76118eedd37a7dc7c6de77589cb5efafe16bd0a53e692b40\",\"native_source_binding\":null,\"original_fields\":{\"cleanup\":\"already-collected\",\"command_argv\":[\"python3\",\"scripts/ci/run_history_native.py\",\"--out\",\"/home/runner/work/_temp/priority-observations/history-native\"],\"consensus_or_model_authority\":false,\"failure\":null,\"final_host_errors\":[],\"final_parent_lease_error\":null,\"host_readiness_only\":true,\"parent_reused\":false,\"passed\":false,\"preparation_execution_binding\":null,\"schema\":\"trnm-ci-original-public-host-controller-v2\",\"systemd_run_exit\":1},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1018,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-after.json\",\"member_bytes\":1711,\"member_sha256\":\"30eed8b75f465275de5dfd43b535abd614c8b7be5e3836fa223cb1fbef64bbb1\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-after-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1019,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native-host/inside-before.json\",\"member_bytes\":1686,\"member_sha256\":\"c32815513c8c2fb6b6162f9b1e2ed76d4b1125d37a2bd6e1d3f46b6e2fd57577\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"inside-before-native\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1020,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native-host/outside-after.json\",\"member_bytes\":1673,\"member_sha256\":\"b806a2bd031904b611486b923980427d0c2f944700eac14a13e2c4c907f4d516\",\"native_source_binding\":null,\"original_fields\":{\"completed\":null,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":\"outside-after-child\",\"schema\":\"trnm-ci-original-public-host-observation-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1029,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native/execution-start.json\",\"member_bytes\":76,\"member_sha256\":\"b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d\",\"native_source_binding\":null,\"original_fields\":{\"completed\":false,\"duration_ns\":null,\"elapsed_ns\":null,\"errors\":null,\"failure\":null,\"host_errors\":null,\"label\":null,\"passed\":null,\"phase\":null,\"schema\":\"trnm-ci-history-native-execution-v1\",\"status\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1054,
+      "raw_json": "{\"acceptance_granted\":false,\"artifact\":13301027311,\"measured_head\":\"44d3def32f515b98fc41f074fe1b88e97f046191\",\"measured_job\":126407622328,\"measured_run\":41778472816,\"member\":\"history-native/preparation.json\",\"member_bytes\":3646,\"member_sha256\":\"630f90fbd3c4d51f1670daa1c3f05cc07caf08fcfd6aaf9cfb9f2f50c4f665f4\",\"native_source_binding\":{\"after\":\"verified\",\"before\":\"verified\",\"before_after_equal\":true,\"scope\":\"Exact original commit/tree and tracked source receipt; missing observations remain unknown.\",\"status\":\"verified\"},\"original_fields\":{\"binary\":{\"ctime_ns\":1793770346062428579,\"device\":2049,\"inode\":6058880,\"mtime_ns\":1793770346061216572,\"path\":\"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\",\"sha256\":\"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\",\"size_bytes\":8629568},\"binary_after\":null,\"binary_before\":null,\"compilation_in_native_measurement\":null,\"completed\":true,\"failures\":[],\"hardness_accepted\":null,\"independent_accepted\":null,\"job\":{\"GITHUB_JOB\":\"native-priorities\",\"GITHUB_RUN_ATTEMPT\":\"1\",\"GITHUB_RUN_ID\":\"41778472816\"},\"log\":null,\"named_execution\":null,\"native_execution_authenticated\":null,\"native_tests_executed\":false,\"passed\":null,\"preparation_sha256\":null,\"process\":{\"cleanup_errors\":[],\"command\":[\"cargo\",\"+1.95.0\",\"test\",\"--release\",\"--locked\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-pon-node\",\"--test\",\"ancestry_long_sync\",\"--no-run\",\"--message-format=json\"],\"exit_code\":0,\"failure\":null,\"pid\":2570,\"started\":true},\"production_activation\":null,\"public_network_ready\":null,\"resources\":null,\"schema\":\"trnm-ci-history-build-preparation-v1\",\"selector\":\"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\",\"service_resource_observation\":false,\"summary\":null,\"summary_file\":null,\"target\":\"ancestry_long_sync\",\"whole_test_command_preserved\":null},\"production_activation\":false,\"schema\":\"trnm-retained-history-w1-literal-readback-v1\",\"scope\":\"Literal original failure fields only; no inferred native cause or accepted performance. Complete selected JSON and original ZIP retained.\",\"source_guard_verified\":null,\"source_tests_executed\":false,\"tested_commit\":\"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\"tested_tree\":\"f3e07fc21a74e9a4367610ba10f5883213609320\"}"
+    },
+    {
+      "diagnostic_log_line": 1056,
+      "raw_json": "{\"absent_fixed_small_members\": [], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 61225934, \"downloaded_zip_sha256\": \"5516bc2f70bfc3ca4a2526812dbab4a9bb74f8d9760f7d622b7dab229699f065\", \"identity_and_availability\": {\"native_source_mismatches\": [], \"native_source_unknown\": [], \"required_members_unread_or_absent\": [], \"required_source_members_unverified\": []}, \"member_index_sha256\": \"c537189d2ffcb0ce176c364622ca80195f9ed42c55ade16c59c93e82bf0f2810\", \"omitted_members\": 0, \"production_activation\": false, \"reader_status\": \"completed\", \"records\": 12, \"schema\": \"trnm-history-w1-failure-artifact-readback-v1\", \"selected_text_bytes\": 27342, \"source_tests_executed\": false, \"target\": {\"digest\": \"sha256:5516bc2f70bfc3ca4a2526812dbab4a9bb74f8d9760f7d622b7dab229699f065\", \"family\": \"history\", \"head\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"id\": 13301027311, \"job\": 126407622328, \"kind\": \"prospective-merge\", \"name\": \"priority-ubuntu-24.04-arm-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1\", \"run\": 41778472816, \"size\": 61225934, \"tested\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}}"
+    },
+    {
+      "diagnostic_log_line": 1079,
+      "raw_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    }
+  ],
+  "literal_original_native_log_excerpts": [
+    {
+      "log_line": 726,
+      "text": "artifact=13301001762 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED"
+    },
+    {
+      "log_line": 727,
+      "text": "artifact=13301001762 member=history-native/history.log line=9 failures:"
+    },
+    {
+      "log_line": 728,
+      "text": "artifact=13301001762 member=history-native/history.log line=28 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (5237) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+    },
+    {
+      "log_line": 729,
+      "text": "artifact=13301001762 member=history-native/history.log line=29 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }"
+    },
+    {
+      "log_line": 730,
+      "text": "artifact=13301001762 member=history-native/history.log line=33 failures:"
+    },
+    {
+      "log_line": 731,
+      "text": "artifact=13301001762 member=history-native/history.log line=36 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3243.28s"
+    },
+    {
+      "log_line": 732,
+      "text": "artifact=13301001762 member=history-native/history.log line=1 "
+    },
+    {
+      "log_line": 733,
+      "text": "artifact=13301001762 member=history-native/history.log line=2 running 1 test"
+    },
+    {
+      "log_line": 734,
+      "text": "artifact=13301001762 member=history-native/history.log line=4 "
+    },
+    {
+      "log_line": 735,
+      "text": "artifact=13301001762 member=history-native/history.log line=5 successes:"
+    },
+    {
+      "log_line": 736,
+      "text": "artifact=13301001762 member=history-native/history.log line=6 "
+    },
+    {
+      "log_line": 737,
+      "text": "artifact=13301001762 member=history-native/history.log line=7 successes:"
+    },
+    {
+      "log_line": 738,
+      "text": "artifact=13301001762 member=history-native/history.log line=8 "
+    },
+    {
+      "log_line": 739,
+      "text": "artifact=13301001762 member=history-native/history.log line=10 "
+    },
+    {
+      "log_line": 740,
+      "text": "artifact=13301001762 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----"
+    },
+    {
+      "log_line": 741,
+      "text": "artifact=13301001762 member=history-native/history.log line=12 {\"elapsed_ns\":61699487197,\"height\":500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 742,
+      "text": "artifact=13301001762 member=history-native/history.log line=13 {\"elapsed_ns\":157593069232,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 743,
+      "text": "artifact=13301001762 member=history-native/history.log line=14 {\"elapsed_ns\":285682921121,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 744,
+      "text": "artifact=13301001762 member=history-native/history.log line=15 {\"elapsed_ns\":444676855583,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 745,
+      "text": "artifact=13301001762 member=history-native/history.log line=16 {\"elapsed_ns\":632391943759,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 746,
+      "text": "artifact=13301001762 member=history-native/history.log line=17 {\"elapsed_ns\":852080607194,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 747,
+      "text": "artifact=13301001762 member=history-native/history.log line=18 {\"elapsed_ns\":1100795511518,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 748,
+      "text": "artifact=13301001762 member=history-native/history.log line=19 {\"elapsed_ns\":1379383722254,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 749,
+      "text": "artifact=13301001762 member=history-native/history.log line=20 {\"elapsed_ns\":1824086346984,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 750,
+      "text": "artifact=13301001762 member=history-native/history.log line=21 {\"elapsed_ns\":2214081589533,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 751,
+      "text": "artifact=13301001762 member=history-native/history.log line=22 {\"elapsed_ns\":2606491049644,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 752,
+      "text": "artifact=13301001762 member=history-native/history.log line=23 {\"elapsed_ns\":2996995288342,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 753,
+      "text": "artifact=13301001762 member=history-native/history.log line=24 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000413517,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001141943,\"stop_requested_when_exited\":true}"
+    },
+    {
+      "log_line": 754,
+      "text": "artifact=13301001762 member=history-native/history.log line=25 {\"elapsed_ns\":3243282337794,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}"
+    },
+    {
+      "log_line": 755,
+      "text": "artifact=13301001762 member=history-native/history.log line=26 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+    },
+    {
+      "log_line": 756,
+      "text": "artifact=13301001762 member=history-native/history.log line=27 "
+    },
+    {
+      "log_line": 757,
+      "text": "artifact=13301001762 member=history-native/history.log line=30 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+    },
+    {
+      "log_line": 758,
+      "text": "artifact=13301001762 member=history-native/history.log line=31 "
+    },
+    {
+      "log_line": 759,
+      "text": "artifact=13301001762 member=history-native/history.log line=32 "
+    },
+    {
+      "log_line": 760,
+      "text": "artifact=13301001762 member=history-native/history.log line=34     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal"
+    },
+    {
+      "log_line": 761,
+      "text": "artifact=13301001762 member=history-native/history.log line=35 "
+    },
+    {
+      "log_line": 762,
+      "text": "artifact=13301001762 member=history-native/history.log line=37 "
+    },
+    {
+      "log_line": 770,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-4926.service"
+    },
+    {
+      "log_line": 771,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=2 {\"failures\": [\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\", \"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\", \"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"], \"passed\": false, \"schema\": \"trnm-ci-history-native-execution-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"target\": \"ancestry_long_sync\"}"
+    },
+    {
+      "log_line": 772,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=3 Finished with result: exit-code"
+    },
+    {
+      "log_line": 773,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1"
+    },
+    {
+      "log_line": 774,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=5 Service runtime: 54min 12.680s"
+    },
+    {
+      "log_line": 775,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=6 CPU time consumed: 13min 33.136s"
+    },
+    {
+      "log_line": 776,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=7 Memory peak: 3.9M"
+    },
+    {
+      "log_line": 777,
+      "text": "artifact=13301001762 member=history-native-host/systemd-run.log line=8 Memory swap peak: 0B"
+    },
+    {
+      "log_line": 779,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=1 Command exited with non-zero status 101"
+    },
+    {
+      "log_line": 780,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=2 \tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393 actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\""
+    },
+    {
+      "log_line": 781,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=3 \tUser time (seconds): 345.61"
+    },
+    {
+      "log_line": 782,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=4 \tSystem time (seconds): 465.14"
+    },
+    {
+      "log_line": 783,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=5 \tPercent of CPU this job got: 24%"
+    },
+    {
+      "log_line": 784,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=6 \tElapsed (wall clock) time (h:mm:ss or m:ss): 54:03.28"
+    },
+    {
+      "log_line": 785,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=7 \tAverage shared text size (kbytes): 0"
+    },
+    {
+      "log_line": 786,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=8 \tAverage unshared data size (kbytes): 0"
+    },
+    {
+      "log_line": 787,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=9 \tAverage stack size (kbytes): 0"
+    },
+    {
+      "log_line": 788,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=10 \tAverage total size (kbytes): 0"
+    },
+    {
+      "log_line": 789,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=11 \tMaximum resident set size (kbytes): 15892"
+    },
+    {
+      "log_line": 790,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=12 \tAverage resident set size (kbytes): 0"
+    },
+    {
+      "log_line": 791,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=13 \tMajor (requiring I/O) page faults: 0"
+    },
+    {
+      "log_line": 792,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=14 \tMinor (reclaiming a frame) page faults: 196190"
+    },
+    {
+      "log_line": 793,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=15 \tVoluntary context switches: 4674536"
+    },
+    {
+      "log_line": 794,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=16 \tInvoluntary context switches: 101976"
+    },
+    {
+      "log_line": 795,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=17 \tSwaps: 0"
+    },
+    {
+      "log_line": 796,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=18 \tFile system inputs: 0"
+    },
+    {
+      "log_line": 797,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=19 \tFile system outputs: 3280168"
+    },
+    {
+      "log_line": 798,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=20 \tSocket messages sent: 0"
+    },
+    {
+      "log_line": 799,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=21 \tSocket messages received: 0"
+    },
+    {
+      "log_line": 800,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=22 \tSignals delivered: 0"
+    },
+    {
+      "log_line": 801,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=23 \tPage size (bytes): 4096"
+    },
+    {
+      "log_line": 802,
+      "text": "artifact=13301001762 member=history-native/history-resources.txt line=24 \tExit status: 101"
+    },
+    {
+      "log_line": 807,
+      "text": "artifact=13300674098 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED"
+    },
+    {
+      "log_line": 808,
+      "text": "artifact=13300674098 member=history-native/history.log line=9 failures:"
+    },
+    {
+      "log_line": 809,
+      "text": "artifact=13300674098 member=history-native/history.log line=28 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (5092) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+    },
+    {
+      "log_line": 810,
+      "text": "artifact=13300674098 member=history-native/history.log line=29 called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }"
+    },
+    {
+      "log_line": 811,
+      "text": "artifact=13300674098 member=history-native/history.log line=33 failures:"
+    },
+    {
+      "log_line": 812,
+      "text": "artifact=13300674098 member=history-native/history.log line=36 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3267.49s"
+    },
+    {
+      "log_line": 813,
+      "text": "artifact=13300674098 member=history-native/history.log line=1 "
+    },
+    {
+      "log_line": 814,
+      "text": "artifact=13300674098 member=history-native/history.log line=2 running 1 test"
+    },
+    {
+      "log_line": 815,
+      "text": "artifact=13300674098 member=history-native/history.log line=4 "
+    },
+    {
+      "log_line": 816,
+      "text": "artifact=13300674098 member=history-native/history.log line=5 successes:"
+    },
+    {
+      "log_line": 817,
+      "text": "artifact=13300674098 member=history-native/history.log line=6 "
+    },
+    {
+      "log_line": 818,
+      "text": "artifact=13300674098 member=history-native/history.log line=7 successes:"
+    },
+    {
+      "log_line": 819,
+      "text": "artifact=13300674098 member=history-native/history.log line=8 "
+    },
+    {
+      "log_line": 820,
+      "text": "artifact=13300674098 member=history-native/history.log line=10 "
+    },
+    {
+      "log_line": 821,
+      "text": "artifact=13300674098 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----"
+    },
+    {
+      "log_line": 822,
+      "text": "artifact=13300674098 member=history-native/history.log line=12 {\"elapsed_ns\":62971041019,\"height\":500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 823,
+      "text": "artifact=13300674098 member=history-native/history.log line=13 {\"elapsed_ns\":160088195006,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 824,
+      "text": "artifact=13300674098 member=history-native/history.log line=14 {\"elapsed_ns\":289277939864,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 825,
+      "text": "artifact=13300674098 member=history-native/history.log line=15 {\"elapsed_ns\":448487827078,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 826,
+      "text": "artifact=13300674098 member=history-native/history.log line=16 {\"elapsed_ns\":639467866968,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 827,
+      "text": "artifact=13300674098 member=history-native/history.log line=17 {\"elapsed_ns\":862078622222,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 828,
+      "text": "artifact=13300674098 member=history-native/history.log line=18 {\"elapsed_ns\":1117478231816,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 829,
+      "text": "artifact=13300674098 member=history-native/history.log line=19 {\"elapsed_ns\":1402070427360,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 830,
+      "text": "artifact=13300674098 member=history-native/history.log line=20 {\"elapsed_ns\":1848975800431,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 831,
+      "text": "artifact=13300674098 member=history-native/history.log line=21 {\"elapsed_ns\":2237280825177,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 832,
+      "text": "artifact=13300674098 member=history-native/history.log line=22 {\"elapsed_ns\":2627883223387,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 833,
+      "text": "artifact=13300674098 member=history-native/history.log line=23 {\"elapsed_ns\":3018189131421,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 834,
+      "text": "artifact=13300674098 member=history-native/history.log line=24 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000972606,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001526073,\"stop_requested_when_exited\":true}"
+    },
+    {
+      "log_line": 835,
+      "text": "artifact=13300674098 member=history-native/history.log line=25 {\"elapsed_ns\":3267488435757,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}"
+    },
+    {
+      "log_line": 836,
+      "text": "artifact=13300674098 member=history-native/history.log line=26 {\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+    },
+    {
+      "log_line": 837,
+      "text": "artifact=13300674098 member=history-native/history.log line=27 "
+    },
+    {
+      "log_line": 838,
+      "text": "artifact=13300674098 member=history-native/history.log line=30 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+    },
+    {
+      "log_line": 839,
+      "text": "artifact=13300674098 member=history-native/history.log line=31 "
+    },
+    {
+      "log_line": 840,
+      "text": "artifact=13300674098 member=history-native/history.log line=32 "
+    },
+    {
+      "log_line": 841,
+      "text": "artifact=13300674098 member=history-native/history.log line=34     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal"
+    },
+    {
+      "log_line": 842,
+      "text": "artifact=13300674098 member=history-native/history.log line=35 "
+    },
+    {
+      "log_line": 843,
+      "text": "artifact=13300674098 member=history-native/history.log line=37 "
+    },
+    {
+      "log_line": 851,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-4775.service"
+    },
+    {
+      "log_line": 852,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=2 {\"failures\": [\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\", \"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\", \"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"], \"passed\": false, \"schema\": \"trnm-ci-history-native-execution-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"target\": \"ancestry_long_sync\"}"
+    },
+    {
+      "log_line": 853,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=3 Finished with result: exit-code"
+    },
+    {
+      "log_line": 854,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1"
+    },
+    {
+      "log_line": 855,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=5 Service runtime: 54min 37.118s"
+    },
+    {
+      "log_line": 856,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=6 CPU time consumed: 13min 39.222s"
+    },
+    {
+      "log_line": 857,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=7 Memory peak: 3.9M"
+    },
+    {
+      "log_line": 858,
+      "text": "artifact=13300674098 member=history-native-host/systemd-run.log line=8 Memory swap peak: 0B"
+    },
+    {
+      "log_line": 860,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=1 Command exited with non-zero status 101"
+    },
+    {
+      "log_line": 861,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=2 \tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393 actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\""
+    },
+    {
+      "log_line": 862,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=3 \tUser time (seconds): 349.96"
+    },
+    {
+      "log_line": 863,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=4 \tSystem time (seconds): 466.85"
+    },
+    {
+      "log_line": 864,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=5 \tPercent of CPU this job got: 24%"
+    },
+    {
+      "log_line": 865,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=6 \tElapsed (wall clock) time (h:mm:ss or m:ss): 54:27.49"
+    },
+    {
+      "log_line": 866,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=7 \tAverage shared text size (kbytes): 0"
+    },
+    {
+      "log_line": 867,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=8 \tAverage unshared data size (kbytes): 0"
+    },
+    {
+      "log_line": 868,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=9 \tAverage stack size (kbytes): 0"
+    },
+    {
+      "log_line": 869,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=10 \tAverage total size (kbytes): 0"
+    },
+    {
+      "log_line": 870,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=11 \tMaximum resident set size (kbytes): 16460"
+    },
+    {
+      "log_line": 871,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=12 \tAverage resident set size (kbytes): 0"
+    },
+    {
+      "log_line": 872,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=13 \tMajor (requiring I/O) page faults: 0"
+    },
+    {
+      "log_line": 873,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=14 \tMinor (reclaiming a frame) page faults: 415276"
+    },
+    {
+      "log_line": 874,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=15 \tVoluntary context switches: 4804836"
+    },
+    {
+      "log_line": 875,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=16 \tInvoluntary context switches: 100889"
+    },
+    {
+      "log_line": 876,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=17 \tSwaps: 0"
+    },
+    {
+      "log_line": 877,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=18 \tFile system inputs: 0"
+    },
+    {
+      "log_line": 878,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=19 \tFile system outputs: 3283000"
+    },
+    {
+      "log_line": 879,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=20 \tSocket messages sent: 0"
+    },
+    {
+      "log_line": 880,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=21 \tSocket messages received: 0"
+    },
+    {
+      "log_line": 881,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=22 \tSignals delivered: 0"
+    },
+    {
+      "log_line": 882,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=23 \tPage size (bytes): 4096"
+    },
+    {
+      "log_line": 883,
+      "text": "artifact=13300674098 member=history-native/history-resources.txt line=24 \tExit status: 101"
+    },
+    {
+      "log_line": 888,
+      "text": "artifact=13301057078 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED"
+    },
+    {
+      "log_line": 889,
+      "text": "artifact=13301057078 member=history-native/history.log line=9 failures:"
+    },
+    {
+      "log_line": 890,
+      "text": "artifact=13301057078 member=history-native/history.log line=32 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4922) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+    },
+    {
+      "log_line": 891,
+      "text": "artifact=13301057078 member=history-native/history.log line=33 called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicRequestDeadline), kind: Cancelled, message: \"PUBLIC_REQUEST_DEADLINE\", source: None, request_history_budget: false }"
+    },
+    {
+      "log_line": 892,
+      "text": "artifact=13301057078 member=history-native/history.log line=37 failures:"
+    },
+    {
+      "log_line": 893,
+      "text": "artifact=13301057078 member=history-native/history.log line=40 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3161.00s"
+    },
+    {
+      "log_line": 894,
+      "text": "artifact=13301057078 member=history-native/history.log line=1 "
+    },
+    {
+      "log_line": 895,
+      "text": "artifact=13301057078 member=history-native/history.log line=2 running 1 test"
+    },
+    {
+      "log_line": 896,
+      "text": "artifact=13301057078 member=history-native/history.log line=4 "
+    },
+    {
+      "log_line": 897,
+      "text": "artifact=13301057078 member=history-native/history.log line=5 successes:"
+    },
+    {
+      "log_line": 898,
+      "text": "artifact=13301057078 member=history-native/history.log line=6 "
+    },
+    {
+      "log_line": 899,
+      "text": "artifact=13301057078 member=history-native/history.log line=7 successes:"
+    },
+    {
+      "log_line": 900,
+      "text": "artifact=13301057078 member=history-native/history.log line=8 "
+    },
+    {
+      "log_line": 901,
+      "text": "artifact=13301057078 member=history-native/history.log line=10 "
+    },
+    {
+      "log_line": 902,
+      "text": "artifact=13301057078 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----"
+    },
+    {
+      "log_line": 903,
+      "text": "artifact=13301057078 member=history-native/history.log line=12 {\"elapsed_ns\":57879920132,\"height\":500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 904,
+      "text": "artifact=13301057078 member=history-native/history.log line=13 {\"elapsed_ns\":150391165893,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 905,
+      "text": "artifact=13301057078 member=history-native/history.log line=14 {\"elapsed_ns\":277291497371,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 906,
+      "text": "artifact=13301057078 member=history-native/history.log line=15 {\"elapsed_ns\":438383125122,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 907,
+      "text": "artifact=13301057078 member=history-native/history.log line=16 {\"elapsed_ns\":627384117602,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 908,
+      "text": "artifact=13301057078 member=history-native/history.log line=17 {\"elapsed_ns\":842484618777,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 909,
+      "text": "artifact=13301057078 member=history-native/history.log line=18 {\"elapsed_ns\":1093777009018,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 910,
+      "text": "artifact=13301057078 member=history-native/history.log line=19 {\"elapsed_ns\":1374386402361,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 911,
+      "text": "artifact=13301057078 member=history-native/history.log line=20 {\"elapsed_ns\":1634894807910,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 912,
+      "text": "artifact=13301057078 member=history-native/history.log line=21 {\"elapsed_ns\":1839096369463,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 913,
+      "text": "artifact=13301057078 member=history-native/history.log line=22 {\"elapsed_ns\":2043585466056,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 914,
+      "text": "artifact=13301057078 member=history-native/history.log line=23 {\"elapsed_ns\":2252177755547,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 915,
+      "text": "artifact=13301057078 member=history-native/history.log line=24 {\"elapsed_ns\":2459982769784,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 916,
+      "text": "artifact=13301057078 member=history-native/history.log line=25 {\"elapsed_ns\":2667392477450,\"height\":3000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 917,
+      "text": "artifact=13301057078 member=history-native/history.log line=26 {\"elapsed_ns\":2876180922237,\"height\":3500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 918,
+      "text": "artifact=13301057078 member=history-native/history.log line=27 {\"elapsed_ns\":3084288767499,\"height\":4000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 919,
+      "text": "artifact=13301057078 member=history-native/history.log line=28 {\"elapsed_ns\":3161000112275,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}"
+    },
+    {
+      "log_line": 920,
+      "text": "artifact=13301057078 member=history-native/history.log line=29 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1723402197490,\"lifetime_reached_before_shutdown\":false,\"reason\":\"stop_requested\",\"stop_requested_before_shutdown\":true},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1723402629880,\"stop_requested_when_exited\":true}"
+    },
+    {
+      "log_line": 921,
+      "text": "artifact=13301057078 member=history-native/history.log line=30 {\"error\":\"PUBLIC_REQUEST_DEADLINE\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+    },
+    {
+      "log_line": 922,
+      "text": "artifact=13301057078 member=history-native/history.log line=31 "
+    },
+    {
+      "log_line": 923,
+      "text": "artifact=13301057078 member=history-native/history.log line=34 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+    },
+    {
+      "log_line": 924,
+      "text": "artifact=13301057078 member=history-native/history.log line=35 "
+    },
+    {
+      "log_line": 925,
+      "text": "artifact=13301057078 member=history-native/history.log line=36 "
+    },
+    {
+      "log_line": 926,
+      "text": "artifact=13301057078 member=history-native/history.log line=38     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal"
+    },
+    {
+      "log_line": 927,
+      "text": "artifact=13301057078 member=history-native/history.log line=39 "
+    },
+    {
+      "log_line": 928,
+      "text": "artifact=13301057078 member=history-native/history.log line=41 "
+    },
+    {
+      "log_line": 936,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-4612.service; invocation ID: a99f7cca452644db90ce7786c1749f35"
+    },
+    {
+      "log_line": 937,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=2 {\"failures\": [\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\", \"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\", \"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"], \"passed\": false, \"schema\": \"trnm-ci-history-native-execution-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"target\": \"ancestry_long_sync\"}"
+    },
+    {
+      "log_line": 938,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=3 Finished with result: exit-code"
+    },
+    {
+      "log_line": 939,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1"
+    },
+    {
+      "log_line": 940,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=5 Service runtime: 52min 48.582s"
+    },
+    {
+      "log_line": 941,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=6 CPU time consumed: 13min 12.049s"
+    },
+    {
+      "log_line": 942,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=7 Memory peak: 2.7M"
+    },
+    {
+      "log_line": 943,
+      "text": "artifact=13301057078 member=history-native-host/systemd-run.log line=8 Memory swap peak: 0B"
+    },
+    {
+      "log_line": 945,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=1 Command exited with non-zero status 101"
+    },
+    {
+      "log_line": 946,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=2 \tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\""
+    },
+    {
+      "log_line": 947,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=3 \tUser time (seconds): 357.98"
+    },
+    {
+      "log_line": 948,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=4 \tSystem time (seconds): 432.17"
+    },
+    {
+      "log_line": 949,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=5 \tPercent of CPU this job got: 24%"
+    },
+    {
+      "log_line": 950,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=6 \tElapsed (wall clock) time (h:mm:ss or m:ss): 52:41.00"
+    },
+    {
+      "log_line": 951,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=7 \tAverage shared text size (kbytes): 0"
+    },
+    {
+      "log_line": 952,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=8 \tAverage unshared data size (kbytes): 0"
+    },
+    {
+      "log_line": 953,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=9 \tAverage stack size (kbytes): 0"
+    },
+    {
+      "log_line": 954,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=10 \tAverage total size (kbytes): 0"
+    },
+    {
+      "log_line": 955,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=11 \tMaximum resident set size (kbytes): 14512"
+    },
+    {
+      "log_line": 956,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=12 \tAverage resident set size (kbytes): 0"
+    },
+    {
+      "log_line": 957,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=13 \tMajor (requiring I/O) page faults: 0"
+    },
+    {
+      "log_line": 958,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=14 \tMinor (reclaiming a frame) page faults: 115022"
+    },
+    {
+      "log_line": 959,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=15 \tVoluntary context switches: 5656568"
+    },
+    {
+      "log_line": 960,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=16 \tInvoluntary context switches: 64800"
+    },
+    {
+      "log_line": 961,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=17 \tSwaps: 0"
+    },
+    {
+      "log_line": 962,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=18 \tFile system inputs: 0"
+    },
+    {
+      "log_line": 963,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=19 \tFile system outputs: 4263264"
+    },
+    {
+      "log_line": 964,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=20 \tSocket messages sent: 0"
+    },
+    {
+      "log_line": 965,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=21 \tSocket messages received: 0"
+    },
+    {
+      "log_line": 966,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=22 \tSignals delivered: 0"
+    },
+    {
+      "log_line": 967,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=23 \tPage size (bytes): 4096"
+    },
+    {
+      "log_line": 968,
+      "text": "artifact=13301057078 member=history-native/history-resources.txt line=24 \tExit status: 101"
+    },
+    {
+      "log_line": 973,
+      "text": "artifact=13301027311 member=history-native/history.log line=3 test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED"
+    },
+    {
+      "log_line": 974,
+      "text": "artifact=13301027311 member=history-native/history.log line=9 failures:"
+    },
+    {
+      "log_line": 975,
+      "text": "artifact=13301027311 member=history-native/history.log line=32 thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4922) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:399:12:"
+    },
+    {
+      "log_line": 976,
+      "text": "artifact=13301027311 member=history-native/history.log line=33 called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicRequestDeadline), kind: Cancelled, message: \"PUBLIC_REQUEST_DEADLINE\", source: None, request_history_budget: false }"
+    },
+    {
+      "log_line": 977,
+      "text": "artifact=13301027311 member=history-native/history.log line=37 failures:"
+    },
+    {
+      "log_line": 978,
+      "text": "artifact=13301027311 member=history-native/history.log line=40 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3229.50s"
+    },
+    {
+      "log_line": 979,
+      "text": "artifact=13301027311 member=history-native/history.log line=1 "
+    },
+    {
+      "log_line": 980,
+      "text": "artifact=13301027311 member=history-native/history.log line=2 running 1 test"
+    },
+    {
+      "log_line": 981,
+      "text": "artifact=13301027311 member=history-native/history.log line=4 "
+    },
+    {
+      "log_line": 982,
+      "text": "artifact=13301027311 member=history-native/history.log line=5 successes:"
+    },
+    {
+      "log_line": 983,
+      "text": "artifact=13301027311 member=history-native/history.log line=6 "
+    },
+    {
+      "log_line": 984,
+      "text": "artifact=13301027311 member=history-native/history.log line=7 successes:"
+    },
+    {
+      "log_line": 985,
+      "text": "artifact=13301027311 member=history-native/history.log line=8 "
+    },
+    {
+      "log_line": 986,
+      "text": "artifact=13301027311 member=history-native/history.log line=10 "
+    },
+    {
+      "log_line": 987,
+      "text": "artifact=13301027311 member=history-native/history.log line=11 ---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----"
+    },
+    {
+      "log_line": 988,
+      "text": "artifact=13301027311 member=history-native/history.log line=12 {\"elapsed_ns\":58106296669,\"height\":500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 989,
+      "text": "artifact=13301027311 member=history-native/history.log line=13 {\"elapsed_ns\":152212773166,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 990,
+      "text": "artifact=13301027311 member=history-native/history.log line=14 {\"elapsed_ns\":281402890445,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 991,
+      "text": "artifact=13301027311 member=history-native/history.log line=15 {\"elapsed_ns\":441223825364,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 992,
+      "text": "artifact=13301027311 member=history-native/history.log line=16 {\"elapsed_ns\":635419193691,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 993,
+      "text": "artifact=13301027311 member=history-native/history.log line=17 {\"elapsed_ns\":862900872427,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 994,
+      "text": "artifact=13301027311 member=history-native/history.log line=18 {\"elapsed_ns\":1119712108365,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 995,
+      "text": "artifact=13301027311 member=history-native/history.log line=19 {\"elapsed_ns\":1410211222543,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}"
+    },
+    {
+      "log_line": 996,
+      "text": "artifact=13301027311 member=history-native/history.log line=20 {\"elapsed_ns\":1678222045806,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 997,
+      "text": "artifact=13301027311 member=history-native/history.log line=21 {\"elapsed_ns\":1885203877818,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 998,
+      "text": "artifact=13301027311 member=history-native/history.log line=22 {\"elapsed_ns\":2093619172360,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 999,
+      "text": "artifact=13301027311 member=history-native/history.log line=23 {\"elapsed_ns\":2303815545747,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 1000,
+      "text": "artifact=13301027311 member=history-native/history.log line=24 {\"elapsed_ns\":2515704330888,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 1001,
+      "text": "artifact=13301027311 member=history-native/history.log line=25 {\"elapsed_ns\":2727420109719,\"height\":3000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 1002,
+      "text": "artifact=13301027311 member=history-native/history.log line=26 {\"elapsed_ns\":2939708922509,\"height\":3500,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 1003,
+      "text": "artifact=13301027311 member=history-native/history.log line=27 {\"elapsed_ns\":3151523593949,\"height\":4000,\"kind\":\"independent-native-fullsync-progress\"}"
+    },
+    {
+      "log_line": 1004,
+      "text": "artifact=13301027311 member=history-native/history.log line=28 {\"elapsed_ns\":3229502662071,\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"PUBLIC_REQUEST_DEADLINE\"}"
+    },
+    {
+      "log_line": 1005,
+      "text": "artifact=13301027311 member=history-native/history.log line=29 {\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1752985776786,\"lifetime_reached_before_shutdown\":false,\"reason\":\"stop_requested\",\"stop_requested_before_shutdown\":true},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1752986352332,\"stop_requested_when_exited\":true}"
+    },
+    {
+      "log_line": 1006,
+      "text": "artifact=13301027311 member=history-native/history.log line=30 {\"error\":\"PUBLIC_REQUEST_DEADLINE\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+    },
+    {
+      "log_line": 1007,
+      "text": "artifact=13301027311 member=history-native/history.log line=31 "
+    },
+    {
+      "log_line": 1008,
+      "text": "artifact=13301027311 member=history-native/history.log line=34 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+    },
+    {
+      "log_line": 1009,
+      "text": "artifact=13301027311 member=history-native/history.log line=35 "
+    },
+    {
+      "log_line": 1010,
+      "text": "artifact=13301027311 member=history-native/history.log line=36 "
+    },
+    {
+      "log_line": 1011,
+      "text": "artifact=13301027311 member=history-native/history.log line=38     actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal"
+    },
+    {
+      "log_line": 1012,
+      "text": "artifact=13301027311 member=history-native/history.log line=39 "
+    },
+    {
+      "log_line": 1013,
+      "text": "artifact=13301027311 member=history-native/history.log line=41 "
+    },
+    {
+      "log_line": 1021,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=1 Running as unit: trnm-from-zero-41778472816-1-native-priorities-4605.service"
+    },
+    {
+      "log_line": 1022,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=2 {\"failures\": [\"ValueError:HISTORY_NATIVE_PROCESS_REQUIRED\", \"ValueError:required-native-test: expected one passed, zero failed/ignored/measured\", \"ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED\"], \"passed\": false, \"schema\": \"trnm-ci-history-native-execution-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"target\": \"ancestry_long_sync\"}"
+    },
+    {
+      "log_line": 1023,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=3 Finished with result: exit-code"
+    },
+    {
+      "log_line": 1024,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=4 Main processes terminated with: code=exited/status=1"
+    },
+    {
+      "log_line": 1025,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=5 Service runtime: 53min 57.085s"
+    },
+    {
+      "log_line": 1026,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=6 CPU time consumed: 13min 29.118s"
+    },
+    {
+      "log_line": 1027,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=7 Memory peak: 3.2M"
+    },
+    {
+      "log_line": 1028,
+      "text": "artifact=13301027311 member=history-native-host/systemd-run.log line=8 Memory swap peak: 0B"
+    },
+    {
+      "log_line": 1030,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=1 Command exited with non-zero status 101"
+    },
+    {
+      "log_line": 1031,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=2 \tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\""
+    },
+    {
+      "log_line": 1032,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=3 \tUser time (seconds): 365.93"
+    },
+    {
+      "log_line": 1033,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=4 \tSystem time (seconds): 441.27"
+    },
+    {
+      "log_line": 1034,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=5 \tPercent of CPU this job got: 24%"
+    },
+    {
+      "log_line": 1035,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=6 \tElapsed (wall clock) time (h:mm:ss or m:ss): 53:49.54"
+    },
+    {
+      "log_line": 1036,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=7 \tAverage shared text size (kbytes): 0"
+    },
+    {
+      "log_line": 1037,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=8 \tAverage unshared data size (kbytes): 0"
+    },
+    {
+      "log_line": 1038,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=9 \tAverage stack size (kbytes): 0"
+    },
+    {
+      "log_line": 1039,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=10 \tAverage total size (kbytes): 0"
+    },
+    {
+      "log_line": 1040,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=11 \tMaximum resident set size (kbytes): 14800"
+    },
+    {
+      "log_line": 1041,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=12 \tAverage resident set size (kbytes): 0"
+    },
+    {
+      "log_line": 1042,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=13 \tMajor (requiring I/O) page faults: 0"
+    },
+    {
+      "log_line": 1043,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=14 \tMinor (reclaiming a frame) page faults: 472349"
+    },
+    {
+      "log_line": 1044,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=15 \tVoluntary context switches: 5816944"
+    },
+    {
+      "log_line": 1045,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=16 \tInvoluntary context switches: 63427"
+    },
+    {
+      "log_line": 1046,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=17 \tSwaps: 0"
+    },
+    {
+      "log_line": 1047,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=18 \tFile system inputs: 0"
+    },
+    {
+      "log_line": 1048,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=19 \tFile system outputs: 4260888"
+    },
+    {
+      "log_line": 1049,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=20 \tSocket messages sent: 0"
+    },
+    {
+      "log_line": 1050,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=21 \tSocket messages received: 0"
+    },
+    {
+      "log_line": 1051,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=22 \tSignals delivered: 0"
+    },
+    {
+      "log_line": 1052,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=23 \tPage size (bytes): 4096"
+    },
+    {
+      "log_line": 1053,
+      "text": "artifact=13301027311 member=history-native/history-resources.txt line=24 \tExit status: 101"
+    }
+  ],
+  "native_acceptance_granted": false,
+  "public_network_ready": false,
+  "independent_wan_accepted": false,
+  "production_activation": false
+}

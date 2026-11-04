@@ -1,0 +1,270 @@
+{
+  "schema": "trnm-concurrent-40a5-source-index-static-review-v1",
+  "scope": "Read-only verification of the concurrent integration commit, its complete Git tree, retained corpus and affected source paths. This is not an executed-worktree guard, preflight, compilation, native test, benchmark, production acceptance or approval.",
+  "candidate": {
+    "sha": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "parent": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+    "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+    "commit_message": "perf(state): avoid redundant complete commitment materialization\n\nBuild complete account commitments from private path/depth/digest subtrees without creating unused storage-record IDs. Reuse a checked canonical-map allocation only after comparing the complete current State, retaining the original budgets, empty-delta tree check, repair path and expected-root fence. An early candidate mismatch returns to the original complete validation path.\n\nKeep stored-node construction, fresh SQL graph checks, cancellation, Host accounting, original service deadlines and independent confirmation. Register six M06 controls, three root controls and both paired cost observations in the existing workflows; retain all prior controls and refresh exact source pins.\n\nRetain raw positive and negative observations, including cold/over-capacity root costs, late-mismatch amplification, initial local environment refusals and the original 44d3 service failures. Local native controls and strict Clippy pass; component results do not establish touched-state complexity or original business acceptance.",
+    "actual_merge": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+    "actual_merge_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+    "actual_merge_ordered_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "40a5ba25e40fd5eda5b04fc1c3811320d438de11"
+    ]
+  },
+  "recursive_tree_and_corpus": {
+    "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+    "parent": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+    "files": 8113,
+    "bytes": 932942579,
+    "originalPins": 384,
+    "currentPins": 389,
+    "originalRequired": 296,
+    "currentRequired": 301,
+    "missingKeys": [],
+    "missingRequired": [],
+    "badPins": [],
+    "deleted": [],
+    "untruncated": true,
+    "changedLeaves": 30,
+    "changedPaths": [
+      ".github/workflows/pon-branch-encoding-acceptance.yml",
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "evidence/pon-throughput-continuation-20261104/README.md",
+      "evidence/pon-throughput-continuation-20261104/local-components/graph-controls.log",
+      "evidence/pon-throughput-continuation-20261104/local-components/graph-root-cost-summary.json",
+      "evidence/pon-throughput-continuation-20261104/local-components/graph-root-cost.log",
+      "evidence/pon-throughput-continuation-20261104/local-components/inventory.json",
+      "evidence/pon-throughput-continuation-20261104/local-components/root-digest-cost.jsonl",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-final-pon-commitment.log",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-final-unchanged-binding-cost-summary.json",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-final-unchanged-binding-cost.log",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost-corrected-summary.json",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost-summary.json",
+      "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost.log",
+      "evidence/pon-throughput-continuation-20261104/local-validation.json",
+      "evidence/pon-throughput-continuation-20261104/measured-44d3-components.json",
+      "evidence/pon-throughput-continuation-20261104/measured-44d3-service.json",
+      "evidence/pon-throughput-continuation-20261104/measured-f35-components.json",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"
+    ]
+  },
+  "changed_leaf_identities": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "before": "73e995142a6363d5e9c7eea52915e4dd5b303717",
+      "after": "6efda5acd36c6af4d3ef820f8c39a031c8c2290f",
+      "size": 14100
+    },
+    {
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "before": "f0c66f589ce88e4548c64f92f7c9af8537b1e2b9",
+      "after": "9dcdb325f466c6e244eb6915f3fc6576c1336ec8",
+      "size": 29071
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "before": "5337bf1a663b0fb787c765e6dd1a0ef686a4556e",
+      "after": "7628f32e85f9e6303e63fde1b08811b03b5e31bb",
+      "size": 10106
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "before": "0ba939ce56e952d929a091213927b2d5a162ec96",
+      "after": "53c4b4605fe5bc85e75658330c7219f869c79926",
+      "size": 71817
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "eb65289520018f83bb2a9c5be94ddea5718a2aab",
+      "after": "02f6d4f7e73238d28f07dc03bbb6dc9a88128f43",
+      "size": 445590
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+      "before": "6876914075d85d6ecc6ccf669ea73041f1ea8df4",
+      "after": "f6ec8b4eff04874ffab312875d65a40027471ed4",
+      "size": 24945
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+      "before": "7b6710ccf8bb1a9f7376b62b8b148899b360a013",
+      "after": "923a9a3cec1ebbf93f9be8ccfc0124b5b721d615",
+      "size": 44157
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/README.md",
+      "before": "426b085bd4f6d0e53e67c2dfc6ec769a13e9904c",
+      "after": "21b4770828efcc2c5f7058a72feedd470c75bc79",
+      "size": 16581
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/graph-controls.log",
+      "before": null,
+      "after": "566ca7ed7aaf353545b90dcb5ce8b258ca247437",
+      "size": 2283
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/graph-root-cost-summary.json",
+      "before": null,
+      "after": "73ed4b6c2039c0818e025726fcc26735b6078319",
+      "size": 3607
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/graph-root-cost.log",
+      "before": null,
+      "after": "353bda68ce8d84a6cd428b60de9ed6923e91db2c",
+      "size": 939
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/inventory.json",
+      "before": null,
+      "after": "ef345d0224714e35c140d40908a28e3722ce10f8",
+      "size": 2223
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/root-digest-cost.jsonl",
+      "before": null,
+      "after": "f90e8240178f5b26986c0de7967161ff8cdb42cf",
+      "size": 97507
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-final-pon-commitment.log",
+      "before": null,
+      "after": "bb8d08c296de3baee0ef929b31faece7901cc412",
+      "size": 11272
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-final-unchanged-binding-cost-summary.json",
+      "before": null,
+      "after": "a07dd8a01d569870a4a56a456c64469b19b70f43",
+      "size": 4854
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-final-unchanged-binding-cost.log",
+      "before": null,
+      "after": "b8c8d0b656e3b5d32eae24a4ed37299d4b4dc274",
+      "size": 8411
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost-corrected-summary.json",
+      "before": null,
+      "after": "74fce5ee0feafa985431ae49f4537236f5647708",
+      "size": 4349
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost-summary.json",
+      "before": null,
+      "after": "395916b2c07a4bac07f7d6040b9149ec108abee4",
+      "size": 3162
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-components/state-unchanged-binding-cost.log",
+      "before": null,
+      "after": "bcac198f00c33655a620ad8e14e8ae5df7381f76",
+      "size": 8123
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/local-validation.json",
+      "before": null,
+      "after": "bc777189f57cba2e25a08689230e336a50ca4e16",
+      "size": 115502
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/measured-44d3-components.json",
+      "before": null,
+      "after": "91b258057f8c6fc32d0eb7d07b91d6ad7aea1f93",
+      "size": 13473
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/measured-44d3-service.json",
+      "before": null,
+      "after": "e4b5e0970feddc4a8f986aba3eec6d584f05357c",
+      "size": 15424
+    },
+    {
+      "path": "evidence/pon-throughput-continuation-20261104/measured-f35-components.json",
+      "before": null,
+      "after": "99b882b1a598ce6e8a34c0447faff482f5ff20a7",
+      "size": 12539
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "before": "aea70d3ee9b74aebbaba3d89896dd18509e54aad",
+      "after": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd",
+      "size": 111069
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+      "before": null,
+      "after": "0c1e8cc5c1e577865791521ca822dd26021d1769",
+      "size": 16596
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "43f923aa22ca5c48505fac000eb7a594973a9d9c",
+      "after": "658ef73e4f724c387669a59c9c82db0f948af9ff",
+      "size": 326055
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "before": "45c458780452e82c2e59ac34ae8a200a167a6647",
+      "after": "65093afcdf1a777b03447ff8db2aaa7d9e14ed83",
+      "size": 47682
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+      "before": null,
+      "after": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+      "size": 3228
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
+      "before": null,
+      "after": "0f12751213809ee79182db061c657f93a5993444",
+      "size": 12150
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "before": "add62202c8038776d0db254c066c619dd8fe4620",
+      "after": "d15fdedabce6bf247311d1f75bf4d8370a8d33c1",
+      "size": 44926
+    }
+  ],
+  "independent_static_reviews": [
+    {
+      "path": "40a5-root-digest-static-review.json",
+      "source": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "scope": "Only the account-root digest builder, exact-input lift extraction and unchanged original storage/SQL paths; no benchmark or native execution."
+    },
+    {
+      "path": "40a5-unchanged-snapshot-static-review.json",
+      "source": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+      "scope": "Only the complete-input unchanged canonical-map path, original budget/error/tree checks and currently reachable private snapshot construction invariants; no arbitrary forged snapshot equivalence or native execution."
+    }
+  ],
+  "retained_scope_boundaries": [
+    "The a10 4-lane Branch result is specific to a10 and its actual merge. The 44d 4-lane Node/state and failure archives are specific to 44d and its actual merge.",
+    "All 384 earlier pinned entries and all 296 earlier required paths remain. The new corpus has 389 pinned entries and 301 required paths; all 389 Git blob values match the exact new tree.",
+    "No tracked leaf was deleted. The new commit changes 30 leaves and has 8,113 total tracked leaves, 932,942,579 bytes. These are Git-object observations, not a fresh local worktree execution claim.",
+    "RootDigest still visits and orders all current accounts. Canonical-map reuse still checks the complete current input; neither establishes touched-set complexity.",
+    "Static peer review cannot qualify the whole new source, infer original service confirmations, resolve a timed native failure, or supply independent PQ/WAN/physical-fault acceptance."
+  ],
+  "native_tests_executed_by_this_review": false,
+  "performance_qualified": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

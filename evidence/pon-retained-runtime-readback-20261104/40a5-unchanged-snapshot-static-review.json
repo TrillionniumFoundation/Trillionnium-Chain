@@ -1,0 +1,552 @@
+{
+  "schema": "trnm-40a5-unchanged-snapshot-static-review-v1",
+  "scope": "Read-only source comparison of the unchanged-snapshot reuse in pon_commitment.rs against a10, its dedicated tests, and the relevant original encoder/tree callees. This is not native execution, runtime qualification, a benchmark, or an explanation of an F0 failure.",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "reviewed_source": {
+    "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "parent": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+    "agents": {
+      "path": "AGENTS.md",
+      "blob": "702727dcf00f032b16d593519b7b74894da40e17",
+      "read_at_reviewed_commit": true,
+      "read_at_documentation_boundary": true,
+      "contents_equal": true
+    },
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "blob": "c2b3a10ab5c0c87cfb670ecd82613e56f14938dd",
+        "parent_blob": "aea70d3ee9b74aebbaba3d89896dd18509e54aad",
+        "full_source_read": true,
+        "full_parent_read": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "blob": "0c1e8cc5c1e577865791521ca822dd26021d1769",
+        "full_source_read": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "blob": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f",
+        "parent_blob": "0d8ea0bf4b5f64b354b6a12c2b90efe670b8883f",
+        "full_current_and_parent_read": true,
+        "full_contents_equal": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+        "blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+        "parent_blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+        "full_current_and_parent_read": true,
+        "full_contents_equal": true
+      }
+    ]
+  },
+  "comparison": {
+    "method": "Full source line comparison; exact changed spans are retained below. No compiler or native test was invoked.",
+    "changed_spans": [
+      {
+        "parent_start_line": 781,
+        "reviewed_start_line": 781,
+        "parent_lines_removed": 1,
+        "reviewed_lines_added": 15
+      },
+      {
+        "parent_start_line": 787,
+        "reviewed_start_line": 801,
+        "parent_lines_removed": 0,
+        "reviewed_lines_added": 97
+      },
+      {
+        "parent_start_line": 2695,
+        "reviewed_start_line": 2806,
+        "parent_lines_removed": 0,
+        "reviewed_lines_added": 4
+      }
+    ],
+    "production_change": "The existing checked_snapshot_with_optional_arithmetic entry selects an optional unchanged candidate; two new private helpers compare actual canonical input and share the prior immutable map. The other addition registers the dedicated test module.",
+    "old_functions_preserved": [
+      "encode",
+      "encode_for_cache",
+      "visit_state_differences",
+      "workspace_charge",
+      "fallback_reason",
+      "prepare_state",
+      "prepare_state_with_arithmetic",
+      "matches_encoded",
+      "charges",
+      "visit_differences",
+      "plan_differences",
+      "materialize_differences",
+      "prepare_values",
+      "CheckedExecutionParent::bind",
+      "CheckedExecutionParent::execute_with_control",
+      "CheckedTransactionPrefix::execute_with_control"
+    ],
+    "old_function_preservation_basis": "The full-file comparison changes only the previous preparation call inside checked_snapshot_with_optional_arithmetic; all other original pon_commitment.rs lines remain in order. The new helper block and test-module declaration are additions.",
+    "unchanged_callees": [
+      "pon_executor.rs in full",
+      "pon_state.rs in full"
+    ]
+  },
+  "conclusion": {
+    "status": "no_current_public_api_reachable_regression_identified_in_reviewed_scope",
+    "blocking_findings": [],
+    "proof_boundary": "The capacity argument depends on the existing opaque immutable CheckedCommitment construction paths. It is not an equivalence claim for arbitrary manually reallocated private canonical maps.",
+    "native_qualification": false,
+    "performance_qualification": false,
+    "business_acceptance": false,
+    "f0_failure_attribution": null
+  },
+  "input_and_control_paths": [
+    {
+      "boundary": "Candidate selection is not acceptance",
+      "finding": "A prior is considered only when its root equals expected_root and its canonical-map key count equals the supplied actual State count. A hit still walks every actual key/value, validates canonical grammar, compares complete bytes, and enforces the original wire bounds.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "checked_snapshot_with_optional_arithmetic",
+          "first_line": 774,
+          "last_line": 799,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L774-L799"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "matches_unchanged_candidate",
+          "first_line": 873,
+          "last_line": 896,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L873-L896"
+        }
+      ]
+    },
+    {
+      "boundary": "Early mismatch preserves complete original validation",
+      "finding": "A differing key or canonical value returns Ok(false) only to decline the candidate. The outer entry then executes the complete original prepare_state_with_arithmetic, so late canonical errors and wire limits cannot be hidden by that early miss. The immutable State borrow prevents safe mutation between the two passes.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "checked_snapshot_with_optional_arithmetic",
+          "first_line": 785,
+          "last_line": 799,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L785-L799"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "matches_unchanged_candidate",
+          "first_line": 868,
+          "last_line": 896,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L868-L896"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_state_with_arithmetic",
+          "first_line": 449,
+          "last_line": 519,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L449-L519"
+        }
+      ]
+    },
+    {
+      "boundary": "Canonical error priority before wire/cache limits",
+      "finding": "An invalid canonical value encountered by the candidate returns the same first canonical error that the original complete preparation reaches. Wire-bound violations are accumulated rather than returned early on a successful comparison pass. A key/value miss instead re-enters the original complete pass. Invalid or refused cache limits and charge failures decline the candidate and preserve the original canonical-before-limits.validate ordering.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_unchanged_snapshot",
+          "first_line": 808,
+          "last_line": 826,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L808-L826"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "matches_unchanged_candidate",
+          "first_line": 873,
+          "last_line": 896,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L873-L896"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "encode_for_cache",
+          "first_line": 310,
+          "last_line": 363,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L310-L363"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_state_with_arithmetic",
+          "first_line": 449,
+          "last_line": 459,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L449-L459"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+          "function": "canonical and canonical_into",
+          "first_line": 293,
+          "last_line": 319,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs#L293-L319"
+        }
+      ]
+    },
+    {
+      "boundary": "Empty delta retains the original tree check",
+      "finding": "The successful candidate still calls previous.tree.apply(previous.root, &[]) rather than returning the prior root directly. The unchanged StateTree::apply begins by comparing self.root() with expected. Its original count/limit handling and immutable clone semantics remain.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_unchanged_snapshot",
+          "first_line": 827,
+          "last_line": 865,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L827-L865"
+        },
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+          "function": "StateTree::apply",
+          "first_line": 303,
+          "last_line": 354,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-protocol/src/pon_state.rs#L303-L354"
+        }
+      ]
+    },
+    {
+      "boundary": "Damaged-tree repair remains a full-root calculation",
+      "finding": "If the empty-delta apply fails, the candidate records FullRoot(InternalSnapshotMismatch), clears compressed_nodes, returns no snapshot, and calculates state_root from the fully byte-matched prior canonical map. These bytes equal the original freshly encoded map. The original prepare_values repair path uses the same state_root and LIMIT mapping, and the outer expected_root comparison remains mandatory.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_unchanged_snapshot",
+          "first_line": 838,
+          "last_line": 865,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L838-L865"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_values",
+          "first_line": 705,
+          "last_line": 741,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L705-L741"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "checked_snapshot_with_optional_arithmetic",
+          "first_line": 792,
+          "last_line": 799,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L792-L799"
+        }
+      ]
+    },
+    {
+      "boundary": "Expected-root mismatch and optional arithmetic",
+      "finding": "A different expected root declines candidate selection and retains the original preparation path. Every returned prepared result is still compared with expected_root. A budget refusal or candidate miss preserves the optional FullRootArithmetic route. The original retained-map prepare_values branch does not use that optional arithmetic, so the successful shared-map branch does not omit an original arithmetic check.",
+      "sources": [
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "checked_snapshot_with_optional_arithmetic",
+          "first_line": 774,
+          "last_line": 799,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L774-L799"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_state_with_arithmetic",
+          "first_line": 449,
+          "last_line": 519,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L449-L519"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+          "function": "prepare_values",
+          "first_line": 658,
+          "last_line": 741,
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L658-L741"
+        }
+      ]
+    }
+  ],
+  "capacity_provenance": {
+    "claim": "For currently reachable legitimate priors, retained map capacities come from the same per-value fresh encoder used by current original preparation; no cumulative comparison-buffer capacity is installed in a snapshot.",
+    "steps": [
+      {
+        "statement": "CheckedCommitment owns private Arc<CanonicalValues>, StateTree, root and charges fields. Its derived Clone shares the Arc and does not clone the canonical Vec entries.",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "CheckedCommitment",
+            "first_line": 118,
+            "last_line": 149,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L118-L149"
+          }
+        ]
+      },
+      {
+        "statement": "The original production map constructor calls canonical(value) separately for every value, moves each resulting Vec and a fresh key byte Vec into encode_for_cache's map, then passes that map into prepare_values. The retained CheckedCommitment receives Arc::new(values).",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "encode_for_cache",
+            "first_line": 310,
+            "last_line": 363,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L310-L363"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "prepare_state_with_arithmetic",
+            "first_line": 449,
+            "last_line": 460,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L449-L460"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "prepare_values",
+            "first_line": 729,
+            "last_line": 741,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L729-L741"
+          }
+        ]
+      },
+      {
+        "statement": "The only new retained-map constructor uses Arc::clone(&previous.values) after full actual-byte equality. It introduces no map/value reallocation or shrink.",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "prepare_unchanged_snapshot",
+            "first_line": 808,
+            "last_line": 865,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L808-L865"
+          }
+        ]
+      },
+      {
+        "statement": "Execution and transaction-prefix staging both construct successors through the same prepare_state_with_arithmetic path. No production constructor was found that installs a reused canonical_into buffer or a Vec-cloned/reserved map into CheckedCommitment.values.",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "CheckedExecutionParent::execute_with_control",
+            "first_line": 1135,
+            "last_line": 1173,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L1135-L1173"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "CheckedTransactionPrefix::execute_with_control",
+            "first_line": 1216,
+            "last_line": 1241,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L1216-L1241"
+          }
+        ]
+      },
+      {
+        "statement": "The encoder file is byte-for-byte identical at a10 and 40a5. canonical creates fresh output; canonical_into clears and reuses an operation-local comparison Vec without retaining it. Its potentially cumulative capacity is distinct from the per-value retained capacities charged here.",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+            "function": "canonical_after_validation and canonical_into",
+            "first_line": 293,
+            "last_line": 319,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs#L293-L319"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "matches_unchanged_candidate",
+            "first_line": 873,
+            "last_line": 896,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L873-L896"
+          }
+        ]
+      },
+      {
+        "statement": "The helper recomputes charges from actual retained key/value lengths and capacities, rather than trusting previous.charges. With the closed production provenance and equal canonical input, current and preceding charges match the original path; workspace_charge(current,current,0), budget selection, and retained charges therefore match that path.",
+        "sources": [
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "charges",
+            "first_line": 542,
+            "last_line": 563,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L542-L563"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "workspace_charge",
+            "first_line": 403,
+            "last_line": 414,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L403-L414"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "prepare_values",
+            "first_line": 664,
+            "last_line": 689,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L664-L689"
+          },
+          {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "function": "prepare_unchanged_snapshot",
+            "first_line": 813,
+            "last_line": 835,
+            "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L813-L835"
+          }
+        ]
+      }
+    ],
+    "public_reachability_limit": "This argument is restricted to snapshots constructed by the current private production paths. Reallocating a private map while preserving its bytes, cloning its Vec entries into different capacities, changing the encoder's capacity strategy, or adding another construction path would require a new accounting argument. Those are not reachable through the current safe public CheckedCommitment API.",
+    "allocation_measurement_limit": "ALLOCATION_STAGES records explicit preparation/allocation phase markers. Comparing those markers is not measurement of allocator byte counts, physical memory, RSS, SQL allocation, or native throughput.",
+    "sources_for_measurement_limit": [
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "function": "ALLOCATION_STAGES and mark_stage",
+        "first_line": 646,
+        "last_line": 657,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs#L646-L657"
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "function": "compare helper",
+        "first_line": 55,
+        "last_line": 75,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs#L55-L75"
+      }
+    ]
+  },
+  "reviewed_tests": {
+    "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+    "blob": "0c1e8cc5c1e577865791521ca822dd26021d1769",
+    "registered_test_functions": 7,
+    "ordinary_test_functions": 6,
+    "explicitly_ignored_test_functions": 1,
+    "selectors": [
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+        "first_line": 78,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+        "first_line": 104,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+        "first_line": 161,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+        "first_line": 231,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+        "first_line": 277,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root",
+        "first_line": 332,
+        "explicitly_ignored": false,
+        "executed_by_this_review": false,
+        "result": null
+      },
+      {
+        "selector": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+        "first_line": 359,
+        "explicitly_ignored": true,
+        "executed_by_this_review": false,
+        "result": null
+      }
+    ],
+    "oracle": "The original helper bypasses the new candidate selector and calls prepare_state_with_arithmetic followed by the original expected-root check. compare checks result/error equality, observation equality, change contents, snapshot presence, tree root, retained charges, and the explicit allocation-stage marker sequence.",
+    "coverage": "The six ordinary controls cover independently allocated equal State, canonical encoder capacity boundaries and budget boundaries, changed bytes and misleading roots, late canonical errors before wire/cache errors, early candidate misses followed by full validation, and empty-delta checking/repair of the original tree.",
+    "retained_capacity_scope": "The capacity control seeds its prior through the original legitimate constructor. It supports the reviewed production provenance, not arbitrary private-map capacity corruption.",
+    "ignored_cost_diagnostic": "unchanged_snapshot_full_binding_cost is explicitly ignored and describes a component cost comparison. It was read but not executed by this review. No timing sample, performance ratio, native result, or throughput qualification is supplied here.",
+    "sources": [
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "function": "original reference helper",
+        "first_line": 11,
+        "last_line": 25,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs#L11-L25"
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "function": "equal and compare helpers",
+        "first_line": 27,
+        "last_line": 75,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs#L27-L75"
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "function": "ordinary controls",
+        "first_line": 77,
+        "last_line": 355,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs#L77-L355"
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs",
+        "function": "ignored component diagnostic",
+        "first_line": 357,
+        "last_line": 422,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs#L357-L422"
+      }
+    ]
+  },
+  "documentation_batch_boundary": {
+    "source": "Existing successful four-History archive reader, used only as the documentation batch boundary receipt. This receipt is separate from the reviewed 40a5 native source.",
+    "run": 41787024926,
+    "job": 126431400722,
+    "conclusion": "success",
+    "diagnostic_source": {
+      "base": null,
+      "candidate": "72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "72a6206bf1b0d4d83cc1c1907c2a74ef34dc593e",
+      "tested_tree": "619cee0358a6c1d5e48530cad44292fb2486564d",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 930890238,
+      "tracked_entries": 8007,
+      "tracked_worktree_verified": true
+    },
+    "before_after_source_equal": true,
+    "audit_original_lines": [
+      "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+      "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    ],
+    "diagnostic_log_source_before_lines": [
+      208,
+      220
+    ],
+    "diagnostic_log_source_after_lines": [
+      1066,
+      1078
+    ],
+    "diagnostic_log_audit_lines": [
+      221,
+      1079
+    ],
+    "receipt_provenance": "Root reported an actual terminal log read and supplied both original audit lines. native_cost_archive_review independently supplied the complete source identity and source/audit line locations from its complete terminal log read. This reviewer did not download that log again.",
+    "raw_log_read_by_this_reviewer": false,
+    "audit_does_not_qualify_reviewed_native_source": true
+  },
+  "limitations": [
+    "No native test, ignored diagnostic, compiler, formatter, Clippy, CI workflow or benchmark was run by this static review.",
+    "The reviewed encoder/tree callees were read and compared as exact source; this does not certify unrelated files or the complete 40a5 integration.",
+    "This review does not establish database immutability, cross-generation graph authority, durability, business confirmation, deadline performance or F0 failure cause.",
+    "Existing native failures and all original resource/deadline/validation requirements remain independent evidence.",
+    "No production source or test was changed. Only this unreferenced documentation blob is authorized for creation; no tree, commit, branch, PR or ref is modified by this action."
+  ],
+  "native_tests_executed": false,
+  "native_test_result": null,
+  "f0_failure_cause": null,
+  "performance_measurements": null,
+  "acceptance_granted": false,
+  "production_activation": false
+}
