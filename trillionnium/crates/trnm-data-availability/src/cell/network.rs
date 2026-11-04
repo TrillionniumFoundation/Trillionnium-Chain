@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     io::{self, Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
     path::Path,
@@ -19,8 +19,18 @@ use super::{
     MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
 
+mod availability;
+mod persistent;
 mod serving;
-pub use serving::{serve_cells_bounded, CellServeLimitsV1, CellServeReportV1};
+pub use persistent::{
+    fetch_cell_persistent, fetch_cell_persistent_to_file, serve_cells_persistent,
+    CellPersistentFetchReportV2, CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2,
+    CellPersistentServeReportV2,
+};
+pub use serving::{
+    serve_cells_bounded, serve_cells_bounded_with_availability, CellServeLimitsV1,
+    CellServeReportV1,
+};
 
 /// Explicit finite limits for this configured-peer pilot. There is no peer
 /// discovery, authority from advertisements, or unbounded retry queue.
@@ -97,8 +107,14 @@ pub struct CellFetchReportV1 {
     pub manifest_id: CellDigestV1,
     pub payload_sha256: CellDigestV1,
     pub payload_bytes: u64,
+    /// Manifest positions satisfied by verified content in the initial cache.
     pub cached_chunks: usize,
+    /// Manifest positions covered by downloaded and committed content. Repeated
+    /// positions reuse one object without a second request; this count retains
+    /// the existing cached_chunks + downloaded_chunks == payload positions rule.
     pub downloaded_chunks: usize,
+    /// Bytes of those verified, committed objects, counted once per digest.
+    /// The ordered payload may be larger when it repeats a shared chunk.
     pub downloaded_bytes: u64,
     /// Actual application response bytes read, even when subsequently rejected.
     /// Excludes requests, TCP/IP overhead, retransmissions and unread socket data.
@@ -118,7 +134,20 @@ pub fn fetch_cell(
     peers: &[SocketAddr],
     limits: CellPeerLimitsV1,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
-    fetch_cell_inner(store, pinned, peers, limits, None)
+    fetch_cell_inner(store, pinned, peers, limits, None, false)
+}
+
+/// Explicit TCI1/TIS1 availability hints followed by rarest-observed-first
+/// scheduling in the same downloader. Hints confer no byte integrity or use
+/// authority; every chunk and the full ordered payload are still verified.
+/// Probes, failed replies and payloads consume one original reservation.
+pub fn fetch_cell_rarest_first(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    fetch_cell_inner(store, pinned, peers, limits, None, true)
 }
 
 /// Fetch, verify and create-only publish using one original absolute deadline.
@@ -132,7 +161,18 @@ pub fn fetch_cell_to_file(
     limits: CellPeerLimitsV1,
     output: &Path,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
-    fetch_cell_inner(store, pinned, peers, limits, Some(output))
+    fetch_cell_inner(store, pinned, peers, limits, Some(output), false)
+}
+
+/// The explicit availability profile with the original create-only materializer.
+pub fn fetch_cell_rarest_first_to_file(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    output: &Path,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    fetch_cell_inner(store, pinned, peers, limits, Some(output), true)
 }
 
 fn fetch_cell_inner(
@@ -141,6 +181,7 @@ fn fetch_cell_inner(
     peers: &[SocketAddr],
     limits: CellPeerLimitsV1,
     output: Option<&Path>,
+    rarest_first: bool,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
     limits.validate()?;
     require(
@@ -158,7 +199,18 @@ fn fetch_cell_inner(
         requests_left: &requests_left,
         responses: &responses,
     };
-    fetch_cell_in_session(store, pinned, peers, limits, &transport, output)
+    fetch_cell_with_schedule(
+        store,
+        pinned,
+        peers,
+        limits,
+        &transport,
+        output,
+        FetchSchedule {
+            rarest_first,
+            requests: None,
+        },
+    )
 }
 
 /// Reuse the caller's original connection, response-byte and time reservation.
@@ -171,10 +223,217 @@ pub(super) fn fetch_cell_in_session(
     transport: &RequestContext<'_>,
     output: Option<&Path>,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    fetch_cell_with_schedule(
+        store,
+        pinned,
+        peers,
+        limits,
+        transport,
+        output,
+        FetchSchedule {
+            rarest_first: false,
+            requests: None,
+        },
+    )
+}
+
+// Each explicit transport reuses the same cache validation, bounded commit
+// batches and complete ordered payload verification. Only object requests differ.
+trait ObjectRequests: Sync {
+    fn request(
+        &self,
+        peer: SocketAddr,
+        kind: u8,
+        digest: CellDigestV1,
+        maximum: usize,
+        transport: &RequestContext<'_>,
+    ) -> (CellResultV1<Vec<u8>>, usize);
+}
+
+struct SingleRequestV1;
+
+impl ObjectRequests for SingleRequestV1 {
+    fn request(
+        &self,
+        peer: SocketAddr,
+        kind: u8,
+        digest: CellDigestV1,
+        maximum: usize,
+        transport: &RequestContext<'_>,
+    ) -> (CellResultV1<Vec<u8>>, usize) {
+        request_with_retry(peer, kind, digest, maximum, transport)
+    }
+}
+
+struct FetchSchedule<'a> {
+    rarest_first: bool,
+    requests: Option<&'a dyn ObjectRequests>,
+}
+
+/// Explicit acquisition strategy. The variants cannot silently combine an
+/// unsupported inventory protocol with persistent V2 framing.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum CellFetchTransportV2 {
+    #[default]
+    OrderedV1,
+    RarestFirstV1,
+    PersistentV2 {
+        max_requests: u64,
+        max_requests_per_connection: u64,
+    },
+}
+
+impl CellFetchTransportV2 {
+    pub fn validate(self, peer: CellPeerLimitsV1) -> CellResultV1<()> {
+        peer.validate()?;
+        if let Self::PersistentV2 {
+            max_requests,
+            max_requests_per_connection,
+        } = self
+        {
+            CellPersistentPeerLimitsV2 {
+                peer,
+                max_requests,
+                max_requests_per_connection,
+            }
+            .validate()?;
+        }
+        Ok(())
+    }
+}
+
+/// One owned reservation and connection pool for an entire release closure.
+/// Member calls borrow this state; they cannot renew any counter or deadline.
+pub(super) struct NetworkFetchSession {
+    peers: Vec<SocketAddr>,
+    limits: CellPeerLimitsV1,
+    profile: CellFetchTransportV2,
+    deadline: Instant,
+    connections_left: AtomicU64,
+    responses: ResponseBudget,
+    pool: Option<persistent::ConnectionPool>,
+}
+
+impl NetworkFetchSession {
+    pub(super) fn new(
+        peers: &[SocketAddr],
+        limits: CellPeerLimitsV1,
+        profile: CellFetchTransportV2,
+        deadline: Instant,
+    ) -> CellResultV1<Self> {
+        profile.validate(limits)?;
+        require(
+            peers.len() <= 8 && peers.iter().collect::<BTreeSet<_>>().len() == peers.len(),
+            "configured peer count/duplicates",
+        )?;
+        remaining(deadline)?;
+        let pool = match profile {
+            CellFetchTransportV2::PersistentV2 {
+                max_requests,
+                max_requests_per_connection,
+            } => Some(persistent::ConnectionPool::new(
+                peers,
+                CellPersistentPeerLimitsV2 {
+                    peer: limits,
+                    max_requests,
+                    max_requests_per_connection,
+                },
+            )),
+            _ => None,
+        };
+        Ok(Self {
+            peers: peers.to_vec(),
+            limits,
+            profile,
+            deadline,
+            connections_left: AtomicU64::new(limits.max_connections),
+            responses: ResponseBudget::new(limits.max_response_bytes),
+            pool,
+        })
+    }
+
+    fn context(&self) -> RequestContext<'_> {
+        RequestContext {
+            timeout: self.limits.request_timeout,
+            overall: self.deadline,
+            requests_left: &self.connections_left,
+            responses: &self.responses,
+        }
+    }
+
+    pub(super) fn manifest(
+        &self,
+        store: &CellStoreV1,
+        pinned: CellDigestV1,
+    ) -> CellResultV1<(CellManifestV1, usize)> {
+        let transport = self.context();
+        match &self.pool {
+            Some(pool) => {
+                let (manifest, rejected, _) =
+                    fetch_manifest_via(store, pinned, &self.peers, self.limits, &transport, pool)?;
+                Ok((manifest, rejected))
+            }
+            None => fetch_manifest(store, pinned, &self.peers, self.limits, &transport),
+        }
+    }
+
+    pub(super) fn cell(
+        &self,
+        store: &CellStoreV1,
+        pinned: CellDigestV1,
+    ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+        fetch_cell_with_schedule(
+            store,
+            pinned,
+            &self.peers,
+            self.limits,
+            &self.context(),
+            None,
+            FetchSchedule {
+                rarest_first: self.profile == CellFetchTransportV2::RarestFirstV1,
+                requests: self.pool.as_ref().map(|pool| pool as &dyn ObjectRequests),
+            },
+        )
+    }
+
+    pub(super) fn connection_attempts(&self) -> u64 {
+        self.limits.max_connections - self.connections_left.load(Ordering::Relaxed)
+    }
+
+    pub(super) fn request_attempts(&self) -> u64 {
+        match (&self.pool, self.profile) {
+            (Some(pool), CellFetchTransportV2::PersistentV2 { max_requests, .. }) => {
+                max_requests - pool.requests_left.load(Ordering::Relaxed)
+            }
+            _ => self.connection_attempts(),
+        }
+    }
+
+    pub(super) fn received_response_bytes(&self) -> CellResultV1<u64> {
+        Ok(self.responses.received()?)
+    }
+}
+
+fn fetch_cell_with_schedule(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    transport: &RequestContext<'_>,
+    output: Option<&Path>,
+    schedule: FetchSchedule<'_>,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
     let deadline = transport.overall;
     let requests_left = transport.requests_left;
     let responses = transport.responses;
-    let (manifest, rejected) = fetch_manifest(store, pinned, peers, limits, transport)?;
+    let (manifest, rejected) = match schedule.requests {
+        Some(requests) => {
+            let (manifest, rejected, _) =
+                fetch_manifest_via(store, pinned, peers, limits, transport, requests)?;
+            (manifest, rejected)
+        }
+        None => fetch_manifest(store, pinned, peers, limits, transport)?,
+    };
     let mut missing = Vec::new();
     let mut report = CellFetchReportV1 {
         manifest_id: pinned,
@@ -188,17 +447,46 @@ pub(super) fn fetch_cell_in_session(
         rejected_responses: rejected,
         supplying_peers: BTreeSet::new(),
     };
+    // The manifest remains an ordered list of payload positions. The bounded
+    // work queue contains each missing content object once, so repeated chunks
+    // neither multiply TCP requests nor spend response bytes a second time.
+    // Remember the validated length as well: equal hashes with conflicting
+    // declared lengths must not be hidden by the deduplication.
+    let mut seen: BTreeMap<CellDigestV1, (u32, bool, usize)> = BTreeMap::new();
     for (index, expected) in manifest.chunks().iter().enumerate() {
         require(Instant::now() <= deadline, "cache scan deadline")?;
+        if let Some((size, cached, positions)) = seen.get_mut(&expected.sha256) {
+            require(*size == expected.size, "chunk digest length conflict")?;
+            report.cached_chunks += usize::from(*cached);
+            *positions += 1;
+            continue;
+        }
         match store.chunk_with_deadline(expected.sha256, Some(deadline))? {
             Some(bytes) => {
                 // chunk() already hashes the actual cache buffer on every read.
                 verify_chunk_length(expected, &bytes)?;
                 report.cached_chunks += 1;
+                seen.insert(expected.sha256, (expected.size, true, 1));
             }
-            None => missing.push((index, expected.clone())),
+            None => {
+                seen.insert(expected.sha256, (expected.size, false, 1));
+                missing.push((index, expected.clone()));
+            }
         }
     }
+    let availability = if schedule.rarest_first && !missing.is_empty() {
+        let (available, rejected) = availability::observe(&manifest, &missing, peers, transport)?;
+        report.rejected_responses += rejected;
+        // An unavailable/stale hint cannot prevent an ordinary fallback fetch.
+        // Unknown chunks run after positively observed chunks, in stable order.
+        missing.sort_by_key(|(index, _)| {
+            let copies = available[*index].count_ones();
+            (if copies == 0 { u32::MAX } else { copies }, *index)
+        });
+        Some(available)
+    } else {
+        None
+    };
     let next = AtomicUsize::new(0);
     let cancelled = AtomicBool::new(false);
     thread::scope(|scope| -> CellResultV1<()> {
@@ -208,13 +496,24 @@ pub(super) fn fetch_cell_in_session(
             let missing = &missing;
             let next = &next;
             let cancelled = &cancelled;
+            let availability = availability.as_deref();
+            let requests = schedule.requests;
             scope.spawn(move || {
                 while !cancelled.load(Ordering::Relaxed) {
                     let index = next.fetch_add(1, Ordering::Relaxed);
                     let Some((order, chunk)) = missing.get(index) else {
                         break;
                     };
-                    let result = download_chunk(chunk, *order, peers, transport);
+                    let preferred = availability.map(|available| available[*order]).unwrap_or(0);
+                    let result = match requests {
+                        Some(requests) => {
+                            download_chunk_via(chunk, *order, peers, transport, preferred, requests)
+                        }
+                        None if preferred == 0 => download_chunk(chunk, *order, peers, transport),
+                        None => {
+                            download_chunk_preferred(chunk, *order, peers, transport, preferred)
+                        }
+                    };
                     if sender.send((chunk, result)).is_err() {
                         break;
                     }
@@ -232,9 +531,9 @@ pub(super) fn fetch_cell_in_session(
                 .map(|(chunk, bytes, _, _)| (*chunk, bytes.as_slice()))
                 .collect();
             store.put_chunk_batch_with_deadline(&chunks, Some(deadline))?;
-            for (_, bytes, peer, rejected) in pending.drain(..) {
+            for (chunk, bytes, peer, rejected) in pending.drain(..) {
                 report.downloaded_bytes += bytes.len() as u64;
-                report.downloaded_chunks += 1;
+                report.downloaded_chunks += seen[&chunk.sha256].2;
                 report.rejected_responses += rejected;
                 report.supplying_peers.insert(peer);
             }
@@ -314,6 +613,17 @@ pub(super) fn fetch_manifest_observed(
     limits: CellPeerLimitsV1,
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(CellManifestV1, usize, bool)> {
+    fetch_manifest_via(store, pinned, peers, limits, transport, &SingleRequestV1)
+}
+
+fn fetch_manifest_via(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    transport: &RequestContext<'_>,
+    requests: &dyn ObjectRequests,
+) -> CellResultV1<(CellManifestV1, usize, bool)> {
     let mut rejected = 0;
     let (manifest, initial_cache_hit) = match store.manifest(pinned)? {
         Some(manifest) => (manifest, true),
@@ -321,12 +631,26 @@ pub(super) fn fetch_manifest_observed(
             let mut received = None;
             let mut last_io = None;
             for peer in peers {
+                if transport.responses.is_quarantined(*peer)? {
+                    continue;
+                }
                 let (candidate, attempts) =
-                    request_with_retry(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport);
+                    requests.request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport);
                 rejected += attempts - 1;
                 let candidate = candidate.and_then(|wire| {
-                    let manifest = CellManifestV1::decode(&wire)?;
-                    require(manifest.id() == pinned, "manifest digest")?;
+                    // A complete supplied object failed its pinned contract.
+                    // This is distinct from missing bytes or interrupted I/O.
+                    let manifest = CellManifestV1::decode(&wire).and_then(|manifest| {
+                        require(manifest.id() == pinned, "manifest digest")?;
+                        Ok(manifest)
+                    });
+                    let manifest = match manifest {
+                        Ok(manifest) => manifest,
+                        Err(error) => {
+                            transport.responses.quarantine(*peer)?;
+                            return Err(error);
+                        }
+                    };
                     require(
                         manifest.size() <= limits.max_cell_bytes,
                         "cell exceeds byte budget",
@@ -371,15 +695,46 @@ fn download_chunk(
     peers: &[SocketAddr],
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
+    download_chunk_preferred(chunk, order, peers, transport, 0)
+}
+
+fn download_chunk_preferred(
+    chunk: &CellChunkV1,
+    order: usize,
+    peers: &[SocketAddr],
+    transport: &RequestContext<'_>,
+    preferred: u8,
+) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
+    download_chunk_via(chunk, order, peers, transport, preferred, &SingleRequestV1)
+}
+
+fn download_chunk_via(
+    chunk: &CellChunkV1,
+    order: usize,
+    peers: &[SocketAddr],
+    transport: &RequestContext<'_>,
+    preferred: u8,
+    requests: &dyn ObjectRequests,
+) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
     let mut last_io = None;
     let mut rejected = 0;
-    for offset in 0..peers.len() {
-        let peer = peers[(order + offset) % peers.len()];
+    let mut indices: Vec<_> = (0..peers.len())
+        .map(|offset| (order + offset) % peers.len())
+        .collect();
+    indices.sort_by_key(|index| preferred & (1_u8 << *index) == 0);
+    for index in indices {
+        let peer = peers[index];
+        if transport.responses.is_quarantined(peer)? {
+            continue;
+        }
         let (candidate, attempts) =
-            request_with_retry(peer, 2, chunk.sha256, chunk.size as usize, transport);
+            requests.request(peer, 2, chunk.sha256, chunk.size as usize, transport);
         rejected += attempts - 1;
         let candidate = candidate.and_then(|bytes| {
-            verify_chunk(chunk, &bytes)?;
+            if let Err(error) = verify_chunk(chunk, &bytes) {
+                transport.responses.quarantine(peer)?;
+                return Err(error);
+            }
             Ok(bytes)
         });
         match candidate {
@@ -451,19 +806,55 @@ fn serve_one_budgeted(
     deadline: Instant,
     responses: Option<&ResponseBudget>,
 ) -> CellResultV1<()> {
+    serve_one_profile(stream, store, deadline, responses, false)
+}
+
+fn serve_one_profile(
+    stream: &mut TcpStream,
+    store: &CellStoreV1,
+    deadline: Instant,
+    responses: Option<&ResponseBudget>,
+    allow_availability: bool,
+) -> CellResultV1<()> {
+    serve_one_wire(
+        stream,
+        store,
+        deadline,
+        responses,
+        allow_availability,
+        b"TCQ1",
+        b"TCS1",
+    )
+}
+
+fn serve_one_wire(
+    stream: &mut TcpStream,
+    store: &CellStoreV1,
+    deadline: Instant,
+    responses: Option<&ResponseBudget>,
+    allow_availability: bool,
+    request_magic: &[u8; 4],
+    response_magic: &[u8; 4],
+) -> CellResultV1<()> {
     let mut query = [0; 37];
     read_deadline(stream, &mut query, deadline, None)?;
-    require(&query[..4] == b"TCQ1", "request version")?;
+    let inventory = &query[..4] == b"TCI1" && allow_availability;
+    require(&query[..4] == request_magic || inventory, "request version")?;
     let digest = query[5..]
         .try_into()
         .map_err(|_| CellErrorV1::Invalid("request digest"))?;
-    let bytes = match query[4] {
-        1 => store.manifest(digest)?.map(|m| m.encode()),
-        2 => store.chunk_with_deadline(digest, Some(deadline))?,
-        _ => return Err(CellErrorV1::Invalid("request type")),
+    let bytes = if inventory {
+        require(query[4] == 1, "availability request type")?;
+        availability::serve_page(stream, store, digest, deadline)?
+    } else {
+        match query[4] {
+            1 => store.manifest(digest)?.map(|m| m.encode()),
+            2 => store.chunk_with_deadline(digest, Some(deadline))?,
+            _ => return Err(CellErrorV1::Invalid("request type")),
+        }
     };
     let mut header = [0; 9];
-    header[..4].copy_from_slice(b"TCS1");
+    header[..4].copy_from_slice(if inventory { b"TIS1" } else { response_magic });
     header[4] = u8::from(bytes.is_none());
     if let Some(bytes) = &bytes {
         header[5..].copy_from_slice(&(bytes.len() as u32).to_be_bytes());
@@ -512,6 +903,11 @@ struct ResponseBytes {
     available: u64,
     reserved: u64,
     received: u64,
+    // This object already spans the entire original fetch session, including
+    // discovery and every release member. Keep refusals with that reservation
+    // instead of allowing each member/retry to forget the same corrupt peer.
+    // Existing callers admit at most eight distinct payload peers.
+    quarantined: BTreeSet<SocketAddr>,
 }
 
 impl ResponseBudget {
@@ -522,6 +918,7 @@ impl ResponseBudget {
                 available: maximum,
                 reserved: 0,
                 received: 0,
+                quarantined: BTreeSet::new(),
             }),
             returned: Condvar::new(),
         }
@@ -532,6 +929,26 @@ impl ResponseBudget {
             .lock()
             .map(|state| state.received)
             .map_err(|_| io::Error::other("cell response budget poisoned"))
+    }
+
+    fn is_quarantined(&self, peer: SocketAddr) -> CellResultV1<bool> {
+        self.state
+            .lock()
+            .map(|state| state.quarantined.contains(&peer))
+            .map_err(|_| CellErrorV1::Invalid("cell peer state poisoned"))
+    }
+
+    fn quarantine(&self, peer: SocketAddr) -> CellResultV1<()> {
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| CellErrorV1::Invalid("cell peer state poisoned"))?;
+        require(
+            state.quarantined.contains(&peer) || state.quarantined.len() < 8,
+            "cell peer quarantine bound",
+        )?;
+        state.quarantined.insert(peer);
+        Ok(())
     }
 
     fn annotate_error(&self, error: CellErrorV1) -> CellErrorV1 {
@@ -686,6 +1103,28 @@ fn request_in_phase(
     transport: &RequestContext<'_>,
     phase: &mut &'static str,
 ) -> CellResultV1<Vec<u8>> {
+    let mut query = [0; 37];
+    query[..4].copy_from_slice(b"TCQ1");
+    query[4] = kind;
+    query[5..].copy_from_slice(&digest);
+    request_frame(peer, &query, b"TCS1", maximum, transport, phase)
+}
+
+// Both explicit profiles share the original byte/connection/time admission.
+// A complete unavailable response is ordinary absence. Only a complete
+// malformed frame or a later invalid pinned object quarantines the peer.
+fn request_frame(
+    peer: SocketAddr,
+    query: &[u8],
+    response_magic: &[u8; 4],
+    maximum: usize,
+    transport: &RequestContext<'_>,
+    phase: &mut &'static str,
+) -> CellResultV1<Vec<u8>> {
+    require(
+        !transport.responses.is_quarantined(peer)?,
+        "cell peer quarantined",
+    )?;
     if transport.responses.received()? == transport.responses.maximum {
         return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED").into());
     }
@@ -698,36 +1137,66 @@ fn request_in_phase(
     let deadline = transport.overall.min(Instant::now() + transport.timeout);
     *phase = "connect";
     let mut stream = TcpStream::connect_timeout(&peer, remaining(deadline)?)?;
-    let mut query = [0; 37];
-    query[..4].copy_from_slice(b"TCQ1");
-    query[4] = kind;
-    query[5..].copy_from_slice(&digest);
+    exchange_frame(
+        &mut stream,
+        ObjectFrame {
+            peer,
+            query,
+            response_magic,
+            maximum,
+        },
+        deadline,
+        transport,
+        phase,
+    )
+}
+
+struct ObjectFrame<'a> {
+    peer: SocketAddr,
+    query: &'a [u8],
+    response_magic: &'a [u8; 4],
+    maximum: usize,
+}
+
+// Request admission and connection ownership belong to the explicit profile;
+// frame integrity, byte accounting and corrupt-peer quarantine stay identical.
+fn exchange_frame(
+    stream: &mut TcpStream,
+    frame: ObjectFrame<'_>,
+    deadline: Instant,
+    transport: &RequestContext<'_>,
+    phase: &mut &'static str,
+) -> CellResultV1<Vec<u8>> {
+    let ObjectFrame {
+        peer,
+        query,
+        response_magic,
+        maximum,
+    } = frame;
     *phase = "request-write";
-    write_deadline(&mut stream, &query, deadline)?;
+    write_deadline(stream, query, deadline)?;
     let mut header = [0; 9];
     *phase = "response-header";
-    read_deadline(
-        &mut stream,
-        &mut header,
-        deadline,
-        Some(transport.responses),
-    )?;
-    require(
-        &header[..4] == b"TCS1" && header[4] == 0,
-        "peer has no bytes or invalid response",
-    )?;
+    read_deadline(stream, &mut header, deadline, Some(transport.responses))?;
     let length = u32::from_be_bytes(
         header[5..]
             .try_into()
             .map_err(|_| CellErrorV1::Invalid("response length"))?,
     ) as usize;
-    require(
-        length > 0 && length <= maximum && length <= MAX_CHUNK_BYTES as usize,
-        "response byte bound",
-    )?;
+    if &header[..4] != response_magic || header[4] > 1 || (header[4] == 1 && length != 0) {
+        transport.responses.quarantine(peer)?;
+        return Err(CellErrorV1::Invalid("invalid peer response frame"));
+    }
+    if header[4] == 1 {
+        return Err(CellErrorV1::Unavailable);
+    }
+    if length == 0 || length > maximum || length > MAX_CHUNK_BYTES as usize {
+        transport.responses.quarantine(peer)?;
+        return Err(CellErrorV1::Invalid("response byte bound"));
+    }
     let mut bytes = vec![0; length];
     *phase = "response-body";
-    read_deadline(&mut stream, &mut bytes, deadline, Some(transport.responses))?;
+    read_deadline(stream, &mut bytes, deadline, Some(transport.responses))?;
     Ok(bytes)
 }
 
@@ -786,6 +1255,9 @@ pub(super) fn write_deadline(
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod dedup_tests;
 
 #[cfg(test)]
 mod budget_tests {

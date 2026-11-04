@@ -5,36 +5,55 @@
 
 use std::{fmt, io};
 
+mod archive;
 mod cache_budget;
 mod cache_wal;
 mod closure;
+mod delta;
 pub mod discovery;
 #[cfg(test)]
 mod historical_tcl3_cache_budget;
 mod manifest;
+mod model_root;
 mod network;
 pub mod pq;
 mod release;
 mod residency;
 mod retention;
 mod store;
+mod tensor;
+mod tensor_reader;
 
+pub use archive::{
+    CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
+    CellReleaseRetentionStoreV2, MAX_CELL_ARCHIVE_CONTRACT_BYTES_V2,
+};
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
     MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
 };
+pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
     MAX_CHUNK_BYTES,
 };
+pub use model_root::{CellModelReleaseRootV1, MAX_MODEL_RELEASE_ROOT_BYTES_V1};
 pub use network::{
-    fetch_cell, fetch_cell_to_file, serve_cells, serve_cells_bounded, CellFetchReportV1,
-    CellPeerLimitsV1, CellServeLimitsV1, CellServeReportV1,
+    fetch_cell, fetch_cell_persistent, fetch_cell_persistent_to_file, fetch_cell_rarest_first,
+    fetch_cell_rarest_first_to_file, fetch_cell_to_file, serve_cells, serve_cells_bounded,
+    serve_cells_bounded_with_availability, serve_cells_persistent, CellFetchReportV1,
+    CellPeerLimitsV1, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
+    CellPersistentServeLimitsV2, CellPersistentServeReportV2, CellServeLimitsV1, CellServeReportV1,
 };
 pub use release::{
-    fetch_closure, fetch_closure_to_file, fetch_release_to_file, read_pinned_release,
-    CellClosureFetchReportV1, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
+    fetch_closure, fetch_closure_to_file, fetch_closure_with_options_to_file,
+    fetch_model_release_to_file, fetch_model_release_with_options_to_file, fetch_release_to_file,
+    fetch_release_with_options_to_file, fetch_tensor_model_to_file,
+    fetch_tensor_model_with_options_to_file, read_pinned_release, CellClosureFetchReportV1,
+    CellFetchTransportV2, CellModelReleaseFetchReportV1, CellReleaseFetchLimitsV1,
+    CellReleaseFetchOptionsV2, CellReleaseFetchReportV1, CellTensorModelFetchReportV1,
+    CellTransportFetchReportV2,
 };
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
@@ -44,6 +63,11 @@ pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
 };
 pub use store::{CellReleaseLimitsV1, CellStoreV1};
+pub use tensor::{
+    CellTensorContractV1, CellTensorDTypeV1, CellTensorFileV1, CellTensorModelManifestV1,
+    CellTensorReadbackV1, CellTensorSpecV1, MAX_CELL_TENSOR_CONTRACT_BYTES_V1,
+    MAX_CELL_TENSOR_HEADER_BYTES_V1, MAX_CELL_TENSOR_MODEL_MANIFEST_BYTES_V1,
+};
 
 pub type CellDigestV1 = [u8; 32];
 pub type CellResultV1<T> = Result<T, CellErrorV1>;
@@ -134,3 +158,15 @@ mod release_tests;
 
 #[cfg(test)]
 mod closure_tests;
+
+#[cfg(test)]
+mod model_root_tests;
+
+#[cfg(test)]
+mod delta_tests;
+
+#[cfg(test)]
+mod delta_network_tests;
+
+#[cfg(test)]
+mod tensor_tests;
