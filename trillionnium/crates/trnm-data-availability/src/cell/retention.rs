@@ -308,6 +308,90 @@ impl CellRetentionStoreV1 {
         self.readback(&row)
     }
 
+    /// Release catalog operations keep their original deadline while acquiring
+    /// the physical writer. Recompute the live layout under that writer so a
+    /// waiting reservation cannot allocate against an earlier free-slot view.
+    pub(super) fn reserve_until(
+        &mut self,
+        contract: CellRetentionContractV1,
+        deadline: Instant,
+    ) -> CellResultV1<CellRetentionReadbackV1> {
+        let mut checkpoint = || Ok(());
+        let mut control = OperationControl {
+            deadline,
+            checkpoint: &mut checkpoint,
+            stopped: false,
+        };
+        control.check()?;
+        validate_contract(&contract, &self.config)?;
+        self.check_arena_controlled(&mut control)?;
+        let row = write_transaction_controlled(
+            &mut self.connection,
+            &mut control,
+            |transaction, control| {
+                validate_schema(transaction)?;
+                control.check()?;
+                if let Some(row) = Self::row_from(transaction, &self.config, contract.operation)? {
+                    require(row.contract == contract, "retention operation changed")?;
+                    control.check()?;
+                    return Ok(row);
+                }
+                let rows =
+                    Self::audit_layout_from(transaction, &self.config, &mut || control.check())?;
+                require(
+                    rows.len() < self.config.maximum_obligations as usize,
+                    "retention record capacity",
+                )?;
+                require(
+                    rows.iter()
+                        .all(|row| row.contract.funding_operation != contract.funding_operation),
+                    "retention funding alias",
+                )?;
+                let reserved = aligned(contract.manifest.size())?;
+                let mut offset = 0_u64;
+                for previous in rows.iter().filter(|row| row.status != 2) {
+                    control.check()?;
+                    if offset + reserved <= previous.offset {
+                        break;
+                    }
+                    offset = previous.offset + previous.reserved;
+                }
+                require(
+                    offset
+                        .checked_add(reserved)
+                        .is_some_and(|end| end <= self.config.capacity_bytes),
+                    "retention capacity exhausted",
+                )?;
+                let row = Row {
+                    contract,
+                    offset,
+                    reserved,
+                    status: 0,
+                    initial_bytes: 0,
+                    repair_bytes: 0,
+                };
+                Self::write_row_on_connection_controlled(
+                    transaction,
+                    &self.config,
+                    &row,
+                    true,
+                    control,
+                )?;
+                Ok(row)
+            },
+        )?;
+        control.check()?;
+        validate_schema(&self.connection)?;
+        let durable = self.required_row(row.contract.operation)?;
+        require(
+            row_checksum(&durable) == row_checksum(&row),
+            "retention reservation readback",
+        )?;
+        let result = self.readback(&durable)?;
+        control.check()?;
+        Ok(result)
+    }
+
     /// Copy at most once under the original obligation identity. The entire
     /// initial byte charge is durable before writing; an uncertain prior attempt
     /// may only be reconciled, never automatically dispatched again.
@@ -825,6 +909,10 @@ impl CellRetentionStoreV1 {
                 row_checksum(&retired) == row_checksum(row) && retired.status == 1,
                 "retention retirement prior",
             )?;
+            // A healthy target does not settle an interrupted repair. Keep its
+            // exact physical slot until every charged repair has reconciled;
+            // recheck under the writer, after any contention, before status 2.
+            Self::require_settled_repairs_from(&transaction, &self.config, &retired, control)?;
             retired.status = 2;
             Self::write_row_on_connection_controlled(
                 &transaction,
@@ -855,6 +943,65 @@ impl CellRetentionStoreV1 {
         // later independent calls, including refusal and uncertain completion.
         self.connection.busy_timeout(original_busy)?;
         result
+    }
+
+    /// Release-wide roots may be retired only after their original repairs
+    /// settle. Physical reclamation independently repeats this check under its
+    /// own writer transaction; this readback is not a reclamation authority.
+    pub(super) fn require_settled_repairs(
+        &self,
+        operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        let mut checkpoint = || Ok(());
+        let mut control = OperationControl {
+            deadline,
+            checkpoint: &mut checkpoint,
+            stopped: false,
+        };
+        control.check()?;
+        validate_schema(&self.connection)?;
+        let row = self.required_row(operation)?;
+        Self::require_settled_repairs_from(&self.connection, &self.config, &row, &mut control)
+    }
+
+    fn require_settled_repairs_from(
+        connection: &Connection,
+        config: &CellRetentionConfigV1,
+        row: &Row,
+        control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
+    ) -> CellResultV1<()> {
+        control.check()?;
+        let count: u64 =
+            connection.query_row("SELECT count(*) FROM repairs", [], |value| value.get(0))?;
+        control.check()?;
+        require(
+            count <= u64::from(config.maximum_obligations),
+            "retention repair record capacity",
+        )?;
+        let mut statement = connection
+            .prepare("SELECT operation FROM repairs WHERE obligation=?1 ORDER BY operation")?;
+        let mut repairs = statement.query([row.contract.operation.as_slice()])?;
+        let mut total = 0_u64;
+        while let Some(repair) = repairs.next()? {
+            control.check()?;
+            let operation = digest(repair.get(0)?)?;
+            let (obligation, amount, complete) = Self::repair_row_from(connection, operation)?
+                .ok_or(CellErrorV1::Invalid("retention missing repair"))?;
+            require(
+                obligation == row.contract.operation && complete,
+                "retention unsettled repair",
+            )?;
+            require(
+                amount == 0 || amount == row.contract.manifest.size(),
+                "retention repair amount",
+            )?;
+            total = total
+                .checked_add(amount)
+                .ok_or(CellErrorV1::Invalid("retention repair overflow"))?;
+        }
+        require(total == row.repair_bytes, "retention repair conservation")?;
+        control.check()
     }
 
     #[cfg(test)]
@@ -1098,43 +1245,52 @@ impl CellRetentionStoreV1 {
 
     fn audit_layout(&self) -> CellResultV1<Vec<Row>> {
         self.check_arena()?;
+        Self::audit_layout_from(&self.connection, &self.config, &mut || Ok(()))
+    }
+
+    fn audit_layout_from(
+        connection: &Connection,
+        config: &CellRetentionConfigV1,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<Vec<Row>> {
+        checkpoint()?;
         let count: u64 =
-            self.connection
-                .query_row("SELECT count(*) FROM obligations", [], |r| r.get(0))?;
+            connection.query_row("SELECT count(*) FROM obligations", [], |r| r.get(0))?;
         require(
-            count <= u64::from(self.config.maximum_obligations),
+            count <= u64::from(config.maximum_obligations),
             "retention record capacity",
         )?;
-        let mut stmt = self
-            .connection
-            .prepare("SELECT operation FROM obligations ORDER BY position,operation")?;
+        checkpoint()?;
+        let mut stmt =
+            connection.prepare("SELECT operation FROM obligations ORDER BY position,operation")?;
         let mut ids = stmt.query([])?;
         let mut rows = Vec::with_capacity(count as usize);
         let mut end = 0;
         while let Some(id) = ids.next()? {
-            let row = self.required_row(digest(id.get(0)?)?)?;
+            checkpoint()?;
+            let row = Self::row_from(connection, config, digest(id.get(0)?)?)?
+                .ok_or(CellErrorV1::Invalid("retention unknown obligation"))?;
             if row.status != 2 {
                 require(row.offset >= end, "retention overlapping duties")?;
                 end = row.offset + row.reserved;
             }
             rows.push(row);
         }
+        checkpoint()?;
         let repair_count: u64 =
-            self.connection
-                .query_row("SELECT count(*) FROM repairs", [], |r| r.get(0))?;
+            connection.query_row("SELECT count(*) FROM repairs", [], |r| r.get(0))?;
         require(
-            repair_count <= u64::from(self.config.maximum_obligations),
+            repair_count <= u64::from(config.maximum_obligations),
             "retention repair record capacity",
         )?;
         let mut totals = std::collections::BTreeMap::<CellDigestV1, u64>::new();
-        let mut stmt = self
-            .connection
-            .prepare("SELECT operation FROM repairs ORDER BY operation")?;
+        let mut stmt = connection.prepare("SELECT operation FROM repairs ORDER BY operation")?;
         let mut ids = stmt.query([])?;
         while let Some(id) = ids.next()? {
-            let (obligation, amount, complete) = self
-                .repair_row(digest(id.get(0)?)?)?
-                .ok_or(CellErrorV1::Invalid("retention missing repair"))?;
+            checkpoint()?;
+            let (obligation, amount, complete) =
+                Self::repair_row_from(connection, digest(id.get(0)?)?)?
+                    .ok_or(CellErrorV1::Invalid("retention missing repair"))?;
             let original = rows
                 .iter()
                 .find(|row| row.contract.operation == obligation)
@@ -1149,11 +1305,13 @@ impl CellRetentionStoreV1 {
                 .ok_or(CellErrorV1::Invalid("retention repair overflow"))?;
         }
         for row in &rows {
+            checkpoint()?;
             require(
                 row.repair_bytes == totals.get(&row.contract.operation).copied().unwrap_or(0),
                 "retention repair conservation",
             )?;
         }
+        checkpoint()?;
         Ok(rows)
     }
 
@@ -1449,11 +1607,11 @@ fn validate_schema(connection: &Connection) -> CellResultV1<()> {
 /// A repair may acquire multiple writers, but every wait spends the same
 /// original absolute deadline. Restore the owner setting on every return path;
 /// a post-commit control failure is uncertain and must retain the durable row.
-fn write_transaction_controlled<C: FnMut() -> CellResultV1<()>>(
+fn write_transaction_controlled<T, C: FnMut() -> CellResultV1<()>>(
     connection: &mut Connection,
     control: &mut OperationControl<'_, C>,
-    write: impl FnOnce(&Connection, &mut OperationControl<'_, C>) -> CellResultV1<()>,
-) -> CellResultV1<()> {
+    write: impl FnOnce(&Connection, &mut OperationControl<'_, C>) -> CellResultV1<T>,
+) -> CellResultV1<T> {
     control.check()?;
     let original_busy_ms: u64 =
         connection.pragma_query_value(None, "busy_timeout", |value| value.get(0))?;
@@ -1467,14 +1625,15 @@ fn write_transaction_controlled<C: FnMut() -> CellResultV1<()>>(
         let transaction =
             connection.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
         control.check()?;
-        write(&transaction, control)?;
+        let value = write(&transaction, control)?;
         control.check()?;
         transaction.busy_timeout(
             original_busy.min(control.deadline.saturating_duration_since(Instant::now())),
         )?;
         control.check()?;
         transaction.commit()?;
-        control.check()
+        control.check()?;
+        Ok(value)
     })();
     connection.busy_timeout(original_busy)?;
     result
@@ -1506,7 +1665,7 @@ fn open_arena(path: &Path, create: bool) -> CellResultV1<File> {
     Ok(file)
 }
 
-fn validate_config(config: &CellRetentionConfigV1) -> CellResultV1<()> {
+pub(super) fn validate_config(config: &CellRetentionConfigV1) -> CellResultV1<()> {
     require(
         config.store_id != [0; 32]
             && (ALIGNMENT..=MAX_CELL_BYTES).contains(&config.capacity_bytes)
@@ -1516,7 +1675,7 @@ fn validate_config(config: &CellRetentionConfigV1) -> CellResultV1<()> {
     )
 }
 
-fn validate_contract(
+pub(super) fn validate_contract(
     contract: &CellRetentionContractV1,
     config: &CellRetentionConfigV1,
 ) -> CellResultV1<()> {

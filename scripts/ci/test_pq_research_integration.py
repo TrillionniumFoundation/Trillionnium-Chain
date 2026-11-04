@@ -406,7 +406,10 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(check(self.root)['cryptographic_acceptance'])
 
     def test_convergence_owner_source_changes_cannot_reuse_prior_pins(self):
-        for name in (
+        # Exercise every convergence dependency, including the model codecs,
+        # tensor reader, transport, CLI, vector and specification. The separate
+        # omission test already deletes each required path and its pin together.
+        for name in sorted(CONVERGENCE_REQUIRED_PATHS | {
             'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
             'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs',
             'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
@@ -415,7 +418,7 @@ class CorpusGateTests(unittest.TestCase):
             'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
             'trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs',
             'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
-        ):
+        }):
             with self.subTest(path=name):
                 path = self.root / name
                 original = path.read_bytes()

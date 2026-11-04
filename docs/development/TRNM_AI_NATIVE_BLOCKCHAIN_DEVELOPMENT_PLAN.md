@@ -5894,6 +5894,50 @@ through these local observations. The original complete Node, exact committed
 head and actual merge, service, history and independent qualification gates stay
 open until their own evidence passes.
 
+### 2026-11-04 complete model storage, tensor admission and retained-root GC
+
+The [M09 model-storage contract](specs/pon/CELL_MODEL_STORAGE_V1.md) integrates
+the byte-verified TMR1/TCX1 work previously present only in archival PR #692
+into this existing integration candidate. Current cache writer deadlines and
+original TCM1/TCR1/TCD1 identities remain. A fresh TCA2 namespace replaces no
+live store and does not claim that the historical TCA1 archive was already the
+new implementation. [Source provenance and observations](../../evidence/cell-storage-continuation-20261104/README.md)
+preserve the original hashes, actual failed retirement regression and
+intermediate compiler diagnostics.
+
+TMR1 binds the declared closure, router roster and bounded direct parents.
+TCX1 reuses exact content chunks and verifies the complete target. TMT1 declares
+an exact, bounded F32/F16/BF16 dense tensor roster; TMA1 contains the complete
+root and tensor plan. Actual container validation rejects wrong dtype/shape,
+duplicate JSON keys, holes/overlap/trailing bytes and complete-hash mismatch
+before a create-only TMA1 marker can be published. The ordinary CLI requires
+independent root/closure/context/profile/generation inputs. It still has no
+CURRENT or FinalUse authority.
+
+Transfer adds explicit bounded rarity hints and TCQ2/TCS2 sequential connection
+reuse. All release members and manifest preflight share the original session's
+requests, dials, response bytes and absolute deadline. Repeated payload chunks
+are fetched once while original V1 manifest-position report accounting is
+preserved. Discovery balances actually observed bootstrap sources and IP
+prefixes under the existing signed TTL/replay/query owner; these are diversity
+heuristics, not evidence of independent custodians or an eclipse-proof DHT.
+
+TCA2 preserves complete immutable roots, optional exact TMA1 validation plans
+and the original physical obligations. Pending reservations and expired but
+unretired roots remain collection roots. Catalog and physical writer contention
+spend the caller's original deadline. Collection audits every root under the
+catalog writer transaction and refuses an unsettled repair before reclaiming
+physical capacity. Cold recovery and two-version shared base/tokenizer controls
+exercise those actual local owners.
+
+The local catalog binds funding/replica/repair declarations; it does not supply
+M12 payment admission, current heights, automatic funded lease extension,
+independent replica evidence or erasure coding. Cross-context physical aliases,
+expert ABI/quantization, ordinary selected-model consumption and the original
+independent PN5 WAN/failure campaign remain explicit gates. No activation,
+public-WAN, performance, model-efficacy or whole-chain-security claim advances
+from this source continuation alone.
+
 ### 2026-11-04 independently pinned recovery, PQ release roles and fixed hybrid TLS
 
 Continue the existing integration candidate with the

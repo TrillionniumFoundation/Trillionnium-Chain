@@ -247,6 +247,98 @@ fn cli_rejects_owner_context_and_authentication_downgrade_before_cache_or_dial()
 }
 
 #[test]
+fn cli_model_root_composes_and_fetches_exact_closure_without_granting_use_or_changing_tcd1() {
+    use trnm_data_availability::cell::CellModelReleaseRootV1;
+    let fixture = Fixture::new();
+    let root_path = fixture.path("owner.tmr1");
+    let prepared = cli(&[
+        "prepare-model-root".into(),
+        "--closure-file".into(),
+        fixture.closure_path.display().to_string(),
+        "--closure".into(),
+        digest_hex(fixture.closure.id()),
+        "--parent-root-files".into(),
+        String::new(),
+        "--output".into(),
+        root_path.display().to_string(),
+    ]);
+    assert!(
+        prepared.status.success(),
+        "{}",
+        String::from_utf8_lossy(&prepared.stderr)
+    );
+    let root = CellModelReleaseRootV1::decode(&fs::read(&root_path).unwrap()).unwrap();
+    let peer = Peer::new(&fixture.origin_path);
+    let mut args = fixture.args(
+        "model-cache.sqlite",
+        "complete.tmr1",
+        &peer.address.to_string(),
+    );
+    args[0] = "fetch-model-root".into();
+    let index = args.iter().position(|arg| arg == "--closure-file").unwrap();
+    args[index] = "--model-root-file".into();
+    args[index + 1] = root_path.display().to_string();
+    args.extend(["--model-root".into(), digest_hex(root.id())]);
+    let output = cli(&args);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["schema"], "trnm.cell.model-release.fetch.v1");
+    assert_eq!(report["model_root"], digest_hex(root.id()));
+    assert_eq!(report["closure"], digest_hex(fixture.closure.id()));
+    assert_eq!(report["downloaded_chunks"], 3);
+    assert_eq!(report["received_response_bytes"], fixture.response_bytes);
+    assert_eq!(report["selection_authority"], false);
+    assert_eq!(report["use_authority"], false);
+    assert_eq!(
+        fs::read(fixture.path("complete.tmr1")).unwrap(),
+        root.encode()
+    );
+    // The original consumer marker stays byte-for-byte TCD1, using the same CAS.
+    let mut legacy = fixture.args("model-cache.sqlite", "legacy.tcd1", "");
+    replace(&mut legacy, "--max-response-bytes", "0".into());
+    let compatible = cli(&legacy);
+    assert!(
+        compatible.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compatible.stderr)
+    );
+    assert_eq!(
+        fs::read(fixture.path("legacy.tcd1")).unwrap(),
+        fixture.closure.encode()
+    );
+    assert_eq!(peer.finish(), 6);
+}
+
+#[test]
+fn cli_model_root_bad_pin_and_symlink_refuse_before_cache_or_peer() {
+    use trnm_data_availability::cell::CellModelReleaseRootV1;
+    let fixture = Fixture::new();
+    let root = CellModelReleaseRootV1::new(fixture.closure.clone(), vec![]).unwrap();
+    let root_path = fixture.path("owner.tmr1");
+    fs::write(&root_path, root.encode()).unwrap();
+    let alias = fixture.path("alias.tmr1");
+    std::os::unix::fs::symlink(&root_path, &alias).unwrap();
+    let peer = Peer::new(&fixture.origin_path);
+    for (number, path, pin) in [(0, root_path, [99; 32]), (1, alias, root.id())] {
+        let cache = format!("model-bad-{number}.sqlite");
+        let marker = format!("model-bad-{number}.tmr1");
+        let mut args = fixture.args(&cache, &marker, &peer.address.to_string());
+        args[0] = "fetch-model-root".into();
+        let index = args.iter().position(|arg| arg == "--closure-file").unwrap();
+        args[index] = "--model-root-file".into();
+        args[index + 1] = path.display().to_string();
+        args.extend(["--model-root".into(), digest_hex(pin)]);
+        assert!(!cli(&args).status.success());
+        assert!(!fixture.path(&cache).exists() && !fixture.path(&marker).exists());
+    }
+    assert_eq!(peer.finish(), 0);
+}
+
+#[test]
 fn cli_fetches_real_bytes_shares_budget_resumes_and_never_overwrites_marker() {
     let fixture = Fixture::new();
     let peer = Peer::new(&fixture.origin_path);
