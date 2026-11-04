@@ -5,7 +5,8 @@ use std::{hint::black_box, time::Instant};
 use trnm_crypto_primitives::pon_work::*;
 
 const LIMIT: usize = 4096;
-const SAMPLES: usize = 9;
+// Twelve samples rotate all four kernels and three variants through every position.
+const SAMPLES: usize = 12;
 const KERNELS: [&str; 4] = [
     "retained-transposed",
     "scalar-reference",
@@ -555,7 +556,7 @@ fn main() {
         1,
         "fixed diagnostic has no argument overrides"
     );
-    print!("{{\"schema\":\"pon-work-rejection-cost-v1\",\"profile\":{},\"attempt_limit\":{LIMIT},\"samples_per_group\":{SAMPLES},\"producer\":\"prepared-task-full-transcript\",\"kernels\":{},\"samples\":[", quoted(PROFILE), array(KERNELS.map(quoted)));
+    print!("{{\"schema\":\"pon-work-rejection-cost-v2\",\"profile\":{},\"attempt_limit\":{LIMIT},\"samples_per_group\":{SAMPLES},\"producer\":\"prepared-task-full-transcript\",\"kernels\":{},\"samples\":[", quoted(PROFILE), array(KERNELS.map(quoted)));
     let mut first = true;
     for class in ["dense", "zero", "rank-one", "sparse"] {
         for top in [127, 7] {

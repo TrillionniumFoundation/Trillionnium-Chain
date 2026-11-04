@@ -37,20 +37,22 @@ from check_cross_arch_cost import (ARCHITECTURES, elf_machine,
 from check_invariant_evidence import source_bytes
 from work_oracle import evaluate as scalar_evaluate
 
-SCHEMA = 'pon-work-rejection-cost-v1'
+SCHEMA = 'pon-work-rejection-cost-v2'
 PROFILE = 'pon-matmul-transcript-64-v1'
 EXAMPLE = 'pon_rejection_cost'
 CLASSES = ('dense', 'zero', 'rank-one', 'sparse')
 TARGETS = ('7f' + 'ff' * 31, '07' + 'ff' * 31)
-KERNELS = ('production-transposed', 'scalar-reference', 'limb-transcript')
+KERNELS = ('retained-transposed', 'scalar-reference', 'limb-transcript', 'production-full-limb')
 VARIANTS = ('legal', 'transcript', 'product-last-cell')
 RESULTS = ('Accepted', 'Transcript', 'Product')
-LIMIT, SAMPLES, N, R, Q = 4096, 9, 64, 8, 4294967291
+ARMS = len(VARIANTS) * len(KERNELS)
+LIMIT, SAMPLES, N, R, Q = 4096, 12, 64, 8, 4294967291
 CELLS, PROOF_BYTES = N * N, 49188
 FALSE_FLAGS = ('fastest_adversary_qualified', 'work_hardness_accepted',
                'worst_case_rejection_qualified', 'public_service_measured', 'production_activation')
 SOURCE_PATHS = {
     'scripts/pon_work_rejection_report.py', 'scripts/ci/test_work_rejection_report.py',
+    'docs/research/PON_WORK_REJECTION_COST_V2_PLAN.md',
     'scripts/ci/ci_observation.py', 'scripts/ci/verify_ci_source.py',
     'scripts/ci/check_cross_arch_cost.py', 'scripts/ci/check_invariant_evidence.py',
     'formal/pon-nakamoto-v1/work_oracle.py', 'formal/pon-nakamoto-v1/contract_wire.py',
@@ -371,9 +373,9 @@ def summarize(raw: dict) -> dict:
             group['fake_ticket_trials'] += len(mutation['ticket_attempts'])
             if proofs[mutation['id']] is None: group['fake_exhausted'] += 1
         expected_arms = []
-        for position in range(9):
-            arm = (position + row['sample']) % 9
-            variant, kernel = VARIANTS[arm // 3], KERNELS[arm % 3]
+        for position in range(ARMS):
+            arm = (position + row['sample']) % ARMS
+            variant, kernel = VARIANTS[arm // len(KERNELS)], KERNELS[arm % len(KERNELS)]
             if proofs[variant] is not None: expected_arms.append((position, variant, kernel))
         require(len(row['measurements']) == len(expected_arms), 'actual ready verification arms cannot be omitted/duplicated')
         for expected_arm, observed in zip(expected_arms, row['measurements']):
@@ -381,7 +383,7 @@ def summarize(raw: dict) -> dict:
                              'returned_product_sha256', 'probe'}, 'timed verification')
             require(type(observed['position']) is int and
                     (observed['position'], observed['variant'], observed['kernel']) == expected_arm,
-                    'nine-arm exact cyclic invocation order')
+                    'twelve-arm exact cyclic invocation order')
             variant, kernel = observed['variant'], observed['kernel']
             require(observed['proof_sha256'] == digest(proofs[variant]), 'timed/probed complete proof identity')
             require(observed['actual_result'] == RESULTS[VARIANTS.index(variant)], 'record actual WorkError, not is_err or inference')
@@ -404,7 +406,7 @@ def summarize(raw: dict) -> dict:
     for (class_name, target), group in groups.items():
         complete = group['honest_winners'] == SAMPLES and group['fake_exhausted'] == 0
         if complete:
-            require(all(group['positions'][(v, k, p)] == 1 for v in VARIANTS for k in KERNELS for p in range(9)),
+            require(all(group['positions'][(v, k, p)] == 1 for v in VARIANTS for k in KERNELS for p in range(ARMS)),
                     'every ready arm occupies every position exactly once per complete group')
         group.pop('positions')
         for key, entry in group['variants'].items():
@@ -415,28 +417,28 @@ def summarize(raw: dict) -> dict:
             if variant == 'legal':
                 entry['honest_acquisition_to_verification_ratio'] = ratio(group['honest_acquisition_ns'], entry['verification_total_ns'])
             else:
-                # The same acquisition is a prerequisite scenario, not nine new
+                # The same acquisition is a prerequisite scenario, not twelve new
                 # independent producer samples and not a from-zero forgery omission.
                 entry['first_construction_including_honest_acquisition_ns'] = group['honest_acquisition_ns'] + entry['construction_total_ns']
                 entry['rejection_to_first_construction_ratio'] = ratio(entry['verification_total_ns'],
                     entry['first_construction_including_honest_acquisition_ns'])
                 entry['rejection_to_existing_proof_mutation_ratio'] = ratio(entry['verification_total_ns'], entry['construction_total_ns'])
         for variant in VARIANTS:
-            baseline = group['variants'].get(variant + '/production-transposed')
+            baseline = group['variants'].get(variant + '/production-full-limb')
             if baseline:
                 for kernel in KERNELS:
                     entry = group['variants'].get(variant + '/' + kernel)
                     if entry:
                         entry['kernel_to_production_total_ratio'] = ratio(entry['verification_total_ns'], baseline['verification_total_ns'])
         output_groups.append({'class': class_name, 'target': target, 'complete_balanced_group': complete, **group})
-    return {'schema': 'pon-work-rejection-summary-v1', 'raw_schema': SCHEMA,
+    return {'schema': 'pon-work-rejection-summary-v2', 'raw_schema': SCHEMA,
         'cohorts': len(expected_keys), 'timed_verifications': measured,
         'independent_winning_transcript_replays': independent_replays,
         'projection_sha256': projection_sha256(raw), 'groups': output_groups,
         'clock': 'monotonic wall nanoseconds, not CPU or energy accounting',
         'honest_cost_scope': 'one actual material/task/prepared setup per flow; all proof/ticket attempts and recording overhead charged in search wall',
         'mutation_cost_scope': 'clone and mutation of an already acquired complete honest winner; first-construction denominator includes that acquisition',
-        'repeated_proof_scope': 'three kernel timings share each exact proof; same-winner repeated network submission and cross-challenge reuse are not measured',
+        'repeated_proof_scope': 'four kernel timings share each exact proof; same-winner repeated network submission and cross-challenge reuse are not measured',
         'probe_scope': 'all timed arms complete before separate actual-result/progress probes; probes are not timed verification observations',
         'independent_scope': 'full scalar transcript replay for every honest winner; all failed proof bytes/tickets checked, failed transcripts are not independently replayed',
         'ratio_definition': 'sum of actual within-class/target costs; kernels are compared on identical complete proof cases; no missing failures or synthetic amortization',
@@ -529,7 +531,7 @@ def collect(output: Path, *, local: bool = False) -> dict:
     require(not output.is_relative_to(ROOT), 'new output directory must be outside the checkout')
     output.mkdir(mode=0o700, parents=True, exist_ok=False)
     observed = []
-    report = {'schema': 'pon-work-rejection-execution-v1', 'result': 'FAIL',
+    report = {'schema': 'pon-work-rejection-execution-v2', 'result': 'FAIL',
         'observed_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'execution_context': 'local-native-preflight' if local else 'github-hosted',
         'runner_context': {key: os.environ.get(key) for key in RUNNER_FIELDS},
@@ -612,7 +614,7 @@ def verify(output: Path, *, require_current: bool = True) -> dict:
         'compiler_channel', 'build_profile', 'observations', 'source_before', 'source_after', 'input_sha256',
         'architecture', 'target', 'build_environment_overrides', 'binary_elf_machine',
         'binary_sha256_before', 'binary_sha256_after', 'artifact_sha256', *FALSE_FLAGS}, 'successful execution receipt')
-    require(record.get('schema') == 'pon-work-rejection-execution-v1' and record.get('result') == 'PASS',
+    require(record.get('schema') == 'pon-work-rejection-execution-v2' and record.get('result') == 'PASS',
             'successful actual collection receipt required')
     timestamp = datetime.datetime.fromisoformat(record['observed_at_utc'])
     require(timestamp.utcoffset() == datetime.timedelta(0), 'actual UTC observation timestamp')
@@ -702,7 +704,7 @@ def compare(left: Path, right: Path, output: Path, *, expected_source: str | Non
     output = output.resolve()
     require(not output.is_relative_to(ROOT), 'comparison receipt outside checkout')
     output.mkdir(mode=0o700, parents=True, exist_ok=False)
-    report = {'schema': 'pon-work-rejection-comparison-v1', 'result': 'FAIL', 'inputs': [str(left), str(right)],
+    report = {'schema': 'pon-work-rejection-comparison-v2', 'result': 'FAIL', 'inputs': [str(left), str(right)],
               **{flag: False for flag in FALSE_FLAGS}}
     try:
         values = [verify(left), verify(right)]
