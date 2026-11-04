@@ -1,0 +1,93 @@
+name: Cell native source inventory closure
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-cell-inventory-closure-20261104.yml
+permissions:
+  contents: read
+concurrency:
+  group: cell-inventory-closure-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      INVENTORY_CANDIDATE: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353
+      INVENTORY_PARENT: 5c070abeb61d0ea8702fa94fffe9330d1699119c
+    steps:
+      - name: Checkout exact workflow source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Record original workflow source and project boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export INVENTORY_OUT="$RUNNER_TEMP/cell-inventory-closure-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$INVENTORY_OUT"
+          echo "INVENTORY_OUT=$INVENTORY_OUT" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$INVENTORY_OUT/workflow-source.json"
+          bash scripts/project-preflight.sh --audit | tee "$INVENTORY_OUT/workflow-audit.json"
+      - name: Checkout the one-file candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: a4a0e2b561f057cfa3189979c5bf11f3a0eb2353
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify the exact candidate and sole inventory change
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$INVENTORY_CANDIDATE" --output "$INVENTORY_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit | tee "$INVENTORY_OUT/audit-before.json"
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          candidate = os.environ['INVENTORY_CANDIDATE']
+          parent = os.environ['INVENTORY_PARENT']
+          expected = 'trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs'
+          assert git('show', '-s', '--format=%P', candidate).split() == [parent]
+          changed = git('diff', '--name-only', parent, candidate).splitlines()
+          assert changed == [expected], changed
+          assert git('hash-object', expected) == 'ec901599281b656b942fe77d807a2a2b92672e5a'
+          record = {'schema': 'trnm-cell-inventory-source-fix-v1',
+                    'candidate': candidate, 'parent': parent, 'changed_paths': changed,
+                    'inventory_blob': git('hash-object', expected),
+                    'implementation_changed': False, 'native_tests_executed': 0,
+                    'public_business_acceptance_granted': False}
+          (Path(os.environ['INVENTORY_OUT']) / 'candidate.json').write_text(json.dumps(record, indent=2) + '\n')
+          print(json.dumps(record, sort_keys=True))
+          PY
+          git diff --check "$INVENTORY_PARENT" "$INVENTORY_CANDIDATE"
+      - name: Run original inventory, source-pin and repository checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$INVENTORY_OUT/inventory.log"
+          python3 scripts/ci/check_pq_research_integration.py 2>&1 | tee "$INVENTORY_OUT/pq-source.log"
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$INVENTORY_OUT/repository.log"
+          git diff --exit-code HEAD --
+      - name: Recheck candidate source and original project boundary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$INVENTORY_CANDIDATE" --output "$INVENTORY_OUT/source-after.json"
+          cmp "$INVENTORY_OUT/source-before.json" "$INVENTORY_OUT/source-after.json"
+          bash scripts/project-preflight.sh --audit | tee "$INVENTORY_OUT/audit-after.json"
+      - name: Retain exact candidate checks and all failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cell-inventory-closure-a4a0e2b5-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cell-inventory-closure-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

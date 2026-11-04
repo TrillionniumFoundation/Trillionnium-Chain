@@ -626,3 +626,26 @@ For both original W1 lanes, the retained-packet selector reports 1 PASS / exit 0
 The added frozen_93e_native_host_readback.py and its isolated workflow reuse the already executed Host parser and 22 negative/positive controls. Only source/target names and exact input identities change. The same two original 93e ZIPs and four complete raw-report member sizes/SHA256 values are fixed to the completed current-source cost readback above. Existing 32 MiB per-member, 160 MiB selected-byte, 70k console and ten-minute limits remain unchanged.
 
 The new reader will project the original client-import Host observations without executing native code, changing Host budgets, claiming exclusive nested costs, or assigning old 73ab numbers to 93e. Its source must pass the actual before/after source checks and project audits. No result is claimed by this preparation; all original F0, campaign, W1 and long-History business failures remain open.
+
+
+## Original 93e Host cost is now observed
+
+[The complete same-source Host record](original-93e-native-host-cost-readback.json) binds successful read-only run [41824848332](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41824848332) / job 126556843009 to diagnostic source 29160a58 / tree 85a3f714. Both literal source receipts match and both original audits pass. Its 22 reader controls pass; both original ZIPs and all four raw-report sizes/digests match the already completed cost readback. The complete 65,811-byte log, 13 original JSON strings and matching output artifact 13318637072 are retained.
+
+Across eleven original phases, the 50 retained History imports contain 44 successes and six failures, with zero unknown import outcomes. Forty of the 44 Host phase summaries are observed; the four empty F0 ROOT summaries retain null counts and complete durations. No compact History row is omitted.
+
+| Original campaign baseline | Checkpoint calls | Recorded wall seconds | Invoking-thread CPU seconds |
+| --- | ---: | ---: | ---: |
+| Run 1 | 82,913 | 6.601991452 | 4.556264853 |
+| Run 2 | 82,930 | 5.964185337 | 4.570351415 |
+| Run 3 | 82,936 | 6.962409772 | 4.570681824 |
+
+The checkpoint count over known records is 493,629. These measurements cover the observed History imports in each phase; they are not graph-only or exclusive stage costs. They cannot be subtracted from account-graph timing or added to nested import/stage totals. Successful entered Host checks inside six failed imports do not turn the enclosing import or business criterion into success. All F0/campaign/W1/History acceptance failures remain.
+
+## Concurrent Cell inventory source-control repair prepared
+
+The concurrent integration change 5c070abe adds three native Rust files but leaves the embedded distributed inventory at 1,172 paths. Actual original PQ run 41824885864 stops all four lanes at the inventory source check before native execution. Root reads the exact x64-head source receipt and actual PASS/26 preflight, eight successful preceding source commands and the original inventory exit 1.
+
+Candidate [a4a0e2b5](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/a4a0e2b561f057cfa3189979c5bf11f3a0eb2353) changes only the existing generated inventory: 1,175 paths, adding cell_residency_observer.rs, cell/residency.rs and cell/residency_tests.rs in generator order. The original generator reproduces the entire prior 1,172-path file byte-for-byte from the exact parent tree; the candidate has exactly one changed leaf and retains all 393 existing source pins. No implementation bytes or validation rule change.
+
+The added isolated workflow checks out this exact candidate, verifies its ordered parent and one-file delta, executes the original inventory --check, source-pin checker and repository checker, and repeats exact source and audit checks. The candidate is held on its own branch until this actual validation returns; no current integration pass is claimed by preparing it.
