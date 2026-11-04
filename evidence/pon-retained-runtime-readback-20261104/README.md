@@ -4,10 +4,12 @@ This directory records already executed work on exact frozen sources. It is evid
 
 ## Latest retained results and current diagnostic source
 
-The newest completed native cohort retained below measures 73ab6e9a / actual merge 88f89924, not the later integration revisions. The current root-owned integration change [69d2e06c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361) adds failure-location observation to the original long-sync selector; its original CI must provide separate results.
+Current integration [69d2e06c](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/69d2e06c48bbbd1e22432f9b557727b140aba361), actual merge bfdfc2bf and tree d9327a58, now has its own four-lane format/strict-Clippy and complete-workspace no-run build results, with 60 distinct selected tests passed per lane. Its original 4,105-block History execution still requires a terminal result. The completed 73ab6e9a / actual merge 88f89924 native costs, failures and Host observations below retain their own source; no older performance or business outcome is assigned to 69d2.
 
 | Frozen measured scope | Actual result | Evidence |
 | --- | --- | --- |
+| 69d original formatting and strict Node Clippy, x64/ARM head/actual merge | All four original lanes succeed | [Current format/lint and queue evidence](69d-format-lint-and-baseline-queue-readback.json) |
+| 69d original workspace test profile, four lanes | Full workspace/all-targets/all-features no-run build succeeds; each lane executes 60 distinct selected tests, all PASS | [Current workspace terminal evidence](69d-original-workspace-four-lane-terminal-readback.json) |
 | 73ab original release, x64/ARM head/actual merge | All four lanes pass original four selectors and three pipelines | [Release terminal record](73ab-release-finality-four-lane-terminal.json) |
 | 73ab original stable/nightly locked-fetch contexts | Four actual executions, exit 0, no timeout | [Fetch terminal record](73ab-locked-fetch-four-context-terminal-readback.json) |
 | 73ab complete Node library, four lanes | Each 985 PASS / 0 FAIL / 27 ignored; original 49 explicit controls and strict Clippy pass | [PQ/native terminal record](73ab-pq-four-lane-terminal-readback.json) |
@@ -402,4 +404,50 @@ The change fills the specific gap demonstrated by the frozen History failures: a
 
 Each measured call retains its original arguments, then records elapsed time before the original Result is propagated. The import expression includes the existing clock argument preparation; if that argument exits early, its duration stays null. Each new page clears fields that could otherwise be inherited from the previous page. Call durations are captured before confirmer cleanup; no extra Node, SQL, file, network or per-page output operation is added.
 
-The original exact selector, 4,105 blocks, 1,800-second server lifetime, separate original RPC/import deadlines, complete verification, assertion texts, reopened-state checks and shutdown/join/error precedence remain. No observed-import API, retry, larger budget or weaker acceptance rule is introduced. Successful import returns do not prove a final durable commit count after an error; durable_committed_blocks and activation_cursor remain null. Two independent static reviews found no semantic/formatting/type issue in this scope. Actual compilation and the original History execution still require the new commit's own CI results; no deadline repair or acceptance is claimed from this observation-only change.
+The original exact selector, 4,105 blocks, 1,800-second server lifetime, separate original RPC/import deadlines, complete verification, assertion texts, reopened-state checks and shutdown/join/error precedence remain. No observed-import API, retry, larger budget or weaker acceptance rule is introduced. Successful import returns do not prove a final durable commit count after an error; durable_committed_blocks and activation_cursor remain null. Two independent static reviews found no semantic/formatting/type issue in this scope. The current source now passes its original four-lane formatting/strict Clippy, full workspace all-targets/all-features no-run compilation, and 60 distinct selected tests per lane. The original 4,105-block History execution still requires its own terminal result and failure-location record; no deadline repair or acceptance is claimed from this observation-only change.
+
+## Current 69d build and selected-control terminal evidence
+
+[The four-lane terminal record](69d-original-workspace-four-lane-terminal-readback.json) binds original run 41799271299 to head 69d2e06c and actual merge bfdfc2bf. All eight before/after source receipts agree with tree d9327a58, 8,127 files / 933,472,602 bytes; each actual project audit passes. The original Rust 1.95.0 command builds --workspace --all-targets --all-features --no-run in the unchanged test profile. Its strict shell gate and original compiler-artifact reader both succeed in all four lanes.
+
+Each lane then actually executes 60 different selected test names: 42 Node and 18 M06. All 60 pass, with zero failures or ignored tests within that selected scope. The roster includes four CPU/reactor controls and 56 semantic controls for full-root arithmetic, unchanged canonical maps, independent root-digest references, error/cancellation return observations, ASCII encoding, reorganization tails, current SQL, prepared historical reads and post-write verification. The root independently matched all 240 result segments, every complete libtest terminal, source/audit literals, 36 large-observation fragments and all four upload/API artifact identities. Full workflow text is bound to the actual source blob.
+
+This is full-workspace compilation plus the explicitly selected executions. It is not complete-workspace test execution, a complete Node/M06 suite, original long-sync success or public-service qualification. The growth step succeeded, but its internal report was not read here and growth figures remain null. Redirected compiler-artifact JSON, raw build.exit and executable digest bodies are also unread/null. The separate [format/strict-Clippy record](69d-format-lint-and-baseline-queue-readback.json) retains its actual four successful lanes; its older workspace snapshot remains dated, not silently rewritten.
+
+## Complete original 73ab long-History failures
+
+[The original four-lane History readback](original-73ab-four-lane-history-failures.json) retains the actual unchanged 4,105-block selector from run 41791242964. The successful reader 41801401067 checks four original ZIPs totaling 226,757,308 bytes and 48 selected members / 107,731 bytes, with zero missing or omitted members. Both reader audits and exact source pairs pass. Root independently reconstructed all eight complete native/GNU-resource members and matched their hashes, 42 original JSON lines, 285 member excerpt lines and the original outer receipts.
+
+| Original 73ab lane | Native result and elapsed time | Last printed milestone | Retained error / server exit |
+| --- | --- | ---: | --- |
+| x64 head | 0 PASS / 1 FAIL / 0 ignored; 3,262.40 s | 2,000 | IO111; original 1,800-second lifetime expired, prior stop false |
+| x64 actual merge | 0 PASS / 1 FAIL / 0 ignored; 3,195.67 s | 2,500 | IO111; original 1,800-second lifetime expired, prior stop false |
+| ARM head | 0 PASS / 1 FAIL / 0 ignored; 3,289.76 s | 4,000 | PUBLIC_REQUEST_DEADLINE; stop_requested at 1,781.596945188 s, lifetime not expired |
+| ARM actual merge | 0 PASS / 1 FAIL / 0 ignored; 3,269.38 s | 4,000 | PUBLIC_REQUEST_DEADLINE; stop_requested at 1,766.083925624 s, lifetime not expired |
+
+Every original native invocation exits 101. The printed milestones are not exact successful-import, committed-block or activation-cursor counts. Failed page, operation boundary, deadline origin, exact durable count and complete 4,105-block confirmation remain null. In particular, this source's x64-merge 2,500 milestone must not inherit the older 44d source's 2,000. The new 69d observer does not fill older unknowns retroactively.
+
+## Same-source 73ab Host costs and graph-stage boundary
+
+[The retained Host projection](original-73ab-native-host-cost-readback.json) reads the same two original ZIPs and four raw reports as [the complete cost projection](original-73ab-native-cost-readback.json). Actual reader 41803235636 succeeds on source 46df7c60: all 22 original reader controls pass, both audits pass, the source pair is byte-identical, and all 8 selected members / 91,600,775 bytes are retained with zero omissions. This reader executes no archived native code and adds no runtime measurement.
+
+All 11 phases and 92 History rows remain: 85 successful imports, seven failed imports and zero unknown import outcomes. Every retained import has a valid observer, with zero measurement-failure observers. Seven failures are F0 baseline index 7 and index 6 in each of six campaign pressure phases. The console preserves all 92 compact import/checkpoint records and 44 per-phase Host slots. F0 ROOT has no History rows; its four slots remain unknown with complete time/call totals null. These are not measured zero-cost observations.
+
+| Original baseline scope | History rows: success / failure | Host checkpoint calls | Checkpoint wall, seconds | Sum of actual invoking-thread CPU, seconds |
+| --- | --- | ---: | ---: | ---: |
+| F0 baseline | 7 / 1 | 83,581 | 6.233690200 | 4.399011445 |
+| Campaign run 1 baseline | 14 / 0 | 166,367 | 6.837774672 | 4.159873526 |
+| Campaign run 2 baseline | 14 / 0 | 166,344 | 7.515145033 | 4.155183110 |
+| Campaign run 3 baseline | 14 / 0 | 166,367 | 6.467027246 | 4.158917758 |
+
+Across observed records the known checkpoint subtotal is 914,503 calls. All recorded Host calls finish and accept; this does not change the seven failed imports or original F0 1/6, campaign 6/27 and F0 four-second 0/6 outcomes. The empty ROOT phase prevents a complete all-phase Host total. Per-import resolve/initial/final fields are retained in the output artifact, while their per-phase summaries are directly visible in console; that output ZIP's complete projection was not independently downloaded. Host CPU sums the actual invoking threads, whereas client-import CPU is the caller-thread measurement. Neither is an exclusive graph cost; no subtraction, CPU-share percentage or cross-source gain is inferred.
+
+[The exact-source graph boundary review](account-graph-cost-source-boundary-69d2.json) separately binds 13 current code blobs. The measured account_graph interval includes current writer/schema checks, optional current-account parsing, fresh SQL reads, complete-input decoding/lift math, graph traversal/collections/equality checks and progress callbacks. Those callbacks can perform the original deadline/Host checks and, under the original exclusive ownership path, bounded refill waiting. Existing decoder/lift caches bind mathematical inputs; they do not authorize current state. The stage counter can include partial or failed traversals. Independent SQL/decode/hash/allocation/callback/refill timing is not available in these reports, so deleting a check, reusing stale SQL or asserting a causal speedup is unsupported.
+
+## Dated current workflow and queue state
+
+[The 09:10:57 UTC metadata snapshot](69d-workflow-status-20261104-091057.json) contains all 16 original 69d PR workflows: 11 success, three failure, one in progress and one pending. F0 41799271331, campaign 41799271249 and W1 41799271243 remain failures; their detailed current-source native/business counts are unread/null in that snapshot. PQ 41799271168 has actual workflow success at 09:04:23, but its internal test counts require separate exact-source log readback. The original priority/History run 41799271270 is still running and required baseline 41799271178 is pending.
+
+[The queue evidence](69d-format-lint-and-baseline-queue-readback.json) preserves the 08:38:29 snapshot: current baseline pending with zero jobs, while older 40a run 41785836318 remains active. Both exact workflows share the same PR concurrency group and cancel-in-progress=false. This supports queue blocking as an inference from configuration and concurrent metadata; the API does not name an explicit blocking_run. No cancellation, concurrency change or budget change was performed. [Both b811 baseline and priority cancellations](b811-prejob-cancelled-baseline-priority.json) instead have actual cancelled terminal states and total_count=0/jobs=[]; no native outcome or cancellation initiator is invented.
+
+All still-failing public confirmation, fresh-service, original long-History and independent PQ/W1/economics/recovery/WAN/model/governed-acceptance boundaries remain open. The records above close only their named engineering, build or evidence subgates.
