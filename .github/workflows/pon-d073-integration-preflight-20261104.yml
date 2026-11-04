@@ -1,0 +1,84 @@
+name: Exact current integration source preflight
+on:
+  push:
+    branches:
+      - fix/chain-retained-failure-readback-20261104
+    paths:
+      - .github/workflows/pon-d073-integration-preflight-20261104.yml
+permissions:
+  contents: read
+concurrency:
+  group: d073-integration-preflight-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PREFLIGHT_CANDIDATE: d0737cf5434894ce47fad8082376fc417313c2cb
+    steps:
+      - name: Checkout exact workflow source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Record actual workflow source and original project boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PREFLIGHT_OUT="$RUNNER_TEMP/d073-integration-preflight-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$PREFLIGHT_OUT"
+          echo "PREFLIGHT_OUT=$PREFLIGHT_OUT" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$PREFLIGHT_OUT/workflow-source.json"
+          bash scripts/project-preflight.sh --audit | tee "$PREFLIGHT_OUT/workflow-audit.json"
+      - name: Checkout fixed current integration source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: d0737cf5434894ce47fad8082376fc417313c2cb
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify exact current source and original project boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$PREFLIGHT_CANDIDATE" --output "$PREFLIGHT_OUT/source-before.json"
+          bash scripts/project-preflight.sh --audit | tee "$PREFLIGHT_OUT/audit-before.json"
+          test "$(git rev-parse HEAD^)" = a4a0e2b561f057cfa3189979c5bf11f3a0eb2353
+          test "$(git rev-parse HEAD^{tree})" = ae0b9e3d09ae95af33f96fdbab72bda855137e2d
+          git diff --check HEAD^ HEAD
+      - name: Run retained source and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
+            python3 -m unittest discover -s scripts/ci -p "$test_file" -v 2>&1 | tee "$PREFLIGHT_OUT/${test_file%.py}.log"
+          done
+          python3 scripts/ci/check_pq_research_integration.py 2>&1 | tee "$PREFLIGHT_OUT/pq-source.log"
+          python3 scripts/ci/pq_chain_claim_guard.py 2>&1 | tee "$PREFLIGHT_OUT/pq-hold.log"
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$PREFLIGHT_OUT/repository.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$PREFLIGHT_OUT/inventory.log"
+      - name: Install the original pinned formatter
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+      - name: Check original workspace formatting without changing source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$PREFLIGHT_OUT/format.log"
+      - name: Recheck unchanged current source and original project boundary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$PREFLIGHT_CANDIDATE" --output "$PREFLIGHT_OUT/source-after.json"
+          cmp "$PREFLIGHT_OUT/source-before.json" "$PREFLIGHT_OUT/source-after.json"
+          bash scripts/project-preflight.sh --audit | tee "$PREFLIGHT_OUT/audit-after.json"
+      - name: Retain exact source checks and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: d073-integration-preflight-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/d073-integration-preflight-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

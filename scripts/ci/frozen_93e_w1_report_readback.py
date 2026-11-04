@@ -580,6 +580,57 @@ def self_checks():
     refusal("size_bool_refused", lambda: selected_size(True, 0))
     check("size_exact_boundary", selected_size(MAX_MEMBER, MAX_SELECTED - MAX_MEMBER) is None)
     check("wrong_source_rejected", not source_matches({"schema": "trnm-ci-source-v1"}, TARGETS[0]))
+    # Exercise the console view with rich rows, a false operand and an unobserved count.
+    doc = fixture()
+    doc["construction_coverage"]["constructed"] = 0
+    del doc["construction_coverage"]["full_transcript_rejections"]
+    del doc["phases"][1]["client_confirmed_transactions"]
+    for phase in doc["phases"]:
+        phase["honest_history"] = [{"started_ns": index, "error": None} for index in range(16)]
+        phase["independent_history_page_replay"] = [
+            {"history_call_index": index, "replay_started_ns": index * 10,
+             "replay_ended_ns": index * 10 + 9, "replay_wall_ns": 9,
+             "replay_thread_cpu_ns": 4, "replay_accepted": True if index == 0 else None,
+             "replay_error": None, "prior_after": "before-" + str(index),
+             "next_after": "after-" + str(index)}
+            for index in range(16)]
+        phase["independent_client_confirmation"]["diagnostic_payload"] = "x" * 1024
+    value = project_report(doc, "fresh")
+    before = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    compact = compact_report(value)
+    check("compact_does_not_mutate_full_projection",
+          json.dumps(value, sort_keys=True, separators=(",", ":")) == before)
+    changed_phase_keys = {"submissions", "history", "heads", "replays", "timeline_and_confirmation"}
+    check("compact_preserves_predicates_denominators_and_unknowns",
+          all(compact[key] == item for key, item in value.items() if key != "phases")
+          and all(all(shown[key] == item for key, item in phase.items() if key not in changed_phase_keys)
+                  for shown, phase in zip(compact["phases"], value["phases"]))
+          and compact["confirmation_denominator"]["unobserved_count_slots"] == 1
+          and compact["confirmation_denominator"]["complete_confirmed_transactions"] is None
+          and compact["fresh_construction_predicates"]["false_predicates"] == ["constructed_positive"]
+          and compact["fresh_construction_predicates"]["unknown_predicates"] == ["full_transcript_rejections_positive"])
+    missing = fixture()
+    del missing["phases"][0]["independent_history_page_replay"]
+    missing_compact = compact_report(project_report(missing, "fresh"))
+    check("compact_preserves_replay_counts_last_row_and_missing",
+          all(phase["replays"]["attempts"] == 16 and phase["replays"]["accepted"] == 1
+              and phase["replays"]["rejected"] == 0 and phase["replays"]["unknown_outcomes"] == 15
+              and phase["replays"]["console_rows_omitted"] == 15
+              and phase["replays"]["rows"] == [[15, 150, 159, 9, 4, None, None, "before-15", "after-15", False]]
+              for phase in compact["phases"])
+          and missing_compact["phases"][0]["replays"]["rows"] is None
+          and missing_compact["phases"][0]["replays"]["console_rows_omitted"] is None
+          and missing_compact["phases"][1]["replays"]["rows"] == []
+          and missing_compact["phases"][1]["replays"]["console_rows_omitted"] == 0)
+    compact_bytes = len(json.dumps(compact, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+    check("compact_reduces_console_and_retains_confirmation_operands",
+          compact_bytes < len(before.encode("utf-8"))
+          and 4 * (compact_bytes + 1) < MAX_STDOUT - 12000
+          and all(phase["timeline_and_confirmation"]["independent_client_confirmation"] ==
+                  {"confirmed": True, "finalized": False, "execution_authority": False, "depth": 6}
+                  for phase in compact["phases"])
+          and all(phase["timeline_and_confirmation"]["independent_client_confirmation"]["diagnostic_payload"] == "x" * 1024
+                  for phase in value["phases"]))
     return {"schema": "trnm-w1-report-reader-selfchecks-v1", "controls": names,
             "passed": len(names), "source_tests_executed": False, "native_tests_executed": 0,
             "acceptance_granted": False, "production_activation": False}
@@ -600,22 +651,31 @@ def emit(value, reserve=0):
 
 
 def compact_report(projection):
-    # Complete projection/raw bytes remain in files. Avoid dumping head polls or observer bodies.
+    # Complete projection/raw bytes remain in files; only the console view is reduced.
     value = dict(projection)
     value["phases"] = []
     for phase in projection["phases"]:
         row = dict(phase)
-        for key in ("submissions", "heads"):
+        for key in ("submissions", "history", "heads"):
             row[key] = {name: phase[key][name] for name in ("status", "attempts")}
         row["replays"] = {key: item for key, item in phase["replays"].items() if key != "rows"}
         replays = phase["replays"]["rows"]
+        last_replays = replays[-1:] if replays is not None else None
         fields = ("history_call_index", "replay_started_ns", "replay_ended_ns",
                   "replay_wall_ns", "replay_thread_cpu_ns", "replay_accepted", "replay_error",
                   "prior_after", "next_after", "native_import_observation_present")
         row["replays"]["columns"] = fields
-        row["replays"]["rows"] = [[item.get(key) for key in fields] for item in replays] if replays is not None else None
+        row["replays"]["rows"] = [[item.get(key) for key in fields] for item in last_replays] if last_replays is not None else None
+        row["replays"]["console_rows_omitted"] = len(replays) - len(last_replays) if replays is not None else None
+        timeline = dict(phase["timeline_and_confirmation"])
+        confirmation = timeline.get("independent_client_confirmation")
+        if isinstance(confirmation, dict):
+            timeline["independent_client_confirmation"] = {
+                key: confirmation[key] for key in ("confirmed", "finalized", "execution_authority", "depth")
+                if key in confirmation}
+        row["timeline_and_confirmation"] = timeline
         value["phases"].append(row)
-    value["console_scope"] = "All predicate operands, planned business slots and compact replay rows; full calls/observers remain in retained raw reports."
+    value["console_scope"] = "All predicate operands and planned business slots; each replay summary keeps its last observed row. Full calls, confirmation fields and replay rows remain unchanged in the retained projection and raw report."
     return value
 
 

@@ -34,7 +34,7 @@ jobs:
           echo "READBACK_OUT=$READBACK_OUT" >> "$GITHUB_ENV"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
           bash scripts/project-preflight.sh --audit
-      - name: Validate 24 reader controls and read four fixed original W1 reports
+      - name: Validate 28 reader controls and read four fixed original W1 reports
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash

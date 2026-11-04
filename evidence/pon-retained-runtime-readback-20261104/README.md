@@ -674,3 +674,16 @@ The new frozen_93e_w1_report_readback.py selects only five members from each of 
 The projection follows the exact original producer: retained-packet native success asserts the two invariant predicates, while fresh native success asserts construction plus both phase invariant/business predicates. Each phase has one original signed business transaction. Twenty-four controls check false/unknown/type/denominator/source/boundary behavior; those are prepared controls, not executed results. All native, report-validation, business, timeout and unobserved outcomes retain their own fields and no projection can grant authority.
 
 [The prior runtime PR section](pr-688-runtime-section-before-a4a-update.md) is retained verbatim before the next bounded update; the rest of PR #688 remains outside this continuation's ownership.
+
+
+## First four-report W1 reader: complete files, one console report omitted
+
+Original read-only run 41828138751 / job 126568066806 succeeds on b5e84bcc, with 24 controls, identical actual source receipts and two PASS/26 audits. Both authenticated original archives yield all ten fixed members, including the four complete reports; source guards and member identities pass. The unchanged 70k console budget exposes three report projections and omits the fourth (merge/fresh). The full fourth raw report and projection remain in output artifact 13319748692, but its unprinted predicates remain unknown to this review.
+
+The small console-only correction retains the complete raw files and full projections unchanged. It replaces repeated History call rows with counts, keeps each replay summary's counts and last row with an explicit omitted-row count, and displays four original confirmation operands. All business predicates, unknown values, denominators, native outcomes and construction coverage remain. Four additional controls check nonmutation, operand retention, replay unknown/empty/count behavior and compact size. Existing limits, targets, source guards, projection logic and artifact writes are unchanged; the 28 controls require their own actual execution.
+
+## Current concurrent source requires a fresh preflight
+
+Concurrent d0737cf5434894ce47fad8082376fc417313c2cb preserves the integrated a4a inventory repair and changes thirteen other leaves, including retained evaluation/weight-loader work. Its exact tree ae0b9e3d09ae95af33f96fdbab72bda855137e2d has 8,768 blobs / 940,828,919 bytes. Four existing M06 corpus entries still name their previous blobs; those mismatches must be corrected while preserving the concurrent code.
+
+The new fixed-source preflight workflow checks out d073 exactly, runs the original project audit, source/negative/inventory checks and pinned formatter, then repeats the source receipt and audit. It does not borrow a4a or 1b checks for d073, change an acceptance gate or run native tests. The old a4a CodeQL exporter correctly exits when its PR boundary moves; its historical failure is retained rather than weakening the source guard.
