@@ -1,0 +1,1945 @@
+{
+  "schema": "trnm-history-four-lane-outer-terminal-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "path": "evidence/pon-retained-runtime-readback-20261104/44d-history-four-lane-outer-terminal-readback.json",
+  "source_scope": {
+    "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+    "tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+    "actual_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "historical_source": true,
+    "not_inherited_by_a10_or_later_sources": true
+  },
+  "run": {
+    "run_id": 41778472816,
+    "attempt": 1,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816",
+    "artifact_metadata_observed_at": "2026-11-04 06:29:59 UTC"
+  },
+  "boundary": {
+    "all_four_jobs_terminal": true,
+    "all_four_original_decoded_console_logs_read": true,
+    "only_failing_step_number": 20,
+    "all_four_outer_systemd_run_exit": 1,
+    "all_four_outer_passed": false,
+    "all_four_outer_failure": null,
+    "all_four_final_host_errors": [],
+    "all_four_cleanup": "already-collected",
+    "native_test_counts": null,
+    "native_test_exit_code": null,
+    "native_failure_cause": null,
+    "reason": "The complete job consoles contain no libtest terminal, native panic or original native failure cause. The producer redirects native stdout and stderr into history-native/history.log. The four fixed archives must be read to establish the original native results.",
+    "preparation_completed_all_four": true,
+    "preparation_process_exit_code_all_four": 0,
+    "preparation_native_tests_executed_false_is_build_only_scope": true,
+    "actual_native_execution_not_inferred_from_step_color": true,
+    "old_016_or_other_cohort_failure_cause_not_inherited": true,
+    "current_head_business_or_performance_qualification": false,
+    "zip_downloaded_by_this_collector": false,
+    "native_executed_by_this_collector": false,
+    "filesystem_written": false,
+    "reference_or_workflow_mutated": false
+  },
+  "source_derived_reader_contract": {
+    "provenance": "Source read at exact historical candidate. Archive member presence and contents remain unread here.",
+    "producers": [
+      {
+        "path": "scripts/ci/run_history_native.py",
+        "source": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://raw.githubusercontent.com/TrillionniumFoundation/Trillionnium-Chain/44d3def32f515b98fc41f074fe1b88e97f046191/scripts/ci/run_history_native.py",
+        "bytes": 21380,
+        "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+        "git_blob_sha": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+        "raw_store_key": "44d3def-history-producer-run_history_native.py-raw"
+      },
+      {
+        "path": "scripts/ci/run_from_zero_host.py",
+        "source": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://raw.githubusercontent.com/TrillionniumFoundation/Trillionnium-Chain/44d3def32f515b98fc41f074fe1b88e97f046191/scripts/ci/run_from_zero_host.py",
+        "bytes": 24743,
+        "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+        "git_blob_sha": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "raw_store_key": "44d3def-history-producer-run_from_zero_host.py-raw"
+      }
+    ],
+    "initial_outer_source_file": "source.json",
+    "final_outer_source_receipt": "Printed to job stdout by verify_ci_source.py without --output; no separate source-after.json write command is present.",
+    "prepared_native_target": "ancestry_long_sync",
+    "prepared_native_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "native_argv_template": [
+      "/usr/bin/time",
+      "-v",
+      "-o",
+      "<out>/history-resources.txt",
+      "<prepared-binary>",
+      "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "--exact",
+      "--ignored",
+      "--show-output"
+    ],
+    "native_argv_evidence": "Derived from exact producer native_command(), not an actual inner execution receipt.",
+    "native_stdout_stderr_combined": "history-native/history.log",
+    "history_members": [
+      "source.json",
+      "history-native/preparation.json",
+      "history-native/execution-start.json",
+      "history-native/manifest.json",
+      "history-native/history.log",
+      "history-native/history-resources.txt",
+      "history-native/long-history/summary.json"
+    ],
+    "host_members": [
+      "history-native-host/controller-result.json",
+      "history-native-host/child-result.json",
+      "history-native-host/inside-before.json",
+      "history-native-host/inside-after.json",
+      "history-native-host/outside-after.json",
+      "history-native-host/systemd-run.log"
+    ],
+    "generic_host_prepare_build_json_produced_in_history_branch": false,
+    "actual_compiler_artifact_profile_record_read": false,
+    "release_opt_level_3_guard_from_exact_source": true
+  },
+  "artifact_api_readback": {
+    "received_utc": "2026-11-04 06:29:59 UTC",
+    "raw_store_key": "44d3def-priority-artifacts-20261104062959-raw"
+  },
+  "lanes": [
+    {
+      "job_metadata": {
+        "id": 126407622328,
+        "run_id": 41778472816,
+        "workflow_name": "PoN priority acceptance",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdbns-uA",
+        "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622328",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816/job/126407622328",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T05:29:08Z",
+        "started_at": "2026-11-04T05:29:13Z",
+        "completed_at": "2026-11-04T06:26:44Z",
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:29:14Z",
+            "completed_at": "2026-11-04T05:29:14Z"
+          },
+          {
+            "name": "Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:29:14Z",
+            "completed_at": "2026-11-04T05:29:38Z"
+          },
+          {
+            "name": "Verify source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:29:38Z",
+            "completed_at": "2026-11-04T05:29:40Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:29:40Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original window owner and context-bound consumer controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute actual CLI observation boundaries and retain every child result",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute isolated original debug pressure regression",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original public service cancellation and actual CPU accounting controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Reject valid W1 state-root replay without durable admission",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Require actual shared CPU depletion and native public recovery",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute real native model lifecycle and adverse decisions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Require native replay, packet encoding and admissible DAA controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Observe complete native history and packet response cost",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 14,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original large-state CPU-budget tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 15,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 16,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original source-preserving migration tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute actual obligation ranges and native reorganization regressions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 18,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Build the original long-history test separately from measurement",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:32:31Z"
+          },
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 20,
+            "started_at": "2026-11-04T05:32:31Z",
+            "completed_at": "2026-11-04T06:26:33Z"
+          },
+          {
+            "name": "Reverify exact unchanged source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-11-04T06:26:33Z",
+            "completed_at": "2026-11-04T06:26:34Z"
+          },
+          {
+            "name": "Retain successes, failures and unqualified external boundaries",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-11-04T06:26:34Z",
+            "completed_at": "2026-11-04T06:26:42Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 44,
+            "started_at": "2026-11-04T06:26:42Z",
+            "completed_at": "2026-11-04T06:26:42Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 45,
+            "started_at": "2026-11-04T06:26:42Z",
+            "completed_at": "2026-11-04T06:26:42Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126407622328",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ],
+        "runner_id": 1000338059,
+        "runner_name": "GitHub Actions 1000338059",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "artifact_api_record": {
+        "id": 13301027311,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwMTAyNzMxMQ==",
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size_in_bytes": 61225934,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301027311",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301027311/zip",
+        "expired": false,
+        "digest": "sha256:5516bc2f70bfc3ca4a2526812dbab4a9bb74f8d9760f7d622b7dab229699f065",
+        "created_at": "2026-11-04T06:26:41Z",
+        "updated_at": "2026-11-04T06:26:41Z",
+        "expires_at": "2026-12-04T06:26:34Z",
+        "workflow_run": {
+          "id": 41778472816,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191"
+        }
+      },
+      "artifact_api_console_identity_match": true,
+      "full_decoded_console_log": {
+        "store_key": "cohort-44d3def-priority-terminal-log-126407622328",
+        "decoded_bytes": 135190,
+        "decoded_sha256": "57cc4209b4acf08d9f50acf90152de9a85785c9a2690d473563525ababa40889",
+        "full_decoded_hash_reverified": true,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622328/logs",
+        "external_dependency": true,
+        "full_text_not_embedded": true
+      },
+      "outer_source_records": [
+        {
+          "line": 873,
+          "end_line": 885,
+          "parsed": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 509,
+          "sha256": "e521cceb1c93e5a4de9e16bec7a148bb6507d6b13e098cb8fbbb3f9b00ab549a",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        },
+        {
+          "line": 973,
+          "end_line": 985,
+          "parsed": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 509,
+          "sha256": "e521cceb1c93e5a4de9e16bec7a148bb6507d6b13e098cb8fbbb3f9b00ab549a",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      ],
+      "outer_before_after_equal": true,
+      "exact_console_proof_lines": [
+        {
+          "line": 858,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\""
+        },
+        {
+          "line": 859,
+          "text": "bash scripts/project-preflight.sh --audit"
+        },
+        {
+          "line": 886,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        },
+        {
+          "line": 912,
+          "text": "python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 931,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 949,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 956,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\""
+        },
+        {
+          "line": 1026,
+          "text": "SHA256 digest of uploaded artifact zip is 5516bc2f70bfc3ca4a2526812dbab4a9bb74f8d9760f7d622b7dab229699f065"
+        },
+        {
+          "line": 1029,
+          "text": "Artifact priority-ubuntu-24.04-arm-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1 has been successfully uploaded! Final size is 61225934 bytes. Artifact ID is 13301027311"
+        }
+      ],
+      "exact_host_controller_json": {
+        "line": 948,
+        "note": "Exact original JSON text after removal of the GitHub log timestamp/ANSI envelope. Preserves all integer lexemes, including nanosecond timestamps beyond JavaScript safe integer precision. This text is authoritative for full Host/preparation/stat/lease values.",
+        "utf8_bytes": 6562,
+        "sha256": "627d3310633fc5d1df203be89ccf3598c7570c0126a2484e10f6364dfaeeb1c1",
+        "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/history-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4605.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4605.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"93f0f7b8-57ea-4702-aa2e-5ba106e21c3d\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7343, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770353569591084, \"device\": 31, \"inode\": 1475, \"mtime_ns\": 1793770353569591084, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770354667159244, \"device\": 31, \"inode\": 1526, \"mtime_ns\": 1793770354667159244, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"b3e769eedcaebb428804c39cbdbabe778003a4bcf63a2e1fd92fed58ca718e9e\", \"size_bytes\": 3308}, \"seal_sha256\": \"b3e769eedcaebb428804c39cbdbabe778003a4bcf63a2e1fd92fed58ca718e9e\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4605.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4605.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"93f0f7b8-57ea-4702-aa2e-5ba106e21c3d\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7343, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770353569591084, \"device\": 31, \"inode\": 1475, \"mtime_ns\": 1793770353569591084, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770354667159244, \"device\": 31, \"inode\": 1526, \"mtime_ns\": 1793770354667159244, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"b3e769eedcaebb428804c39cbdbabe778003a4bcf63a2e1fd92fed58ca718e9e\", \"size_bytes\": 3308}, \"seal_sha256\": \"b3e769eedcaebb428804c39cbdbabe778003a4bcf63a2e1fd92fed58ca718e9e\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary\": {\"ctime_ns\": 1793770346062428579, \"device\": 2049, \"inode\": 6058880, \"mtime_ns\": 1793770346061216572, \"path\": \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\", \"sha256\": \"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\", \"size_bytes\": 8629568}, \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"build_log\": {\"ctime_ns\": 1793770350870368908, \"device\": 2049, \"inode\": 6051728, \"mtime_ns\": 1793770350870368908, \"path\": \"/home/runner/work/_temp/priority-observations/history-native/build.jsonl\", \"sha256\": \"3a0e204a39f4ab7c191730702e66b1b886b34e7c14b876489448d475b7ff41e7\", \"size_bytes\": 110117}, \"completed\": true, \"failures\": [], \"job\": {\"GITHUB_JOB\": \"native-priorities\", \"GITHUB_RUN_ATTEMPT\": \"1\", \"GITHUB_RUN_ID\": \"41778472816\"}, \"native_tests_executed\": false, \"process\": {\"cleanup_errors\": [], \"command\": [\"cargo\", \"+1.95.0\", \"test\", \"--release\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"ancestry_long_sync\", \"--no-run\", \"--message-format=json\"], \"exit_code\": 0, \"failure\": null, \"pid\": 2570, \"started\": true}, \"schema\": \"trnm-ci-history-build-preparation-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"source_before\": {\"commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"target\": \"ancestry_long_sync\"}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41778472816-1-native-priorities-4605.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "preparation_projection": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "failures": [],
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2570,
+          "started": true
+        },
+        "binary": {
+          "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da",
+          "sha256": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+          "size_bytes": 8629568
+        },
+        "build_log": {
+          "path": "/home/runner/work/_temp/priority-observations/history-native/build.jsonl",
+          "sha256": "3a0e204a39f4ab7c191730702e66b1b886b34e7c14b876489448d475b7ff41e7",
+          "size_bytes": 110117
+        },
+        "build_env": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_HOME": "/home/runner/work/_temp/cargo-priority",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-priority",
+          "OPENSSL_CONF": null,
+          "OPENSSL_DIR": null,
+          "OPENSSL_MODULES": null,
+          "OPENSSL_STATIC": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null,
+          "TRNM_PQ_OPENSSL": null,
+          "TRNM_PQ_OPENSSL_SHA256": null,
+          "TRNM_PQ_OPENSSL_VERSION": null
+        },
+        "native_target": "ancestry_long_sync",
+        "native_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "source_before": {
+          "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_after": {
+          "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_pair_equal": true,
+        "native_tests_executed": false,
+        "scope": "This is the completed original release --no-run build preparation; it does not report inner native execution."
+      },
+      "host_projection": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_history_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/history-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "host_readiness_only": true,
+        "consensus_or_model_authority": false,
+        "original_parent_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        }
+      },
+      "native_result_in_complete_console": null,
+      "native_failure_cause_in_complete_console": null
+    },
+    {
+      "job_metadata": {
+        "id": 126407622438,
+        "run_id": 41778472816,
+        "workflow_name": "PoN priority acceptance",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdbns_Jg",
+        "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622438",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816/job/126407622438",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T05:29:08Z",
+        "started_at": "2026-11-04T05:29:13Z",
+        "completed_at": "2026-11-04T06:25:39Z",
+        "name": "native priorities (ubuntu-24.04-arm, head, history)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:29:13Z",
+            "completed_at": "2026-11-04T05:29:14Z"
+          },
+          {
+            "name": "Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:29:14Z",
+            "completed_at": "2026-11-04T05:29:37Z"
+          },
+          {
+            "name": "Verify source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:29:37Z",
+            "completed_at": "2026-11-04T05:29:40Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:29:40Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original window owner and context-bound consumer controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute actual CLI observation boundaries and retain every child result",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute isolated original debug pressure regression",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original public service cancellation and actual CPU accounting controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Reject valid W1 state-root replay without durable admission",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Require actual shared CPU depletion and native public recovery",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute real native model lifecycle and adverse decisions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Require native replay, packet encoding and admissible DAA controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Observe complete native history and packet response cost",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 14,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original large-state CPU-budget tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 15,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 16,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute original source-preserving migration tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Execute actual obligation ranges and native reorganization regressions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 18,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Build the original long-history test separately from measurement",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:32:36Z"
+          },
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 20,
+            "started_at": "2026-11-04T05:32:36Z",
+            "completed_at": "2026-11-04T06:25:29Z"
+          },
+          {
+            "name": "Reverify exact unchanged source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-11-04T06:25:29Z",
+            "completed_at": "2026-11-04T06:25:30Z"
+          },
+          {
+            "name": "Retain successes, failures and unqualified external boundaries",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-11-04T06:25:30Z",
+            "completed_at": "2026-11-04T06:25:37Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 44,
+            "started_at": "2026-11-04T06:25:37Z",
+            "completed_at": "2026-11-04T06:25:38Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 45,
+            "started_at": "2026-11-04T06:25:38Z",
+            "completed_at": "2026-11-04T06:25:38Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126407622438",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ],
+        "runner_id": 1000338064,
+        "runner_name": "GitHub Actions 1000338064",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "artifact_api_record": {
+        "id": 13301057078,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwMTA1NzA3OA==",
+        "name": "priority-ubuntu-24.04-arm-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size_in_bytes": 61209394,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301057078",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301057078/zip",
+        "expired": false,
+        "digest": "sha256:ff19ed08e168311405d18c60da95099338e399d747c74bc3c53ffe294e02df0e",
+        "created_at": "2026-11-04T06:25:37Z",
+        "updated_at": "2026-11-04T06:25:37Z",
+        "expires_at": "2026-12-04T06:25:30Z",
+        "workflow_run": {
+          "id": 41778472816,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191"
+        }
+      },
+      "artifact_api_console_identity_match": true,
+      "full_decoded_console_log": {
+        "store_key": "cohort-44d3def-priority-terminal-log-126407622438",
+        "decoded_bytes": 134422,
+        "decoded_sha256": "7a137d5c636047a976f36d222b44264370013c3cf566d5d4aad4af7ea96106e8",
+        "full_decoded_hash_reverified": true,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622438/logs",
+        "external_dependency": true,
+        "full_text_not_embedded": true
+      },
+      "outer_source_records": [
+        {
+          "line": 872,
+          "end_line": 884,
+          "parsed": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 420,
+          "sha256": "87e69ce3ba8916d19c041bc1dc0dc76cf18d9d3ab473a494809c77c1bda1d021",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        },
+        {
+          "line": 972,
+          "end_line": 984,
+          "parsed": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 420,
+          "sha256": "87e69ce3ba8916d19c041bc1dc0dc76cf18d9d3ab473a494809c77c1bda1d021",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      ],
+      "outer_before_after_equal": true,
+      "exact_console_proof_lines": [
+        {
+          "line": 857,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\""
+        },
+        {
+          "line": 858,
+          "text": "bash scripts/project-preflight.sh --audit"
+        },
+        {
+          "line": 885,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        },
+        {
+          "line": 911,
+          "text": "python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 930,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 948,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 955,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\""
+        },
+        {
+          "line": 1025,
+          "text": "SHA256 digest of uploaded artifact zip is ff19ed08e168311405d18c60da95099338e399d747c74bc3c53ffe294e02df0e"
+        },
+        {
+          "line": 1028,
+          "text": "Artifact priority-ubuntu-24.04-arm-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1 has been successfully uploaded! Final size is 61209394 bytes. Artifact ID is 13301057078"
+        }
+      ],
+      "exact_host_controller_json": {
+        "line": 947,
+        "note": "Exact original JSON text after removal of the GitHub log timestamp/ANSI envelope. Preserves all integer lexemes, including nanosecond timestamps beyond JavaScript safe integer precision. This text is authoritative for full Host/preparation/stat/lease values.",
+        "utf8_bytes": 6384,
+        "sha256": "6ad40745af3f8996f5ed605f1a18a41877af3cf0a09afb7d0156871aafe109ca",
+        "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/history-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4612.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4612.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"b2d92e84-407d-4126-b764-0e9fe87e0391\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7281, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770358029595781, \"device\": 31, \"inode\": 1473, \"mtime_ns\": 1793770358029595781, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770359116801453, \"device\": 31, \"inode\": 1519, \"mtime_ns\": 1793770359116801453, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"c233d113be06a63f0c67100b79c1deed5a3dca78a6366b3170f4988ec37199cc\", \"size_bytes\": 3219}, \"seal_sha256\": \"c233d113be06a63f0c67100b79c1deed5a3dca78a6366b3170f4988ec37199cc\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4612.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4612.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"b2d92e84-407d-4126-b764-0e9fe87e0391\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7281, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770358029595781, \"device\": 31, \"inode\": 1473, \"mtime_ns\": 1793770358029595781, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770359116801453, \"device\": 31, \"inode\": 1519, \"mtime_ns\": 1793770359116801453, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"c233d113be06a63f0c67100b79c1deed5a3dca78a6366b3170f4988ec37199cc\", \"size_bytes\": 3219}, \"seal_sha256\": \"c233d113be06a63f0c67100b79c1deed5a3dca78a6366b3170f4988ec37199cc\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary\": {\"ctime_ns\": 1793770350256096562, \"device\": 2049, \"inode\": 6058882, \"mtime_ns\": 1793770350255150762, \"path\": \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da\", \"sha256\": \"ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee\", \"size_bytes\": 8629568}, \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"build_log\": {\"ctime_ns\": 1793770355345322033, \"device\": 2049, \"inode\": 6051725, \"mtime_ns\": 1793770355345322033, \"path\": \"/home/runner/work/_temp/priority-observations/history-native/build.jsonl\", \"sha256\": \"2bff4f7a4ba1b3fd296a90a06961f18092302fba84fc58e40a3c393e05b451a9\", \"size_bytes\": 110117}, \"completed\": true, \"failures\": [], \"job\": {\"GITHUB_JOB\": \"native-priorities\", \"GITHUB_RUN_ATTEMPT\": \"1\", \"GITHUB_RUN_ID\": \"41778472816\"}, \"native_tests_executed\": false, \"process\": {\"cleanup_errors\": [], \"command\": [\"cargo\", \"+1.95.0\", \"test\", \"--release\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"ancestry_long_sync\", \"--no-run\", \"--message-format=json\"], \"exit_code\": 0, \"failure\": null, \"pid\": 2572, \"started\": true}, \"schema\": \"trnm-ci-history-build-preparation-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"source_before\": {\"commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"target\": \"ancestry_long_sync\"}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41778472816-1-native-priorities-4612.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "preparation_projection": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "failures": [],
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2572,
+          "started": true
+        },
+        "binary": {
+          "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-164498976f3897da",
+          "sha256": "ed9f3704bc526464a465ee2658e2fd482badbae0b10cfecadd025c1f5aa856ee",
+          "size_bytes": 8629568
+        },
+        "build_log": {
+          "path": "/home/runner/work/_temp/priority-observations/history-native/build.jsonl",
+          "sha256": "2bff4f7a4ba1b3fd296a90a06961f18092302fba84fc58e40a3c393e05b451a9",
+          "size_bytes": 110117
+        },
+        "build_env": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_HOME": "/home/runner/work/_temp/cargo-priority",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-priority",
+          "OPENSSL_CONF": null,
+          "OPENSSL_DIR": null,
+          "OPENSSL_MODULES": null,
+          "OPENSSL_STATIC": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null,
+          "TRNM_PQ_OPENSSL": null,
+          "TRNM_PQ_OPENSSL_SHA256": null,
+          "TRNM_PQ_OPENSSL_VERSION": null
+        },
+        "native_target": "ancestry_long_sync",
+        "native_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "source_before": {
+          "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_after": {
+          "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_pair_equal": true,
+        "native_tests_executed": false,
+        "scope": "This is the completed original release --no-run build preparation; it does not report inner native execution."
+      },
+      "host_projection": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_history_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/history-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "host_readiness_only": true,
+        "consensus_or_model_authority": false,
+        "original_parent_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        }
+      },
+      "native_result_in_complete_console": null,
+      "native_failure_cause_in_complete_console": null
+    },
+    {
+      "job_metadata": {
+        "id": 126407622526,
+        "run_id": 41778472816,
+        "workflow_name": "PoN priority acceptance",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdbns_fg",
+        "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622526",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816/job/126407622526",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T05:29:08Z",
+        "started_at": "2026-11-04T05:29:11Z",
+        "completed_at": "2026-11-04T06:27:29Z",
+        "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:29:11Z",
+            "completed_at": "2026-11-04T05:29:12Z"
+          },
+          {
+            "name": "Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:29:12Z",
+            "completed_at": "2026-11-04T05:29:36Z"
+          },
+          {
+            "name": "Verify source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:29:36Z",
+            "completed_at": "2026-11-04T05:29:38Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:29:38Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original window owner and context-bound consumer controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute actual CLI observation boundaries and retain every child result",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute isolated original debug pressure regression",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original public service cancellation and actual CPU accounting controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Reject valid W1 state-root replay without durable admission",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Require actual shared CPU depletion and native public recovery",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute real native model lifecycle and adverse decisions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Require native replay, packet encoding and admissible DAA controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Observe complete native history and packet response cost",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 14,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original large-state CPU-budget tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 15,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 16,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute original source-preserving migration tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Execute actual obligation ranges and native reorganization regressions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 18,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Build the original long-history test separately from measurement",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:32:35Z"
+          },
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 20,
+            "started_at": "2026-11-04T05:32:35Z",
+            "completed_at": "2026-11-04T06:27:18Z"
+          },
+          {
+            "name": "Reverify exact unchanged source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-11-04T06:27:18Z",
+            "completed_at": "2026-11-04T06:27:19Z"
+          },
+          {
+            "name": "Retain successes, failures and unqualified external boundaries",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-11-04T06:27:19Z",
+            "completed_at": "2026-11-04T06:27:27Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 44,
+            "started_at": "2026-11-04T06:27:27Z",
+            "completed_at": "2026-11-04T06:27:28Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 45,
+            "started_at": "2026-11-04T06:27:28Z",
+            "completed_at": "2026-11-04T06:27:28Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126407622526",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000338068,
+        "runner_name": "GitHub Actions 1000338068",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "artifact_api_record": {
+        "id": 13300674098,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwMDY3NDA5OA==",
+        "name": "priority-ubuntu-24.04-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size_in_bytes": 50781415,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13300674098",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13300674098/zip",
+        "expired": false,
+        "digest": "sha256:a9260767a0dea64b75c0c13f975f0ee6c06cd4872b5331104eb2d97a3d4b9db1",
+        "created_at": "2026-11-04T06:27:27Z",
+        "updated_at": "2026-11-04T06:27:27Z",
+        "expires_at": "2026-12-04T06:27:20Z",
+        "workflow_run": {
+          "id": 41778472816,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191"
+        }
+      },
+      "artifact_api_console_identity_match": true,
+      "full_decoded_console_log": {
+        "store_key": "cohort-44d3def-priority-terminal-log-126407622526",
+        "decoded_bytes": 135400,
+        "decoded_sha256": "d598246f2cd7ed5a28c0d99f80815e0e9ca29e36f5de5af5c6664ec4cde7f7b7",
+        "full_decoded_hash_reverified": true,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622526/logs",
+        "external_dependency": true,
+        "full_text_not_embedded": true
+      },
+      "outer_source_records": [
+        {
+          "line": 878,
+          "end_line": 890,
+          "parsed": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 509,
+          "sha256": "e521cceb1c93e5a4de9e16bec7a148bb6507d6b13e098cb8fbbb3f9b00ab549a",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        },
+        {
+          "line": 978,
+          "end_line": 990,
+          "parsed": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 509,
+          "sha256": "e521cceb1c93e5a4de9e16bec7a148bb6507d6b13e098cb8fbbb3f9b00ab549a",
+          "text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      ],
+      "outer_before_after_equal": true,
+      "exact_console_proof_lines": [
+        {
+          "line": 863,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\""
+        },
+        {
+          "line": 864,
+          "text": "bash scripts/project-preflight.sh --audit"
+        },
+        {
+          "line": 891,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        },
+        {
+          "line": 917,
+          "text": "python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 936,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 954,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 961,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\""
+        },
+        {
+          "line": 1030,
+          "text": "SHA256 digest of uploaded artifact zip is a9260767a0dea64b75c0c13f975f0ee6c06cd4872b5331104eb2d97a3d4b9db1"
+        },
+        {
+          "line": 1033,
+          "text": "Artifact priority-ubuntu-24.04-prospective-merge-history-44d3def32f515b98fc41f074fe1b88e97f046191-1 has been successfully uploaded! Final size is 50781415 bytes. Artifact ID is 13300674098"
+        }
+      ],
+      "exact_host_controller_json": {
+        "line": 953,
+        "note": "Exact original JSON text after removal of the GitHub log timestamp/ANSI envelope. Preserves all integer lexemes, including nanosecond timestamps beyond JavaScript safe integer precision. This text is authoritative for full Host/preparation/stat/lease values.",
+        "utf8_bytes": 6562,
+        "sha256": "1492ce09f8212aa4cac3cc5c32c799fed12fc605b33fb841379e222da7a24c4e",
+        "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/history-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4775.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4775.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"721ce54f-b619-4dc7-8f25-4206f7d16616\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770357863875425, \"device\": 29, \"inode\": 1524, \"mtime_ns\": 1793770357863875425, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770359230661578, \"device\": 29, \"inode\": 1570, \"mtime_ns\": 1793770359230661578, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"f9237d80c0cde3fbeba0ec4802ddaacea070e6bac3083b73666e5ee1e8e98209\", \"size_bytes\": 3308}, \"seal_sha256\": \"f9237d80c0cde3fbeba0ec4802ddaacea070e6bac3083b73666e5ee1e8e98209\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4775.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4775.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"721ce54f-b619-4dc7-8f25-4206f7d16616\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770357863875425, \"device\": 29, \"inode\": 1524, \"mtime_ns\": 1793770357863875425, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770359230661578, \"device\": 29, \"inode\": 1570, \"mtime_ns\": 1793770359230661578, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"f9237d80c0cde3fbeba0ec4802ddaacea070e6bac3083b73666e5ee1e8e98209\", \"size_bytes\": 3308}, \"seal_sha256\": \"f9237d80c0cde3fbeba0ec4802ddaacea070e6bac3083b73666e5ee1e8e98209\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary\": {\"ctime_ns\": 1793770349850614011, \"device\": 2049, \"inode\": 9444283, \"mtime_ns\": 1793770349848613989, \"path\": \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\", \"sha256\": \"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\", \"size_bytes\": 9650880}, \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"build_log\": {\"ctime_ns\": 1793770354468664067, \"device\": 2049, \"inode\": 9437186, \"mtime_ns\": 1793770354468664067, \"path\": \"/home/runner/work/_temp/priority-observations/history-native/build.jsonl\", \"sha256\": \"265de126482dd91505958b7522dcadf61665b4d078487d664c21e8e0307a92b5\", \"size_bytes\": 108351}, \"completed\": true, \"failures\": [], \"job\": {\"GITHUB_JOB\": \"native-priorities\", \"GITHUB_RUN_ATTEMPT\": \"1\", \"GITHUB_RUN_ID\": \"41778472816\"}, \"native_tests_executed\": false, \"process\": {\"cleanup_errors\": [], \"command\": [\"cargo\", \"+1.95.0\", \"test\", \"--release\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"ancestry_long_sync\", \"--no-run\", \"--message-format=json\"], \"exit_code\": 0, \"failure\": null, \"pid\": 2654, \"started\": true}, \"schema\": \"trnm-ci-history-build-preparation-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"source_before\": {\"commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"target\": \"ancestry_long_sync\"}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41778472816-1-native-priorities-4775.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "preparation_projection": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "failures": [],
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2654,
+          "started": true
+        },
+        "binary": {
+          "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393",
+          "sha256": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+          "size_bytes": 9650880
+        },
+        "build_log": {
+          "path": "/home/runner/work/_temp/priority-observations/history-native/build.jsonl",
+          "sha256": "265de126482dd91505958b7522dcadf61665b4d078487d664c21e8e0307a92b5",
+          "size_bytes": 108351
+        },
+        "build_env": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_HOME": "/home/runner/work/_temp/cargo-priority",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-priority",
+          "OPENSSL_CONF": null,
+          "OPENSSL_DIR": null,
+          "OPENSSL_MODULES": null,
+          "OPENSSL_STATIC": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null,
+          "TRNM_PQ_OPENSSL": null,
+          "TRNM_PQ_OPENSSL_SHA256": null,
+          "TRNM_PQ_OPENSSL_VERSION": null
+        },
+        "native_target": "ancestry_long_sync",
+        "native_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "source_before": {
+          "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_after": {
+          "commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "prospective-merge",
+            "prospective_merge": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "914dffbf7d0a1fb11d3f8b5fc3e4854146913c0b",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_pair_equal": true,
+        "native_tests_executed": false,
+        "scope": "This is the completed original release --no-run build preparation; it does not report inner native execution."
+      },
+      "host_projection": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_history_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/history-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "host_readiness_only": true,
+        "consensus_or_model_authority": false,
+        "original_parent_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        }
+      },
+      "native_result_in_complete_console": null,
+      "native_failure_cause_in_complete_console": null
+    },
+    {
+      "job_metadata": {
+        "id": 126407622538,
+        "run_id": 41778472816,
+        "workflow_name": "PoN priority acceptance",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdbns_ig",
+        "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622538",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41778472816/job/126407622538",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T05:29:08Z",
+        "started_at": "2026-11-04T05:29:11Z",
+        "completed_at": "2026-11-04T06:27:13Z",
+        "name": "native priorities (ubuntu-24.04, head, history)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T05:29:12Z",
+            "completed_at": "2026-11-04T05:29:13Z"
+          },
+          {
+            "name": "Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T05:29:13Z",
+            "completed_at": "2026-11-04T05:29:45Z"
+          },
+          {
+            "name": "Verify source and original project boundary",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T05:29:45Z",
+            "completed_at": "2026-11-04T05:29:47Z"
+          },
+          {
+            "name": "Install the source-pinned native toolchain",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T05:29:47Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original window owner and context-bound consumer controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original release from-zero controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute actual CLI observation boundaries and retain every child result",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute isolated original debug pressure regression",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original public service cancellation and actual CPU accounting controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Reject valid W1 state-root replay without durable admission",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Require actual shared CPU depletion and native public recovery",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute real native model lifecycle and adverse decisions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Require native replay, packet encoding and admissible DAA controls",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Observe complete native history and packet response cost",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 14,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original large-state CPU-budget tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 15,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original native full-capacity test",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 16,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute original source-preserving migration tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Execute actual obligation ranges and native reorganization regressions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 18,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:29:56Z"
+          },
+          {
+            "name": "Build the original long-history test separately from measurement",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-11-04T05:29:56Z",
+            "completed_at": "2026-11-04T05:32:42Z"
+          },
+          {
+            "name": "Execute 4105 real work blocks and paid public full sync",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 20,
+            "started_at": "2026-11-04T05:32:42Z",
+            "completed_at": "2026-11-04T06:27:01Z"
+          },
+          {
+            "name": "Reverify exact unchanged source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-11-04T06:27:01Z",
+            "completed_at": "2026-11-04T06:27:02Z"
+          },
+          {
+            "name": "Retain successes, failures and unqualified external boundaries",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-11-04T06:27:02Z",
+            "completed_at": "2026-11-04T06:27:10Z"
+          },
+          {
+            "name": "Post Checkout the exact candidate or the actual PR target merge",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 44,
+            "started_at": "2026-11-04T06:27:10Z",
+            "completed_at": "2026-11-04T06:27:11Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 45,
+            "started_at": "2026-11-04T06:27:11Z",
+            "completed_at": "2026-11-04T06:27:11Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126407622538",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000338067,
+        "runner_name": "GitHub Actions 1000338067",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "artifact_api_record": {
+        "id": 13301001762,
+        "node_id": "MDg6QXJ0aWZhY3QxMzMwMTAwMTc2Mg==",
+        "name": "priority-ubuntu-24.04-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1",
+        "size_in_bytes": 50815213,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301001762",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13301001762/zip",
+        "expired": false,
+        "digest": "sha256:0e76ff23b238cb937775ca725a15d2499e4f28ac1e9c9262b1570e198c1ceba2",
+        "created_at": "2026-11-04T06:27:10Z",
+        "updated_at": "2026-11-04T06:27:10Z",
+        "expires_at": "2026-12-04T06:27:03Z",
+        "workflow_run": {
+          "id": 41778472816,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "44d3def32f515b98fc41f074fe1b88e97f046191"
+        }
+      },
+      "artifact_api_console_identity_match": true,
+      "full_decoded_console_log": {
+        "store_key": "cohort-44d3def-priority-terminal-log-126407622538",
+        "decoded_bytes": 134639,
+        "decoded_sha256": "0c8237b51ddfcdbc46ff33cf009db0a1b3a1dd37e271773335347042fa21099e",
+        "full_decoded_hash_reverified": true,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126407622538/logs",
+        "external_dependency": true,
+        "full_text_not_embedded": true
+      },
+      "outer_source_records": [
+        {
+          "line": 877,
+          "end_line": 889,
+          "parsed": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 420,
+          "sha256": "87e69ce3ba8916d19c041bc1dc0dc76cf18d9d3ab473a494809c77c1bda1d021",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        },
+        {
+          "line": 977,
+          "end_line": 989,
+          "parsed": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "utf8_bytes": 420,
+          "sha256": "87e69ce3ba8916d19c041bc1dc0dc76cf18d9d3ab473a494809c77c1bda1d021",
+          "text": "{\n  \"base\": null,\n  \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\",\n  \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932581466,\n  \"tracked_entries\": 8095,\n  \"tracked_worktree_verified\": true\n}"
+        }
+      ],
+      "outer_before_after_equal": true,
+      "exact_console_proof_lines": [
+        {
+          "line": 862,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\""
+        },
+        {
+          "line": 863,
+          "text": "bash scripts/project-preflight.sh --audit"
+        },
+        {
+          "line": 890,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        },
+        {
+          "line": 916,
+          "text": "python3 scripts/ci/run_history_native.py --prepare --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 935,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out \"$TRNM_CI_RECEIPT_DIR/history-native\""
+        },
+        {
+          "line": 953,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 960,
+          "text": "python3 scripts/ci/verify_ci_source.py \"${args[@]}\""
+        },
+        {
+          "line": 1029,
+          "text": "SHA256 digest of uploaded artifact zip is 0e76ff23b238cb937775ca725a15d2499e4f28ac1e9c9262b1570e198c1ceba2"
+        },
+        {
+          "line": 1032,
+          "text": "Artifact priority-ubuntu-24.04-head-history-44d3def32f515b98fc41f074fe1b88e97f046191-1 has been successfully uploaded! Final size is 50815213 bytes. Artifact ID is 13301001762"
+        }
+      ],
+      "exact_host_controller_json": {
+        "line": 952,
+        "note": "Exact original JSON text after removal of the GitHub log timestamp/ANSI envelope. Preserves all integer lexemes, including nanosecond timestamps beyond JavaScript safe integer precision. This text is authoritative for full Host/preparation/stat/lease values.",
+        "utf8_bytes": 6384,
+        "sha256": "64d34f29062f5fc6b140bac4b77fe2a7b10e9b31c0eaa6bdb8018dd143d60eb9",
+        "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/history-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4926.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4926.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"d30ec4c6-7f05-40f4-be71-a9410b878289\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7128, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770365059531325, \"device\": 29, \"inode\": 1666, \"mtime_ns\": 1793770365059531325, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770366403013109, \"device\": 29, \"inode\": 1712, \"mtime_ns\": 1793770366403013109, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"f7b5fb67bffa44063fd912766f6e71345da6769a4e9ff2e6b78f95604cbcb396\", \"size_bytes\": 3219}, \"seal_sha256\": \"f7b5fb67bffa44063fd912766f6e71345da6769a4e9ff2e6b78f95604cbcb396\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-41778472816-1-native-priorities-4926.service\", \"current_service\": \"trnm-from-zero-41778472816-1-native-priorities-4926.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"d30ec4c6-7f05-40f4-be71-a9410b878289\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7128, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1793770365059531325, \"device\": 29, \"inode\": 1666, \"mtime_ns\": 1793770365059531325, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1793770366403013109, \"device\": 29, \"inode\": 1712, \"mtime_ns\": 1793770366403013109, \"path\": \"/run/trnm-public-fixture-41778472816-1-native-priorities/parent.json\", \"sha256\": \"f7b5fb67bffa44063fd912766f6e71345da6769a4e9ff2e6b78f95604cbcb396\", \"size_bytes\": 3219}, \"seal_sha256\": \"f7b5fb67bffa44063fd912766f6e71345da6769a4e9ff2e6b78f95604cbcb396\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary\": {\"ctime_ns\": 1793770357134524034, \"device\": 2049, \"inode\": 9192494, \"mtime_ns\": 1793770357132524032, \"path\": \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393\", \"sha256\": \"64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad\", \"size_bytes\": 9650880}, \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"build_log\": {\"ctime_ns\": 1793770361715527934, \"device\": 2049, \"inode\": 9185438, \"mtime_ns\": 1793770361715527934, \"path\": \"/home/runner/work/_temp/priority-observations/history-native/build.jsonl\", \"sha256\": \"bd932414e4a7767e5f5eee0368365d3a3e31e47f06844ec13cc9f4df46e4bc28\", \"size_bytes\": 108351}, \"completed\": true, \"failures\": [], \"job\": {\"GITHUB_JOB\": \"native-priorities\", \"GITHUB_RUN_ATTEMPT\": \"1\", \"GITHUB_RUN_ID\": \"41778472816\"}, \"native_tests_executed\": false, \"process\": {\"cleanup_errors\": [], \"command\": [\"cargo\", \"+1.95.0\", \"test\", \"--release\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"ancestry_long_sync\", \"--no-run\", \"--message-format=json\"], \"exit_code\": 0, \"failure\": null, \"pid\": 2813, \"started\": true}, \"schema\": \"trnm-ci-history-build-preparation-v1\", \"selector\": \"actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"source_before\": {\"commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"test_sha256\": \"9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"44d3def32f515b98fc41f074fe1b88e97f046191\", \"tested_tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932581466, \"tracked_entries\": 8095, \"tracked_worktree_verified\": true}, \"tree\": \"f3e07fc21a74e9a4367610ba10f5883213609320\"}, \"target\": \"ancestry_long_sync\"}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-41778472816-1-native-priorities-4926.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      "preparation_projection": {
+        "schema": "trnm-ci-history-build-preparation-v1",
+        "completed": true,
+        "failures": [],
+        "process": {
+          "cleanup_errors": [],
+          "command": [
+            "cargo",
+            "+1.95.0",
+            "test",
+            "--release",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "ancestry_long_sync",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "failure": null,
+          "pid": 2813,
+          "started": true
+        },
+        "binary": {
+          "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-38a943a8640ae393",
+          "sha256": "64b702e496398d9847596bcac3247e757d7ef7b52fe0a3455a2d4d84f6e783ad",
+          "size_bytes": 9650880
+        },
+        "build_log": {
+          "path": "/home/runner/work/_temp/priority-observations/history-native/build.jsonl",
+          "sha256": "bd932414e4a7767e5f5eee0368365d3a3e31e47f06844ec13cc9f4df46e4bc28",
+          "size_bytes": 108351
+        },
+        "build_env": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_HOME": "/home/runner/work/_temp/cargo-priority",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-priority",
+          "OPENSSL_CONF": null,
+          "OPENSSL_DIR": null,
+          "OPENSSL_MODULES": null,
+          "OPENSSL_STATIC": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null,
+          "TRNM_PQ_OPENSSL": null,
+          "TRNM_PQ_OPENSSL_SHA256": null,
+          "TRNM_PQ_OPENSSL_VERSION": null
+        },
+        "native_target": "ancestry_long_sync",
+        "native_selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "source_before": {
+          "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_after": {
+          "commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+          "test_sha256": "9ab49c288c65d8db31d0e0bac3b69db6c8c445999404e36952d2e0a548b93ab9",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+            "tested_tree": "f3e07fc21a74e9a4367610ba10f5883213609320",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 932581466,
+            "tracked_entries": 8095,
+            "tracked_worktree_verified": true
+          },
+          "tree": "f3e07fc21a74e9a4367610ba10f5883213609320"
+        },
+        "source_pair_equal": true,
+        "native_tests_executed": false,
+        "scope": "This is the completed original release --no-run build preparation; it does not report inner native execution."
+      },
+      "host_projection": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_history_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/history-native"
+        ],
+        "systemd_run_exit": 1,
+        "passed": false,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "host_readiness_only": true,
+        "consensus_or_model_authority": false,
+        "original_parent_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        }
+      },
+      "native_result_in_complete_console": null,
+      "native_failure_cause_in_complete_console": null
+    }
+  ]
+}
