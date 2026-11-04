@@ -249,3 +249,64 @@ The two source reviews found no reachable semantic violation in their stated sco
 [The exact 40a5 F0 outer record](40a5-f0-outer-terminal-readback.json) binds original run 41785836093 / job 126427664011. Source/parser preparation, compiler/graph preparation, source-bound ELF and original controls, and the service-arm step succeed. Original pair execution and finalization fail. Final source verification/retention and artifact upload succeed.
 
 This outer-only readback does not expose the internal native counts, exit/cause or four-second confirmation denominator. All such fields remain null; no earlier 44d or a10 internal outcome is assigned to 40a5. The retained original archive is [artifact 13301461139](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41785836093/artifacts/13301461139), 15,940,628 bytes, SHA-256 `dba913975f1941d874bdb7d5c82258d69f0c74aa7c1ce2adbd1e11056fb5ea90`. API metadata and the original upload receipt agree. Full original job metadata and terminal log text are retained in the JSON. This observation leaves current-source native/business qualification unresolved.
+
+## Completed frozen 40a native cost and confirmation readback
+
+[The complete 40a cost record](40a5-native-cost-and-confirmation-readback.json) now supplies the inner evidence that was unavailable in the earlier outer-only F0 record. Actual SUCCESS reader [41791107191](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791107191), job 126444441307, retains the original 17 SQL controls and five decode-control groups. Both fixed ZIPs and all four complete native report bytes/hashes verify. There are 33 selected members / 105,080,075 bytes and zero omitted members. The two actual audit PASS records and before/after source receipts bind diagnostic b68bf403 / tree c3cbc67d, 8,015 entries / 931,600,847 bytes.
+
+The measured native source remains 40a5ba25 / tree 75fe3367, not the later faa or 73ab revisions:
+
+- Original F0 confirms **0/6** in its original windows and **0/6** against its scheduled four-second bound. Two rounds are observed but unconfirmed; four are unobserved. The first baseline attempt ends at phase epoch 30.002199940 s, 29.002199940 s after its scheduled start, without confirmation. Original exit 101, NATIVE_F0_FAILED and BASELINE_MUST_PASS remain. Its baseline error is PUBLIC_REQUEST_DEADLINE; the root phase error list is empty and its criteria still fail.
+- The original three-run campaign confirms **6/27**: six confirmed, nine observed unconfirmed and twelve unobserved. Each baseline confirms two of its three planned rounds; none of the six pressure phases confirms a round. All nine phase criteria fail and all nine report PUBLIC_REQUEST_DEADLINE. These are original-window counts, not a four-second acceptance result.
+- Coverage remains all 16 native stages across 11 phases / 22 roles: 352 rows, comprising 336 entered and 16 unentered. SQL has 88 rows, comprising 49 observed and 39 unentered. Unentered SQL wall/CPU stays null; original unentered native-stage wall zero / complete CPU null remains a separate producer representation. No public failure is erased by the observed SQL intervals' zero failure/abandonment/unwinding/CPU-unknown counts.
+
+| 40a original campaign baseline | Client account-graph calls | Account-graph wall / caller CPU, seconds | Observed SQL commit wall subtotal, milliseconds |
+| --- | ---: | --- | ---: |
+| run 1 | 136 | 15.857839091 / 3.636439891 | 181.769102 |
+| run 2 | 137 | 15.881182848 / 3.686882949 | 35.918052 |
+| run 3 | 138 | 15.198865829 / 3.714934025 | 108.640015 |
+
+The first confirmed baseline rounds end at phase epochs 13.408139979, 13.308585511 and 13.103585269 seconds. Different completed-round and call counts across sources prevent a controlled speedup or throughput claim from these aggregates. Account-graph, commitment, SQL and end-to-end intervals remain nested, not additive. Node-decode reuse still binds expected node ID plus freshly read complete SQL bytes; it grants no authority and does not imply fewer SQL reads. No new Host projection was run here, so the old 44d checkpoint values are not assigned to 40a.
+
+The [retained output artifact](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791107191/artifacts/13302619351) is 13302619351, 83,233,432 bytes, SHA-256 ea4b12aee04bfc2791536d6d934b8881ec32bd452caae1b4a314ae249a0dc877. The durable JSON preserves 24 original console JSON records as strings and the complete reader terminal log. Original selected report members and ZIP bytes remain in that artifact.
+
+## 73ab release toolchain failure repaired and verified
+
+[The original 40a ARM failure](40a5-release-finality-toolchain-failure.json) retains the actual partial-toolchain recovery and cargo-clippy installation conflict. Compilation did not start; the original certificate and pipeline steps were skipped. The origin of the pre-existing partial installation remains unknown.
+
+The repair is ordinary integration commit [73ab6e9a](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/73ab6e9a83bcc836e261d93f9bb23ceafe556758), directly after concurrent faa36 recovery/cache/confirmation/fuzz-lock work. Recursive readback verifies exactly one changed leaf, the original release-finality workflow: 7,450 to 7,852 bytes. Tree 65a2100f has 8,120 files / 933,034,956 bytes. All 389 corpus pins / 301 required paths are preserved and match their actual blobs. The pre-change faa source's actual preflight and both source receipts were read from run 41790379662 / job 126442122973.
+
+Build and certificate steps now share one fresh RUSTUP_HOME per run, attempt, runner and lane. The source-pinned minimal Rust 1.95.0 and required clippy/rustfmt components remain. Original Cargo/rustc commands, four exact selectors including the original explicit ignored-test selection, three pipelines, release profile, 30-minute job cap, 300-second per-pipeline cap, final counters and source/artifact checks are unchanged. The repair deletes no shared installation and swallows no failure.
+
+[The four original release lanes](73ab-release-finality-four-lane-terminal.json), [run 41791243030](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030), now actually succeed:
+
+| Exact 73ab lane | Original job | Actual original selector results |
+| --- | ---: | --- |
+| x64 head | 126444877220 | Four distinct selectors, each 1 PASS / 0 FAIL / 0 ignored |
+| ARM head | 126444877344 | Four distinct selectors, each 1 PASS / 0 FAIL / 0 ignored |
+| ARM actual merge | 126444877500 | Four distinct selectors, each 1 PASS / 0 FAIL / 0 ignored |
+| x64 actual merge | 126444877622 | Four distinct selectors, each 1 PASS / 0 FAIL / 0 ignored |
+
+Actual merge 88f89924 has ordered parents dd6e1c3c and 73ab6e9a and the same tree. Every lane retains exact before/after source equality, actual audit PASS, successful pinned installation, the same unique Rust home in both relevant steps, original native build and all four named invocations. The three-pattern collect-all pipeline step and original counter reader also succeed in every lane. The complete native result excerpts retain interleaved output and separate-line ok results; repeated printed command text is not extra execution.
+
+This closes the original toolchain-installation blocker on 73ab. Individual pipeline report counters and the actual ELF digest file content were not extracted; they remain null. No four-second public-service, saturation, full-Node, complete-workspace or whole-chain PQ acceptance follows.
+
+## Unexecuted 40a priority cohort and Legacy History boundary
+
+[The exact original 40a priority cancellation](40a5-priority-prejob-cancellation.json) retains run 41785836221, attempt 1, completed/cancelled, with total_count=0 and jobs=[]. No job was instantiated, so it supplies no History/capacity/service native result. Its cancellation initiator and native results remain null. Earlier 44d results are not inherited, and this unexecuted cohort is not removed from the record.
+
+[The fixed-source Legacy operation review](40a5-legacy-history-operation-boundaries.md) explains why authenticated campaign costs cannot directly identify the original 4,105-block selector's bottleneck. That selector uses Legacy storage. For its ordinary successful new-packet path with a stable epoch, there is one W1 verification entry, one canonical M06 execution entry and three historical State constructions; state reconstruction between 128-block snapshots checks actual stored deltas and roots without re-executing old W1 or transactions.
+
+The intended final page has a separate deep activation from genesis. Each attach step checks staging State and the still-active genesis State before commit; actual entered/completed step counts remain unknown after failure. A single arithmetic material entry can alternate between these inputs, so continuous staging-cache reuse cannot be assumed. No speculative wrapper was applied. Fresh PQ-state validation, growth dispatch, original independent roots, actual readbacks, cancellation and publication boundaries remain. Source topology supplies no measured stage shares or exact ARM deadline location.
+
+## Original quality/fuzz fetch failures identified
+
+[The four original 40a fetch failures](original-40a-quality-fuzz-fetch-failures.json) have been read by actual SUCCESS [reader 41792928140](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140), job 126450249569. All four complete original fetch logs are byte-identical, 301 bytes each, and report that tests/fuzz/Cargo.lock cannot be updated while --locked is supplied. Both quality lanes and both fuzz lanes fail on that same independent manifest. The four original jobs remain failures.
+
+Four source.json members exactly verify 40a head / 720606 actual merge / tree 75fe3367, 8,113 entries / 932,942,579 bytes. The original archives did not contain source-before.json or source-after.json; those two missing members remain null, distinct from the diagnostic reader's own successful before/after receipts. Eight complete selected members total 3,066 bytes. Their fetch text contains no numeric exit code or named missing package, so those original-text observations are not invented.
+
+The source comparison identifies the missing sha2-to-sha2-asm edge and sha2-asm 0.6.4 package in the independent fuzz lock. Concurrent faa36 adds exactly those ten lines while retaining the original --locked commands. That package-level correspondence is an inference from the frozen manifests and full before/after lock comparison; the Cargo error itself only names the lock file. The later 73ab release pass does not prove the independent fetch repair.
+
+Reader source 5c09e132 / tree 71f5328e has 8,019 files / 931,985,269 bytes, with both actual audits PASS. [Output artifact 13303794145](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140/artifacts/13303794145) is 117,038 bytes, SHA-256 189d42f44310dbae8fd98c158da676631f6dfa6c096c0af68da70509e5e321ba. It preserves all four complete original ZIPs and selected members; the durable JSON retains all 14 original console JSON lines.
+
+A separate fixed-source fetch verification targets 73ab head and actual merge 88f899 under both original contexts: quality Rust 1.95.0 and fuzz nightly-2026-10-01. It must actually execute the original cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml command with the original 900-second command owner and ten-second termination grace. Its scope is this fetch subgate; complete quality checks, fuzz target execution and business/PQ acceptance remain separate.

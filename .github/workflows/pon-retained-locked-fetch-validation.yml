@@ -1,0 +1,178 @@
+name: Retained original locked fuzz-graph fetch
+on:
+  push:
+    branches: [fix/chain-retained-failure-readback-20261104]
+    paths:
+      - .github/workflows/pon-retained-locked-fetch-validation.yml
+permissions:
+  contents: read
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  locked-fetch:
+    name: Original locked fetch (${{ matrix.kind }}, ${{ matrix.context }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ matrix.job_minutes }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: head
+            context: quality
+            tested: 73ab6e9a83bcc836e261d93f9bb23ceafe556758
+            toolchain: 1.95.0
+            job_minutes: 180
+          - kind: head
+            context: fuzz
+            tested: 73ab6e9a83bcc836e261d93f9bb23ceafe556758
+            toolchain: nightly-2026-10-01
+            job_minutes: 45
+          - kind: prospective-merge
+            context: quality
+            tested: 88f899241b1050b1be5bc55f2c1b077b1afa1c10
+            toolchain: 1.95.0
+            job_minutes: 180
+          - kind: prospective-merge
+            context: fuzz
+            tested: 88f899241b1050b1be5bc55f2c1b077b1afa1c10
+            toolchain: nightly-2026-10-01
+            job_minutes: 45
+    env:
+      MEASURED_HEAD: 73ab6e9a83bcc836e261d93f9bb23ceafe556758
+      MEASURED_BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0
+      MEASURED_TESTED: ${{ matrix.tested }}
+      MEASURED_KIND: ${{ matrix.kind }}
+      MEASURED_CONTEXT: ${{ matrix.context }}
+    steps:
+      - name: Checkout the fixed original head or actual merge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.tested }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source and execute unchanged preflight
+        env:
+          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$FETCH_OUT"
+          args=(--kind "$MEASURED_KIND" --expected-head "$MEASURED_HEAD")
+          if test "$MEASURED_KIND" = prospective-merge; then
+            args+=(--expected-base "$MEASURED_BASE" --expected-merge "$MEASURED_TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$FETCH_OUT/source-before.json" 2>&1 | tee "$FETCH_OUT/source-before.log"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$FETCH_OUT/preflight.log"
+      - name: Install only the original context toolchain in fresh private homes
+        env:
+          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}
+          RUSTUP_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-rustup
+          CARGO_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-cargo
+          CARGO_TARGET_DIR: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-target
+          RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$RUSTUP_HOME" "$CARGO_HOME"
+          case "$MEASURED_CONTEXT" in
+            quality) command=(rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy) ;;
+            fuzz) command=(rustup toolchain install nightly-2026-10-01 --profile minimal --component rust-src) ;;
+            *) exit 2 ;;
+          esac
+          "${command[@]}" 2>&1 | tee "$FETCH_OUT/toolchain-install.log"
+          rustc --version --verbose 2>&1 | tee "$FETCH_OUT/compiler.log"
+          cargo --version --verbose 2>&1 | tee "$FETCH_OUT/cargo-version.log"
+          rustup component list --installed 2>&1 | tee "$FETCH_OUT/components.log"
+      - name: Execute only the original locked fetch with the original process owner
+        env:
+          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}
+          RUSTUP_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-rustup
+          CARGO_HOME: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-cargo
+          CARGO_TARGET_DIR: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}-target
+          RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts/ci')
+          from ci_observation import finish, pin_source, run, tool_root, tool_versions
+          output = Path(os.environ['FETCH_OUT'])
+          environment = dict(os.environ)
+          context = environment['MEASURED_CONTEXT']
+          versions = tool_versions()
+          if context == 'fuzz':
+              binary_dir = tool_root() / ('fuzz-' + versions['TRNM_CARGO_FUZZ_VERSION']) / 'bin'
+              environment['PATH'] = str(binary_dir) + os.pathsep + environment.get('PATH', '')
+              environment['RUSTUP_TOOLCHAIN'] = versions['TRNM_FUZZ_TOOLCHAIN']
+              environment['CARGO_TARGET_DIR'] = str(Path(environment['CARGO_TARGET_DIR']) / 'fuzz')
+          if environment['RUSTUP_TOOLCHAIN'] != os.environ['RUSTUP_TOOLCHAIN']:
+              raise ValueError('ORIGINAL_FETCH_TOOLCHAIN_MISMATCH')
+          observations = []
+          report = {'schema': 'trnm-retained-locked-fetch-only-v1', 'result': 'FAIL',
+                    'context': context, 'observations': observations,
+                    'requested_head': environment['MEASURED_HEAD'],
+                    'requested_kind': environment['MEASURED_KIND'],
+                    'requested_tested_commit': environment['MEASURED_TESTED'],
+                    'rustup_toolchain': environment['RUSTUP_TOOLCHAIN'],
+                    'rustup_home': environment['RUSTUP_HOME'], 'cargo_home': environment['CARGO_HOME'],
+                    'command_timeout_seconds': 900, 'original_term_grace_seconds': 10,
+                    'acceptance_granted': False, 'full_quality_or_fuzz_executed': False,
+                    'fuzz_targets_executed': False, 'dependency_policy_checks_executed': False}
+          code = 1
+          try:
+              expected = pin_source()
+              report['source_expected'] = expected
+              if expected != environment['MEASURED_TESTED']:
+                  raise ValueError('ORIGINAL_FETCH_SOURCE_MISMATCH')
+              # This is exactly the failed argv in both retained original producers.
+              # Omitting timeout reuses ci_observation.run's original 900s/TERM10s owner.
+              observed = run(['cargo', 'fetch', '--locked', '--manifest-path', 'tests/fuzz/Cargo.toml'],
+                             output / 'fetch.log', env=environment, expected_source=expected)
+              observations.append(observed)
+              code = observed['exit_code']
+              report['result'] = 'PASS' if code == 0 else 'FAIL'
+          except (OSError, ValueError, RuntimeError) as error:
+              report['error'] = str(error)
+              print(str(error), file=sys.stderr)
+          finally:
+              finish(output, report, ['tests/fuzz/Cargo.toml', 'tests/fuzz/Cargo.lock',
+                                     'rust-toolchain.toml', 'scripts/ci/tool-versions.env',
+                                     'scripts/ci/run_supply_chain.py', 'scripts/ci/run_fuzz_smoke.py',
+                                     'scripts/ci/ci_observation.py'])
+              print(json.dumps(report, sort_keys=True), flush=True)
+              log = output / 'fetch.log'
+              if log.is_file():
+                  sys.stdout.buffer.write(log.read_bytes())
+                  sys.stdout.buffer.flush()
+          raise SystemExit(code if code != 0 or report['result'] == 'PASS' else 125)
+          PY
+      - name: Recheck the fixed source even after failure
+        if: always()
+        env:
+          FETCH_OUT: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$FETCH_OUT"
+          args=(--kind "$MEASURED_KIND" --expected-head "$MEASURED_HEAD")
+          if test "$MEASURED_KIND" = prospective-merge; then
+            args+=(--expected-base "$MEASURED_BASE" --expected-merge "$MEASURED_TESTED")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$FETCH_OUT/source-after.json" 2>&1 | tee "$FETCH_OUT/source-after.log"
+      - name: Preserve source, toolchain, exact fetch output and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: retained-locked-fetch-${{ matrix.kind }}-${{ matrix.context }}-73ab6e9a83bcc836e261d93f9bb23ceafe556758-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/retained-locked-fetch-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.kind }}-${{ matrix.context }}/
+          if-no-files-found: error
+          retention-days: 30

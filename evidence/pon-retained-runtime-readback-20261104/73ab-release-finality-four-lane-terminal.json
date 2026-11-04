@@ -1,0 +1,2013 @@
+{
+  "schema": "trnm-release-finality-toolchain-isolation-four-lane-terminal-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_binding": {
+    "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+    "actual_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+    "merge": {
+      "sha": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+      "tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+      "parents": [
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "73ab6e9a83bcc836e261d93f9bb23ceafe556758"
+      ],
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+      "received_utc": "2026-11-04 07:18:30 UTC",
+      "raw_key": "73ab-release-merge-20261104071830-raw"
+    },
+    "workflow": {
+      "source": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+      "path": ".github/workflows/release-finality-reference.yml",
+      "bytes": 7852,
+      "sha256": "a833e4554eb61c9c3de5704d1af87fbc467a81106da0c5ea76c0d8f013d2c0b8",
+      "git_blob_sha": "23746e01d1f4a35987f87e5491b247e931d59782",
+      "matches_candidate": true,
+      "raw_key": "73ab-release-workflow-20261104071809-raw"
+    }
+  },
+  "run_id": 41791243030,
+  "run_attempt": 1,
+  "corrected_scope": "The original release-finality toolchain preparation failure is absent on this exact source; all original four lanes ran the original build, four required selectors, three pipeline patterns and counter reader.",
+  "lanes": [
+    {
+      "job": {
+        "id": 126444877220,
+        "run_id": 41791243030,
+        "workflow_name": "Release finality reference and native baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcLO1pA",
+        "head_sha": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877220",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/job/126444877220",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:17:34Z",
+        "started_at": "2026-11-04T07:17:37Z",
+        "completed_at": "2026-11-04T07:21:54Z",
+        "name": "reference (ubuntu-24.04, head)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:17:38Z",
+            "completed_at": "2026-11-04T07:17:39Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:17:39Z",
+            "completed_at": "2026-11-04T07:18:04Z"
+          },
+          {
+            "name": "Verify actual immutable source and unchanged original preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:18:04Z",
+            "completed_at": "2026-11-04T07:18:06Z"
+          },
+          {
+            "name": "Install existing frozen conformance environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:18:06Z",
+            "completed_at": "2026-11-04T07:18:12Z"
+          },
+          {
+            "name": "Execute all reference, recovery and separate-reader controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:18:12Z",
+            "completed_at": "2026-11-04T07:18:15Z"
+          },
+          {
+            "name": "Preserve original signed learning suites and execute actual V3 join",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:18:15Z",
+            "completed_at": "2026-11-04T07:18:17Z"
+          },
+          {
+            "name": "Build original native pipeline without changing runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:18:17Z",
+            "completed_at": "2026-11-04T07:21:02Z"
+          },
+          {
+            "name": "Require each native certificate and separate-reference selector to execute",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T07:21:02Z",
+            "completed_at": "2026-11-04T07:21:10Z"
+          },
+          {
+            "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T07:21:10Z",
+            "completed_at": "2026-11-04T07:21:50Z"
+          },
+          {
+            "name": "Recompute existing native counters without claiming saturation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T07:21:50Z",
+            "completed_at": "2026-11-04T07:21:50Z"
+          },
+          {
+            "name": "Recheck source even after failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T07:21:50Z",
+            "completed_at": "2026-11-04T07:21:51Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T07:21:51Z",
+            "completed_at": "2026-11-04T07:21:52Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T07:21:52Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T07:21:53Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126444877220",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000339706,
+        "runner_name": "GitHub Actions 1000339706",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "line": 894,
+          "end_line": 906,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:18:05.9623112Z {\n2026-11-04T07:18:05.9623475Z   \"base\": null,\n2026-11-04T07:18:05.9623913Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:05.9624421Z   \"kind\": \"head\",\n2026-11-04T07:18:05.9624749Z   \"prospective_merge\": null,\n2026-11-04T07:18:05.9625163Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:18:05.9625642Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:05.9626235Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:18:05.9626815Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:18:05.9627292Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:18:05.9627948Z   \"tracked_entries\": 8120,\n2026-11-04T07:18:05.9628368Z   \"tracked_worktree_verified\": true\n2026-11-04T07:18:05.9628780Z }"
+        },
+        {
+          "line": 1360,
+          "end_line": 1372,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:21:51.2441039Z {\n2026-11-04T07:21:51.2441381Z   \"base\": null,\n2026-11-04T07:21:51.2441823Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:51.2442321Z   \"kind\": \"head\",\n2026-11-04T07:21:51.2442635Z   \"prospective_merge\": null,\n2026-11-04T07:21:51.2443015Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:21:51.2443495Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:51.2444086Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:21:51.2444609Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:21:51.2445027Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:21:51.2445410Z   \"tracked_entries\": 8120,\n2026-11-04T07:21:51.2445751Z   \"tracked_worktree_verified\": true\n2026-11-04T07:21:51.2446104Z }"
+        }
+      ],
+      "actual_audit": [
+        {
+          "line": 907,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+          "original_timestamped_log_line": "2026-11-04T07:18:06.0196625Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      ],
+      "source_pair_equal": true,
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877220/logs",
+        "store_key": "73ab-release-terminal-log-126444877220",
+        "bytes": 162193,
+        "sha256": "401e547391b482e2fe8044d9614cc6fb106e48aa7caf5137fd86dc925f8d0f22",
+        "full_text_external": true
+      },
+      "toolchain": {
+        "home": "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head",
+        "home_occurrences": [
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head",
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head"
+        ],
+        "actual_install_version_line": {
+          "line": 1039,
+          "text": "  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+        },
+        "all_original_toolchain_lines": [
+          {
+            "line": 1018,
+            "text": "mkdir \"$RUSTUP_HOME\""
+          },
+          {
+            "line": 1019,
+            "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+          },
+          {
+            "line": 1033,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head"
+          },
+          {
+            "line": 1035,
+            "text": "info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu"
+          },
+          {
+            "line": 1036,
+            "text": "info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1037,
+            "text": "info: downloading 5 components"
+          },
+          {
+            "line": 1039,
+            "text": "  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1226,
+            "text": "    Finished `release` profile [optimized] target(s) in 2m 35s"
+          },
+          {
+            "line": 1254,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head"
+          },
+          {
+            "line": 1257,
+            "text": "    Finished `release` profile [optimized] target(s) in 7.70s"
+          },
+          {
+            "line": 1265,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.07s"
+          },
+          {
+            "line": 1274,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.07s"
+          },
+          {
+            "line": 1282,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.07s"
+          }
+        ],
+        "components_required_by_actual_install": [
+          "clippy",
+          "rustfmt"
+        ],
+        "profile": "minimal",
+        "actual_rustc_version": "1.95.0 (59807616e 2026-04-14)",
+        "archive_compiler_txt_contents_read": false
+      },
+      "original_four_native_groups": [
+        {
+          "header_line": 1260,
+          "terminal_line": 1263,
+          "declared": 1,
+          "first_test": "original_reference_signed_fixture_preserves_facts_and_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.00"
+          },
+          "literal_execution_text": "running 1 test\ntest original_reference_signed_fixture_preserves_facts_and_scope ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s"
+        },
+        {
+          "header_line": 1268,
+          "terminal_line": 1272,
+          "declared": 1,
+          "first_test": "native_reader_enforces_adversarial_corpus_without_python",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.08"
+          },
+          "literal_execution_text": "running 1 test\ntest native_reader_enforces_adversarial_corpus_without_python ... 101 native cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.08s"
+        },
+        {
+          "header_line": 1277,
+          "terminal_line": 1280,
+          "declared": 1,
+          "first_test": "unchanged_python_reference_regenerates_exact_fixture_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.15"
+          },
+          "literal_execution_text": "running 1 test\ntest unchanged_python_reference_regenerates_exact_fixture_bytes ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.15s"
+        },
+        {
+          "header_line": 1285,
+          "terminal_line": 1290,
+          "declared": 1,
+          "first_test": "original_python_reader_and_native_reader_agree_on_adversarial_corpus",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.30"
+          },
+          "literal_execution_text": "running 1 test\ntest original_python_reader_and_native_reader_agree_on_adversarial_corpus ... 101 native cases, 6 accepted, remaining refused\n101 paired cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.30s"
+        }
+      ],
+      "original_guarded_commands": [
+        {
+          "line": 1018,
+          "text": "mkdir \"$RUSTUP_HOME\""
+        },
+        {
+          "line": 1019,
+          "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+        },
+        {
+          "line": 1020,
+          "text": "cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline"
+        },
+        {
+          "line": 1021,
+          "text": "sha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\""
+        },
+        {
+          "line": 1022,
+          "text": "rustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\""
+        },
+        {
+          "line": 1231,
+          "text": "for selector in \\"
+        },
+        {
+          "line": 1239,
+          "text": "    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\"
+        },
+        {
+          "line": 1241,
+          "text": "  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\"
+        },
+        {
+          "line": 1244,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1297,
+          "text": "for pattern in hot disjoint4 growth; do"
+        },
+        {
+          "line": 1298,
+          "text": "  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\"
+        },
+        {
+          "line": 1305,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1321,
+          "text": "from campaign_gate import pipeline_observation"
+        },
+        {
+          "line": 1328,
+          "text": "        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))"
+        },
+        {
+          "line": 1331,
+          "text": "raise SystemExit(int(failed))"
+        }
+      ],
+      "original_step_status": {
+        "7": {
+          "name": "Build original native pipeline without changing runtime",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "8": {
+          "name": "Require each native certificate and separate-reference selector to execute",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "9": {
+          "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "10": {
+          "name": "Recompute existing native counters without claiming saturation",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "11": {
+          "name": "Recheck source even after failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "12": {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success",
+          "status": "completed"
+        }
+      },
+      "original_pipeline": {
+        "patterns": [
+          "hot",
+          "disjoint4",
+          "growth"
+        ],
+        "timeout_seconds": 300,
+        "per_pattern_exit_codes_derived_from_unchanged_collect_all_shell_success": [
+          0,
+          0,
+          0
+        ],
+        "exit_file_contents_read": false,
+        "summary_counter_values": null,
+        "counter_reader_terminal": "success",
+        "not_saturation_or_public_service_qualification": true
+      },
+      "artifact": {
+        "id": 13303099474,
+        "name": "release-finality-ubuntu-24.04-head-73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "bytes": 1119627,
+        "digest": "sha256:1be9f890b0edbfcc85f52118ac36fac58593d3f86a89e8307df80e933fed12fe",
+        "expired": false,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/artifacts/13303099474",
+        "api_and_console_match": true,
+        "zip_downloaded": false
+      },
+      "original_errors": [],
+      "native_binary_sha256_value": null,
+      "native_binary_digest_file_presented_by_successful_command": true,
+      "complete_relevant_original_command_blocks": [
+        {
+          "name": "original_build_toolchain_and_environment",
+          "first_line": 1016,
+          "last_line": 1034,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nmkdir \"$RUSTUP_HOME\"\nrustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt\ncargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline\nsha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\"\nrustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\"\nuname -a > \"$RUNNER_TEMP/release-finality/environment.txt\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head\n##[endgroup]"
+        },
+        {
+          "name": "all_original_native_selector_commands",
+          "first_line": 1227,
+          "last_line": 1255,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nexport TRNM_FINALITY_REFERENCE_PYTHON=\"$RUNNER_TEMP/finality-env/bin/python\"\noverall=0\nfor selector in \\\n  original_reference_signed_fixture_preserves_facts_and_scope \\\n  native_reader_enforces_adversarial_corpus_without_python \\\n  unchanged_python_reference_regenerates_exact_fixture_bytes \\\n  original_python_reader_and_native_reader_agree_on_adversarial_corpus; do\n  log=\"$RUNNER_TEMP/release-finality/$selector.log\"\n  if ! cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml \\\n    -p trnm-pon-node --test release_finality_v2 \"$selector\" -- \\\n    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\\n    2>&1 | tee \"$log\"; then overall=1; fi\n  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\\n    > \"$RUNNER_TEMP/release-finality/$selector.execution.json\"; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-head\n##[endgroup]"
+        },
+        {
+          "name": "all_three_original_pipeline_pattern_commands",
+          "first_line": 1292,
+          "last_line": 1315,
+          "literal_log_text": "##[group]Run # GitHub invokes bash with -e; collect all three outcomes explicitly.\n# GitHub invokes bash with -e; collect all three outcomes explicitly.\nset +e\nset -uo pipefail\noverall=0\nfor pattern in hot disjoint4 growth; do\n  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\\n    \"$RUNNER_TEMP/release-finality/$pattern\" 8 32 1000 \"$pattern\" protected \\\n    > \"$RUNNER_TEMP/release-finality/$pattern.stdout\" 2> \"$RUNNER_TEMP/release-finality/$pattern.stderr\"\n  code=$?\n  printf '%s\\n' \"$code\" > \"$RUNNER_TEMP/release-finality/$pattern.exit\"\n  if test \"$code\" -ne 0; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n##[endgroup]"
+        },
+        {
+          "name": "original_counter_reader",
+          "first_line": 1316,
+          "last_line": 1342,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\n\"$RUNNER_TEMP/finality-env/bin/python\" - \"$RUNNER_TEMP/release-finality\" <<'PY'\nimport json, pathlib, sys\nsys.path.insert(0, 'formal/release-finality-v2')\nfrom campaign_gate import pipeline_observation\nroot=pathlib.Path(sys.argv[1]); observations={}; failed=False\nfor pattern in ('hot','disjoint4','growth'):\n    source=root/pattern/'summary.json'\n    if not source.is_file():\n        observations[pattern]={'status':'not_observed'}; failed=True\n    else:\n        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))\n        failed |= not observations[pattern]['run_passed']\n(root/'pipeline-observations.json').write_text(json.dumps(observations,indent=2)+'\\n')\nraise SystemExit(int(failed))\nPY\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n##[endgroup]"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 126444877344,
+        "run_id": 41791243030,
+        "workflow_name": "Release finality reference and native baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcLO2IA",
+        "head_sha": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877344",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/job/126444877344",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:17:34Z",
+        "started_at": "2026-11-04T07:17:40Z",
+        "completed_at": "2026-11-04T07:21:58Z",
+        "name": "reference (ubuntu-24.04-arm, head)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:17:41Z",
+            "completed_at": "2026-11-04T07:17:41Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:17:41Z",
+            "completed_at": "2026-11-04T07:18:06Z"
+          },
+          {
+            "name": "Verify actual immutable source and unchanged original preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:18:06Z",
+            "completed_at": "2026-11-04T07:18:07Z"
+          },
+          {
+            "name": "Install existing frozen conformance environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:18:07Z",
+            "completed_at": "2026-11-04T07:18:13Z"
+          },
+          {
+            "name": "Execute all reference, recovery and separate-reader controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:18:13Z",
+            "completed_at": "2026-11-04T07:18:16Z"
+          },
+          {
+            "name": "Preserve original signed learning suites and execute actual V3 join",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:18:16Z",
+            "completed_at": "2026-11-04T07:18:17Z"
+          },
+          {
+            "name": "Build original native pipeline without changing runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:18:17Z",
+            "completed_at": "2026-11-04T07:21:04Z"
+          },
+          {
+            "name": "Require each native certificate and separate-reference selector to execute",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T07:21:04Z",
+            "completed_at": "2026-11-04T07:21:14Z"
+          },
+          {
+            "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T07:21:14Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          },
+          {
+            "name": "Recompute existing native counters without claiming saturation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T07:21:53Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          },
+          {
+            "name": "Recheck source even after failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T07:21:53Z",
+            "completed_at": "2026-11-04T07:21:54Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T07:21:54Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T07:21:56Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T07:21:56Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126444877344",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ],
+        "runner_id": 1000339691,
+        "runner_name": "GitHub Actions 1000339691",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "line": 889,
+          "end_line": 901,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:18:07.1231267Z {\n2026-11-04T07:18:07.1231491Z   \"base\": null,\n2026-11-04T07:18:07.1231749Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:07.1232037Z   \"kind\": \"head\",\n2026-11-04T07:18:07.1232225Z   \"prospective_merge\": null,\n2026-11-04T07:18:07.1232451Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:18:07.1232734Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:07.1233163Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:18:07.1233473Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:18:07.1233759Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:18:07.1233973Z   \"tracked_entries\": 8120,\n2026-11-04T07:18:07.1234198Z   \"tracked_worktree_verified\": true\n2026-11-04T07:18:07.1234411Z }"
+        },
+        {
+          "line": 1355,
+          "end_line": 1367,
+          "value": {
+            "base": null,
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": null,\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:21:54.2904084Z {\n2026-11-04T07:21:54.2904333Z   \"base\": null,\n2026-11-04T07:21:54.2904591Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:54.2904877Z   \"kind\": \"head\",\n2026-11-04T07:21:54.2905063Z   \"prospective_merge\": null,\n2026-11-04T07:21:54.2905288Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:21:54.2905573Z   \"tested_commit\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:54.2905930Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:21:54.2906241Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:21:54.2906538Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:21:54.2906746Z   \"tracked_entries\": 8120,\n2026-11-04T07:21:54.2906965Z   \"tracked_worktree_verified\": true\n2026-11-04T07:21:54.2907178Z }"
+        }
+      ],
+      "actual_audit": [
+        {
+          "line": 902,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+          "original_timestamped_log_line": "2026-11-04T07:18:07.1816953Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      ],
+      "source_pair_equal": true,
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877344/logs",
+        "store_key": "73ab-release-terminal-log-126444877344",
+        "bytes": 161923,
+        "sha256": "1ff0a60e71e067d38fc666ae18bde167525f7beaf136a773c3c3e7bc5dd2fa8e",
+        "full_text_external": true
+      },
+      "toolchain": {
+        "home": "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head",
+        "home_occurrences": [
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head",
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head"
+        ],
+        "actual_install_version_line": {
+          "line": 1034,
+          "text": "  1.95.0-aarch64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+        },
+        "all_original_toolchain_lines": [
+          {
+            "line": 1013,
+            "text": "mkdir \"$RUSTUP_HOME\""
+          },
+          {
+            "line": 1014,
+            "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+          },
+          {
+            "line": 1028,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head"
+          },
+          {
+            "line": 1030,
+            "text": "info: syncing channel updates for 1.95.0-aarch64-unknown-linux-gnu"
+          },
+          {
+            "line": 1031,
+            "text": "info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1032,
+            "text": "info: downloading 5 components"
+          },
+          {
+            "line": 1034,
+            "text": "  1.95.0-aarch64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1221,
+            "text": "    Finished `release` profile [optimized] target(s) in 2m 39s"
+          },
+          {
+            "line": 1249,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head"
+          },
+          {
+            "line": 1252,
+            "text": "    Finished `release` profile [optimized] target(s) in 8.21s"
+          },
+          {
+            "line": 1260,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1269,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1277,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          }
+        ],
+        "components_required_by_actual_install": [
+          "clippy",
+          "rustfmt"
+        ],
+        "profile": "minimal",
+        "actual_rustc_version": "1.95.0 (59807616e 2026-04-14)",
+        "archive_compiler_txt_contents_read": false
+      },
+      "original_four_native_groups": [
+        {
+          "header_line": 1255,
+          "terminal_line": 1258,
+          "declared": 1,
+          "first_test": "original_reference_signed_fixture_preserves_facts_and_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.00"
+          },
+          "literal_execution_text": "running 1 test\ntest original_reference_signed_fixture_preserves_facts_and_scope ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s"
+        },
+        {
+          "header_line": 1263,
+          "terminal_line": 1267,
+          "declared": 1,
+          "first_test": "native_reader_enforces_adversarial_corpus_without_python",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.06"
+          },
+          "literal_execution_text": "running 1 test\ntest native_reader_enforces_adversarial_corpus_without_python ... 101 native cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.06s"
+        },
+        {
+          "header_line": 1272,
+          "terminal_line": 1275,
+          "declared": 1,
+          "first_test": "unchanged_python_reference_regenerates_exact_fixture_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.14"
+          },
+          "literal_execution_text": "running 1 test\ntest unchanged_python_reference_regenerates_exact_fixture_bytes ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.14s"
+        },
+        {
+          "header_line": 1280,
+          "terminal_line": 1285,
+          "declared": 1,
+          "first_test": "original_python_reader_and_native_reader_agree_on_adversarial_corpus",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.24"
+          },
+          "literal_execution_text": "running 1 test\ntest original_python_reader_and_native_reader_agree_on_adversarial_corpus ... 101 native cases, 6 accepted, remaining refused\n101 paired cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.24s"
+        }
+      ],
+      "original_guarded_commands": [
+        {
+          "line": 1013,
+          "text": "mkdir \"$RUSTUP_HOME\""
+        },
+        {
+          "line": 1014,
+          "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+        },
+        {
+          "line": 1015,
+          "text": "cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline"
+        },
+        {
+          "line": 1016,
+          "text": "sha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\""
+        },
+        {
+          "line": 1017,
+          "text": "rustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\""
+        },
+        {
+          "line": 1226,
+          "text": "for selector in \\"
+        },
+        {
+          "line": 1234,
+          "text": "    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\"
+        },
+        {
+          "line": 1236,
+          "text": "  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\"
+        },
+        {
+          "line": 1239,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1292,
+          "text": "for pattern in hot disjoint4 growth; do"
+        },
+        {
+          "line": 1293,
+          "text": "  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\"
+        },
+        {
+          "line": 1300,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1316,
+          "text": "from campaign_gate import pipeline_observation"
+        },
+        {
+          "line": 1323,
+          "text": "        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))"
+        },
+        {
+          "line": 1326,
+          "text": "raise SystemExit(int(failed))"
+        }
+      ],
+      "original_step_status": {
+        "7": {
+          "name": "Build original native pipeline without changing runtime",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "8": {
+          "name": "Require each native certificate and separate-reference selector to execute",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "9": {
+          "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "10": {
+          "name": "Recompute existing native counters without claiming saturation",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "11": {
+          "name": "Recheck source even after failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "12": {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success",
+          "status": "completed"
+        }
+      },
+      "original_pipeline": {
+        "patterns": [
+          "hot",
+          "disjoint4",
+          "growth"
+        ],
+        "timeout_seconds": 300,
+        "per_pattern_exit_codes_derived_from_unchanged_collect_all_shell_success": [
+          0,
+          0,
+          0
+        ],
+        "exit_file_contents_read": false,
+        "summary_counter_values": null,
+        "counter_reader_terminal": "success",
+        "not_saturation_or_public_service_qualification": true
+      },
+      "artifact": {
+        "id": 13304125236,
+        "name": "release-finality-ubuntu-24.04-arm-head-73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "bytes": 1118155,
+        "digest": "sha256:c0f473eda812422a15342ed7b0f3731191ccbea74588ce50a5059578add97dab",
+        "expired": false,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/artifacts/13304125236",
+        "api_and_console_match": true,
+        "zip_downloaded": false
+      },
+      "original_errors": [],
+      "native_binary_sha256_value": null,
+      "native_binary_digest_file_presented_by_successful_command": true,
+      "complete_relevant_original_command_blocks": [
+        {
+          "name": "original_build_toolchain_and_environment",
+          "first_line": 1011,
+          "last_line": 1029,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nmkdir \"$RUSTUP_HOME\"\nrustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt\ncargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline\nsha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\"\nrustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\"\nuname -a > \"$RUNNER_TEMP/release-finality/environment.txt\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head\n##[endgroup]"
+        },
+        {
+          "name": "all_original_native_selector_commands",
+          "first_line": 1222,
+          "last_line": 1250,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nexport TRNM_FINALITY_REFERENCE_PYTHON=\"$RUNNER_TEMP/finality-env/bin/python\"\noverall=0\nfor selector in \\\n  original_reference_signed_fixture_preserves_facts_and_scope \\\n  native_reader_enforces_adversarial_corpus_without_python \\\n  unchanged_python_reference_regenerates_exact_fixture_bytes \\\n  original_python_reader_and_native_reader_agree_on_adversarial_corpus; do\n  log=\"$RUNNER_TEMP/release-finality/$selector.log\"\n  if ! cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml \\\n    -p trnm-pon-node --test release_finality_v2 \"$selector\" -- \\\n    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\\n    2>&1 | tee \"$log\"; then overall=1; fi\n  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\\n    > \"$RUNNER_TEMP/release-finality/$selector.execution.json\"; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-head\n##[endgroup]"
+        },
+        {
+          "name": "all_three_original_pipeline_pattern_commands",
+          "first_line": 1287,
+          "last_line": 1310,
+          "literal_log_text": "##[group]Run # GitHub invokes bash with -e; collect all three outcomes explicitly.\n# GitHub invokes bash with -e; collect all three outcomes explicitly.\nset +e\nset -uo pipefail\noverall=0\nfor pattern in hot disjoint4 growth; do\n  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\\n    \"$RUNNER_TEMP/release-finality/$pattern\" 8 32 1000 \"$pattern\" protected \\\n    > \"$RUNNER_TEMP/release-finality/$pattern.stdout\" 2> \"$RUNNER_TEMP/release-finality/$pattern.stderr\"\n  code=$?\n  printf '%s\\n' \"$code\" > \"$RUNNER_TEMP/release-finality/$pattern.exit\"\n  if test \"$code\" -ne 0; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n##[endgroup]"
+        },
+        {
+          "name": "original_counter_reader",
+          "first_line": 1311,
+          "last_line": 1337,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\n\"$RUNNER_TEMP/finality-env/bin/python\" - \"$RUNNER_TEMP/release-finality\" <<'PY'\nimport json, pathlib, sys\nsys.path.insert(0, 'formal/release-finality-v2')\nfrom campaign_gate import pipeline_observation\nroot=pathlib.Path(sys.argv[1]); observations={}; failed=False\nfor pattern in ('hot','disjoint4','growth'):\n    source=root/pattern/'summary.json'\n    if not source.is_file():\n        observations[pattern]={'status':'not_observed'}; failed=True\n    else:\n        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))\n        failed |= not observations[pattern]['run_passed']\n(root/'pipeline-observations.json').write_text(json.dumps(observations,indent=2)+'\\n')\nraise SystemExit(int(failed))\nPY\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  LANE: head\n##[endgroup]"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 126444877500,
+        "run_id": 41791243030,
+        "workflow_name": "Release finality reference and native baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcLO2vA",
+        "head_sha": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877500",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/job/126444877500",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:17:34Z",
+        "started_at": "2026-11-04T07:17:39Z",
+        "completed_at": "2026-11-04T07:21:57Z",
+        "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:17:40Z",
+            "completed_at": "2026-11-04T07:17:41Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:17:41Z",
+            "completed_at": "2026-11-04T07:18:07Z"
+          },
+          {
+            "name": "Verify actual immutable source and unchanged original preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:18:07Z",
+            "completed_at": "2026-11-04T07:18:09Z"
+          },
+          {
+            "name": "Install existing frozen conformance environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:18:09Z",
+            "completed_at": "2026-11-04T07:18:15Z"
+          },
+          {
+            "name": "Execute all reference, recovery and separate-reader controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:18:15Z",
+            "completed_at": "2026-11-04T07:18:19Z"
+          },
+          {
+            "name": "Preserve original signed learning suites and execute actual V3 join",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:18:19Z",
+            "completed_at": "2026-11-04T07:18:20Z"
+          },
+          {
+            "name": "Build original native pipeline without changing runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:18:20Z",
+            "completed_at": "2026-11-04T07:21:05Z"
+          },
+          {
+            "name": "Require each native certificate and separate-reference selector to execute",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T07:21:05Z",
+            "completed_at": "2026-11-04T07:21:14Z"
+          },
+          {
+            "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T07:21:14Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          },
+          {
+            "name": "Recompute existing native counters without claiming saturation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T07:21:53Z",
+            "completed_at": "2026-11-04T07:21:53Z"
+          },
+          {
+            "name": "Recheck source even after failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T07:21:53Z",
+            "completed_at": "2026-11-04T07:21:54Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T07:21:54Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T07:21:56Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T07:21:56Z",
+            "completed_at": "2026-11-04T07:21:56Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126444877500",
+        "labels": [
+          "ubuntu-24.04-arm"
+        ],
+        "runner_id": 1000339692,
+        "runner_name": "GitHub Actions 1000339692",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "line": 893,
+          "end_line": 905,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:18:09.1578619Z {\n2026-11-04T07:18:09.1578945Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:18:09.1579288Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:09.1579589Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:18:09.1579888Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:18:09.1580214Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:18:09.1580491Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:18:09.1580844Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:18:09.1581151Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:18:09.1581426Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:18:09.1581637Z   \"tracked_entries\": 8120,\n2026-11-04T07:18:09.1581846Z   \"tracked_worktree_verified\": true\n2026-11-04T07:18:09.1582057Z }"
+        },
+        {
+          "line": 1359,
+          "end_line": 1371,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:21:54.4975852Z {\n2026-11-04T07:21:54.4976354Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:21:54.4976819Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:54.4977191Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:21:54.4977598Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:21:54.4978035Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:21:54.4978438Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:21:54.4978868Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:21:54.4979242Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:21:54.4979623Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:21:54.4979892Z   \"tracked_entries\": 8120,\n2026-11-04T07:21:54.4980155Z   \"tracked_worktree_verified\": true\n2026-11-04T07:21:54.4980478Z }"
+        }
+      ],
+      "actual_audit": [
+        {
+          "line": 906,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+          "original_timestamped_log_line": "2026-11-04T07:18:09.2071490Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      ],
+      "source_pair_equal": true,
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877500/logs",
+        "store_key": "73ab-release-terminal-log-126444877500",
+        "bytes": 162851,
+        "sha256": "43ccfc97cd21b4a444374da8b76f38072aa97e1e42d423e55a41ab026214e021",
+        "full_text_external": true
+      },
+      "toolchain": {
+        "home": "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge",
+        "home_occurrences": [
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge",
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge"
+        ],
+        "actual_install_version_line": {
+          "line": 1038,
+          "text": "  1.95.0-aarch64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+        },
+        "all_original_toolchain_lines": [
+          {
+            "line": 1017,
+            "text": "mkdir \"$RUSTUP_HOME\""
+          },
+          {
+            "line": 1018,
+            "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+          },
+          {
+            "line": 1032,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge"
+          },
+          {
+            "line": 1034,
+            "text": "info: syncing channel updates for 1.95.0-aarch64-unknown-linux-gnu"
+          },
+          {
+            "line": 1035,
+            "text": "info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1036,
+            "text": "info: downloading 5 components"
+          },
+          {
+            "line": 1038,
+            "text": "  1.95.0-aarch64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1225,
+            "text": "    Finished `release` profile [optimized] target(s) in 2m 38s"
+          },
+          {
+            "line": 1253,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge"
+          },
+          {
+            "line": 1256,
+            "text": "    Finished `release` profile [optimized] target(s) in 8.33s"
+          },
+          {
+            "line": 1264,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1273,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1281,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          }
+        ],
+        "components_required_by_actual_install": [
+          "clippy",
+          "rustfmt"
+        ],
+        "profile": "minimal",
+        "actual_rustc_version": "1.95.0 (59807616e 2026-04-14)",
+        "archive_compiler_txt_contents_read": false
+      },
+      "original_four_native_groups": [
+        {
+          "header_line": 1259,
+          "terminal_line": 1262,
+          "declared": 1,
+          "first_test": "original_reference_signed_fixture_preserves_facts_and_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.00"
+          },
+          "literal_execution_text": "running 1 test\ntest original_reference_signed_fixture_preserves_facts_and_scope ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s"
+        },
+        {
+          "header_line": 1267,
+          "terminal_line": 1271,
+          "declared": 1,
+          "first_test": "native_reader_enforces_adversarial_corpus_without_python",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.06"
+          },
+          "literal_execution_text": "running 1 test\ntest native_reader_enforces_adversarial_corpus_without_python ... 101 native cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.06s"
+        },
+        {
+          "header_line": 1276,
+          "terminal_line": 1279,
+          "declared": 1,
+          "first_test": "unchanged_python_reference_regenerates_exact_fixture_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.16"
+          },
+          "literal_execution_text": "running 1 test\ntest unchanged_python_reference_regenerates_exact_fixture_bytes ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.16s"
+        },
+        {
+          "header_line": 1284,
+          "terminal_line": 1289,
+          "declared": 1,
+          "first_test": "original_python_reader_and_native_reader_agree_on_adversarial_corpus",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.24"
+          },
+          "literal_execution_text": "running 1 test\ntest original_python_reader_and_native_reader_agree_on_adversarial_corpus ... 101 native cases, 6 accepted, remaining refused\n101 paired cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.24s"
+        }
+      ],
+      "original_guarded_commands": [
+        {
+          "line": 1017,
+          "text": "mkdir \"$RUSTUP_HOME\""
+        },
+        {
+          "line": 1018,
+          "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+        },
+        {
+          "line": 1019,
+          "text": "cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline"
+        },
+        {
+          "line": 1020,
+          "text": "sha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\""
+        },
+        {
+          "line": 1021,
+          "text": "rustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\""
+        },
+        {
+          "line": 1230,
+          "text": "for selector in \\"
+        },
+        {
+          "line": 1238,
+          "text": "    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\"
+        },
+        {
+          "line": 1240,
+          "text": "  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\"
+        },
+        {
+          "line": 1243,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1296,
+          "text": "for pattern in hot disjoint4 growth; do"
+        },
+        {
+          "line": 1297,
+          "text": "  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\"
+        },
+        {
+          "line": 1304,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1320,
+          "text": "from campaign_gate import pipeline_observation"
+        },
+        {
+          "line": 1327,
+          "text": "        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))"
+        },
+        {
+          "line": 1330,
+          "text": "raise SystemExit(int(failed))"
+        }
+      ],
+      "original_step_status": {
+        "7": {
+          "name": "Build original native pipeline without changing runtime",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "8": {
+          "name": "Require each native certificate and separate-reference selector to execute",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "9": {
+          "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "10": {
+          "name": "Recompute existing native counters without claiming saturation",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "11": {
+          "name": "Recheck source even after failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "12": {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success",
+          "status": "completed"
+        }
+      },
+      "original_pipeline": {
+        "patterns": [
+          "hot",
+          "disjoint4",
+          "growth"
+        ],
+        "timeout_seconds": 300,
+        "per_pattern_exit_codes_derived_from_unchanged_collect_all_shell_success": [
+          0,
+          0,
+          0
+        ],
+        "exit_file_contents_read": false,
+        "summary_counter_values": null,
+        "counter_reader_terminal": "success",
+        "not_saturation_or_public_service_qualification": true
+      },
+      "artifact": {
+        "id": 13303482043,
+        "name": "release-finality-ubuntu-24.04-arm-prospective-merge-73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "bytes": 1118253,
+        "digest": "sha256:5d8f386a5c831fb1e3032010167cca06408fbfbed5c614e984eef56de4de1bca",
+        "expired": false,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/artifacts/13303482043",
+        "api_and_console_match": true,
+        "zip_downloaded": false
+      },
+      "original_errors": [],
+      "native_binary_sha256_value": null,
+      "native_binary_digest_file_presented_by_successful_command": true,
+      "complete_relevant_original_command_blocks": [
+        {
+          "name": "original_build_toolchain_and_environment",
+          "first_line": 1015,
+          "last_line": 1033,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nmkdir \"$RUSTUP_HOME\"\nrustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt\ncargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline\nsha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\"\nrustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\"\nuname -a > \"$RUNNER_TEMP/release-finality/environment.txt\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "all_original_native_selector_commands",
+          "first_line": 1226,
+          "last_line": 1254,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nexport TRNM_FINALITY_REFERENCE_PYTHON=\"$RUNNER_TEMP/finality-env/bin/python\"\noverall=0\nfor selector in \\\n  original_reference_signed_fixture_preserves_facts_and_scope \\\n  native_reader_enforces_adversarial_corpus_without_python \\\n  unchanged_python_reference_regenerates_exact_fixture_bytes \\\n  original_python_reader_and_native_reader_agree_on_adversarial_corpus; do\n  log=\"$RUNNER_TEMP/release-finality/$selector.log\"\n  if ! cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml \\\n    -p trnm-pon-node --test release_finality_v2 \"$selector\" -- \\\n    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\\n    2>&1 | tee \"$log\"; then overall=1; fi\n  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\\n    > \"$RUNNER_TEMP/release-finality/$selector.execution.json\"; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-arm-prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "all_three_original_pipeline_pattern_commands",
+          "first_line": 1291,
+          "last_line": 1314,
+          "literal_log_text": "##[group]Run # GitHub invokes bash with -e; collect all three outcomes explicitly.\n# GitHub invokes bash with -e; collect all three outcomes explicitly.\nset +e\nset -uo pipefail\noverall=0\nfor pattern in hot disjoint4 growth; do\n  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\\n    \"$RUNNER_TEMP/release-finality/$pattern\" 8 32 1000 \"$pattern\" protected \\\n    > \"$RUNNER_TEMP/release-finality/$pattern.stdout\" 2> \"$RUNNER_TEMP/release-finality/$pattern.stderr\"\n  code=$?\n  printf '%s\\n' \"$code\" > \"$RUNNER_TEMP/release-finality/$pattern.exit\"\n  if test \"$code\" -ne 0; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "original_counter_reader",
+          "first_line": 1315,
+          "last_line": 1341,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\n\"$RUNNER_TEMP/finality-env/bin/python\" - \"$RUNNER_TEMP/release-finality\" <<'PY'\nimport json, pathlib, sys\nsys.path.insert(0, 'formal/release-finality-v2')\nfrom campaign_gate import pipeline_observation\nroot=pathlib.Path(sys.argv[1]); observations={}; failed=False\nfor pattern in ('hot','disjoint4','growth'):\n    source=root/pattern/'summary.json'\n    if not source.is_file():\n        observations[pattern]={'status':'not_observed'}; failed=True\n    else:\n        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))\n        failed |= not observations[pattern]['run_passed']\n(root/'pipeline-observations.json').write_text(json.dumps(observations,indent=2)+'\\n')\nraise SystemExit(int(failed))\nPY\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n##[endgroup]"
+        }
+      ]
+    },
+    {
+      "job": {
+        "id": 126444877622,
+        "run_id": 41791243030,
+        "workflow_name": "Release finality reference and native baseline",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTty1_c8AAAAdcLO3Ng",
+        "head_sha": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877622",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/job/126444877622",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-04T07:17:34Z",
+        "started_at": "2026-11-04T07:17:37Z",
+        "completed_at": "2026-11-04T07:21:23Z",
+        "name": "reference (ubuntu-24.04, prospective-merge)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T07:17:38Z",
+            "completed_at": "2026-11-04T07:17:38Z"
+          },
+          {
+            "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-04T07:17:38Z",
+            "completed_at": "2026-11-04T07:18:03Z"
+          },
+          {
+            "name": "Verify actual immutable source and unchanged original preflight",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-04T07:18:03Z",
+            "completed_at": "2026-11-04T07:18:05Z"
+          },
+          {
+            "name": "Install existing frozen conformance environment",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-04T07:18:05Z",
+            "completed_at": "2026-11-04T07:18:11Z"
+          },
+          {
+            "name": "Execute all reference, recovery and separate-reader controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T07:18:11Z",
+            "completed_at": "2026-11-04T07:18:15Z"
+          },
+          {
+            "name": "Preserve original signed learning suites and execute actual V3 join",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-04T07:18:15Z",
+            "completed_at": "2026-11-04T07:18:17Z"
+          },
+          {
+            "name": "Build original native pipeline without changing runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-04T07:18:17Z",
+            "completed_at": "2026-11-04T07:20:33Z"
+          },
+          {
+            "name": "Require each native certificate and separate-reference selector to execute",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-04T07:20:33Z",
+            "completed_at": "2026-11-04T07:20:40Z"
+          },
+          {
+            "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-04T07:20:40Z",
+            "completed_at": "2026-11-04T07:21:20Z"
+          },
+          {
+            "name": "Recompute existing native counters without claiming saturation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-04T07:21:20Z",
+            "completed_at": "2026-11-04T07:21:20Z"
+          },
+          {
+            "name": "Recheck source even after failures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-04T07:21:20Z",
+            "completed_at": "2026-11-04T07:21:21Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-04T07:21:21Z",
+            "completed_at": "2026-11-04T07:21:22Z"
+          },
+          {
+            "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-04T07:21:22Z",
+            "completed_at": "2026-11-04T07:21:22Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-04T07:21:22Z",
+            "completed_at": "2026-11-04T07:21:22Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/126444877622",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000339707,
+        "runner_name": "GitHub Actions 1000339707",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "source_before_after": [
+        {
+          "line": 894,
+          "end_line": 906,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:18:05.0449693Z {\n2026-11-04T07:18:05.0450096Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:18:05.0450544Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:18:05.0450923Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:18:05.0451301Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:18:05.0451711Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:18:05.0452068Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:18:05.0452516Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:18:05.0452905Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:18:05.0453248Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:18:05.0453536Z   \"tracked_entries\": 8120,\n2026-11-04T07:18:05.0453813Z   \"tracked_worktree_verified\": true\n2026-11-04T07:18:05.0454085Z }"
+        },
+        {
+          "line": 1360,
+          "end_line": 1372,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+            "kind": "prospective-merge",
+            "prospective_merge": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "88f899241b1050b1be5bc55f2c1b077b1afa1c10",
+            "tested_tree": "65a2100f3feccc29a096a3348c109d77f0a656c2",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 933034956,
+            "tracked_entries": 8120,
+            "tracked_worktree_verified": true
+          },
+          "literal_json_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n  \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 933034956,\n  \"tracked_entries\": 8120,\n  \"tracked_worktree_verified\": true\n}",
+          "original_timestamped_log_lines": "2026-11-04T07:21:21.3958775Z {\n2026-11-04T07:21:21.3959156Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n2026-11-04T07:21:21.3959628Z   \"candidate\": \"73ab6e9a83bcc836e261d93f9bb23ceafe556758\",\n2026-11-04T07:21:21.3960005Z   \"kind\": \"prospective-merge\",\n2026-11-04T07:21:21.3960379Z   \"prospective_merge\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:21:21.3960787Z   \"schema\": \"trnm-ci-source-v1\",\n2026-11-04T07:21:21.3961140Z   \"tested_commit\": \"88f899241b1050b1be5bc55f2c1b077b1afa1c10\",\n2026-11-04T07:21:21.3961576Z   \"tested_tree\": \"65a2100f3feccc29a096a3348c109d77f0a656c2\",\n2026-11-04T07:21:21.3961967Z   \"tests_executed_by_identity_check\": false,\n2026-11-04T07:21:21.3962287Z   \"tracked_bytes\": 933034956,\n2026-11-04T07:21:21.3962564Z   \"tracked_entries\": 8120,\n2026-11-04T07:21:21.3962828Z   \"tracked_worktree_verified\": true\n2026-11-04T07:21:21.3963116Z }"
+        }
+      ],
+      "actual_audit": [
+        {
+          "line": 907,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}",
+          "original_timestamped_log_line": "2026-11-04T07:18:05.0919025Z {\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+        }
+      ],
+      "source_pair_equal": true,
+      "original_full_console": {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126444877622/logs",
+        "store_key": "73ab-release-terminal-log-126444877622",
+        "bytes": 162871,
+        "sha256": "2f153bfeb31c193eab99af551ce6a571810d3e09891f7ddb5565b74cdc03f5b9",
+        "full_text_external": true
+      },
+      "toolchain": {
+        "home": "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge",
+        "home_occurrences": [
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge",
+          "/home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge"
+        ],
+        "actual_install_version_line": {
+          "line": 1039,
+          "text": "  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+        },
+        "all_original_toolchain_lines": [
+          {
+            "line": 1018,
+            "text": "mkdir \"$RUSTUP_HOME\""
+          },
+          {
+            "line": 1019,
+            "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+          },
+          {
+            "line": 1033,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge"
+          },
+          {
+            "line": 1035,
+            "text": "info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu"
+          },
+          {
+            "line": 1036,
+            "text": "info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1037,
+            "text": "info: downloading 5 components"
+          },
+          {
+            "line": 1039,
+            "text": "  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+          },
+          {
+            "line": 1226,
+            "text": "    Finished `release` profile [optimized] target(s) in 2m 08s"
+          },
+          {
+            "line": 1254,
+            "text": "  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge"
+          },
+          {
+            "line": 1257,
+            "text": "    Finished `release` profile [optimized] target(s) in 6.12s"
+          },
+          {
+            "line": 1265,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1274,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          },
+          {
+            "line": 1282,
+            "text": "    Finished `release` profile [optimized] target(s) in 0.06s"
+          }
+        ],
+        "components_required_by_actual_install": [
+          "clippy",
+          "rustfmt"
+        ],
+        "profile": "minimal",
+        "actual_rustc_version": "1.95.0 (59807616e 2026-04-14)",
+        "archive_compiler_txt_contents_read": false
+      },
+      "original_four_native_groups": [
+        {
+          "header_line": 1260,
+          "terminal_line": 1263,
+          "declared": 1,
+          "first_test": "original_reference_signed_fixture_preserves_facts_and_scope",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.00"
+          },
+          "literal_execution_text": "running 1 test\ntest original_reference_signed_fixture_preserves_facts_and_scope ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s"
+        },
+        {
+          "header_line": 1268,
+          "terminal_line": 1272,
+          "declared": 1,
+          "first_test": "native_reader_enforces_adversarial_corpus_without_python",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.07"
+          },
+          "literal_execution_text": "running 1 test\ntest native_reader_enforces_adversarial_corpus_without_python ... 101 native cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.07s"
+        },
+        {
+          "header_line": 1277,
+          "terminal_line": 1280,
+          "declared": 1,
+          "first_test": "unchanged_python_reference_regenerates_exact_fixture_bytes",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.13"
+          },
+          "literal_execution_text": "running 1 test\ntest unchanged_python_reference_regenerates_exact_fixture_bytes ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.13s"
+        },
+        {
+          "header_line": 1285,
+          "terminal_line": 1290,
+          "declared": 1,
+          "first_test": "original_python_reader_and_native_reader_agree_on_adversarial_corpus",
+          "counts": {
+            "result": "ok",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filtered_out": 3,
+            "duration_seconds_text": "0.26"
+          },
+          "literal_execution_text": "running 1 test\ntest original_python_reader_and_native_reader_agree_on_adversarial_corpus ... 101 native cases, 6 accepted, remaining refused\n101 paired cases, 6 accepted, remaining refused\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.26s"
+        }
+      ],
+      "original_guarded_commands": [
+        {
+          "line": 1018,
+          "text": "mkdir \"$RUSTUP_HOME\""
+        },
+        {
+          "line": 1019,
+          "text": "rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt"
+        },
+        {
+          "line": 1020,
+          "text": "cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline"
+        },
+        {
+          "line": 1021,
+          "text": "sha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\""
+        },
+        {
+          "line": 1022,
+          "text": "rustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\""
+        },
+        {
+          "line": 1231,
+          "text": "for selector in \\"
+        },
+        {
+          "line": 1239,
+          "text": "    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\"
+        },
+        {
+          "line": 1241,
+          "text": "  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\"
+        },
+        {
+          "line": 1244,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1297,
+          "text": "for pattern in hot disjoint4 growth; do"
+        },
+        {
+          "line": 1298,
+          "text": "  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\"
+        },
+        {
+          "line": 1305,
+          "text": "exit \"$overall\""
+        },
+        {
+          "line": 1321,
+          "text": "from campaign_gate import pipeline_observation"
+        },
+        {
+          "line": 1328,
+          "text": "        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))"
+        },
+        {
+          "line": 1331,
+          "text": "raise SystemExit(int(failed))"
+        }
+      ],
+      "original_step_status": {
+        "7": {
+          "name": "Build original native pipeline without changing runtime",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "8": {
+          "name": "Require each native certificate and separate-reference selector to execute",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "9": {
+          "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "10": {
+          "name": "Recompute existing native counters without claiming saturation",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "11": {
+          "name": "Recheck source even after failures",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        "12": {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success",
+          "status": "completed"
+        }
+      },
+      "original_pipeline": {
+        "patterns": [
+          "hot",
+          "disjoint4",
+          "growth"
+        ],
+        "timeout_seconds": 300,
+        "per_pattern_exit_codes_derived_from_unchanged_collect_all_shell_success": [
+          0,
+          0,
+          0
+        ],
+        "exit_file_contents_read": false,
+        "summary_counter_values": null,
+        "counter_reader_terminal": "success",
+        "not_saturation_or_public_service_qualification": true
+      },
+      "artifact": {
+        "id": 13304055287,
+        "name": "release-finality-ubuntu-24.04-prospective-merge-73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+        "bytes": 1113136,
+        "digest": "sha256:a5fb262590ea6eec9043672f85e171e439c6bd4d075e804957c8788b898d2093",
+        "expired": false,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41791243030/artifacts/13304055287",
+        "api_and_console_match": true,
+        "zip_downloaded": false
+      },
+      "original_errors": [],
+      "native_binary_sha256_value": null,
+      "native_binary_digest_file_presented_by_successful_command": true,
+      "complete_relevant_original_command_blocks": [
+        {
+          "name": "original_build_toolchain_and_environment",
+          "first_line": 1016,
+          "last_line": 1034,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nmkdir \"$RUSTUP_HOME\"\nrustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt\ncargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline\nsha256sum trillionnium/target/release/examples/continuous_pipeline > \"$RUNNER_TEMP/release-finality/native-binary.sha256\"\nrustc +1.95.0 --version > \"$RUNNER_TEMP/release-finality/compiler.txt\"\nuname -a > \"$RUNNER_TEMP/release-finality/environment.txt\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "all_original_native_selector_commands",
+          "first_line": 1227,
+          "last_line": 1255,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\nexport TRNM_FINALITY_REFERENCE_PYTHON=\"$RUNNER_TEMP/finality-env/bin/python\"\noverall=0\nfor selector in \\\n  original_reference_signed_fixture_preserves_facts_and_scope \\\n  native_reader_enforces_adversarial_corpus_without_python \\\n  unchanged_python_reference_regenerates_exact_fixture_bytes \\\n  original_python_reader_and_native_reader_agree_on_adversarial_corpus; do\n  log=\"$RUNNER_TEMP/release-finality/$selector.log\"\n  if ! cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml \\\n    -p trnm-pon-node --test release_finality_v2 \"$selector\" -- \\\n    --exact --include-ignored --format pretty --nocapture --test-threads=1 \\\n    2>&1 | tee \"$log\"; then overall=1; fi\n  if ! python3 scripts/ci/check_required_native_test.py \"$log\" --test \"$selector\" \\\n    > \"$RUNNER_TEMP/release-finality/$selector.execution.json\"; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n  RUSTUP_HOME: /home/runner/work/_temp/release-finality-rustup-41791243030-1-ubuntu-24.04-prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "all_three_original_pipeline_pattern_commands",
+          "first_line": 1292,
+          "last_line": 1315,
+          "literal_log_text": "##[group]Run # GitHub invokes bash with -e; collect all three outcomes explicitly.\n# GitHub invokes bash with -e; collect all three outcomes explicitly.\nset +e\nset -uo pipefail\noverall=0\nfor pattern in hot disjoint4 growth; do\n  timeout 300s trillionnium/target/release/examples/continuous_pipeline \\\n    \"$RUNNER_TEMP/release-finality/$pattern\" 8 32 1000 \"$pattern\" protected \\\n    > \"$RUNNER_TEMP/release-finality/$pattern.stdout\" 2> \"$RUNNER_TEMP/release-finality/$pattern.stderr\"\n  code=$?\n  printf '%s\\n' \"$code\" > \"$RUNNER_TEMP/release-finality/$pattern.exit\"\n  if test \"$code\" -ne 0; then overall=1; fi\ndone\nexit \"$overall\"\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n##[endgroup]"
+        },
+        {
+          "name": "original_counter_reader",
+          "first_line": 1316,
+          "last_line": 1342,
+          "literal_log_text": "##[group]Run set -euo pipefail\nset -euo pipefail\n\"$RUNNER_TEMP/finality-env/bin/python\" - \"$RUNNER_TEMP/release-finality\" <<'PY'\nimport json, pathlib, sys\nsys.path.insert(0, 'formal/release-finality-v2')\nfrom campaign_gate import pipeline_observation\nroot=pathlib.Path(sys.argv[1]); observations={}; failed=False\nfor pattern in ('hot','disjoint4','growth'):\n    source=root/pattern/'summary.json'\n    if not source.is_file():\n        observations[pattern]={'status':'not_observed'}; failed=True\n    else:\n        observations[pattern]=pipeline_observation(json.loads(source.read_bytes()))\n        failed |= not observations[pattern]['run_passed']\n(root/'pipeline-observations.json').write_text(json.dumps(observations,indent=2)+'\\n')\nraise SystemExit(int(failed))\nPY\nshell: /usr/bin/bash -e {0}\nenv:\n  PYTHONDONTWRITEBYTECODE: 1\n  CARGO_BUILD_JOBS: 2\n  RUST_TEST_THREADS: 1\n  SOURCE: 73ab6e9a83bcc836e261d93f9bb23ceafe556758\n  BASE: dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n  TESTED: 88f899241b1050b1be5bc55f2c1b077b1afa1c10\n  LANE: prospective-merge\n##[endgroup]"
+        }
+      ]
+    }
+  ],
+  "outcome": {
+    "lanes": 4,
+    "native_distinct_selectors_per_lane": 4,
+    "native_pass_per_lane": 4,
+    "native_fail_per_lane": 0,
+    "native_ignored_per_lane": 0,
+    "total_invocations": 16,
+    "original_pipeline_patterns_per_lane": 3,
+    "all_four_source_pairs_equal": true,
+    "all_four_actual_audit_pass": true,
+    "all_four_original_rustup_homes_distinct": true
+  },
+  "limits": {
+    "native_full_node_or_full_workspace_qualified": false,
+    "public_service_business_acceptance": false,
+    "controlled_performance_speedup": false,
+    "p99_or_saturation_acceptance": false,
+    "whole_chain_pq_or_production_activation": false,
+    "prior_40a_failure_preserved": true,
+    "new_other_source_results_not_inherited": true,
+    "individual_pipeline_counter_values_not_read": true,
+    "binary_sha256_and_compiler_file_contents_not_read": true,
+    "original_complete_consoles_retained_in_session_and_hash_linked": true,
+    "no_zip_downloads": true,
+    "no_rerun_cancel_or_ref_mutation": true
+  },
+  "original_job_timeout_minutes": 30,
+  "evidence_extraction": {
+    "full_job_console_retained_without_refetch": true,
+    "raw_console_hash_covers_complete_decoded_original_text": true,
+    "source_receipts_include_original_timestamped_lines": true,
+    "original_command_blocks_are_complete_between_group_markers": true,
+    "native_result_groups_preserve_interleaved_case_output_and_separate_ok_lines": true,
+    "excluded_from_embedded_document": "Full 649838-byte combined console text remains hash-linked, including unrelated earlier controls; no large signed hex copied.",
+    "pipeline_exit_codes_are_only_a_logical_derivation_from_the_original_collect_all_shell_and_actual_step_success": true,
+    "actual_pipeline_report_contents_not_read": true,
+    "actual_pipeline_counter_values": null
+  }
+}

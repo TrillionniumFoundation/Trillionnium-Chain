@@ -1,0 +1,653 @@
+{
+  "schema": "trnm-frozen-40a-fetch-failure-durable-readback-v1",
+  "scope": "Readback of four failed original quality/fuzz jobs at frozen 40a source. Reader success verifies archive identity and retained fetch/source text only. No archived command, native test, fuzz mutation, later repaired fetch or later acceptance gate is executed by this reader.",
+  "original_candidate": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "original_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+  "original_run_id": 41785836318,
+  "original_run_attempt": 1,
+  "original_run_status_at_readback": "in_progress",
+  "original_run_conclusion_at_readback": null,
+  "reader": {
+    "run_id": 41792928140,
+    "job_id": 126450249569,
+    "run_attempt": 1,
+    "event": "push",
+    "path": ".github/workflows/pon-frozen-40a-fetch-failure-readback-20261104.yml",
+    "head_sha": "5c09e132ad5b55c07b6222b2c8ffeff9b3135adc",
+    "status": "completed",
+    "conclusion": "success",
+    "job_status": "completed",
+    "job_conclusion": "success",
+    "head_branch": "fix/chain-retained-failure-readback-20261104",
+    "workflow_blob": "0ad4e4dd49876a822d0c7921fb184555f79f16f1",
+    "script_blob": "5610bd92b24922e292e57ff3be3a46343867a6f2",
+    "script_path": "scripts/ci/frozen_40a_fetch_failure_readback.py",
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140",
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140/job/126450249569",
+    "original_job_log_read": "complete, fetched once",
+    "original_job_log_characters": 36795,
+    "original_job_log_lines": 308,
+    "steps": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 2,
+        "name": "Checkout exact diagnostic source",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 3,
+        "name": "Verify diagnostic source and original project boundary",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 4,
+        "name": "Read four exact original fetch failures as data",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 5,
+        "name": "Recheck unchanged diagnostic source and project boundary",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 6,
+        "name": "Retain original ZIP bytes and all reader outcomes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 12,
+        "name": "Post Checkout exact diagnostic source",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 13,
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "source_before": {
+      "console_line_start": 209,
+      "console_line_end": 221,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"5c09e132ad5b55c07b6222b2c8ffeff9b3135adc\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5c09e132ad5b55c07b6222b2c8ffeff9b3135adc\",\n  \"tested_tree\": \"71f5328eae729304ce485a0b411597b9d680ff46\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 931985269,\n  \"tracked_entries\": 8019,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_after": {
+      "console_line_start": 253,
+      "console_line_end": 265,
+      "original_json": "{\n  \"base\": null,\n  \"candidate\": \"5c09e132ad5b55c07b6222b2c8ffeff9b3135adc\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"5c09e132ad5b55c07b6222b2c8ffeff9b3135adc\",\n  \"tested_tree\": \"71f5328eae729304ce485a0b411597b9d680ff46\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 931985269,\n  \"tracked_entries\": 8019,\n  \"tracked_worktree_verified\": true\n}"
+    },
+    "source_before_after_text_equal": true,
+    "actual_source": {
+      "tested_commit": "5c09e132ad5b55c07b6222b2c8ffeff9b3135adc",
+      "tested_tree": "71f5328eae729304ce485a0b411597b9d680ff46",
+      "tracked_entries": 8019,
+      "tracked_bytes": 931985269,
+      "tracked_worktree_verified": true,
+      "tests_executed_by_identity_check": false
+    },
+    "actual_audits": [
+      {
+        "console_line": 222,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      },
+      {
+        "console_line": 266,
+        "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+      }
+    ],
+    "original_zip_and_selected_member_retention": {
+      "output_artifact": {
+        "id": 13303794145,
+        "name": "frozen-40a-fetch-failure-readback-5c09e132ad5b55c07b6222b2c8ffeff9b3135adc-1",
+        "size_in_bytes": 117038,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13303794145",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13303794145/zip",
+        "expired": false,
+        "created_at": "2026-11-04T07:32:27Z",
+        "expires_at": "2026-12-04T07:32:26Z",
+        "updated_at": "2026-11-04T07:32:27Z",
+        "digest": "sha256:189d42f44310dbae8fd98c158da676631f6dfa6c096c0af68da70509e5e321ba",
+        "workflow_run": {
+          "id": 41792928140,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-retained-failure-readback-20261104",
+          "head_sha": "5c09e132ad5b55c07b6222b2c8ffeff9b3135adc"
+        }
+      },
+      "upload_console_excerpts": [
+        {
+          "console_line": 282,
+          "original_text": "With the provided path, there will be 35 files uploaded"
+        },
+        {
+          "console_line": 287,
+          "original_text": "Uploaded bytes 117038"
+        },
+        {
+          "console_line": 289,
+          "original_text": "SHA256 digest of uploaded artifact zip is 189d42f44310dbae8fd98c158da676631f6dfa6c096c0af68da70509e5e321ba"
+        },
+        {
+          "console_line": 291,
+          "original_text": "Artifact frozen-40a-fetch-failure-readback-5c09e132ad5b55c07b6222b2c8ffeff9b3135adc-1.zip successfully finalized. Artifact ID 13303794145"
+        },
+        {
+          "console_line": 292,
+          "original_text": "Artifact frozen-40a-fetch-failure-readback-5c09e132ad5b55c07b6222b2c8ffeff9b3135adc-1 has been successfully uploaded! Final size is 117038 bytes. Artifact ID is 13303794145"
+        },
+        {
+          "console_line": 293,
+          "original_text": "Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41792928140/artifacts/13303794145"
+        }
+      ],
+      "output_artifact_downloaded_for_this_note": false
+    },
+    "native_tests_executed": false,
+    "archived_commands_executed": false,
+    "later_repaired_fetch_executed": false,
+    "acceptance_granted": false
+  },
+  "totals": {
+    "fixed_original_targets": 4,
+    "reader_completed": 4,
+    "reader_failed": 0,
+    "source_json_verified": 4,
+    "source_mismatches": 0,
+    "original_jobs_conclusion_failure": 4,
+    "selected_members": 8,
+    "selected_member_bytes": 3066,
+    "source_before_json_members_present": 0,
+    "source_after_json_members_present": 0,
+    "complete_literal_json_lines": 14,
+    "identical_fetch_texts": true,
+    "fetch_bytes_each": 301,
+    "fetch_sha256_each": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+    "original_fetch_numeric_exit_codes": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "native_pass_count": null,
+    "native_fail_count": null,
+    "fuzz_mutation_counts": null
+  },
+  "finding": {
+    "observed_error": "Cargo refused to update tests/fuzz/Cargo.lock because --locked was supplied.",
+    "observed_scope": "The quality supply-chain fetch-crates-1.log and fuzz fetch.log each concern the independent tests/fuzz manifest. Four complete files contain the same Cargo lock refusal.",
+    "not_observed_in_fetch_text": [
+      "numeric fetch exit code",
+      "missing dependency package name",
+      "network timeout",
+      "successful repaired fetch",
+      "fuzz mutation counts"
+    ],
+    "unknowns_preserved": "The selected source members source-before.json and source-after.json are absent. Original source.json is present and verified in all four archives. Reader source-before/after guards refer to the auxiliary diagnostic source, not to new source files in the original archives.",
+    "original_failure_retained": true
+  },
+  "targets": [
+    {
+      "target": {
+        "attempt": 1,
+        "digest": "sha256:47237c5d9879f584617728d844534d9cd4ed86c972a1bfc69a200d004943b11b",
+        "fetch_member": "supply-chain/fetch-crates-1.log",
+        "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "id": 13302207260,
+        "job": 126429599723,
+        "job_name": "rust-baseline shard (quality)",
+        "kind": "head",
+        "name": "rust-observations-head-40a5ba25e40fd5eda5b04fc1c3811320d438de11-1-quality",
+        "run": 41785836318,
+        "size": 41663,
+        "tested": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343"
+      },
+      "original_job_conclusion": "failure",
+      "reader_status": "completed",
+      "downloaded_zip_bytes": 41663,
+      "downloaded_zip_sha256": "47237c5d9879f584617728d844534d9cd4ed86c972a1bfc69a200d004943b11b",
+      "member_index_sha256": "1cd39eb845a3e87db0f9b4739354607cae4cc3774104120a87b0d889000273bb",
+      "selected_text_bytes": 722,
+      "records": 2,
+      "source_status": {
+        "source-after.json": null,
+        "source-before.json": null,
+        "source.json": "verified"
+      },
+      "source_mismatches": [],
+      "absent_source_members": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "original_fetch_exit_code": null,
+      "original_members": [
+        {
+          "console_line": 232,
+          "member": "supply-chain/fetch-crates-1.log",
+          "bytes": 301,
+          "sha256": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+          "original_text": "    Updating crates.io index\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\n",
+          "source_observation": null
+        },
+        {
+          "console_line": 233,
+          "member": "source.json",
+          "bytes": 421,
+          "sha256": "0353a0f3a252ffb47ebe931e7aedea1ea89c82c8d08aabc9e53f58af8b2dbe18",
+          "original_text": "{\n  \"base\": null,\n  \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932942579,\n  \"tracked_entries\": 8113,\n  \"tracked_worktree_verified\": true\n}\n",
+          "source_observation": {
+            "fields": {
+              "base": null,
+              "candidate": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "tested_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 932942579,
+              "tracked_entries": 8113,
+              "tracked_worktree_verified": true
+            },
+            "mismatching_fields": [],
+            "missing_fields": [],
+            "status": "verified"
+          }
+        }
+      ],
+      "reader_summary_console_line": 234,
+      "source_tests_executed": false,
+      "acceptance_granted": false
+    },
+    {
+      "target": {
+        "attempt": 1,
+        "digest": "sha256:373446ee129ca43dece78d8e967f74b9b1ed93d1c669f1024278b86bb3241646",
+        "fetch_member": "supply-chain/fetch-crates-1.log",
+        "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "id": 13301623824,
+        "job": 126429599917,
+        "job_name": "prospective Rust shard (quality)",
+        "kind": "prospective-merge",
+        "name": "rust-observations-prospective-merge-720606ee3ed65c943bda395c923e4d5b9bc0560c-1-quality",
+        "run": 41785836318,
+        "size": 41773,
+        "tested": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+        "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343"
+      },
+      "original_job_conclusion": "failure",
+      "reader_status": "completed",
+      "downloaded_zip_bytes": 41773,
+      "downloaded_zip_sha256": "373446ee129ca43dece78d8e967f74b9b1ed93d1c669f1024278b86bb3241646",
+      "member_index_sha256": "8f84aaa4b428419137017a6270e0a95243d7a84a7aa22b445eea2d0b37ce7741",
+      "selected_text_bytes": 811,
+      "records": 2,
+      "source_status": {
+        "source-after.json": null,
+        "source-before.json": null,
+        "source.json": "verified"
+      },
+      "source_mismatches": [],
+      "absent_source_members": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "original_fetch_exit_code": null,
+      "original_members": [
+        {
+          "console_line": 235,
+          "member": "supply-chain/fetch-crates-1.log",
+          "bytes": 301,
+          "sha256": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+          "original_text": "    Updating crates.io index\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\n",
+          "source_observation": null
+        },
+        {
+          "console_line": 236,
+          "member": "source.json",
+          "bytes": 510,
+          "sha256": "b898d1eb8fb8a773d3ec28a74c13175a8ee5c27a5f5cf78edffa6d850af31d0a",
+          "original_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\",\n  \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932942579,\n  \"tracked_entries\": 8113,\n  \"tracked_worktree_verified\": true\n}\n",
+          "source_observation": {
+            "fields": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "kind": "prospective-merge",
+              "prospective_merge": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+              "tested_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 932942579,
+              "tracked_entries": 8113,
+              "tracked_worktree_verified": true
+            },
+            "mismatching_fields": [],
+            "missing_fields": [],
+            "status": "verified"
+          }
+        }
+      ],
+      "reader_summary_console_line": 237,
+      "source_tests_executed": false,
+      "acceptance_granted": false
+    },
+    {
+      "target": {
+        "attempt": 1,
+        "digest": "sha256:f1191f55d4451b4cac3643eedd7ba67b16b2073a1105b7f13f8d2bad3a0fc4c8",
+        "fetch_member": "fuzz/fetch.log",
+        "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "id": 13302016035,
+        "job": 126429599397,
+        "job_name": "fuzz-smoke",
+        "kind": "head",
+        "name": "head-fuzz-smoke-40a5ba25e40fd5eda5b04fc1c3811320d438de11-1",
+        "run": 41785836318,
+        "size": 4140,
+        "tested": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343"
+      },
+      "original_job_conclusion": "failure",
+      "reader_status": "completed",
+      "downloaded_zip_bytes": 4140,
+      "downloaded_zip_sha256": "f1191f55d4451b4cac3643eedd7ba67b16b2073a1105b7f13f8d2bad3a0fc4c8",
+      "member_index_sha256": "6412de8b61ce3e28ab694521e3e3ff364893d252aea3b4f8d78ea261d5fc1195",
+      "selected_text_bytes": 722,
+      "records": 2,
+      "source_status": {
+        "source-after.json": null,
+        "source-before.json": null,
+        "source.json": "verified"
+      },
+      "source_mismatches": [],
+      "absent_source_members": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "original_fetch_exit_code": null,
+      "original_members": [
+        {
+          "console_line": 238,
+          "member": "fuzz/fetch.log",
+          "bytes": 301,
+          "sha256": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+          "original_text": "    Updating crates.io index\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\n",
+          "source_observation": null
+        },
+        {
+          "console_line": 239,
+          "member": "source.json",
+          "bytes": 421,
+          "sha256": "0353a0f3a252ffb47ebe931e7aedea1ea89c82c8d08aabc9e53f58af8b2dbe18",
+          "original_text": "{\n  \"base\": null,\n  \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932942579,\n  \"tracked_entries\": 8113,\n  \"tracked_worktree_verified\": true\n}\n",
+          "source_observation": {
+            "fields": {
+              "base": null,
+              "candidate": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "tested_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 932942579,
+              "tracked_entries": 8113,
+              "tracked_worktree_verified": true
+            },
+            "mismatching_fields": [],
+            "missing_fields": [],
+            "status": "verified"
+          }
+        }
+      ],
+      "reader_summary_console_line": 240,
+      "source_tests_executed": false,
+      "acceptance_granted": false
+    },
+    {
+      "target": {
+        "attempt": 1,
+        "digest": "sha256:9a7228d240eb9f3992a00ccc656aa3c6ec65dd3ce46b0e379d221d10d758bcfa",
+        "fetch_member": "fuzz/fetch.log",
+        "head": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "id": 13302426232,
+        "job": 126429599964,
+        "job_name": "prospective-merge (fuzz-smoke)",
+        "kind": "prospective-merge",
+        "name": "merge-fuzz-smoke-720606ee3ed65c943bda395c923e4d5b9bc0560c-1",
+        "run": 41785836318,
+        "size": 4189,
+        "tested": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+        "tree": "75fe3367c4896a4f2d5f5dd561914613ec999343"
+      },
+      "original_job_conclusion": "failure",
+      "reader_status": "completed",
+      "downloaded_zip_bytes": 4189,
+      "downloaded_zip_sha256": "9a7228d240eb9f3992a00ccc656aa3c6ec65dd3ce46b0e379d221d10d758bcfa",
+      "member_index_sha256": "0c7b1e3d23056b9a62816d97395c23bdd9a922aeb76ebe6ebf9c41c231785634",
+      "selected_text_bytes": 811,
+      "records": 2,
+      "source_status": {
+        "source-after.json": null,
+        "source-before.json": null,
+        "source.json": "verified"
+      },
+      "source_mismatches": [],
+      "absent_source_members": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "original_fetch_exit_code": null,
+      "original_members": [
+        {
+          "console_line": 241,
+          "member": "fuzz/fetch.log",
+          "bytes": 301,
+          "sha256": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+          "original_text": "    Updating crates.io index\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\n",
+          "source_observation": null
+        },
+        {
+          "console_line": 242,
+          "member": "source.json",
+          "bytes": 510,
+          "sha256": "b898d1eb8fb8a773d3ec28a74c13175a8ee5c27a5f5cf78edffa6d850af31d0a",
+          "original_text": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\",\n  \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 932942579,\n  \"tracked_entries\": 8113,\n  \"tracked_worktree_verified\": true\n}\n",
+          "source_observation": {
+            "fields": {
+              "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+              "candidate": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+              "kind": "prospective-merge",
+              "prospective_merge": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "720606ee3ed65c943bda395c923e4d5b9bc0560c",
+              "tested_tree": "75fe3367c4896a4f2d5f5dd561914613ec999343",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 932942579,
+              "tracked_entries": 8113,
+              "tracked_worktree_verified": true
+            },
+            "mismatching_fields": [],
+            "missing_fields": [],
+            "status": "verified"
+          }
+        }
+      ],
+      "reader_summary_console_line": 243,
+      "source_tests_executed": false,
+      "acceptance_granted": false
+    }
+  ],
+  "repaired_lock_correspondence": {
+    "status": "source-supported correspondence; repaired fetch not executed in this readback",
+    "repair_commit": "faae36cfaa3332ef20c7f94ac5e816641a1ee884",
+    "repair_commit_parent": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+    "repair_commit_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/faae36cfaa3332ef20c7f94ac5e816641a1ee884",
+    "repair_commit_scope_note": "The commit has other changes. This note reviews only its tests/fuzz/Cargo.lock change.",
+    "lock_path": "tests/fuzz/Cargo.lock",
+    "before_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+    "after_blob": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+    "mechanical_full_file_comparison": {
+      "anchor_count": 1,
+      "replacement_equal": true,
+      "added_lines": 10,
+      "removed_lines": 0,
+      "other_changes": false
+    },
+    "original_commit_api_patch": "@@ -744,6 +744,16 @@ dependencies = [\n  \"cfg-if\",\n  \"cpufeatures 0.2.17\",\n  \"digest 0.10.7\",\n+ \"sha2-asm\",\n+]\n+\n+[[package]]\n+name = \"sha2-asm\"\n+version = \"0.6.4\"\n+source = \"registry+https://github.com/rust-lang/crates.io-index\"\n+checksum = \"b845214d6175804686b2bd482bcffe96651bb2d1200742b712003504a2dac1ab\"\n+dependencies = [\n+ \"cc\",\n ]\n \n [[package]]",
+    "observed_source_facts": [
+      "The fuzz manifest defines its own workspace and directly depends on trnm-protocol.",
+      "At exact 40a source trnm-protocol selects sha2 with feature asm on Linux x86_64/aarch64.",
+      "The original separate fuzz lock has sha2 0.10.9 without a sha2-asm dependency and without a sha2-asm package.",
+      "The faae child adds the sha2-to-sha2-asm edge and sha2-asm 0.6.4 with dependency cc to that exact separate lock; the remaining lock text is unchanged.",
+      "The quality producer's second manifest is tests/fuzz/Cargo.toml and maps to fetch-crates-1.log; the fuzz producer uses that same manifest for fetch.log."
+    ],
+    "inference": "The faae lock correction addresses the missing assembly-backend dependency in the same independent graph rejected by all four original Cargo fetches. Cargo's generic lock error does not itself enumerate that dependency, so this correspondence relies on the frozen manifest and before/after lock comparison.",
+    "validation_limit": "No cargo command is run by this evidence reader. Actual repaired quality/fuzz acceptance requires its own exact-source original execution; these four original jobs remain failures. Separate release results are not imported.",
+    "source_excerpts": [
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "tests/fuzz/Cargo.toml",
+        "blob_sha": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
+        "line_start": 11,
+        "line_end": 23,
+        "original_text": "# Fuzzing has its own lockfile and graph. No fuzz dependency enters the 26-package\n# native workspace or a normal node binary.\n[workspace]\nmembers = [\".\"]\nresolver = \"2\"\n\n[dependencies]\nlibfuzzer-sys = \"=0.4.10\"\ntrnm-protocol = { version = \"=0.1.0\", path = \"../../trillionnium/crates/trnm-protocol\" }\ntrnm-crypto-primitives = { version = \"=0.1.0\", path = \"../../trillionnium/crates/trnm-crypto-primitives\" }\ntrnm-pon-node = { version = \"=0.1.0\", path = \"../../trillionnium/crates/trnm-pon-node\" }\ntrnm-mvcc-fee = { version = \"=0.1.0\", path = \"../../trillionnium/crates/trnm-mvcc-fee\" }\nserde_json = \"=1.0.149\"",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/tests/fuzz/Cargo.toml"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "blob_sha": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+        "line_start": 18,
+        "line_end": 22,
+        "original_text": "# The pinned backend checks the actual CPU and retains its software fallback.\n# SHA-2 bytes and every validation call stay identical. sha2-asm cannot build on\n# Windows; only these original native Linux targets select this implementation.\n[target.'cfg(all(target_os = \"linux\", any(target_arch = \"x86_64\", target_arch = \"aarch64\")))'.dependencies]\nsha2 = { version = \"0.10\", features = [\"asm\"] }",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/trillionnium/crates/trnm-protocol/Cargo.toml"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "scripts/ci/rust_baseline_shards.py",
+        "blob_sha": "1721caeab93868a5c0f3c1fe0ce4dbb7f0f3dd49",
+        "line_start": 33,
+        "line_end": 42,
+        "original_text": "    full = bodies[0]\n    prefix = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\\n'\n              '    python3 scripts/ci/run_supply_chain.py\\n')\n    suffix = RUST_DOCS + RUST_CLIPPY\n    require(full.startswith(prefix) and full.endswith(suffix), 'Rust quality command boundary')\n    runtime = full[len(prefix):-len(suffix)]\n    require(code_lines(runtime) == code_lines(MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK),\n            'complete retained Rust runtime commands required')\n    header = 'set -euo pipefail\\nexport RUST_TEST_THREADS=\"${RUST_TEST_THREADS:-1}\"\\n'\n    return {'runtime': header + runtime, 'quality': header + prefix + suffix}",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/scripts/ci/rust_baseline_shards.py"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "scripts/ci/run_supply_chain.py",
+        "blob_sha": "7ebbf422bdad6973c9c6546b85bcc46f0011ff2b",
+        "line_start": 12,
+        "line_end": 12,
+        "original_text": "MANIFESTS = ['trillionnium/Cargo.toml', 'tests/fuzz/Cargo.toml']",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/scripts/ci/run_supply_chain.py"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "scripts/ci/run_supply_chain.py",
+        "blob_sha": "7ebbf422bdad6973c9c6546b85bcc46f0011ff2b",
+        "line_start": 29,
+        "line_end": 33,
+        "original_text": "        for index, manifest in enumerate(MANIFESTS):\n            checked(['cargo', 'fetch', '--locked', '--manifest-path', manifest],\n                    output / f'fetch-crates-{index}.log', observations, expected_source=expected_source)\n        checked([str(binary), '--manifest-path', MANIFESTS[0], '--config', 'deny.toml',\n                 '--locked', 'fetch', 'db'], output / 'fetch-advisories.log', observations, expected_source=expected_source)",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/scripts/ci/run_supply_chain.py"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "scripts/ci/run_fuzz_smoke.py",
+        "blob_sha": "62a62cc717f7ffd41cdb9b952f407f215cf9810b",
+        "line_start": 48,
+        "line_end": 64,
+        "original_text": "    manifest = 'tests/fuzz/Cargo.toml'\n    lock = ROOT / 'tests/fuzz/Cargo.lock'\n    original_lock = digest(lock)\n    try:\n        expected_source = pin_source()\n        report['source_expected'] = expected_source\n        checked(['cargo', 'fuzz', '--version'], output / 'cargo-fuzz-version.log', observations, env=environment, expected_source=expected_source)\n        version_text = (output / 'cargo-fuzz-version.log').read_text().strip()\n        if version_text != 'cargo-fuzz ' + versions['TRNM_CARGO_FUZZ_VERSION']:\n            raise ValueError('fuzz tool version mismatch')\n        report['cargo_fuzz_sha256'] = digest(binary_dir / 'cargo-fuzz')\n        checked(['rustc', '--version', '--verbose'], output / 'compiler.log', observations, env=environment, expected_source=expected_source)\n        host = re.search(r'^host: (\\S+)$', (output / 'compiler.log').read_text(), re.M)\n        if host is None:\n            raise ValueError('compiler host missing')\n        checked(['cargo', 'fetch', '--locked', '--manifest-path', manifest],\n                output / 'fetch.log', observations, env=environment, expected_source=expected_source)",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/scripts/ci/run_fuzz_smoke.py"
+      },
+      {
+        "commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "path": "tests/fuzz/Cargo.lock",
+        "blob_sha": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434",
+        "line_start": 738,
+        "line_end": 747,
+        "original_text": "[[package]]\nname = \"sha2\"\nversion = \"0.10.9\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283\"\ndependencies = [\n \"cfg-if\",\n \"cpufeatures 0.2.17\",\n \"digest 0.10.7\",\n]",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/40a5ba25e40fd5eda5b04fc1c3811320d438de11/tests/fuzz/Cargo.lock"
+      }
+    ],
+    "repaired_lock_excerpt": {
+      "commit": "faae36cfaa3332ef20c7f94ac5e816641a1ee884",
+      "path": "tests/fuzz/Cargo.lock",
+      "blob_sha": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+      "line_start": 738,
+      "line_end": 757,
+      "original_text": "[[package]]\nname = \"sha2\"\nversion = \"0.10.9\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283\"\ndependencies = [\n \"cfg-if\",\n \"cpufeatures 0.2.17\",\n \"digest 0.10.7\",\n \"sha2-asm\",\n]\n\n[[package]]\nname = \"sha2-asm\"\nversion = \"0.6.4\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"b845214d6175804686b2bd482bcffe96651bb2d1200742b712003504a2dac1ab\"\ndependencies = [\n \"cc\",\n]"
+    }
+  },
+  "original_console_json_lines": [
+    {
+      "console_line": 222,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    },
+    {
+      "console_line": 232,
+      "original_json": "{\"artifact\": 13302207260, \"bytes\": 301, \"member\": \"supply-chain/fetch-crates-1.log\", \"original_text\": \"    Updating crates.io index\\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\\n\", \"read_status\": \"read\", \"retained_file\": \"member-00.raw\", \"sha256\": \"b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669\", \"source_observation\": null}"
+    },
+    {
+      "console_line": 233,
+      "original_json": "{\"artifact\": 13302207260, \"bytes\": 421, \"member\": \"source.json\", \"original_text\": \"{\\n  \\\"base\\\": null,\\n  \\\"candidate\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"kind\\\": \\\"head\\\",\\n  \\\"prospective_merge\\\": null,\\n  \\\"schema\\\": \\\"trnm-ci-source-v1\\\",\\n  \\\"tested_commit\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"tested_tree\\\": \\\"75fe3367c4896a4f2d5f5dd561914613ec999343\\\",\\n  \\\"tests_executed_by_identity_check\\\": false,\\n  \\\"tracked_bytes\\\": 932942579,\\n  \\\"tracked_entries\\\": 8113,\\n  \\\"tracked_worktree_verified\\\": true\\n}\\n\", \"read_status\": \"read\", \"retained_file\": \"member-01.raw\", \"sha256\": \"0353a0f3a252ffb47ebe931e7aedea1ea89c82c8d08aabc9e53f58af8b2dbe18\", \"source_observation\": {\"fields\": {\"base\": null, \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932942579, \"tracked_entries\": 8113, \"tracked_worktree_verified\": true}, \"mismatching_fields\": [], \"missing_fields\": [], \"status\": \"verified\"}}"
+    },
+    {
+      "console_line": 234,
+      "original_json": "{\"absent_source_members\": [\"source-before.json\", \"source-after.json\"], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 41663, \"downloaded_zip_sha256\": \"47237c5d9879f584617728d844534d9cd4ed86c972a1bfc69a200d004943b11b\", \"fetch_member_present\": true, \"member_index_sha256\": \"1cd39eb845a3e87db0f9b4739354607cae4cc3774104120a87b0d889000273bb\", \"original_fetch_exit_code\": null, \"original_job_conclusion\": \"failure\", \"original_run_conclusion\": null, \"original_run_status\": \"in_progress\", \"reader_status\": \"completed\", \"records\": 2, \"schema\": \"trnm-frozen-fetch-failure-readback-v1\", \"scope\": \"Original fetch and source text only. Missing source fields remain null; the complete original ZIP and selected member bytes are retained. No archived command is executed and no later fix is inherited.\", \"selected_text_bytes\": 722, \"source_mismatches\": [], \"source_status\": {\"source-after.json\": null, \"source-before.json\": null, \"source.json\": \"verified\"}, \"source_tests_executed\": false, \"target\": {\"attempt\": 1, \"digest\": \"sha256:47237c5d9879f584617728d844534d9cd4ed86c972a1bfc69a200d004943b11b\", \"fetch_member\": \"supply-chain/fetch-crates-1.log\", \"head\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"id\": 13302207260, \"job\": 126429599723, \"job_name\": \"rust-baseline shard (quality)\", \"kind\": \"head\", \"name\": \"rust-observations-head-40a5ba25e40fd5eda5b04fc1c3811320d438de11-1-quality\", \"run\": 41785836318, \"size\": 41663, \"tested\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\"}}"
+    },
+    {
+      "console_line": 235,
+      "original_json": "{\"artifact\": 13301623824, \"bytes\": 301, \"member\": \"supply-chain/fetch-crates-1.log\", \"original_text\": \"    Updating crates.io index\\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\\n\", \"read_status\": \"read\", \"retained_file\": \"member-00.raw\", \"sha256\": \"b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669\", \"source_observation\": null}"
+    },
+    {
+      "console_line": 236,
+      "original_json": "{\"artifact\": 13301623824, \"bytes\": 510, \"member\": \"source.json\", \"original_text\": \"{\\n  \\\"base\\\": \\\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\\\",\\n  \\\"candidate\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"kind\\\": \\\"prospective-merge\\\",\\n  \\\"prospective_merge\\\": \\\"720606ee3ed65c943bda395c923e4d5b9bc0560c\\\",\\n  \\\"schema\\\": \\\"trnm-ci-source-v1\\\",\\n  \\\"tested_commit\\\": \\\"720606ee3ed65c943bda395c923e4d5b9bc0560c\\\",\\n  \\\"tested_tree\\\": \\\"75fe3367c4896a4f2d5f5dd561914613ec999343\\\",\\n  \\\"tests_executed_by_identity_check\\\": false,\\n  \\\"tracked_bytes\\\": 932942579,\\n  \\\"tracked_entries\\\": 8113,\\n  \\\"tracked_worktree_verified\\\": true\\n}\\n\", \"read_status\": \"read\", \"retained_file\": \"member-01.raw\", \"sha256\": \"b898d1eb8fb8a773d3ec28a74c13175a8ee5c27a5f5cf78edffa6d850af31d0a\", \"source_observation\": {\"fields\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932942579, \"tracked_entries\": 8113, \"tracked_worktree_verified\": true}, \"mismatching_fields\": [], \"missing_fields\": [], \"status\": \"verified\"}}"
+    },
+    {
+      "console_line": 237,
+      "original_json": "{\"absent_source_members\": [\"source-before.json\", \"source-after.json\"], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 41773, \"downloaded_zip_sha256\": \"373446ee129ca43dece78d8e967f74b9b1ed93d1c669f1024278b86bb3241646\", \"fetch_member_present\": true, \"member_index_sha256\": \"8f84aaa4b428419137017a6270e0a95243d7a84a7aa22b445eea2d0b37ce7741\", \"original_fetch_exit_code\": null, \"original_job_conclusion\": \"failure\", \"original_run_conclusion\": null, \"original_run_status\": \"in_progress\", \"reader_status\": \"completed\", \"records\": 2, \"schema\": \"trnm-frozen-fetch-failure-readback-v1\", \"scope\": \"Original fetch and source text only. Missing source fields remain null; the complete original ZIP and selected member bytes are retained. No archived command is executed and no later fix is inherited.\", \"selected_text_bytes\": 811, \"source_mismatches\": [], \"source_status\": {\"source-after.json\": null, \"source-before.json\": null, \"source.json\": \"verified\"}, \"source_tests_executed\": false, \"target\": {\"attempt\": 1, \"digest\": \"sha256:373446ee129ca43dece78d8e967f74b9b1ed93d1c669f1024278b86bb3241646\", \"fetch_member\": \"supply-chain/fetch-crates-1.log\", \"head\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"id\": 13301623824, \"job\": 126429599917, \"job_name\": \"prospective Rust shard (quality)\", \"kind\": \"prospective-merge\", \"name\": \"rust-observations-prospective-merge-720606ee3ed65c943bda395c923e4d5b9bc0560c-1-quality\", \"run\": 41785836318, \"size\": 41773, \"tested\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\"}}"
+    },
+    {
+      "console_line": 238,
+      "original_json": "{\"artifact\": 13302016035, \"bytes\": 301, \"member\": \"fuzz/fetch.log\", \"original_text\": \"    Updating crates.io index\\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\\n\", \"read_status\": \"read\", \"retained_file\": \"member-00.raw\", \"sha256\": \"b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669\", \"source_observation\": null}"
+    },
+    {
+      "console_line": 239,
+      "original_json": "{\"artifact\": 13302016035, \"bytes\": 421, \"member\": \"source.json\", \"original_text\": \"{\\n  \\\"base\\\": null,\\n  \\\"candidate\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"kind\\\": \\\"head\\\",\\n  \\\"prospective_merge\\\": null,\\n  \\\"schema\\\": \\\"trnm-ci-source-v1\\\",\\n  \\\"tested_commit\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"tested_tree\\\": \\\"75fe3367c4896a4f2d5f5dd561914613ec999343\\\",\\n  \\\"tests_executed_by_identity_check\\\": false,\\n  \\\"tracked_bytes\\\": 932942579,\\n  \\\"tracked_entries\\\": 8113,\\n  \\\"tracked_worktree_verified\\\": true\\n}\\n\", \"read_status\": \"read\", \"retained_file\": \"member-01.raw\", \"sha256\": \"0353a0f3a252ffb47ebe931e7aedea1ea89c82c8d08aabc9e53f58af8b2dbe18\", \"source_observation\": {\"fields\": {\"base\": null, \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932942579, \"tracked_entries\": 8113, \"tracked_worktree_verified\": true}, \"mismatching_fields\": [], \"missing_fields\": [], \"status\": \"verified\"}}"
+    },
+    {
+      "console_line": 240,
+      "original_json": "{\"absent_source_members\": [\"source-before.json\", \"source-after.json\"], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 4140, \"downloaded_zip_sha256\": \"f1191f55d4451b4cac3643eedd7ba67b16b2073a1105b7f13f8d2bad3a0fc4c8\", \"fetch_member_present\": true, \"member_index_sha256\": \"6412de8b61ce3e28ab694521e3e3ff364893d252aea3b4f8d78ea261d5fc1195\", \"original_fetch_exit_code\": null, \"original_job_conclusion\": \"failure\", \"original_run_conclusion\": null, \"original_run_status\": \"in_progress\", \"reader_status\": \"completed\", \"records\": 2, \"schema\": \"trnm-frozen-fetch-failure-readback-v1\", \"scope\": \"Original fetch and source text only. Missing source fields remain null; the complete original ZIP and selected member bytes are retained. No archived command is executed and no later fix is inherited.\", \"selected_text_bytes\": 722, \"source_mismatches\": [], \"source_status\": {\"source-after.json\": null, \"source-before.json\": null, \"source.json\": \"verified\"}, \"source_tests_executed\": false, \"target\": {\"attempt\": 1, \"digest\": \"sha256:f1191f55d4451b4cac3643eedd7ba67b16b2073a1105b7f13f8d2bad3a0fc4c8\", \"fetch_member\": \"fuzz/fetch.log\", \"head\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"id\": 13302016035, \"job\": 126429599397, \"job_name\": \"fuzz-smoke\", \"kind\": \"head\", \"name\": \"head-fuzz-smoke-40a5ba25e40fd5eda5b04fc1c3811320d438de11-1\", \"run\": 41785836318, \"size\": 4140, \"tested\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\"}}"
+    },
+    {
+      "console_line": 241,
+      "original_json": "{\"artifact\": 13302426232, \"bytes\": 301, \"member\": \"fuzz/fetch.log\", \"original_text\": \"    Updating crates.io index\\nerror: cannot update the lock file /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/tests/fuzz/Cargo.lock because --locked was passed to prevent this\\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\\n\", \"read_status\": \"read\", \"retained_file\": \"member-00.raw\", \"sha256\": \"b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669\", \"source_observation\": null}"
+    },
+    {
+      "console_line": 242,
+      "original_json": "{\"artifact\": 13302426232, \"bytes\": 510, \"member\": \"source.json\", \"original_text\": \"{\\n  \\\"base\\\": \\\"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\\\",\\n  \\\"candidate\\\": \\\"40a5ba25e40fd5eda5b04fc1c3811320d438de11\\\",\\n  \\\"kind\\\": \\\"prospective-merge\\\",\\n  \\\"prospective_merge\\\": \\\"720606ee3ed65c943bda395c923e4d5b9bc0560c\\\",\\n  \\\"schema\\\": \\\"trnm-ci-source-v1\\\",\\n  \\\"tested_commit\\\": \\\"720606ee3ed65c943bda395c923e4d5b9bc0560c\\\",\\n  \\\"tested_tree\\\": \\\"75fe3367c4896a4f2d5f5dd561914613ec999343\\\",\\n  \\\"tests_executed_by_identity_check\\\": false,\\n  \\\"tracked_bytes\\\": 932942579,\\n  \\\"tracked_entries\\\": 8113,\\n  \\\"tracked_worktree_verified\\\": true\\n}\\n\", \"read_status\": \"read\", \"retained_file\": \"member-01.raw\", \"sha256\": \"b898d1eb8fb8a773d3ec28a74c13175a8ee5c27a5f5cf78edffa6d850af31d0a\", \"source_observation\": {\"fields\": {\"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\", \"candidate\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"kind\": \"prospective-merge\", \"prospective_merge\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"tested_tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 932942579, \"tracked_entries\": 8113, \"tracked_worktree_verified\": true}, \"mismatching_fields\": [], \"missing_fields\": [], \"status\": \"verified\"}}"
+    },
+    {
+      "console_line": 243,
+      "original_json": "{\"absent_source_members\": [\"source-before.json\", \"source-after.json\"], \"acceptance_granted\": false, \"downloaded_zip_bytes\": 4189, \"downloaded_zip_sha256\": \"9a7228d240eb9f3992a00ccc656aa3c6ec65dd3ce46b0e379d221d10d758bcfa\", \"fetch_member_present\": true, \"member_index_sha256\": \"0c7b1e3d23056b9a62816d97395c23bdd9a922aeb76ebe6ebf9c41c231785634\", \"original_fetch_exit_code\": null, \"original_job_conclusion\": \"failure\", \"original_run_conclusion\": null, \"original_run_status\": \"in_progress\", \"reader_status\": \"completed\", \"records\": 2, \"schema\": \"trnm-frozen-fetch-failure-readback-v1\", \"scope\": \"Original fetch and source text only. Missing source fields remain null; the complete original ZIP and selected member bytes are retained. No archived command is executed and no later fix is inherited.\", \"selected_text_bytes\": 811, \"source_mismatches\": [], \"source_status\": {\"source-after.json\": null, \"source-before.json\": null, \"source.json\": \"verified\"}, \"source_tests_executed\": false, \"target\": {\"attempt\": 1, \"digest\": \"sha256:9a7228d240eb9f3992a00ccc656aa3c6ec65dd3ce46b0e379d221d10d758bcfa\", \"fetch_member\": \"fuzz/fetch.log\", \"head\": \"40a5ba25e40fd5eda5b04fc1c3811320d438de11\", \"id\": 13302426232, \"job\": 126429599964, \"job_name\": \"prospective-merge (fuzz-smoke)\", \"kind\": \"prospective-merge\", \"name\": \"merge-fuzz-smoke-720606ee3ed65c943bda395c923e4d5b9bc0560c-1\", \"run\": 41785836318, \"size\": 4189, \"tested\": \"720606ee3ed65c943bda395c923e4d5b9bc0560c\", \"tree\": \"75fe3367c4896a4f2d5f5dd561914613ec999343\"}}"
+    },
+    {
+      "console_line": 266,
+      "original_json": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"\", \"remote_policy_mutated\": false}"
+    }
+  ],
+  "precision_policy": "Original JSON console records and original selected source files are preserved as strings. Parsed metadata and small counts are summaries. Missing values are not inferred from job color, a different lane, or a later fix."
+}
