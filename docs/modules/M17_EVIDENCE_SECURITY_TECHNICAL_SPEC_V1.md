@@ -231,3 +231,33 @@ it does not claim those external tools ran. No second ledger or acceptance flag
 is added. Full two-repository baselines, native capacity/history, minimum physical
 work cost, independent future-task adoption, physical power loss, long-term DA
 and independent WAN confirmed throughput retain their distinct acceptance duties.
+
+
+## Four-kernel W1 cost readback
+
+M17.HistoricalEvidence binds the current four native kernel identities and all
+twelve case/kernel arms to their original source. Nine retained samples do not
+cover every arm at every position; the v2 summary preserves all position counts
+and distinguishes complete cohorts from complete position balance. The current
+production and retained-transposed ratio denominators are separately named.
+Explicit historical verification preserves the old three-kernel v1 summary and
+checks its original native source; changing labels cannot promote it to current
+evidence. A successful raw readback never turns an original failed collection
+manifest into a successful native rerun. All qualification flags remain false.
+
+Exact source-bound regression selectors:
+
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_twelve_arm_position_counts_preserve_nine_samples_without_inventing_balance`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_and_retained_ratios_name_different_actual_denominators`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_three_kernel_output_requires_explicit_historical_readback`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_legacy_labels_cannot_relabel_current_four_kernel_measurements`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_current_labels_cannot_upgrade_old_three_kernel_observations`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_full_limb_measurements_cannot_be_omitted`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_missing_kernel_identity_cannot_reduce_declared_work`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_reordered_kernel_identities_cannot_relabel_the_native_schedule`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_wrong_current_kernel_progress_rejects`.
+- `scripts/ci/test_work_rejection_report.py::RejectionAccountingTests.test_pairwise_only_rotation_does_not_replace_twelve_arm_order`.
+- `scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_historical_kernel_labels_cannot_disagree_with_pinned_producer_source`.
+- `scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_legacy_native_source_has_only_explicit_historical_applicability`.
+- `scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_duplicate_native_kernel_declaration_cannot_select_a_convenient_one`.
+- `scripts/ci/test_work_rejection_report.py::RejectionReceiptTests.test_declared_native_kernel_count_cannot_disagree_with_its_labels`.

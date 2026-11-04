@@ -64,7 +64,7 @@ def mutations(proof, challenge, target):
     return [transcript, product]
 
 
-def update_winner(row):
+def update_winner(row, kernels=cost.KERNELS):
     winner = row['honest_search']['attempts'][-1]
     prefix = bytes.fromhex(row['proof_prefix_hex'])
     proof = prefix + bytes.fromhex(winner['trace'])
@@ -72,19 +72,20 @@ def update_winner(row):
     row['mutations'] = mutations(proof, challenge, row['target'])
     proof_hashes = {'legal': cost.digest(proof), **{m['id']: m['proof_sha256'] for m in row['mutations']}}
     measured = []
-    for position in range(9):
-        arm = (position + row['sample']) % 9
-        variant, kernel = cost.VARIANTS[arm // 3], cost.KERNELS[arm % 3]
-        durations = {'legal': (101, 303, 90), 'transcript': (80, 240, 72), 'product-last-cell': (100, 300, 90)}
+    arm_count = len(cost.VARIANTS) * len(kernels)
+    for position in range(arm_count):
+        arm = (position + row['sample']) % arm_count
+        variant, kernel = cost.VARIANTS[arm // len(kernels)], kernels[arm % len(kernels)]
+        durations = {'legal': (101, 303, 90, 81), 'transcript': (80, 240, 72, 64), 'product-last-cell': (100, 300, 90, 80)}
         measured.append({'position': position, 'variant': variant, 'kernel': kernel, 'proof_sha256': proof_hashes[variant],
-            'elapsed_ns': durations[variant][arm % 3], 'actual_result': cost.RESULTS[arm // 3],
+            'elapsed_ns': durations[variant][arm % len(kernels)], 'actual_result': cost.RESULTS[arm // len(kernels)],
             'returned_product_sha256': cost.digest(prefix[-cost.CELLS * 4:]) if variant == 'legal' else None,
             'probe': cost.expected_progress(challenge, variant)})
     row['measurements'] = measured
 
 
-@lru_cache(maxsize=1)
-def fixture_template():
+@lru_cache(maxsize=2)
+def fixture_template(kernels=cost.KERNELS):
     rows = []
     for class_name in cost.CLASSES:
         for target in cost.TARGETS:
@@ -97,18 +98,18 @@ def fixture_template():
                         'challenge_ns': 3, 'proof_construction_ns': 100, 'ticket_ns': 5, 'diagnostic_overhead_ns': 12,
                         'attempts': [attempt(class_name, target, sample, 0)]}, 'honest_acquisition_ns': 161,
                     'mutations': [], 'measurements': []}
-                update_winner(row)
+                update_winner(row, kernels)
                 rows.append(row)
     return {'schema': cost.SCHEMA, 'profile': cost.PROFILE, 'attempt_limit': cost.LIMIT,
-        'samples_per_group': cost.SAMPLES, 'producer': 'prepared-task-full-transcript', 'kernels': list(cost.KERNELS),
+        'samples_per_group': cost.SAMPLES, 'producer': 'prepared-task-full-transcript', 'kernels': list(kernels),
         'samples': rows, **{flag: False for flag in cost.FALSE_FLAGS}}
 
 
-def fixture():
-    return copy.deepcopy(fixture_template())
+def fixture(kernels=cost.KERNELS):
+    return copy.deepcopy(fixture_template(kernels))
 
 
-def summarize_fixture(raw):
+def summarize_fixture(raw, *, historical=False):
     # Only the expensive cryptographic scalar oracle is substituted. Fixtures
     # explicitly contain synthetic traces/clocks; all bytes, accounting, target
     # search, actual-result labels, progress and order validators still execute.
@@ -116,7 +117,7 @@ def summarize_fixture(raw):
         (bytes.fromhex(r['proof_prefix_hex'])[-cost.CELLS * 4:], bytes.fromhex(r['honest_search']['attempts'][-1]['trace']))
         for r in raw['samples'] if r['honest_search']['outcome'] == 'winner'}
     with patch.object(cost, 'independent_winner', side_effect=lambda class_name, challenge: winners[(class_name, challenge)]):
-        return cost.summarize(raw)
+        return cost.summarize(raw, historical=historical)
 
 
 class RejectionAccountingTests(unittest.TestCase):
@@ -128,20 +129,85 @@ class RejectionAccountingTests(unittest.TestCase):
 
     def test_complete_synthetic_accounting_counts_flows_once(self):
         value = summarize_fixture(fixture())
+        self.assertEqual(value['schema'], 'pon-work-rejection-summary-v2')
         self.assertEqual(value['cohorts'], 72)
-        self.assertEqual(value['timed_verifications'], 648)
+        self.assertEqual(value['timed_verifications'], 864)
         self.assertEqual(value['independent_winning_transcript_replays'], 72)
+        self.assertEqual(value['arms_per_ready_cohort'], 12)
+        self.assertEqual(value['production_kernel'], 'production-full-limb')
         for group in value['groups']:
             self.assertEqual(group['honest_acquisition_ns'], 9 * 161)
             self.assertEqual(group['setup_ns'], 9 * 41)
-            self.assertTrue(group['complete_balanced_group'])
-            product = group['variants']['product-last-cell/production-transposed']
+            self.assertTrue(group['complete_cohort_group'])
+            self.assertFalse(group['complete_balanced_group'])
+            product = group['variants']['product-last-cell/retained-transposed']
             self.assertEqual(product['construction_total_ns'], 9 * 13)
             self.assertEqual(product['first_construction_including_honest_acquisition_ns'], 9 * 174)
             self.assertEqual(product['rejection_to_first_construction_ratio']['numerator'], '50')
             self.assertEqual(product['rejection_to_existing_proof_mutation_ratio']['numerator'], '100')
             self.assertEqual(product['rejection_to_existing_proof_mutation_ratio']['denominator'], '13')
         self.assertFalse(value['worst_case_rejection_qualified'])
+
+    def test_twelve_arm_position_counts_preserve_nine_samples_without_inventing_balance(self):
+        value = summarize_fixture(fixture())
+        for group in value['groups']:
+            self.assertEqual(set(group['invocation_position_counts']), set(group['variants']))
+            self.assertEqual(len(group['invocation_position_counts']), 12)
+            for counts in group['invocation_position_counts'].values():
+                self.assertEqual(len(counts), 12)
+                self.assertEqual(sorted(counts), [0] * 3 + [1] * 9)
+            self.assertEqual(group['invocation_position_counts']['legal/retained-transposed'],
+                             [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1])
+            self.assertEqual(group['invocation_position_counts']['product-last-cell/production-full-limb'],
+                             [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+    def test_current_and_retained_ratios_name_different_actual_denominators(self):
+        group = summarize_fixture(fixture())['groups'][0]
+        retained = group['variants']['product-last-cell/retained-transposed']
+        production = group['variants']['product-last-cell/production-full-limb']
+        self.assertEqual(retained['kernel_to_production_total_ratio'], cost.ratio(5, 4))
+        self.assertEqual(retained['kernel_to_retained_transposed_total_ratio'], cost.ratio(1, 1))
+        self.assertEqual(production['kernel_to_production_total_ratio'], cost.ratio(1, 1))
+        self.assertEqual(production['kernel_to_retained_transposed_total_ratio'], cost.ratio(4, 5))
+
+    def test_legacy_three_kernel_output_requires_explicit_historical_readback(self):
+        raw = fixture(cost.LEGACY_KERNELS)
+        with self.assertRaisesRegex(ValueError, 'explicit historical'):
+            summarize_fixture(raw)
+        value = summarize_fixture(raw, historical=True)
+        self.assertEqual(value['schema'], 'pon-work-rejection-summary-v1')
+        self.assertEqual(value['timed_verifications'], 648)
+        self.assertTrue(all(g['complete_balanced_group'] for g in value['groups']))
+        self.assertNotIn('production_kernel', value)
+        # Exact synthetic v1 summary from the original 0d1fc3c4cd reader;
+        # compatibility must not rewrite a retained summary's bytes or labels.
+        self.assertEqual(cost.digest(cost.encoded(value)),
+                         'c3fd0f6566f2d6d73187cc131b80ecfb4dc7ffe3eacd97a3238e7a687ff3ee0a')
+
+    def test_legacy_labels_cannot_relabel_current_four_kernel_measurements(self):
+        raw = fixture()
+        raw['kernels'] = list(cost.LEGACY_KERNELS)
+        with self.assertRaises(ValueError):
+            summarize_fixture(raw, historical=True)
+
+    def test_current_labels_cannot_upgrade_old_three_kernel_observations(self):
+        raw = fixture(cost.LEGACY_KERNELS)
+        raw['kernels'] = list(cost.KERNELS)
+        with self.assertRaises(ValueError):
+            summarize_fixture(raw)
+
+    def test_missing_full_limb_measurements_cannot_be_omitted(self):
+        self.reject(lambda r: r['samples'][0].update(measurements=[m for m in
+            r['samples'][0]['measurements'] if m['kernel'] != 'production-full-limb']))
+
+    def test_missing_kernel_identity_cannot_reduce_declared_work(self):
+        self.reject(lambda r: r['kernels'].pop())
+
+    def test_reordered_kernel_identities_cannot_relabel_the_native_schedule(self):
+        self.reject(lambda r: r['kernels'].reverse())
+
+    def test_wrong_current_kernel_progress_rejects(self):
+        self.reject(lambda r: r['samples'][0]['measurements'][11]['probe'].update(before_product=0))
 
     def test_old_v3_cannot_be_relabelled_new_late_rejection(self):
         self.reject(lambda r: r.update(schema='pon-structured-cost-v3'))
@@ -156,19 +222,19 @@ class RejectionAccountingTests(unittest.TestCase):
         self.reject(lambda r: r['samples'][0]['measurements'][6].update(actual_result=True))
 
     def test_product_error_cannot_be_inferred_from_transcript_label(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(actual_result='Transcript'))
+        self.reject(lambda r: r['samples'][0]['measurements'][8].update(actual_result='Transcript'))
 
     def test_callback_probe_cannot_be_timed_verifier_cost(self):
         self.reject(lambda r: r['samples'][0]['measurements'][0]['probe'].update(timed=True))
 
     def test_probe_result_cannot_disagree_with_actual_timed_result(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(actual_result='Transcript'))
+        self.reject(lambda r: r['samples'][0]['measurements'][8]['probe'].update(actual_result='Transcript'))
 
     def test_product_must_reach_full_correction_boundary(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(before_product=0))
+        self.reject(lambda r: r['samples'][0]['measurements'][8]['probe'].update(before_product=0))
 
     def test_transcript_must_skip_corrections(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][3]['probe'].update(before_product=1))
+        self.reject(lambda r: r['samples'][0]['measurements'][4]['probe'].update(before_product=1))
 
     def test_equal_counts_cannot_replace_exact_progress_order(self):
         self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(sequence_sha256='0' * 64))
@@ -240,10 +306,16 @@ class RejectionAccountingTests(unittest.TestCase):
         self.reject(lambda r: r['samples'][0]['measurements'].__setitem__(1, copy.deepcopy(r['samples'][0]['measurements'][0])))
 
     def test_pairwise_only_rotation_does_not_replace_nine_arm_order(self):
+        raw = fixture(cost.LEGACY_KERNELS)
+        raw['samples'][1]['measurements'].reverse()
+        with self.assertRaises(ValueError):
+            summarize_fixture(raw, historical=True)
+
+    def test_pairwise_only_rotation_does_not_replace_twelve_arm_order(self):
         self.reject(lambda r: r['samples'][1]['measurements'].reverse())
 
     def test_product_rejection_must_not_return_verified_product(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(returned_product_sha256='0' * 64))
+        self.reject(lambda r: r['samples'][0]['measurements'][8].update(returned_product_sha256='0' * 64))
 
     def test_changed_failed_attempt_proof_bytes_reject(self):
         self.reject(lambda r: r['samples'][0]['honest_search']['attempts'][0].update(proof_sha256='0' * 64))
@@ -300,9 +372,12 @@ class RejectionAccountingTests(unittest.TestCase):
             result = summarize_fixture(raw)
         group = result['groups'][0]
         expected = sum(r['mutations'][0]['construction_ns'] for r in raw['samples'][:9])
-        entry = group['variants']['transcript/production-transposed']
+        entry = group['variants']['transcript/retained-transposed']
         self.assertEqual(group['fake_exhausted'], 1)
+        self.assertFalse(group['complete_cohort_group'])
         self.assertFalse(group['complete_balanced_group'])
+        self.assertEqual(result['timed_verifications'], 860)
+        self.assertEqual(sum(group['invocation_position_counts']['transcript/production-full-limb']), 8)
         self.assertEqual(entry['verifications'], 8)
         self.assertEqual(entry['construction_total_ns'], expected)
         self.assertEqual(entry['matched_construction_total_ns'], expected - fake['construction_ns'])
@@ -340,6 +415,7 @@ class RejectionReceiptTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.inputs = {path: b'synthetic source input' for path in cost.SOURCE_PATHS}
+        self.inputs[cost.EXAMPLE_SOURCE] = self.native_source(cost.KERNELS)
         self.hashes = {path: cost.digest(raw) for path, raw in self.inputs.items()}
         self.summary = {'test_only': 'synthetic receipt validation fixture, not a cost observation'}
         self.arch = 'x64'
@@ -355,7 +431,8 @@ class RejectionReceiptTests(unittest.TestCase):
         observations = []
         for command, stem, timeout in commands:
             stdout = {'rustc': 'rustc fixture\nrelease: 1.95.0\nhost: ' + spec['target'] + '\n',
-                      'cargo': 'cargo 1.95.0 (synthetic)\n', 'native': '{}\n'}.get(stem, 'synthetic\n')
+                      'cargo': 'cargo 1.95.0 (synthetic)\n',
+                      'native': json.dumps({'kernels': list(cost.KERNELS)}) + '\n'}.get(stem, 'synthetic\n')
             (self.root / (stem + '.stdout')).write_text(stdout)
             (self.root / (stem + '.stderr')).write_bytes(b'')
             observations.append({'command': command, 'cwd': '/synthetic-source', 'exit_code': 0,
@@ -379,6 +456,11 @@ class RejectionReceiptTests(unittest.TestCase):
             'binary_sha256_after': cost.digest(binary), **{flag: False for flag in cost.FALSE_FLAGS}}
         (self.root / 'summary.json').write_bytes(cost.encoded(self.summary))
         self.save()
+
+    @staticmethod
+    def native_source(kernels):
+        return ('const KERNELS: [&str; ' + str(len(kernels)) + '] = [\n' +
+                ''.join('    "' + kernel + '",\n' for kernel in kernels) + '];\n').encode()
 
     def save(self):
         self.record['artifact_sha256'] = {p.name: cost.file_digest(p) for p in self.root.iterdir()
@@ -464,6 +546,46 @@ class RejectionReceiptTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.verify(current=changed)
         value = self.verify(current=changed, historical=True)
         self.assertFalse(value['current_measured_inputs_match'])
+
+    def test_historical_kernel_labels_cannot_disagree_with_pinned_producer_source(self):
+        for malformed in ([], None, True):
+            raw = cost.encoded(malformed)
+            (self.root / 'native.stdout').write_bytes(raw)
+            self.record['observations'][-1]['stdout_bytes'] = len(raw)
+            self.save()
+            with self.subTest(raw=malformed), self.assertRaisesRegex(ValueError, 'raw diagnostic must be an object'):
+                self.verify(historical=True)
+        (self.root / 'native.stdout').write_bytes(cost.encoded({'kernels': list(cost.LEGACY_KERNELS)}))
+        self.record['observations'][-1]['stdout_bytes'] = (self.root / 'native.stdout').stat().st_size
+        self.save()
+        with self.assertRaisesRegex(ValueError, 'explicit historical'):
+            self.verify()
+        with self.assertRaisesRegex(ValueError, 'differ from the measured source'):
+            self.verify(historical=True)
+
+    def test_legacy_native_source_has_only_explicit_historical_applicability(self):
+        raw = cost.encoded({'kernels': list(cost.LEGACY_KERNELS)})
+        (self.root / 'native.stdout').write_bytes(raw)
+        self.record['observations'][-1]['stdout_bytes'] = len(raw)
+        self.inputs[cost.EXAMPLE_SOURCE] = self.native_source(cost.LEGACY_KERNELS)
+        self.hashes[cost.EXAMPLE_SOURCE] = cost.digest(self.inputs[cost.EXAMPLE_SOURCE])
+        self.save()
+        with self.assertRaisesRegex(ValueError, 'explicit historical'):
+            self.verify()
+        changed = dict(self.hashes, **{cost.EXAMPLE_SOURCE: cost.digest(self.native_source(cost.KERNELS))})
+        value = self.verify(current=changed, historical=True)
+        self.assertFalse(value['current_measured_inputs_match'])
+
+    def test_duplicate_native_kernel_declaration_cannot_select_a_convenient_one(self):
+        with self.assertRaises(ValueError):
+            cost.source_kernels(self.native_source(cost.KERNELS) + self.native_source(cost.LEGACY_KERNELS))
+
+    def test_declared_native_kernel_count_cannot_disagree_with_its_labels(self):
+        original = self.native_source(cost.KERNELS)
+        for changed in (original.replace(b'&str; 4', b'&str; 3'),
+                        original.replace(b'\n];', b',\n];')):
+            with self.subTest(source=changed), self.assertRaises(ValueError):
+                cost.source_kernels(changed)
 
     def test_symlink_cannot_replace_original_artifact(self):
         original = self.root / 'native.stdout'
