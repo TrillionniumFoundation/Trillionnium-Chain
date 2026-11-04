@@ -41,6 +41,11 @@ TESTS = (
     'from_zero_service_shares_cpu_with_honest_work_and_reopened_owner',
     'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline',
 )
+REPORT_PATHS = {
+    'service_report': 'native/report.json',
+    'sustained_report': 'native/sustained/report.json',
+    'confirmation_report': 'confirmation/report.json',
+}
 
 
 def source_identity() -> dict:
@@ -1018,18 +1023,59 @@ def summarize_confirmation_report(path: Path) -> dict:
                      'reported native observations only, no independent proof/state oracle'}
 
 
+def report_file_identity(path: Path) -> dict:
+    """Identify bounded retained bytes without parsing or accepting their claims."""
+    identity = {'state': 'unavailable', 'bytes': None, 'sha256': None}
+    try:
+        if path.is_symlink() or (path.exists() and not path.is_file()):
+            identity['state'] = 'not_regular'
+        elif not path.exists():
+            identity['state'] = 'missing'
+        else:
+            with path.open('rb') as stream:
+                raw = stream.read(REPORT_LIMIT + 1)
+            if len(raw) > REPORT_LIMIT:
+                identity.update(state='over_limit', bytes_at_least=len(raw))
+            else:
+                identity.update(state='present', bytes=len(raw), sha256=digest(raw))
+    except OSError as error:
+        identity['error'] = str(error)
+    return identity
+
+
 def run(out: Path) -> dict:
     out = out.resolve()
     require(not out.is_relative_to(ROOT), 'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
     identity = source_identity()
     out.mkdir(parents=True, exist_ok=False)
+    terminal = {
+        'schema': 'trnm-from-zero-native-terminal-v1',
+        'scope': 'child process terminals and original sequential report acceptance; '
+                 'diagnostic readback grants no acceptance or subsequent CI execution',
+        'legacy_execution_finished_scope': 'original native execution and report validation '
+                                           'sequence reached its end; not process liveness or overall acceptance',
+        'native_execution_completed': False,
+        'native_execution_completed_scope': 'all planned child invocations returned without timeout; '
+                                            'not named-test or business acceptance',
+        'native_invocations': [{'name': name, 'status': 'not_executed',
+                                'exit_code': None, 'timed_out': None} for name in TESTS],
+        'unexecuted_native_tests': list(TESTS),
+        'acceptance_stages': {
+            key: {'path': path, 'status': 'not_executed', 'error': None,
+                  'before_validation': None, 'retained_report': None,
+                  'retained_matches_before_validation': None}
+            for key, path in REPORT_PATHS.items()},
+        'unexecuted_acceptance_stages': list(REPORT_PATHS),
+        'acceptance_passed': False, 'finalization_completed': False,
+        'subsequent_ci_steps_observed': False,
+    }
     result = {'schema': 'trnm-from-zero-native-execution-v3', 'source_before': identity,
               'source_after': None, 'source_recompiled': False, 'all_named_tests_passed': False,
               'format_passed': False, 'runs': [], 'failures': [],
               'independent_wan_accepted': False, 'work_hardness_accepted': False,
               'production_activation': False, 'passed': False, 'execution_finished': False,
               'service_report': None, 'sustained_report': None, 'confirmation_report': None,
-              'confirmation_observation': None}
+              'confirmation_observation': None, 'terminal': terminal}
     previous_output = os.environ.get('TRNM_PUBLIC_V3_FROM_ZERO_DIR')
     previous_confirmation_output = os.environ.get('TRNM_PUBLIC_V3_CONFIRMATION_DIR')
     previous_cwd = Path.cwd()
@@ -1061,9 +1107,15 @@ def run(out: Path) -> dict:
         result['source_recompiled'] = True
         result['binary_sha256_before'] = digest(binary.read_bytes())
         shutil.copy2(binary, out / TARGET)
-        for name in TESTS:
+        for index, name in enumerate(TESTS):
             folder = out / name
+            invocation = terminal['native_invocations'][index]
+            invocation['status'] = 'invoked_without_terminal'
             observed = run_child([str(binary), name, '--exact', '--nocapture', '--test-threads=1'], folder, 90)
+            # Keep the returned child status even if a later log read or report
+            # validator fails. A returned process is not a passing native test.
+            invocation.update(status='returned', exit_code=observed['exit_code'],
+                              timed_out=observed['timed_out'])
             row = {'name': name, 'process': observed, 'passed': False,
                    'stdout_sha256': digest((folder / 'stdout').read_bytes()),
                    'stderr_sha256': digest((folder / 'stderr').read_bytes())}
@@ -1081,9 +1133,21 @@ def run(out: Path) -> dict:
         require(result['binary_sha256_before'] == result['binary_sha256_after']
                 == digest((out / TARGET).read_bytes()), 'NATIVE_BINARY_CHANGED')
         result['all_named_tests_passed'] = len(result['runs']) == len(TESTS) and all(r['passed'] for r in result['runs'])
-        result['service_report'] = validate_service_report(out / 'native/report.json')
-        result['sustained_report'] = validate_sustained_report(out / 'native/sustained/report.json')
-        result['confirmation_report'] = validate_confirmation_report(out / 'confirmation/report.json')
+        for key, validator in (
+                ('service_report', validate_service_report),
+                ('sustained_report', validate_sustained_report),
+                ('confirmation_report', validate_confirmation_report)):
+            stage = terminal['acceptance_stages'][key]
+            stage['status'] = 'invoked_without_terminal'
+            stage['before_validation'] = report_file_identity(out / stage['path'])
+            try:
+                result[key] = validator(out / stage['path'])
+            except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
+                stage.update(status='failed', error=str(error))
+                raise  # Preserve the original error and stop the same later stages.
+            stage['status'] = 'passed'
+        # v3 compatibility: this means the original sequence including report
+        # validation reached its end, not that a child is still alive otherwise.
         result['execution_finished'] = True
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
         result['failures'].append(str(error))
@@ -1105,6 +1169,15 @@ def run(out: Path) -> dict:
             result['source_after'] = source_identity()
         except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
             result['failures'].append(str(error))
+        # Retain report identities independently of acceptance, including files
+        # whose validator failed or was never reached. Keep the before-validation
+        # snapshot separately; validated summaries retain their own exact hashes.
+        for stage in terminal['acceptance_stages'].values():
+            stage['retained_report'] = report_file_identity(out / stage['path'])
+            before = stage['before_validation']
+            if before is not None and before['sha256'] is not None:
+                stage['retained_matches_before_validation'] = (
+                    before['sha256'] == stage['retained_report']['sha256'])
         try:
             for row in result['runs']:
                 for channel in ('stdout', 'stderr'):
@@ -1139,21 +1212,35 @@ def run(out: Path) -> dict:
                             and result['service_report'] is not None and result['sustained_report'] is not None
                             and result['confirmation_report'] is not None
                             and not result['failures'])
+        terminal['native_execution_completed'] = all(
+            row['status'] == 'returned' and type(row['exit_code']) is int and row['timed_out'] is False
+            for row in terminal['native_invocations'])
+        terminal['unexecuted_native_tests'] = [
+            row['name'] for row in terminal['native_invocations'] if row['status'] == 'not_executed']
+        terminal['unexecuted_acceptance_stages'] = [
+            key for key, stage in terminal['acceptance_stages'].items()
+            if stage['status'] == 'not_executed']
+        terminal['acceptance_passed'] = result['passed']
+        terminal['finalization_completed'] = True
         save_manifest(out, result)
     return result
 
 
-if __name__ == '__main__':
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument('--out', type=Path)
     action.add_argument('--summarize-confirmation', type=Path,
                         help='read an original raw report, retaining business failures and missing samples')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.summarize_confirmation is not None:
         observation = summarize_confirmation_report(args.summarize_confirmation)
         print(json.dumps(observation, indent=2, sort_keys=True))
-        raise SystemExit(0 if observation['original_gate_validated'] else 1)
+        return 0 if observation['original_gate_validated'] else 1
     receipt = run(args.out)
     print(json.dumps({'passed': receipt['passed'], 'failures': receipt['failures']}))
-    raise SystemExit(0 if receipt['passed'] else 1)
+    return 0 if receipt['passed'] else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

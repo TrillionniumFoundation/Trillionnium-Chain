@@ -52,6 +52,24 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Model-prefix and History codec continuation — 2026-11-03
+
+Continue the existing PR #688 integration lineage from `01627151f3ab50750eac2adeb46d8883a601265f`.
+M06 seeks each model/state prefix directly in its ordered map, preserving the full
+base snapshot, current write overlay and complete key/value conflict comparison.
+M04 copies only immutable packet Config across unlocked History work, keeping
+profile validation, error order, exact wire bytes, complete W1/M06 verification,
+original completion identities and every request/CPU/Host deadline unchanged.
+M17 preserves the underlying V2 cost reader's semantic failure exit status while
+retaining the full report and the priority of explicitly requested acceptance gates.
+
+Use the original Rust profiles and pinned PQ provider for normal model, MVCC and
+History regression checks. Preserve failures and bind new observations to this
+candidate; historical F0/pressure results are not transferred. These changes do
+not establish a fastest-legal-producer lower bound, public confirmation SLO,
+prospective model improvement or independently administered evaluation. Existing
+qualification and activation decisions remain unchanged.
+
 #### PoN exact-fact decoding and honest-rate sensitivity — 2026-11-03
 
 Continue the composed PR #688 source `e1a41026a1b93a6cd3926a60e8af3d97f713ebb6`.
@@ -5681,3 +5699,116 @@ or strict Clippy. The new exact head and actual merge must run the original
 hosted gates with the same 4-second/16-hostile, 30-second campaign, fixed Host,
 resource, history, error and settlement requirements. DRAFT, SHADOW_ONLY,
 DENY_ALL and HOLD_NO_GO remain in force.
+
+### 2026-11-04 final History resource completion and honest-path continuation
+
+The [final-resource continuation](../../evidence/pon-final-resource-completion-20261104/README.md)
+preserves the original gates while closing the outer completion boundary: all
+three page wrappers perform their original final Host observation, preserve its
+error priority and existing native errors, and fence only otherwise successful
+results against the same absolute deadline. Four complete sync exits also retain
+their own final Host observation before the time fence. Settled CPU, durable
+packet/activation facts, existing early errors and incomplete-page exits remain.
+Two ordinary local controls cover the new boundary without claiming fixed-Host
+or public-service execution.
+
+New-block header precheck uses the original encoder's exact grammar/checked
+length before the same id, network and SQL checks, avoiding an unused full wire
+copy. Exact duplicate comparison and persistence still encode all bytes. Legacy
+and PQ V6 valid-transfer controls retain real W1, M06 and stored identity. The
+duplicate path repeats its small grammar check; no timing or SLO gain is inferred.
+
+The CI execution v3 receipt remains compatible. New versioned terminal diagnostics
+separate returned children, failed report acceptance and unexecuted later stages,
+and retain raw report identities without granting acceptance. The original gate,
+commands, timeouts, failures and nonzero exit remain authoritative. The source-362
+F0 readback is 2/6 in the original window and 0/6 under the four-second SLO; prior
+C1/C2 1/6 records remain historical facts. The later frozen-source `be0d5f97`
+[readback](../../evidence/pon-six-axis-continuation-20261104/README.md) retains
+1/6 inside the original window, 0/6 under the same SLO and 3/27 in the original
+three-run campaign. Neither measured source qualifies the later runtime. A separate
+derived note corrects phase epoch end versus elapsed round time without rewriting
+hash-pinned observations. Original scientific, independent-operation, business and
+release gates remain HOLD.
+
+The same continuation preserves the five concurrent commits through `be0d5f97`,
+including their native controls, workflow denominators and all 384 source pins.
+New PQ fixture cleanup retains the original send error and observes actual worker
+join and independent Child exit under one unchanged ten-second cleanup deadline;
+late completion cannot override that deadline or erase observed durable facts.
+Owners retain their private directory until actual termination. Two new ordinary
+Submit controls compile, but their first local execution stops at Unix socket
+binding with executor EPERM before Submit, so neither is reported as passed.
+The original source-362 full Node failure (950/1/23, native exit 101) and witness
+250 ms failure remain separate blockers. This fixture diagnostic correction does
+not establish their root cause or original-service acceptance.
+
+The later source-362 runtime receipts locate a separate compatibility defect:
+after successful Rust Node execution, the independent storage oracle rejects the
+source-declared `reorg_lifecycle_v1` name because its identifier grammar excludes
+digits. Permit digits only after the first ASCII letter/underscore while keeping
+the complete catalog equality, all retained tables and read/replay budgets.
+A separate ordinary control builds both actual DDL profiles in memory and reads
+every table without Packet/work construction; the original 28 methods remain,
+with 29 registered after this addition. This local identifier regression does
+not replace complete same-source runtime qualification or erase the old 15
+failures and nine errors.
+
+The committed-source execution on `39839288` completes 15 selected ordinary
+native controls, one independent DDL control, 68 source controls, 63 simulated
+driver controls and strict complete-workspace Clippy. Full tracked-byte source
+identity agrees before and after every phase. The Node list now contains 999
+names and retains all original 974; listing is not full-suite execution.
+Three locked dependency graphs, unchanged lockfiles, formatting, 384 source
+pins, links and CI contracts pass. Raw command records and both earlier fixture
+EPERM failures remain in the continuation evidence, with full runtime, service
+and public-security qualification still open.
+
+Register the new DDL control in both original applicability/M17 selector arrays
+and advance the exact Python method count to 29. Preserve every original selector,
+source-binding evidence class, null receipt and maturity/qualification state;
+this metadata repair is not execution or promotion of the complete oracle.
+
+The final implementation `0b2e9839` independently repeats the original-profile
+build, 15 ordinary native controls, one DDL control, strict workspace Clippy and
+three locked graphs with exact before/after source guards. All 134 selected
+source/driver/applicability controls and both applicability/maturity contracts
+pass. The initial generated-table drift errors remain recorded alongside the
+subsequent correction; full public and scientific acceptance remains open.
+
+### Frozen owner056 composition after exact 312 native observations — 2026-11-04
+
+Freeze owner 056303b5193809597d4b5ec1f075dfc5109fe888, tree
+5c4bdec9085555b82986a5892be8a44ac6a65669, without modifying its branch.
+The successor keeps every source/evidence entry of that tree and carries the
+existing DA readiness overlay and historical qualification files from 312.
+The merged commit records both parents. The fixed qualification base uses the
+exact 056 commit; a later owner tip cannot silently change this event denominator.
+
+This adopts the already-existing 39839288 schema identifier correction,
+c9 final-resource deadline completion fences and PQ fixture cleanup, atomic
+SIGKILL readiness publication, and 54594c0c prefix-range/codec-context changes.
+These are source adoption, not new performance qualification. Independent narrow
+reviews for c9 and 54594c0c are preserved with their exact inputs and zero-execution
+boundaries. Prefix snapshots, point/prefix conflicts, per-call codec validation,
+owner identity, every resource/deadline check and original test budgets remain.
+
+The original 312 release/workspace CPU matrix passed eight jobs, containing
+32 executions of four original selectors and 180 executions of 45 semantic
+controls. Its 24 parity records still deny Host/all-honest-service qualification.
+The original PQ workflow 41761586991 completed all four x64/ARM head/merge jobs
+successfully; at composition preparation this statement is job-status readback,
+not a newly counted independent full-artifact replay. The 312 head runtime
+remains DA 173/174: the newer-sequence TCP case validated one record instead of
+two. No assertion or 200 ms/250 ms/10 s/30 s limit is changed here. Its merge
+runtime remains in progress. The original baseline has cancel-in-progress:false,
+so publishing this successor does not request cancellation of that old job.
+
+Original 312 campaign, fresh-challenge, protocol and from-zero gates remain
+failed. The full DA negative and exact CPU/source observations are durable at
+b263aa0773fdb0927dffeba9b4f360d82fa013b5; its bounded read-only bridge is collecting
+the exact 312 campaign and fresh manifests separately. Old f35 costs and counts
+are not transferred to this successor. Local execution is unavailable: no local
+preflight, Cargo, Clippy or formatter is claimed for this composition. The exact
+committed source must run the original hosted preflight, graph/lock, retained
+native, strict Clippy, formatting, source-integrity and Markdown gates. HOLD_NO_GO.

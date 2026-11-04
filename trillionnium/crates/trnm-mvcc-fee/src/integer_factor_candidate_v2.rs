@@ -1,6 +1,6 @@
 //! Explicit native factor admission for a fresh, bounded integer model family.
 //! All models and duplicate records are ordinary reorg-reversible M06 State.
-use crate::pon_executor::{canonical, Config, Result, State};
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use trnm_protocol::integer_factor_v2::{FactorWitnessV2, COLUMNS, ROWS};
@@ -182,9 +182,7 @@ impl FactorState for ReadState<'_> {
         unreachable!("read-only builder")
     }
     fn scan(&mut self, prefix: &str) -> State {
-        self.0
-            .iter()
-            .filter(|(k, _)| k.starts_with(prefix))
+        prefix_rows(self.0, prefix)
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect()
     }
@@ -334,9 +332,7 @@ pub fn bootstrap_state(cfg: &Config) -> Result<State> {
             self.0.insert(k, v);
         }
         fn scan(&mut self, p: &str) -> State {
-            self.0
-                .iter()
-                .filter(|(k, _)| k.starts_with(p))
+            prefix_rows(&self.0, p)
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect()
         }

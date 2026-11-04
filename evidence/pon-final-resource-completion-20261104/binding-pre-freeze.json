@@ -1,0 +1,75 @@
+{
+  "schema": "pon-oracle-binding-pre-freeze-v1",
+  "source_state": "dirty registration follow-up atop 39839288",
+  "commands_exit_codes": [
+    1,
+    1,
+    0
+  ],
+  "selected_unittest_result": {
+    "ran": 3,
+    "errors": 3,
+    "passed": 0
+  },
+  "error": "documentation applicability table drift",
+  "cause": "The added selector was present in both JSON registries but absent from their existing generated architecture-document table.",
+  "correction": "Verified the old marked table equals the parent JSON profile_table, then regenerated only that marked table from the updated registry. No equality check or qualification rule changed.",
+  "corrected_source_execution": "pending exact committed follow-up; no PASS inferred here",
+  "archive": {
+    "path": "binding-pre-freeze.tar.gz",
+    "sha256": "bf47c309cedb8f2a41b6c2c1903c6ce32f72b150c3e3b3362e90024a39baa57b",
+    "bytes": 1911,
+    "members": [
+      {
+        "path": "applicability-final-0.json",
+        "bytes": 759,
+        "sha256": "26d9fb4e02b7dce94e5a72908082155da1507e9d8dd4906faabaef7298dd8323"
+      },
+      {
+        "path": "applicability-final-0.stderr",
+        "bytes": 3761,
+        "sha256": "eba7b7732678ef45cd2f2709d34abc812edfb32061c8d2e9b83a2202dd9c341e"
+      },
+      {
+        "path": "applicability-final-0.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "applicability-final-1.json",
+        "bytes": 472,
+        "sha256": "bffaaaa817bb06e88353fb0e088b503cddc1546bc94f9e2fb1effcce70247370"
+      },
+      {
+        "path": "applicability-final-1.stderr",
+        "bytes": 651,
+        "sha256": "721db1b26006636651ce42333f61976bd21ca6094d114d5dd316f58ccb77b8d4"
+      },
+      {
+        "path": "applicability-final-1.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "applicability-final-2.json",
+        "bytes": 606,
+        "sha256": "5d9ee3531307b080a73640e94f0827cccba030bb792bdebaed1f60ab099ffaeb"
+      },
+      {
+        "path": "applicability-final-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "applicability-final-2.stdout",
+        "bytes": 124,
+        "sha256": "ff6b3bc0e8fbaf654c677c6acb3f08c67735d8ab885e2dc9a47c24c5dddb98f6"
+      },
+      {
+        "path": "applicability-final-summary.json",
+        "bytes": 2614,
+        "sha256": "0764173ca742f3f805206dc5ba1dbbd7be7d8d113039f073569ae4335e70bccd"
+      }
+    ]
+  }
+}

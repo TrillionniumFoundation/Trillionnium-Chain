@@ -1,0 +1,57 @@
+{
+  "schema": "round4-final-resource-review-v1",
+  "reviewed_at_utc": "2026-11-04T00:57:21.321531+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "checkout_head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+  "review_scope": "Read-only source review of the pending final-resource deadline patch in three files; the reviewed patch is a working-tree diff, not the executed HEAD cohort.",
+  "decision": "NO_BLOCKING_SOURCE_REVIEW_FINDING",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 207709,
+      "sha256": "1bbc200965efa1e817fe23d54d16f22e3d7b00af89cfc8e26de25d5cbab28b32"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22747,
+      "sha256": "b1f36309c24c099570ca8b3962f8f71a4c8c2fc4a59f67a1978f447d30f63652"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+      "bytes": 12504,
+      "sha256": "a07e73b5dd126224e2c6b6da0cfd789cb131ffb9dd1cbb3e874f42ecb072e7be"
+    }
+  ],
+  "observations": [
+    "finish_with_resource invokes the existing final resource callback once before inspecting the captured native Result.",
+    "Error precedence remains resource error, then original native error, then PUBLIC_REQUEST_DEADLINE only for otherwise successful outward results.",
+    "The same supplied deadline is tested after the final resource observation; no deadline refresh, new CPU operation, refund or Node-state mutation is introduced by the helper.",
+    "All three import wrappers call the helper at their original final-resource position. The observed wrapper keeps only kernel.verify inside observe_host(Final).",
+    "All four sync deadline fences sit inside the complete-page success branch after the original Host check. Earlier ? boundaries and incomplete/page-budget failures remain unchanged.",
+    "The priority/count matrix tests are designed to cover normal success, callback-caused expiry, resource/native error priority and mandatory final observation after pre-existing expiry.",
+    "The valid local import test is designed to preserve committed active/packet facts, exact CPU debit and settlement, zero reservations/in-flight state, and cold-reopen validity after only the final callback becomes late."
+  ],
+  "limitations": [
+    "This reviewer did not run tests, build binaries, dispatch workflows or execute retained artifacts.",
+    "Test design was read only. No test PASS or current-head runtime qualification is claimed here.",
+    "The controlled final callback is not evidence of real fixed-Host provisioning, and this patch review claims no service-performance improvement."
+  ],
+  "test_execution_by_reviewer": false,
+  "repo_mutation_by_reviewer": false,
+  "test_selectors_reviewed": [
+    "final_resource_completion_preserves_error_priority_and_original_deadline",
+    "final_resource_expiry_keeps_committed_history_and_settled_cpu"
+  ],
+  "source_snapshot_refresh": {
+    "at_utc": "2026-11-04T01:07:19.054739+00:00",
+    "previous_review_file_sha256": "a41bc31a13099b6cbb47d4814b4f7a27b0ca89abd07723aed1fa42823597b056",
+    "changes": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+        "previous_sha256": "949e060b21fd57ece99c21b9ccfbce470fc36211f6b8b16f1d0b0f32dca6aa5e",
+        "current_sha256": "a07e73b5dd126224e2c6b6da0cfd789cb131ffb9dd1cbb3e874f42ecb072e7be",
+        "review": "Re-read full current diff: only line wrapping of existing settled_full_cpu_ns assertion; no semantic change."
+      }
+    ]
+  }
+}

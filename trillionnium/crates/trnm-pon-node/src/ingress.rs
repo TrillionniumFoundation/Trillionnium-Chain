@@ -923,10 +923,22 @@ fn write_untrusted_error(
 fn hex_packet(text: &str) -> Result<Packet> {
     decode_hex_packet(text, None)
 }
-fn hex_packet_for_settings(text: &str, settings: &Settings) -> Result<Packet> {
-    decode_hex_packet(text, Some(settings))
+fn hex_packet_for_context(
+    text: &str,
+    context: &crate::pq_application_v6::PacketCodecContext,
+) -> Result<Packet> {
+    decode_hex_packet_with(text, |raw| context.decode(raw))
 }
 fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> {
+    decode_hex_packet_with(text, |raw| match settings {
+        Some(settings) => Packet::decode_for_settings(raw, settings),
+        None => Packet::decode(raw),
+    })
+}
+fn decode_hex_packet_with(
+    text: &str,
+    decode: impl FnOnce(&[u8]) -> Result<Packet>,
+) -> Result<Packet> {
     ensure(
         text.len() <= 2_097_152
             && text.len().is_multiple_of(2)
@@ -936,10 +948,7 @@ fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> 
         "PACKET_HEX",
     )?;
     let raw = hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?;
-    match settings {
-        Some(settings) => Packet::decode_for_settings(&raw, settings),
-        None => Packet::decode(&raw),
-    }
+    decode(&raw)
 }
 /// Negotiate before sending Submit; legacy listeners see only a nonmutating hello.
 /// Durable authenticated outbox bytes remain the exact originally signed request.
@@ -2486,10 +2495,7 @@ fn receive_page_from_before(
     );
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    native
+    history_import::finish_with_resource(native, deadline, resource)
 }
 /// Public History import is untrusted even when a local TCP proxy carries
 /// remote packets through a loopback address. No external caller can select
@@ -2573,8 +2579,9 @@ pub fn receive_public_page_from_before_observed(
     );
     // Do not convert an already committed block into an invalid work proof
     // when the last local Host owner observation fails.
-    observe_host(observation, HistoryHostPhase::Final, || kernel.verify())?;
-    native
+    history_import::finish_with_resource(native, deadline, || {
+        observe_host(observation, HistoryHostPhase::Final, || kernel.verify())
+    })
 }
 
 /// Shared public History import: refill and full W1 never hold the Node mutex.
@@ -2606,8 +2613,7 @@ pub fn receive_public_page_from_shared(
             resource: &|| kernel.verify(),
         },
     );
-    kernel.verify()?;
-    result
+    history_import::finish_with_resource(result, deadline, || kernel.verify())
 }
 
 pub fn sync_from(
@@ -2658,6 +2664,7 @@ pub fn sync_from(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2711,6 +2718,7 @@ pub fn sync_from_authenticated(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2761,6 +2769,7 @@ pub fn sync_from_authenticated_durable(
             kernel.verify()?;
         }
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }
@@ -2820,6 +2829,7 @@ pub fn sync_from_public_history_pq_v4(
         after = receive_public_page_from_before(node, address, page, tip, after, now()?, deadline)?;
         kernel.verify()?;
         if complete {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
             return Ok(after);
         }
     }

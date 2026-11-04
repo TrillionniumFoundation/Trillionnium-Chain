@@ -296,7 +296,7 @@ class ApplicabilityTests(unittest.TestCase):
         selectors = set(row['evidence_selectors'])
         for path, count in [
             ('formal/pon-nakamoto-v1/test_account_multiproof_oracle.py', 28),
-            ('formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py', 28),
+            ('formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py', 29),
             ('formal/pon-nakamoto-v1/test_obligation_range_oracle.py', 13),
             ('scripts/ci/test_work_rejection_report.py', 87),
         ]:

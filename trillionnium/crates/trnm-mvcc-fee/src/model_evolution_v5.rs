@@ -4,7 +4,7 @@
 //! Evaluation remains the fixed public retrospective v3 material and controlled
 //! quorum. Neither repeated rounds nor this profile imply fresh-data governance.
 use crate::integer_factor_candidate_v2::{self as factor, FactorState, IntegerModelV2};
-use crate::pon_executor::{canonical, Config, Result, State};
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use serde_json::{json, Value};
 use std::sync::OnceLock;
 use trnm_protocol::integer_evolution_v3::{EvolutionOperationV3, EvolutionWitnessV3};
@@ -118,9 +118,7 @@ impl FactorState for ReadState<'_> {
         unreachable!("read-only builder")
     }
     fn scan(&mut self, prefix: &str) -> State {
-        self.0
-            .iter()
-            .filter(|(k, _)| k.starts_with(prefix))
+        prefix_rows(self.0, prefix)
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect()
     }

@@ -470,7 +470,8 @@
           },
           "evidence_selectors": [
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_history_uses_real_native_validation_and_separate_stores",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+            "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors"
           ],
           "remaining": "Allowlisted same-owner development delivery is not open discovery, independent operation, WAN liveness or public attack acceptance."
         },
@@ -869,7 +870,12 @@
             "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::explicit_revision16_cli_is_distinct_reopens_and_refuses_revision15_store",
             "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::signed_joint_update_has_native_packet_membership_and_survives_store_reopen",
             "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::external_window_has_real_pnw1_membership_and_pinned_store_reopen",
-            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen"
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets"
           ],
           "remaining": "Derived execution caches remain disposable; explicitly selected native authenticated commitments have their own checked persistent authority. Full-State execution and non-account scans remain, without a partial-State verifier or global incremental cost guarantee. Default Node storage is unchanged; ordinary product integration, public service and physical power-loss acceptance remain open. Revision16 is a bounded three-expert development family, not arbitrary Hepta topology; controlled new-text windows do not establish independent prospective utility or data governance."
         },
@@ -2522,6 +2528,7 @@
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
             "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
+            "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeSchemaIdentifierControls.test_real_legacy_and_native_ddl_tables_are_all_read",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_full_sorted_source_includes_future_and_zero_amount_rows",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_partition_and_single_edge_rows_are_canonical",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_ranges_share_nearest_boundaries_once",
@@ -2643,7 +2650,10 @@
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_spawn_failure_retains_empty_create_new_logs",
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_checked_capture_keeps_failed_observation_and_refuses",
             "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_capture_preserves_source_cwd_without_changing_parent",
-            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory"
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory",
+            "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit",
+            "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two",
+            "scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Same-target cost accounting counterexamples, not a work-hardness proof."""
 import copy
+import io
 import json
+import runpy
 import sys
 import tempfile
 from unittest.mock import patch
@@ -119,6 +121,52 @@ class WorkCostAccountingTests(unittest.TestCase):
         self.assertIn('trillionnium/Cargo.lock', result)
         self.assertIn('trillionnium/crates/a/src/lib.rs', result)
         self.assertNotIn('trillionnium/README.md', result)
+
+
+class MatrixV2CommandTests(unittest.TestCase):
+    """Exercise the real CLI with report-only fixtures, never native work."""
+
+    def invoke(self, report, *flags):
+        output = io.StringIO()
+        argv = [str(Path(cost.__file__).resolve()), '--matrix-v2', 'report-only.jsonl', *flags]
+        status = 0
+        with patch('pon_w1_cost_matrix_reader.analyze', return_value=report) as analyze, \
+             patch.object(sys, 'argv', argv), patch.object(sys, 'stdout', output), \
+             patch.object(sys, 'path', list(sys.path)):
+            try:
+                runpy.run_path(argv[0], run_name='__main__')
+            except SystemExit as result:
+                status = result.code
+        analyze.assert_called_once_with(Path('report-only.jsonl'))
+        self.assertEqual(output.getvalue(), encoded(report).decode())
+        return status
+
+    def report(self, alerts, gate='not-accepted'):
+        return {'schema': 'pon-w1-cost-matrix-observation-report-v2',
+                'record_consistency': 'PASS', 'semantic_alerts': alerts,
+                'local_cost_gate': gate, 'local_observation_gate': 'not-accepted',
+                'service': {'status': 'unmeasured'},
+                'hardness_accepted': False, 'production_activation': False}
+
+    def test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit(self):
+        report = self.report([{'class': 'zero', 'path': 'production',
+                               'outcome': 'recorded-native-disagreement'}])
+        self.assertEqual(self.invoke(report), 1)
+
+    def test_matrix_v2_explicit_failed_gates_retain_exit_two(self):
+        for alerts in ([], [{'path': 'production', 'outcome': 'recorded-native-disagreement'}]):
+            for flags in (('--require-cost-gates',), ('--require-local-acceptance',),
+                          ('--require-cost-gates', '--require-local-acceptance')):
+                with self.subTest(alerts=alerts, flags=flags):
+                    self.assertEqual(self.invoke(self.report(alerts), *flags), 2)
+
+    def test_matrix_v2_success_keeps_cost_acceptance_opt_in(self):
+        # Consistent records do not establish numeric cost acceptance or service.
+        self.assertEqual(self.invoke(self.report([])), 0)
+        report = self.report([], gate='pass')
+        self.assertEqual(self.invoke(report), 0)
+        self.assertEqual(self.invoke(report, '--require-cost-gates'), 0)
+        self.assertEqual(self.invoke(report, '--require-local-acceptance'), 2)
 
 
 class CostEvidenceVerificationTests(unittest.TestCase):

@@ -176,6 +176,8 @@ type ReplayRow = (
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
+#[cfg(test)]
+mod admission_wire_tests;
 mod authenticated_pending_activation;
 mod detached_admission;
 pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
@@ -588,18 +590,21 @@ impl WorkCheckedPacket {
     }
     /// The original History owner supplies its immutable ledger settings after
     /// checking the actual parent. Input bytes cannot select a weaker codec.
-    pub(crate) fn completion_identity_for_settings(&self, settings: &Settings) -> Result<Hash> {
+    pub(crate) fn completion_identity_for_context(
+        &self,
+        context: &crate::pq_application_v6::PacketCodecContext,
+    ) -> Result<Hash> {
         ensure(
-            self.packet.header.network == settings.network()
-                && self.packet.header.parameters == settings.parameters(),
+            self.packet.header.network == context.network()
+                && self.packet.header.parameters == context.parameters(),
             "CONTEXT",
         )?;
-        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+        if !context.is_pq() {
             return self.completion_identity();
         }
         Ok(hash(
             b"public-pq-history-complete-work-identity-v1",
-            &[&self.packet.encode_for_settings(settings)?],
+            &[&context.encode(&self.packet)?],
         ))
     }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
@@ -3444,7 +3449,9 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode_for_settings(&self.settings)?;
+        // Keep the complete encoder grammar at its original boundary. New
+        // packets need no owned wire copy until the actual persistence step.
+        packet.checked_wire_length_for_settings(&self.settings)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3460,6 +3467,7 @@ impl Node {
             )
             .optional()?;
         if let Some(prior) = previous {
+            let bytes = packet.encode_for_settings(&self.settings)?;
             ensure(prior == bytes, "DUPLICATE_CONTENT")?;
             // Immutable work can be cached; a previous caller's clock cannot.
             ensure(

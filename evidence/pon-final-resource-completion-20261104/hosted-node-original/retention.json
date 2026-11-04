@@ -1,0 +1,11 @@
+{
+  "schema": "trnm-original-node-log-retention-v1",
+  "job_id": 126300605830,
+  "run_id": 41746463373,
+  "log_bytes": 7291639,
+  "log_sha256": "b8fc142d00b90638b6ad723d83b01208492972df250352d79f22bbcb6eeb210d",
+  "compressed_bytes": 763629,
+  "compressed_sha256": "4c9c7587303068b78aff6f46de5c3ab24571a23f199a8c7cd75ba3a7034eed5e",
+  "content_transformed": false,
+  "executed_retained_code": false
+}

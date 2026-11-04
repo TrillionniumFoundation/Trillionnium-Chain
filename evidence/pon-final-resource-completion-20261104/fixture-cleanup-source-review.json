@@ -1,0 +1,45 @@
+{
+  "schema": "round4-fixture-cleanup-source-review-v1",
+  "reviewed_at_utc": "2026-11-04T01:37:36.938157+00:00",
+  "parent_commit": "be0d5f978dc86008115524a6be85c38e03982b33",
+  "reviewed_working_file": {
+    "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+    "bytes": 24854,
+    "sha256": "d75951ac942cd3c3f4d9d3ea46f5fff0a94b190a64cfdd58e2cb3799673bec38",
+    "matches_current_at_record": true
+  },
+  "scope": "Independent read-only review of the restored working-tree cleanup diff only; no qualification for unrelated concurrent production/projection/cache changes or their combined execution.",
+  "decision": "NO_REMAINING_BLOCKING_SOURCE_FINDING",
+  "original_assertions": {
+    "reference_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "reference_file_sha256": "41df5b51d0775894d359d43a2cb7c86b328654a78c0f93959e65847675b077ba",
+    "reference_unchanged_in_parent_be0": true,
+    "all_original_assertions_preserved": true,
+    "original_assert_macro_count": 14,
+    "connection_refusal_match_preserved": true,
+    "original_selector": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+    "original_control_branch": "AfterRejectedSignature",
+    "original_numeric_budgets_unchanged": true
+  },
+  "closed_finding": {
+    "issue": "Shared 10-second cleanup deadline formerly bounded receives but did not reject otherwise-successful late completion.",
+    "resolution": "Both stop_until functions now check their original until after recording actual completion facts and on already-observed branches. Existing errors remain earlier; observed joined/status/receipt facts are preserved.",
+    "control": "The ordinary valid sentinel test checks deadline errors for already-observed owners and retains flags; source reviewed, not executed by this reviewer."
+  },
+  "observations": [
+    "preserve_send_error collects both cleanup Results and returns the held original send Result unchanged. Cleanup failures are reported separately; success-path join/metrics/child error ordering remains explicit.",
+    "cleanup captures one Instant deadline with ten seconds and passes that same value to worker and child. No substep renews the interval or extends original transport/business budgets.",
+    "The child owner is established before Child handoff and retains the concrete Child, output files, and Arc<TempDir>. try_wait errors are not treated as reaping; timeout/drop requests abort without reporting observed exit.",
+    "The worker joiner owns the actual JoinHandle plus Arc<TempDir>, while the service worker also retains the directory. A returned JoinHandle.join result is sent before worker.joined is set; timeout alone does not set it.",
+    "captured_file reads at most 64 KiB plus one byte per stdout/stderr regular file to detect over-limit data. Child diagnostic forwarding is separately bounded. No post-exit pipe EOF wait remains.",
+    "PID is used for identity/receipt comparison only. Signalling and try_wait operate through the owned Child, not a reused numeric PID."
+  ],
+  "limitations": [
+    "The ten-second interval bounds caller waiting and qualification of successful cleanup; OS failures can leave owners retaining resources until actual join/reaping is observed.",
+    "Auxiliary owner-thread termination itself is not separately joined by the caller; worker_join_observed specifically proves the service worker JoinHandle returned.",
+    "This reviewer edited no repository file and executed no tests, negative/pressure selector, binary or retained script.",
+    "Root reported that two ordinary valid controls from the previous build failed at child UnixListener::bind with EPERM before Submit. That report is not converted into a PASS or combined-source validation here."
+  ],
+  "repo_edits_by_reviewer": false,
+  "native_execution_by_reviewer": false
+}

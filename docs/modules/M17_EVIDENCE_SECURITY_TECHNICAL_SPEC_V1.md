@@ -231,3 +231,11 @@ it does not claim those external tools ran. No second ledger or acceptance flag
 is added. Full two-repository baselines, native capacity/history, minimum physical
 work cost, independent future-task adoption, physical power loss, long-term DA
 and independent WAN confirmed throughput retain their distinct acceptance duties.
+
+## Work report semantic status
+
+M17.HistoricalEvidence preserves the full V2 report and refuses a successful command status when the underlying reader reports semantic disagreement. Explicit requested cost/local gates retain exit-code priority; ordinary report success grants no work-cost or production qualification.
+
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_semantic_failure_preserves_report_and_nonzero_exit`
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_explicit_failed_gates_retain_exit_two`
+- `scripts/ci/test_work_cost_report.py::MatrixV2CommandTests.test_matrix_v2_success_keeps_cost_acceptance_opt_in`
