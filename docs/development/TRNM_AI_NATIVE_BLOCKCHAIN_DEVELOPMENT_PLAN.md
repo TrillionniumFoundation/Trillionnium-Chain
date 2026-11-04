@@ -5548,6 +5548,34 @@ four-second/F0/campaign failures remain. Operation-local account projection,
 committed-read ownership, resource fairness and complete client import still need
 separate evidence. Existing HOLD conditions and all activation flags remain.
 
+The [first throughput attempt and retained failures](../../evidence/pon-throughput-continuation-20261104/README.md)
+record ed7d45a9's exact-source guard and formatter stops before new native tests.
+Refresh the same literal blob comparisons and apply the actual rustfmt output;
+do not remove guards or inherit earlier native results. Continuous public scope
+also reuses the identical Packet bytes already encoded during the same immutable
+operation. The original CI wrapper retains all full logs and now exposes failure
+tails, native totals and component observations while preserving command exits.
+No original test/profile/deadline/Host/CPU limit or qualification field changes.
+
+The next composed source preserves concurrent bbcb380's W1 cache discriminator
+and fixed-account cohort context controls. Cold complete-commitment calculation
+can now lend its already parsed account map, bound to the exact immutable State
+borrow, to the same operation's full SQL graph verifier. Complete-cache hits lend
+no projection; readback-scoped paths retain the original parser. Actual parser
+counters, complete-call ABBA controls, different-State/malformed-account cases,
+current SQL corruption and every graph cancellation point are checked by new
+native tests, with no assumed result before execution.
+
+Public History keeps its entire indexed packet read and identity checks under
+the Node owner, then releases the mutex before encoding owned Packet material,
+hex and Page JSON. Its bounded copied profile/context preserves the requested
+fixed tip during concurrent reorganization. Original stop/deadline/CPU checks
+also guard formatting. This is not promotion of the test-only independent SQL
+snapshot path. Real concurrent writer, fixed-tip/different-tip, foreign-body
+corruption and formatting cancellation controls join the unchanged original
+public/PQ and snapshot controls. No complete state, W1, graph or final authority
+check is removed.
+
 
 ### 2026-11-04 readiness Draft preserves the current complete owner
 
@@ -5581,3 +5609,33 @@ rendezvous lifetime, all Host/source checks, CPU budgets and service selectors.
 The newer owner's three original campaigns and two fresh-service jobs remain
 failed at their own exact source. Original four-second/16-hostile, F0, complete
 workspace, independent security/PQ and activation conditions remain OPEN.
+
+
+### 2026-11-04 original inline guard failure and owner correction
+
+The first combined `e8bc6eff` original repository-truth and external-evidence
+jobs fail on the retained recent-batch workflow's stale `store.rs` inline blob
+comparison. Its 381 corpus pins had matched, but that narrower Git-tree check
+did not execute or replace the original CI contract. Preserve both complete
+decoded job logs and their source/hash bindings; neither failure is a native
+performance result.
+
+Combine published `e8bc6eff` with frozen exact owner
+`f35ee6dc61feaba7c68b16e1f9384b5c3794a976`, which preserves `29586a77`'s
+literal guard corrections and applies the three actual Rust 1.95 formatter
+hunks observed in original job `126319351908`. The owner delta changes only
+two test sources and their existing corpus pin; no test or assertion is removed. Preserve its new same-State
+account projection, original full graph checks, fixed-tip History formatting,
+and all concurrent work, together with the same sole DA readiness fixture.
+All 16 workflow byte streams and 20 literal source guards now bind to the
+owner's exact Git tree, as do all 384 corpus pins. This remote JavaScript
+readback is not execution of the original Python contract or shell preflight.
+The new complete head and actual merge still require all original hosted
+source, format, strict-lint, native and business gates. Earlier source-bound
+failures remain unchanged; performance and activation remain HOLD.
+
+The complete decoded formatter log is also retained with its actual source
+`29586a77`, actual merge `482e5164`, and original nonzero exit. Its earlier
+source identity and audit preflight succeeded, but formatting stopped before
+new native qualification. The frozen owner's correction requires fresh hosted
+verification; neither this log nor remote byte matching is a native PASS.

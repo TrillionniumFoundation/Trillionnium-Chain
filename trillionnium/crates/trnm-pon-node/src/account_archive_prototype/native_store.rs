@@ -4,6 +4,7 @@
 //! or commits a transaction. The native owner supplies its own SQLite connection
 //! and commits account nodes with the actual block, deltas and state commitment.
 use super::{Account, ArchiveError, Kind, Node};
+use crate::account_archive_execution::state_witness::CurrentAccounts;
 use crate::{Error, Result};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
@@ -365,6 +366,37 @@ pub(crate) fn verify_with_lifts(
 ) -> Result<()> {
     let empty = empty_hashes();
     let actual = super::accounts(state).map_err(storage)?;
+    verify_account_values(db, root, &actual, progress, lifts, &empty)
+}
+
+/// Reuse parsing from the complete commitment made in this same operation.
+/// The projection must borrow this exact State; a foreign State falls back to
+/// the original parser. No SQL row, graph result or progress check is reused.
+pub(crate) fn verify_with_current_accounts(
+    db: &Connection,
+    root: &Root,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    lifts: Option<&LiftCache>,
+    current_accounts: &CurrentAccounts<'_>,
+) -> Result<()> {
+    match current_accounts.values_for(state) {
+        Some(actual) => {
+            let empty = empty_hashes();
+            verify_account_values(db, root, actual, progress, lifts, &empty)
+        }
+        None => verify_with_lifts(db, root, state, progress, lifts),
+    }
+}
+
+fn verify_account_values(
+    db: &Connection,
+    root: &Root,
+    actual: &BTreeMap<Hash, Account>,
+    progress: &mut dyn FnMut() -> Result<()>,
+    lifts: Option<&LiftCache>,
+    empty: &[Hash; 257],
+) -> Result<()> {
     let mut reader = NodeReader::new(db);
     let node = root
         .node
@@ -375,7 +407,7 @@ pub(crate) fn verify_with_lifts(
         root.count <= 65_536
             && root.node.is_none() == (root.count == 0)
             && node.as_ref().map_or(empty[0], |node| {
-                lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
+                lifts.map_or_else(|| node.lift(0, empty), |cache| cache.lift(node, 0))
             }) == root.digest,
         "NATIVE_ACCOUNT_ROOT",
     )
@@ -404,16 +436,16 @@ pub(crate) fn verify_with_lifts(
             }
             Kind::Fork { .. } => {
                 stack.push(
-                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
+                    child_with_lifts(&mut reader, &node, true, empty, lifts).map_err(storage)?,
                 );
                 stack.push(
-                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
+                    child_with_lifts(&mut reader, &node, false, empty, lifts).map_err(storage)?,
                 );
             }
         }
     }
     crate::ensure(
-        retained == actual && retained.len() as u64 == root.count && balance == root.balance,
+        retained == *actual && retained.len() as u64 == root.count && balance == root.balance,
         "NATIVE_ACCOUNT_STATE",
     )
     .map_err(Error::local_integrity)

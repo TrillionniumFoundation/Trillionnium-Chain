@@ -1490,8 +1490,10 @@ impl Node {
             return Ok(None);
         }
         ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
-        let sha =
-            crate::operator_task_policy::digest_bytes(&packet.encode_for_settings(&self.settings)?);
+        // Packet and Settings remain immutably borrowed by this owner operation.
+        // Reuse its already encoded bytes; this carries no policy/nonce/CPU
+        // authority and the subsequent receiver checks still run independently.
+        let sha = crate::operator_task_policy::digest_bytes(&encoded);
         let (parent, generation) = self.active()?;
         let v = o
             .view

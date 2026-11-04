@@ -59,13 +59,25 @@ mod tests {
         let mut keys: BTreeSet<_> = before.keys().collect();
         keys.extend(after.keys());
         keys.into_iter()
-            .map(|key| (key.clone(), before.get(key).cloned(), after.get(key).cloned()))
+            .map(|key| {
+                (
+                    key.clone(),
+                    before.get(key).cloned(),
+                    after.get(key).cloned(),
+                )
+            })
             .collect()
     }
 
     fn candidate(before: &State, after: &State) -> Vec<OwnedEntry> {
         entries(before, after)
-            .map(|entry| (entry.key.clone(), entry.before.cloned(), entry.after.cloned()))
+            .map(|entry| {
+                (
+                    entry.key.clone(),
+                    entry.before.cloned(),
+                    entry.after.cloned(),
+                )
+            })
             .collect()
     }
 

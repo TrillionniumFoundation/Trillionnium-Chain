@@ -85,14 +85,7 @@ fn original(
 }
 
 fn retained(cache: &VerifierCache) -> usize {
-    cache
-        .entries
-        .lock()
-        .unwrap()
-        .keys
-        .iter()
-        .flatten()
-        .count()
+    cache.entries.lock().unwrap().keys.iter().flatten().count()
 }
 
 #[test]
@@ -412,8 +405,9 @@ fn pq_caller_authentication_complete_cost() {
                 let matches_expected = error.as_deref() == expected;
                 let after = intake.pq_authentication.usage().unwrap();
                 let accounting = after.attempts == before.attempts + 1
-                    && after.bytes == before.bytes
-                        + (wire.len() + caller_message(c, *nonce, true).unwrap().len()) as u64
+                    && after.bytes
+                        == before.bytes
+                            + (wire.len() + caller_message(c, *nonce, true).unwrap().len()) as u64
                     && !after.unavailable;
                 mismatches += usize::from(!matches_expected || !accounting);
                 unknown_cpu += usize::from(cpu_ns.is_none());

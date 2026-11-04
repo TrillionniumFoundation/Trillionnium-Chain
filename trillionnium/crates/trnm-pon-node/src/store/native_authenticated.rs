@@ -26,6 +26,9 @@ mod post_write_readback;
 pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
 
+#[cfg(test)]
+mod current_accounts_tests;
+
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
 const MAX_RECORD_BYTES: usize = 16 * 1024;
@@ -685,12 +688,15 @@ pub(super) fn verify_state_with_readback(
         }
         let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
         verify_record(db, settings, &record, progress, cache)?;
+        let (current_commitment, current_accounts) = match cache {
+            Some(cache) if readback.is_none() => {
+                cache.complete_with_current_accounts(settings, state)?
+            }
+            Some(cache) => (cache.complete(settings, state)?, None),
+            None => (complete(settings, state)?, None),
+        };
         local(ensure(
-            record.state
-                == match cache {
-                    Some(cache) => cache.complete(settings, state)?,
-                    None => complete(settings, state)?,
-                },
+            record.state == current_commitment,
             "NATIVE_STATE_ROOT",
         ))?;
         let reused = match readback.as_deref_mut() {
@@ -720,6 +726,18 @@ pub(super) fn verify_state_with_readback(
                     progress,
                     cache.map(|c| &c.lifts),
                 )?);
+            } else if let Some(current_accounts) = current_accounts.as_ref() {
+                // This is the same complete immutable State just compared with
+                // record.state. Reuse only its fresh account parsing; the ordinary
+                // verifier still reads and checks the entire current SQL graph.
+                native_store::verify_with_current_accounts(
+                    db,
+                    &record.accounts,
+                    state,
+                    progress,
+                    cache.map(|c| &c.lifts),
+                    current_accounts,
+                )?;
             } else {
                 native_store::verify_with_lifts(
                     db,
