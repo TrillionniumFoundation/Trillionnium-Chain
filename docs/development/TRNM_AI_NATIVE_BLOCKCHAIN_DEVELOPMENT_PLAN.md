@@ -6012,3 +6012,46 @@ and 35 source-integrity tests. The final checkpoint all-targets invocation recor
 nine passing library tests and one Unix-bind `EPERM` failure; it is not a complete
 transport acceptance. Scoped Clippy and formatting pass. No historical observation
 or successful source check is promoted to production qualification.
+
+
+### 2026-11-04 frozen transparent W1 profile and independent cost control
+
+Continue the existing integration candidate with measured implementation
+`b13211ccf356fe16624da66d970ce71d77a5c51f`, preserving concurrent model, Cell,
+Legacy and source-inventory changes. The [transparent profile evidence](../../evidence/pon-w1-transparent-profile-20261104/README.md)
+freezes the original guest/image and an explicit Poseidon2/final-join verifier
+context. Native complete W1 and ordinary Node admission remain the engineering
+baseline; no pairing wrapper, alternate lottery identity or proof-only Node
+acceptance is introduced.
+
+The candidate now rejects noncanonical control inclusion digests before SDK
+hashing. A real saved-receipt mutation previously exited 101 with an assertion;
+the same input now returns a controlled rejection. Exact path depth/index checks
+also reject a previously accepted high-index alias that retained the same work
+ID. Fifteen verifier tests, six complete-relation tests and 42 actual input
+controls pass; the latter contain one acceptance, 41 rejections and no panic.
+Twenty-four cost-observer and seven source-map controls pass. The observer keeps
+late-observed exits and final validation beyond its shared deadline incomplete.
+The portable source map verifies seven locked archives and 37 selected files;
+it does not constitute a full QROM reduction or whole-graph audit.
+
+The source-bound saved-proof comparison retains all 1,000 native and 100
+candidate decode/verify samples. Medians are 0.544418 ms and 20.1955265 ms,
+a descriptive 37.0956 ratio on one shared-host input. The 256,886-byte receipt
+is 5.2225 times the 49,188-byte native witness. Zero new proofs were generated;
+proving, post-find publication, propagation, confirmation and stale-block costs
+remain unobserved in this run. Historical proving failures and failed benefit
+results are preserved. Finite scalar controls do not prove all-input equivalence
+between the old Transposed guest and the current FullLimb native implementation.
+
+Strict Clippy and formatting pass for both isolated packages, alongside the
+retained source-boundary/integrity controls and main graph at the measured
+source. The final composition preserves concurrent `245146c7` recovery/release
+changes, including their separate main-lock dependency edges; they do not alter
+either independent W1 lock or its measured source closure.
+The independent workflow carries these checks to exact PR head and prospective
+merge sources and retains failures; its creation is not a hosted CI pass.
+Concrete quantum soundness, equivalent Node parent-state/A/B artifact binding,
+end-to-end benefit and production admission remain HOLD. Any new complete
+statement/image or accepted cryptographic profile requires its own actual proof,
+security argument and complete-cost evidence before the original path can change.
