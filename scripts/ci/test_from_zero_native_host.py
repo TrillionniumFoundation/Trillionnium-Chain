@@ -476,7 +476,8 @@ class EvaluationHostBoundaryTests(unittest.TestCase):
                     stderr='' if index < 2 else 'original expected refusal\n')
                 for index in range(19)]
         phases = [dict(phase=name, command='"/fixture/trnm-pon-node" "sync" "--development"',
-                       server_join_succeeded=True, accepted_connections=1,
+                       server_join_succeeded=True,
+                       accepted_connections=0 if name in runner.LOCAL_PHASES else 1,
                        actual_cli_returncode=rows[index]['receipt']['actual_returncode'])
                   for index, name in enumerate(runner.PHASES)]
         return runner, stdout, rows, phases, Path('/fixture/trnm-pon-node')
@@ -512,7 +513,7 @@ class EvaluationHostBoundaryTests(unittest.TestCase):
             with self.subTest(kind=kind), self.assertRaises(ValueError):
                 runner.validate_observation(stdout, changed, phases, binary)
 
-    def test_real_connections_exact_cli_and_all_network_phases_are_required(self):
+    def test_real_connections_exact_cli_and_all_listener_phases_are_required(self):
         runner, stdout, rows, phases, binary = self.observation()
         for kind in ('missing', 'duplicate', 'zero', 'other-cli', 'server-failed', 'child-exit'):
             changed = copy.deepcopy(phases)
@@ -530,6 +531,25 @@ class EvaluationHostBoundaryTests(unittest.TestCase):
                 changed[0]['actual_cli_returncode'] = 2
             with self.subTest(kind=kind), self.assertRaises(ValueError):
                 runner.validate_observation(stdout, rows, changed, binary)
+
+    def test_four_local_and_eight_network_phases_keep_distinct_connection_contracts(self):
+        runner, stdout, rows, phases, binary = self.observation()
+        result = runner.validate_observation(stdout, rows, phases, binary)
+        self.assertEqual(result['actual_listener_phases'], 12)
+        self.assertEqual(result['actual_network_phases'], 8)
+        self.assertEqual(result['actual_local_phases'], 4)
+        self.assertEqual(result['actual_cli_calls'], 19)
+        self.assertEqual(result['local_phase_names'],
+                         ['default-query', 'unknown', 'window', 'lighter-branch'])
+        self.assertEqual(result['accepted_connections'], 8)
+        self.assertFalse(result['public_readiness'])
+        for index, phase in enumerate(phases):
+            bad_counts = (1, -1, True, None) if phase['phase'] in runner.LOCAL_PHASES else (0, -1, True, None)
+            for count in bad_counts:
+                changed = copy.deepcopy(phases)
+                changed[index]['accepted_connections'] = count
+                with self.subTest(phase=phase['phase'], count=count), self.assertRaises(ValueError):
+                    runner.validate_observation(stdout, rows, changed, binary)
 
     def test_server_parser_retains_actual_zero_connection_parent_refusal(self):
         import evaluation_host_runner as runner
