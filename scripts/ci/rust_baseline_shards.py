@@ -80,8 +80,9 @@ def run_shard(args, root=ROOT):
         command = args.output.with_suffix('.sh')
         with command.open('xb') as stream:
             stream.write(script)
-        # No extra native-process timeout or retry. The existing 180-minute
-        # hosted job owns cancellation; abrupt loss leaves running/absent proof.
+        # This shard driver adds no timeout or retry. The exact architecture
+        # Host profile has its own finite bound; the unchanged 180-minute hosted
+        # job still owns outer cancellation and interrupted proof stays incomplete.
         code = subprocess.run(['bash', str(command)], cwd=root, check=False).returncode
         result['exit_code'] = code
         result['after'] = identity(args, root)
