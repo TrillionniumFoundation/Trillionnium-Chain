@@ -5,6 +5,147 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## Resource accounting and event scheduling continuation, 2026-11-04
+
+The continuation starts from integration PR #688 at
+`a4a0e2b561f057cfa3189979c5bf11f3a0eb2353`, with protected main at
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`. These are source observations,
+not an activation or a claim that unrelated native gates are complete. The
+native validation was also repeated after preserving the concurrent integration
+commit `d0737cf5434894ce47fad8082376fc417313c2cb`. The older deterministic
+model and its failed schedules below remain intact. The
+[reproduction manifest](../../evidence/pon-quantum-event-resources-20261104/README.md)
+records the tested source composition and the limits of each observation.
+
+Two additional experiments address different missing parts:
+
+- [Winner-predicate resource accounting](quantum_oracle_resources.py) separates
+  task preprocessing, per-search setup, preparation, forward winner computation,
+  phase marking, inverse computation, diffusion, interrupted work, classical
+  checking after every complete measurement, and post-winner proof/propagation.
+  Failed candidates and zero-iteration trials still pay their candidate check.
+  A missing full W1 circuit produces an unknown
+  cost, not a multiplication of isolated SHA component counts into a fabricated
+  oracle. Caller-supplied circuit budgets enable explicitly conditional logical
+  qubit/gate/depth and error-correction sensitivity calculations.
+- [Event-based network experiment](quantum_network_sim.py) replaces the older
+  expected honest clock with sampled classical arrivals and finite Grover
+  trials. Proof completion and message delivery are separate events. Public-tip
+  restart and private-fork continuation have distinct rules; participation
+  changes, failed searches, discarded progress and unfinished trials remain
+  visible. The [campaign entry point](experiments/quantum_network_campaign.py)
+  produces bounded, seeded observations rather than a consensus security proof.
+
+### The minimal legal winner predicate
+
+For the current PNW1 relation, the ticket depends on the challenge and the exact
+ordered tiled-prefix transcript. Canonical fixed task matrices, their task
+identity and a useful `A B` product may be prepared classically. In contrast,
+challenge-derived noise, challenge-modified matrices, ordered intermediate
+prefixes, trace hashing and target comparison cannot be discarded merely because
+the input task is public. The actual cheapest implementation of that predicate
+remains an open adversarial optimization problem.
+
+The native [relation](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
+already separates `TranscriptEvaluation` from corrected-product construction;
+[legal attempts](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs)
+also expose public task reuse. This is why a cost model must not mechanically
+charge the full verifier, corrected product, SQL, logging, network transport or
+a separately generated succinct proof on every coherent query. A winning
+candidate must still yield a complete valid proof before native acceptance.
+Preprocessing is charged at its actual reuse scope; it does not confer current
+task eligibility or authorization.
+
+The resource calculator's circuit stages are supplied assertions. Even when
+every stage has numerical values, it has not synthesized or verified a complete
+W1 phase oracle, proved a minimum cost, calibrated a physical QPU, or established
+the quantum security of the proof system. Its surface-code equation, gate
+decomposition, factory throughput, residual magic-state error, routing factors
+and clock period are explicit assumptions. Estimates that cannot satisfy their
+declared error budget are reported as unavailable. The default W1 case remains
+unknown; the fully populated demonstration is a small non-W1 arithmetic example.
+
+### What the network experiment can and cannot establish
+
+The periodic backend keeps the current branch-local target, integer required
+work, median-time and future-time rules. Equal work retains the existing local
+tip. Work from different profile identities is not comparable. The ASERT
+backends reuse the earlier isolated exact-u256 arithmetic and remain research
+policies; they are not alternative installed protocols.
+
+For a specified marked fraction `p` and `q` Grover iterations, one ideal trial
+has success probability `sin((2*q+1)*asin(sqrt(p)))**2`. Increasing `q` beyond
+the peak can reduce success. Equating the marked fraction of a finite W1 search
+space with the uniform ticket probability `(target+1)/2**256` is a separate
+assumption. Unknown or zero marked counts, BBHT search, correlations, hardware
+noise and the actual reversible predicate are not inferred from this formula.
+The automatic iteration choice is near the first success-probability peak;
+it is not claimed to maximize throughput or attacker profit. Explicit iteration
+counts allow other bounded strategies to be tested.
+
+A new public block can invalidate the parent of an honest-tip search; it does
+not force an attacker mining a private branch to abandon that branch. The
+experiment therefore records restart costs without building this incorrect
+defence into its private-fork policy. A future-dated private parent does not stop
+construction of its private descendants. Receiving miners separately enforce
+the future-time rule for every ancestor; eligible prefixes can be adopted while
+later descendants wait. Bounded phased timestamp strategies expose compression,
+holding, relaxation and a configured tail as explicit inputs. Candidate checking,
+post-winner proof and propagation costs must finish before a remote modeled receiver
+can adopt that block. These are synthetic header events without W1 proofs,
+task/effect execution or native networking.
+
+Probe confirmation follows the native conjunction: six descendants and at least
+six times the inclusion block's required work, with the inclusion block excluded
+from both counts. Six easier descendants alone need not satisfy confirmation.
+Trace readback independently checks integer credit, ancestry and admission-time
+constraints and replays the seeded experiment. Source hashes and claims about
+which files existed at the recorded Git commit are also checked. This is a
+separate implementation check within this development task, not an external
+cryptographic audit.
+
+Reorganization, growth, quality, prefix and transaction-wait observations from
+a finite run are empirical diagnostics under its declared assumptions. They
+are not common-prefix, chain-growth, chain-quality or transaction-liveness
+theorems, and they do not provide a mixed classical/quantum security threshold.
+No bounded campaign, including a run without a reorganization, establishes that
+the protocol is secure. No successful modeled private fork establishes a
+physically realizable attack on Trillionnium.
+
+### Candidate literature and implementation boundary
+
+[Bailey and Sattath, arXiv:2403.08023v2](https://arxiv.org/html/2403.08023v2)
+provide a variable-difficulty quantum attack construction and variants that
+address timestamp lag and bounded adjustment factors. Their idealized mining
+model does not supply a W1 oracle. The current exact 16-block clamp and integer
+rules still have to be respected by any Trillionnium-specific schedule.
+
+[Garay, Kiayias and Shen, Fast Difficulty Adjustment in Proof-of-Work Consensus](https://eprint.iacr.org/2026/1116)
+is a CRYPTO 2026 paper, with a revised ePrint dated 2026-09-10. Its construction
+uses parallel chains and approximate agreement over previous-epoch information.
+The public abstract, [author-institution page](https://www.iog.io/papers/fast-difficulty-adjustment-in-proof-of-work-consensus)
+and its two-page [explainer](https://www.iog.io/api/research/pdf/explainer/CMS48YZX)
+were accessible for this continuation; the complete ePrint PDF was unavailable
+through the research interface. There is no complete pseudocode-to-source
+mapping here. Requesting its backend must fail explicitly. A trimmed mean,
+median of targets, or faster single-chain adjustment is not a reproduction of
+this construction. The paper's asymptotic adjustment result is not a seconds
+guarantee for PoN or a quantum-mining theorem.
+
+[Baig, Guenther and Pietrzak, Nakamoto Consensus from Multiple Resources](https://doi.org/10.4230/LIPIcs.AFT.2025.16)
+classify weight functions in an ideal continuous-resource model against private
+double spending. Monotonicity and joint degree-one homogeneity in timed resources
+are central: `Gamma(S, alpha*V, alpha*W) = alpha*Gamma(S,V,W)`. The discrete model
+needs additional resource-variation and majority assumptions. Replotting,
+selfish-mining economics and implementation-specific network losses have their
+own boundaries. This is a theoretical comparison, not a proposal to sum arbitrary
+scores or replace current required work with `sqrt(D)`.
+
+Full W1 reversible synthesis and adversarial cost minimization, a complete Fast
+DAA protocol reproduction, and a proved mixed-resource PoN security model remain
+separate research exit conditions. The native pure-PoN engineering line retains
+its present consensus and original acceptance budgets.
+
 ## What this package establishes
 
 [quantum_daa_model.py](quantum_daa_model.py) executes the current development

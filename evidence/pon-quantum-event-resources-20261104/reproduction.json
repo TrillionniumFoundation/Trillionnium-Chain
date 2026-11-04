@@ -1,0 +1,865 @@
+{
+  "schema": "trnm-quantum-event-resources-reproduction-v1",
+  "date": "2026-11-04",
+  "status": "CONDITIONAL_RESEARCH_QUANTUM_SECURITY_UNQUALIFIED",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "integration_pr": 688,
+  "source": {
+    "preserved_integration_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "preserved_integration_tree": "ae0b9e3d09ae95af33f96fdbab72bda855137e2d",
+    "native_source_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "native_source_tree": "ae0b9e3d09ae95af33f96fdbab72bda855137e2d",
+    "native_source_inputs_verified": 1175,
+    "native_inputs_changed": [],
+    "native_source_manifest_sha256": "a0e80f7a2abbe909fbd3e145f20f43bbaa02b0c94b8e62054c69158b41c4c3aa",
+    "research_execution_record": {
+      "all_source_files_committed_at_head": false,
+      "git_head": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "scope": "only enumerated source bytes; excludes unrelated concurrent files",
+      "source_sha256": {
+        "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py": "28cfc2e50732e4dd64ec41244c4da10c8cd4e23e18eec744e738271dbed84a04",
+        "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+        "formal/pon-nakamoto-v1/quantum_network_sim.py": "d86400fd6610edaae50bd00467523067575f37af21b65810bdddf31bcbc507e9",
+        "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+        "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "ea6d79e7e9ec58eb510e118699e502e44ab09c73ccd0658f720bf4d0ee900396",
+        "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+      },
+      "uncommitted_source_files": [
+        "formal/pon-nakamoto-v1/quantum_network_sim.py",
+        "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+        "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py"
+      ]
+    },
+    "enumerated_inputs": [
+      {
+        "path": "config/pon/devnet-v1.json",
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "git_blob_sha1": "a60f403b2f0e7343aed61170ca2aef875a787790"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+        "bytes": 12457,
+        "sha256": "28cfc2e50732e4dd64ec41244c4da10c8cd4e23e18eec744e738271dbed84a04",
+        "git_blob_sha1": "4a91decd9ca9480be94e97a5968dd2cd036ca116"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+        "bytes": 16888,
+        "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+        "git_blob_sha1": "df3a050b6f8ae84991a614ee7fd9deb7ff358825"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+        "bytes": 42551,
+        "sha256": "d86400fd6610edaae50bd00467523067575f37af21b65810bdddf31bcbc507e9",
+        "git_blob_sha1": "85ff6e5e4f8ae956ccd671f145357e98e705c470"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/reference.py",
+        "bytes": 4753,
+        "sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+        "git_blob_sha1": "76f61ae20aa924ce2df2ebfa0029d8b9b3cce04c"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+        "bytes": 19399,
+        "sha256": "ea6d79e7e9ec58eb510e118699e502e44ab09c73ccd0658f720bf4d0ee900396",
+        "git_blob_sha1": "5e619af46cf62501816a204f58e84d6fee8706ed"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "bytes": 20098,
+        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+        "git_blob_sha1": "989ac5f08b8e4f707cda613617fd5245eb6a6463"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+        "bytes": 26839,
+        "sha256": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e",
+        "git_blob_sha1": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+        "bytes": 13822,
+        "sha256": "7952ce8d9ff3aa8b81140ac8f316bb98de83eff646879ca25cbe3951c689c078",
+        "git_blob_sha1": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed"
+      },
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "bytes": 22588,
+        "sha256": "194cdcb1e7ca0e85416f45eeb5f2751a62d059db5a8dd8c29081bf4712afe76c",
+        "git_blob_sha1": "6399f8c644395d273689ededa2c1ed99e4ae1364"
+      },
+      {
+        "path": "scripts/ci/test_pq_quantum_daa_scenarios.py",
+        "bytes": 4684,
+        "sha256": "a72bb7d11a3aa9937c9752f59c2736f9343a44015f7f77ec8a13a25b4d256aa8",
+        "git_blob_sha1": "d86317801876961ed68e22c1134305c3749a615e"
+      },
+      {
+        "path": "scripts/pon_daa_schedule_reader.py",
+        "bytes": 16896,
+        "sha256": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d",
+        "git_blob_sha1": "daff997555e0c3840087f33eccb549dab01a0727"
+      },
+      {
+        "path": "scripts/ci/test_pon_daa_schedule_reader.py",
+        "bytes": 6442,
+        "sha256": "618d94c99689cc81678ff05edaf1757ead7bbafc5c4db0f0f4adf85de7b77480",
+        "git_blob_sha1": "e92785659281b4ce5edd92a0574bdbad98606b49"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/reversible_components.py",
+        "bytes": 21097,
+        "sha256": "0e005fbb232c4dafd9494ac51163a823809dc83fa3a63f02198a1ae9b9a12821",
+        "git_blob_sha1": "044d239b143a86809f1659392150698f83293171"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_reversible_components.py",
+        "bytes": 2701,
+        "sha256": "d05efd17f1dda8342ddc5c93637bccaaebb9f0d3668625924091a721261c94b4",
+        "git_blob_sha1": "aa72e11d8453512ae4adcb2353e8dca8c65e79c2"
+      },
+      {
+        "path": "trillionnium/Cargo.lock",
+        "bytes": 39976,
+        "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+        "git_blob_sha1": "fe1e6a3aee8771dd025c7e3607061c020542d852"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "bytes": 334071,
+        "sha256": "e097b9e8cb972187333c56854f8cfc55c0e27bd608ea596e454ecb7eeb9f62b4",
+        "git_blob_sha1": "a7035222bc51cfe7f60e891398230c3179accc82"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+        "bytes": 28485,
+        "sha256": "47bb8a533d289b59375271a13b977d8c32dba604562a5ed9250eab618c507aa5",
+        "git_blob_sha1": "a105a2ea1d057a9999e7bb31d2c1e8002720ce40"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+        "bytes": 29182,
+        "sha256": "1f186613b8f9df74ba50d6c8d1d0e02fdeaee22dc4a4d2969449cd5f96234164",
+        "git_blob_sha1": "c12b91dcb9d5a45b9782a78486660b2712a15e8b"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "bytes": 33073,
+        "sha256": "be9b62089b6b276f0bb711ce063a704dc7444d8961cba044e1c31f79f9b74c9b",
+        "git_blob_sha1": "ea0639e2ac3542d606c4b0fe9ff7f72b86f566c7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs",
+        "bytes": 17751,
+        "sha256": "4b499f13255673f8ea3e4ed40dbcaa226742c9cf185c452f26cbb6efac223c86",
+        "git_blob_sha1": "4484727e5d2203f7e1b066d110d9eaa2e5fd81dc"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "bytes": 104102,
+        "sha256": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+        "git_blob_sha1": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+        "bytes": 13531,
+        "sha256": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+        "git_blob_sha1": "89165df40fea479fc73a5b5ce8d2fc0262ccd1f6"
+      }
+    ]
+  },
+  "python_tests": [
+    {
+      "name": "oracle-resources",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_oracle_resources.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.177,
+      "log_sha256": "a1702a4d443c629b1547eff92c044eb166652f6070588002ef99e70337e4ab5d",
+      "result": "PASS",
+      "test_count": 22
+    },
+    {
+      "name": "network-events",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_network_sim.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 4.817,
+      "log_sha256": "485989d226dd266f57d85e7af4f17923d407fbf0f15a86fc856cbd5326258282",
+      "result": "PASS",
+      "test_count": 22
+    },
+    {
+      "name": "existing-daa",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_daa_model.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 11.934,
+      "log_sha256": "1378af1cc18f1371e877675ba3595981e7f7f927c4905b0c28e860d1e5bd6200",
+      "result": "PASS",
+      "test_count": 18
+    },
+    {
+      "name": "existing-sensitivity",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_quantum_daa_scenarios.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.24,
+      "log_sha256": "7e82b81857199f46f2ecffef1115621cc8b9e713ee3109c0bbdeb68c79a29f57",
+      "result": "PASS",
+      "test_count": 6
+    },
+    {
+      "name": "existing-reversible-components",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_reversible_components.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "result": "PASS",
+      "test_count": 6,
+      "log_sha256": "890993c6beefe40dec6bd79958660ddc5543bf2ad170d0d5dbba08eca335a770"
+    }
+  ],
+  "network_campaign": {
+    "command": [
+      "python3",
+      "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "--out",
+      "<fresh-output>"
+    ],
+    "verification_command": [
+      "python3",
+      "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "--verify",
+      "<same-output>"
+    ],
+    "producer_exit_code": 0,
+    "reader_exit_code": 0,
+    "runs": 30,
+    "horizon_completed_runs": 30,
+    "trace_rows": 77847,
+    "seeds": [
+      4101,
+      4102,
+      4103
+    ],
+    "report_sha256": "af12008e7d459e8e423dbc4c12c591d2dde4166441cb7d4d17d417a14884e994",
+    "manifest_sha256": "418840cb59214e33055e7d99bf81d5bda7230e117fda07854c9895425780684c",
+    "process_measurement": {
+      "cpu_seconds": 5.0489645979999995,
+      "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "scope": "simulator and trace serialization, not W1 or quantum hardware",
+      "wall_seconds": 5.69955051800207
+    },
+    "observations": [
+      {
+        "scenario": "periodic_honest_grover",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1381,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 4,
+        "quantum_cancelled_searches": 101,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "classical_control",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1169,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_private_grover",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1277,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_fast_oracle_sensitivity",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1469,
+        "observer_max_reorg_depth": 77,
+        "confirmed_probe_reversals": 1,
+        "quantum_blocks": 112,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_participation_shocks",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1198,
+        "observer_max_reorg_depth": 2,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 8,
+        "quantum_cancelled_searches": 83,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "long_proof_and_network_delay",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1392,
+        "observer_max_reorg_depth": 3,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 4,
+        "quantum_cancelled_searches": 88,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_raw_private",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1424,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_mtp_private",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 1439,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 26,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "fixed_round_overshoot_sensitivity",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 31,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 14,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_timestamp_phases_sensitivity",
+        "seed": 4101,
+        "termination": "horizon",
+        "trace_rows": 14780,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 1856,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 1805
+      },
+      {
+        "scenario": "periodic_honest_grover",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1592,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 2,
+        "quantum_cancelled_searches": 119,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "classical_control",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1348,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_private_grover",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1456,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_fast_oracle_sensitivity",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1573,
+        "observer_max_reorg_depth": 88,
+        "confirmed_probe_reversals": 1,
+        "quantum_blocks": 112,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_participation_shocks",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1325,
+        "observer_max_reorg_depth": 2,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 8,
+        "quantum_cancelled_searches": 93,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "long_proof_and_network_delay",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1470,
+        "observer_max_reorg_depth": 5,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 2,
+        "quantum_cancelled_searches": 94,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_raw_private",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1429,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_mtp_private",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 1445,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 26,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "fixed_round_overshoot_sensitivity",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 31,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 14,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_timestamp_phases_sensitivity",
+        "seed": 4102,
+        "termination": "horizon",
+        "trace_rows": 14679,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 1856,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 1805
+      },
+      {
+        "scenario": "periodic_honest_grover",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1436,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 109,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "classical_control",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1216,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_private_grover",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1324,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_fast_oracle_sensitivity",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1530,
+        "observer_max_reorg_depth": 84,
+        "confirmed_probe_reversals": 1,
+        "quantum_blocks": 112,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "periodic_participation_shocks",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1403,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 6,
+        "quantum_cancelled_searches": 101,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "long_proof_and_network_delay",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1445,
+        "observer_max_reorg_depth": 4,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 96,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_raw_private",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1418,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 25,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "asert_mtp_private",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 1422,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 26,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "fixed_round_overshoot_sensitivity",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 31,
+        "observer_max_reorg_depth": 0,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 0,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 14,
+        "quantum_censored_searches": 1,
+        "private_future_blocks_created": 0
+      },
+      {
+        "scenario": "private_timestamp_phases_sensitivity",
+        "seed": 4103,
+        "termination": "horizon",
+        "trace_rows": 14714,
+        "observer_max_reorg_depth": 1,
+        "confirmed_probe_reversals": 0,
+        "quantum_blocks": 1856,
+        "quantum_cancelled_searches": 0,
+        "quantum_failed_searches": 0,
+        "quantum_censored_searches": 0,
+        "private_future_blocks_created": 1805
+      }
+    ],
+    "scope": "synthetic conditional timing, fixed seeds and bounded strategies; not security thresholds"
+  },
+  "native": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--release",
+      "--all-features",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_adversarial_schedule",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 369.1310796737671,
+    "test_result": {
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 0,
+      "test_seconds": 6.92
+    },
+    "binary_sha256": "6ac0ceb7a33cdbd63f27f25d0698f42e498ced14508a0182eac5d2ef400dc5e2",
+    "binary_bytes": 15829320,
+    "reader": {
+      "schema": "pon-native-daa-bounds-reader-v1",
+      "record_and_oracle_consistency": "PASS",
+      "observations": 85,
+      "unique_full_python_verified_proofs": 84,
+      "unique_native_admitted_packets_observed": 83,
+      "native_time_rejections_observed": 2,
+      "next_targets": [
+        {
+          "required_work_hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f",
+          "schedule": "ordinary",
+          "target": "0836fa3857bed3fda227f571010bf82c0e0475c862ab07df9899480b4968cfe4"
+        },
+        {
+          "required_work_hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007b",
+          "schedule": "lower-clamp",
+          "target": "0214c11883749c1ab506b5a52939a5452feca65f233c64fb344fca923824cada"
+        },
+        {
+          "required_work_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007",
+          "schedule": "upper-clamp",
+          "target": "20dbe8e15efb4ff6889fd5c4042fe0b03811d7218aac1f7e6265202d25a33f90"
+        }
+      ],
+      "selected_required_chainwork": 761,
+      "reader_performed_native_admission": false,
+      "reader_reopened_native_database": false,
+      "host_and_source_provenance_checked_by_reader": false,
+      "full_python_transcript_and_product_recomputed": true,
+      "proof_hardness_or_timestamp_attack_profitability_qualified": false,
+      "public_network_qualification": false,
+      "report_sha256": "c08f5c11419656408ee179ea49f41701c2edcb25178dc9b963b995a460cb62db"
+    },
+    "reader_controls_passed": 10,
+    "reader_controls_exit_code": 0,
+    "format": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.16047191619873
+    },
+    "scoped_clippy": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--release",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "daa_adversarial_schedule",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 47.80958819389343
+    },
+    "locked_offline_workspace_members": 26,
+    "locked_offline_packages": 180,
+    "rust_toolchain": "1.95.0 (59807616e 2026-04-14)",
+    "openssl_provider_version": "3.5.9",
+    "network_dependency_fetches": false,
+    "entire_rust_workspace_test_suite_executed": false
+  },
+  "source_controls": {
+    "preflight": "PASS",
+    "distributed_source_inventory": "PASS",
+    "claim_guard_tests_passed": 22,
+    "claim_guard_status": "HOLD",
+    "project_boundary_tests_passed_on_unchanged_retry": 16,
+    "markdown_scope": "source Markdown targets plus exact Git tree for omitted historical files; not full archived-evidence gate",
+    "failures_preserved": [
+      "Initial retained DAA test invocation lacked usable Git HEAD; exact Git restoration followed by unchanged 18-test PASS.",
+      "Initial project-boundary invocation hit two existing 10-second subprocess timeouts under shared-host load; unchanged 16-test retry PASS.",
+      "During development private future creation exposed TRACE_TIMESTAMP in the older readback; creation/adoption checks were separated and final 22 tests plus 30 replays PASS."
+    ],
+    "acceptance_budgets_relaxed": false
+  },
+  "resource_model": {
+    "demo_command": [
+      "python3",
+      "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "--demo"
+    ],
+    "demo_exit_code": 0,
+    "demo_sha256": "bb330a60ddd2e6825cc9376309cd16b873a1f9f86678502730e945687bc4ef14",
+    "w1_complete_oracle_cost": "UNKNOWN_COMPLETE_ORACLE_COST",
+    "w1_logical_qubits": null,
+    "w1_logical_gates": null,
+    "w1_logical_depth": null,
+    "w1_physical_estimate": null,
+    "populated_example": "HYPOTHETICAL_NON_W1_EXAMPLE",
+    "surface_code_and_factories": "caller-supplied conditional assumptions; no physical calibration"
+  },
+  "limits": {
+    "complete_w1_quantum_oracle_verified": false,
+    "optimal_adversary_cost_proved": false,
+    "physical_quantum_hardware_executed": false,
+    "fast_daa_2026_protocol_implemented": false,
+    "mixed_resource_security_threshold_proved": false,
+    "common_prefix_theorem": false,
+    "chain_growth_theorem": false,
+    "chain_quality_theorem": false,
+    "transaction_liveness_theorem": false,
+    "production_consensus_activation": false,
+    "whole_chain_pq_qualified": false,
+    "release_ready": false,
+    "fast_oracle_case_is_small_miner_empirical_attack": false
+  },
+  "literature": [
+    {
+      "title": "51% Attack via Difficulty Increase with a Small Quantum Miner",
+      "url": "https://arxiv.org/html/2403.08023v2",
+      "mapping": "ideal variable-difficulty construction; no W1 oracle or Trillionnium empirical attack"
+    },
+    {
+      "title": "Fast Difficulty Adjustment in Proof-of-Work Consensus",
+      "url": "https://eprint.iacr.org/2026/1116",
+      "accessible_explainer": "https://www.iog.io/api/research/pdf/explainer/CMS48YZX",
+      "full_pdf_fetch": "403 Forbidden",
+      "implementation": "explicitly unavailable pending complete protocol/parameter mapping"
+    },
+    {
+      "title": "Nakamoto Consensus from Multiple Resources",
+      "url": "https://doi.org/10.4230/LIPIcs.AFT.2025.16",
+      "mapping": "conditional resource model, not arbitrary score addition or sqrt(D) chainwork"
+    }
+  ]
+}
