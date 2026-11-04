@@ -257,6 +257,24 @@ workspace, config and source checker/tests remain K's exact bytes. This adds
 no W1 performance, security or proof-acceptance claim and does not relabel any
 prior-source runtime result.
 
+### Published exact source and branch readback — `e94781d2`
+
+The [published source receipt](final-composition/published-composition-source-check.json)
+and [raw log](final-composition/published-composition-source-check.log) verify
+`e94781d2323f5dc8987e1eb7ed2bef23ee8745c3`, tree
+`ebf1d4264f43d5c9f1ff801e80f24d0391b838e1`. Both source boundaries match across
+**8,873 entries / 942,501,289 bytes**. The 442 actual-blob pins, native inventory,
+CI contract and **2,580 local links** pass. This command executes no new native
+test or Clippy run; those results remain bound to C/E above.
+
+The [publication observation](final-composition/published-results.json) records
+the expected-head, non-forced update of the existing PR #688 branch from
+`03163dcb` to this source and the matching remote readback. Protected main
+remains `dd6e1c3c`, and the PR remains a draft without merge or activation.
+The final receipt follow-up changes only this continuation evidence directory.
+The five selected E Node tests remain unexecuted following compilation SIGKILL
+and the unsuccessful resource-window scheduling attempt.
+
 The original [A results](results.json) record the counts, command scopes, lockfile
 identity, source bounds and SHA256/size observations for the original M09 library,
 Node library and `trnm-cell` executables. These local observations do not
