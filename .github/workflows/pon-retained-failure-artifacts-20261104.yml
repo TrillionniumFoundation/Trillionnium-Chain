@@ -135,7 +135,27 @@ jobs:
               r"|deadline|cancelled|pending|unknown|elapsed|duration|host_errors"
               r"|observed|scheduled|within|before_original|slo|success|known_empty|^mode$|^number$|^code$|^kind$"
               r"|^schema$|^status$|^phase$|^name$|^label$|^reason$|^error$")
+          BE0D_NATIVE_REPORTS = {
+              "run-1-raw/report.json": (24004285, "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593"),
+              "run-2-raw/report.json": (24941889, "d6099b55cc3ff1c378475f5707188a72ad5649fe2940fafe46d22a58c73b6755"),
+              "run-3-raw/report.json": (24864185, "4e0ed8293440c60edefac30a9dbf7f864620810ac89dd9fb8a2e5bb5d02c3fec"),
+          }
+          NATIVE_STAGE_NAMES = (
+              "record", "packet", "delta", "verify_state", "verify_history", "publish",
+              "read_active", "state_at", "execute", "admission", "activation",
+              "complete_commitment", "complete_state_root", "account_graph",
+              "persisted_state_root", "execution_parent_binding",
+          )
+          NATIVE_TOTAL_FIELDS = (
+              "calls", "wall_ns", "cpu_known_calls", "cpu_unknown_calls", "cpu_ns", "unwinding_calls",
+          )
+          NATIVE_SNAPSHOT_KEYS = (
+              "native_history_arithmetic_before", "native_history_arithmetic_after",
+              "client_native_history_arithmetic_before", "client_native_history_arithmetic_after",
+          )
           def selected(name, target):
+              if target["id"] == 13288600275 and name in BE0D_NATIVE_REPORTS:
+                  return True
               # Read the original failed command and bounded terminal/derived
               # reports first. Per-attacker and cost reports stay in the retained
               # ZIP; walking those unrelated trees exhausted the v1 reader.
@@ -161,6 +181,8 @@ jobs:
           
           def priority(info):
               name = info.filename
+              if name in BE0D_NATIVE_REPORTS:
+                  return (-1, name)
               if name in ("node-lib.log", "node-lib.json", "finalization/result.json",
                           "execution/results.json", "results.json"):
                   return (0, name)
@@ -236,6 +258,101 @@ jobs:
                           stack.append((path + "/" + str(index), item[index]))
               return found
           
+          def native_stage_delta(before, after):
+              def unknown(reason):
+                  return {"status": "unknown", "reason": reason, "rows": None}
+              if not all(isinstance(x, dict) for x in (before, after)):
+                  return unknown("snapshot_missing_or_null")
+              for snapshot in (before, after):
+                  if snapshot.get("schema") != "pon-native-history-arithmetic-observation-v1":
+                      return unknown("snapshot_schema")
+                  if snapshot.get("stage_observation_failed") is not False:
+                      return unknown("stage_observation_failed_or_missing")
+                  if snapshot.get("has_consensus_authority") is not False:
+                      return unknown("unexpected_authority_field")
+                  rows = snapshot.get("stages")
+                  if (not isinstance(rows, list) or len(rows) != len(NATIVE_STAGE_NAMES)
+                          or any(not isinstance(row, dict) for row in rows)
+                          or [row.get("stage") for row in rows] != list(NATIVE_STAGE_NAMES)):
+                      return unknown("stage_identity_or_availability")
+              rows = []
+              for index, name in enumerate(NATIVE_STAGE_NAMES):
+                  values = []
+                  for snapshot in (before, after):
+                      totals = snapshot["stages"][index].get("totals")
+                      if not isinstance(totals, dict) or set(totals) != set(NATIVE_TOTAL_FIELDS):
+                          return unknown("stage_totals_fields:" + name)
+                      row = [totals[key] for key in NATIVE_TOTAL_FIELDS]
+                      if any(type(n) is not int or not 0 <= n < (1 << 64) - 1 for n in row):
+                          return unknown("invalid_or_saturated_counter:" + name)
+                      if row[0] != row[2] + row[3] or row[5] > row[0]:
+                          return unknown("stage_call_accounting:" + name)
+                      values.append(row)
+                  delta = [end - start for start, end in zip(*values)]
+                  if any(n < 0 for n in delta):
+                      return unknown("counter_regressed:" + name)
+                  if delta[0] != delta[2] + delta[3] or delta[5] > delta[0]:
+                      return unknown("delta_call_accounting:" + name)
+                  if delta[0] == 0 and any(delta[1:]):
+                      return unknown("counter_changed_without_completed_call:" + name)
+                  complete_cpu = delta[4] if delta[0] > 0 and delta[3] == 0 else None
+                  rows.append(delta + [complete_cpu, "observed_calls" if delta[0] else "not_entered"])
+              return {"status": "observed", "rows": rows}
+
+
+          def native_history_projection(value, target, record):
+              require(isinstance(value, dict)
+                      and value.get("schema") == "native-public-v3-separate-process-campaign-v2"
+                      and value.get("state_backend") == "authenticated-v1", "NATIVE_REPORT_SCHEMA")
+              phases = value.get("phases")
+              modes = ["baseline", "from-zero", "late-product"]
+              require(isinstance(phases, list) and len(phases) == 3
+                      and all(isinstance(p, dict) for p in phases)
+                      and [p.get("mode") for p in phases] == modes, "NATIVE_PHASE_IDENTITIES")
+              kept = []
+              phase_keys = (
+                  "mode", "duration_seconds", "state_backend", "finite_phase_criteria_met",
+                  "all_signed_rounds_confirmed_in_window", "genuine_budget_depletion_observed",
+                  "startup_or_campaign_error", "verifier_errors", "observer_complete",
+                  "receiver_client_state_equal", "client_observation_scope",
+              )
+              for index, phase in enumerate(phases):
+                  row = {key: phase[key] for key in phase_keys if key in phase}
+                  row["scheduled_phase_index"] = index
+                  row["snapshot_keys_present"] = [key for key in NATIVE_SNAPSHOT_KEYS if key in phase]
+                  row["snapshots"] = {key: phase.get(key) for key in NATIVE_SNAPSHOT_KEYS}
+                  row["receiver_stage_deltas"] = native_stage_delta(
+                      phase.get(NATIVE_SNAPSHOT_KEYS[0]), phase.get(NATIVE_SNAPSHOT_KEYS[1]))
+                  row["client_stage_deltas"] = native_stage_delta(
+                      phase.get(NATIVE_SNAPSHOT_KEYS[2]), phase.get(NATIVE_SNAPSHOT_KEYS[3]))
+                  kept.append(row)
+              projection = {
+                  "schema": "trnm-retained-native-history-cost-readback-v1",
+                  "artifact": target["id"], "measured_head": target["head"],
+                  "measured_run": target["run"], "measured_job": target["job"],
+                  "member": record["member"], "member_bytes": record["bytes"],
+                  "member_sha256": record["sha256"],
+                  "finite_experiment_criteria_met": value.get("finite_experiment_criteria_met"),
+                  "scheduled_phases": 3, "stage_names": NATIVE_STAGE_NAMES,
+                  "delta_columns": ["calls", "wall_ns", "cpu_known_calls", "cpu_unknown_calls",
+                                    "cpu_ns_known_sum", "unwinding_calls", "complete_cpu_ns", "observation_status"],
+                  "phases": kept, "source_tests_executed": False, "acceptance_granted": False,
+                  "scope": "Before/after cumulative owner counters; setup and final read_active excluded; receiver includes service cleanup, client includes native replay and confirmation; nested costs are not additive; current-thread CPU excludes scoped workers; errors/cancellation are included but stage result codes are unavailable; unknown or unentered CPU is not zero; no SQL-COMMIT/fsync attribution.",
+              }
+              scalar_fields(projection)  # Keep the original node cap on selected data only.
+              compact = {key: item for key, item in projection.items() if key != "phases"}
+              compact["phases"] = []
+              for phase in kept:
+                  row = {key: item for key, item in phase.items() if key != "snapshots"}
+                  for key in ("startup_or_campaign_error", "verifier_errors"):
+                      if key in row:
+                          rendered = json.dumps(row[key], sort_keys=True)
+                          if len(rendered) > 1024:
+                              row[key] = {"rendered_prefix": rendered[:1024], "console_truncated": True,
+                                          "original_value_retained": True}
+                  compact["phases"].append(row)
+              return projection, compact
+
           results = []
           had_error = False
           for target in TARGETS:
@@ -283,6 +400,8 @@ jobs:
                                     "compressed_bytes": x.compress_size, "crc32": x.CRC}
                                    for x in infos]
                           index_sha = write_json(output / "members.json", index)
+                          if target["id"] == 13288600275:
+                              require(set(BE0D_NATIVE_REPORTS) <= {x.filename for x in infos}, "NATIVE_REPORT_MEMBER_MISSING")
                           chosen = sorted((x for x in infos if not x.is_dir() and selected(x.filename, target)),
                                           key=priority)
                           for member_index, info in enumerate(chosen):
@@ -294,6 +413,11 @@ jobs:
                               require(len(raw) == info.file_size, "MEMBER_SIZE")
                               record = {"member": info.filename, "bytes": len(raw),
                                         "sha256": hashlib.sha256(raw).hexdigest()}
+                              native_report = target["id"] == 13288600275 and info.filename in BE0D_NATIVE_REPORTS
+                              if native_report:
+                                  expected_size, expected_sha = BE0D_NATIVE_REPORTS[info.filename]
+                                  require(record["bytes"] == expected_size and record["sha256"] == expected_sha,
+                                          "NATIVE_REPORT_BYTES_OR_HASH")
                               try:
                                   content = raw.decode("utf-8")
                               except UnicodeDecodeError:
@@ -302,11 +426,17 @@ jobs:
                                   continue
                               if info.filename.endswith(".json"):
                                   value = json.loads(content)
-                                  fields = scalar_fields(value)
-                                  record["scalar_fields"] = fields
-                                  excerpt = json.dumps({"artifact": target["id"], "member": info.filename,
-                                                        "fields": fields}, sort_keys=True) + "\n"
-                                  console_excerpt = console_json(target, info.filename, fields)
+                                  if native_report:
+                                      projection, compact = native_history_projection(value, target, record)
+                                      record["native_history_cost_projection"] = projection
+                                      excerpt = json.dumps(projection, sort_keys=True) + "\n"
+                                      console_excerpt = json.dumps(compact, sort_keys=True, separators=(",", ":")) + "\n"
+                                  else:
+                                      fields = scalar_fields(value)
+                                      record["scalar_fields"] = fields
+                                      excerpt = json.dumps({"artifact": target["id"], "member": info.filename,
+                                                            "fields": fields}, sort_keys=True) + "\n"
+                                      console_excerpt = console_json(target, info.filename, fields)
                               else:
                                   lines = content.splitlines()
                                   picked = set()
@@ -346,6 +476,8 @@ jobs:
                               record["excerpt_file"] = f"excerpt-{member_index:04}.txt"
                               rendered, displayed_lines, omitted_lines = bounded_console(
                                   console_excerpt, MAX_STDOUT - printed, target, info.filename)
+                              if native_report:
+                                  require(omitted_lines == 0, "NATIVE_COST_CONSOLE_LIMIT")
                               record["stdout_emitted"] = displayed_lines > 0
                               record["stdout_lines_emitted"] = displayed_lines
                               record["stdout_lines_omitted"] = omitted_lines
@@ -353,10 +485,15 @@ jobs:
                                   print(rendered, end="", flush=True)
                                   printed += len(rendered)
                               records.append(record)
+                          if target["id"] == 13288600275:
+                              require({row["member"] for row in records
+                                       if row.get("read_status") == "read"
+                                       and "native_history_cost_projection" in row}
+                                      == set(BE0D_NATIVE_REPORTS), "NATIVE_REPORT_SET_INCOMPLETE")
                   finally:
                       print("::" + command_token + "::", flush=True)
                   result = {
-                      "schema": "trnm-retained-failure-artifact-readback-v2",
+                      "schema": "trnm-retained-failure-artifact-readback-v3",
                       "target": target, "downloaded_zip_bytes": received,
                       "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
                       "member_index_sha256": index_sha,
