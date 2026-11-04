@@ -1,0 +1,3027 @@
+{
+  "schema": "pon-retained-from-zero-and-preparation-readback-v1",
+  "scope": "Actual completed readback of frozen original artifacts. Native tests, business validation, preparation refusal and unexecuted stages remain separate.",
+  "reader": {
+    "commit": "c94557593bd858c8622be3af959b6e9331452c90",
+    "tree": "c96a81b3d7364f8ac1a6734ef368edfd1b8c4a39",
+    "run": 41772202892,
+    "job": 126384242458,
+    "attempt": 1,
+    "conclusion": "success",
+    "artifact": {
+      "id": 13294939185,
+      "name": "retained-failure-readback-c94557593bd858c8622be3af959b6e9331452c90-1",
+      "size_in_bytes": 369411999,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13294939185",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13294939185/zip",
+      "expired": false,
+      "created_at": "2026-11-04T04:21:02Z",
+      "expires_at": "2026-12-04T04:20:49Z",
+      "updated_at": "2026-11-04T04:21:02Z",
+      "digest": "sha256:bc8c4904e5dd94412466193fcd8ed9e317e9442a92aae487fb0221918f638010",
+      "workflow_run": {
+        "id": 41772202892,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "c94557593bd858c8622be3af959b6e9331452c90"
+      }
+    }
+  },
+  "observations": {
+    "six_from_zero_archives": {
+      "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+      "measured_merge": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+      "measured_tree": "e0a48a52802852a08bf80ffc564c23e20bc91358",
+      "each_original_named_test_count": 5,
+      "each_named_tests_passed": 5,
+      "each_named_tests_failed": 0,
+      "all_children_returned_without_timeout": true,
+      "each_service_report": "passed",
+      "each_sustained_report": "passed",
+      "each_confirmation_report": "failed: CONFIRMATION_TARGET",
+      "each_unexecuted_native_tests": [],
+      "each_unexecuted_acceptance_stages": [],
+      "each_finalization_completed": true,
+      "each_business_acceptance": false,
+      "legacy_execution_finished_field": false,
+      "legacy_field_scope": "The original top-level execution_finished is false after validation failure; terminal.native_execution_completed separately records all planned child invocations returned. Both original values are retained.",
+      "new_unique_tests": 0
+    },
+    "f0_preparation_failure": {
+      "observed_native_business_result": null,
+      "original_planned_confirmations": 6,
+      "original_preparation": {
+        "failure": "FORMAT_FAILED",
+        "head": "41dd661222285728720b97519da1f5a024c7716b",
+        "prepared": false,
+        "schema": "pon-fixed-host-root-f0-prepared-v1",
+        "selector_invocation_attempted": false,
+        "tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e"
+      },
+      "original_workflow_outcomes": {
+        "ARM_OUTCOME": "skipped",
+        "EXECUTION_OUTCOME": "skipped",
+        "F0_SOURCE_AFTER_STATUS": "0",
+        "FINALIZATION_OUTCOME": "failure",
+        "PREPARATION_OUTCOME": "failure",
+        "SOURCE_OUTCOME": "success",
+        "TOOLCHAIN_OUTCOME": "success"
+      },
+      "schema": "trnm-retained-f0-preparation-scope-v1",
+      "scope": "Status describes the F0 business selector using the retained preparation and workflow outcomes. Finalizer unobserved slots preserve the original plan. Actual business confirmation measurement remains null.",
+      "status": "prepare-failed/native-not-executed"
+    }
+  },
+  "readback": {
+    "run": 41772202892,
+    "job": 126384242458,
+    "log_chars": 1317245,
+    "source_guards": [
+      {
+        "base": null,
+        "candidate": "c94557593bd858c8622be3af959b6e9331452c90",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c94557593bd858c8622be3af959b6e9331452c90",
+        "tested_tree": "c96a81b3d7364f8ac1a6734ef368edfd1b8c4a39",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 927198646,
+        "tracked_entries": 7966,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "c94557593bd858c8622be3af959b6e9331452c90",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c94557593bd858c8622be3af959b6e9331452c90",
+        "tested_tree": "c96a81b3d7364f8ac1a6734ef368edfd1b8c4a39",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 927198646,
+        "tracked_entries": 7966,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "audits": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ],
+    "summaries": [
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 1053225,
+        "downloaded_zip_sha256": "a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+        "member_index_sha256": "aaf0db6df1943530527986039de20115e73aec10c500a7fe2933453ef4aa4cc9",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 4,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 7296784,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13284469302,
+          "job": 126300605830,
+          "name": "pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463373,
+          "size": 1053225
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 19665544,
+        "downloaded_zip_sha256": "41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+        "member_index_sha256": "0849cbc26a90a0b196c31c0d2bf85fff2bad3e05f27d1b031fd3f00268a345f5",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 261527,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607",
+          "head": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+          "id": 13287122967,
+          "job": 126322033940,
+          "name": "pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+          "run": 41752900351,
+          "size": 19665544
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 60835230,
+        "downloaded_zip_sha256": "fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+        "member_index_sha256": "4e848b787cc48f70f6363d0da2ec75c13a6daf9c3c2ead1d1b0a3f6350cb3cde",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 12,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 2515927,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6",
+          "head": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "id": 13283953563,
+          "job": 126300603089,
+          "name": "pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+          "run": 41746463223,
+          "size": 60835230
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 53187443,
+        "downloaded_zip_sha256": "e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+        "member_index_sha256": "c4c105fb2592035795be52826d6965b70ed91f829264c6140cada313b7d3e251",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 17072,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284616264,
+          "job": 126277462314,
+          "name": "priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 53187443
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 52915730,
+        "downloaded_zip_sha256": "c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+        "member_index_sha256": "55afb8811d02ce040ea70ae507f10d8d8de2e1ae94d3ec5e6124d6955f2f5e9e",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 17340,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d",
+          "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "id": 13284611411,
+          "job": 126277462527,
+          "name": "priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1",
+          "run": 41732369945,
+          "size": 52915730
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15946259,
+        "downloaded_zip_sha256": "90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+        "member_index_sha256": "1425eccd381ea4179d0c454eea91f02105802f50f1c4e20238548c8d0282ba1c",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 261553,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13286673364,
+          "job": 126323929045,
+          "name": "pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071420,
+          "size": 15946259
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 59518668,
+        "downloaded_zip_sha256": "06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+        "member_index_sha256": "c95c11aa1f538c16dd941033270faefed6b72d85148ffa445564e45cfa419c37",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 76224612,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be",
+          "head": "be0d5f978dc86008115524a6be85c38e03982b33",
+          "id": 13288600275,
+          "job": 126326178742,
+          "name": "pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1",
+          "run": 41753071468,
+          "size": 59518668
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 56503959,
+        "downloaded_zip_sha256": "7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+        "member_index_sha256": "47cab6dfcf307804975a3a4a20161c7391aa3dfe79b261b9ede01138651b7058",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 15,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 67248983,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13290599543,
+          "job": 126349481887,
+          "name": "pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813065,
+          "size": 56503959
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 15793484,
+        "downloaded_zip_sha256": "c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+        "member_index_sha256": "d1b3e472c41a3351fa29da78ce45b1dfabbc6f2e13899e4df0d1874f29e8db1b",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 77,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 261442,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13291962180,
+          "job": 126353223160,
+          "name": "pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760812979,
+          "size": 15793484
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 5292126,
+        "downloaded_zip_sha256": "57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932",
+        "member_index_sha256": "82fd3b9ad268aec9262c14f84081b97f25dc19d70b6b0bfb7d8a1092710901df",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 152015,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293036116,
+          "job": 126358234949,
+          "name": "w1-fresh-service-prospective-merge-554a76fb8e21f160806692c753ca3ea6ad53a42f-1",
+          "run": 41760812907,
+          "size": 5292126
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 5289751,
+        "downloaded_zip_sha256": "586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9",
+        "member_index_sha256": "a085d0a5b0091fa85cb0f8fc690ba3461366e4f76ef19373bc68f251e220e6ae",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 17,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 151785,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293036964,
+          "job": 126358235097,
+          "name": "w1-fresh-service-head-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760812907,
+          "size": 5289751
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 8137142,
+        "downloaded_zip_sha256": "5f42d14ce77a7ccb9a3321849da3ba575b834f084ef944d60a43c4d3161e23d2",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "3e4485951b6c314c85af79f1b1252a36faab8f36a2a1e386c5e61932439ca7e5",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 301469,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:5f42d14ce77a7ccb9a3321849da3ba575b834f084ef944d60a43c4d3161e23d2",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13294156008,
+          "job": 126370230755,
+          "kind": "head",
+          "name": "cost-x64-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813143,
+          "size": 8137142,
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 7826142,
+        "downloaded_zip_sha256": "0d4c256cb7f7c2622c803c60c1ab8874361cb065fd15ec88132b4251cfdb6f3d",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "b83b7c1f089ddcf3046923ea21c182d33dbdc348b1431ba37a22adee90b57b0d",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 305352,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:0d4c256cb7f7c2622c803c60c1ab8874361cb065fd15ec88132b4251cfdb6f3d",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293304196,
+          "job": 126370230550,
+          "kind": "head",
+          "name": "cost-arm64-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813143,
+          "size": 7826142,
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 7209581,
+        "downloaded_zip_sha256": "4577b8253a0b974ffc48660513b9fca3b33ea11226ebbe71cca5e9e08ce7792c",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "13981619808c82d41afbcfed66282b8011e038a6f595777ebfcb26ec0b3ff5b2",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 296949,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:4577b8253a0b974ffc48660513b9fca3b33ea11226ebbe71cca5e9e08ce7792c",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13294472662,
+          "job": 126367534188,
+          "kind": "head",
+          "name": "priority-ubuntu-24.04-head-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813063,
+          "size": 7209581,
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 7235030,
+        "downloaded_zip_sha256": "00c16c5e5de91f200c31111fc1030d677a2ec31c39d94c0a61aedbd2bd0ae7ab",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "cbfefeebfce304753518d9474ddd1702cb22ae55599d32675ab2f88d9b7de769",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 297105,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:00c16c5e5de91f200c31111fc1030d677a2ec31c39d94c0a61aedbd2bd0ae7ab",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13294038025,
+          "job": 126367533913,
+          "kind": "prospective-merge",
+          "name": "priority-ubuntu-24.04-prospective-merge-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813063,
+          "size": 7235030,
+          "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 7055594,
+        "downloaded_zip_sha256": "b2318efda4444f5cc57070f765dc793ada0221305bcc7e47b60161c585fb2bf0",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "3d920464c7adc373bfe555b70c6b02519f873d66cf772d24892eecb8c043ec47",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 300746,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:b2318efda4444f5cc57070f765dc793ada0221305bcc7e47b60161c585fb2bf0",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13294522239,
+          "job": 126367534323,
+          "kind": "head",
+          "name": "priority-ubuntu-24.04-arm-head-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813063,
+          "size": 7055594,
+          "tested": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_from_zero_small_members": [
+          "source-after.json",
+          "source-before.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 7051358,
+        "downloaded_zip_sha256": "386c4c3fc4077fbd7cd47258db3d49ce86dcdd504b6e206222dd5c193d57334a",
+        "from_zero_manifest_read": true,
+        "member_index_sha256": "96238541965ab4f61ca32d41062b00989be78ff74b8f6e1b8e497c233ea4c997",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 27,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 300794,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:386c4c3fc4077fbd7cd47258db3d49ce86dcdd504b6e206222dd5c193d57334a",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "id": 13293943410,
+          "job": 126367534048,
+          "kind": "prospective-merge",
+          "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1",
+          "run": 41760813063,
+          "size": 7051358,
+          "tested": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        }
+      },
+      {
+        "absent_f0_preparation_small_members": [
+          "finalization-not-run.json",
+          "finalization-status.txt",
+          "prepared/source-after.json"
+        ],
+        "acceptance_granted": false,
+        "downloaded_zip_bytes": 24967,
+        "downloaded_zip_sha256": "8cf4e283a9a54d841b42328883e819b3fd83c426ba0343477548e5b95dd68366",
+        "f0_preparation_read": true,
+        "f0_preparation_scope": {
+          "observed_native_business_result": null,
+          "original_planned_confirmations": 6,
+          "original_preparation": {
+            "failure": "FORMAT_FAILED",
+            "head": "41dd661222285728720b97519da1f5a024c7716b",
+            "prepared": false,
+            "schema": "pon-fixed-host-root-f0-prepared-v1",
+            "selector_invocation_attempted": false,
+            "tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e"
+          },
+          "original_workflow_outcomes": {
+            "ARM_OUTCOME": "skipped",
+            "EXECUTION_OUTCOME": "skipped",
+            "F0_SOURCE_AFTER_STATUS": "0",
+            "FINALIZATION_OUTCOME": "failure",
+            "PREPARATION_OUTCOME": "failure",
+            "SOURCE_OUTCOME": "success",
+            "TOOLCHAIN_OUTCOME": "success"
+          },
+          "schema": "trnm-retained-f0-preparation-scope-v1",
+          "scope": "Status describes the F0 business selector using the retained preparation and workflow outcomes. Finalizer unobserved slots preserve the original plan. Actual business confirmation measurement remains null.",
+          "status": "prepare-failed/native-not-executed"
+        },
+        "member_index_sha256": "9e5eb490da1a5d076ade4fdaf23ba3b58f04282c18885403261712a7622a5d8a",
+        "omitted_members": 0,
+        "production_activation": false,
+        "reader_status": "completed",
+        "records": 28,
+        "schema": "trnm-retained-failure-artifact-readback-v6",
+        "selected_text_bytes": 63824,
+        "source_tests_executed": false,
+        "target": {
+          "digest": "sha256:8cf4e283a9a54d841b42328883e819b3fd83c426ba0343477548e5b95dd68366",
+          "head": "41dd661222285728720b97519da1f5a024c7716b",
+          "id": 13293559601,
+          "job": 126376194034,
+          "name": "pon-fixed-host-root-f0-x64-head-41dd661222285728720b97519da1f5a024c7716b-1",
+          "run": 41769682840,
+          "size": 24967
+        }
+      }
+    ],
+    "from_zero": [
+      {
+        "acceptance_granted": false,
+        "artifact": 13294156008,
+        "build": {
+          "cpu_ns": 96138000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "6b1c8cbe0bd9cb3b12baa322a9182419af04da4050d3affc7c9798b1b46e30b5",
+          "stdout_sha256": "bebf1d68dd9642ff161539e25d6e7f93f462583df964062009d2372b28fce6b7",
+          "system_cpu_ns": 42183000,
+          "timed_out": false,
+          "user_cpu_ns": 53955000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 394769643
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "3a098352f31ce08e1672364c9f5c25025061796b287ff454b35dc74f6decda82",
+          "simulated_control": false
+        },
+        "expected_source_kind": "head",
+        "expected_tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "format": {
+          "cpu_ns": 9741748000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 130544000,
+          "timed_out": false,
+          "user_cpu_ns": 9611204000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 39621634042
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48956,
+        "member_sha256": "53a6abc03ad5e5e50b12533a72c4a1e8b70057d3305f62c8b4f4a2077c7d814e",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "2671772aec6903fcc7b53c40c09d18a99b26041a393ef675a1afafb21186d9db",
+          "binary_sha256_before": "2671772aec6903fcc7b53c40c09d18a99b26041a393ef675a1afafb21186d9db",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1542000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 1542000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5519440
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2968000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+              "system_cpu_ns": 989000,
+              "timed_out": false,
+              "user_cpu_ns": 1979000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5344135
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 18616000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "e572d80153b4a3e2d0416647e039c3d80cfccc105b054d4c6ecca19926dc16b5",
+              "system_cpu_ns": 2792000,
+              "timed_out": false,
+              "user_cpu_ns": 15824000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 96565203
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "e572d80153b4a3e2d0416647e039c3d80cfccc105b054d4c6ecca19926dc16b5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2383833000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "f8c20e26cf602864098723a0cf4dbede580fcaeeb5b0a36e6e66203f77472921",
+              "system_cpu_ns": 755801000,
+              "timed_out": false,
+              "user_cpu_ns": 1628032000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 9684281720
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "f8c20e26cf602864098723a0cf4dbede580fcaeeb5b0a36e6e66203f77472921"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1828038000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "c194798d8353251e8da6c51e898a4e4bf40510a7e94aca85747f1f92cdcc8134",
+              "system_cpu_ns": 934444000,
+              "timed_out": false,
+              "user_cpu_ns": 893594000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8601180834
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "c194798d8353251e8da6c51e898a4e4bf40510a7e94aca85747f1f92cdcc8134"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 8175103,
+                "sha256": "3a098352f31ce08e1672364c9f5c25025061796b287ff454b35dc74f6decda82",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 8175103,
+                "sha256": "3a098352f31ce08e1672364c9f5c25025061796b287ff454b35dc74f6decda82",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3480263,
+                "sha256": "f383d21d3208a161b90b6b99bcb497473c7a8eef6a3e5ba47d806e60c460ad9d",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3480263,
+                "sha256": "f383d21d3208a161b90b6b99bcb497473c7a8eef6a3e5ba47d806e60c460ad9d",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 12304467,
+                "sha256": "aba461d7353fd3a5aed7cede65b3dfd5cae7149d22ab86115608a1194001f737",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 12304467,
+                "sha256": "aba461d7353fd3a5aed7cede65b3dfd5cae7149d22ab86115608a1194001f737",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13293304196,
+        "build": {
+          "cpu_ns": 98597000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "7281fa4378dbb9b8337afc086b824f1049d943cd6ea2888ebf723adda6be4420",
+          "system_cpu_ns": 37096000,
+          "timed_out": false,
+          "user_cpu_ns": 61501000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 399427857
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "20220f913f042b9956f5118b3d534ab41b54fc5c819711324af2baf21a9ebebb",
+          "simulated_control": false
+        },
+        "expected_source_kind": "head",
+        "expected_tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "format": {
+          "cpu_ns": 10101561000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 133078000,
+          "timed_out": false,
+          "user_cpu_ns": 9968483000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 40592743926
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48966,
+        "member_sha256": "28460f9cd28c6b3ed0862a665b6638e1875c16cae85b2f832272a8356e25fa86",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "66f63d6e19bbd1f19f0551f9c61ea02075cd1d60ad2b3bca8f31b1bbe008f675",
+          "binary_sha256_before": "66f63d6e19bbd1f19f0551f9c61ea02075cd1d60ad2b3bca8f31b1bbe008f675",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1851000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 1851000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5689842
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 5171000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+              "system_cpu_ns": 2068000,
+              "timed_out": false,
+              "user_cpu_ns": 3103000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5529428
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 33352000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "875097b3b0ab50549600ef58c3b8b7f1a922ebe9e339609c862842753450c26d",
+              "system_cpu_ns": 5885000,
+              "timed_out": false,
+              "user_cpu_ns": 27467000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 184411926
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "875097b3b0ab50549600ef58c3b8b7f1a922ebe9e339609c862842753450c26d"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2465226000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "c983a31570f939555f6b238db59f905f3405361cf03f0dbb151e954e3cfc0961",
+              "system_cpu_ns": 501927000,
+              "timed_out": false,
+              "user_cpu_ns": 1963299000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 10000946989
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "c983a31570f939555f6b238db59f905f3405361cf03f0dbb151e954e3cfc0961"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1701790000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52",
+              "system_cpu_ns": 575879000,
+              "timed_out": false,
+              "user_cpu_ns": 1125911000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8707564095
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 7951700,
+                "sha256": "20220f913f042b9956f5118b3d534ab41b54fc5c819711324af2baf21a9ebebb",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 7951700,
+                "sha256": "20220f913f042b9956f5118b3d534ab41b54fc5c819711324af2baf21a9ebebb",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3473845,
+                "sha256": "bdf43249704f9972fe45892ecb6f0ce804a6e2411178fd7bed84b77d1f40d75f",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3473845,
+                "sha256": "bdf43249704f9972fe45892ecb6f0ce804a6e2411178fd7bed84b77d1f40d75f",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 11281483,
+                "sha256": "e17eb6766f8b966c04bc8c6d3537de596ccad480279c412ea5aa9c4d2d53cd1e",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 11281483,
+                "sha256": "e17eb6766f8b966c04bc8c6d3537de596ccad480279c412ea5aa9c4d2d53cd1e",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13294472662,
+        "build": {
+          "cpu_ns": 116624000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b",
+          "stdout_sha256": "0f9f48003696ffd850ea1f18697af8a7a54642146fd0435c2576918b55e66425",
+          "system_cpu_ns": 34592000,
+          "timed_out": false,
+          "user_cpu_ns": 82032000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 494564652
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "3251a6a8299238d4204e32283f7eead7bfbddf17fcf4a40af360c1d57a33735c",
+          "simulated_control": false
+        },
+        "expected_source_kind": "head",
+        "expected_tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "format": {
+          "cpu_ns": 12902134000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 148906000,
+          "timed_out": false,
+          "user_cpu_ns": 12753228000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 52411050956
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48869,
+        "member_sha256": "77075adb795a63d26e085e9c884748ad454c0d9285a5acbf2b9bc17f8fd1a71d",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "f03520225c77f39357e838b808ca75e2d65549af94cc68360a4f773115413e91",
+          "binary_sha256_before": "f03520225c77f39357e838b808ca75e2d65549af94cc68360a4f773115413e91",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1936000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 1936000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5579159
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 3973000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+              "system_cpu_ns": 993000,
+              "timed_out": false,
+              "user_cpu_ns": 2980000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 79417109
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 23128000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "ec17a5e58af986bf94ed3fa2007d0f858a38364a49dc4373558a33156de10841",
+              "system_cpu_ns": 5550000,
+              "timed_out": false,
+              "user_cpu_ns": 17578000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 99432997
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "ec17a5e58af986bf94ed3fa2007d0f858a38364a49dc4373558a33156de10841"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2444814000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "afcc2d535b127572ac917c3dfd0d9f60407a15ed8ab6e0190fae7da5d438d906",
+              "system_cpu_ns": 665080000,
+              "timed_out": false,
+              "user_cpu_ns": 1779734000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 9819843241
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "afcc2d535b127572ac917c3dfd0d9f60407a15ed8ab6e0190fae7da5d438d906"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1957522000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998",
+              "system_cpu_ns": 906159000,
+              "timed_out": false,
+              "user_cpu_ns": 1051363000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8690269957
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "f9c63a2516505383a674354a336bf8548f4b5304c553cd1a8bf534d1ecf37998"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 7371968,
+                "sha256": "3251a6a8299238d4204e32283f7eead7bfbddf17fcf4a40af360c1d57a33735c",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 7371968,
+                "sha256": "3251a6a8299238d4204e32283f7eead7bfbddf17fcf4a40af360c1d57a33735c",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3475178,
+                "sha256": "920271f4887c12094a7d6469e1fa56d8904192c9919b3d6fcceb4007eb57f5f5",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3475178,
+                "sha256": "920271f4887c12094a7d6469e1fa56d8904192c9919b3d6fcceb4007eb57f5f5",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 10586671,
+                "sha256": "4f8da87368f52c19ade527b01533ba46533442e9b814e0bd2ebc4dfd5177b773",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 10586671,
+                "sha256": "4f8da87368f52c19ade527b01533ba46533442e9b814e0bd2ebc4dfd5177b773",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13294038025,
+        "build": {
+          "cpu_ns": 108567000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b",
+          "stdout_sha256": "b8cd3c5deae05d63b49496b040dcd7452ca5e7ebf515cef02ab8d16c865142de",
+          "system_cpu_ns": 41833000,
+          "timed_out": false,
+          "user_cpu_ns": 66734000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 409888876
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "0b7e153ea9396ce2d86d51b547b85aeeaf40b08c8aef98842b266884eaf8ae3c",
+          "simulated_control": false
+        },
+        "expected_source_kind": "prospective-merge",
+        "expected_tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+        "format": {
+          "cpu_ns": 12597194000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 134197000,
+          "timed_out": false,
+          "user_cpu_ns": 12462997000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 51300082689
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48942,
+        "member_sha256": "4ceb23d047196f5e0b346a5cb8a81166d15fd77feeebb311d0e2417b90eb67b1",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "f03520225c77f39357e838b808ca75e2d65549af94cc68360a4f773115413e91",
+          "binary_sha256_before": "f03520225c77f39357e838b808ca75e2d65549af94cc68360a4f773115413e91",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1786000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 1786000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5499838
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 3530000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+              "system_cpu_ns": 0,
+              "timed_out": false,
+              "user_cpu_ns": 3530000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 81079128
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 21794000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "7abf1dd940e113ac6ade16a8340fc05d2418eefa27419732ed2593b4522f0ab2",
+              "system_cpu_ns": 4953000,
+              "timed_out": false,
+              "user_cpu_ns": 16841000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 30794516
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "7abf1dd940e113ac6ade16a8340fc05d2418eefa27419732ed2593b4522f0ab2"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2433512000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "7068aaae77940d18b863adc08e761436a7275b86d6326d2dfb7b0302b47c105b",
+              "system_cpu_ns": 619694000,
+              "timed_out": false,
+              "user_cpu_ns": 1813818000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 9868431661
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "7068aaae77940d18b863adc08e761436a7275b86d6326d2dfb7b0302b47c105b"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1917068000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b",
+              "system_cpu_ns": 886434000,
+              "timed_out": false,
+              "user_cpu_ns": 1030634000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8607546462
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b001c3354385484589b4faed4238b6b6489c53fa99984e93b6334bd4869e2e2b"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 7626322,
+                "sha256": "0b7e153ea9396ce2d86d51b547b85aeeaf40b08c8aef98842b266884eaf8ae3c",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 7626322,
+                "sha256": "0b7e153ea9396ce2d86d51b547b85aeeaf40b08c8aef98842b266884eaf8ae3c",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3473513,
+                "sha256": "25aa9b7dc8ce6a1ebe3d306f0be23d47233bdc6778a2b27aa549f85f83308355",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3473513,
+                "sha256": "25aa9b7dc8ce6a1ebe3d306f0be23d47233bdc6778a2b27aa549f85f83308355",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 10881158,
+                "sha256": "f51d6c0cbac9fba0678665442100e5305d03d19bb2d16c3f221e74c9f607c74b",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 10881158,
+                "sha256": "f51d6c0cbac9fba0678665442100e5305d03d19bb2d16c3f221e74c9f607c74b",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13294522239,
+        "build": {
+          "cpu_ns": 96093000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "3e387a8770b0f1cb405015fdc27a5b6815daea9b22b24ee767337abfce8c68cc",
+          "system_cpu_ns": 27455000,
+          "timed_out": false,
+          "user_cpu_ns": 68638000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 397259420
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "6d60c6a6d1a75f299d6126bb3327bbfa88a6e319f5385702d603323ea0b08216",
+          "simulated_control": false
+        },
+        "expected_source_kind": "head",
+        "expected_tested_commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "format": {
+          "cpu_ns": 10081098000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 128369000,
+          "timed_out": false,
+          "user_cpu_ns": 9952729000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 40499154303
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48935,
+        "member_sha256": "009f199cce7de8f4eb143ce3f07b3a395190631e4bfd04af6c429e41a458adb9",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "fa11bdcd9689a80657c696f5f2a3d29cb34a2086fae4ca3d3e2b12969e54fcea",
+          "binary_sha256_before": "fa11bdcd9689a80657c696f5f2a3d29cb34a2086fae4ca3d3e2b12969e54fcea",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2023000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 2023000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5610706
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 5371000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+              "system_cpu_ns": 1074000,
+              "timed_out": false,
+              "user_cpu_ns": 4297000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 10601194
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 32683000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "47289e6508a3669a4f79b9cb3cd93fb19bd5df4ce2524377a2d734853b0e63f0",
+              "system_cpu_ns": 5106000,
+              "timed_out": false,
+              "user_cpu_ns": 27577000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 106750645
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "47289e6508a3669a4f79b9cb3cd93fb19bd5df4ce2524377a2d734853b0e63f0"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2458226000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "d23e691ab6b43d36af7cb1f51b6987469e58def34d6eb3c455d13c277abd5a1e",
+              "system_cpu_ns": 455721000,
+              "timed_out": false,
+              "user_cpu_ns": 2002505000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 9988983524
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "d23e691ab6b43d36af7cb1f51b6987469e58def34d6eb3c455d13c277abd5a1e"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1688695000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "e77a4ed81c02300e63c70060a738f8df274c9aad7b204fdb497c303ef8199821",
+              "system_cpu_ns": 598421000,
+              "timed_out": false,
+              "user_cpu_ns": 1090274000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8713161623
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "e77a4ed81c02300e63c70060a738f8df274c9aad7b204fdb497c303ef8199821"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "01627151f3ab50750eac2adeb46d8883a601265f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 8031765,
+                "sha256": "6d60c6a6d1a75f299d6126bb3327bbfa88a6e319f5385702d603323ea0b08216",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 8031765,
+                "sha256": "6d60c6a6d1a75f299d6126bb3327bbfa88a6e319f5385702d603323ea0b08216",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3474394,
+                "sha256": "f062aeb5e368ef23ab584e08cfb724835a6db17ea1140396ced15fbe4add1e87",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3474394,
+                "sha256": "f062aeb5e368ef23ab584e08cfb724835a6db17ea1140396ced15fbe4add1e87",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 11309760,
+                "sha256": "214afc250a18cc75ff4e3cf72e7405da2bb287df2080fe2636afaad082fef97f",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 11309760,
+                "sha256": "214afc250a18cc75ff4e3cf72e7405da2bb287df2080fe2636afaad082fef97f",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      },
+      {
+        "acceptance_granted": false,
+        "artifact": 13293943410,
+        "build": {
+          "cpu_ns": 98397000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1",
+          "stdout_sha256": "291206f02b3eef0bcad333cbbc3ef91e1d91ba514adcce348c62832b82f21302",
+          "system_cpu_ns": 33455000,
+          "timed_out": false,
+          "user_cpu_ns": 64942000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 400293153
+        },
+        "confirmation_observation": {
+          "original_gate_validated": false,
+          "original_gate_validation_error": "CONFIRMATION_TARGET",
+          "schema": "trnm-original-confirmation-observation-v1",
+          "sha256": "b057ba5d53c19bf19c316ffc7580d6bf418be12b1300a4cd02c86ed15208a7cd",
+          "simulated_control": false
+        },
+        "expected_source_kind": "prospective-merge",
+        "expected_tested_commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+        "format": {
+          "cpu_ns": 10033912000,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "exit_code": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "system_cpu_ns": 130965000,
+          "timed_out": false,
+          "user_cpu_ns": 9902947000,
+          "wait4_cpu_resolution_ns": 1000,
+          "wall_ns": 40302806648
+        },
+        "member": "from-zero-native/manifest.json",
+        "member_bytes": 48891,
+        "member_sha256": "140062db7a6bb8f0dba7df65800ef464e2cd2b2228f996166f32a0e8c5321748",
+        "original": {
+          "all_named_tests_passed": true,
+          "binary_sha256_after": "fa11bdcd9689a80657c696f5f2a3d29cb34a2086fae4ca3d3e2b12969e54fcea",
+          "binary_sha256_before": "fa11bdcd9689a80657c696f5f2a3d29cb34a2086fae4ca3d3e2b12969e54fcea",
+          "execution_finished": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "format_passed": true,
+          "independent_wan_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "schema": "trnm-from-zero-native-execution-v3",
+          "source_recompiled": true,
+          "work_hardness_accepted": false
+        },
+        "runs": [
+          {
+            "failure": null,
+            "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2066000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+              "system_cpu_ns": 2066000,
+              "timed_out": false,
+              "user_cpu_ns": 0,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 5559238
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 5412000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+              "system_cpu_ns": 902000,
+              "timed_out": false,
+              "user_cpu_ns": 4510000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 10520619
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+          },
+          {
+            "failure": null,
+            "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 32676000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "3f5b53e7bb84004dfab77dfef9cffc4eaa633ee504260356a9c1592cf33b80f8",
+              "system_cpu_ns": 5105000,
+              "timed_out": false,
+              "user_cpu_ns": 27571000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 101550872
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "3f5b53e7bb84004dfab77dfef9cffc4eaa633ee504260356a9c1592cf33b80f8"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 2448709000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "a27ee6fb7ad8fe9c1eb1c3e21d9be8d24ceb0b72a89ec1f3517e517208cca0cb",
+              "system_cpu_ns": 471025000,
+              "timed_out": false,
+              "user_cpu_ns": 1977684000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 9907471425
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "a27ee6fb7ad8fe9c1eb1c3e21d9be8d24ceb0b72a89ec1f3517e517208cca0cb"
+          },
+          {
+            "failure": null,
+            "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "named_execution": {
+              "executed_tests": 1,
+              "result": "PASS",
+              "scope": "named-libtest-execution-only",
+              "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+            },
+            "passed": true,
+            "process": {
+              "cpu_ns": 1699133000,
+              "cpu_scope": "entire child, not apportioned to nested wall intervals",
+              "exit_code": 0,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "500620ccd15f0190489e388b7e5fa232802e86e024a8436f35e6a8acda85d338",
+              "system_cpu_ns": 599511000,
+              "timed_out": false,
+              "user_cpu_ns": 1099622000,
+              "wait4_cpu_resolution_ns": 1000,
+              "wall_ns": 8695390486
+            },
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "500620ccd15f0190489e388b7e5fa232802e86e024a8436f35e6a8acda85d338"
+          }
+        ],
+        "schema": "trnm-retained-from-zero-terminal-readback-v1",
+        "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+        "source_tests_executed": false,
+        "sources": {
+          "source_after": {
+            "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          },
+          "source_before": {
+            "commit": "554a76fb8e21f160806692c753ca3ea6ad53a42f",
+            "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0",
+            "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+          }
+        },
+        "terminal": {
+          "acceptance_passed": false,
+          "acceptance_stages": {
+            "confirmation_report": {
+              "before_validation": {
+                "bytes": 7937368,
+                "sha256": "b057ba5d53c19bf19c316ffc7580d6bf418be12b1300a4cd02c86ed15208a7cd",
+                "state": "present"
+              },
+              "error": "CONFIRMATION_TARGET",
+              "path": "confirmation/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 7937368,
+                "sha256": "b057ba5d53c19bf19c316ffc7580d6bf418be12b1300a4cd02c86ed15208a7cd",
+                "state": "present"
+              },
+              "status": "failed"
+            },
+            "service_report": {
+              "before_validation": {
+                "bytes": 3474125,
+                "sha256": "373a665c3cd46bfaf8fb5214138037d86e53e9eaf50e3ad1e118f223b5765777",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 3474125,
+                "sha256": "373a665c3cd46bfaf8fb5214138037d86e53e9eaf50e3ad1e118f223b5765777",
+                "state": "present"
+              },
+              "status": "passed"
+            },
+            "sustained_report": {
+              "before_validation": {
+                "bytes": 11281443,
+                "sha256": "812525fa380928b5ffd245a654bd40f05d278e3ae7e51762daa14593a649ed4a",
+                "state": "present"
+              },
+              "error": null,
+              "path": "native/sustained/report.json",
+              "retained_matches_before_validation": true,
+              "retained_report": {
+                "bytes": 11281443,
+                "sha256": "812525fa380928b5ffd245a654bd40f05d278e3ae7e51762daa14593a649ed4a",
+                "state": "present"
+              },
+              "status": "passed"
+            }
+          },
+          "finalization_completed": true,
+          "native_execution_completed": true,
+          "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+          "native_invocations": [
+            {
+              "exit_code": 0,
+              "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "status": "returned",
+              "timed_out": false
+            },
+            {
+              "exit_code": 0,
+              "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "status": "returned",
+              "timed_out": false
+            }
+          ],
+          "schema": "trnm-from-zero-native-terminal-v1",
+          "subsequent_ci_steps_observed": false,
+          "unexecuted_acceptance_stages": [],
+          "unexecuted_native_tests": []
+        }
+      }
+    ],
+    "f0": [
+      {
+        "acceptance_granted": false,
+        "all_planned_rounds": [
+          {
+            "actual_ended_ns": 30001996243,
+            "actual_started_ns": 1001508610,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29001996243,
+            "end_lateness_from_four_second_deadline_ns": 25001996243,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "baseline",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 1508610
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": 30059899379,
+            "actual_started_ns": 1000645332,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29059899379,
+            "end_lateness_from_four_second_deadline_ns": 25059899379,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "valid-work-root",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 645332
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          }
+        ],
+        "artifact": 13291962180,
+        "denominator_fields": {
+          "controller_resource_failure": null,
+          "controller_resources_complete": true,
+          "four_second_slo_successes": 0,
+          "native_complete_success": null,
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "native_result_observed": null,
+          "planned_business_packet_exposures": 42,
+          "planned_confirmations": 6,
+          "report_failure": null,
+          "report_observed": null
+        },
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126353223160,
+        "measured_run": 41760812979,
+        "member": "execution/results.json",
+        "member_bytes": 73770,
+        "member_sha256": "83cdabadbb9bff9b67c3d30b19fd467aa75c58b07003f18bf43dc4f734ee8c24",
+        "original_fields": {
+          "all_services_known_empty": null,
+          "complete_success": false,
+          "controller_resources_complete": true,
+          "failure": "NATIVE_F0_FAILED",
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "report_validation_failure": "BASELINE_MUST_PASS",
+          "schema": "pon-fixed-host-root-f0-execution-v1",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        },
+        "production_activation": false,
+        "rounds_available": true,
+        "schema": "trnm-retained-f0-terminal-readback-v1",
+        "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+        "services": null,
+        "services_available": false,
+        "source_tests_executed": false,
+        "step_returncode": 101
+      },
+      {
+        "acceptance_granted": false,
+        "all_planned_rounds": [
+          {
+            "actual_ended_ns": 30001996243,
+            "actual_started_ns": 1001508610,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29001996243,
+            "end_lateness_from_four_second_deadline_ns": 25001996243,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "baseline",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 1508610
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": 30059899379,
+            "actual_started_ns": 1000645332,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": 29059899379,
+            "end_lateness_from_four_second_deadline_ns": 25059899379,
+            "four_second_slo_met": false,
+            "observed_exactly_once": true,
+            "phase": "valid-work-root",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": 645332
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          }
+        ],
+        "artifact": 13291962180,
+        "denominator_fields": {
+          "controller_resource_failure": null,
+          "controller_resources_complete": true,
+          "four_second_slo_successes": 0,
+          "native_complete_success": false,
+          "native_result_failure": "NATIVE_F0_FAILED",
+          "native_result_observed": true,
+          "planned_business_packet_exposures": 42,
+          "planned_confirmations": 6,
+          "report_failure": null,
+          "report_observed": true
+        },
+        "measured_head": "01627151f3ab50750eac2adeb46d8883a601265f",
+        "measured_job": 126353223160,
+        "measured_run": 41760812979,
+        "member": "finalization/result.json",
+        "member_bytes": 21435,
+        "member_sha256": "304e99e5d3fe63277180e83109e0a87e9ac4e4294a25f0e75e1b794e79a98144",
+        "original_fields": {
+          "all_services_known_empty": true,
+          "complete_success": false,
+          "controller_resources_complete": null,
+          "failure": null,
+          "head": "01627151f3ab50750eac2adeb46d8883a601265f",
+          "native_result_failure": null,
+          "report_validation_failure": null,
+          "schema": "fixed-host-root-f0-finalization-v1",
+          "tree": "e0a48a52802852a08bf80ffc564c23e20bc91358"
+        },
+        "production_activation": false,
+        "rounds_available": true,
+        "schema": "trnm-retained-f0-terminal-readback-v1",
+        "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+        "services": [
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": null,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "controller",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-f0-41760812979-1-fixed-host-root-f0.service"
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": true,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "baseline",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-41760812979-1-fixed-host-root-f0-baseline-5387.service"
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": true,
+            "failure": null,
+            "known_empty": true,
+            "observed_empty_at_readback": true,
+            "ownership_validated": true,
+            "phase": "valid-work-root",
+            "remaining": "observed-empty",
+            "service": "trnm-fixed-root-41760812979-1-fixed-host-root-f0-valid-work-root-5479.service"
+          }
+        ],
+        "services_available": true,
+        "source_tests_executed": false,
+        "step_returncode": null
+      },
+      {
+        "acceptance_granted": false,
+        "all_planned_rounds": [
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "baseline",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 0,
+            "scheduled_offset_ns": 1000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 1,
+            "scheduled_offset_ns": 5000000000,
+            "start_lateness_from_schedule_ns": null
+          },
+          {
+            "actual_ended_ns": null,
+            "actual_started_ns": null,
+            "confirmed_inside_original_window": false,
+            "elapsed_from_scheduled_ns": null,
+            "end_lateness_from_four_second_deadline_ns": null,
+            "four_second_slo_met": false,
+            "observed_exactly_once": false,
+            "phase": "valid-work-root",
+            "round": 2,
+            "scheduled_offset_ns": 9000000000,
+            "start_lateness_from_schedule_ns": null
+          }
+        ],
+        "artifact": 13293559601,
+        "denominator_fields": {
+          "controller_resource_failure": null,
+          "controller_resources_complete": false,
+          "four_second_slo_successes": 0,
+          "native_complete_success": false,
+          "native_result_failure": "[Errno 2] No such file or directory: '/home/runner/work/_temp/pon-fixed-host-root-f0-41769682840-1/execution'",
+          "native_result_observed": false,
+          "planned_business_packet_exposures": 42,
+          "planned_confirmations": 6,
+          "report_failure": "[Errno 2] No such file or directory: '/home/runner/work/_temp/pon-fixed-host-root-f0-41769682840-1/execution'",
+          "report_observed": false
+        },
+        "measured_head": "41dd661222285728720b97519da1f5a024c7716b",
+        "measured_job": 126376194034,
+        "measured_run": 41769682840,
+        "member": "finalization/result.json",
+        "member_bytes": 12794,
+        "member_sha256": "e73446741c8890e433bfb9c9540e62d8f13c97901f984530d06b461fe9834e6e",
+        "original_fields": {
+          "all_services_known_empty": false,
+          "complete_success": false,
+          "controller_resources_complete": null,
+          "failure": null,
+          "head": "41dd661222285728720b97519da1f5a024c7716b",
+          "native_result_failure": null,
+          "report_validation_failure": null,
+          "schema": "fixed-host-root-f0-finalization-v1",
+          "tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e"
+        },
+        "production_activation": false,
+        "rounds_available": true,
+        "schema": "trnm-retained-f0-terminal-readback-v1",
+        "scope": "Literal retained F0 denominator and cleanup fields; missing values remain null; no changed confirmation threshold or new native verdict; all original selected fields and ZIP retained.",
+        "services": [
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": null,
+            "failure": "FROZEN_PREPARATION_REQUIRED",
+            "known_empty": false,
+            "observed_empty_at_readback": false,
+            "ownership_validated": false,
+            "phase": "controller",
+            "remaining": "unknown",
+            "service": null
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": false,
+            "failure": "FROZEN_PREPARATION_REQUIRED",
+            "known_empty": false,
+            "observed_empty_at_readback": false,
+            "ownership_validated": false,
+            "phase": "baseline",
+            "remaining": "unknown",
+            "service": null
+          },
+          {
+            "cleanup_attempted": false,
+            "controller_terminal_before_phase_observation": false,
+            "failure": "FROZEN_PREPARATION_REQUIRED",
+            "known_empty": false,
+            "observed_empty_at_readback": false,
+            "ownership_validated": false,
+            "phase": "valid-work-root",
+            "remaining": "unknown",
+            "service": null
+          }
+        ],
+        "services_available": true,
+        "source_tests_executed": false,
+        "step_returncode": null
+      }
+    ]
+  },
+  "selected_original_native_terminal_lines": [
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.67s"
+    },
+    {
+      "artifact": 13294156008,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.60s"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.18s"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.99s"
+    },
+    {
+      "artifact": 13293304196,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.70s"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.08s"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.81s"
+    },
+    {
+      "artifact": 13294472662,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.68s"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.02s"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.08s"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.86s"
+    },
+    {
+      "artifact": 13294038025,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.60s"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.10s"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.98s"
+    },
+    {
+      "artifact": 13294522239,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.71s"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 3,
+      "text": "test caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct ... ok"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.10s"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 3,
+      "text": "test from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection ... ok"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "line": 5,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "line": 7,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.90s"
+    },
+    {
+      "artifact": 13293943410,
+      "member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "line": 6,
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.69s"
+    }
+  ],
+  "source_tests_executed_by_reader": false,
+  "acceptance_granted": false,
+  "production_activation": false
+}

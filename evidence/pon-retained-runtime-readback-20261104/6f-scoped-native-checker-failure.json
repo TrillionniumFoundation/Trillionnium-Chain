@@ -1,0 +1,348 @@
+{
+  "schema": "pon-scoped-native-original-command-and-checker-outcome-v1",
+  "scope": "One frozen supplementary execution on integration source 6f458c4f. All original commands are retained; a composite-parent transcript checker failed after the native command returned successfully. This is not a green job or performance qualification.",
+  "diagnostic_workflow_commit": "c94557593bd858c8622be3af959b6e9331452c90",
+  "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+  "run": 41772202866,
+  "job": 126384242062,
+  "attempt": 1,
+  "conclusion": "failure",
+  "artifact": {
+    "id": 13296192102,
+    "name": "scoped-state-ubuntu-24.04-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-1",
+    "size_in_bytes": 1062125,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13296192102",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13296192102/zip",
+    "expired": false,
+    "created_at": "2026-11-04T04:33:44Z",
+    "expires_at": "2026-11-18T04:33:43Z",
+    "updated_at": "2026-11-04T04:33:44Z",
+    "digest": "sha256:4054f91f330b2d819c9cb4fea1857ad2cae992aa42a0cd539b2a286f8c2b7854",
+    "workflow_run": {
+      "id": 41772202866,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-retained-failure-readback-20261104",
+      "head_sha": "c94557593bd858c8622be3af959b6e9331452c90"
+    }
+  },
+  "source_guards": [
+    {
+      "base": null,
+      "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 931951117,
+      "tracked_entries": 8026,
+      "tracked_worktree_verified": true
+    },
+    {
+      "base": null,
+      "candidate": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+      "tested_tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 931951117,
+      "tracked_entries": 8026,
+      "tracked_worktree_verified": true
+    }
+  ],
+  "project_audits": [
+    {
+      "result": "PASS",
+      "mode": "--audit",
+      "project": "trillionnium-chain",
+      "packages": 26,
+      "branch": "",
+      "remote_policy_mutated": false
+    },
+    {
+      "result": "PASS",
+      "mode": "--audit",
+      "project": "trillionnium-chain",
+      "packages": 26,
+      "branch": "",
+      "remote_policy_mutated": false
+    }
+  ],
+  "original_command_receipts": [
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/test_ci_source_integrity.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/test_record_pq_native_command.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_research_integration.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_chain_claim_guard.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_authority_surface_scan.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/pq-source.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/pq-hold.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/repository.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/inventory.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/compiler.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/locked-graph.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/format.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/build.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_is_bound_to_exact_state_and_never_hides_account_changes.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_preserves_complete_root_and_late_error_priority.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-current_projection_rereads_corrupt_sql_and_preserves_every_cancellation.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-actual_stored_graph_damage_is_reread_after_a_receipt.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_foreign_sql_change_forces_original_fresh_state_validation.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-admission_parent_keeps_second_boundary_cancellation_and_error_identity.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cancellation_terminates_only_staging_and_preserves_full_active_state.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_authorizer_blocks_trigger_writes_and_restores_after_error.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/scope-three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/sigkill-parent.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/export-native_authenticated_signed_growth_branches_reopen_and_compact_queries.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/export-authenticated_migration_preserves_signed_branches_and_irreversible_local_facts.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-environment.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-python.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/oracle-dependencies.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/independent-storage-controls.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/independent-native-storage.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/independent-native-migration.json",
+      "status": "command_succeeded"
+    },
+    {
+      "exit_code": 0,
+      "receipt": "/home/runner/work/_temp/scoped-state-native/clippy.json",
+      "status": "command_succeeded"
+    }
+  ],
+  "original_commands_count": 42,
+  "original_commands_exit_zero": 42,
+  "original_native_terminal_summaries": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.01s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.27s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.04s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.05s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.08s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.12s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.06s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.03s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.13s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.06s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 2.09s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.04s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.65s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.11s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.16s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.10s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.04s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.23s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 1.79s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 3.09s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 999 filtered out; finished in 0.42s"
+  ],
+  "native_scopes": {
+    "scoped_exact_selectors": 19,
+    "unchanged_five_cut_sigkill_parent": 1,
+    "native_export_selectors": 2,
+    "independent_oracle_controls": 29,
+    "actual_export_cli_passes": 2,
+    "strict_node_clippy": "passed"
+  },
+  "actual_oracle_cli_terminal": [
+    "{\"output\": \"/home/runner/work/_temp/scoped-state-native/native-authenticated-state/oracle.json\", \"result\": \"PASS\"}",
+    "{\"output\": \"/home/runner/work/_temp/scoped-state-native/authenticated-migration/oracle.json\", \"result\": \"PASS\"}"
+  ],
+  "actual_helper_failure": [
+    "required-native-test: expected exactly one test invocation"
+  ],
+  "reason": "The nineteenth exact selector is the original three-cut reorg SIGKILL parent. Its three killed child libtest invocations share stdout. The generic one-invocation checker refused those additional invocations, after the parent returned 0 with one test passed, no failed or ignored tests. Its failure remains retained.",
+  "correction": {
+    "workflow_blob": "02c9165b1892362b70ce257f2bf0bb2d7bdeaecf",
+    "original_workflow_blob": "0520bcb9ee2e25d2d79ee2d78cdce85e08b72218",
+    "original_lines_preserved_in_order": true,
+    "original_selectors_commands_profiles_timeouts_assertions_unchanged": true,
+    "normal_single_selector_checkers_unchanged": 18,
+    "composite_reader": "Require the original one-parent/three-child order, three ordered original cuts, signal 9 and original recovery/debt fields, then pass the remaining original parent transcript to the unchanged required-native-test validator.",
+    "reader_positive_controls": 1,
+    "reader_negative_controls": 18,
+    "reader_controls_executed_at_document_creation": false,
+    "correction_native_execution_at_document_creation": "pending",
+    "child_invocations_add_unique_tests": false
+  },
+  "qualification": {
+    "unique_native_tests_added": 0,
+    "performance_acceptance_granted": false,
+    "production_activation": false
+  }
+}
