@@ -1,0 +1,45 @@
+{
+  "schema": "trnm.cell.final-source-controls-observation.v1",
+  "tested_commit": "7b2677e023263136297a460a727ced70280061ea",
+  "tested_tree": "c03cf51a10627cec28fd6e0271caff05a234d273",
+  "source_before_after_equal": true,
+  "tracked_entries_verified": 8850,
+  "tracked_bytes_verified": 942199426,
+  "source_negative_tests": {
+    "ci_source_integrity": 34,
+    "pq_source_integrity": 35,
+    "claim_guard": 22,
+    "authority_surface": 11
+  },
+  "source_negative_tests_total": 102,
+  "format": "PASS",
+  "native_inventory": "PASS",
+  "source_pins": 442,
+  "required_paths": 359,
+  "ci_contract": "PASS",
+  "repository": {
+    "activation": false,
+    "head": "7b2677e023263136297a460a727ced70280061ea",
+    "local_links": 2555,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1123,
+    "source_state": "committed-clean",
+    "tree": "c03cf51a10627cec28fd6e0271caff05a234d273",
+    "workspace_packages": 26
+  },
+  "workspace_members": 26,
+  "resolved_platform_packages": 175,
+  "lock_packages": 180,
+  "lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+  "native_tests_executed_by_this_receipt": 0,
+  "clippy_executed_by_this_receipt": false,
+  "qualification_promoted": false,
+  "production_activation": false,
+  "notes": [
+    "Native storage successes remain bound to C; whole-workspace strict Clippy successes remain bound to C/E.",
+    "The E selected Node compilation failed before tests, and the later resource scheduler started no retry.",
+    "Later source-preserving merges do not relabel these source-control executions."
+  ]
+}

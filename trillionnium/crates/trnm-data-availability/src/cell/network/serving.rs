@@ -13,7 +13,7 @@ pub struct CellServeLimitsV1 {
 }
 
 impl CellServeLimitsV1 {
-    fn validate(self) -> CellResultV1<()> {
+    pub(super) fn validate(self) -> CellResultV1<()> {
         CellPeerLimitsV1 {
             request_timeout: self.request_timeout,
             overall_timeout: self.overall_timeout,
@@ -63,7 +63,7 @@ fn listener_wait_timeout(deadline: Instant, now: Instant) -> Duration {
 /// the original service deadline before retrying the nonblocking accept.
 /// Interrupted polls return to that same outer loop without a timeout reset.
 #[cfg(unix)]
-fn wait_for_listener(listener: &TcpListener, deadline: Instant) -> io::Result<bool> {
+pub(super) fn wait_for_listener(listener: &TcpListener, deadline: Instant) -> io::Result<bool> {
     use rustix::event::{poll, PollFd, PollFlags, Timespec};
 
     let wait = listener_wait_timeout(deadline, Instant::now());
@@ -88,7 +88,7 @@ fn wait_for_listener(listener: &TcpListener, deadline: Instant) -> io::Result<bo
 }
 
 #[cfg(not(unix))]
-fn wait_for_listener(_listener: &TcpListener, _deadline: Instant) -> io::Result<bool> {
+pub(super) fn wait_for_listener(_listener: &TcpListener, _deadline: Instant) -> io::Result<bool> {
     // Preserve the existing portable path where Unix polling is unavailable.
     thread::sleep(Duration::from_millis(5));
     Ok(false)
@@ -109,12 +109,35 @@ pub fn serve_cells_bounded(
     serve_cells_inner(listener, cache, shutdown, limits, &|_| ())
 }
 
+/// Explicitly admit the separate TCI1/TIS1 bounded inventory profile on this
+/// same server. Existing TCQ1/TCS1 byte requests retain their original meaning.
+/// Inventory is a transient length/presence hint, never proof of possession.
+pub fn serve_cells_bounded_with_availability(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellServeLimitsV1,
+) -> CellResultV1<CellServeReportV1> {
+    serve_cells_profile(listener, cache, shutdown, limits, &|_| (), true)
+}
+
 fn serve_cells_inner(
     listener: &TcpListener,
     cache: &Path,
     shutdown: &AtomicBool,
     limits: CellServeLimitsV1,
     observed: &(impl Fn(&CellServeReportV1) + Sync),
+) -> CellResultV1<CellServeReportV1> {
+    serve_cells_profile(listener, cache, shutdown, limits, observed, false)
+}
+
+fn serve_cells_profile(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellServeLimitsV1,
+    observed: &(impl Fn(&CellServeReportV1) + Sync),
+    allow_availability: bool,
 ) -> CellResultV1<CellServeReportV1> {
     limits.validate()?;
     let deadline = Instant::now() + limits.overall_timeout;
@@ -156,11 +179,12 @@ fn serve_cells_inner(
                     match thread::Builder::new()
                         .name("cell-serve".into())
                         .spawn_scoped(scope, move || {
-                            let complete = serve_one_budgeted(
+                            let complete = serve_one_profile(
                                 &mut stream,
                                 &store,
                                 request_deadline,
                                 Some(budget),
+                                allow_availability,
                             )
                             .is_ok();
                             (store, complete)

@@ -13,9 +13,10 @@ added to Git. Reproduce from the containing commit with the original limits.
 
 The source and log identities below bind tested model commit
 `592969aa0c0e0e3246b1e156f6f0bc5951f9aa01`. A later
-[source-preserving merge record](merge-validation.json) keeps the concurrent W1
-integration and both histories. Its model runtime, M06, dependency inputs and
-source pins remain unchanged; only the combined plan gains concurrent text.
+[source-preserving merge record](merge-validation.json) keeps concurrent W1
+and Cell-storage histories. The model runtime and M06 resolved dependency
+closure remain unchanged; the combined plan and corpus source inventory gain
+concurrent entries, and M09 keeps its own test/qualification scope.
 The original source-hash map is historical and is not silently rebound to that
 merged plan. Whole-tree merge readback is reported separately in PR #688.
 

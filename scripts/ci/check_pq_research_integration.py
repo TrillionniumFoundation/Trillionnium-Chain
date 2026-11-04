@@ -290,6 +290,48 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
 ))
+# The complete Cell model-storage composition is part of this candidate even
+# when no path contains a PQ marker. Pins cover the actual codecs, payload
+# readers, protocol versions and negative controls. This adds no publisher,
+# CURRENT/FinalUse, independent-retention or production qualification claim.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+    "docs/development/specs/pon/CELL_RETENTION_V1.md",
+    "formal/pon-nakamoto-v1/model_release_root.py",
+    "formal/pon-nakamoto-v1/test_model_release_root.py",
+    "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json",
+    "trillionnium/crates/trnm-data-availability/src/lib.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_residency_observer.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/dedup_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_reader.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

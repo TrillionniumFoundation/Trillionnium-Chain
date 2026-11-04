@@ -1,3 +1,4 @@
+use super::super::selection;
 use super::*;
 use crate::cell::{
     network::{self, RequestContext, ResponseBudget},
@@ -133,6 +134,9 @@ struct ObservedAdvertisement {
     // Fixed when this exact record was actually received. Equal-record retries
     // cannot renew its monotonic lease; a higher sequence replaces the record.
     expires: Instant,
+    // Actual bootstrap positions for this exact current statement, not claims
+    // supplied by an advertiser or inherited from a superseded sequence.
+    sources: u8,
 }
 
 pub(super) fn discover(
@@ -157,7 +161,7 @@ pub(super) fn discover(
     // and cannot manufacture a candidate when no bootstrap supplies one.
     directory.records(options.request, wall_now()?.as_secs(), transport.overall)?;
     for _round in 0..2 {
-        for bootstrap in &options.bootstraps {
+        for (source, bootstrap) in options.bootstraps.iter().enumerate() {
             // Do not stop at eight temporary endpoints: a later bootstrap in
             // this same bounded round may carry their newer signed high water.
             let response = exchange(
@@ -262,6 +266,7 @@ pub(super) fn discover(
                     continue;
                 }
                 check_deadline(expiry)?;
+                let mut sources = 1_u8 << source;
                 if let Some(prior) = observed.get(&owner) {
                     if record.statement.sequence < prior.record.statement.sequence {
                         observation.rejected_records += 1;
@@ -273,6 +278,7 @@ pub(super) fn discover(
                             "discovery observed identity conflict",
                         )?;
                         expiry = expiry.min(prior.expires);
+                        sources |= prior.sources;
                     }
                 } else {
                     require(
@@ -285,6 +291,7 @@ pub(super) fn discover(
                     ObservedAdvertisement {
                         record,
                         expires: expiry,
+                        sources,
                     },
                 );
             }
@@ -303,7 +310,7 @@ pub(super) fn discover(
         .into_iter()
         .map(|record| (record.statement.owner, record))
         .collect();
-    let mut candidates: Vec<(SocketAddr, Instant)> = Vec::new();
+    let mut candidates = Vec::new();
     for (owner, seen) in observed {
         if current.get(&owner) != Some(&seen.record)
             || seen.record.statement.withdrawn
@@ -322,16 +329,16 @@ pub(super) fn discover(
         if Instant::now() >= expiry {
             continue;
         }
-        let endpoint = seen.record.statement.endpoint;
-        if let Some((_, existing)) = candidates.iter_mut().find(|(peer, _)| *peer == endpoint) {
-            // Distinct current owners may independently advertise one address.
-            // One live current hint suffices: use their latest eligible expiry,
-            // never a superseded record from any one identity.
-            *existing = (*existing).max(expiry);
-        } else if candidates.len() < MAX_DISCOVERED_PROVIDERS {
-            candidates.push((endpoint, expiry));
-        }
+        // Defer the eight-endpoint limit until every eligible current identity
+        // has competed across observed sources and advertised network prefixes.
+        candidates.push(selection::Candidate {
+            owner,
+            endpoint: seen.record.statement.endpoint,
+            sources: seen.sources,
+            expires: expiry,
+        });
     }
+    let candidates = selection::select(candidates)?;
     if candidates.is_empty() && observation.capacity_rejections > 0 {
         return Err(CellErrorV1::Invalid("discovery identity capacity"));
     }
