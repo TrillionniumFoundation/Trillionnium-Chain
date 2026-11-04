@@ -37,6 +37,30 @@ fn actual_transparent_proof_verifies_complete_original_statement() {
 }
 
 #[test]
+fn retained_receipt_legacy_bytes_roundtrip_and_inner_trailing_data_refuses() {
+    let (wire, expected) = sample();
+    let (input, raw) = parts(&wire).unwrap();
+    let (receipt, consumed): (Receipt, usize) = bincode_next::serde::decode_from_slice(
+        raw,
+        bincode_next::config::legacy().with_limit::<{ MAX_CERTIFICATE_BYTES - 16 - INPUT_BYTES }>(),
+    )
+    .unwrap();
+    assert_eq!(consumed, raw.len());
+    // Exact retained bincode 1 fixed-integer bytes are the interoperability
+    // oracle. A newly generated receipt would not detect a wire-format change.
+    assert_eq!(
+        bincode_next::serde::encode_to_vec(&receipt, bincode_next::config::legacy()).unwrap(),
+        raw
+    );
+    let mut trailing = raw.to_vec();
+    trailing.push(0);
+    // Keep the outer frame well-formed: the inner receipt must still refuse.
+    let with_inner_trailing = frame(input, &trailing);
+    assert_eq!(parts(&with_inner_trailing).unwrap().1.len(), raw.len() + 1);
+    assert!(verify_bound(&with_inner_trailing, &expected).is_err());
+}
+
+#[test]
 fn every_header_byte_and_external_task_target_and_witness_are_bound() {
     let (wire, expected) = sample();
     let input = parts(&wire).unwrap().0;
@@ -154,9 +178,13 @@ fn inconsistent_header_task_and_target_refuse_before_receipt_processing() {
             verify_bound(&wire, &inconsistent).unwrap_err().to_string(),
             "W1_CERTIFICATE_CONTEXT"
         );
-        let mut rebound: Receipt = bincode::deserialize(raw).unwrap();
+        let mut rebound: Receipt =
+            bincode_next::serde::decode_from_slice(raw, bincode_next::config::legacy())
+                .unwrap()
+                .0;
         rebound.journal.bytes = full_relation::unverified_claimed_journal(&forged_input).unwrap();
-        let rebound_raw = bincode::serialize(&rebound).unwrap();
+        let rebound_raw =
+            bincode_next::serde::encode_to_vec(&rebound, bincode_next::config::legacy()).unwrap();
         bounds::preflight(&rebound_raw).unwrap();
         for receipt in [invalid_receipt.as_slice(), rebound_raw.as_slice()] {
             assert_eq!(
@@ -186,9 +214,15 @@ fn false_received_claim_cannot_reuse_a_valid_proof_even_with_rebound_journal() {
     )
     .unwrap();
     forged_input[..STATEMENT_BYTES].copy_from_slice(&forged_expected.encode());
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt =
+        bincode_next::serde::decode_from_slice(raw, bincode_next::config::legacy())
+            .unwrap()
+            .0;
     receipt.journal.bytes = full_relation::unverified_claimed_journal(&forged_input).unwrap();
-    let forged = frame(&forged_input, &bincode::serialize(&receipt).unwrap());
+    let forged = frame(
+        &forged_input,
+        &bincode_next::serde::encode_to_vec(&receipt, bincode_next::config::legacy()).unwrap(),
+    );
     assert_eq!(
         verify_bound(&forged, &forged_expected)
             .unwrap_err()
@@ -201,12 +235,18 @@ fn false_received_claim_cannot_reuse_a_valid_proof_even_with_rebound_journal() {
 fn actual_seal_corruption_is_rejected_by_the_cryptographic_verifier() {
     let (wire, expected) = sample();
     let (input, raw) = parts(&wire).unwrap();
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt =
+        bincode_next::serde::decode_from_slice(raw, bincode_next::config::legacy())
+            .unwrap()
+            .0;
     let InnerReceipt::Succinct(proof) = &mut receipt.inner else {
         panic!("actual Succinct")
     };
     proof.seal[40] ^= 1;
-    let corrupted = frame(input, &bincode::serialize(&receipt).unwrap());
+    let corrupted = frame(
+        input,
+        &bincode_next::serde::encode_to_vec(&receipt, bincode_next::config::legacy()).unwrap(),
+    );
     // Encoding is still in the fixed bounded grammar; cryptography must reject.
     bounds::preflight(parts(&corrupted).unwrap().1).unwrap();
     assert_eq!(
@@ -294,13 +334,19 @@ fn allocation_prefixes_foreign_kinds_parameters_and_trailing_data_refuse() {
     let mut trailing = wire.clone();
     trailing.push(0);
     assert!(verify_bound(&trailing, &expected).is_err());
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt =
+        bincode_next::serde::decode_from_slice(raw, bincode_next::config::legacy())
+            .unwrap()
+            .0;
     let InnerReceipt::Succinct(proof) = &mut receipt.inner else {
         panic!("actual Succinct")
     };
     proof.verifier_parameters = Digest::ZERO;
     assert!(verify_bound(
-        &frame(input, &bincode::serialize(&receipt).unwrap()),
+        &frame(
+            input,
+            &bincode_next::serde::encode_to_vec(&receipt, bincode_next::config::legacy()).unwrap()
+        ),
         &expected
     )
     .is_err());

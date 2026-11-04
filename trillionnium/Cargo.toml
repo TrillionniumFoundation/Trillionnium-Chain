@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
+exclude = ["vendor/ark-relations-0.5.1", "vendor/ark-crypto-primitives-0.5.0", "vendor/paste-compat"]
 members = [
   "crates/trnm-audit-events",
   "crates/trnm-governance-guard",
@@ -76,3 +77,9 @@ overflow-checks = true
 opt-level = 3
 debug-assertions = true
 overflow-checks = true
+
+# Fixed, source-bound compatibility changes; see vendor/REVIEW.md.
+[patch.crates-io]
+ark-relations = { path = "vendor/ark-relations-0.5.1" }
+ark-crypto-primitives = { path = "vendor/ark-crypto-primitives-0.5.0" }
+paste = { path = "vendor/paste-compat" }

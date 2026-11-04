@@ -24,6 +24,13 @@ def render():
         paths = {path for item in raw.split(b"\0") if item
                  for path in [item.decode("utf-8")]
                  if Path(path).suffix in {".rs", ".json", ".bin", ".der"} or Path(path).name in {"Cargo.toml", "WYCHEPROOF_LICENSE"}}
+    # Local patched crates are part of the actual cold Cargo build closure.
+    # Include their source, manifests, licenses and recorded upstream provenance.
+    # Git applies the same repository ignore rules to generated target files.
+    vendor = subprocess.check_output(
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
+         "--", "trillionnium/vendor"], cwd=ROOT)
+    paths.update(item.decode("utf-8") for item in vendor.split(b"\0") if item)
     paths.update(("trillionnium/Cargo.toml", "trillionnium/Cargo.lock", str(OUTPUT.relative_to(ROOT))))
     # The native confirmation-risk test includes this exact shared model vector.
     # Keep its explicit repository-relative dependency in the cold build closure;
