@@ -466,6 +466,151 @@ fn snapshot_payload_capacity_is_a_private_schedule_hint_and_preserves_control_er
     assert!(!error.requires_owner_stop());
 }
 
+// The original buffered scan is an independent length/count reference. It is
+// test-only and cannot select a second production scheduling policy.
+fn buffered_payload_bytes(
+    state: &State,
+    control: &ExecutionControl<'_, Error>,
+) -> Result<SnapshotPayload> {
+    let mut total = 0usize;
+    for (index, (key, value)) in state.iter().enumerate() {
+        if index.is_multiple_of(256) {
+            (control.progress)(ExecutionProgress::BeforeParentBinding)?;
+        }
+        let cell = canonical(value)?;
+        total = total
+            .checked_add(key.len())
+            .and_then(|sum| sum.checked_add(cell.len()))
+            .ok_or("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY")?;
+        if total > MAX_SNAPSHOT_PAYLOAD {
+            return Ok(SnapshotPayload::HeldRequired {
+                observed_bytes: total,
+            });
+        }
+    }
+    Ok(SnapshotPayload::Fits(total))
+}
+
+#[test]
+fn snapshot_payload_count_keeps_exact_json_bytes_and_serialization_errors() {
+    use serde::ser::SerializeSeq;
+    use std::io::Write;
+
+    let escaped: String = (0..=127).map(char::from).collect();
+    let values = [
+        serde_json::Value::Null,
+        serde_json::json!(true),
+        serde_json::json!(false),
+        serde_json::json!(u64::MAX),
+        serde_json::json!(i64::MIN),
+        serde_json::json!(-0.0),
+        serde_json::json!(1.25e-100),
+        serde_json::json!(f64::MAX),
+        serde_json::json!(escaped),
+        serde_json::json!("a\"\\\n\t\r\u{0000}日本語é🦀"),
+        serde_json::json!({"z": [], "a": {"β": [false, null, 3], "x": {}}}),
+        serde_json::json!("x".repeat(4094)),
+    ];
+    for value in &values {
+        assert_eq!(
+            canonical_payload_length(value).unwrap(),
+            canonical(value).unwrap().len()
+        );
+    }
+    let nested = serde_json::json!({"outer": values, "keys": {"\n": "\"", "🦀": 17}});
+    assert_eq!(
+        canonical_payload_length(&nested).unwrap(),
+        canonical(&nested).unwrap().len()
+    );
+
+    struct FailsAfterPrefix;
+    impl Serialize for FailsAfterPrefix {
+        fn serialize<S: serde::Serializer>(
+            &self,
+            serializer: S,
+        ) -> std::result::Result<S::Ok, S::Error> {
+            let mut seq = serializer.serialize_seq(None)?;
+            seq.serialize_element("written before the original error")?;
+            Err(serde::ser::Error::custom("snapshot serialization failure"))
+        }
+    }
+    let original = canonical(&FailsAfterPrefix).unwrap_err();
+    let counted = canonical_payload_length(&FailsAfterPrefix).unwrap_err();
+    assert_eq!(counted.to_string(), original.to_string());
+    assert_eq!(counted.kind(), original.kind());
+
+    // Overflow cannot wrap into a small detached snapshot, and it does not
+    // short-circuit a later serialization failure into a capacity verdict.
+    let mut length = CanonicalPayloadLength(Some(usize::MAX - 1));
+    length.write_all(&[0]).unwrap();
+    assert_eq!(length.0, Some(usize::MAX));
+    length.write_all(&[0]).unwrap();
+    assert_eq!(length.0, None);
+    length.write_all(&[]).unwrap();
+    assert_eq!(length.0, None);
+    let error = Error::from(serde_json::to_writer(&mut length, &FailsAfterPrefix).unwrap_err());
+    assert_eq!(error.to_string(), original.to_string());
+}
+
+#[test]
+fn snapshot_payload_count_preserves_exact_capacity_and_cancellation_boundaries() {
+    let mut state = State::new();
+    let mut remaining = MAX_SNAPSHOT_PAYLOAD - 1;
+    while remaining > 0 {
+        let key = format!("cell-{:05}", state.len());
+        let bytes = remaining.min(key.len() + 4096);
+        assert!(bytes >= key.len() + 2);
+        state.insert(
+            key.clone(),
+            serde_json::json!("x".repeat(bytes - key.len() - 2)),
+        );
+        remaining -= bytes;
+    }
+    let control = ExecutionControl::new(&|_| Ok(()), &());
+    for expected_bytes in MAX_SNAPSHOT_PAYLOAD - 1..=MAX_SNAPSHOT_PAYLOAD + 1 {
+        let expected = buffered_payload_bytes(&state, &control).unwrap();
+        assert_eq!(payload_bytes(&state, &control).unwrap(), expected);
+        assert_eq!(
+            expected,
+            if expected_bytes <= MAX_SNAPSHOT_PAYLOAD {
+                SnapshotPayload::Fits(expected_bytes)
+            } else {
+                SnapshotPayload::HeldRequired {
+                    observed_bytes: expected_bytes,
+                }
+            }
+        );
+        let value = state.values_mut().next_back().unwrap();
+        *value = serde_json::json!(format!("{}x", value.as_str().unwrap()));
+    }
+    for cancel_at in [0, 1, 3, 7, 8] {
+        let observe =
+            |scan: fn(&State, &ExecutionControl<'_, Error>) -> Result<SnapshotPayload>| {
+                let calls = AtomicUsize::new(0);
+                let progress = |point| {
+                    assert_eq!(point, ExecutionProgress::BeforeParentBinding);
+                    if calls.fetch_add(1, Ordering::Relaxed) == cancel_at {
+                        Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+                    } else {
+                        Ok(())
+                    }
+                };
+                let result = scan(&state, &ExecutionControl::new(&progress, &()));
+                (
+                    result.map_err(|error| {
+                        (error.to_string(), error.kind(), error.requires_owner_stop())
+                    }),
+                    calls.load(Ordering::Relaxed),
+                )
+            };
+        assert_eq!(observe(payload_bytes), observe(buffered_payload_bytes));
+    }
+    assert_eq!(
+        payload_bytes(&State::new(), &control).unwrap(),
+        SnapshotPayload::Fits(0)
+    );
+}
+
 #[test]
 fn admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner() {
     for authenticated in [false, true] {

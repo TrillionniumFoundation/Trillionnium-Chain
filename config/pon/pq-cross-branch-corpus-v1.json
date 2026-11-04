@@ -350,7 +350,8 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
-    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c"
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs"
   ],
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "1d4022888c91e5153482eb10bd3185cd6675eb18",
@@ -692,7 +693,7 @@
     "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "e0045e56dbaf555ff761ee64ba3e32227c18c489",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs": "93f14af5f15018c4cf05269ce63e369411b2f555",
-    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "a6fd9c8e4f514d19ca58295272cde7968b9b5abd",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "71ab19e0ad93dc6962ca91c74c2f5c606e6fdca2",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "dc0532566688df3bca59f19b9278125058bfbe41",
     "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs": "586942255c345bbeaa049bc5d39f8a2d82d42d53",
@@ -762,7 +763,8 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs": "6cde50a98a7574ba9d4d3a9c3f94128779f224de",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs": "1d33eb39cf1c449ed981b1e1681c5aca5145e428",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
-    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba"
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "f33fecef7776e0f8ee98176a19e5e31d45489a83"
   },
   "assertions": {
     "production_activation": false,

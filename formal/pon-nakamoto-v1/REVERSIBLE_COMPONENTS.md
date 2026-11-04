@@ -26,13 +26,28 @@ many intermediate values. Its space requirements are not an optimality claim.
 The exported `TRNM-QIR1` artifact contains a canonical JSON register description
 and actual packed gates. A separate strict decoder reopens the artifact and
 checks types, lengths, bounds, disjoint registers, gate arity, unused encoding
-bits and wire aliases. The reopened artifact is the one actually executed by
-the classical basis-state checker. Re-encoding and all gate metrics must match.
+bits and wire aliases. It also checks the declared compute/copy/inverse split:
+computation may target only scratch and cannot read or write outputs; copying
+may use only X/CNOT gates, target each output at most once and never read an
+output; the final gates must be the exact reversed computation. Input registers
+cannot be written in any phase. Missing copies preserve zero function bits,
+including the zero-gate identity emitted by `finish()` for an all-zero result.
+This enforces the cleanup structure for every basis input and output seed;
+it does not establish that an arbitrary well-formed circuit computes the
+intended modular product or hash. Those functions still require the independent
+numerical checks. The reopened artifact is the one actually executed by the
+classical basis-state checker. Re-encoding and all gate metrics must match.
 This format grants no transaction, block, model-installation or protocol authority.
 
 The tests include all 256 input pairs for four-bit addition and all 256 pairs
 for multiplication modulo 11, nonzero output targets, malformed encodings,
 and a deleted inverse gate that must be detected through dirty scratch.
+Decoder controls also reject changed, missing or reordered inverse gates,
+false compute boundaries, input writes, computation using output bits, invalid
+copy destinations or operations, output-controlled copies and repeated copy
+targets. These controls run at artifact reopen, before basis sampling. Positive
+controls retain constant and direct-input outputs, omitted zero copies and
+zero-gate circuits, as well as the actual 32-bit field and SHA-256 netlists.
 The 32-bit observation includes all 49 pairs of seven boundary values and
 64 reproducibly sampled pairs. Canonical and noncanonical field inputs are
 included. Supporting noncanonical inputs in this arithmetic component does

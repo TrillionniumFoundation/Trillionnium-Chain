@@ -52,6 +52,50 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Joint source, native admission and reversible-artifact continuation — 2026-11-04
+
+Continue the existing PR #688 candidate from
+`d0737cf5434894ce47fad8082376fc417313c2cb`, preserving the concurrent
+`bd2777f9cc74df10ba07ae8202584ed0fb90a519` Legacy reorganization observations
+and source-pin refresh, followed by `245146c7d2e6f7dfcda463f6a7dd342d4d7ca818`
+complete-journal recovery pins, PQ release roles and fixed-provider TLS controls.
+Measurements made before those updates retain their original component scope;
+they do not qualify the combined source. The runtime counterpart is
+`TrillionniumFoundation/hepta-private-ci` PR #4696; the separate Hepta language
+repository is not the CURRENT/FinalUse execution authority. Its published V8
+source `e0b4c82e129d42d98cb9a98bf97fe41d1e3b1b53` selects the older Chain
+`73ab6e9a83bcc836e261d93f9bb23ceafe556758`. A new closed V9 must select the
+final reviewed Chain commit/tree and actual ordered merge in every ordinary,
+installed and native lane. Existing profiles and their failed observations keep
+their original identities. In particular, the V8 source checker omitted the
+runtime-material release helper and accepted an ignored package that shadows a
+pinned module. The successor must bind the complete inspected 43-file closure
+and reject hidden index flags and extra ignored execution inputs before imports.
+
+The existing detached-admission owner now counts the same canonical JSON
+serialization through a checked writer instead of allocating one output buffer
+per state value. It retains the full parent traversal, original 8 MiB decision,
+error ordering, cancellation points and the held-parent fallback. Separate
+allocation and timing observations retain every paired sample; allocation
+elimination in this scan is not a touched-set or business-confirmation result.
+
+The existing reversible-component decoder now validates the declared
+compute/copy/exact-inverse structure before executing basis samples. Inputs
+remain read-only, computation cannot use outputs, and copying cannot mutate
+scratch. Legitimate constant, direct-input and all-zero outputs remain supported.
+The actual modular-multiply and SHA-256 netlist bytes are unchanged. The decoder
+now rejects arbitrary reversible circuits that do not follow its declared
+construction; this is not a general external-format compatibility claim. This closes
+a research-artifact decoder defect, not the complete W1 oracle or quantum DAA.
+
+The [small reproduction record](../../evidence/joint-source-closure-20261104/README.md)
+separates the original four stale PQ source pins from this increment, and records
+all source controls and native outcomes. Current PQ authority, normal migration,
+whole-effect rollback, PQ-compatible GrowthV2, the original four-second/16-worker
+business gate, complete work-cost assumptions and independent model/WAN
+acceptance remain required. No budget, original failing predicate, signed domain,
+consensus weight or activation flag is relaxed by these changes.
+
 #### Evaluation integrity and weight-loading continuation — 2026-11-04
 
 Continue the PR #688 lineage from `93e207c8d2ccb8509f78566223abc371b9d8118b`.
