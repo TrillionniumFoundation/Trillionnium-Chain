@@ -5124,3 +5124,27 @@ Only explicitly named large raw reports may be parsed one at a time within
 fixed total decode and process address-space bounds. New reader controls and
 readback remain pending until their actual hosted execution. No original
 native workload, deadline, resource allowance or business gate changes.
+
+
+### 2026-11-04 original artifact readback retains its output-cap failure
+
+Reader source `5cd4cc9d` actually ran original job `126345886863`:
+source identity before/after and audit preflight passed, as did all 27
+synthetic controls, including nine reproduced v1 output-boundary negatives.
+The frozen f35 campaign ZIP matched its exact 60,599,441 bytes and SHA256;
+all 1,766 members reached CRC/SHA256 verification and the original native
+binary and all three reports matched the controller bindings. The three
+30-second attempts each confirmed one of three planned baseline rounds and
+zero of three planned rounds in each pressure mode: 3/27 total, 0/18 pressure.
+All finite campaign criteria remain false. This is a new integrity readback
+of the original f35 experiment, not a new native performance run.
+
+The same reader then failed the unchanged cumulative 2 MiB stdout budget
+before emitting its F0 snapshot. Preserve that overall failure and the exact
+complete returned job bytes in explicitly ordered chunks. A single successful
+artifact is not a complete two-artifact readback. The follow-up keeps all
+download, decoded-byte, derived-file, address-space, deadline and stdout caps;
+only the printed already-sanitized view is reduced, with explicit omissions
+and an exact digest/length binding to the unchanged complete projection file.
+Original archive code and native binaries are never executed by the reader.
+Its new controls and complete readback remain pending until actual Actions.

@@ -1,0 +1,385 @@
+2026-11-04T02:20:46.7579104Z test_every_retained_table_is_checked_including_empty_ones (__main__.MigrationPreservationOracle.test_every_retained_table_is_checked_including_empty_ones) ... ERROR
+2026-11-04T02:20:46.8564366Z test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) ... 
+2026-11-04T02:20:46.8566693Z   test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) (authenticated=False) ... FAIL
+2026-11-04T02:20:46.8717393Z   test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) (authenticated=True) ... FAIL
+2026-11-04T02:20:46.9670371Z test_only_schema_identity_changes_and_deleted_sequence_frontier_stays (__main__.MigrationPreservationOracle.test_only_schema_identity_changes_and_deleted_sequence_frontier_stays) ... ERROR
+2026-11-04T02:20:47.0635555Z test_retained_values_cannot_change_type_or_contents (__main__.MigrationPreservationOracle.test_retained_values_cannot_change_type_or_contents) ... ERROR
+2026-11-04T02:20:47.1447012Z test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text (__main__.MigrationPreservationOracle.test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text) ... ok
+2026-11-04T02:20:47.2341202Z test_account_existence_and_nonce_monotonicity_are_checked (__main__.NativeAuthenticatedStorageOracle.test_account_existence_and_nonce_monotonicity_are_checked) ... ok
+2026-11-04T02:20:47.6016287Z test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks (__main__.NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks) ... ERROR
+2026-11-04T02:20:47.6952120Z test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused (__main__.NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused) ... FAIL
+2026-11-04T02:20:47.7693659Z test_ancestry_rows_require_exact_types_and_unique_keys (__main__.NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys) ... ok
+2026-11-04T02:20:47.8604896Z test_chainwork_uses_full_unsigned_512_bit_value (__main__.NativeAuthenticatedStorageOracle.test_chainwork_uses_full_unsigned_512_bit_value) ... FAIL
+2026-11-04T02:20:47.9504682Z test_changed_delta_cannot_hide_behind_matching_account_leaf (__main__.NativeAuthenticatedStorageOracle.test_changed_delta_cannot_hide_behind_matching_account_leaf) ... FAIL
+2026-11-04T02:20:48.0409168Z test_changed_stored_delta_digest_is_detected (__main__.NativeAuthenticatedStorageOracle.test_changed_stored_delta_digest_is_detected) ... FAIL
+2026-11-04T02:20:48.1393433Z test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused (__main__.NativeAuthenticatedStorageOracle.test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused) ... FAIL
+2026-11-04T02:20:48.2312468Z test_event_generations_cannot_skip_or_rewind (__main__.NativeAuthenticatedStorageOracle.test_event_generations_cannot_skip_or_rewind) ... FAIL
+2026-11-04T02:20:48.3260008Z test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active (__main__.NativeAuthenticatedStorageOracle.test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active) ... ERROR
+2026-11-04T02:20:48.4212478Z test_extra_active_and_kv_slots_are_detected (__main__.NativeAuthenticatedStorageOracle.test_extra_active_and_kv_slots_are_detected) ... FAIL
+2026-11-04T02:20:48.5209192Z test_false_snapshot_and_active_kv_are_not_trusted (__main__.NativeAuthenticatedStorageOracle.test_false_snapshot_and_active_kv_are_not_trusted) ... FAIL
+2026-11-04T02:20:48.6135359Z test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes (__main__.NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes) ... ERROR
+2026-11-04T02:20:48.7071628Z test_missing_historical_commitment_and_orphan_deltas_are_refused (__main__.NativeAuthenticatedStorageOracle.test_missing_historical_commitment_and_orphan_deltas_are_refused) ... FAIL
+2026-11-04T02:20:48.7985481Z test_missing_required_node_and_damaged_unreachable_cow_child_are_detected (__main__.NativeAuthenticatedStorageOracle.test_missing_required_node_and_damaged_unreachable_cow_child_are_detected) ... FAIL
+2026-11-04T02:20:48.8749044Z test_null_boolean_absence_and_utf8_delta_values_remain_exact (__main__.NativeAuthenticatedStorageOracle.test_null_boolean_absence_and_utf8_delta_values_remain_exact) ... ok
+2026-11-04T02:20:48.9661777Z test_parent_commitment_and_packet_digest_are_bound (__main__.NativeAuthenticatedStorageOracle.test_parent_commitment_and_packet_digest_are_bound) ... FAIL
+2026-11-04T02:20:49.0561359Z test_rehashed_false_aggregate_is_recomputed_from_full_state (__main__.NativeAuthenticatedStorageOracle.test_rehashed_false_aggregate_is_recomputed_from_full_state) ... FAIL
+2026-11-04T02:20:49.1950885Z test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed (__main__.NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed) ... ERROR
+2026-11-04T02:20:49.2835574Z test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored (__main__.NativeAuthenticatedStorageOracle.test_uncheckpointed_wal_and_oversized_json_are_not_silently_ignored) ... ok
+2026-11-04T02:20:49.5124496Z test_actual_hex_envelope_and_independent_signed_amount_replay (__main__.SignedApplicationControls.test_actual_hex_envelope_and_independent_signed_amount_replay) ... ERROR
+2026-11-04T02:20:49.7245046Z test_native_compact_query_is_independently_checked_when_present (__main__.SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present) ... FAIL
+2026-11-04T02:20:49.9254176Z test_self_consistent_state_records_cannot_change_signed_transfer_amount (__main__.SignedApplicationControls.test_self_consistent_state_records_cannot_change_signed_transfer_amount) ... ERROR
+2026-11-04T02:20:49.9255934Z 
+2026-11-04T02:20:49.9256185Z ======================================================================
+2026-11-04T02:20:49.9257501Z ERROR: test_every_retained_table_is_checked_including_empty_ones (__main__.MigrationPreservationOracle.test_every_retained_table_is_checked_including_empty_ones)
+2026-11-04T02:20:49.9258914Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9259553Z Traceback (most recent call last):
+2026-11-04T02:20:49.9261064Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 456, in test_every_retained_table_is_checked_including_empty_ones
+2026-11-04T02:20:49.9262037Z     source = self.inspect(source_path, authenticated=False)
+2026-11-04T02:20:49.9262390Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9263109Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9263982Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9264468Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9265270Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9266012Z     tables = table_rows(db)
+2026-11-04T02:20:49.9266246Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9266899Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9267663Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9268393Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9269358Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9269918Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9270235Z 
+2026-11-04T02:20:49.9270352Z ======================================================================
+2026-11-04T02:20:49.9271390Z ERROR: test_only_schema_identity_changes_and_deleted_sequence_frontier_stays (__main__.MigrationPreservationOracle.test_only_schema_identity_changes_and_deleted_sequence_frontier_stays)
+2026-11-04T02:20:49.9272224Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9272566Z Traceback (most recent call last):
+2026-11-04T02:20:49.9273423Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 435, in test_only_schema_identity_changes_and_deleted_sequence_frontier_stays
+2026-11-04T02:20:49.9274340Z     source = self.inspect(source_path, authenticated=False)
+2026-11-04T02:20:49.9274687Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9275360Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9276158Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9276608Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9277313Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9277981Z     tables = table_rows(db)
+2026-11-04T02:20:49.9278198Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9278791Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9279515Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9280611Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9281283Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9281589Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9281763Z 
+2026-11-04T02:20:49.9281881Z ======================================================================
+2026-11-04T02:20:49.9282553Z ERROR: test_retained_values_cannot_change_type_or_contents (__main__.MigrationPreservationOracle.test_retained_values_cannot_change_type_or_contents)
+2026-11-04T02:20:49.9283240Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9283570Z Traceback (most recent call last):
+2026-11-04T02:20:49.9284439Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 445, in test_retained_values_cannot_change_type_or_contents
+2026-11-04T02:20:49.9285306Z     source = self.inspect(source_path, authenticated=False)
+2026-11-04T02:20:49.9285639Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9286301Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9287103Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9287544Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9288239Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9288903Z     tables = table_rows(db)
+2026-11-04T02:20:49.9289122Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9289889Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9290815Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9291532Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9292309Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9292619Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9292799Z 
+2026-11-04T02:20:49.9292906Z ======================================================================
+2026-11-04T02:20:49.9293735Z ERROR: test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks (__main__.NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks)
+2026-11-04T02:20:49.9294575Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9294901Z Traceback (most recent call last):
+2026-11-04T02:20:49.9295755Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 308, in test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks
+2026-11-04T02:20:49.9296634Z     result = self.inspect()
+2026-11-04T02:20:49.9296856Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9297461Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9298251Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9298685Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9299382Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9300217Z     tables = table_rows(db)
+2026-11-04T02:20:49.9300443Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9301037Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9301754Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9302467Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9303126Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9303422Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9303593Z 
+2026-11-04T02:20:49.9303704Z ======================================================================
+2026-11-04T02:20:49.9304537Z ERROR: test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active (__main__.NativeAuthenticatedStorageOracle.test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active)
+2026-11-04T02:20:49.9305393Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9305723Z Traceback (most recent call last):
+2026-11-04T02:20:49.9306578Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 185, in test_explicit_pending_reorg_reconstructs_staged_slot_and_preserves_active
+2026-11-04T02:20:49.9307453Z     result = self.inspect()
+2026-11-04T02:20:49.9307672Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9308273Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9309057Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9309491Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9310352Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9311171Z     tables = table_rows(db)
+2026-11-04T02:20:49.9311393Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9311986Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9312810Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9313524Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9314179Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9314465Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9314641Z 
+2026-11-04T02:20:49.9314745Z ======================================================================
+2026-11-04T02:20:49.9315582Z ERROR: test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes (__main__.NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes)
+2026-11-04T02:20:49.9316450Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9316775Z Traceback (most recent call last):
+2026-11-04T02:20:49.9317633Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 163, in test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes
+2026-11-04T02:20:49.9318498Z     result = self.inspect()
+2026-11-04T02:20:49.9318714Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9319308Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9320262Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9320708Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9321410Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9322074Z     tables = table_rows(db)
+2026-11-04T02:20:49.9322286Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9322879Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9323594Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9324295Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9324952Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9325237Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9325404Z 
+2026-11-04T02:20:49.9325512Z ======================================================================
+2026-11-04T02:20:49.9326325Z ERROR: test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed (__main__.NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed)
+2026-11-04T02:20:49.9327165Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9327555Z Traceback (most recent call last):
+2026-11-04T02:20:49.9328409Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 347, in test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed
+2026-11-04T02:20:49.9329320Z     self.inspect()
+2026-11-04T02:20:49.9330015Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9330837Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9331428Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9332142Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9332810Z     tables = table_rows(db)
+2026-11-04T02:20:49.9333026Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9333733Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9334466Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9335179Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9335832Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9336134Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9336305Z 
+2026-11-04T02:20:49.9336421Z ======================================================================
+2026-11-04T02:20:49.9337152Z ERROR: test_actual_hex_envelope_and_independent_signed_amount_replay (__main__.SignedApplicationControls.test_actual_hex_envelope_and_independent_signed_amount_replay)
+2026-11-04T02:20:49.9337902Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9338237Z Traceback (most recent call last):
+2026-11-04T02:20:49.9339048Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 532, in test_actual_hex_envelope_and_independent_signed_amount_replay
+2026-11-04T02:20:49.9340067Z     result = oracle.check_observation(manifest, self.path)
+2026-11-04T02:20:49.9340407Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9341087Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 651, in check_observation
+2026-11-04T02:20:49.9341931Z     target = inspect_sqlite(database_path, context.as_json(), initial, replay_context=context)
+2026-11-04T02:20:49.9342415Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9343134Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9343794Z     tables = table_rows(db)
+2026-11-04T02:20:49.9344016Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9344626Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9345350Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9346061Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9346716Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9347006Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9347180Z 
+2026-11-04T02:20:49.9347285Z ======================================================================
+2026-11-04T02:20:49.9348078Z ERROR: test_self_consistent_state_records_cannot_change_signed_transfer_amount (__main__.SignedApplicationControls.test_self_consistent_state_records_cannot_change_signed_transfer_amount)
+2026-11-04T02:20:49.9348898Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9349223Z Traceback (most recent call last):
+2026-11-04T02:20:49.9350198Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 542, in test_self_consistent_state_records_cannot_change_signed_transfer_amount
+2026-11-04T02:20:49.9351111Z     self.assertEqual(self.inspect()['counts']['blocks'], 2)
+2026-11-04T02:20:49.9351553Z                      ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9352180Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 150, in inspect
+2026-11-04T02:20:49.9352971Z     return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
+2026-11-04T02:20:49.9353523Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9354238Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 459, in inspect_sqlite
+2026-11-04T02:20:49.9354895Z     tables = table_rows(db)
+2026-11-04T02:20:49.9355115Z              ^^^^^^^^^^^^^^
+2026-11-04T02:20:49.9355706Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 266, in table_rows
+2026-11-04T02:20:49.9356425Z     require(re.fullmatch('[a-z_]+', name) is not None, 'TABLE_NAME')
+2026-11-04T02:20:49.9357135Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py", line 58, in require
+2026-11-04T02:20:49.9357789Z     raise ValueError('NATIVE_STORAGE_' + code)
+2026-11-04T02:20:49.9358088Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9358256Z 
+2026-11-04T02:20:49.9358370Z ======================================================================
+2026-11-04T02:20:49.9359285Z FAIL: test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) (authenticated=False)
+2026-11-04T02:20:49.9360345Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9360675Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9360848Z 
+2026-11-04T02:20:49.9361018Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9361299Z 
+2026-11-04T02:20:49.9361393Z Traceback (most recent call last):
+2026-11-04T02:20:49.9362269Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 478, in test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality
+2026-11-04T02:20:49.9363410Z     with self.subTest(authenticated=authenticated), self.assertRaisesRegex(ValueError, 'ANCESTRY_CONTENT$'):
+2026-11-04T02:20:49.9364040Z AssertionError: "ANCESTRY_CONTENT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9364357Z 
+2026-11-04T02:20:49.9364462Z ======================================================================
+2026-11-04T02:20:49.9365366Z FAIL: test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality (__main__.MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality) (authenticated=True)
+2026-11-04T02:20:49.9366310Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9366645Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9366815Z 
+2026-11-04T02:20:49.9366996Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9367265Z 
+2026-11-04T02:20:49.9367368Z Traceback (most recent call last):
+2026-11-04T02:20:49.9368254Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 478, in test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality
+2026-11-04T02:20:49.9369358Z     with self.subTest(authenticated=authenticated), self.assertRaisesRegex(ValueError, 'ANCESTRY_CONTENT$'):
+2026-11-04T02:20:49.9370132Z AssertionError: "ANCESTRY_CONTENT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9370439Z 
+2026-11-04T02:20:49.9370550Z ======================================================================
+2026-11-04T02:20:49.9371314Z FAIL: test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused (__main__.NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused)
+2026-11-04T02:20:49.9372229Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9372552Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9372727Z 
+2026-11-04T02:20:49.9373006Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9373280Z 
+2026-11-04T02:20:49.9373373Z Traceback (most recent call last):
+2026-11-04T02:20:49.9374197Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 324, in test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused
+2026-11-04T02:20:49.9375127Z     with self.assertRaisesRegex(ValueError, 'ANCESTRY_ROW_SET$'):
+2026-11-04T02:20:49.9375589Z AssertionError: "ANCESTRY_ROW_SET$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9375890Z 
+2026-11-04T02:20:49.9376005Z ======================================================================
+2026-11-04T02:20:49.9376658Z FAIL: test_chainwork_uses_full_unsigned_512_bit_value (__main__.NativeAuthenticatedStorageOracle.test_chainwork_uses_full_unsigned_512_bit_value)
+2026-11-04T02:20:49.9377328Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9377652Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9377832Z 
+2026-11-04T02:20:49.9378004Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9378272Z 
+2026-11-04T02:20:49.9378371Z Traceback (most recent call last):
+2026-11-04T02:20:49.9379140Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 293, in test_chainwork_uses_full_unsigned_512_bit_value
+2026-11-04T02:20:49.9380137Z     with self.assertRaisesRegex(ValueError, 'CHAINWORK_ARITHMETIC$'):
+2026-11-04T02:20:49.9380633Z AssertionError: "CHAINWORK_ARITHMETIC$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9380969Z 
+2026-11-04T02:20:49.9381072Z ======================================================================
+2026-11-04T02:20:49.9381808Z FAIL: test_changed_delta_cannot_hide_behind_matching_account_leaf (__main__.NativeAuthenticatedStorageOracle.test_changed_delta_cannot_hide_behind_matching_account_leaf)
+2026-11-04T02:20:49.9382580Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9382910Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9383077Z 
+2026-11-04T02:20:49.9383254Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9383513Z 
+2026-11-04T02:20:49.9383614Z Traceback (most recent call last):
+2026-11-04T02:20:49.9384427Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 232, in test_changed_delta_cannot_hide_behind_matching_account_leaf
+2026-11-04T02:20:49.9385320Z     with self.assertRaisesRegex(ValueError, 'DELTA_BEFORE$'):
+2026-11-04T02:20:49.9385751Z AssertionError: "DELTA_BEFORE$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9386045Z 
+2026-11-04T02:20:49.9386153Z ======================================================================
+2026-11-04T02:20:49.9386786Z FAIL: test_changed_stored_delta_digest_is_detected (__main__.NativeAuthenticatedStorageOracle.test_changed_stored_delta_digest_is_detected)
+2026-11-04T02:20:49.9387448Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9387773Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9387943Z 
+2026-11-04T02:20:49.9388110Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9388378Z 
+2026-11-04T02:20:49.9388470Z Traceback (most recent call last):
+2026-11-04T02:20:49.9389229Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 239, in test_changed_stored_delta_digest_is_detected
+2026-11-04T02:20:49.9390335Z     with self.assertRaisesRegex(ValueError, 'DELTA_ROOT$'):
+2026-11-04T02:20:49.9390757Z AssertionError: "DELTA_ROOT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9391036Z 
+2026-11-04T02:20:49.9391147Z ======================================================================
+2026-11-04T02:20:49.9392050Z FAIL: test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused (__main__.NativeAuthenticatedStorageOracle.test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused)
+2026-11-04T02:20:49.9392878Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9393212Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9393392Z 
+2026-11-04T02:20:49.9393562Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9393831Z 
+2026-11-04T02:20:49.9393929Z Traceback (most recent call last):
+2026-11-04T02:20:49.9394760Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 407, in test_duplicate_json_noncanonical_record_and_wrong_schema_are_refused
+2026-11-04T02:20:49.9395697Z     with self.assertRaisesRegex(ValueError, 'CANONICAL_RECORD$'):
+2026-11-04T02:20:49.9396152Z AssertionError: "CANONICAL_RECORD$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9396466Z 
+2026-11-04T02:20:49.9396568Z ======================================================================
+2026-11-04T02:20:49.9397199Z FAIL: test_event_generations_cannot_skip_or_rewind (__main__.NativeAuthenticatedStorageOracle.test_event_generations_cannot_skip_or_rewind)
+2026-11-04T02:20:49.9397853Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9398181Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9398347Z 
+2026-11-04T02:20:49.9398517Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9398779Z 
+2026-11-04T02:20:49.9398881Z Traceback (most recent call last):
+2026-11-04T02:20:49.9399756Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 382, in test_event_generations_cannot_skip_or_rewind
+2026-11-04T02:20:49.9400602Z     with self.assertRaisesRegex(ValueError, 'EVENT_HISTORY$'):
+2026-11-04T02:20:49.9401048Z AssertionError: "EVENT_HISTORY$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9401348Z 
+2026-11-04T02:20:49.9401451Z ======================================================================
+2026-11-04T02:20:49.9402076Z FAIL: test_extra_active_and_kv_slots_are_detected (__main__.NativeAuthenticatedStorageOracle.test_extra_active_and_kv_slots_are_detected)
+2026-11-04T02:20:49.9402720Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9403045Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9403210Z 
+2026-11-04T02:20:49.9403385Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9403657Z 
+2026-11-04T02:20:49.9403748Z Traceback (most recent call last):
+2026-11-04T02:20:49.9404498Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 389, in test_extra_active_and_kv_slots_are_detected
+2026-11-04T02:20:49.9405334Z     with self.assertRaisesRegex(ValueError, 'ACTIVE_COUNT$'):
+2026-11-04T02:20:49.9405773Z AssertionError: "ACTIVE_COUNT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9406062Z 
+2026-11-04T02:20:49.9406177Z ======================================================================
+2026-11-04T02:20:49.9406840Z FAIL: test_false_snapshot_and_active_kv_are_not_trusted (__main__.NativeAuthenticatedStorageOracle.test_false_snapshot_and_active_kv_are_not_trusted)
+2026-11-04T02:20:49.9407523Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9407850Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9408156Z 
+2026-11-04T02:20:49.9408324Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9408592Z 
+2026-11-04T02:20:49.9408684Z Traceback (most recent call last):
+2026-11-04T02:20:49.9409734Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 280, in test_false_snapshot_and_active_kv_are_not_trusted
+2026-11-04T02:20:49.9410616Z     with self.assertRaisesRegex(ValueError, 'SNAPSHOT_STATE$'):
+2026-11-04T02:20:49.9411068Z AssertionError: "SNAPSHOT_STATE$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9411371Z 
+2026-11-04T02:20:49.9411476Z ======================================================================
+2026-11-04T02:20:49.9412244Z FAIL: test_missing_historical_commitment_and_orphan_deltas_are_refused (__main__.NativeAuthenticatedStorageOracle.test_missing_historical_commitment_and_orphan_deltas_are_refused)
+2026-11-04T02:20:49.9413036Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9413377Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9413548Z 
+2026-11-04T02:20:49.9413724Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9413988Z 
+2026-11-04T02:20:49.9414087Z Traceback (most recent call last):
+2026-11-04T02:20:49.9414919Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 268, in test_missing_historical_commitment_and_orphan_deltas_are_refused
+2026-11-04T02:20:49.9415839Z     with self.assertRaisesRegex(ValueError, 'MISSING_COMMITMENT$'):
+2026-11-04T02:20:49.9416312Z AssertionError: "MISSING_COMMITMENT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9416630Z 
+2026-11-04T02:20:49.9416738Z ======================================================================
+2026-11-04T02:20:49.9417568Z FAIL: test_missing_required_node_and_damaged_unreachable_cow_child_are_detected (__main__.NativeAuthenticatedStorageOracle.test_missing_required_node_and_damaged_unreachable_cow_child_are_detected)
+2026-11-04T02:20:49.9418418Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9418742Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9418909Z 
+2026-11-04T02:20:49.9419087Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9419352Z 
+2026-11-04T02:20:49.9419442Z Traceback (most recent call last):
+2026-11-04T02:20:49.9420444Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 254, in test_missing_required_node_and_damaged_unreachable_cow_child_are_detected
+2026-11-04T02:20:49.9421390Z     with self.assertRaisesRegex(ValueError, 'ACCOUNT_NODE_BYTES$'):
+2026-11-04T02:20:49.9421854Z AssertionError: "ACCOUNT_NODE_BYTES$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9422158Z 
+2026-11-04T02:20:49.9422274Z ======================================================================
+2026-11-04T02:20:49.9422941Z FAIL: test_parent_commitment_and_packet_digest_are_bound (__main__.NativeAuthenticatedStorageOracle.test_parent_commitment_and_packet_digest_are_bound)
+2026-11-04T02:20:49.9423636Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9423964Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9424138Z 
+2026-11-04T02:20:49.9424302Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9424565Z 
+2026-11-04T02:20:49.9424662Z Traceback (most recent call last):
+2026-11-04T02:20:49.9425434Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 220, in test_parent_commitment_and_packet_digest_are_bound
+2026-11-04T02:20:49.9426293Z     with self.assertRaisesRegex(ValueError, 'RECORD_BINDING$'):
+2026-11-04T02:20:49.9426737Z AssertionError: "RECORD_BINDING$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9427188Z 
+2026-11-04T02:20:49.9427291Z ======================================================================
+2026-11-04T02:20:49.9428027Z FAIL: test_rehashed_false_aggregate_is_recomputed_from_full_state (__main__.NativeAuthenticatedStorageOracle.test_rehashed_false_aggregate_is_recomputed_from_full_state)
+2026-11-04T02:20:49.9428889Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9429262Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9429428Z 
+2026-11-04T02:20:49.9429745Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9430010Z 
+2026-11-04T02:20:49.9430108Z Traceback (most recent call last):
+2026-11-04T02:20:49.9430915Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 213, in test_rehashed_false_aggregate_is_recomputed_from_full_state
+2026-11-04T02:20:49.9431828Z     with self.assertRaisesRegex(ValueError, 'COMPLETE_COMMITMENT$'):
+2026-11-04T02:20:49.9432309Z AssertionError: "COMPLETE_COMMITMENT$" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9432627Z 
+2026-11-04T02:20:49.9432734Z ======================================================================
+2026-11-04T02:20:49.9433478Z FAIL: test_native_compact_query_is_independently_checked_when_present (__main__.SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present)
+2026-11-04T02:20:49.9434229Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9434553Z ValueError: NATIVE_STORAGE_TABLE_NAME
+2026-11-04T02:20:49.9434723Z 
+2026-11-04T02:20:49.9434898Z During handling of the above exception, another exception occurred:
+2026-11-04T02:20:49.9435164Z 
+2026-11-04T02:20:49.9435257Z Traceback (most recent call last):
+2026-11-04T02:20:49.9436073Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py", line 551, in test_native_compact_query_is_independently_checked_when_present
+2026-11-04T02:20:49.9437039Z     with self.assertRaisesRegex(ValueError, 'MULTIPROOF_NATIVE_QUERY_FIELDS'):
+2026-11-04T02:20:49.9437604Z AssertionError: "MULTIPROOF_NATIVE_QUERY_FIELDS" does not match "NATIVE_STORAGE_TABLE_NAME"
+2026-11-04T02:20:49.9437959Z 
+2026-11-04T02:20:49.9438106Z ----------------------------------------------------------------------
+2026-11-04T02:20:49.9438421Z Ran 28 tests in 3.277s
+2026-11-04T02:20:49.9438553Z 
+2026-11-04T02:20:49.9438659Z FAILED (failures=15, errors=9)

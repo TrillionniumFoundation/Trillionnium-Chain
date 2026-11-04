@@ -1,0 +1,242 @@
+{
+  "schema": "trnm-original-artifact-reader-v2-observation-v1",
+  "reader_commit": "5cd4cc9d3cad4b7dc4da6a42b598260f18f49ebc",
+  "reader_tree": "a0dc4c2c807577a18e2e966cbd7cb02a38ea4d0f",
+  "reader_blob": "f8ea44c88224d07c0796e086f5d29163f93a0ffa",
+  "run_id": 41760218776,
+  "job_id": 126345886863,
+  "original_job_conclusion": "failure",
+  "source_before_after": true,
+  "audit_preflight_passed": true,
+  "synthetic_controls_passed": 27,
+  "prior_reader_negatives_reproduced": 9,
+  "native_tests_executed": 0,
+  "actual_failure": "STDOUT_PROJECTION_BUDGET",
+  "campaign_complete_readback": {
+    "archive_digest_and_size_verified": true,
+    "artifact": {
+      "artifact_id": 13287158757,
+      "artifact_name": "pon-native-campaign-x64-head-release-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1",
+      "bytes": 60599441,
+      "kind": "campaign",
+      "project_json": [
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ],
+      "required_json": [
+        "source-before.json",
+        "source-after.json",
+        "results.json",
+        "run-1-raw/report.json",
+        "run-2-raw/report.json",
+        "run-3-raw/report.json"
+      ],
+      "run_id": 41752900360,
+      "sha256": "d66801acae25f6ec7d8a8e40cc6ebbbc7c895c5a694b51f433f4cc6b279757bd",
+      "source": "f35ee6dc61feaba7c68b16e1f9384b5c3794a976",
+      "source_json": [
+        "source-before.json",
+        "source-after.json"
+      ],
+      "tree": "87870eb9fc3d6477ee35e59334ccdbb669721777"
+    },
+    "declared_decoded_bytes": 361333009,
+    "members_crc_and_sha256_verified": 1766,
+    "original_binary_verified": true,
+    "phase_summaries": {
+      "run-1-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ],
+      "run-2-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ],
+      "run-3-raw/report.json": [
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 1,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "baseline",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 2,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "from-zero",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        },
+        {
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "confirmation_flag_unknowns": 0,
+          "confirmed_rounds": 0,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "mode": "late-product",
+          "planned_signed_rounds": 3,
+          "recorded_rounds": 1,
+          "root_criteria": null,
+          "startup_or_campaign_error": null
+        }
+      ]
+    },
+    "qualification": {
+      "native_executed": false,
+      "performance_qualified": false,
+      "production_activation": false,
+      "readback_only": true
+    },
+    "reader_address_space_cap_bytes": 4294967296,
+    "source_receipts_verified": [
+      "source-before.json",
+      "source-after.json"
+    ]
+  },
+  "f0_snapshot_emitted": false,
+  "two_artifact_readback_complete": false,
+  "complete_decoded_log": {
+    "encoding": "UTF-8",
+    "bytes": 1214356,
+    "sha256": "2167aca12286290fd3951346fe262d585cb717917f5b5db70326eefff3f9cac7",
+    "ordered_chunks": [
+      {
+        "path": "qualification/original-artifact-readback-20261104/v2-failure/job-126345886863.decoded.part-01",
+        "bytes": 400002,
+        "sha256": "950590f4c1e2e70fa2a72aff7eb7e6c39aa53d1bb33dbaedd4ba140a513a354e",
+        "git_blob": "d48ae658bb50f1626c0894d5295569ecdddf425b"
+      },
+      {
+        "path": "qualification/original-artifact-readback-20261104/v2-failure/job-126345886863.decoded.part-02",
+        "bytes": 400000,
+        "sha256": "ef09c3659e70c0c6ce88a172d12230254429051a586a6575e3a52a19795d8871",
+        "git_blob": "6d70a5c3b5309694f6e8a50bc8be8f054d558934"
+      },
+      {
+        "path": "qualification/original-artifact-readback-20261104/v2-failure/job-126345886863.decoded.part-03",
+        "bytes": 400000,
+        "sha256": "8143c55537122bad606abd995c4be3fd70f686e2e628405b4ae247dd21dd56b9",
+        "git_blob": "7dff4a2a01f73938c21d7ecbf7f3a2942f1ebe1c"
+      },
+      {
+        "path": "qualification/original-artifact-readback-20261104/v2-failure/job-126345886863.decoded.part-04",
+        "bytes": 14354,
+        "sha256": "42192f1e52f829077706ad815cf059777274eb647b69dc8afc5dfe69a6f1ca57",
+        "git_blob": "de7cf059b0dc7e6857e12c3e6fef65800d865934"
+      }
+    ],
+    "reconstruction": "Concatenate ordered UTF-8 chunk bytes without adding separators, then verify complete bytes and SHA256.",
+    "raw_artifact_zip": false
+  },
+  "followup": {
+    "scope": "Only reduce the stdout view of the existing sanitized projection; retain its complete projected file and bind its exact bytes/hash.",
+    "all_budgets_unchanged": true,
+    "source_filtering_unchanged": true,
+    "artifact_identity_and_crc_validation_unchanged": true,
+    "synthetic_controls_intended": 30,
+    "executed_locally": false
+  },
+  "qualification": {
+    "performance_qualified": false,
+    "production_activation": false,
+    "whole_chain_qualified": false
+  }
+}

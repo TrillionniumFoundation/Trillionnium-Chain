@@ -595,6 +595,50 @@ def write_outputs(out, payloads, budget):
             stream.write(payload)
 
 
+
+def stdout_projection(projected, encoded):
+    """A deliberately incomplete view; full safe projection stays in its file."""
+    remaining = [4096]
+    def visit(value, depth=0):
+        if remaining[0] <= 0 or depth > 12:
+            return {"stdout_omitted": True}
+        remaining[0] -= 1
+        if isinstance(value, dict):
+            output, omitted = {}, 0
+            items = list(value.items())
+            for index, (name, item) in enumerate(items):
+                if remaining[0] <= 0:
+                    omitted += len(items) - index
+                    break
+                if name.startswith("field_sha256:") or name in (
+                        "omitted_string_sha256", "canonical_json_sha256",
+                        "canonical_json_bytes", "characters", "value_omitted"):
+                    omitted += 1
+                    continue
+                output[name] = visit(item, depth + 1)
+            if omitted:
+                output["stdout_omitted_fields"] = omitted
+            return output
+        if isinstance(value, list):
+            if len(value) > 16:
+                return {
+                    "recorded_items": len(value),
+                    "first": [visit(item, depth + 1) for item in value[:8]],
+                    "last": [visit(item, depth + 1) for item in value[-8:]],
+                    "stdout_omitted_items": len(value) - 16,
+                }
+            return [visit(item, depth + 1) for item in value]
+        return value
+    return {
+        "complete_projection_bytes": len(encoded),
+        "complete_projection_sha256": hashlib.sha256(encoded).hexdigest(),
+        "stdout_projection_is_complete": False,
+        "stdout_node_limit": 4096,
+        "projection": visit(projected),
+        "scope": "limited view of the already-sanitized projection; opaque hash fields, deeper structure and middle array elements may be omitted; complete projected bytes remain in the output artifact",
+    }
+
+
 def self_test():
     count = 0
     def rejects(function, code):
@@ -699,6 +743,41 @@ def self_test():
                 and (out / "b.json").read_bytes() == b"bb", "BOUNDED_OUTPUT_POSITIVE")
         count += 1
 
+    # The old complete stdout view exceeds its fixed cap on this bounded
+    # synthetic case. Keep that cap; emit a declared partial view instead.
+    synthetic = {"submissions": [
+        {"started_ns": index, "ended_ns": index + 1,
+         "field_sha256:" + "a" * 64: {
+             "canonical_json_bytes": 1, "canonical_json_sha256": "b" * 64,
+             "value_omitted": True}}
+        for index in range(10000)]}
+    encoded = encode_json(synthetic)
+    require(len(json.dumps(synthetic).encode()) > PRINT_BUDGET,
+            "PREVIOUS_STDOUT_CAP_NEGATIVE_NOT_REPRODUCED")
+    limited = stdout_projection(synthetic, encoded)
+    require(len(encode_json(limited)) < 128 * 1024
+            and limited["complete_projection_bytes"] == len(encoded)
+            and limited["complete_projection_sha256"] == hashlib.sha256(encoded).hexdigest()
+            and limited["stdout_projection_is_complete"] is False,
+            "LIMITED_STDOUT_PRESERVES_COMPLETE_DIGEST")
+    rows = limited["projection"]["submissions"]
+    require(rows["recorded_items"] == 10000 and rows["stdout_omitted_items"] == 9984
+            and rows["first"][0]["started_ns"] == 0
+            and rows["last"][-1]["started_ns"] == 9999,
+            "STDOUT_ENDPOINTS_EXPLICIT")
+    count += 1
+    nested = {"confirmed_inside_pressure_window": False}
+    for _ in range(20):
+        nested = {"value": nested}
+    bounded = stdout_projection(nested, encode_json(nested))
+    require('"stdout_omitted": true' in json.dumps(bounded),
+            "STDOUT_DEPTH_BOUND")
+    count += 1
+    flags = {"finite_phase_criteria_met": False, "confirmed_rounds": None}
+    limited_flags = stdout_projection(flags, encode_json(flags))
+    require(limited_flags["projection"] == flags, "STDOUT_FALSE_AND_UNKNOWN")
+    count += 1
+
     print(json.dumps({"self_tests_passed": count, "prior_reader_negatives_reproduced": 9,
                       "native_tests_executed": 0, "artifact_members_executed": 0}))
 
@@ -759,8 +838,9 @@ def main():
                 prefix + "-selected.json": encode_json(projected),
                 prefix + "-readback.json": encode_json(snapshot),
             }
+            stdout_selected = stdout_projection(projected, payloads[prefix + "-selected.json"])
             lines = [kind + " " + json.dumps(value, sort_keys=True, allow_nan=False)
-                     for kind, value in (("READBACK", snapshot), ("SELECTED", projected))]
+                     for kind, value in (("READBACK", snapshot), ("SELECTED", stdout_selected))]
             printed_after = printed + sum(len(line.encode()) + 1 for line in lines)
             require(printed_after <= PRINT_BUDGET, "STDOUT_PROJECTION_BUDGET")
             require(sum(len(data) for data in payloads.values()) <= budget["derived"],

@@ -1,0 +1,35 @@
+{
+  "schema": "chain-original-storage-oracle-failure-v1",
+  "job_id": 126318926276,
+  "source": "e8bc6eff6f51abedf45229ded84aa552133ee68b",
+  "original_complete_decoded_log": {
+    "bytes": 905193,
+    "sha256": "bff9330b834f07097c463dd0423c7e000ae3c9375c543b6d29a48a5d9f316192",
+    "persisted_as_complete_here": false
+  },
+  "excerpt": {
+    "first_line_1_based": 7727,
+    "last_line_1_based": 8111,
+    "bytes": 43709,
+    "sha256": "039b8b373130a93c4d9fcbf6d0c2cede4e5ef7611badb8600b255b52b868beb7"
+  },
+  "actual_suite_result": {
+    "failures": 15,
+    "errors": 9,
+    "error": "NATIVE_STORAGE_TABLE_NAME"
+  },
+  "source_cause": {
+    "original_regex": "[a-z_]+",
+    "source_declared_table": "reorg_lifecycle_v1",
+    "original_store_blob": "3eb46aa54bf428b84dca400973475ef9f79fe05f"
+  },
+  "existing_owner_correction": {
+    "commit": "39839288cd112930f1f334b31c8fcb10ded43e28",
+    "subsequent_registration": "0b2e98399fbb0c52fa03c3eee39d179b64729710",
+    "latest_owner_observed": "01627151f3ab50750eac2adeb46d8883a601265f",
+    "oracle_blob": "89f0682cd224e3012b8289251ac70094aab5955b",
+    "tests_blob": "f9a19cdbebd1256b53f5a2aa07988bcb46f93b93",
+    "scope": "Existing source changes observed, not duplicated here; no independent new positive execution is claimed."
+  },
+  "new_candidate_qualification": false
+}
