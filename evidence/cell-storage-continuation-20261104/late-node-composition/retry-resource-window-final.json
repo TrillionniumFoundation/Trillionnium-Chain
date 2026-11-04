@@ -1,0 +1,733 @@
+{
+  "schema": "trnm.cell.native-build-resource-scheduling.v1",
+  "tested_commit": "17bea70f6646c74e80bab0571e735dba903c2ea5",
+  "status": "resource_window_not_observed",
+  "test_profile_changed": false,
+  "cargo_build_jobs": 1,
+  "minimum_estimated_reclaimable_headroom_bytes": 3489660928,
+  "maximum_other_compiler_rss_kib": 524288,
+  "observations": [
+    {
+      "utc": "2026-11-04T13:07:38.718583+00:00",
+      "estimated_headroom_bytes": 709480448,
+      "active_compiler_rss_kib": 2529256,
+      "anon_bytes": 3204665344,
+      "shmem_bytes": 4334526464,
+      "kernel_bytes": 341262336
+    },
+    {
+      "utc": "2026-11-04T13:07:48.725645+00:00",
+      "estimated_headroom_bytes": 650731520,
+      "active_compiler_rss_kib": 2548164,
+      "anon_bytes": 3240763392,
+      "shmem_bytes": 4373729280,
+      "kernel_bytes": 324710400
+    },
+    {
+      "utc": "2026-11-04T13:07:58.736794+00:00",
+      "estimated_headroom_bytes": 269946880,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3599728640,
+      "shmem_bytes": 4403867648,
+      "kernel_bytes": 316391424
+    },
+    {
+      "utc": "2026-11-04T13:08:08.745849+00:00",
+      "estimated_headroom_bytes": 418811904,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3398561792,
+      "shmem_bytes": 4453535744,
+      "kernel_bytes": 319025152
+    },
+    {
+      "utc": "2026-11-04T13:08:18.753960+00:00",
+      "estimated_headroom_bytes": 121090048,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3661164544,
+      "shmem_bytes": 4486590464,
+      "kernel_bytes": 321089536
+    },
+    {
+      "utc": "2026-11-04T13:08:28.761530+00:00",
+      "estimated_headroom_bytes": 116932608,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3631734784,
+      "shmem_bytes": 4517281792,
+      "kernel_bytes": 323985408
+    },
+    {
+      "utc": "2026-11-04T13:08:38.775383+00:00",
+      "estimated_headroom_bytes": 2183032832,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1496113152,
+      "shmem_bytes": 4545896448,
+      "kernel_bytes": 364892160
+    },
+    {
+      "utc": "2026-11-04T13:08:48.780515+00:00",
+      "estimated_headroom_bytes": 1983864832,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1466728448,
+      "shmem_bytes": 4591013888,
+      "kernel_bytes": 548327424
+    },
+    {
+      "utc": "2026-11-04T13:08:58.787424+00:00",
+      "estimated_headroom_bytes": 1926955008,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1489854464,
+      "shmem_bytes": 4626251776,
+      "kernel_bytes": 546873344
+    },
+    {
+      "utc": "2026-11-04T13:09:08.792889+00:00",
+      "estimated_headroom_bytes": 2203455488,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1144700928,
+      "shmem_bytes": 4692717568,
+      "kernel_bytes": 549060608
+    },
+    {
+      "utc": "2026-11-04T13:09:18.796814+00:00",
+      "estimated_headroom_bytes": 1634709504,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1663897600,
+      "shmem_bytes": 4730945536,
+      "kernel_bytes": 560381952
+    },
+    {
+      "utc": "2026-11-04T13:09:28.800422+00:00",
+      "estimated_headroom_bytes": 1437990912,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1838673920,
+      "shmem_bytes": 4761939968,
+      "kernel_bytes": 551329792
+    },
+    {
+      "utc": "2026-11-04T13:09:38.807779+00:00",
+      "estimated_headroom_bytes": 1239560192,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1966493696,
+      "shmem_bytes": 4813049856,
+      "kernel_bytes": 570830848
+    },
+    {
+      "utc": "2026-11-04T13:09:48.811267+00:00",
+      "estimated_headroom_bytes": 2091782144,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1027063808,
+      "shmem_bytes": 4846710784,
+      "kernel_bytes": 624377856
+    },
+    {
+      "utc": "2026-11-04T13:09:58.814416+00:00",
+      "estimated_headroom_bytes": 1959112704,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1113051136,
+      "shmem_bytes": 4893147136,
+      "kernel_bytes": 624623616
+    },
+    {
+      "utc": "2026-11-04T13:10:08.819769+00:00",
+      "estimated_headroom_bytes": 1572335616,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1483034624,
+      "shmem_bytes": 4905369600,
+      "kernel_bytes": 629194752
+    },
+    {
+      "utc": "2026-11-04T13:10:18.823254+00:00",
+      "estimated_headroom_bytes": 1005678592,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1993629696,
+      "shmem_bytes": 4940541952,
+      "kernel_bytes": 650084352
+    },
+    {
+      "utc": "2026-11-04T13:10:28.834247+00:00",
+      "estimated_headroom_bytes": 864948224,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2076639232,
+      "shmem_bytes": 5006843904,
+      "kernel_bytes": 641503232
+    },
+    {
+      "utc": "2026-11-04T13:10:38.845570+00:00",
+      "estimated_headroom_bytes": 1528332288,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1420726272,
+      "shmem_bytes": 5067685888,
+      "kernel_bytes": 573190144
+    },
+    {
+      "utc": "2026-11-04T13:10:48.850488+00:00",
+      "estimated_headroom_bytes": 1049313280,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1896939520,
+      "shmem_bytes": 5098938368,
+      "kernel_bytes": 544743424
+    },
+    {
+      "utc": "2026-11-04T13:10:58.860578+00:00",
+      "estimated_headroom_bytes": 872562688,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2034712576,
+      "shmem_bytes": 5115666432,
+      "kernel_bytes": 566992896
+    },
+    {
+      "utc": "2026-11-04T13:11:08.875229+00:00",
+      "estimated_headroom_bytes": 524267520,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2574897152,
+      "shmem_bytes": 5149315072,
+      "kernel_bytes": 341454848
+    },
+    {
+      "utc": "2026-11-04T13:11:18.886902+00:00",
+      "estimated_headroom_bytes": 1465286656,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1433702400,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 513384448
+    },
+    {
+      "utc": "2026-11-04T13:11:28.892959+00:00",
+      "estimated_headroom_bytes": 1144549376,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1688797184,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 579026944
+    },
+    {
+      "utc": "2026-11-04T13:11:38.901158+00:00",
+      "estimated_headroom_bytes": 636538880,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2456743936,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 319090688
+    },
+    {
+      "utc": "2026-11-04T13:11:48.908075+00:00",
+      "estimated_headroom_bytes": 319692800,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2774650880,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 318029824
+    },
+    {
+      "utc": "2026-11-04T13:11:58.945999+00:00",
+      "estimated_headroom_bytes": 228679680,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2863616000,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 320077824
+    },
+    {
+      "utc": "2026-11-04T13:12:08.979660+00:00",
+      "estimated_headroom_bytes": 192958464,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2897584128,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 321830912
+    },
+    {
+      "utc": "2026-11-04T13:12:19.010865+00:00",
+      "estimated_headroom_bytes": 117370880,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2961125376,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 333877248
+    },
+    {
+      "utc": "2026-11-04T13:12:29.193229+00:00",
+      "estimated_headroom_bytes": 56926208,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3025223680,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 330223616
+    },
+    {
+      "utc": "2026-11-04T13:12:41.581423+00:00",
+      "estimated_headroom_bytes": 23162880,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3058659328,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 330551296
+    },
+    {
+      "utc": "2026-11-04T13:12:54.392406+00:00",
+      "estimated_headroom_bytes": 19922944,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3061014528,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 331436032
+    },
+    {
+      "utc": "2026-11-04T13:13:05.615101+00:00",
+      "estimated_headroom_bytes": 8507392,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3071963136,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 331902976
+    },
+    {
+      "utc": "2026-11-04T13:13:15.743750+00:00",
+      "estimated_headroom_bytes": 338579456,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2727571456,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 346222592
+    },
+    {
+      "utc": "2026-11-04T13:13:25.788327+00:00",
+      "estimated_headroom_bytes": 299671552,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2774269952,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 338432000
+    },
+    {
+      "utc": "2026-11-04T13:13:35.822429+00:00",
+      "estimated_headroom_bytes": 243228672,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2827210752,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 341934080
+    },
+    {
+      "utc": "2026-11-04T13:13:45.874345+00:00",
+      "estimated_headroom_bytes": 281509888,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2789400576,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 341463040
+    },
+    {
+      "utc": "2026-11-04T13:13:55.935092+00:00",
+      "estimated_headroom_bytes": 332099584,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2737176576,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 343097344
+    },
+    {
+      "utc": "2026-11-04T13:14:06.012834+00:00",
+      "estimated_headroom_bytes": 288985088,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2779705344,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 343683072
+    },
+    {
+      "utc": "2026-11-04T13:14:16.035211+00:00",
+      "estimated_headroom_bytes": 1134280704,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1672855552,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 605237248
+    },
+    {
+      "utc": "2026-11-04T13:14:26.045407+00:00",
+      "estimated_headroom_bytes": 1110065152,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1685241856,
+      "shmem_bytes": 5177561088,
+      "kernel_bytes": 617066496
+    },
+    {
+      "utc": "2026-11-04T13:14:36.098694+00:00",
+      "estimated_headroom_bytes": 923332608,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2138562560,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 350474240
+    },
+    {
+      "utc": "2026-11-04T13:14:46.103467+00:00",
+      "estimated_headroom_bytes": 1695293440,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1233154048,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 483921920
+    },
+    {
+      "utc": "2026-11-04T13:14:56.108921+00:00",
+      "estimated_headroom_bytes": 1073610752,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1904050176,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 434708480
+    },
+    {
+      "utc": "2026-11-04T13:15:06.122329+00:00",
+      "estimated_headroom_bytes": 965689344,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2038439936,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 408240128
+    },
+    {
+      "utc": "2026-11-04T13:15:16.131627+00:00",
+      "estimated_headroom_bytes": 354832384,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2695774208,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 361762816
+    },
+    {
+      "utc": "2026-11-04T13:15:26.146887+00:00",
+      "estimated_headroom_bytes": 227221504,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2835755008,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 349392896
+    },
+    {
+      "utc": "2026-11-04T13:15:36.196750+00:00",
+      "estimated_headroom_bytes": 183730176,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2875445248,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 353193984
+    },
+    {
+      "utc": "2026-11-04T13:15:46.217377+00:00",
+      "estimated_headroom_bytes": 133693440,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2923417600,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 355258368
+    },
+    {
+      "utc": "2026-11-04T13:15:56.247403+00:00",
+      "estimated_headroom_bytes": 136155136,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2922328064,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 353886208
+    },
+    {
+      "utc": "2026-11-04T13:16:06.282646+00:00",
+      "estimated_headroom_bytes": 174845952,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2886381568,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 351141888
+    },
+    {
+      "utc": "2026-11-04T13:16:16.312423+00:00",
+      "estimated_headroom_bytes": 192311296,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2871091200,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 348966912
+    },
+    {
+      "utc": "2026-11-04T13:16:26.335145+00:00",
+      "estimated_headroom_bytes": 175398912,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2888912896,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 348057600
+    },
+    {
+      "utc": "2026-11-04T13:16:36.352305+00:00",
+      "estimated_headroom_bytes": 214278144,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2848399360,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 349691904
+    },
+    {
+      "utc": "2026-11-04T13:16:46.392982+00:00",
+      "estimated_headroom_bytes": 121344000,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2935455744,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 355569664
+    },
+    {
+      "utc": "2026-11-04T13:16:56.417873+00:00",
+      "estimated_headroom_bytes": 170094592,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2888089600,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 354185216
+    },
+    {
+      "utc": "2026-11-04T13:17:06.442059+00:00",
+      "estimated_headroom_bytes": 1015681024,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2020081664,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 376606720
+    },
+    {
+      "utc": "2026-11-04T13:17:16.453691+00:00",
+      "estimated_headroom_bytes": 1057779712,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1773322240,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 581267456
+    },
+    {
+      "utc": "2026-11-04T13:17:26.458527+00:00",
+      "estimated_headroom_bytes": 543281152,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2257739776,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 611348480
+    },
+    {
+      "utc": "2026-11-04T13:17:36.464028+00:00",
+      "estimated_headroom_bytes": 1252302848,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1629765632,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 530300928
+    },
+    {
+      "utc": "2026-11-04T13:17:46.473681+00:00",
+      "estimated_headroom_bytes": 587096064,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2466615296,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 358658048
+    },
+    {
+      "utc": "2026-11-04T13:17:56.483648+00:00",
+      "estimated_headroom_bytes": 537829376,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2376728576,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 497811456
+    },
+    {
+      "utc": "2026-11-04T13:18:06.492474+00:00",
+      "estimated_headroom_bytes": 319442944,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2735017984,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 357908480
+    },
+    {
+      "utc": "2026-11-04T13:18:16.509108+00:00",
+      "estimated_headroom_bytes": 363524096,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2690760704,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 358084608
+    },
+    {
+      "utc": "2026-11-04T13:18:26.530930+00:00",
+      "estimated_headroom_bytes": 242511872,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2811555840,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 358301696
+    },
+    {
+      "utc": "2026-11-04T13:18:36.555623+00:00",
+      "estimated_headroom_bytes": 262762496,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2795413504,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 354193408
+    },
+    {
+      "utc": "2026-11-04T13:18:46.570173+00:00",
+      "estimated_headroom_bytes": 258338816,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2800963584,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 353067008
+    },
+    {
+      "utc": "2026-11-04T13:18:56.600491+00:00",
+      "estimated_headroom_bytes": 217706496,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2837475328,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 357187584
+    },
+    {
+      "utc": "2026-11-04T13:19:06.639651+00:00",
+      "estimated_headroom_bytes": 214892544,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2841956352,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 355520512
+    },
+    {
+      "utc": "2026-11-04T13:19:16.726275+00:00",
+      "estimated_headroom_bytes": 207728640,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2847485952,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 357154816
+    },
+    {
+      "utc": "2026-11-04T13:19:26.763357+00:00",
+      "estimated_headroom_bytes": 259182592,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2793107456,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 360079360
+    },
+    {
+      "utc": "2026-11-04T13:19:36.815542+00:00",
+      "estimated_headroom_bytes": 230977536,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2821386240,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 360005632
+    },
+    {
+      "utc": "2026-11-04T13:19:46.883925+00:00",
+      "estimated_headroom_bytes": 212180992,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2837696512,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 362491904
+    },
+    {
+      "utc": "2026-11-04T13:19:56.940839+00:00",
+      "estimated_headroom_bytes": 206168064,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2842439680,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 363761664
+    },
+    {
+      "utc": "2026-11-04T13:20:06.962508+00:00",
+      "estimated_headroom_bytes": 195620864,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2852044800,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 364703744
+    },
+    {
+      "utc": "2026-11-04T13:20:16.995361+00:00",
+      "estimated_headroom_bytes": 140668928,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2903470080,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 368230400
+    },
+    {
+      "utc": "2026-11-04T13:20:27.050928+00:00",
+      "estimated_headroom_bytes": 166436864,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2878828544,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 367104000
+    },
+    {
+      "utc": "2026-11-04T13:20:37.075338+00:00",
+      "estimated_headroom_bytes": 87277568,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2951507968,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 373583872
+    },
+    {
+      "utc": "2026-11-04T13:20:47.099847+00:00",
+      "estimated_headroom_bytes": 79515648,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2958057472,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 374796288
+    },
+    {
+      "utc": "2026-11-04T13:20:59.882017+00:00",
+      "estimated_headroom_bytes": 25600000,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 3011702784,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 375066624
+    },
+    {
+      "utc": "2026-11-04T13:21:11.306765+00:00",
+      "estimated_headroom_bytes": 51507200,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2986680320,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 374181888
+    },
+    {
+      "utc": "2026-11-04T13:21:21.319493+00:00",
+      "estimated_headroom_bytes": 1157484544,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1677836288,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 577048576
+    },
+    {
+      "utc": "2026-11-04T13:21:31.328861+00:00",
+      "estimated_headroom_bytes": 1013813248,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1726574592,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 671981568
+    },
+    {
+      "utc": "2026-11-04T13:21:41.340890+00:00",
+      "estimated_headroom_bytes": 1126469632,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1617784832,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 668114944
+    },
+    {
+      "utc": "2026-11-04T13:21:51.356080+00:00",
+      "estimated_headroom_bytes": 1070071808,
+      "active_compiler_rss_kib": 1074068,
+      "anon_bytes": 1671208960,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 671088640
+    },
+    {
+      "utc": "2026-11-04T13:22:01.360637+00:00",
+      "estimated_headroom_bytes": 895827968,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1843859456,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 672681984
+    },
+    {
+      "utc": "2026-11-04T13:22:11.383244+00:00",
+      "estimated_headroom_bytes": 686501888,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2320867328,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 405000192
+    },
+    {
+      "utc": "2026-11-04T13:22:21.397337+00:00",
+      "estimated_headroom_bytes": 1140240384,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 1874042880,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 398086144
+    },
+    {
+      "utc": "2026-11-04T13:22:31.408846+00:00",
+      "estimated_headroom_bytes": 637894656,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2347786240,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 426688512
+    },
+    {
+      "utc": "2026-11-04T13:22:41.417231+00:00",
+      "estimated_headroom_bytes": 238354432,
+      "active_compiler_rss_kib": 0,
+      "anon_bytes": 2806751232,
+      "shmem_bytes": 5177565184,
+      "kernel_bytes": 367263744
+    }
+  ],
+  "tests_started": false,
+  "interpretation": "This is an operational scheduling observation, not a protocol or test-acceptance threshold. No retry command or selected test was executed, and no successful native result is inferred."
+}
