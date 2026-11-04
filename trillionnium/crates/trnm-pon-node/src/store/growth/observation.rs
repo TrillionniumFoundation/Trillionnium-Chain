@@ -9,6 +9,37 @@ use serde_json::Value;
 const MEMBERSHIP_SQL_BUDGET: u64 = 8193;
 
 impl Node {
+    /// The public batch entry has already checked its nonempty, distinct owner
+    /// limit. Select active and prove every requested path in this one snapshot;
+    /// the result reserves no nonce and carries no execution authority.
+    pub(in crate::store) fn growth_next_nonces(&self, senders: &[Hash]) -> Result<Vec<u64>> {
+        self.growth_guard()?;
+        let tx = self.db.unchecked_transaction()?;
+        let parent = self.growth_parent(self.active()?.0)?;
+        let (proof, _) =
+            multiproof::from_native_database(&self.db, &parent.checkpoint, senders, &|_| {
+                Ok::<_, archive::ArchiveError>(())
+            })
+            .map_err(archive_error)?;
+        let checked =
+            CheckedMultiproof::verify(context(&self.settings), &parent.checkpoint, &proof)
+                .map_err(archive_error)?;
+        let values = senders
+            .iter()
+            .map(|&sender| {
+                checked
+                    .account(sender)
+                    .map_err(archive_error)?
+                    .map_or(0, |account| account.nonce)
+                    .checked_add(1)
+                    .ok_or_else(|| "NONCE_OVERFLOW".into())
+            })
+            .collect::<Result<Vec<_>>>()?;
+        self.growth_guard()?;
+        tx.rollback()?;
+        Ok(values)
+    }
+
     /// Fixed metadata only, under this existing cold-audited growth owner.
     /// This opens no new connection and reads no working State or packet body.
     pub fn growth_head_observation_with_progress(

@@ -284,9 +284,12 @@ pub(crate) fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()
         / cfg.params["candidate_round_blocks"]
             .as_u64()
             .ok_or("CONFIG")?;
-    state.retain(|key, value| {
-        !key.starts_with("linear-update-v3:")
-            || (value["parent"] == current && value["round"] == round)
-    });
+    let removed: Vec<_> = prefix_rows(state, "linear-update-v3:")
+        .filter(|(_, value)| value["parent"] != current || value["round"] != round)
+        .map(|(key, _)| key.clone())
+        .collect();
+    for key in removed {
+        state.remove(&key);
+    }
     Ok(())
 }

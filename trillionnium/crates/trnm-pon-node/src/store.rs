@@ -2457,10 +2457,14 @@ impl Node {
     /// Read up to 256 distinct senders from ONE fully checked SQLite snapshot.
     /// Results preserve input order and reserve no nonce or execution authority.
     /// The legacy singleton path is unchanged; no successful verdict survives a call.
+    /// Growth binds all requested owners to the snapshot's active account root.
     pub fn next_nonces(&self, senders: &[Hash]) -> Result<Vec<u64>> {
         ensure((1..=256).contains(&senders.len()), "NONCE_QUERY_LIMIT")?;
         let unique: std::collections::BTreeSet<_> = senders.iter().collect();
         ensure(unique.len() == senders.len(), "DUPLICATE_NONCE_QUERY")?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_next_nonces(senders);
+        }
         self.namespace()?;
         let tx = self.db.unchecked_transaction()?;
         self.storage_context()?;

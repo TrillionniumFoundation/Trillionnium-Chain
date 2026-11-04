@@ -567,16 +567,17 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
         / cfg.params["candidate_round_blocks"]
             .as_u64()
             .ok_or("CONFIG")?;
-    let removed: Vec<_> = state
-        .iter()
-        .filter(|(k, _)| k.starts_with("linear-update-v2:"))
+    let removed: Vec<_> = prefix_rows(state, "linear-update-v2:")
         .filter(|(_, v)| v["parent"] != current || v["round"] != round)
         .map(|(k, _)| k.clone())
         .collect();
     for key in removed {
         let id = key.strip_prefix("linear-update-v2:").ok_or("STATE")?;
         let p = format!("linear-normal-v2:{id}:");
-        state.retain(|k, _| !k.starts_with(&p));
+        let rows: Vec<_> = prefix_rows(state, &p).map(|(key, _)| key.clone()).collect();
+        for row in rows {
+            state.remove(&row);
+        }
         state.remove(&key);
     }
     let mut needed = BTreeSet::new();
@@ -594,13 +595,16 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
             needed.insert(hex::encode(control.id()));
         }
     }
-    for (k, v) in state.iter() {
-        if (k.starts_with("contribution:")
-            || k.starts_with("evaluation-archive:")
-            || k.starts_with("release:")
-            || k.starts_with("linear-update-v3:"))
-            && v["family"] == hex::encode(cfg.family)
-        {
+    for (_, v) in [
+        "contribution:",
+        "evaluation-archive:",
+        "linear-update-v3:",
+        "release:",
+    ]
+    .into_iter()
+    .flat_map(|prefix| prefix_rows(state, prefix))
+    {
+        if v["family"] == hex::encode(cfg.family) {
             for name in ["artifact", "factor_parent_artifact"] {
                 if let Some(value) = v[name].as_str() {
                     needed.insert(value.to_owned());
@@ -608,9 +612,14 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
             }
         }
     }
-    state.retain(|k, _| {
-        !(k.starts_with("linear-model-v2:") || k.starts_with("linear-model-v3:"))
-            || k.split(':').nth(1).is_some_and(|id| needed.contains(id))
-    });
+    let removed: Vec<_> = ["linear-model-v2:", "linear-model-v3:"]
+        .into_iter()
+        .flat_map(|prefix| prefix_rows(state, prefix))
+        .filter(|(key, _)| !key.split(':').nth(1).is_some_and(|id| needed.contains(id)))
+        .map(|(key, _)| key.clone())
+        .collect();
+    for key in removed {
+        state.remove(&key);
+    }
     Ok(())
 }
