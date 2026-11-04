@@ -1,0 +1,21 @@
+   Compiling generic-array v0.14.7
+   Compiling rusqlite v0.39.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling rustix v1.1.4
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-task-kernel)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/73305aff6ced/chain/trillionnium/crates/trnm-pon-node)
+error: could not compile `trnm-pon-node` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/7318d5f890d1/runtime93/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=04acfd3437c03dfe -C extra-filename=-524e9bf7e3b64440 --out-dir /workspace/scratch/73305aff6ced/target/debug/deps -L dependency=/workspace/scratch/73305aff6ced/target/debug/deps --extern fs2=/workspace/scratch/73305aff6ced/target/debug/deps/libfs2-c204fb47daf20c57.rlib --extern hex=/workspace/scratch/73305aff6ced/target/debug/deps/libhex-1558f6adc06e3fa8.rlib --extern libc=/workspace/scratch/73305aff6ced/target/debug/deps/liblibc-b1f611c28b7e9ae9.rlib --extern rusqlite=/workspace/scratch/73305aff6ced/target/debug/deps/librusqlite-babe8a83cd7d5d71.rlib --extern rustix=/workspace/scratch/73305aff6ced/target/debug/deps/librustix-08f06c2eab418122.rlib --extern serde=/workspace/scratch/73305aff6ced/target/debug/deps/libserde-3bd1ca99d837caa4.rlib --extern serde_json=/workspace/scratch/73305aff6ced/target/debug/deps/libserde_json-f0d4891802ba697c.rlib --extern sha2=/workspace/scratch/73305aff6ced/target/debug/deps/libsha2-fafdf068c84600ef.rlib --extern tempfile=/workspace/scratch/73305aff6ced/target/debug/deps/libtempfile-3587518b5ee06720.rlib --extern trnm_crypto_primitives=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_crypto_primitives-089dab1b97b809d8.rlib --extern trnm_data_availability=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_data_availability-5fb788d6e34387b0.rlib --extern trnm_mempool=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_mempool-6b692f2ffb93df30.rlib --extern trnm_mvcc_fee=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_mvcc_fee-2814de0b2a3bb320.rlib --extern trnm_protocol=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_protocol-10a9b461ad55d750.rlib --extern trnm_service_settlement=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_service_settlement-5717fe6dde1b696b.rlib --extern trnm_sqlite_io_boundary=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_sqlite_io_boundary-3edd05a9e463fda1.rlib --extern trnm_transport=/workspace/scratch/73305aff6ced/target/debug/deps/libtrnm_transport-a3ce364ac5999f75.rlib --extern zeroize=/workspace/scratch/73305aff6ced/target/debug/deps/libzeroize-cafe2ada39f15181.rlib -L native=/workspace/scratch/73305aff6ced/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out -L native=/workspace/scratch/73305aff6ced/target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/73305aff6ced/target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/73305aff6ced/target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/out` (signal: 9, SIGKILL: kill)
