@@ -1,0 +1,387 @@
+{
+  "schema": "trnm-e62-remote-publication-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+  "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+  "parents": [
+    "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+    "a10c39025cdc03d3265b031d6547b11e0350da2c"
+  ],
+  "expected_cas_parent": "c806dd9ab640e87ca3fc507a8aeada53c2053990",
+  "force": false,
+  "author_noreply": true,
+  "committer_noreply": true,
+  "prospective_merge": {
+    "commit": "2c9c10ecc3f28ca6d7af76888e500763abdcb0e2",
+    "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+    "parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29"
+    ]
+  },
+  "whole_tree_non_tree_entries": 8170,
+  "whole_tree_exact": true,
+  "changed_file_readbacks": [
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "sha": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08",
+      "bytes": 33605,
+      "sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+      "full_byte_readback": true
+    },
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "sha": "ebed0cc5d4076974112fc8b09279b1a370c2dc79",
+      "bytes": 14293,
+      "sha256": "c775e72a187a3ed4f04ea0876a6a3cc107b69feb86d915b95dde2aa34c2f63d3",
+      "full_byte_readback": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "192d3e1050a70329684fb786beffd54dff82370c",
+      "bytes": 70715,
+      "sha256": "060eda0051be64d61b2e350bcc1edee5bbae53f0ee13622d401cc6d4e996c398",
+      "full_byte_readback": true
+    },
+    {
+      "path": ".github/workflows/chain-published-fuzz-lock.yml",
+      "sha": "2505721d77ee4d2e6cffd40eecaca26ef526c96d",
+      "bytes": 5717,
+      "sha256": "954def6b941d9f6a23065a28c7531825b38e8f1fc3554ffc197de8c825f78c15",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/fuzz-lock/job-126409090815.decoded.log",
+      "sha": "760d4626df4667cba238e68b04958a7831bca031",
+      "bytes": 78089,
+      "sha256": "b75591dc4cbb0f22fb075a239b83c0a9d760bb857ca1f89a9357792337da3093",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/FUZZ_LOCK_GENERATION.json",
+      "sha": "ac0edbebb2a33c526b861b811a84d0959646a598",
+      "bytes": 11148,
+      "sha256": "ee2d0f4f72c9f7ba6eebf28e2aeeec31a66b97656dc1025957185821fbdb237c",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/branch-count/job-126404257659.decoded.log",
+      "sha": "8b09eb17350b9292553bdcdda2e275a33346523c",
+      "bytes": 212060,
+      "sha256": "89d63e4c19ba98ed0ea1b1163105389fe472c39cc6ddaa3788ecab1614714daf",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/branch-count/job-126404257700.decoded.log",
+      "sha": "432e85c88c92c11ea79d2a65b9bc2167ace2388b",
+      "bytes": 211928,
+      "sha256": "29107863cbc15cfc8d512d82c632df55052fb6beb1da396e1a719f05a77c891a",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/ORIGINAL_BRANCH_COUNT_FAILURES.json",
+      "sha": "fecc7dfbc1631dcf9510a8b9a5d5c0599fe4e281",
+      "bytes": 4691,
+      "sha256": "6891bcc025b0fb7b677bb7bcb0feacb4fcd67720ccd549ca0e475f8fc4f8a330",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/DA_RETENTION_INDEPENDENT_REVIEW.json",
+      "sha": "0f5d020049b5a63f89a6b0c0301df476eeb4c4e6",
+      "bytes": 4054,
+      "sha256": "e0205af02cb37a4e520ca6997bfa87dc785932b3179847010d04f1015105adaf",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/COMPOSING_AGENT_SOURCE_REVIEW.json",
+      "sha": "e819b88755466553365bd40301d733896cfe8ef4",
+      "bytes": 5925,
+      "sha256": "f7bb6c33ad32601780a0b8ff3a5f5657715b87808d5441a8de1a6d4f1dcbfeb3",
+      "full_byte_readback": true
+    },
+    {
+      "path": "qualification/frozen-44d-lock-composition-20261104/COMPOSITION.json",
+      "sha": "43b2091cdfc78e1951212d80cbdacc501d0b2014",
+      "bytes": 30369,
+      "sha256": "d3decac53ed12ff3046ce3b42e80f55859a3f8bbd761b9edf22a0fa2812b42f7",
+      "full_byte_readback": true
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "869ddaeb4230f97a6eeed4a69eee29aa6dad9e7d",
+      "bytes": 447303,
+      "sha256": "b4f19b384994896b7199984ee14dd84859803e942ef473313ff95ceb926f0e35",
+      "full_byte_readback": true
+    }
+  ],
+  "adopted_source_readbacks": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "git_blob": "73e995142a6363d5e9c7eea52915e4dd5b303717",
+      "bytes": 14100,
+      "sha256": "3dfdaec90ad2765eb4b940a638b3b866e31ca910f89eb1d74c0ea91ed2a77a5a",
+      "readback": true
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "git_blob": "5337bf1a663b0fb787c765e6dd1a0ef686a4556e",
+      "bytes": 9333,
+      "sha256": "e3da9f32ccc4e1c1e1b8326d0e3cc84f1216fa8e7ea9d0d0039564710b920a2e",
+      "readback": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "git_blob": "0ba939ce56e952d929a091213927b2d5a162ec96",
+      "bytes": 70715,
+      "sha256": "f21f68ba14b69f3113e0c838d78c3842975d6a26d530d90b5c2b40c6a6a3d3f5",
+      "readback": true
+    },
+    {
+      "path": "config/pon/pq-system-required-tests-v1.json",
+      "git_blob": "e740e4bb6d91f9641138656357a88edd037a73fe",
+      "bytes": 5471,
+      "sha256": "cf3ec90e580fe3ae433477de93315ddf1365c11b67fb3755d3db3b2093c8e3d4",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "git_blob": "fe1e6a3aee8771dd025c7e3607061c020542d852",
+      "bytes": 39976,
+      "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "git_blob": "02a4b76bca4de77f1fd45e914f7e84610f5315e8",
+      "bytes": 60429,
+      "sha256": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+      "git_blob": "e0a8163edbb451d68605bf26e8544ca1a42dc3fa",
+      "bytes": 55653,
+      "sha256": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "git_blob": "43f923aa22ca5c48505fac000eb7a594973a9d9c",
+      "bytes": 325141,
+      "sha256": "2027754beaff1ee868aedb67f230e4b42cd2b6384724f1c3f47cc47193672a01",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "git_blob": "add62202c8038776d0db254c066c619dd8fe4620",
+      "bytes": 44516,
+      "sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "git_blob": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+      "bytes": 36217,
+      "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+      "git_blob": "f680b26569b39923f63eeb2ccb347e33ea46e03e",
+      "bytes": 27953,
+      "sha256": "57af491f886603245962c1ac26f6ff21edfa623a8437b957282852422fa254db",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "git_blob": "da6f83549c726a82fd5bda91902093bf5ec8ba38",
+      "bytes": 23380,
+      "sha256": "967dfdaa623f252debe1f8d1b680287f1940b275d17b85ddafa9394d3faa1454",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+      "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+      "bytes": 26042,
+      "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "git_blob": "60bf0d27e89dc676f5e0291875bcb88abad680fe",
+      "bytes": 34649,
+      "sha256": "2941acb3e8c1836f115b44b98f5e6b72aa87664beb19e92c8a4b9fdb2ae928ae",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "git_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "bytes": 684,
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "git_blob": "decb1202b55c77777954d2ef85a6f6887e39090e",
+      "bytes": 15663,
+      "sha256": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+      "readback": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+      "git_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+      "bytes": 2844,
+      "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+      "readback": true
+    }
+  ],
+  "original_new_runs": [
+    {
+      "run": 41782247143,
+      "name": "PoN parent-bound model evidence",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782246936,
+      "name": "PoN recent batch exact-source acceptance",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247015,
+      "name": "Release finality reference and native baseline",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247117,
+      "name": "PoN original native campaign",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247051,
+      "name": "PoN branch encoding exact-source acceptance",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247033,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782246987,
+      "name": "trnm-required-baseline",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "pending",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247001,
+      "name": "CodeQL exact-source analysis export",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247052,
+      "name": "PoN owned process cleanup",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247044,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247128,
+      "name": "PoN baseline diagnostic readback",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247094,
+      "name": "PoN priority acceptance",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "pending",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247028,
+      "name": "PoN W1 work security observations",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782247177,
+      "name": "PoN isolated cloud build inputs",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782246946,
+      "name": "PoN original large-state CPU acceptance",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782246998,
+      "name": "PoN PQ network and rollback witness",
+      "event": "pull_request",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782241884,
+      "name": "PR #699",
+      "event": "dynamic",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "in_progress",
+      "conclusion_at_initial_read": null
+    },
+    {
+      "run": 41782235395,
+      "name": "Exact published fuzz ASM locked graph",
+      "event": "push",
+      "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "status_at_initial_read": "queued",
+      "conclusion_at_initial_read": null
+    }
+  ],
+  "local_preflight_executed": false,
+  "local_native_executed": false,
+  "gate_conclusion": "PENDING_ORIGINAL_NEW_SOURCE_EXECUTIONS"
+}

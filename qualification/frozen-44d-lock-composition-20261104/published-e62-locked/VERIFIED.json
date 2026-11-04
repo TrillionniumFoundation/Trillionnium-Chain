@@ -1,0 +1,88 @@
+{
+  "schema": "trnm-exact-published-fuzz-lock-independent-log-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 41782235395,
+  "job_id": 126416200615,
+  "actual_conclusion": "success",
+  "actual_result": {
+    "first_locked_fetch_exit": 0,
+    "fuzz_mutations_executed": 0,
+    "lock_bytes": 33605,
+    "lock_sha256": "8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d",
+    "lock_unchanged": true,
+    "metadata_sha256": "f0d0883647abfa2385c8bf5925888818f859befa5f45ebe7ef59af30a2f8808e",
+    "native_tests_executed": 0,
+    "offline_locked_metadata_exit": 0,
+    "original_complete_fuzz_gate_qualified": false,
+    "performance_qualified": false,
+    "production_activation": false,
+    "resolved_packages": 147,
+    "schema": "trnm-exact-published-fuzz-lock-v1",
+    "source": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "toolchain": "nightly-2026-10-01",
+    "tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60"
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "tested_tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 936047121,
+    "tracked_entries": 8170,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "tested_tree": "e61e1542d983e780c96a39e5785d3b4efc46ed60",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 936047121,
+    "tracked_entries": 8170,
+    "tracked_worktree_verified": true
+  },
+  "source_workflow_blob": "2505721d77ee4d2e6cffd40eecaca26ef526c96d",
+  "workflow_full_byte_readback": true,
+  "job_log": {
+    "bytes": 40165,
+    "sha256": "ec792f24e6bd966922c9c40a0f8b5a7fe9f753eaadf286983c3195778d165947",
+    "path": "job-126416200615.decoded.log"
+  },
+  "both_lock_sha_checks_observed": 2,
+  "original_preflight": {
+    "result": "PASS",
+    "mode": "--audit",
+    "packages": 26,
+    "remote_policy_mutated": false
+  },
+  "original_artifact": [
+    {
+      "id": 13299452755,
+      "name": "exact-published-fuzz-lock-e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29-1",
+      "bytes": 62459,
+      "sha256": "ac15f90865cbfead2f8b31b7e51ef52a99515fddadee8d05879baf4cb5c48ea0"
+    }
+  ],
+  "previous_negative": {
+    "source": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "run_id": 41779987720,
+    "job_id": 126409090815,
+    "original_locked_exit": 101,
+    "old_lock_blob": "76dc02ff2332f5d0cf5ac4a0d49bcb4aac517434"
+  },
+  "narrow_issue_status": "Generated lock mismatch repaired and first locked command verified on the exact published candidate.",
+  "native_tests_executed": 0,
+  "fuzz_mutations_executed": 0,
+  "original_complete_quality_or_fuzz_qualified": false,
+  "performance_qualified": false,
+  "production_activation": false,
+  "metadata_json_independently_reparsed_here": false,
+  "metadata_scope": "Actual runner parsed and checked the offline Cargo graph. This follow-up independently verifies its source-bound original job receipt and exact result/hash, without claiming a second local parse of the full metadata artifact."
+}
