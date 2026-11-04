@@ -31,7 +31,7 @@ jobs:
           echo "READBACK_OUT=$READBACK_OUT" >> "$GITHUB_ENV"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$READBACK_OUT/source-before.json"
           bash scripts/project-preflight.sh --audit
-      - name: Read eleven exact original artifacts without executing their contents
+      - name: Read eighteen exact original artifacts without executing their contents
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -43,7 +43,7 @@ jobs:
           
           REPO = "TrillionniumFoundation/Trillionnium-Chain"
           BRANCH = "fix/chain-retained-failure-readback-20261104"
-          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13290599543,"name":"pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1","size":56503959,"digest":"sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771","run":41760813065,"job":126349481887,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13291962180,"name":"pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":15793484,"digest":"sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a","run":41760812979,"job":126353223160,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036116,"name":"w1-fresh-service-prospective-merge-554a76fb8e21f160806692c753ca3ea6ad53a42f-1","size":5292126,"digest":"sha256:57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932","run":41760812907,"job":126358234949,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036964,"name":"w1-fresh-service-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":5289751,"digest":"sha256:586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9","run":41760812907,"job":126358235097,"head":"01627151f3ab50750eac2adeb46d8883a601265f"}]''')
+          TARGETS = json.loads(r'''[{"id":13284469302,"name":"pq-system-ubuntu-24.04-head-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":1053225,"digest":"sha256:a73afaa8fcf10d306f3b89095f8958f4b7caf32ee93c17d2bb967058708f090a","run":41746463373,"job":126300605830,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13287122967,"name":"pon-fixed-host-root-f0-x64-head-f35ee6dc61feaba7c68b16e1f9384b5c3794a976-1","size":19665544,"digest":"sha256:41e30555cf4efa4662eba0c2d6ad7e8eac3ceadd1dd4101c1e42e45bbc1b6607","run":41752900351,"job":126322033940,"head":"f35ee6dc61feaba7c68b16e1f9384b5c3794a976"},{"id":13283953563,"name":"pon-native-campaign-x64-head-release-362fbebe5027d731f16c88f710bfef7e922cd230-1","size":60835230,"digest":"sha256:fc4693f5b3bee2c24b760b5dcac6cdd631e670687b0d8e44a2fe65643faf23c6","run":41746463223,"job":126300603089,"head":"362fbebe5027d731f16c88f710bfef7e922cd230"},{"id":13284616264,"name":"priority-ubuntu-24.04-arm-head-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":53187443,"digest":"sha256:e64496907fb666244ed2930bda9c342a06fa1ea6f26057942ae891ecbcd9d3af","run":41732369945,"job":126277462314,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13284611411,"name":"priority-ubuntu-24.04-arm-prospective-merge-history-b4bdf142f513081715ecc8d1f9674291e85302cc-1","size":52915730,"digest":"sha256:c6402ea1546e9bf7597f3fffec82da8080e90de740cfa7c880f183e8a88be23d","run":41732369945,"job":126277462527,"head":"b4bdf142f513081715ecc8d1f9674291e85302cc"},{"id":13286673364,"name":"pon-fixed-host-root-f0-x64-head-be0d5f978dc86008115524a6be85c38e03982b33-1","size":15946259,"digest":"sha256:90a1834ddc7a083fc9103285c6f42f9c00d421b8c6d6206139f9db3e7f4da042","run":41753071420,"job":126323929045,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13288600275,"name":"pon-native-campaign-x64-head-release-be0d5f978dc86008115524a6be85c38e03982b33-1","size":59518668,"digest":"sha256:06bd58d9fb7e10fea73e6f57f2e008295b6515e7be490532deea74711aa6d1be","run":41753071468,"job":126326178742,"head":"be0d5f978dc86008115524a6be85c38e03982b33"},{"id":13290599543,"name":"pon-native-campaign-x64-head-release-01627151f3ab50750eac2adeb46d8883a601265f-1","size":56503959,"digest":"sha256:7737b4114625c241425e9f35c3779515aa698ff10aa8c1af2805cda432cd5771","run":41760813065,"job":126349481887,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13291962180,"name":"pon-fixed-host-root-f0-x64-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":15793484,"digest":"sha256:c9416f8df9b478c2168790ab24d2c1ca9690b58490f77b4ebb01df0af203751a","run":41760812979,"job":126353223160,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036116,"name":"w1-fresh-service-prospective-merge-554a76fb8e21f160806692c753ca3ea6ad53a42f-1","size":5292126,"digest":"sha256:57fcc90f2661af1e362e88ed98a73e129340e8fbdccd35427786fbb9f890b932","run":41760812907,"job":126358234949,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13293036964,"name":"w1-fresh-service-head-01627151f3ab50750eac2adeb46d8883a601265f-1","size":5289751,"digest":"sha256:586470235a89df90a49645fb8916939a6405d06e1f1e6aa706c241f65e0d01c9","run":41760812907,"job":126358235097,"head":"01627151f3ab50750eac2adeb46d8883a601265f"},{"id":13294156008,"name":"cost-x64-01627151f3ab50750eac2adeb46d8883a601265f-1","size":8137142,"digest":"sha256:5f42d14ce77a7ccb9a3321849da3ba575b834f084ef944d60a43c4d3161e23d2","run":41760813143,"job":126370230755,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"head","tested":"01627151f3ab50750eac2adeb46d8883a601265f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13293304196,"name":"cost-arm64-01627151f3ab50750eac2adeb46d8883a601265f-1","size":7826142,"digest":"sha256:0d4c256cb7f7c2622c803c60c1ab8874361cb065fd15ec88132b4251cfdb6f3d","run":41760813143,"job":126370230550,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"head","tested":"01627151f3ab50750eac2adeb46d8883a601265f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13294472662,"name":"priority-ubuntu-24.04-head-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1","size":7209581,"digest":"sha256:4577b8253a0b974ffc48660513b9fca3b33ea11226ebbe71cca5e9e08ce7792c","run":41760813063,"job":126367534188,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"head","tested":"01627151f3ab50750eac2adeb46d8883a601265f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13294038025,"name":"priority-ubuntu-24.04-prospective-merge-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1","size":7235030,"digest":"sha256:00c16c5e5de91f200c31111fc1030d677a2ec31c39d94c0a61aedbd2bd0ae7ab","run":41760813063,"job":126367533913,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"prospective-merge","tested":"554a76fb8e21f160806692c753ca3ea6ad53a42f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13294522239,"name":"priority-ubuntu-24.04-arm-head-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1","size":7055594,"digest":"sha256:b2318efda4444f5cc57070f765dc793ada0221305bcc7e47b60161c585fb2bf0","run":41760813063,"job":126367534323,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"head","tested":"01627151f3ab50750eac2adeb46d8883a601265f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13293943410,"name":"priority-ubuntu-24.04-arm-prospective-merge-service-model-01627151f3ab50750eac2adeb46d8883a601265f-1","size":7051358,"digest":"sha256:386c4c3fc4077fbd7cd47258db3d49ce86dcdd504b6e206222dd5c193d57334a","run":41760813063,"job":126367534048,"head":"01627151f3ab50750eac2adeb46d8883a601265f","kind":"prospective-merge","tested":"554a76fb8e21f160806692c753ca3ea6ad53a42f","tree":"e0a48a52802852a08bf80ffc564c23e20bc91358"},{"id":13293559601,"name":"pon-fixed-host-root-f0-x64-head-41dd661222285728720b97519da1f5a024c7716b-1","size":24967,"digest":"sha256:8cf4e283a9a54d841b42328883e819b3fd83c426ba0343477548e5b95dd68366","run":41769682840,"job":126376194034,"head":"41dd661222285728720b97519da1f5a024c7716b"}]''')
           ROOT = Path(os.environ["READBACK_OUT"])
           API = "https://api.github.com/repos/" + REPO
           TOKEN = os.environ["GH_TOKEN"]
@@ -63,7 +63,7 @@ jobs:
           require(os.environ["GITHUB_REPOSITORY"] == REPO, "REPOSITORY")
           require(os.environ["GITHUB_REF"] == "refs/heads/" + BRANCH, "REF")
           require(os.environ["GITHUB_EVENT_NAME"] == "push", "EVENT")
-          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 11, "TARGETS")
+          require(len(TARGETS) == len({x["id"] for x in TARGETS}) == 18, "TARGETS")
           
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -151,6 +151,59 @@ jobs:
               r"|execution_finished|source_recompiled|source_verified|source_expected|commit"
               r"|binary_sha256_before|binary_sha256_after|requested_window_ns|attack_workers"
               r"|systemd_run_exit|cleanup)$")
+          F0_PREPARATION_TARGET_ID = 13293559601
+          F0_PREPARATION_MEMBERS = frozenset((
+              "SCOPE.txt", "artifact-files.json", "workflow-predeclared.json", "workflow-outcomes.json",
+              "source-before.json", "source-after.json", "source-before.log", "source-after.log",
+              "preparation.stdout.log", "preparation.stderr.log",
+              "prepared/prepared.json", "prepared/predeclared.json",
+              "prepared/source-before.json", "prepared/source-after.json",
+              "prepared/source-before.step.json", "prepared/source-before.stdout.log",
+              "prepared/source-before.stderr.log",
+              "prepared/preflight.step.json", "prepared/preflight.stdout.log",
+              "prepared/preflight.stderr.log",
+              "prepared/format.step.json", "prepared/format.stdout.log", "prepared/format.stderr.log",
+              "finalization/result.json", "finalization/controller/result.json",
+              "finalization/baseline/result.json", "finalization/valid-work-root/result.json",
+              "finalization.stdout.log", "finalization.stderr.log",
+              "finalization-status.txt", "finalization-not-run.json",
+          ))
+          F0_PREPARATION_EXTRA_KEY = re.compile(
+              r"^(?:prepared|selector_invocation_attempted|head|tree|stdout|stderr|path|bytes|sha256"
+              r"|stdout_sha256|stderr_sha256|SOURCE_OUTCOME|TOOLCHAIN_OUTCOME|PREPARATION_OUTCOME"
+              r"|ARM_OUTCOME|EXECUTION_OUTCOME|FINALIZATION_OUTCOME|F0_SOURCE_AFTER_STATUS)$")
+          FROM_ZERO_TARGET_IDS = frozenset((
+              13294156008, 13293304196, 13294472662,
+              13294038025, 13294522239, 13293943410,
+          ))
+          FROM_ZERO_TESTS = (
+              "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+              "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+              "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+              "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          )
+          FROM_ZERO_MANIFEST = "from-zero-native/manifest.json"
+          FROM_ZERO_MEMBERS = frozenset({
+              "source.json", "source-before.json", "source-after.json",
+              FROM_ZERO_MANIFEST,
+              "from-zero-native/build/stdout", "from-zero-native/build/stderr",
+              "from-zero-native/format-check/stdout", "from-zero-native/format-check/stderr",
+              "from-zero-native/format-copy/stdout", "from-zero-native/format-copy/stderr",
+              "from-zero-native-host/controller-result.json",
+              "from-zero-native-host/child-result.json",
+              "from-zero-native-host/prepare-build.json",
+              "from-zero-native-host/prepare-build/stdout",
+              "from-zero-native-host/prepare-build/stderr",
+              "from-zero-native-host/inside-before.json",
+              "from-zero-native-host/inside-after.json",
+              "from-zero-native-host/outside-after.json",
+              "from-zero-native-host/systemd-run.log",
+          } | {"from-zero-native/" + name + "/" + channel
+               for name in FROM_ZERO_TESTS for channel in ("stdout", "stderr")})
+          FROM_ZERO_EXTRA_KEY = re.compile(
+              r"^(?:execution_finished|source_recompiled|commit|tree|timed_out"
+              r"|binary_sha256_before|binary_sha256_after|systemd_run_exit|cleanup)$")
           NATIVE_REPORTS = {
               13288600275: {
                   "run-1-raw/report.json": (24004285, "561b22bc5c4717c71ac379adf1a396b4a5aa7555c18c9d2668288ca3ac324593"),
@@ -179,6 +232,10 @@ jobs:
               "client_native_history_arithmetic_before", "client_native_history_arithmetic_after",
           )
           def selected(name, target):
+              if target["id"] == F0_PREPARATION_TARGET_ID:
+                  return name in F0_PREPARATION_MEMBERS
+              if target["id"] in FROM_ZERO_TARGET_IDS:
+                  return name in FROM_ZERO_MEMBERS
               if target["id"] in W1_FRESH_TARGET_IDS:
                   return name in W1_FRESH_MEMBERS
               if name in NATIVE_REPORTS.get(target["id"], {}):
@@ -224,6 +281,109 @@ jobs:
                   return (2, name)
               return (3, name)
           
+          def f0_preparation_priority(info):
+              name = info.filename
+              first = ("prepared/prepared.json", "workflow-outcomes.json", "finalization/result.json")
+              if name in first:
+                  return (0, first.index(name), name)
+              if name in ("prepared/format.stdout.log", "prepared/format.stderr.log",
+                          "prepared/format.step.json", "preparation.stderr.log", "preparation.stdout.log"):
+                  return (1, 0, name)
+              return (2, 0, name)
+
+          def from_zero_priority(info):
+              name = info.filename
+              if name == FROM_ZERO_MANIFEST:
+                  return (0, name)
+              if name.endswith("/stderr"):
+                  return (1, name)
+              if name in (
+                      "from-zero-native-host/controller-result.json",
+                      "from-zero-native-host/child-result.json",
+                      "from-zero-native-host/prepare-build.json"):
+                  return (2, name)
+              if name.endswith("/stdout") and "/build/" not in name and "/prepare-build/" not in name:
+                  return (3, name)
+              if name == "from-zero-native-host/systemd-run.log":
+                  return (4, name)
+              return (5, name)
+
+          def from_zero_manifest_projection(value, target, record):
+              require(isinstance(value, dict)
+                      and value.get("schema") == "trnm-from-zero-native-execution-v3",
+                      "FROM_ZERO_MANIFEST_SCHEMA")
+              def fields(item, names):
+                  return {name: item.get(name) for name in names} if isinstance(item, dict) else None
+              sources = {}
+              for key in ("source_before", "source_after"):
+                  source = value.get(key)
+                  if isinstance(source, dict):
+                      require(source.get("commit") == target["tested"]
+                              and source.get("tree") == target["tree"], "FROM_ZERO_MANIFEST_SOURCE")
+                  sources[key] = fields(source, ("commit", "tree", "test_sha256"))
+              process_fields = (
+                  "exit_code", "timed_out", "wall_ns", "user_cpu_ns", "system_cpu_ns", "cpu_ns",
+                  "cpu_scope", "wait4_cpu_resolution_ns", "stdout_sha256", "stderr_sha256",
+              )
+              runs = value.get("runs")
+              if runs is not None:
+                  require(isinstance(runs, list) and len(runs) <= len(FROM_ZERO_TESTS)
+                          and all(isinstance(row, dict) for row in runs)
+                          and [row.get("name") for row in runs] == list(FROM_ZERO_TESTS[:len(runs)]),
+                          "FROM_ZERO_MANIFEST_RUNS")
+                  runs = [{**fields(row, ("name", "passed", "failure", "named_execution",
+                                          "stdout_sha256", "stderr_sha256")),
+                           "process": fields(row.get("process"), process_fields)} for row in runs]
+              terminal = value.get("terminal")
+              terminal_view = fields(terminal, (
+                  "schema", "native_execution_completed", "native_execution_completed_scope",
+                  "unexecuted_native_tests", "unexecuted_acceptance_stages",
+                  "acceptance_passed", "finalization_completed", "subsequent_ci_steps_observed",
+              ))
+              if terminal_view is not None:
+                  invocations = terminal.get("native_invocations")
+                  if invocations is not None:
+                      require(isinstance(invocations, list) and len(invocations) == len(FROM_ZERO_TESTS)
+                              and all(isinstance(row, dict) for row in invocations)
+                              and [row.get("name") for row in invocations] == list(FROM_ZERO_TESTS),
+                              "FROM_ZERO_MANIFEST_INVOCATIONS")
+                      invocations = [fields(row, ("name", "status", "exit_code", "timed_out"))
+                                     for row in invocations]
+                  terminal_view["native_invocations"] = invocations
+                  acceptance = terminal.get("acceptance_stages")
+                  terminal_view["acceptance_stages"] = {
+                      key: fields(acceptance.get(key), (
+                          "path", "status", "error", "before_validation", "retained_report",
+                          "retained_matches_before_validation",
+                      )) if isinstance(acceptance, dict) else None
+                      for key in ("service_report", "sustained_report", "confirmation_report")}
+              projection = {
+                  "schema": "trnm-retained-from-zero-terminal-readback-v1",
+                  "artifact": target["id"], "member": record["member"],
+                  "member_bytes": record["bytes"], "member_sha256": record["sha256"],
+                  "expected_source_kind": target["kind"], "expected_tested_commit": target["tested"],
+                  "sources": sources,
+                  "original": fields(value, (
+                      "schema", "source_recompiled", "all_named_tests_passed", "format_passed",
+                      "passed", "execution_finished", "failures",
+                      "binary_sha256_before", "binary_sha256_after",
+                      "independent_wan_accepted", "work_hardness_accepted", "production_activation",
+                  )),
+                  "format": fields(value.get("format"), process_fields),
+                  "build": fields(value.get("build"), process_fields),
+                  "runs": runs, "terminal": terminal_view,
+                  "confirmation_observation": fields(value.get("confirmation_observation"), (
+                      "schema", "sha256", "original_gate_validated", "original_gate_validation_error",
+                      "simulated_control",
+                  )),
+                  "source_tests_executed": False, "acceptance_granted": False,
+                  "scope": "Literal retained manifest outcomes; returned child, named-test result, report validation and unexecuted stages remain separate. Missing values stay null. Full original manifest and logs remain in the retained ZIP.",
+              }
+              scalar_fields(projection)
+              rendered = json.dumps(projection, sort_keys=True, separators=(",", ":")) + "\n"
+              require(len(rendered) <= 12000, "FROM_ZERO_MANIFEST_CONSOLE_LIMIT")
+              return projection, rendered
+
           def f0_terminal_projection(value, target, record):
               # Copy the current F0 producer's six fixed rows and cleanup facts.
               # These are original observations, not newly recomputed verdicts.
@@ -527,7 +687,8 @@ jobs:
                           if reports:
                               require(set(reports) <= {x.filename for x in infos}, "NATIVE_REPORT_MEMBER_MISSING")
                           chosen = sorted((x for x in infos if not x.is_dir() and selected(x.filename, target)),
-                                          key=priority)
+                                          key=(f0_preparation_priority if target["id"] == F0_PREPARATION_TARGET_ID
+                                               else from_zero_priority if target["id"] in FROM_ZERO_TARGET_IDS else priority))
                           for member_index, info in enumerate(chosen):
                               if info.file_size > MAX_MEMBER or selected_bytes + info.file_size > MAX_SELECTED:
                                   omitted.append({"name": info.filename, "reason": "bounded reader size limit"})
@@ -556,13 +717,30 @@ jobs:
                                       record["native_history_cost_projection"] = projection
                                       excerpt = json.dumps(projection, sort_keys=True) + "\n"
                                       console_excerpt = json.dumps(compact, sort_keys=True, separators=(",", ":")) + "\n"
+                                  elif target["id"] in FROM_ZERO_TARGET_IDS and info.filename == FROM_ZERO_MANIFEST:
+                                      projection, console_excerpt = from_zero_manifest_projection(value, target, record)
+                                      record["from_zero_terminal_projection"] = projection
+                                      excerpt = json.dumps(projection, sort_keys=True) + "\n"
                                   else:
-                                      extra_key = W1_FRESH_EXTRA_KEY if target["id"] in W1_FRESH_TARGET_IDS else None
+                                      extra_key = W1_FRESH_EXTRA_KEY if target["id"] in W1_FRESH_TARGET_IDS else (
+                                          FROM_ZERO_EXTRA_KEY if target["id"] in FROM_ZERO_TARGET_IDS else (
+                                              F0_PREPARATION_EXTRA_KEY if target["id"] == F0_PREPARATION_TARGET_ID else None))
                                       fields = scalar_fields(value, extra_key)
                                       record["scalar_fields"] = fields
+                                      if target["id"] == F0_PREPARATION_TARGET_ID and info.filename == "prepared/prepared.json":
+                                          require(isinstance(value, dict)
+                                                  and value.get("schema") == "pon-fixed-host-root-f0-prepared-v1"
+                                                  and value.get("head") == target["head"], "F0_PREPARATION_SOURCE")
+                                          record["f0_preparation_fields"] = {key: value.get(key) for key in (
+                                              "schema", "head", "tree", "prepared", "selector_invocation_attempted", "failure")}
+                                      if target["id"] == F0_PREPARATION_TARGET_ID and info.filename == "workflow-outcomes.json":
+                                          require(isinstance(value, dict), "F0_WORKFLOW_OUTCOMES")
+                                          record["f0_workflow_outcomes"] = {key: value.get(key) for key in (
+                                              "SOURCE_OUTCOME", "TOOLCHAIN_OUTCOME", "PREPARATION_OUTCOME", "ARM_OUTCOME",
+                                              "EXECUTION_OUTCOME", "FINALIZATION_OUTCOME", "F0_SOURCE_AFTER_STATUS")}
                                       excerpt = json.dumps({"artifact": target["id"], "member": info.filename,
                                                             "fields": fields}, sort_keys=True) + "\n"
-                                      if target["id"] == 13291962180 and info.filename in (
+                                      if target["id"] in (13291962180, F0_PREPARATION_TARGET_ID) and info.filename in (
                                               "execution/results.json", "finalization/result.json"):
                                           projection, console_excerpt = f0_terminal_projection(value, target, record)
                                           record["f0_terminal_projection"] = projection
@@ -573,7 +751,10 @@ jobs:
                                   picked = set()
                                   for number, line in enumerate(lines):
                                       clean = re.sub(r"\x1b\[[0-9;]*m", "", line)
-                                      if MATCH.search(clean):
+                                      if (MATCH.search(clean) or (
+                                              target["id"] == F0_PREPARATION_TARGET_ID
+                                              and info.filename == "prepared/format.stdout.log"
+                                              and clean.startswith(("Diff in ", "+", "-")))):
                                           picked.update(range(max(0, number - 2), min(len(lines), number + 12)))
                                   # Bound display only. The original ZIP remains intact.
                                   picked.update(range(max(0, len(lines) - 40), len(lines)))
@@ -611,6 +792,8 @@ jobs:
                                   require(omitted_lines == 0, "NATIVE_COST_CONSOLE_LIMIT")
                               if "f0_terminal_projection" in record:
                                   require(omitted_lines == 0, "F0_TERMINAL_CONSOLE_LIMIT")
+                              if "from_zero_terminal_projection" in record:
+                                  require(omitted_lines == 0, "FROM_ZERO_MANIFEST_CONSOLE_LIMIT")
                               record["stdout_emitted"] = displayed_lines > 0
                               record["stdout_lines_emitted"] = displayed_lines
                               record["stdout_lines_omitted"] = omitted_lines
@@ -626,7 +809,7 @@ jobs:
                   finally:
                       print("::" + command_token + "::", flush=True)
                   result = {
-                      "schema": "trnm-retained-failure-artifact-readback-v5",
+                      "schema": "trnm-retained-failure-artifact-readback-v6",
                       "target": target, "downloaded_zip_bytes": received,
                       "downloaded_zip_sha256": target["digest"].split(":", 1)[1],
                       "member_index_sha256": index_sha,
@@ -636,6 +819,38 @@ jobs:
                       "production_activation": False,
                       "scope": "Read original failed evidence only; excerpts are bounded, original archive retained."
                   }
+                  if target["id"] in FROM_ZERO_TARGET_IDS:
+                      result["from_zero_manifest_read"] = any(
+                          "from_zero_terminal_projection" in row for row in records)
+                      result["absent_from_zero_small_members"] = sorted(
+                          FROM_ZERO_MEMBERS - {info.filename for info in infos})
+                  if target["id"] == F0_PREPARATION_TARGET_ID:
+                      result["f0_preparation_read"] = any(
+                          row["member"] == "prepared/prepared.json" and row.get("read_status") == "read"
+                          for row in records)
+                      result["absent_f0_preparation_small_members"] = sorted(
+                          F0_PREPARATION_MEMBERS - {info.filename for info in infos})
+                      preparation = next((row["f0_preparation_fields"] for row in records
+                                          if "f0_preparation_fields" in row), None)
+                      outcomes = next((row["f0_workflow_outcomes"] for row in records
+                                       if "f0_workflow_outcomes" in row), None)
+                      terminal = next((row["f0_terminal_projection"] for row in records
+                                       if "f0_terminal_projection" in row), None)
+                      scope_status = "unknown"
+                      if (isinstance(preparation, dict) and isinstance(outcomes, dict)
+                              and preparation.get("prepared") is False
+                              and preparation.get("selector_invocation_attempted") is False
+                              and outcomes.get("PREPARATION_OUTCOME") == "failure"
+                              and outcomes.get("ARM_OUTCOME") == outcomes.get("EXECUTION_OUTCOME") == "skipped"):
+                          scope_status = "prepare-failed/native-not-executed"
+                      result["f0_preparation_scope"] = {
+                          "schema": "trnm-retained-f0-preparation-scope-v1", "status": scope_status,
+                          "original_preparation": preparation, "original_workflow_outcomes": outcomes,
+                          "original_planned_confirmations": terminal["denominator_fields"].get("planned_confirmations")
+                                                             if isinstance(terminal, dict) else None,
+                          "observed_native_business_result": None,
+                          "scope": "Status describes the F0 business selector using the retained preparation and workflow outcomes. Finalizer unobserved slots preserve the original plan. Actual business confirmation measurement remains null.",
+                      }
                   write_json(output / "readback.json", result)
                   summary = {key: result[key] for key in (
                       "schema", "target", "downloaded_zip_bytes", "downloaded_zip_sha256",
@@ -643,6 +858,13 @@ jobs:
                       "source_tests_executed", "acceptance_granted", "production_activation")}
                   summary["omitted_members"] = len(omitted)
                   summary["records"] = len(records)
+                  if target["id"] in FROM_ZERO_TARGET_IDS:
+                      summary["from_zero_manifest_read"] = result["from_zero_manifest_read"]
+                      summary["absent_from_zero_small_members"] = result["absent_from_zero_small_members"]
+                  if target["id"] == F0_PREPARATION_TARGET_ID:
+                      summary["f0_preparation_read"] = result["f0_preparation_read"]
+                      summary["absent_f0_preparation_small_members"] = result["absent_f0_preparation_small_members"]
+                      summary["f0_preparation_scope"] = result["f0_preparation_scope"]
                   print(json.dumps(summary, sort_keys=True), flush=True)
                   results.append(summary)
               except Exception as error:
@@ -657,7 +879,7 @@ jobs:
                   results.append(result)
           
           write_json(ROOT / "readback.json", {
-              "schema": "trnm-retained-failure-readback-cohort-v4",
+              "schema": "trnm-retained-failure-readback-cohort-v5",
               "planned_artifacts": len(TARGETS), "results": results,
               "source_tests_executed": False, "acceptance_granted": False,
               "production_activation": False})

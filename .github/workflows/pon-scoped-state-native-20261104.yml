@@ -16,14 +16,14 @@ jobs:
       RUST_TEST_THREADS: "1"
       PYTHONDONTWRITEBYTECODE: "1"
       SOURCE_KIND: head
-      EXPECTED_HEAD: 41dd661222285728720b97519da1f5a024c7716b
-      EXPECTED_TESTED: 41dd661222285728720b97519da1f5a024c7716b
+      EXPECTED_HEAD: 6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029
+      EXPECTED_TESTED: 6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029
       SELECTOR: ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks
     steps:
       - name: Checkout the exact repair source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          ref: 41dd661222285728720b97519da1f5a024c7716b
+          ref: 6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029
           fetch-depth: 0
           persist-credentials: false
       - name: Bind source and preserve original preflight
@@ -56,12 +56,12 @@ jobs:
               "tested_commit": os.environ["EXPECTED_TESTED"],
               "selector": os.environ["SELECTOR"],
               "profile": "original cargo test profile; lib; all-features",
-              "reason": "same-call scoped account parsing and four authenticated ledger/reorg Transaction::commit API observations",
+              "reason": "same-call scoped account parsing, identity-lift arithmetic and four authenticated ledger/reorg Transaction::commit API observations",
               "native_export_selectors": [
                   "store::native_authenticated_tests::native_authenticated_signed_growth_branches_reopen_and_compact_queries",
                   "store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts",
               ],
-              "additional_exact_native_selectors": ["store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints","store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes","store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority","store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation","store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors","store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it","store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks","store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt","store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences","store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence","store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen","store::admission_parent_tests::admission_parent_foreign_sql_change_forces_original_fresh_state_validation","store::admission_parent_tests::admission_parent_keeps_second_boundary_cancellation_and_error_identity","store::reorg_cancellation::tests::cancellation_terminates_only_staging_and_preserves_full_active_state","store::reorg_cancellation::tests::late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts","store::reorg_cancellation::tests::cleanup_authorizer_blocks_trigger_writes_and_restores_after_error","store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu","store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence"],
+              "additional_exact_native_selectors": ["account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity","store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints","store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes","store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority","store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation","store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors","store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it","store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks","store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt","store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences","store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence","store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen","store::admission_parent_tests::admission_parent_foreign_sql_change_forces_original_fresh_state_validation","store::admission_parent_tests::admission_parent_keeps_second_boundary_cancellation_and_error_identity","store::reorg_cancellation::tests::cancellation_terminates_only_staging_and_preserves_full_active_state","store::reorg_cancellation::tests::late_staging_cancellation_and_postcommit_control_cannot_rewrite_active_facts","store::reorg_cancellation::tests::cleanup_authorizer_blocks_trigger_writes_and_restores_after_error","store::reorg_cancellation::tests::cleanup_panic_rolls_back_and_restores_sql_guards_without_refunding_unknown_cpu","store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence"],
               "independent_storage_oracle_registered_methods": 29,
               "cuts": ["epoch", "w1", "m06", "admitted", "activated"],
               "original_child_import_deadline_seconds": 20,
@@ -106,6 +106,7 @@ jobs:
           set -euo pipefail
           failed=0
           for selector in \
+            account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity \
             store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints \
             store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes \
             store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority \
@@ -214,7 +215,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: scoped-state-ubuntu-24.04-41dd661222285728720b97519da1f5a024c7716b-${{ github.run_attempt }}
+          name: scoped-state-ubuntu-24.04-6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029-${{ github.run_attempt }}
           path: ${{ runner.temp }}/scoped-state-native/
           if-no-files-found: error
           retention-days: 14

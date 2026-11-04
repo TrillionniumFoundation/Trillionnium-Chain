@@ -1,0 +1,377 @@
+{
+  "schema": "pon-native-format-gate-followup-v1",
+  "scope": "Frozen-source formatter failures and the exact reviewed follow-up; no current-source native pass is claimed. Native-execution absence refers to the requested Node test selectors, not the independently pinned provider preparation/smoke steps.",
+  "failed_source": {
+    "commit": "41dd661222285728720b97519da1f5a024c7716b",
+    "tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e",
+    "tracked_entries": 8026,
+    "tracked_bytes": 931949909
+  },
+  "primary_actual_failure": {
+    "run": 41769682894,
+    "job": 126376193911,
+    "kind": "head",
+    "runner": "ubuntu-24.04",
+    "compiler": "Rust 1.95.0",
+    "source_preflight": {
+      "run": 41769682894,
+      "job": 126376193911,
+      "source": {
+        "base": null,
+        "candidate": "41dd661222285728720b97519da1f5a024c7716b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "41dd661222285728720b97519da1f5a024c7716b",
+        "tested_tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 931949909,
+        "tracked_entries": 8026,
+        "tracked_worktree_verified": true
+      },
+      "audit": {
+        "result": "PASS",
+        "mode": "--audit",
+        "packages": 26,
+        "remote_policy_mutated": false
+      },
+      "fmtExit": 1,
+      "buildExecuted": false
+    },
+    "format_exit_code": 1,
+    "artifact": {
+      "id": 13293574465,
+      "bytes": 125443,
+      "sha256": "dec5458f1cbcae7730521dcf96fa9095adfcd1abcee68967301aa33564780c9f"
+    },
+    "node_test_binary_build_executed": false
+  },
+  "independently_compared_formatter_logs": [
+    {
+      "run": 41769682884,
+      "job": 126376194090,
+      "kind": "head",
+      "runner": "ubuntu-24.04-arm"
+    },
+    {
+      "run": 41769682978,
+      "job": 126376194529,
+      "kind": "prospective-merge",
+      "runner": "ubuntu-24.04-arm",
+      "tested_commit": "d4d0750e55cbb1c785f9f6e170f76205012de1db"
+    }
+  ],
+  "formatter_diff_comparison": {
+    "same_full_diff": true,
+    "hunks": 13,
+    "files": 3
+  },
+  "actual_formatter_hunks": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 659,
+      "old": "             DEFERRABLE INITIALLY DEFERRED);\",\n    )\n    .unwrap();\n    let tx = rusqlite::Transaction::new_unchecked(\n        &db,\n        rusqlite::TransactionBehavior::Immediate,\n    )\n    .unwrap();\n    tx.execute(\"INSERT INTO commit_parent VALUES(1)\", [])\n        .unwrap();\n    let guard = cache.observe_sql_commit(SqlCommitSite::Atomic);",
+      "fresh": "             DEFERRABLE INITIALLY DEFERRED);\",\n    )\n    .unwrap();\n    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)\n        .unwrap();\n    tx.execute(\"INSERT INTO commit_parent VALUES(1)\", [])\n        .unwrap();\n    let guard = cache.observe_sql_commit(SqlCommitSite::Atomic);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 672,
+      "old": "    result.unwrap();\n    assert!(db.is_autocommit());\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_parent\", [], |row| row.get::<_, u64>(0))\n            .unwrap(),\n        1\n    );",
+      "fresh": "    result.unwrap();\n    assert!(db.is_autocommit());\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_parent\", [], |row| row\n            .get::<_, u64>(0))\n            .unwrap(),\n        1\n    );"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 679,
+      "old": "\n    let tx = rusqlite::Transaction::new_unchecked(\n        &db,\n        rusqlite::TransactionBehavior::Immediate,\n    )\n    .unwrap();\n    tx.execute(\"INSERT INTO commit_child VALUES(99)\", [])\n        .unwrap();\n    let guard = cache.observe_sql_commit(SqlCommitSite::AdmissionPersistence);",
+      "fresh": "\n    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)\n        .unwrap();\n    tx.execute(\"INSERT INTO commit_child VALUES(99)\", [])\n        .unwrap();\n    let guard = cache.observe_sql_commit(SqlCommitSite::AdmissionPersistence);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 693,
+      "old": "    );\n    assert!(db.is_autocommit());\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_child\", [], |row| row.get::<_, u64>(0))\n            .unwrap(),\n        0\n    );",
+      "fresh": "    );\n    assert!(db.is_autocommit());\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_child\", [], |row| row\n            .get::<_, u64>(0))\n            .unwrap(),\n        0\n    );"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 700,
+      "old": "\n    // A missing CPU stamp stays unknown even when the actual COMMIT succeeds.\n    let tx = rusqlite::Transaction::new_unchecked(\n        &db,\n        rusqlite::TransactionBehavior::Immediate,\n    )\n    .unwrap();\n    let mut guard = cache.observe_sql_commit(SqlCommitSite::ReorgStep);\n    guard.cpu = None;\n    let result = tx.commit();",
+      "fresh": "\n    // A missing CPU stamp stays unknown even when the actual COMMIT succeeds.\n    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)\n        .unwrap();\n    let mut guard = cache.observe_sql_commit(SqlCommitSite::ReorgStep);\n    guard.cpu = None;\n    let result = tx.commit();"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 728,
+      "old": "            1\n        );\n    }\n    assert_eq!(sites[SqlCommitSite::Atomic as usize][\"totals\"][\"calls_succeeded\"], 1);\n    assert_eq!(sites[SqlCommitSite::AdmissionPersistence as usize][\"totals\"][\"calls_failed\"], 1);\n    assert_eq!(sites[SqlCommitSite::ReorgStep as usize][\"totals\"][\"cpu_unknown_calls\"], 1);\n    assert!(sites[SqlCommitSite::ReorgStep as usize][\"totals\"][\"cpu_ns\"].is_null());\n    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize][\"totals\"][\"calls_abandoned\"], 1);\n    assert_eq!(sites[SqlCommitSite::ReorgTermination as usize][\"totals\"][\"calls_unwinding\"], 1);\n    assert_eq!(measured[\"sql_commit\"][\"observation_failed\"], false);\n\n    // Observation contention cannot block, retry, or replace the real SQL result.",
+      "fresh": "            1\n        );\n    }\n    assert_eq!(\n        sites[SqlCommitSite::Atomic as usize][\"totals\"][\"calls_succeeded\"],\n        1\n    );\n    assert_eq!(\n        sites[SqlCommitSite::AdmissionPersistence as usize][\"totals\"][\"calls_failed\"],\n        1\n    );\n    assert_eq!(\n        sites[SqlCommitSite::ReorgStep as usize][\"totals\"][\"cpu_unknown_calls\"],\n        1\n    );\n    assert!(sites[SqlCommitSite::ReorgStep as usize][\"totals\"][\"cpu_ns\"].is_null());\n    assert_eq!(\n        sites[SqlCommitSite::ReorgTermination as usize][\"totals\"][\"calls_abandoned\"],\n        1\n    );\n    assert_eq!(\n        sites[SqlCommitSite::ReorgTermination as usize][\"totals\"][\"calls_unwinding\"],\n        1\n    );\n    assert_eq!(measured[\"sql_commit\"][\"observation_failed\"], false);\n\n    // Observation contention cannot block, retry, or replace the real SQL result."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 740,
+      "old": "    let contended = HistoryArithmetic::default();\n    let held = contended.sql_commits.rows.lock().unwrap();\n    let tx = rusqlite::Transaction::new_unchecked(\n        &db,\n        rusqlite::TransactionBehavior::Immediate,\n    )\n    .unwrap();\n    tx.execute(\"INSERT INTO commit_parent VALUES(2)\", [])\n        .unwrap();\n    let guard = contended.observe_sql_commit(SqlCommitSite::Atomic);",
+      "fresh": "    let contended = HistoryArithmetic::default();\n    let held = contended.sql_commits.rows.lock().unwrap();\n    let tx = rusqlite::Transaction::new_unchecked(&db, rusqlite::TransactionBehavior::Immediate)\n        .unwrap();\n    tx.execute(\"INSERT INTO commit_parent VALUES(2)\", [])\n        .unwrap();\n    let guard = contended.observe_sql_commit(SqlCommitSite::Atomic);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 752,
+      "old": "    result.unwrap();\n    drop(held);\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_parent\", [], |row| row.get::<_, u64>(0))\n            .unwrap(),\n        2\n    );",
+      "fresh": "    result.unwrap();\n    drop(held);\n    assert_eq!(\n        db.query_row(\"SELECT COUNT(*) FROM commit_parent\", [], |row| row\n            .get::<_, u64>(0))\n            .unwrap(),\n        2\n    );"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 759,
+      "old": "    assert_eq!(contended.observation()[\"sql_commit\"][\"observation_failed\"], true);\n}\n",
+      "fresh": "    assert_eq!(\n        contended.observation()[\"sql_commit\"][\"observation_failed\"],\n        true\n    );\n}\n"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "line": 478,
+      "old": "            cursor,\n            2,\n        )?;\n        let commit_observation =\n            (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n                self.authenticated_arithmetic\n                    .history\n                    .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)\n            });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);",
+      "fresh": "            cursor,\n            2,\n        )?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "line": 4444,
+      "old": "            }),\n        };\n        transaction_result?;\n        let commit_observation =\n            (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n                self.authenticated_arithmetic\n                    .history\n                    .observe_sql_commit(native_authenticated::SqlCommitSite::AdmissionPersistence)\n            });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);",
+      "fresh": "            }),\n        };\n        transaction_result?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::AdmissionPersistence)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "line": 5034,
+      "old": "        self.continuous_scope_checkpoint()?;\n        self.mining_scope_checkpoint()?;\n        progress()?;\n        let commit_observation =\n            (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n                self.authenticated_arithmetic\n                    .history\n                    .observe_sql_commit(native_authenticated::SqlCommitSite::Atomic)\n            });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);",
+      "fresh": "        self.continuous_scope_checkpoint()?;\n        self.mining_scope_checkpoint()?;\n        progress()?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::Atomic)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "line": 5099,
+      "old": "            }),\n        };\n        transaction_result?;\n        let commit_observation =\n            (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n                self.authenticated_arithmetic\n                    .history\n                    .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgStep)\n            });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);",
+      "fresh": "            }),\n        };\n        transaction_result?;\n        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {\n            self.authenticated_arithmetic\n                .history\n                .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgStep)\n        });\n        let commit_result = tx.commit();\n        if let Some(observation) = commit_observation {\n            observation.finish_sql_result(&commit_result);"
+    }
+  ],
+  "auxiliary_frozen_failure": {
+    "run": 41770745958,
+    "job": 126379603657,
+    "workflow_commit": "ec65ed8cc9e7dff990cecb3408d54c3fd1255758",
+    "tested_commit": "41dd661222285728720b97519da1f5a024c7716b",
+    "log_chars": 1010272,
+    "source_guards": [
+      {
+        "base": null,
+        "candidate": "41dd661222285728720b97519da1f5a024c7716b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "41dd661222285728720b97519da1f5a024c7716b",
+        "tested_tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 931949909,
+        "tracked_entries": 8026,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "41dd661222285728720b97519da1f5a024c7716b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "41dd661222285728720b97519da1f5a024c7716b",
+        "tested_tree": "9f96d370be1460c49ad1d6bf117dea6ca3e0d00e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 931949909,
+        "tracked_entries": 8026,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "audits": [
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      },
+      {
+        "result": "PASS",
+        "mode": "--audit",
+        "project": "trillionnium-chain",
+        "packages": 26,
+        "branch": "",
+        "remote_policy_mutated": false
+      }
+    ],
+    "receipts": [
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_ci_source_integrity.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_record_pq_native_command.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_research_integration.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_chain_claim_guard.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/test_pq_authority_surface_scan.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/pq-source.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/pq-hold.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/repository.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/inventory.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/compiler.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 0,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/locked-graph.json",
+        "status": "command_succeeded"
+      },
+      {
+        "exit_code": 1,
+        "receipt": "/home/runner/work/_temp/scoped-state-native/format.json",
+        "status": "command_failed"
+      }
+    ],
+    "format_headers": [
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:659:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:672:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:679:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:693:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:700:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:728:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:740:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:752:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:759:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs:478:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store.rs:4444:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store.rs:5034:",
+      "Diff in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/src/store.rs:5099:"
+    ],
+    "build_receipt_present": false,
+    "artifact": {
+      "id": 13295465583,
+      "name": "scoped-state-ubuntu-24.04-41dd661222285728720b97519da1f5a024c7716b-1",
+      "size_in_bytes": 127332,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13295465583",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13295465583/zip",
+      "expired": false,
+      "created_at": "2026-11-04T04:11:55Z",
+      "expires_at": "2026-11-18T04:11:54Z",
+      "updated_at": "2026-11-04T04:11:55Z",
+      "digest": "sha256:cbd3fab7fed312bc0e110b6fd187147d54f30d1f2250b863a6afd3e5ad361fe2",
+      "workflow_run": {
+        "id": 41770745958,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-retained-failure-readback-20261104",
+        "head_sha": "ec65ed8cc9e7dff990cecb3408d54c3fd1255758"
+      }
+    },
+    "storage_oracle_executed": false,
+    "clippy_executed": false,
+    "node_test_selectors_executed": false
+  },
+  "followup": {
+    "commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+    "parent": "41dd661222285728720b97519da1f5a024c7716b",
+    "tree": "76d3b416eccc6a810634062e036f646f22bffc76",
+    "files": 8026,
+    "bytes": 931951117,
+    "changed": [
+      {
+        "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+        "before": "9b282518293918949a0ed19a073d3d6aa1106e90",
+        "after": "8a88f024f9947c59c945aa2d3011c68f00fb2e96",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+        "before": "5bf048bf843740b32ea5881c8068d65fe94d3287",
+        "after": "0cfbce49376fc0c3147f9b7558c8101ac3a24be4",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "before": "29c4c07a5e24e83d49857615e89a39c4a76f3c64",
+        "after": "570ca080158b49999efcce9a503a797df7ce575f",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "before": "c30d01e4b6cbb11434539b82229ccca41d11a051",
+        "after": "d137e38fc08738f4e6d6b81712f7c7423624a8c2",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "19e4c0ef2d7076f1b0135106cb5b60e7b6fe00f1",
+        "after": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+        "before": "362538718043d3c2eb253c1d5a3f97af57c3dfbf",
+        "after": "27b6342619ee051c57944de88b4bbab33ff4627c",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+        "before": "1fa9deabced470aff5be06a927013b0adc0aca50",
+        "after": "435d0b6a113b42660fc6a2365fbf12881a56e022",
+        "mode": "100644",
+        "type": "blob"
+      }
+    ],
+    "actual_prospective_merge": "4d0bcfb743d032db14faf1f05422e2e0cf300089",
+    "ordered_merge_parents": [
+      "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029"
+    ],
+    "all_existing_corpus_pins": 384,
+    "all_existing_required_paths": 296,
+    "all_inline_source_guards_matched": 20,
+    "existing_corpus_values_refreshed": 4,
+    "format_fix": "Exact original Rust 1.95 formatter hunks, including normal formatter trailing-comma layout, applied without changing behavior or assertions.",
+    "identity_lift_fix": "At depth == node.depth the original Node::lift interval is empty and returns node.digest. The new path returns that current digest without mathematical-cache lookup/insertion/eviction. All nonidentity full-input keys, SQL reads, decodes, node checkpoints and cancellation remain unchanged.",
+    "identity_regression": "All original source/test lines retained. Added identity cache length equality and 8193 distinct nonidentity one-level lifts compared with the original function, checking actual capacity 8192 and overflow result size 1.",
+    "native_status_at_publication": "pending",
+    "measured_speedup": null
+  },
+  "acceptance_granted": false,
+  "production_activation": false,
+  "new_unique_tests": 0
+}
