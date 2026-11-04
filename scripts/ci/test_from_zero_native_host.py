@@ -16,6 +16,112 @@ import from_zero_native_host as host
 
 
 class HostBoundaryTests(unittest.TestCase):
+    def test_architecture_profile_preserves_the_whole_original_cargo_target(self):
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / ('architecture_delivery_compare-' + 'a' * 16)
+            binary.write_bytes(b'parser fixture only')
+            command = [str(binary)]
+            self.assertEqual(host.native_command(command, 1200), binary)
+            for changed in ([*command, '--skip', 'anything'], [*command, '--list'],
+                            [*command, '--test-threads=1'], [str(binary) + '.foreign'],
+                            [str(binary.with_name('another-' + 'a' * 16))]):
+                with self.subTest(command=changed), self.assertRaises(ValueError):
+                    host.native_budget(changed)
+            for budget in (True, 90, 1199, 1201, 3600):
+                with self.subTest(budget=budget), self.assertRaises(ValueError):
+                    host.native_command(command, budget)
+            with patch.object(host.time, 'monotonic_ns', return_value=10):
+                host.validate_native_deadline(10 + 1_200_000_000_000, command)
+                with self.assertRaises(ValueError):
+                    host.validate_native_deadline(11 + 1_200_000_000_000, command)
+
+    def test_architecture_root_gate_binds_exact_unfiltered_native_argv(self):
+        with tempfile.TemporaryDirectory() as raw:
+            binary = Path(raw) / ('architecture_delivery_compare-' + 'a' * 16)
+            binary.write_bytes(b'parser fixture only')
+            args = SimpleNamespace(elf_fd=7, sha256='a' * 64, deadline_ns=123456)
+            leaf, _ = host.names('123.1', 'b' * 24)
+            command = ['/usr/bin/python3', '-I', '-B', str(host.SCRIPT), 'exec-native',
+                       '--gate-fd', '6', '--elf-fd', '7', '--sha256', args.sha256,
+                       '--membership', '/' + host.FIXED_UNIT + '/' + leaf,
+                       '--deadline-ns', str(args.deadline_ns), str(binary)]
+            self.assertEqual(host.validate_gate_arguments(command, args, leaf), binary)
+            for changed in ([*command, '--skip', 'anything'], command[:-1],
+                            [*command[:-1], str(binary) + '.foreign']):
+                with self.subTest(command=changed), self.assertRaises(ValueError):
+                    host.validate_gate_arguments(changed, args, leaf)
+
+    def architecture_record(self):
+        import architecture_host_runner as runner
+        stdout = 'running 2 tests\n' + ''.join(f'test {name} ... ok\n' for name in runner.TESTS)
+        stdout += 'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s\n'
+        samples = [dict(scenario=scenario, sample=sample, position=position,
+                        mode=runner.MODES[(sample + position) % 3], cold_reopen_equal=True,
+                        errors=[], finite_business_target_met=True)
+                   for scenario in runner.SCENARIOS for sample in range(3) for position in range(3)]
+        report = dict(schema='native-signed-dag-delivery-comparison-v1',
+                      same_signed_packets_across_modes_and_repetitions=True,
+                      balanced_cyclic_mode_order=True, samples_per_workload_and_mode=3,
+                      samples=samples, all_finite_business_targets_met=True)
+        return runner, stdout, report
+
+    def test_architecture_observer_refuses_missing_ignored_filtered_or_duplicate_tests(self):
+        runner, stdout, report = self.architecture_record()
+        self.assertEqual(runner.validate_observation(stdout, report)['passed'], 2)
+        for changed in (stdout.replace(runner.TESTS[0], 'other'),
+                        stdout.replace(' ... ok', ' ... ignored', 1),
+                        stdout.replace('0 filtered out', '1 filtered out'),
+                        stdout.replace('2 passed', '0 passed'),
+                        stdout + f'test {runner.TESTS[0]} ... ok\n'):
+            with self.subTest(stdout=changed), self.assertRaises(ValueError):
+                runner.validate_observation(changed, report)
+
+    def test_architecture_observer_requires_all_distinct_original_eighteen_positions(self):
+        runner, stdout, report = self.architecture_record()
+        for mutation in ('omit', 'duplicate', 'mode', 'error', 'reopen'):
+            changed = copy.deepcopy(report)
+            if mutation == 'omit':
+                changed['samples'].pop()
+            elif mutation == 'duplicate':
+                changed['samples'][0] = changed['samples'][1]
+            elif mutation == 'mode':
+                changed['samples'][0]['mode'] = runner.MODES[1]
+            elif mutation == 'error':
+                changed['samples'][0]['errors'] = ['PUBLIC_HOST_KERNEL_PARENT']
+            else:
+                changed['samples'][0]['cold_reopen_equal'] = False
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                runner.validate_observation(stdout, changed)
+
+    def test_architecture_observer_cannot_infer_business_success_from_exit_zero(self):
+        runner, stdout, report = self.architecture_record()
+        report['samples'][0]['finite_business_target_met'] = False
+        with self.assertRaises(ValueError):
+            runner.validate_observation(stdout, report)
+        report['all_finite_business_targets_met'] = False
+        self.assertFalse(runner.validate_observation(stdout, report)['all_finite_business_targets_met'])
+
+    def test_cargo_runner_executes_other_targets_with_original_arguments_cwd_and_exit(self):
+        import architecture_host_runner as runner
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            executable = directory / 'another-native-target'
+            executable.write_text('#!/usr/bin/env python3\nimport json,os,sys\n'
+                                  'print(json.dumps([sys.argv[1:],os.getcwd(),os.environ["TRNM_RUNNER_TEST"]]))\n'
+                                  'raise SystemExit(23)\n')
+            executable.chmod(0o700)
+            result = subprocess.run([sys.executable, '-I', '-B', runner.__file__, str(executable),
+                                     '--exact', 'original_name'], cwd=directory,
+                                    env={**os.environ, 'TRNM_RUNNER_TEST': 'unchanged'},
+                                    capture_output=True, check=False)
+            self.assertEqual(result.returncode, 23)
+            self.assertEqual(json.loads(result.stdout),
+                             [['--exact', 'original_name'], str(directory), 'unchanged'])
+        for command in (['/tmp/architecture_delivery_compare-foreign'],
+                        ['/tmp/architecture_delivery_compare-' + 'a' * 16, '--skip', 'native']):
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                runner.selected(command)
+
     def test_parent_counter_observation_reopens_the_supplied_parent_not_the_leaf(self):
         with tempfile.TemporaryDirectory() as raw:
             parent = Path(raw)

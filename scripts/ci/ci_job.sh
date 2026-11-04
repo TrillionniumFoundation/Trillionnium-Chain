@@ -160,6 +160,10 @@ case "${1:?required job}" in
       # The first-Startup guardian fixture binds the actual compile and run
       # source, independently checked by this workflow's normal source boundary.
       export TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT="$(git rev-parse HEAD)"
+      # Preserve every original target and test; only the architecture target
+      # receives its required fixed Host parent through the Cargo runner.
+      export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER="python3 -I -B $(pwd -P)/scripts/ci/architecture_host_runner.py"
+      export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="$CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
