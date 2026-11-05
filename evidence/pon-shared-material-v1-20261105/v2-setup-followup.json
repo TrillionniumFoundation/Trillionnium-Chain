@@ -1,0 +1,217 @@
+{
+  "acquisition": {
+    "all_archives_verified": true,
+    "finished_unix_ns": 1793856024083245771,
+    "lockfile_relaxed": false,
+    "original_proof_disk_floor_bytes": 1073741824,
+    "proof_started": false,
+    "results": [
+      {
+        "end_free_disk_bytes": 4636127232,
+        "expected_bytes": 490849318,
+        "expected_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+        "file": "risc0-rust-1.88.0.tar.gz",
+        "finished_unix_ns": 1793856009263059483,
+        "process_cpu_ns": 4057733115,
+        "received_bytes": 490849318,
+        "received_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+        "response_status": 200,
+        "start_free_disk_bytes": 4372324352,
+        "started_unix_ns": 1793855984229948647,
+        "status": "downloaded-and-pin-verified",
+        "url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+        "wall_ns": 25033099550
+      },
+      {
+        "end_free_disk_bytes": 3981094912,
+        "expected_bytes": 72795381,
+        "expected_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+        "file": "cargo-risczero-3.0.3.tgz",
+        "finished_unix_ns": 1793856024083022926,
+        "process_cpu_ns": 536352615,
+        "received_bytes": 72795381,
+        "received_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+        "response_status": 200,
+        "start_free_disk_bytes": 4636123136,
+        "started_unix_ns": 1793856009263346055,
+        "status": "downloaded-and-pin-verified",
+        "url": "https://github.com/risc0/risc0/releases/download/v3.0.3/cargo-risczero-x86_64-unknown-linux-gnu.tgz",
+        "wall_ns": 14819668088
+      }
+    ],
+    "schema": "pon-v2-pinned-runtime-acquisition-v1",
+    "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+    "started_unix_ns": 1793855984229587223
+  },
+  "both_official_archives_verified": true,
+  "build_admission": {
+    "command": [
+      "python3",
+      "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+      "--wall-seconds",
+      "900",
+      "--out",
+      "/workspace/scratch/8de1bcb09af8/v2-runtime/build-host",
+      "--",
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "build",
+      "--locked",
+      "--release",
+      "--jobs",
+      "1",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+      "-p",
+      "trnm-w1-zk-host-v2",
+      "--bin",
+      "w1-staged-prover-v2"
+    ],
+    "declared_environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_TARGET_DIR": "/workspace/scratch/8de1bcb09af8/v2-runtime/target",
+      "PATH": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin:/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu:/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "RISC0_BUILD_LOCKED": "1",
+      "RISC0_HOME": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0",
+      "RUSTUP_TOOLCHAIN": "1.95.0"
+    },
+    "original_proof_disk_floor_bytes": 1073741824,
+    "proof_started": false,
+    "schema": "pon-v2-build-setup-v1",
+    "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+    "start_free_disk_bytes": 773115904,
+    "started_unix_ns": 1793856285509713771,
+    "status": "not-started-disk-floor"
+  },
+  "build_started": false,
+  "declared_proof_budget_unchanged": true,
+  "fresh_verifier_built": false,
+  "full_v2_proof_observed": false,
+  "guest_compiler_version": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n",
+  "guest_toolchain_installed_and_version_checked": true,
+  "installation": {
+    "checks": [
+      {
+        "command": [
+          "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+          "-Vv"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n"
+      },
+      {
+        "command": [
+          "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+          "--print",
+          "target-libdir",
+          "--target",
+          "riscv32im-risc0-zkvm-elf"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/lib/rustlib/riscv32im-risc0-zkvm-elf/lib\n"
+      },
+      {
+        "command": [
+          "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu/r0vm",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "risc0-r0vm 3.0.3\n"
+      }
+    ],
+    "free_disk_bytes": 1210310656,
+    "installations": [
+      {
+        "archive": "risc0-rust-1.88.0.tar.gz",
+        "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+        "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+        "expanded_regular_bytes": 1518201915,
+        "free_disk_after_bytes": 1348661248,
+        "free_disk_before_bytes": 3168120832,
+        "status": "extracted"
+      },
+      {
+        "archive": "cargo-risczero-3.0.3.tgz",
+        "archive_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+        "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu",
+        "expanded_regular_bytes": 123785448,
+        "free_disk_after_bytes": 1210335232,
+        "free_disk_before_bytes": 1337712640,
+        "status": "extracted"
+      }
+    ],
+    "original_disk_floor_bytes": 1073741824,
+    "private_cargo_wrapper": {
+      "path": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin/cargo",
+      "purpose": "propagate one build job through SDK CARGO environment sanitation; preserve all other arguments and full guest build",
+      "sha256": "b8996b2a8c912c268f6db052cadb5e42e397dd9c69ef6bd0542f3574dae18926"
+    },
+    "process_cpu_ns": 20788449934,
+    "proof_started": false,
+    "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+    "schema": "pon-v2-pinned-runtime-install-v1",
+    "status": "installed-and-version-checked",
+    "wall_ns": 21452705903
+  },
+  "meaning": "This is an observed build-setup admission refusal, not an executed cryptographic proof failure. Earlier absent-tool and zero-free-space observations remain historical records.",
+  "normal_locked_dependencies_resolved": true,
+  "proof_started": false,
+  "r0vm_installed_and_sha256_checked": true,
+  "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+  "records": [
+    {
+      "bytes": 940,
+      "path": "v2-runtime/predeclared.json",
+      "sha256": "a0f7ade61ad22d6a6786d081ad9193b1d81b335e8b7f01f8ca5d9921599ac54c"
+    },
+    {
+      "bytes": 1853,
+      "path": "v2-runtime/acquisition.json",
+      "sha256": "5026994a3b9bd13d991c8fde9b5cf1c40741d74da5360cd40870480ca4252cfb"
+    },
+    {
+      "bytes": 686,
+      "path": "v2-runtime/risc0-rust-1.88.0.tar.gz.result.json",
+      "sha256": "596965e4b843f9bbb2469949c4dbe1b5e556601774a85feebd1cd2dcdcdbdc78"
+    },
+    {
+      "bytes": 678,
+      "path": "v2-runtime/cargo-risczero-3.0.3.tgz.result.json",
+      "sha256": "b09fb8a155e2736bd07b4c991aaad332daa7af7a8f63eff89be20c0e696f1e50"
+    },
+    {
+      "bytes": 1722,
+      "path": "v2-runtime/guest-archive-layout.json",
+      "sha256": "23fb2ee4864bd7d3f55e6c25c7e9e354b84874f685cf8c4503977763ffc0df83"
+    },
+    {
+      "bytes": 2744,
+      "path": "v2-runtime/install.json",
+      "sha256": "7cf810498810e543acbc442a4c2d482f919c1e7841f3b9d5a734028a96cdaa52"
+    },
+    {
+      "bytes": 528,
+      "path": "v2-runtime/archive-cache-cleanup.json",
+      "sha256": "59e41ce3bb92aadbb75453bda218f8188f40111e629d8f7c3f5683b7168e5c1e"
+    },
+    {
+      "bytes": 1681,
+      "path": "v2-runtime/build-host-predeclared.json",
+      "sha256": "f6845e692a9ec1acd25816f2e10aa2082af5445d95254708e160be0e1b1b552c"
+    },
+    {
+      "bytes": 1719,
+      "path": "v2-runtime/build-host-launch.json",
+      "sha256": "d285a46b1bf8af0e0512c77ae98134d6b23e0662e28271566aae67f96e17adca"
+    }
+  ],
+  "runner_built": false,
+  "saved_receipt_controls_run": false,
+  "schema": "pon-v2-setup-followup-v1",
+  "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+  "status": "pinned-tools-restored-build-not-started-disk-floor"
+}

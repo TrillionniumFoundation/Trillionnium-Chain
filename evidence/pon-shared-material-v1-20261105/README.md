@@ -65,7 +65,9 @@ A separate local `settle_model.py` run recomputes the evaluations and returns `n
 
 The receipt-report parser previously accepted missing, zero or boolean image identifiers. It now requires all eight exact u32 image words. The independent Rust verifier already fixed that image: this is observation-binding hardening, not a demonstrated cryptographic forgery fix or a new proof.
 
-The frozen-source observer suite passes 26 tests, including the new image cases. Normal locked Cargo metadata subsequently succeeds; earlier offline dependency failures are retained and are not the current blocker. [v2-preflight.json](v2-preflight.json) records the precise current setup: required guest/tool binaries absent, final free-disk sample below the unchanged 1 GiB floor, and `proof_started=false`. No new full v2 receipt, 58 saved-receipt controls, or proof-cost benefit was obtained. The original 7,200-second total, 300-second segment bound and 256 MiB checkpoint cap remain unchanged.
+The frozen-source observer suite passes 26 tests, including the new image cases. Normal locked Cargo metadata subsequently succeeds; earlier offline dependency failures are retained and are not the current blocker. [v2-preflight.json](v2-preflight.json) retains the earlier setup snapshot: required guest/tool binaries absent, a free-disk sample below the unchanged 1 GiB floor, and `proof_started=false`.
+
+A later free-space window allowed the exact official archives to be downloaded, SHA256 checked and installed. Actual guest Rust 1.88.0-dev and pinned `r0vm` 3.0.3 version checks succeeded. The [setup follow-up](v2-setup-followup.json) then records a build admission refusal: 773,115,904 bytes free, below the unchanged 1,073,741,824-byte floor. The runner/fresh-verifier build and prover did not start. Successfully verified recoverable download archives were removed after installation; the installed tools and all observation records remain. No new full v2 receipt, 58 saved-receipt controls, or proof-cost benefit was obtained. The original 7,200-second proof total, 300-second segment bound and 256 MiB checkpoint cap remain unchanged.
 
 ## Validation and acceptance boundaries
 
@@ -73,6 +75,7 @@ On frozen source 59321c3: 135 retained crypto tests, six native example tests, n
 
 The original 0.25 CPU / 2 GiB / 4-second / 16-hostile-work / depth-6 service gate is unchanged and unqualified by this campaign. Rectangular/grouped challenges, real request deadlines, complete v2 proof benefit, independent future model evaluation and funded external effects remain distinct open gates. All production activation flags stay false.
 
+
 ## Raw archive integrity
 
-[archive.json](archive.json) binds the separately delivered `pon-shared-material-v1-20261105.zip`: 341 entries, 3,290,232 compressed bytes, SHA256 `263f6eb27d8a8d46796e6c5a95cd8ae73d6652a36a16a9668eff9e8a6a787ae0`. Its payload retains 38,526,221 bytes of raw evidence; each payload file has its own SHA256.
+[archive.json](archive.json) binds the separately delivered `pon-shared-material-v1-20261105.zip`: 356 entries, 3,306,416 compressed bytes, SHA256 `07e2e47c431cc2e183207b9191009de247914c6548f8f52856e2291dfcb2a1cd`. Its payload retains 38,567,811 bytes of raw evidence; each payload file has its own SHA256.
