@@ -1,0 +1,324 @@
+{
+  "all_declared_outcomes_observed": true,
+  "blocking_findings": [],
+  "declared_cases": 31,
+  "exhaustion": {
+    "attempt_nonce": 0,
+    "attempt_target_hit": false,
+    "cost_reader_status": "incomplete",
+    "distinct_application_batches_credited": 0,
+    "failure_type": "NATIVE_RUN_FAILED",
+    "full_system_cost": null,
+    "native_kinds": [
+      "material",
+      "setup",
+      "search",
+      "summary"
+    ],
+    "native_summary_counts": {
+      "attempts": 1,
+      "control_failures": 0,
+      "exhausted": 1,
+      "failed_searches": 0,
+      "measurement_incomplete": [],
+      "native_verifier_calls": 0,
+      "searches": 1,
+      "winners": 0
+    },
+    "observed_partial_child_cpu_ns": 2118000,
+    "observed_partial_supervisor_cpu_ns": 736885342,
+    "original_process_exit": 2,
+    "tile_states": [
+      {
+        "index": 0,
+        "state": "process_finished_unaccepted"
+      },
+      {
+        "index": 1,
+        "state": "not_started"
+      },
+      {
+        "index": 2,
+        "state": "not_started"
+      },
+      {
+        "index": 3,
+        "state": "not_started"
+      },
+      {
+        "index": 4,
+        "state": "not_started"
+      }
+    ]
+  },
+  "fanout_and_reuse": [
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 14,
+      "cycles": 1,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 15,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 9,
+      "name": "fanout-t0-v3",
+      "native_first_alias_cpu_ns": 2410893,
+      "native_verifier_cpu_ns": 7443573,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 7227886,
+      "verifiers": 3,
+      "winning_proofs": 5
+    },
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 14,
+      "cycles": 1,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 40,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 9,
+      "name": "fanout-t0-v8",
+      "native_first_alias_cpu_ns": 2491321,
+      "native_verifier_cpu_ns": 19926964,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 7162852,
+      "verifiers": 8,
+      "winning_proofs": 5
+    },
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 42,
+      "cycles": 4,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 20,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 22,
+      "name": "reuse-t0-cycles4",
+      "native_first_alias_cpu_ns": 12929707,
+      "native_verifier_cpu_ns": 12929707,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 17050383,
+      "verifiers": 1,
+      "winning_proofs": 20
+    },
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 58,
+      "cycles": 1,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 15,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 53,
+      "name": "fanout-t1-v3",
+      "native_first_alias_cpu_ns": 2308770,
+      "native_verifier_cpu_ns": 7470413,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 20603908,
+      "verifiers": 3,
+      "winning_proofs": 5
+    },
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 58,
+      "cycles": 1,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 40,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 53,
+      "name": "fanout-t1-v8",
+      "native_first_alias_cpu_ns": 2256601,
+      "native_verifier_cpu_ns": 19642607,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 18902976,
+      "verifiers": 8,
+      "winning_proofs": 5
+    },
+    {
+      "actual_native_replay_scope": "same_process_sequential_full_replay; not independent validator coverage",
+      "application_output_sha256": "4249c3fdedbd30a104b99dbcd3a9de168e3cae4f11e1415845534e99354d4d1b",
+      "attempts": 624,
+      "cycles": 4,
+      "distinct_application_batches_credited": 1,
+      "full_native_verifier_calls": 20,
+      "full_system_cost": null,
+      "material_identity": {
+        "materials": [
+          "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+          "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+          "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+          "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+          "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b"
+        ],
+        "model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "selected_tasks": {
+          "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+            "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+          ],
+          "rows": 64,
+          "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+          "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+        }
+      },
+      "misses": 604,
+      "name": "reuse-t1-cycles4",
+      "native_first_alias_cpu_ns": 10851859,
+      "native_verifier_cpu_ns": 10851859,
+      "net_compute_benefit": null,
+      "producer_cpu_ns": 243189147,
+      "verifiers": 1,
+      "winning_proofs": 20
+    }
+  ],
+  "observed_cases": 31,
+  "scope": "same-operator read-only accounting and outcome audit; not an independent validator deployment",
+  "source": {
+    "commit": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+    "inputs_sha256": {
+      "consumer.json": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10",
+      "evaluation-bundle.json": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+      "model.json": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd"
+    },
+    "runner_sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f",
+    "tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf"
+  },
+  "terminal_outcome_counts": {
+    "complete": 30,
+    "expected_bounded_search_exhaustion": 1
+  }
+}

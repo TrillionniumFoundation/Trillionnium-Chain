@@ -16,11 +16,13 @@ use std::{
 use trnm_crypto_primitives::pon_work::{
     self,
     arithmetic_facts::{ArithmeticFactCache, ArithmeticObservation},
-    legal_attempt::{Arithmetic, Materialization, Task},
+    legal_attempt::{Arithmetic, Materialization, Preparation, Task},
     Hash, VerifiedWork, WorkError, CELLS, PROFILE, PROOF_BYTES,
 };
 
 const SCHEMA: &str = "pon-shared-material-v1";
+const SCHEMA_V2: &str = "pon-shared-material-v2";
+const VERIFIER_SCOPE: &str = "same_process_sequential_full_replay";
 const INPUT_BYTES: usize = 2 * CELLS * 4;
 const MAX_LINE_BYTES: usize = 4 * 1024 * 1024;
 const CHALLENGE_DOMAIN: &[u8] = b"pon-shared-material-challenge-v1";
@@ -33,6 +35,9 @@ struct Options {
     max_attempts: u64,
     cycles: u64,
     arithmetic: Arithmetic,
+    preparation: Preparation,
+    verifiers: u64,
+    v2: bool,
     attack_controls: bool,
 }
 impl Options {
@@ -47,9 +52,12 @@ impl Options {
             max_attempts: 4096,
             cycles: 1,
             arithmetic: Arithmetic::FullLimb,
+            preparation: Preparation::Dense,
+            verifiers: 1,
+            v2: false,
             attack_controls: false,
         };
-        let mut seen = [false; 6];
+        let mut seen = [false; 8];
         while let Some(flag) = args.next() {
             let index = match flag.as_str() {
                 "--target-index" => 0,
@@ -58,6 +66,8 @@ impl Options {
                 "--cycles" => 3,
                 "--arithmetic" => 4,
                 "--attack-controls" => 5,
+                "--preparation" => 6,
+                "--verifiers" => 7,
                 _ => return Err("SHARED_MATERIAL_OPTION".into()),
             };
             if std::mem::replace(&mut seen[index], true) {
@@ -87,7 +97,7 @@ impl Options {
                     hex::decode_to_slice(value, &mut options.seed)
                         .map_err(|_| "SHARED_MATERIAL_SEED")?;
                 }
-                2 | 3 => {
+                2 | 3 | 7 => {
                     let number = value.parse::<u64>().map_err(|_| "SHARED_MATERIAL_COUNT")?;
                     if value != number.to_string()
                         || number == 0
@@ -97,8 +107,11 @@ impl Options {
                     }
                     if index == 2 {
                         options.max_attempts = number;
-                    } else {
+                    } else if index == 3 {
                         options.cycles = number;
+                    } else {
+                        options.verifiers = number;
+                        options.v2 = true;
                     }
                 }
                 4 => {
@@ -107,6 +120,14 @@ impl Options {
                         "transposed" => Arithmetic::Transposed,
                         _ => return Err("SHARED_MATERIAL_ARITHMETIC".into()),
                     };
+                }
+                6 => {
+                    options.preparation = match value.as_str() {
+                        "dense" => Preparation::Dense,
+                        "sparse" => Preparation::Sparse,
+                        _ => return Err("SHARED_MATERIAL_PREPARATION".into()),
+                    };
+                    options.v2 = true;
                 }
                 _ => unreachable!("fixed option"),
             }
@@ -126,6 +147,25 @@ impl Options {
             Arithmetic::FullLimb => "full-limb",
             Arithmetic::Transposed => "transposed",
         }
+    }
+    fn preparation_name(&self) -> &'static str {
+        match self.preparation {
+            Preparation::Dense => "dense",
+            Preparation::Sparse => "sparse",
+        }
+    }
+    fn schema(&self) -> &'static str {
+        if self.v2 {
+            SCHEMA_V2
+        } else {
+            SCHEMA
+        }
+    }
+    fn preparation_record(&self, mut value: Value) -> Value {
+        if self.v2 {
+            value["preparation"] = self.preparation_name().into();
+        }
+        value
     }
 }
 
@@ -240,6 +280,7 @@ fn challenge(task: Hash, options: &Options, cycle: u64, nonce: u64) -> Hash {
 
 struct Emitter<W> {
     output: W,
+    schema: &'static str,
     rows: u64,
     bytes: u64,
     record_build: Timing,
@@ -249,6 +290,7 @@ impl<W: Write> Emitter<W> {
     fn new(output: W) -> Self {
         Self {
             output,
+            schema: SCHEMA,
             rows: 0,
             bytes: 0,
             record_build: Timing::default(),
@@ -259,7 +301,7 @@ impl<W: Write> Emitter<W> {
         let started = Clock::start();
         let mut row = build();
         let object = row.as_object_mut().ok_or("SHARED_MATERIAL_RECORD")?;
-        object.insert("schema".into(), SCHEMA.into());
+        object.insert("schema".into(), self.schema.into());
         object.insert("kind".into(), kind.into());
         let timing = started.finish();
         add(&mut self.record_build, timing);
@@ -405,6 +447,7 @@ struct Summary {
     native_verifier: Timing,
     reference_verifier: Timing,
     typed_copy: Timing,
+    native_verifier_calls: u64,
 }
 
 fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) -> Result<Summary> {
@@ -417,7 +460,8 @@ fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) 
     let (a, b) = decode(&bytes)?;
     let task = pon_work::task_id(&a, &b).map_err(|e| format!("SHARED_MATERIAL_TASK:{e:?}"))?;
     let input_timing = input_started.finish();
-    emitter.emit("material", || json!({"profile":PROFILE,"matrix_width":pon_work::N,
+    emitter.emit("material", || {
+        let mut value = options.preparation_record(json!({"profile":PROFILE,"matrix_width":pon_work::N,
         "field_modulus":pon_work::Q as u64,"input_bytes":bytes.len(),"input_hex":hex::encode(&bytes),
         "input_sha256":sha(&bytes),"matrix_a_sha256":sha(&bytes[..CELLS*4]),
         "matrix_b_sha256":sha(&bytes[CELLS*4..]),"task":hex::encode(task),
@@ -428,14 +472,22 @@ fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) 
         "input_timing":input_timing.value(),"input_provenance_verified":false,
         "scope":"offline complete W1; no task eligibility, native service or useful demand",
         "timing_scope":"search includes challenge, all complete attempts and binary trial retention; hex/JSON/output separately observed; outer process costs require caller supervisor",
-        "max_line_bytes":MAX_LINE_BYTES}))?;
+        "max_line_bytes":MAX_LINE_BYTES}));
+        if options.v2 {
+            value["verifiers"] = options.verifiers.into();
+            value["native_verifier_scope"] = VERIFIER_SCOPE.into();
+        }
+        value
+    })?;
     let setup_started = Clock::start();
-    let producer = Task::new(&a, &b, options.arithmetic);
+    let producer = Task::with_preparation(&a, &b, options.arithmetic, options.preparation);
     let setup = setup_started.finish();
     emitter.emit("setup", || {
-        json!({"task":hex::encode(task),"arithmetic":options.arithmetic_name(),
+        options.preparation_record(
+            json!({"task":hex::encode(task),"arithmetic":options.arithmetic_name(),
         "calls":1,"reuse_searches":options.cycles,"timing":setup.value(),
-        "outcome":match &producer { Ok(_) => "Prepared".into(), Err(e) => format!("{e:?}") }})
+        "outcome":match &producer { Ok(_) => "Prepared".into(), Err(e) => format!("{e:?}") }}),
+        )
     })?;
     let producer = producer.map_err(|e| format!("SHARED_MATERIAL_SETUP:{e:?}"))?;
     let mut summary = Summary::default();
@@ -467,11 +519,11 @@ fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) 
                 trial.timing,
             );
         }
-        emitter.emit("search", || json!({"cycle":cycle,"task":hex::encode(task),
+        emitter.emit("search", || options.preparation_record(json!({"cycle":cycle,"task":hex::encode(task),
             "target":hex::encode(options.target()),"arithmetic":options.arithmetic_name(),
             "setup_calls":0,"timing":searched.timing.value(),"error":searched.error,
             "status":if searched.error.is_some(){"failed"}else if searched.winner.is_some(){"target-hit-unverified"}else{"exhausted"},
-            "attempts":searched.trials.iter().map(Trial::value).collect::<Vec<_>>()}))?;
+            "attempts":searched.trials.iter().map(Trial::value).collect::<Vec<_>>()})))?;
         // Controls have their own attempts and denominator; a legal search that
         // exhausts never silently removes a planned adversarial observation.
         if options.attack_controls {
@@ -500,14 +552,34 @@ fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) 
             "ticket":hex::encode(winner.ticket),"proof_sha256":sha(&winner.proof),
             "proof_hex":hex::encode(&winner.proof),"verified":false})
         })?;
-        let started = Clock::start();
-        let native = black_box(pon_work::verify(
-            winner.challenge,
-            task,
-            options.target(),
-            &winner.proof,
-        ));
-        let native_timing = started.finish();
+        let mut native_verifiers = Vec::new();
+        for index in 0..options.verifiers {
+            let started = Clock::start();
+            let native = black_box(pon_work::verify(
+                winner.challenge,
+                task,
+                options.target(),
+                &winner.proof,
+            ));
+            let timing = started.finish();
+            // Every entry is a real full call with fresh operation-local state;
+            // no mathematical-fact cache or prior verifier result is consulted.
+            // These calls share one process/administrator and are not nodes.
+            add(&mut summary.native_verifier, timing);
+            summary.native_verifier_calls += 1;
+            retain_unknown_time(
+                &mut summary.measurement_incomplete,
+                || {
+                    if options.v2 {
+                        format!("native_verifier[{cycle}][{index}]")
+                    } else {
+                        format!("native_verifier[{cycle}]")
+                    }
+                },
+                timing,
+            );
+            native_verifiers.push((native, timing));
+        }
         let started = Clock::start();
         let reference = black_box(pon_work::verify_reference(
             winner.challenge,
@@ -516,37 +588,54 @@ fn run<W: Write>(options: &Options, input: impl Read, emitter: &mut Emitter<W>) 
             &winner.proof,
         ));
         let reference_timing = started.finish();
-        add(&mut summary.native_verifier, native_timing);
         add(&mut summary.reference_verifier, reference_timing);
-        retain_unknown_time(
-            &mut summary.measurement_incomplete,
-            || format!("native_verifier[{cycle}]"),
-            native_timing,
-        );
         retain_unknown_time(
             &mut summary.measurement_incomplete,
             || format!("reference_verifier[{cycle}]"),
             reference_timing,
         );
-        let verified = match (&native, &reference) {
-            (Ok(a), Ok(b)) => {
-                typed_match(a, &winner, task)
-                    && typed_match(b, &winner, task)
-                    && a.product() == b.product()
+        let verified = match &reference {
+            Ok(reference) => {
+                typed_match(reference, &winner, task)
+                    && native_verifiers.iter().all(|(native, _)| match native {
+                        Ok(native) => {
+                            typed_match(native, &winner, task)
+                                && native.product() == reference.product()
+                        }
+                        Err(_) => false,
+                    })
             }
-            _ => false,
+            Err(_) => false,
         };
         emitter.emit("verification", || {
-            json!({"cycle":cycle,"proof_sha256":sha(&winner.proof),
-            "native":{"outcome":outcome(&native),"timing":native_timing.value()},
+            let (native, timing) = &native_verifiers[0];
+            let mut value = json!({"cycle":cycle,"proof_sha256":sha(&winner.proof),
+            "native":{"outcome":outcome(native),"timing":timing.value()},
             "scalar_reference":{"outcome":outcome(&reference),"timing":reference_timing.value()},
-            "typed_products_equal":verified})
+            "typed_products_equal":verified});
+            if options.v2 {
+                value["native_verifier_scope"] = VERIFIER_SCOPE.into();
+                value["native_verifiers"] = native_verifiers
+                    .iter()
+                    .enumerate()
+                    .map(|(index, (result, timing))| {
+                        json!({"index":index,"outcome":outcome(result),"timing":timing.value(),
+                            "product_sha256":result.as_ref().ok().map(|work|sha(&raw(work.product())))})
+                    })
+                    .collect();
+            }
+            value
         })?;
         if !verified {
             summary.failed += 1;
             continue;
         }
-        let native = native.map_err(|e| format!("SHARED_MATERIAL_VERIFIER:{e:?}"))?;
+        let native = native_verifiers
+            .into_iter()
+            .next()
+            .expect("bounded nonzero verifier count")
+            .0
+            .map_err(|e| format!("SHARED_MATERIAL_VERIFIER:{e:?}"))?;
         let started = Clock::start();
         // This is the only output handoff. Never decode C from unverified bytes.
         let product = raw(native.product());
@@ -785,8 +874,10 @@ fn attack_controls<W: Write>(
 fn execute<W: Write>(args: impl IntoIterator<Item = String>, input: impl Read, output: W) -> i32 {
     let started = Clock::start();
     let mut emitter = Emitter::new(output);
-    let result = Options::parse(args)
-        .and_then(|options| run(&options, input, &mut emitter).map(|r| (options, r)));
+    let result = Options::parse(args).and_then(|options| {
+        emitter.schema = options.schema();
+        run(&options, input, &mut emitter).map(|r| (options, r))
+    });
     let run_timing = started.finish();
     let build = emitter.record_build;
     let output = emitter.serialization_output;
@@ -813,15 +904,14 @@ fn execute<W: Write>(args: impl IntoIterator<Item = String>, input: impl Read, o
                 && summary.failed == 0
                 && summary.exhausted == 0
                 && summary.controls_failed == 0
+                && summary.native_verifier_calls == summary.winners * options.verifiers
                 && summary.measurement_incomplete.is_empty()
                 && summary.producer.known()
                 && summary.native_verifier.known()
                 && summary.reference_verifier.known()
                 && summary.typed_copy.known()
                 && run_timing.known();
-            (
-                if complete { 0 } else { 2 },
-                json!({
+            let mut value = json!({
                 "status":if complete{"complete"}else{"failed"},"requested_cycles":options.cycles,
                 "searches":summary.searches,"attempts":summary.attempts,"winners":summary.winners,
                 "exhausted":summary.exhausted,"failed_searches":summary.failed,"control_failures":summary.controls_failed,
@@ -834,8 +924,14 @@ fn execute<W: Write>(args: impl IntoIterator<Item = String>, input: impl Read, o
                 "serialization_output_subtotal":output.value(),"rows_before_summary":rows,"bytes_before_summary":bytes,
                 "source_hardware_verified":false,"cheapest_work_qualified":false,"public_service_measured":false,
                 "model_utility_qualified":false,"production_activation":false,
-                "scope":"finite offline observation; run total overlaps subtotals and excludes final summary/exit; physical process resources require external supervisor"}),
-            )
+                "scope":"finite offline observation; run total overlaps subtotals and excludes final summary/exit; physical process resources require external supervisor"});
+            if options.v2 {
+                value["preparation"] = options.preparation_name().into();
+                value["verifiers"] = options.verifiers.into();
+                value["native_verifier_calls"] = summary.native_verifier_calls.into();
+                value["native_verifier_scope"] = VERIFIER_SCOPE.into();
+            }
+            (if complete { 0 } else { 2 }, value)
         }
         Err(error) => (
             2,
@@ -883,6 +979,13 @@ mod tests {
             vec!["--max-attempts", "4097"],
             vec!["--seed", "00"],
             vec!["--target-index", "1"],
+            vec!["--preparation", "unknown"],
+            vec!["--preparation", "dense", "--preparation", "sparse"],
+            vec!["--verifiers", "0"],
+            vec!["--verifiers", "65"],
+            vec!["--verifiers", "01"],
+            vec!["--verifiers", "true"],
+            vec!["--verifiers", "1", "--verifiers", "1"],
         ] {
             let mut values = args();
             values.extend(extension.into_iter().map(str::to_owned));
@@ -909,6 +1012,9 @@ mod tests {
         let expected = challenge(task, &original, 0, 0);
         let mut arm = original.clone();
         arm.arithmetic = Arithmetic::Transposed;
+        arm.preparation = Preparation::Sparse;
+        arm.verifiers = 64;
+        arm.v2 = true;
         arm.cycles = 64;
         assert_eq!(expected, challenge(task, &arm, 0, 0));
         arm.target_index = 1;
@@ -938,6 +1044,9 @@ mod tests {
             .collect();
         assert_eq!(rows.iter().filter(|r| r["kind"] == "setup").count(), 1);
         assert_eq!(rows.iter().filter(|r| r["kind"] == "winner").count(), 2);
+        assert!(rows.iter().all(|r| r["schema"] == SCHEMA));
+        assert!(rows.iter().all(|r| r.get("preparation").is_none()));
+        assert!(rows.iter().all(|r| r.get("native_verifiers").is_none()));
         for row in rows.iter().filter(|r| r["kind"] == "search") {
             let trials = row["attempts"].as_array().unwrap();
             assert!(!trials.is_empty());
@@ -1007,5 +1116,146 @@ mod tests {
             assert_eq!(row["expected_path_observed"], true);
         }
         assert!(!rows.iter().any(|r| r["kind"] == "winner"));
+    }
+
+    #[test]
+    fn explicit_preparation_or_verifier_count_selects_v2_without_changing_defaults() {
+        let original = Options::parse(args()).unwrap();
+        assert_eq!(original.schema(), SCHEMA);
+        assert_eq!(original.preparation, Preparation::Dense);
+        assert_eq!(original.verifiers, 1);
+        for extension in [
+            vec!["--preparation", "dense"],
+            vec!["--preparation", "sparse"],
+            vec!["--verifiers", "1"],
+            vec!["--verifiers", "64"],
+        ] {
+            let mut values = args();
+            values.extend(extension.into_iter().map(str::to_owned));
+            let explicit = Options::parse(values).unwrap();
+            assert_eq!(explicit.schema(), SCHEMA_V2);
+            assert_eq!(explicit.arithmetic, original.arithmetic);
+            assert_eq!(explicit.target(), original.target());
+            assert_eq!(explicit.seed, original.seed);
+        }
+    }
+
+    #[test]
+    fn sparse_and_dense_v2_keep_identical_work_and_charge_each_real_full_verifier_once() {
+        let mut a = vec![0; CELLS];
+        let mut b = vec![0; CELLS];
+        for row in 0..15 {
+            a[row * pon_work::N] = if row % 2 == 0 {
+                237
+            } else {
+                pon_work::Q as u32 - 31
+            };
+        }
+        for value in b.iter_mut().take(pon_work::N) {
+            *value = 8;
+        }
+        let bytes = [raw(&a), raw(&b)].concat();
+        let mut streams = Vec::new();
+        for preparation in ["dense", "sparse"] {
+            let mut values = args();
+            values.extend([
+                "--preparation".into(),
+                preparation.into(),
+                "--verifiers".into(),
+                "3".into(),
+                "--cycles".into(),
+                "2".into(),
+            ]);
+            let mut output = Vec::new();
+            let code = execute(values, bytes.as_slice(), &mut output);
+            #[cfg(target_os = "linux")]
+            assert_eq!(code, 0);
+            #[cfg(not(target_os = "linux"))]
+            assert_eq!(code, 2);
+            let rows: Vec<Value> = String::from_utf8(output)
+                .unwrap()
+                .lines()
+                .map(|line| serde_json::from_str(line).unwrap())
+                .collect();
+            assert!(rows.iter().all(|row| row["schema"] == SCHEMA_V2));
+            for row in rows
+                .iter()
+                .filter(|row| matches!(row["kind"].as_str(), Some("material" | "setup" | "search")))
+            {
+                assert_eq!(row["preparation"], preparation);
+            }
+            assert_eq!(rows[0]["verifiers"], 3);
+            assert_eq!(rows[0]["native_verifier_scope"], VERIFIER_SCOPE);
+            let summary = rows.last().unwrap();
+            assert_eq!(summary["native_verifier_calls"], 6);
+            let mut native_cpu = Some(0u64);
+            let mut native_wall = Some(0u64);
+            let mut stream = Vec::new();
+            for cycle in 0..2 {
+                let winner = rows
+                    .iter()
+                    .find(|row| row["kind"] == "winner" && row["cycle"] == cycle)
+                    .unwrap();
+                let verification = rows
+                    .iter()
+                    .find(|row| row["kind"] == "verification" && row["cycle"] == cycle)
+                    .unwrap();
+                assert_eq!(verification["typed_products_equal"], true);
+                assert_eq!(verification["native_verifier_scope"], VERIFIER_SCOPE);
+                let actual = verification["native_verifiers"].as_array().unwrap();
+                assert_eq!(actual.len(), 3);
+                assert_eq!(verification["native"]["timing"], actual[0]["timing"]);
+                assert_eq!(verification["native"]["outcome"], actual[0]["outcome"]);
+                for (index, result) in actual.iter().enumerate() {
+                    assert_eq!(result["index"], index);
+                    assert_eq!(result["outcome"], "Accepted");
+                    assert_eq!(result["product_sha256"], winner["product_sha256"]);
+                    native_cpu = native_cpu
+                        .and_then(|total| Some(total + result["timing"]["cpu_ns"].as_u64()?));
+                    native_wall = native_wall
+                        .and_then(|total| Some(total + result["timing"]["wall_ns"].as_u64()?));
+                }
+                stream.push((
+                    winner["challenge"].clone(),
+                    winner["ticket"].clone(),
+                    winner["proof_hex"].clone(),
+                    winner["product_hex"].clone(),
+                ));
+            }
+            assert_eq!(
+                summary["native_verifier_subtotal"]["cpu_ns"].as_u64(),
+                native_cpu
+            );
+            assert_eq!(
+                summary["native_verifier_subtotal"]["wall_ns"].as_u64(),
+                native_wall
+            );
+            streams.push(stream);
+        }
+        assert_eq!(streams[0], streams[1]);
+    }
+
+    #[test]
+    fn v2_invalid_material_retains_failure_without_any_handoff() {
+        let mut values = args();
+        values.extend([
+            "--preparation".into(),
+            "sparse".into(),
+            "--verifiers".into(),
+            "3".into(),
+        ]);
+        let mut bytes = vec![0; INPUT_BYTES];
+        bytes[INPUT_BYTES - 4..].copy_from_slice(&(pon_work::Q as u32).to_le_bytes());
+        let mut output = Vec::new();
+        assert_eq!(execute(values, bytes.as_slice(), &mut output), 2);
+        let rows: Vec<Value> = String::from_utf8(output)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0]["schema"], SCHEMA_V2);
+        assert_eq!(rows[0]["status"], "failed");
+        assert_eq!(rows[0]["error"], "SHARED_MATERIAL_CANONICAL:Field");
     }
 }

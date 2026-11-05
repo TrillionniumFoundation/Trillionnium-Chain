@@ -17,6 +17,52 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Complete useful-operator relation, 2026-11-05 America/New_York:** Continue
+the existing #688 candidate with the separately versioned
+[useful-Cell reference relation](specs/pon/USEFUL_CELL_RELATION_V1.md).
+Bind the existing integer source router's complete model, read-only Cell state,
+ordered source-backed inputs, numeric/decision rules, consumer use and fixed
+verifier to an independently retained task contract. Reuse all five complete
+W1 transcripts, require actual source-feature replay, and reject internally
+consistent packages that disagree with the consumer's expected context. Keep
+numeric error, routing/STOP behavior and the original frozen quality protocol
+separate. This is a research relation with explicit disabled STOP/abstention,
+not ordinary Hepta Encoder execution, authenticated owner effects, a succinct
+proof, a W1 consensus replacement, or work-security/production qualification.
+The original negative usefulness/cost results and the native/PQ/WAN gates remain.
+
+**Shared-material total-cost continuation, 2026-11-05 America/New_York:**
+Continue #688 from `6ee529046d295e3175f09112492abee373f1f54c` under the
+[v2 measurement contract](specs/pon/SHARED_CELL_COST_V2.md). Compare explicit dense
+and sparse legal preparation with identical complete W1 challenge/proof streams;
+retain the cached selected-expert ordinary operator and the original model's
+non-adoption. Measure every requested local full verifier replay and charge each
+process/phase once. Recompute cost summaries from raw observations, retain failed
+searches and distinguish CPU from wall time, local pipes from WAN, and repeated
+outputs from new useful demand. All-miner/all-validator network coverage, stale
+blocks, device loading, independent future model benefit and actual full-system
+net savings remain unqualified. No work relation or original service budget changes.
+The [frozen continuation and raw-cost index](../../evidence/pon-shared-material-cost-v2-20261105/README.md)
+records 24 paired observations, six fanout/reuse observations and one actual search
+exhaustion on source `eeedfe33f9c7cd27a1855b865e7faa458047dcd1`. Sparse preparation
+reduces paired median setup CPU by 85.7--88.1%, while complete child/warm wall
+arm-median ratios remain 353--662x. All-miss costs, same-process full verifier
+counts, repeated-output non-credit and the original no-adoption are retained.
+The same-material hostile refusal/attacker CPU remains 9.35--13.74x; neither
+this finite observation nor the algebra audit proves global cheapest work.
+
+**Grouped operator continuation, 2026-11-05 America/New_York:** Continue PR #688
+with the [routed integer algebraic relation](specs/pon/GROUPED_CELL_OPERATOR_V0.md).
+Execute only the router and selected experts, retain original integer/bias/tie
+semantics, bind the ordered request/context/route/output statement, and measure
+against cached ordinary inference. Use real supplied request identities and
+original deadlines in a bounded planner; retrospective corpus fixtures do not
+establish demand or latency utility. Preserve cheaper factored/merged execution
+strategies and charge verification, batching and transport separately. This
+research implementation does not introduce a PoW lottery or replace W1. Work
+security, real deadlines, ordinary Hepta consumption, future model benefit and
+funded effects retain their independent open gates.
+
 **Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
 Continue the existing #688 candidate from
 `6ee529046d295e3175f09112492abee373f1f54c`, preserving the concurrent schema,

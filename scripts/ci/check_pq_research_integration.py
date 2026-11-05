@@ -339,12 +339,17 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 # Exact consumer and business-path bytes for the request/working-state/data
 # continuation. Observation output is never execution authority, and these
 # finite resource checks do not establish host isolation or public acceptance.
+# Same-operation checked multiproofs and the post-snapshot epoch owner are
+# required dependencies even though their filenames do not identify PQ code.
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/pon_public_v3_phase_read.py",
     "scripts/ci/test_pon_public_v3_phase_read.py",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs",
     "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs",
     "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
     "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
     "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",

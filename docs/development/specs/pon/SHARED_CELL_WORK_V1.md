@@ -172,9 +172,11 @@ of the result; successful numerical execution does not erase them.
 
 ## Separate rectangular/grouped research profile
 
-`pon-routed-int257-grouped-research-v0` is a **design identifier only**, not an
-implemented or activated work relation. Its initial business fixture is the
-existing 64-request integer routing batch. The router shape is `3 x 257` by
+`pon-routed-int257-grouped-research-v0` now has a separately implemented
+[exact algebraic operator and independent verifier](GROUPED_CELL_OPERATOR_V0.md).
+It is not a registered PoW lottery or an activated work relation and does not
+inherit W1 qualification. Its initial business fixture remains the existing
+64-request integer routing batch. The router shape is `3 x 257` by
 `257 x 64`; after deterministic routing, each selected expert uses a cached
 `base + delta` matrix of shape `3 x 257` and its `257 x b_e` request group,
 where the three group sizes sum to 64. Empty groups require no multiplication.
@@ -203,3 +205,13 @@ design that removes useful sparsity or creates surplus expert work must debit
 that work. Initial correctness can be checked by the ordinary exact integer
 operator; moving to a full proof or a service dispute window requires separate
 proof-cost and trust assumptions. No new challenge domain is registered here.
+
+## Complete decision relation
+
+The separately versioned [useful-Cell relation](USEFUL_CELL_RELATION_V1.md)
+now wraps this exact packing with consumer-retained contract/state/use context,
+mandatory frozen-source feature replay, fixed numerical and decision semantics,
+and five complete reference W1 verifications. Its new challenge domain belongs
+to the enclosing research relation; this original native W1 profile is unchanged.
+The grouped relation above remains a design and acquires no qualification from
+that reference verifier.

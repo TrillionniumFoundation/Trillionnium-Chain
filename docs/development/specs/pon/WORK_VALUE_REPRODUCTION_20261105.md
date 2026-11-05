@@ -115,7 +115,7 @@ Markdown files. Changed links were checked against the exact Git tree instead;
 no placeholder evidence was created. Native component tests do not upgrade the
 separate SQLite I/O-boundary qualification or full release/host acceptance.
 
-## Fixed-base merge continuation
+## First fixed-base merge: owner controls
 
 The published candidate was then merged normally with the fixed concurrent
 PR #688 source `1d6a9f9b5e8abd9e86457f45199a4922f9376360`, tree
@@ -184,6 +184,77 @@ are not reclassified as measurements of this merge. Growth callbacks do not
 claim interruption inside bulk map construction, serde or hashing; no public
 CPU/SLO, SQLite I/O qualification, model efficacy or release gate is promoted.
 Any subsequent movement of the PR base is outside this fixed validation scope.
+
+This first merge was committed locally as
+`c06d6b192f809c51789a4eb69bb5037a7c52c93f` and published as
+`1af1085db98a85ac1a191e5de370c49ac7d9b26d`, with the identical content tree
+`b0c64bd2ad908f586780fc979574b3c6e2ff4af0` and the ordered parents recorded above.
+
+## Second fixed-base merge: crypto and CI research inputs
+
+A subsequent actual manifest conflict required another normal merge, now with
+ordered parents `1af1085db98a85ac1a191e5de370c49ac7d9b26d` and
+`f3a597f274833121d5ec408cb6a1cad83996d7f2`. The fixed second parent has tree
+`86ca08c321e0866d2f49811c74e77c9dedb0c06a`; the common ancestor is the first
+fixed source `1d6a9f9b5e8abd9e86457f45199a4922f9376360`. Both prior validation
+receipts above remain historical observations of their own exact compositions.
+
+The resolved manifest again preserves the fixed upstream's complete bytes,
+substituting only this candidate's three Rust source pins. It retains all 505
+pins and 423 required paths, including the newly required Growth observation
+and account multiproof dependencies. The plan merges both independent additions.
+Before extending this note, all eight other candidate files and 64 other
+upstream files were checked against their exact parent blobs.
+
+Upstream adds a separately named routed grouped integer research module and an
+explicit sparse preparation option for legal-work experiments. The original
+`Task::new` remains dense; the native producer, verifier, Node mining/store,
+funding/payment and M12 source are unchanged by this upstream delta. The Python
+useful-relation verifier does not create native adoption or payment authority.
+The native funding tests are rebuilt against the new crypto dependency. Small
+crypto unit controls and the changed source/CI contracts are checked with:
+
+```bash
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-crypto-primitives --lib pon_work::legal_attempt::tests:: -- --test-threads=1
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-crypto-primitives --lib pon_routed_int257_grouped::tests:: -- --test-threads=1
+cargo clippy --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-service-settlement -p trnm-pon-node -p trnm-crypto-primitives \
+  --all-targets --all-features -- -D warnings
+python3 -B scripts/ci/check_ci_contract.py
+python3 -B scripts/ci/test_ci_contract.py \
+  EvaluationQuorumLaneTests.test_actual_lane_preserves_quorum_reference_and_retained_vector_checks \
+  EvaluationQuorumLaneTests.test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved
+```
+
+| Second fixed-merge check | Observed result |
+| --- | --- |
+| Original development preflight | PASS, 26 packages; no remote-policy mutation |
+| Native funding/payment, rebuilt with merged crypto dependency | PASS, 6 tests |
+| M12 full crate, all targets/features | PASS, 48 tests |
+| Legal-attempt Dense/Sparse and transcript controls | PASS, 9 tests |
+| Grouped integer research-profile unit controls | PASS, 11 tests |
+| Whole-workspace formatting | PASS |
+| M12/Node/crypto strict Clippy, all targets/features | PASS with `-D warnings` |
+| Cargo graph and original lockfile | PASS, 26 members / 175 packages; same lock SHA-256 |
+| Upgraded PQ source-integrity negative controls | PASS, 37 tests |
+| Merged source-pin contract | PASS, 505 pins; status remains `HOLD_NO_GO` |
+| Actual CI contract and selected protocol/relation controls | PASS, contract check and 2 test methods; no CI campaign execution claimed |
+| Changed Markdown references | PASS, 368 local references in 18 changed files resolve in the merged Git tree |
+
+The executable source, configuration and tests remain byte-identical to this
+validated composition; finalization extends only this note. The native test
+build again reports the separate SQLite I/O loader-directory `UNQUALIFIED`
+observation. The component passes do not supersede it, the sparse-evidence
+limitation of the whole repository checker, or any release/host acceptance gate.
+
+This continuation does not rerun shared-material/grouped/useful-relation research
+campaigns, external proving, architecture campaigns or the whole workspace test
+suite. Previous utility, raw-source and Growth/mining results are retained above,
+not relabeled as fresh measurements of this second merge. No later upstream
+movement, model improvement, deployment, real payment or acceptance promotion is
+included in this fixed-source scope.
 
 ## Remaining acceptance requirements
 
