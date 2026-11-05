@@ -35,6 +35,7 @@ SOURCES = {
     "llm_neural_read_worker.py": "scripts/llm_neural_read_worker.py",
     "llm_parent_material.py": "scripts/llm_parent_material.py",
     "llm_runtime_pilot.py": "scripts/llm_runtime_pilot.py",
+    "llm_base_material.py": "scripts/llm_base_material.py",
     "model-family-smollm2-135m-v1.json": "config/pon/model-family-smollm2-135m-v1.json",
 }
 REQUIRED_ENV = ("HEPTA_FLEET_ROOT", "HEPTA_AGENT_ID", "HEPTA_AGENT_GENERATION",

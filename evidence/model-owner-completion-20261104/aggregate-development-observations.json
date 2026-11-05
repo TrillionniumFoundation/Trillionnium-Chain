@@ -1,0 +1,95 @@
+{
+  "schema": "model-owner-test-observations-v1",
+  "records": [
+    {
+      "log": "model-final-default-tests.log",
+      "log_sha256": "15cddd99dbb6553dca876edc3ab1f882dd15b17c0024d734ee9e156d422506f2",
+      "scope": "399-method aggregate before omitted training class was included",
+      "reported_tests": 399,
+      "reported_seconds": 68.172,
+      "original_summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 399 tests in 68.172s",
+        "",
+        "OK (skipped=130)"
+      ],
+      "actual_model_trial": false,
+      "passed": 269,
+      "skipped": 130,
+      "failed": 0,
+      "errors": 0,
+      "discovery_complete": false
+    },
+    {
+      "log": "model-final-complete-default-tests.log",
+      "log_sha256": "6fdafabe889256c4be139366fb1264b6500555ebf0435c7f68e21e7311c42c36",
+      "scope": "complete 411-method aggregate before fixture synchronization repair",
+      "reported_tests": 411,
+      "reported_seconds": 68.471,
+      "original_summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 411 tests in 68.471s",
+        "",
+        "FAILED (failures=1, errors=1, skipped=130)"
+      ],
+      "actual_model_trial": false,
+      "passed": 279,
+      "skipped": 130,
+      "failed": 1,
+      "errors": 1,
+      "discovery_complete": true,
+      "failures": [
+        "synthetic maximum worker fixture exceeded real deadline before clock control",
+        "actual child fixture assumed interpreter exit within unproved 50ms"
+      ]
+    },
+    {
+      "log": "source-integrity-tests.log",
+      "log_sha256": "1c00960ea229e882ecdaee06aa038c662e8855e284779ce99c23694a9aff4381",
+      "scope": "source identity negative controls",
+      "reported_tests": 34,
+      "reported_seconds": 9.023,
+      "original_summary": [
+        "{\"receipt\": \"/tmp/trnm-ci-raw-source-ju0sxomw/.git/receipt\", \"result\": \"FAIL\"}",
+        "{\"receipt\": \"/tmp/trnm-ci-raw-source-v1moxqd0/.git/receipt\", \"result\": \"FAIL\"}",
+        "{\"receipt\": \"/tmp/trnm-ci-raw-source-qx9odfjt/.git/receipt\", \"result\": \"FAIL\"}",
+        "{\"receipt\": \"/tmp/trnm-ci-raw-source-wemx0gwh/.git/receipt-PASS\", \"result\": \"PASS\"}",
+        "{\"receipt\": \"/tmp/trnm-ci-raw-source-wemx0gwh/.git/receipt-FAIL\", \"result\": \"FAIL\"}"
+      ],
+      "actual_model_trial": false
+    },
+    {
+      "log": "evidence-source-tests.log",
+      "log_sha256": "06b566ef5ea2fbcb76c085e407c5a028c2777975120f226d91016e5506aff5f7",
+      "scope": "evidence source negative controls",
+      "reported_tests": 38,
+      "reported_seconds": 4.367,
+      "original_summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 38 tests in 4.367s",
+        "",
+        "OK"
+      ],
+      "actual_model_trial": false
+    },
+    {
+      "log": "pq-source-negative-tests.log",
+      "log_sha256": "7367d0db0f72fbd96ce91f35351b40bf952e127fad40c3c92ae3a39f4669cd47",
+      "scope": "PQ source closure negative controls",
+      "reported_tests": 35,
+      "reported_seconds": 112.559,
+      "original_summary": [
+        "...................................",
+        "----------------------------------------------------------------------",
+        "Ran 35 tests in 112.559s",
+        "",
+        "OK"
+      ],
+      "actual_model_trial": false
+    }
+  ],
+  "qualification": false
+}

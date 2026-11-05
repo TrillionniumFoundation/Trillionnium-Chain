@@ -1,0 +1,30 @@
+{
+  "schema": "model-owner-development-observations-v1",
+  "scope": "development-controls-not-pretrained-efficacy",
+  "logs": [
+    {
+      "name": "snapshot-controls-first.log",
+      "bytes": 13084,
+      "sha256": "8ac4bce100724ae51c3ae2a4728a8a62f4395f326c991f02b855f925212d11e2",
+      "tail": "transformers/models/auto/auto_factory.py\", line 573, in from_pretrained\n    trust_remote_code = resolve_trust_remote_code(\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scratch/f4976366a32a/torch-env/lib/python3.12/site-packages/transformers/dynamic_module_utils.py\", line 735, in resolve_trust_remote_code\n    elif os.path.isdir(model_name):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen genericpath>\", line 42, in isdir\nTypeError: stat: path should be string, bytes, os.PathLike or integer, not NoneType\n\n----------------------------------------------------------------------\nRan 15 tests in 21.349s\n\nFAILED (errors=6)\n"
+    },
+    {
+      "name": "snapshot-controls-second.log",
+      "bytes": 5486,
+      "sha256": "02239cb59cf2fde000edaac7c5149c01b654b69fe42bfd2cd827a512697996a8",
+      "tail": "-------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/workspace/scratch/f4976366a32a/chain/scripts/test_llm_base_material_torch.py\", line 142, in test_replaced_all_disk_members_cannot_change_captured_model_or_tokenizer\n    return original_open(file, *args, **kwargs)\nAssertionError: {'_name_or_path': '', 'add_cross_attention'[1829 chars]: 32} != {'vocab_size': 32, 'max_position_embeddings[1825 chars]None}\nDiff is 2184 characters long. Set self.maxDiff to None to see it.\n\n----------------------------------------------------------------------\nRan 15 tests in 244.745s\n\nFAILED (failures=3)\n"
+    },
+    {
+      "name": "snapshot-controls-final.log",
+      "bytes": 3304,
+      "sha256": "b21227acd6f8686c725677aef89730599c7a5e8ef6703e5d345eb0f314dc115e",
+      "tail": "_base_material_torch.ActualBaseMaterialTests.test_unchanged_vocab_size_and_template_do_not_hide_loaded_tokenizer_change) ... ok\ntest_undeclared_adapter_template_index_and_pickle_files_are_never_discovered (test_llm_base_material_torch.ActualBaseMaterialTests.test_undeclared_adapter_template_index_and_pickle_files_are_never_discovered) ... ok\ntest_wrong_bf16_inventory_and_nonfinite_refuse_before_model_constructor (test_llm_base_material_torch.ActualBaseMaterialTests.test_wrong_bf16_inventory_and_nonfinite_refuse_before_model_constructor) ... ok\n\n----------------------------------------------------------------------\nRan 17 tests in 27.241s\n\nOK\n"
+    },
+    {
+      "name": "snapshot-parent-pure-controls.log",
+      "bytes": 5410,
+      "sha256": "20e9624f041d60dd6225ddae0fa5997bb9ebc38c2fa722a87897ed68f5d1bbf5",
+      "tail": "never_makes_a_candidate) ... ok\ntest_recipe_changes_cannot_hide_under_a_rehashed_plan (test_llm_runtime_parent_step.ParentStepTests.test_recipe_changes_cannot_hide_under_a_rehashed_plan) ... ok\ntest_rehashed_wrong_candidate_operation_parent_or_authority_still_refuse (test_llm_runtime_parent_step.ParentStepTests.test_rehashed_wrong_candidate_operation_parent_or_authority_still_refuse) ... ok\ntest_zero_exit_without_actual_receipt_stays_failed (test_llm_runtime_parent_step.ParentStepTests.test_zero_exit_without_actual_receipt_stays_failed) ... ok\n\n----------------------------------------------------------------------\nRan 29 tests in 17.087s\n\nOK\n"
+    }
+  ]
+}
