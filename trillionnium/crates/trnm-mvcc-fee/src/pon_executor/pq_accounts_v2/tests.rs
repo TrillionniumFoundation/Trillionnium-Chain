@@ -55,6 +55,40 @@ fn ordinary(
         None,
     )
 }
+fn rotation(
+    cfg: &Config,
+    parent: &State,
+    account: Hash,
+    nonce: u64,
+    generation: u64,
+    prior: &Key,
+    next: &Key,
+) -> Vec<u8> {
+    fixture::signed(
+        &common(cfg, account, nonce, generation),
+        wire::ROTATE,
+        &[
+            (generation + 1).to_be_bytes().as_slice(),
+            &authority_digest(parent, account, cfg).unwrap(),
+        ]
+        .concat(),
+        &[
+            Witness {
+                key: prior,
+                role: 3,
+                generation,
+                carried: false,
+            },
+            Witness {
+                key: next,
+                role: 4,
+                generation: generation + 1,
+                carried: true,
+            },
+        ],
+        None,
+    )
+}
 fn transfer_payload(recipient: Hash, amount: u64) -> Vec<u8> {
     [
         recipient.as_slice(),
@@ -114,6 +148,47 @@ fn real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit
     assert_eq!(register.len(), 5691);
     let active = execute(&funded.state, &cfg, 2, new.id, &[register], Some(1002)).unwrap();
     assert_eq!(active.state[&auth_key(&name)], authority(1, new.id, false));
+    assert_eq!(active.state[&format!("account:{name}")]["nonce"], 1);
+    // Unlike genesis authority, permissionless REGISTER consumed nonce one.
+    // Retaining that real authority while restoring the funded nonce is invalid.
+    let mut restored_funding_nonce = active.state.clone();
+    restored_funding_nonce
+        .get_mut(&format!("account:{name}"))
+        .unwrap()["nonce"] = json!(0);
+    assert_eq!(
+        (
+            validate_state(&restored_funding_nonce, &cfg),
+            execute(&restored_funding_nonce, &cfg, 3, new.id, &[], Some(1003)).is_err()
+        ),
+        (Err("PQ2_AUTHORITY_NONCE"), true)
+    );
+    let next = Key::public_test_seed(105);
+    let rotate = rotation(&cfg, &active.state, new.id, 2, 1, &new, &next);
+    let rotated = execute(&active.state, &cfg, 3, new.id, &[rotate], Some(1003)).unwrap();
+    assert_eq!(
+        rotated.state[&auth_key(&name)],
+        authority(2, next.id, false)
+    );
+    assert_eq!(rotated.state[&format!("account:{name}")]["nonce"], 2);
+    let mut restored_registration_nonce = rotated.state.clone();
+    restored_registration_nonce
+        .get_mut(&format!("account:{name}"))
+        .unwrap()["nonce"] = json!(1);
+    assert_eq!(
+        (
+            validate_state(&restored_registration_nonce, &cfg),
+            execute(
+                &restored_registration_nonce,
+                &cfg,
+                4,
+                new.id,
+                &[],
+                Some(1004)
+            )
+            .is_err()
+        ),
+        (Err("PQ2_AUTHORITY_NONCE"), true)
+    );
     let raw = ordinary(&cfg, &new, new.id, 2, 1, 1, &transfer_payload(a.id, 17));
     let done = execute(&active.state, &cfg, 3, new.id, &[raw], Some(1003)).unwrap();
     assert_eq!(done.metrics.signature_verifications, 1);
@@ -154,6 +229,30 @@ fn real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit
 fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
     let (cfg, state, _, owner, provider) = setup();
     let next = Key::public_test_seed(105);
+    // A genesis key starts at generation one without consuming a nonce. Its
+    // first real dual-signed rotation must therefore remain valid at nonce one.
+    let minimum = execute(
+        &state,
+        &cfg,
+        1,
+        owner.id,
+        &[rotation(&cfg, &state, owner.id, 1, 1, &owner, &next)],
+        Some(1001),
+    )
+    .unwrap();
+    let name = hex::encode(owner.id);
+    let account_key = format!("account:{name}");
+    assert_eq!(minimum.state[&account_key]["nonce"], 1);
+    validate_state(&minimum.state, &cfg).unwrap();
+    let mut reverted = minimum.state.clone();
+    reverted.get_mut(&account_key).unwrap()["nonce"] = json!(0);
+    assert_eq!(
+        (
+            validate_state(&reverted, &cfg),
+            execute(&reverted, &cfg, 2, owner.id, &[], Some(1002)).is_err(),
+        ),
+        (Err("PQ2_AUTHORITY_NONCE"), true)
+    );
     let budget = 50_000_u64;
     let deadline = 20_u64;
     let task = hash(
@@ -177,31 +276,7 @@ fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
     .concat();
     let reserve = ordinary(&cfg, &owner, owner.id, 1, 1, 2, &payload);
     let reserved = execute(&state, &cfg, 1, owner.id, &[reserve], Some(1001)).unwrap();
-    let rotation_payload = [
-        2_u64.to_be_bytes().as_slice(),
-        &authority_digest(&reserved.state, owner.id, &cfg).unwrap(),
-    ]
-    .concat();
-    let rotate = fixture::signed(
-        &common(&cfg, owner.id, 2, 1),
-        wire::ROTATE,
-        &rotation_payload,
-        &[
-            Witness {
-                key: &owner,
-                role: 3,
-                generation: 1,
-                carried: false,
-            },
-            Witness {
-                key: &next,
-                role: 4,
-                generation: 2,
-                carried: true,
-            },
-        ],
-        None,
-    );
+    let rotate = rotation(&cfg, &reserved.state, owner.id, 2, 1, &owner, &next);
     let rotated = execute(
         &reserved.state,
         &cfg,
@@ -212,7 +287,6 @@ fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
     )
     .unwrap();
     assert_eq!(rotated.metrics.signature_verifications, 2);
-    let name = hex::encode(owner.id);
     assert_eq!(
         rotated.state[&auth_key(&name)],
         authority(2, next.id, false)
@@ -439,6 +513,88 @@ fn anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once() {
         authority(1, new_owner.id, false)
     );
     assert_eq!(out.state[&format!("pq-import-v2:{name}")]["claimed"], true);
+    // A completed CLAIM necessarily consumed source_nonce + 1. A retained
+    // authority paired with a pre-CLAIM nonce is an inconsistent imported State,
+    // even when all immutable anchor and key records are still unchanged.
+    for reverted_nonce in [0, 6, 7] {
+        let mut reverted = out.state.clone();
+        reverted.get_mut(&format!("account:{name}")).unwrap()["nonce"] = json!(reverted_nonce);
+        assert_eq!(
+            validate_state(&reverted, &cfg),
+            Err("PQ2_IMPORT_CLAIM_NONCE"),
+            "claimed account retained pre-CLAIM nonce {reverted_nonce}"
+        );
+        assert!(execute(&reverted, &cfg, 2, new_owner.id, &[], Some(1502)).is_err());
+    }
+    // CLAIM consumes source_nonce + 1, and every later real dual-signed key
+    // rotation consumes one more nonce. Retaining later key generations while
+    // rewinding only the account nonce must fail the complete State grammar.
+    let next_owner = Key::public_test_seed(104);
+    let last_owner = Key::public_test_seed(105);
+    let keys = [&new_owner, &next_owner, &last_owner];
+    let mut rotated_state = out.state.clone();
+    for (index, pair) in keys.windows(2).enumerate() {
+        let generation = index as u64 + 1;
+        let nonce = 8 + generation;
+        let height = generation + 1;
+        let raw = rotation(
+            &cfg,
+            &rotated_state,
+            owner,
+            nonce,
+            generation,
+            pair[0],
+            pair[1],
+        );
+        let rotated = execute(
+            &rotated_state,
+            &cfg,
+            height,
+            pair[1].id,
+            &[raw],
+            Some(1500 + height),
+        )
+        .unwrap();
+        assert_eq!(rotated.metrics.signature_verifications, 2);
+        assert_eq!(rotated.state[&format!("account:{name}")]["nonce"], nonce);
+        validate_state(&rotated.state, &cfg).unwrap();
+        for reverted_nonce in 8..nonce {
+            let mut reverted = rotated.state.clone();
+            reverted.get_mut(&format!("account:{name}")).unwrap()["nonce"] = json!(reverted_nonce);
+            assert_eq!(
+                (
+                    validate_state(&reverted, &cfg),
+                    execute(
+                        &reverted,
+                        &cfg,
+                        height + 1,
+                        pair[1].id,
+                        &[],
+                        Some(1501 + height),
+                    )
+                    .is_err(),
+                ),
+                (Err("PQ2_AUTHORITY_NONCE"), true),
+                "generation {} retained nonce {reverted_nonce}",
+                generation + 1
+            );
+        }
+        rotated_state = rotated.state;
+    }
+    let after_rotation = ordinary(&cfg, &last_owner, owner, 11, 3, 3, &[207; 32]);
+    let rotated_cancelled = execute(
+        &rotated_state,
+        &cfg,
+        4,
+        last_owner.id,
+        &[after_rotation],
+        Some(1504),
+    )
+    .unwrap();
+    assert_eq!(rotated_cancelled.state[&task]["status"], "cancelled");
+    // A coherent earlier branch remains valid with its own generation and
+    // nonce; this check must not introduce local history into consensus State.
+    validate_state(&out.state, &cfg).unwrap();
     assert!(execute(&out.state, &cfg, 2, new_owner.id, &[raw], Some(1502)).is_err());
     let cancel = ordinary(&cfg, &new_owner, owner, 9, 1, 3, &[207; 32]);
     let cancelled = execute(&out.state, &cfg, 2, new_owner.id, &[cancel], Some(1502)).unwrap();
@@ -536,6 +692,40 @@ fn migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unboun
         .get_mut(&format!("account:{}", hex::encode(owner)))
         .unwrap()["nonce"] = json!(u64::MAX);
     assert!(synthetic_repin(registry.clone(), &cfg, nonce).is_err());
+    // A source nonce of MAX - 1 still permits its one final CLAIM. A retained
+    // second generation would require an unrepresentable additional nonce.
+    let mut last_nonce = material.clone();
+    let name = hex::encode(owner);
+    last_nonce
+        .state
+        .get_mut(&format!("account:{name}"))
+        .unwrap()["nonce"] = json!(u64::MAX - 1);
+    let final_anchor = synthetic_repin(registry.clone(), &cfg, last_nonce).unwrap();
+    let (final_cfg, final_state, _) =
+        genesis_with_trusted_migration(&[], 1500, final_anchor).unwrap();
+    let final_key = Key::public_test_seed(103);
+    let last_claim = claim(&final_cfg, owner, u64::MAX, &a, &final_key);
+    let last = execute(
+        &final_state,
+        &final_cfg,
+        1,
+        final_key.id,
+        &[last_claim],
+        Some(1501),
+    )
+    .unwrap();
+    assert_eq!(last.state[&format!("account:{name}")]["nonce"], u64::MAX);
+    validate_state(&last.state, &final_cfg).unwrap();
+    let mut impossible = last.state;
+    impossible.insert(status_key(&name, 1), authority(1, final_key.id, true));
+    install_key(&mut impossible, &name, 2, b.id, &b.spki);
+    assert_eq!(
+        (
+            validate_state(&impossible, &final_cfg),
+            execute(&impossible, &final_cfg, 2, final_key.id, &[], Some(1502)).is_err(),
+        ),
+        (Err("PQ2_AUTHORITY_NONCE"), true)
+    );
     for (key, field, value) in [
         (
             format!("task:{}", hex::encode([207; 32])),

@@ -52,6 +52,43 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Historical account inventory and retained CLAIM nonce floors — 2026-11-04
+
+Continue the existing PR #688 candidate from
+`5c070abeb61d0ea8702fa94fffe9330d1699119c`. Its source is divergent from
+the separately inspected #706 `c09e681b`, so retain its missing
+complete-state CLAIM/rotation nonce checks and close the independent REGISTER
+nonce counterexample while preserving Application V6 and
+the existing integration work. A claimed import requires a nonce above its
+source floor and at least source nonce plus retained generation. Descriptor-bound
+initial accounts require at least generation minus one; later REGISTER accounts
+require at least generation because registration consumes nonce 1. The private
+initial-account set is derived from the same sorted descriptor inputs, never a
+caller flag. Real CLAIM/REGISTER/rotation then corrupted-state
+counterexamples must fail before the repair and refuse after it. Coherent
+whole-store rollback remains an independent external-root obligation.
+
+The native read-only inventory binds an independently selected source network,
+genesis and checkpoint to its full State root and original conservation owner.
+It counts every account and monetary row, including zero values and nonce
+floors. Unclassified debt, revocation, pending execution and model records
+prevent empty-ledger inference. A Node read transaction obtains material from
+actual retained packets and validated State without changing active tip,
+generation or source ownership. An empty selected ledger still cannot establish
+absence of external obligations, source finality or source retirement.
+
+Keep original EdDSA-seed recovery in an isolated public-input research module.
+Pin the full network/account/migration/new-key/nonce/profile statement and exact
+PoC source identities; do not implement a successful verifier stub, add a
+production recovery endpoint or pass a seed through server requests. The
+FC 2026 paper and its current official PoC report different proving times;
+preserve their separate measurement scopes. Actual ZK verification, proof
+parameter/security review, bounded recovery execution and durable one-use
+integration remain open. The [historical-account contract](../security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md)
+defines A/B/C and the still-unimplemented same-chain activation/reorganization
+boundary; the [small reproduction record](../../evidence/pq-historical-migration-20261104/README.md)
+binds only this continuation's executed source and controls.
+
 #### Joint source, native admission and reversible-artifact continuation — 2026-11-04
 
 Continue the existing PR #688 candidate from

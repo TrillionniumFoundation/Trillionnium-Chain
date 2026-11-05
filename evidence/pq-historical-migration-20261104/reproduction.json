@@ -1,0 +1,658 @@
+{
+  "schema": "pq-historical-migration-reproduction-v1",
+  "status": "SCOPED_CONTROLS_PASS_WITH_RETAINED_NODE_UNIT_BUILD_AND_LINT_FAILURES",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "source_network_retired": false,
+  "seed_proof_verified": false,
+  "full_node_unit_suite_executed": false,
+  "lineage": {
+    "initial_integration_head": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "separately_inspected_divergent_pr706": "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+    "preserved_concurrent_heads": [
+      "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "c156c2310346d1367b8f9b1111171f412b5ffce2",
+      "03163dcb849a15cd267fcaf704a533a88cd54131"
+    ],
+    "complete_m06_test_commit": "0723b501e4941a8c13c28683957c03da23232422",
+    "final_runtime_validation_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+    "final_runtime_validation_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+    "own_final_evidence_changes": [
+      "evidence/pq-historical-migration-20261104/README.md",
+      "evidence/pq-historical-migration-20261104/reproduction.json"
+    ],
+    "post_runtime_preserved_head": "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "post_runtime_production_workspace_and_ci_entrypoint_unchanged": true
+  },
+  "environment": {
+    "rust": "1.95.0",
+    "rust_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "llvm": "22.1.2",
+    "target": "x86_64-unknown-linux-gnu",
+    "openssl": "3.5.9",
+    "openssl_cli_sha256": "ec72bff5f6e4b2d9798e66b4ee338e81969ff6f8fa5a228bf312f1c57ff08818",
+    "cargo_locked": true,
+    "cargo_offline": true,
+    "build_jobs": 1,
+    "test_threads": 1,
+    "node_public_test_profile_overrides": {
+      "opt-level": 0,
+      "debug": 0,
+      "debug-assertions": true,
+      "overflow-checks": true
+    },
+    "workspace_members": 26,
+    "resolved_packages": 180,
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+  },
+  "locked_closure_equivalence_from_full_m06_run": [
+    {
+      "root_package": "trnm-mvcc-fee",
+      "packages": 138,
+      "unchanged": true,
+      "serialization": "sorted package records; JSON sort_keys=true; separators=comma/colon",
+      "sha256": "37f140b09d77d6656a8762f0e7b1c945746e2dc9399bc096918384e95d535508"
+    },
+    {
+      "root_package": "trnm-pon-node",
+      "packages": 149,
+      "unchanged": true,
+      "serialization": "sorted package records; JSON sort_keys=true; separators=comma/colon",
+      "sha256": "780b1a96c5b73058705a267eab3e132abea8d4acbbf788672fbbf174d282a780"
+    }
+  ],
+  "m06_source_subtree_unchanged_after_full_run": true,
+  "source_inputs": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "git_blob": "7f2729147b8a787d90e62eae41b028e6cad64a68",
+      "sha256": "8c808bd6ac19d0f61b9cae7631992d1d7d32367ca662570df253c28737071bac",
+      "bytes": 31731
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "git_blob": "0938d0466dc4ec97251ef58f57d8b2a66583f859",
+      "sha256": "703ea9f16775db1167a35448719554775876e8c006a5f1f48450bfa4442290d4",
+      "bytes": 77738
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "git_blob": "d10c5769a0c5bf119f0605c0c086d854ece035f5",
+      "sha256": "953f4a76f041815045c057025152da45195b5134667267fa4a496f8ae9320250",
+      "bytes": 471210
+    },
+    {
+      "path": "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md",
+      "git_blob": "2dc436903834f14ef54080fd31a75e9ac61ba007",
+      "sha256": "4e5c3f4755c9709914dfa63c075342604cd6339a837d231beb624fec4a846655",
+      "bytes": 14869
+    },
+    {
+      "path": "evidence/pq-historical-migration-20261104/README.md",
+      "git_blob": "07127272965b83162e98884195b41efb7b863ed7",
+      "sha256": "e70291e90c938d71b1945b168cff203ea47e68efeb92fea9ea8f843e125a5130",
+      "bytes": 12167
+    },
+    {
+      "path": "evidence/pq-historical-migration-20261104/registered-nonce-green-to-red.patch",
+      "git_blob": "c24496214ee6fe913677aafef65ee5f1baf34422",
+      "sha256": "bfa8d5ce074e8575cb0cee83edd3a967a5be1f278bbabe4c0cc2b7477165019f",
+      "bytes": 2006
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_seed_recovery_v1.py",
+      "git_blob": "d5afca75a55b86efe6590dbeec4af8ae34b58ace",
+      "sha256": "aa0d6bcc278a07d9a7d7eed490d759b9544b1370aafdd7c8248c3541c5f45224",
+      "bytes": 14811
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_seed_recovery_v1.py",
+      "git_blob": "b1d185ea1fb33d6c625f11e6b24ce37da165d2ed",
+      "sha256": "e5fbc04de6a19f63f49142388f3572ee1ab61c7facfe2fca56263620f9371854",
+      "bytes": 18815
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "git_blob": "9f70438ed65679f2d310ba6ca3bd1db3c68f492d",
+      "sha256": "e82eb3d7408dd96f0d381be64a40b01a57cd03a3abd26b8029ef68ad7cb326b4",
+      "bytes": 22759
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "git_blob": "fd5a98be7cdf3d0dc0af9016d0111bf2de7411a0",
+      "sha256": "57300f960b5af116d9d2a6e4e02062ab82cb692f9b5148abcaea181f9f660d51",
+      "bytes": 40434
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_tests.rs",
+      "git_blob": "e3357b6dfdb9aa905dc01a7bc1318aac9d150a37",
+      "sha256": "bb64ae654130c2f3b70756391c2a0e2788d02850f2a52d52601e04328e51d679",
+      "bytes": 6554
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs",
+      "git_blob": "774cf5cf6d4460d36267e029df7341731c656f78",
+      "sha256": "6f6df98a497091adef6dde2560d2ba61896f0398dfff2fb5c0a3a40e205e4fdc",
+      "bytes": 7148
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "git_blob": "0f2701da52c1756722fbabd7e996ca68824d402a",
+      "sha256": "eb5ec18d5c488570ce2fc7dcbdfadc71cb5bf1a8ef0ac4078f14bfe9374db588",
+      "bytes": 27819
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "git_blob": "00810528b03ac126471812c257bbdf69bfc5cc5b",
+      "sha256": "40e1bca7fc26c4cd1d013ff10596f622c52906f9eeb86b7a3ffea482addd58f5",
+      "bytes": 329941
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "2f0a4137261cf0b62d3e719568322bb453c93fe3",
+      "sha256": "a29914176a2336e5646228207806e54fa944e9254a28a18714cd5cd5be86ce3f",
+      "bytes": 336774
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
+      "git_blob": "0f25af0a8e483e0f3f3816c01c466667dae02dda",
+      "sha256": "2a3de2babfe42317cf4e90f89aa805738294084b8380ff326c1197d0cf248adb",
+      "bytes": 3032
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory_tests.rs",
+      "git_blob": "b2a5e52f078fd2c76924aa3069b62e7a1f4221a6",
+      "sha256": "1c48ffeb40ee1dddc3ad9489dc7e64b7267b6480a984372795e8279a98e63b4c",
+      "bytes": 13322
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_migration_inventory.rs",
+      "git_blob": "0727123d7225bcf68cdd9cf503cd875b0390d93f",
+      "sha256": "63d879e2f2e47ddb0e4b4c2f6078397a83b7f82026b1f99112671d0e8876aa3b",
+      "bytes": 16795
+    }
+  ],
+  "executed_checks": [
+    {
+      "stage": "cargo-metadata-final",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.419086,
+      "log_sha256": "3c3329aae0bb359b77ed09d42f8f4f31d1baff71e01d0cd143db8b3f04c8a0d2",
+      "test_summaries": []
+    },
+    {
+      "stage": "m06-committed-all",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_commit": "0723b501e4941a8c13c28683957c03da23232422",
+      "source_tree": "9d919fc89d810bdfab84438ce8d68d64976a0bb3",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 424.952929,
+      "log_sha256": "beec869e74d96c1621731814efe9feed847f58b9ed8ae3164951d3fc4f99431a",
+      "test_summaries": [
+        "test result: ok. 120 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 76.39s",
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.98s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.42s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.30s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.94s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s",
+        "test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 66.52s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.88s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.10s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.93s",
+        "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.92s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.18s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "stage": "m06-pq-final",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-features",
+        "--lib",
+        "pon_executor::pq_accounts_v2::",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 105.369749,
+      "log_sha256": "99347fc3528c326751bb50a82f0b16c6d3c3a36697c35765cb9b96f3bc99c9ff",
+      "test_summaries": [
+        "test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 105 filtered out; finished in 12.45s"
+      ]
+    },
+    {
+      "stage": "node-public-inventory",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "pq_migration_inventory",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 227.253334,
+      "log_sha256": "252c0cb07f4f4dac75ec22173932bb3453246b86aeda17dfac03dc44f98fbbd9",
+      "test_summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.99s"
+      ]
+    },
+    {
+      "stage": "clippy-m06-all",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source_commit": "961b74d0d1b54b3d6d251f7c4aadf4766b188214",
+      "source_tree": "3955842788d830686f42757d76dd9e43b49b0070",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 405.846193,
+      "log_sha256": "78eba764e4a4fac68454febfa4415bb425c40659658bfa73f0ce40bb9ab30cbe",
+      "test_summaries": []
+    },
+    {
+      "stage": "clippy-node-public",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "--test",
+        "pq_migration_inventory",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 18.469446,
+      "log_sha256": "a0f238a3df2d44814ae56e16ea4ea2b8a4c89fab35d9bb0221f0914b9bc04f85",
+      "test_summaries": []
+    },
+    {
+      "stage": "format",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration.sh",
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 14.464652,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_summaries": []
+    },
+    {
+      "stage": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.449352,
+      "log_sha256": "e4cbe6df17121ec421718146b79122f7f9bbffe860ff9f9959582665cf8bad32",
+      "test_summaries": []
+    },
+    {
+      "stage": "seed-inputs",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_seed_recovery_v1.py",
+        "-v"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.526244,
+      "log_sha256": "1a372ae58ac82e30e54ee798079a30034425ea253df9d2ffd92bd6137e2673d3",
+      "test_summaries": [
+        "Ran 19 tests in 0.088s"
+      ]
+    },
+    {
+      "stage": "pq-source-pins",
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 3.554257,
+      "log_sha256": "4410e6eb20b1dce5ce61897dda31316a12a3224ff3c44790065a937c3ec8cdff",
+      "test_summaries": []
+    },
+    {
+      "stage": "distributed-inventory",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.419028,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "test_summaries": []
+    },
+    {
+      "stage": "source-integrity",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 5.618345,
+      "log_sha256": "2e919f63b4155ee5798847b3d017fe34aadb784d0a5066d578e3bd7209ac190d",
+      "test_summaries": [
+        "Ran 34 tests in 4.610s"
+      ]
+    },
+    {
+      "stage": "pq-corpus-negative",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 18.594452,
+      "log_sha256": "600b95d267927b6c18da9103aa7e8121ccbd73259f4f5d99eea85d1d3445b8f1",
+      "test_summaries": [
+        "Ran 35 tests in 18.500s"
+      ]
+    },
+    {
+      "stage": "claim-guard",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.26571,
+      "log_sha256": "78f0673eb21132e7a4f79e422d90c03d114631ad6719566f92c1a18ad3142652",
+      "test_summaries": [
+        "Ran 22 tests in 0.163s"
+      ]
+    },
+    {
+      "stage": "ci-contract",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 14.191113,
+      "log_sha256": "07e0ae389deea6360a91a7f37a7abc00f34f29eb78580e52015803605f456561",
+      "test_summaries": [
+        "Ran 98 tests in 14.084s"
+      ]
+    },
+    {
+      "stage": "repository-links",
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 59.627929,
+      "log_sha256": "421d0bbf33370602e6561cd4cef013d575b76cf2b2f9d539035567c4fd9ae7ff",
+      "test_summaries": []
+    },
+    {
+      "stage": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "source_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
+      "source_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
+      "dirty_before": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.018188,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_summaries": []
+    }
+  ],
+  "retained_failed_observations": [
+    {
+      "observation": "Native CLAIM/rotation negative control: 1 passed, 3 failed; old runtime accepted inconsistent retained authority",
+      "exit_code": 101,
+      "tests_executed": 4,
+      "log_sha256": "2479daa950f4171659a0577c6d1806ee8f9d7b2c49cc51d945b95c14c1c14439",
+      "log_bytes": 5507
+    },
+    {
+      "observation": "Native REGISTER negative control: 0 passed, 1 failed; old runtime accepted nonce 0 with retained generation 1",
+      "exit_code": 101,
+      "tests_executed": 1,
+      "log_sha256": "746b9eb5b37c6b4722e57101845acfa3dff3b6af1a652562061284c7d7628bd1",
+      "log_bytes": 1413
+    },
+    {
+      "observation": "E0283 test sum type ambiguity; repaired with sum::<u64>()",
+      "exit_code": 101,
+      "tests_executed": 0,
+      "log_sha256": "2dcbf77242ef324cb25d433b88cee58663a3ed61a7b4f9a5bf6432a3e17750cd",
+      "log_bytes": 3704
+    },
+    {
+      "observation": "Node lib-test compiler SIGKILL; original opt-level 3 and debuginfo 2",
+      "exit_code": 101,
+      "tests_executed": 0,
+      "log_sha256": "935ab6e66f73e392f76c9a7f7ca541cb722cfde68be90a4e08214f0225446245",
+      "log_bytes": 3295
+    },
+    {
+      "observation": "Node lib-test compiler SIGKILL; opt-level 3 and debuginfo 0",
+      "exit_code": 101,
+      "tests_executed": 0,
+      "log_sha256": "6a2f3fb290ca7a9ea53e4fb030952f9a661afb567d6f5c2383a0021707f07486",
+      "log_bytes": 3824
+    },
+    {
+      "observation": "Node lib-test compiler SIGKILL; opt-level 0 and debuginfo 0",
+      "exit_code": 101,
+      "tests_executed": 0,
+      "log_sha256": "0f09536d8ed29279556319dca22ce1ba361fdc79a37865103d7f913c0148d670",
+      "log_bytes": 3426
+    },
+    {
+      "observation": "Node lib-test compiler SIGKILL on clean 0723 source; opt-level 3 and debuginfo 0",
+      "exit_code": 101,
+      "tests_executed": 0,
+      "log_sha256": "6c1d0fcb35bbe9978787e6782a954e424ae5240d79cf1b14bd0bd7d2303cbe28",
+      "log_bytes": 3464
+    },
+    {
+      "observation": "Full all-target strict Clippy terminated by SIGKILL in Node lib-test checking; scoped strict checks are recorded separately",
+      "exit_code": 101,
+      "tests_executed": null,
+      "log_sha256": "e6dda680e3c73f50227d06fdc607d07669fc78677bdf21b495e11ea63f7f829f",
+      "log_bytes": 7538
+    },
+    {
+      "observation": "Intermediate CI contract: 98 tests, 3 errors from stale inline store source pin; exact pin refreshed",
+      "exit_code": 1,
+      "tests_executed": 98,
+      "log_sha256": "c748d1969f951efdaa7ebb2d45074da76d958c50144068d98005aed7e2cbad98",
+      "log_bytes": 20196
+    },
+    {
+      "observation": "Intermediate format check during implementation did not pass; formatted before final checks",
+      "exit_code": 1,
+      "tests_executed": null,
+      "log_sha256": "47a98a5f73a664ff9b023d37731696ba9a8ba423acebd70d3b2364176f7c5a62",
+      "log_bytes": 5723
+    },
+    {
+      "observation": "Intermediate REGISTER test formatting diff; formatted before final checks",
+      "exit_code": 1,
+      "tests_executed": null,
+      "log_sha256": "60f736ee8ccf11494fc82139d85ff92f5f0f326e1733bb880ef7d738ddbf84e6",
+      "log_bytes": 1296
+    },
+    {
+      "observation": "Intermediate generated source inventory was stale; regenerated and verified",
+      "exit_code": 1,
+      "tests_executed": null,
+      "log_sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb",
+      "log_bytes": 76
+    }
+  ],
+  "red_input_reconstruction": {
+    "first_baseline": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "first_test_git_blob": "be78290a1d2b1d5cf2551cd264c202666a38b32d",
+    "first_test_sha256": "f490c55385fcfeddcf6622ac4059e56a90f0ddb0c6168a69095a10b6e0f29076",
+    "second_patch": "registered-nonce-green-to-red.patch",
+    "apply": "git apply --unidiff-zero",
+    "second_runtime_sha256": "dce2a581fa3fc50b862cafef3c454103af6713a7d084e8e80d502f33d98ec176",
+    "second_tests_sha256": "8f246a148324d82a39e6e28a9e734c159e4eb288b7e77b7ccd1a4a36764e81ed",
+    "scope": "Exact two-file intermediate red input, not an assertion that unrelated historical source files are reconstructed."
+  },
+  "remaining": [
+    "Authenticated deployed-state and external-obligation inventory; no case A production decision established.",
+    "Pre-compromise registry provenance, unsupported-state preservation and actual source write retirement.",
+    "Node/account/effect integration of an independently retained monotonic root; complete coherent old-store rollback remains open.",
+    "A versioned same-chain activation/reorg/freeze/reconciliation protocol; current constructor creates a distinct genesis.",
+    "Reviewed seed proof and PQ possession verification, security parameters, wallet derivations, bounded recovery owner and durable one-use commit.",
+    "Full Node unit harness/all-target lint and complete workspace/platform/business qualification; no remote CI pass inferred."
+  ]
+}
