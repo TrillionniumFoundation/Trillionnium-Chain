@@ -1,0 +1,101 @@
+{
+  "schema": "pon-six-axis-native-cost-execution-declaration-v1",
+  "declared_utc": "2026-11-05T03:54:25.854327+00:00",
+  "registered_before_cost_samples": true,
+  "source_checkpoint": "799cc427e5a26b5a4f94236b8716ee5fb744288c",
+  "source_tree": "26295bde7ce6ccbee14e9b1acfff981ac821fc51",
+  "complete_trillionnium_tree": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+  "immutable_inputs": {
+    "rust-toolchain.toml": {
+      "bytes": 86,
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40033,
+      "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+    },
+    "scripts/ci/prepare_pq_provider.sh": {
+      "bytes": 8110,
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    "evidence/pon-six-axis-execution-v1/measurement-plan.json": {
+      "bytes": 3075,
+      "sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb"
+    },
+    "evidence/pon-six-axis-execution-v1/parse_measurements.py": {
+      "bytes": 32498,
+      "sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d"
+    },
+    "evidence/pon-six-axis-execution-v1/observe_resources.py": {
+      "bytes": 2627,
+      "sha256": "dc70719af44b12a3bc507cc21d0b91a8f141a8b39bf6c54cbf59591fae61dbb6"
+    }
+  },
+  "measurement_plan_changed": false,
+  "prior_source_declarations_remain_historical": true,
+  "comparison_rule": "Use the unchanged registered plan and analysis helper. One initially declared prefix ABBA attempt and one native A/H attempt; preserve all started, failed, cancelled and incomplete observations. No post-outcome sample/cohort removal or best-attempt selection. Repairs or different source require a new declaration and separate results.",
+  "build": {
+    "toolchain": "1.95.0",
+    "locked": true,
+    "all_features": true,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "RUST_TEST_THREADS": "1",
+    "compiler_profile_or_linker_overrides": false,
+    "test_profiles": "Original Cargo.toml: Node opt3, M06 opt1, original debug information, assertions and overflow checks.",
+    "compile_only_cpu_affinity": [
+      0
+    ],
+    "compile_affinity_does_not_apply_to_test_processes": true,
+    "provider_version": "3.5.9",
+    "provider_preparation": "Run exact pinned prepare_pq_provider.sh and retain its complete source/hash/smoke receipt. Bind the newly built CLI/library and actual Rust artifacts; do not reuse unavailable old binary hashes.",
+    "provider_hash_and_elf_identity_required_before_samples": true
+  },
+  "paths": {
+    "checkout": "/workspace/scratch/fee7901564fd-next/native799",
+    "cargo_home": "/workspace/scratch/fee7901564fd-next/cargo-native799",
+    "cargo_target": "/workspace/scratch/fee7901564fd-next/target-native799",
+    "provider_root": "/workspace/scratch/fee7901564fd-next/provider-native799",
+    "receipts": "/workspace/scratch/fee7901564fd-next/validation-native799",
+    "prefix_attempt": "/workspace/scratch/fee7901564fd-next/validation-native799/prefix-attempt1",
+    "growth_attempt": "/workspace/scratch/fee7901564fd-next/validation-native799/growth-attempt1"
+  },
+  "runtime_hardware": {
+    "machine": "x86_64",
+    "kernel": "6.18.57",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "cgroup_cpu_max": "800000 100000",
+    "cgroup_memory_max_bytes": 8589934592,
+    "shared_with_other_sessions": true,
+    "original_fixed_acceptance_host": false
+  },
+  "sample_storage": "Original overlay filesystem; explicit create-only run directories. No tmpfs database or journal substitution.",
+  "whole_command_resource_scope": "Unchanged observer captures the complete command and waited children: startup/setup/warmup/checks/output and any compilation disclosed separately. RUSAGE_CHILDREN peak is not simultaneous aggregate RSS and does not establish per-stage CPU.",
+  "required_before_and_after": [
+    "Exact immutable source contents and profiles",
+    "Actual command/environment, CPU affinity and provider/binary identities",
+    "Whole original log, real exit/cancel/failure status",
+    "Raw sample/journal identities and all declared event denominators"
+  ],
+  "prefix_samples_started": 0,
+  "growth_measurements_started": 0,
+  "result": null,
+  "original_four_second_16_hostile_gate_unchanged": true,
+  "original_4105_history_gate_unchanged": true,
+  "p99_qualification": false,
+  "production_activation": false
+}
