@@ -7,8 +7,10 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::hash;
 
+mod header_timestamp;
 mod header_window;
 mod parallel_preparation;
+mod read_epoch;
 mod scale_observation;
 
 fn base_settings() -> Settings {
@@ -343,6 +345,8 @@ fn reference(settings: &Settings, state: &State, packet: &GrowthPacket) -> State
     let out = limits::execute_with_commitment(
         state,
         pon_executor::BlockExecution {
+            // Historical full-State oracle: classic expiry is block height,
+            // so supplying PGH2 time must preserve these original outputs.
             timestamp: None,
             transactions: &packet.transactions,
             height: h.height,

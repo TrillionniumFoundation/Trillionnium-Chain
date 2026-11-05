@@ -355,23 +355,27 @@ impl Node {
         };
         self.growth_guard()?;
         tx.rollback()?;
+        self.growth_guard()?;
         Ok(out)
     }
     pub fn growth_account(&self, block: Hash, owner: Hash) -> Result<Option<Account>> {
         self.growth_guard()?;
         let tx = self.db.unchecked_transaction()?;
         let parent = self.growth_parent(block)?;
-        let (proof, _) =
-            multiproof::from_native_database(&self.db, &parent.checkpoint, &[owner], &|_| {
-                Ok::<_, archive::ArchiveError>(())
-            })
-            .map_err(archive_error)?;
-        let checked =
-            CheckedMultiproof::verify(context(&self.settings), &parent.checkpoint, &proof)
-                .map_err(archive_error)?;
+        let (_, checked, _) = multiproof::from_native_database_checked(
+            &self.db,
+            context(&self.settings),
+            &parent.checkpoint,
+            &[owner],
+            &|_| Ok::<_, archive::ArchiveError>(()),
+        )
+        .map_err(archive_error)?;
         let value = checked.account(owner).map_err(archive_error)?;
         self.growth_guard()?;
         tx.rollback()?;
+        // SQLite's data_version is snapshot-local until this read transaction
+        // ends. A foreign WAL commit must not leave this owner epoch trusted.
+        self.growth_guard()?;
         Ok(value)
     }
     pub fn growth_working(&self, block: Hash) -> Result<State> {
@@ -380,6 +384,7 @@ impl Node {
         let state = self.growth_parent(block)?.source.stored.working;
         self.growth_guard()?;
         tx.rollback()?;
+        self.growth_guard()?;
         Ok(state)
     }
     pub fn growth_current_working(&self) -> Result<GrowthWorkingSnapshot> {
@@ -388,6 +393,7 @@ impl Node {
         let result = self.growth_snapshot_in_read()?;
         self.growth_guard()?;
         tx.rollback()?;
+        self.growth_guard()?;
         Ok(result)
     }
     /// Caller holds one read transaction for a multi-step native observation.
@@ -463,21 +469,25 @@ impl Node {
         )?;
         let tx = self.db.unchecked_transaction()?;
         let parent = self.growth_parent(block)?;
-        let (proof, observation) =
-            multiproof::from_native_database(&self.db, &parent.checkpoint, owners, &|_| {
-                Ok::<_, archive::ArchiveError>(())
-            })
-            .map_err(archive_error)?;
+        let (proof, _, observation) = multiproof::from_native_database_checked(
+            &self.db,
+            context(&self.settings),
+            &parent.checkpoint,
+            owners,
+            &|_| Ok::<_, archive::ArchiveError>(()),
+        )
+        .map_err(archive_error)?;
         GrowthPacket::witness_digest(&proof)?;
-        CheckedMultiproof::verify(context(&self.settings), &parent.checkpoint, &proof)
-            .map_err(archive_error)?;
         self.growth_guard()?;
         tx.rollback()?;
+        self.growth_guard()?;
         Ok((parent.checkpoint, proof, observation))
     }
     pub fn growth_packet(&self, id: Hash) -> Result<GrowthPacket> {
         self.growth_guard()?;
-        self.growth_load_packet(id)
+        let packet = self.growth_load_packet(id)?;
+        self.growth_guard()?;
+        Ok(packet)
     }
     fn growth_load_packet(&self, id: Hash) -> Result<GrowthPacket> {
         let raw: Vec<u8> = self.db.query_row(
@@ -585,7 +595,9 @@ impl Node {
     }
     pub fn growth_expected_target(&self, parent: Hash) -> Result<Hash> {
         self.growth_guard()?;
-        self.growth_target(parent)
+        let target = self.growth_target(parent)?;
+        self.growth_guard()?;
+        Ok(target)
     }
     fn growth_target(&self, parent: Hash) -> Result<Hash> {
         self.growth_target_with_progress(parent, &|_| Ok(()))
@@ -622,6 +634,24 @@ impl Node {
                 self.settings.target("pow_limit_hex")?,
             ),
         }
+    }
+}
+
+// Construction, admission and retained/cold replay all project the same PGH2
+// ledger into M06. Observation/recovery wall time must not replace header time.
+fn execution_block<'a>(
+    header: &GrowthHeader,
+    transactions: &'a [Vec<u8>],
+    workers: usize,
+) -> pon_executor::BlockExecution<'a> {
+    let h = &header.ledger;
+    pon_executor::BlockExecution {
+        timestamp: Some(h.timestamp),
+        transactions,
+        height: h.height,
+        miner: h.miner,
+        parent_id: h.parent,
+        workers,
     }
 }
 
@@ -689,7 +719,6 @@ fn execute_observed_with_workers(
             .insert(owner);
         Ok(())
     };
-    let h = &packet.header.ledger;
     let partition = limits::AccountPartition {
         parent_count: parent.verified.permanent_account_count,
         parent_balance: parent.verified.permanent_account_balance,
@@ -700,14 +729,7 @@ fn execute_observed_with_workers(
     let mut commitment_control_error = None;
     let result = limits::execute_with_commitment_observed_control(
         &view,
-        pon_executor::BlockExecution {
-            timestamp: None,
-            transactions: &packet.transactions,
-            height: h.height,
-            miner: h.miner,
-            parent_id: h.parent,
-            workers: preparation.0,
-        },
+        execution_block(&packet.header, &packet.transactions, preparation.0),
         &settings.app,
         limits::GrowthExecutionInputs {
             partition: &partition,

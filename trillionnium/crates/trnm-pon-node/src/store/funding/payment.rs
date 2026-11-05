@@ -417,6 +417,11 @@ impl Node {
             self.growth_payment_epoch()?;
         }
         read.rollback()?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            // A foreign WAL commit is hidden by the read snapshot itself.
+            // Payment facts cannot renew an invalidated native owner epoch.
+            self.growth_payment_epoch()?;
+        }
         result.ok_or_else(|| {
             if cursor != self.settings.genesis() && examined == MAX_ANCESTORS {
                 "NATIVE_PAYMENT_SCAN_LIMIT".into()

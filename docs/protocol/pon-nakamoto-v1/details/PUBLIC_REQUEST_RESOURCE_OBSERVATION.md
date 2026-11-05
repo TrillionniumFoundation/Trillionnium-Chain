@@ -160,3 +160,29 @@ response signing. The reader uses phase-specific scope for extended reports,
 validates exact diagnostic types and outcome consistency, and preserves the old
 v1/v2/v3/v4 derivation for reports without the extension. Per-stage retained
 percentiles still do not establish end-to-end business confirmation p99.
+
+### Actual settlement values and owner completion
+
+The current additive `public-v3-cpu-settlement-observation-v2` retains the actual
+original `owner_cpu_ns`, `scoped_worker_cpu_ns`, `total_cpu_ns`,
+`live_paid_cpu_ns` and `residual_cpu_ns` samples alongside the original facts.
+When known, owner plus joined scoped-worker CPU equals the original total, and
+live-paid plus residual CPU equals that same total. These values add no debit.
+Unknown total remains unknown even if individual component clocks are present;
+failed accounting, rejected work and cancelled work stay in the cohort.
+
+The reader preserves historical v1-only derivations. A v2 cohort explicitly
+counts older records and records without settlement as missing numeric samples,
+not measured zero. These original samples end at the original owner CPU sample:
+they exclude reactor CPU and the later budget/journal tail. The `cpu_settle`
+phase overlaps that sample and must not be added to reconstruct whole-request
+CPU. No extension changes settlement success, request outcome or authority.
+
+For v2 observations, existing lifecycle clocks separately report the actual
+connection and task owner closures. A task may outlive its connection, including
+after a cancellation. Its wall-clock close tail is distinct from a cancellation
+signal timestamp and from CPU attributable only to that tail. A task that has
+not closed remains incomplete with unknown terminal latency; the full CPU sample
+of a task closing after its connection is labelled as the whole original sample,
+not as post-disconnect CPU. None of these measurements establishes inclusion,
+independent confirmation or confirmation TPS.

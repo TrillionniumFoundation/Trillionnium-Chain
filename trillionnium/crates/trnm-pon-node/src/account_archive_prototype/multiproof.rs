@@ -696,12 +696,43 @@ pub(crate) fn from_native_database<E: From<ArchiveError>>(
     from_database_with_progress(db, checkpoint, requested, progress)
 }
 
+/// Retain the complete verification produced during construction for use in
+/// this same native read operation. The expected context is still explicit;
+/// checked account facts grant neither current authority nor a reusable storage
+/// epoch. Callers must keep their original snapshot and post-read guards.
+pub(crate) fn from_native_database_checked<E: From<ArchiveError>>(
+    db: &Connection,
+    context: Context,
+    checkpoint: &Checkpoint,
+    requested: &[Hash],
+    progress: &(impl Fn(MultiproofProgress) -> std::result::Result<(), E> + ?Sized),
+) -> std::result::Result<(Multiproof, CheckedMultiproof, ConstructionObservation), E> {
+    from_database_checked_with_progress(db, context, checkpoint, requested, progress)
+}
+
 fn from_database_with_progress<E: From<ArchiveError>>(
     db: &Connection,
     checkpoint: &Checkpoint,
     requested: &[Hash],
     progress: &(impl Fn(MultiproofProgress) -> std::result::Result<(), E> + ?Sized),
 ) -> std::result::Result<(Multiproof, ConstructionObservation), E> {
+    let (proof, _, observation) = from_database_checked_with_progress(
+        db,
+        checkpoint.context,
+        checkpoint,
+        requested,
+        progress,
+    )?;
+    Ok((proof, observation))
+}
+
+fn from_database_checked_with_progress<E: From<ArchiveError>>(
+    db: &Connection,
+    context: Context,
+    checkpoint: &Checkpoint,
+    requested: &[Hash],
+    progress: &(impl Fn(MultiproofProgress) -> std::result::Result<(), E> + ?Sized),
+) -> std::result::Result<(Multiproof, CheckedMultiproof, ConstructionObservation), E> {
     if requested.len() > MAX_ACCOUNTS {
         return Err(ArchiveError::Budget.into());
     }
@@ -739,16 +770,13 @@ fn from_database_with_progress<E: From<ArchiveError>>(
         accounts: queries.into_iter().map(|query| query.account).collect(),
         frontier: collector.frontier,
     };
-    let checked =
-        CheckedMultiproof::verify_with_progress(checkpoint.context, checkpoint, &proof, progress)?;
-    Ok((
-        proof,
-        ConstructionObservation {
-            archive_point_reads: collector.reads,
-            proof: checked.observation,
-            expanded_witnesses_allocated: 0,
-        },
-    ))
+    let checked = CheckedMultiproof::verify_with_progress(context, checkpoint, &proof, progress)?;
+    let observation = ConstructionObservation {
+        archive_point_reads: collector.reads,
+        proof: checked.observation.clone(),
+        expanded_witnesses_allocated: 0,
+    };
+    Ok((proof, checked, observation))
 }
 
 #[cfg(test)]

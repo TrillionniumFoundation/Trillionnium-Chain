@@ -111,6 +111,14 @@ impl Default for RequestErrorDiagnostics {
 #[derive(Clone, Copy, Debug, Serialize)]
 pub struct PublicCpuSettlementObservation {
     schema: &'static str,
+    /// Values from the original settlement, including rejected/cancelled work.
+    /// These are not new samples or debits. In particular, an unavailable total
+    /// stays unknown even if some component clocks happened to be readable.
+    pub owner_cpu_ns: Option<u64>,
+    pub scoped_worker_cpu_ns: Option<u64>,
+    pub total_cpu_ns: Option<u64>,
+    pub live_paid_cpu_ns: Option<u64>,
+    pub residual_cpu_ns: Option<u64>,
     pub owner_cpu_known: bool,
     pub scoped_worker_cpu_known: bool,
     pub live_paid_cpu_known: bool,
@@ -125,13 +133,19 @@ impl PublicCpuSettlementObservation {
     pub(super) fn capture(
         owner_cpu: Option<u64>,
         scoped_worker_cpu: Option<u64>,
+        total_cpu: Option<u64>,
         live_paid_cpu: Option<u64>,
         residual_cpu: Option<u64>,
         budget_settled: bool,
         continuous_journal_persisted: Option<bool>,
     ) -> Self {
         Self {
-            schema: "public-v3-cpu-settlement-observation-v1",
+            schema: "public-v3-cpu-settlement-observation-v2",
+            owner_cpu_ns: owner_cpu,
+            scoped_worker_cpu_ns: scoped_worker_cpu,
+            total_cpu_ns: total_cpu,
+            live_paid_cpu_ns: live_paid_cpu,
+            residual_cpu_ns: residual_cpu,
             owner_cpu_known: owner_cpu.is_some(),
             scoped_worker_cpu_known: scoped_worker_cpu.is_some(),
             live_paid_cpu_known: live_paid_cpu.is_some(),
