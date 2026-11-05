@@ -66,11 +66,12 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 48674a83dde3f8ea6721e93cd5f52cab8a28fa63
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = d77160ea50b82326bea309ea9a7a072f9f90262c
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)" = eed2c350e3dfd17a66d7c4f4225ee2f02d3c0e60
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = 04f8f3a5030977dad5caf859ad6514a50a5b67ae
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = e3ec8bf4bdd510f3fe718e63a4df595d342c61c6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 526f155f2215184aa607da6d453423ca6930ded2
@@ -221,7 +222,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for test in fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types fixed_block_fields_match_original_errors_after_warm_cache_and_rollback fixed_parent_work_matches_original_and_rereads_after_restore fixed_fields_genesis_failure_order_and_cold_reopen_keep_state; do
+          for test in fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types fixed_block_fields_match_original_errors_after_warm_cache_and_rollback fixed_parent_work_matches_original_and_rereads_after_restore fixed_fields_genesis_failure_order_and_cold_reopen_keep_state stored_packet_blob_copy_bound_preserves_sql_types_and_boundary stored_packet_reads_keep_legacy_errors_provenance_and_restoration stored_packet_reads_keep_pq_errors_provenance_and_restoration; do
             selector="store::native_authenticated::native_fixed_blob_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
@@ -234,6 +235,19 @@ jobs:
             selector="store::native_authenticated::nullable_blob_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Keep settings-selected task observations and original legacy readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in configured_profiles_decode_transfers_acceptances_and_reject_foreign_or_malformed_bytes every_native_profile_observes_real_settlement_with_its_exact_wire_id legacy_selection_and_ambiguity_keep_the_original_codec_order; do
+            selector="store::task_observation::tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+          for test in exact_acceptance_survives_restart_and_cli_readback_without_mutation settlement_in_another_packet_never_rescues_a_reorged_exact_packet receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding altered_current_task_bytes_cannot_become_a_settlement_observation; do
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation "$test" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$test"
           done
       - name: Preserve original source-preserving migration coverage
         shell: bash

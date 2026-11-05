@@ -135,6 +135,15 @@ fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
 fn bytes64(bytes: Vec<u8>) -> Result<[u8; 64]> {
     bytes.try_into().map_err(|_| "STORAGE_WORK".into())
 }
+// Packet::encode/decode and every settings-selected PQ account packet codec
+// enforce this ceiling, including the PQ prefix. GrowthPacket is separate.
+// Keep one excess byte so the original decoder/duplicate checks still reject
+// oversized local rows; this bounds Rust-owned copies, not SQLite cell memory.
+// Preserve empty BLOB and every non-BLOB value, including SQL NULL, so original
+// rusqlite conversions and subsequent validation retain their exact ordering.
+const STORED_PACKET_SQL: &str = "SELECT
+ CASE WHEN typeof(packet)='blob' AND length(packet)>1048576 THEN substr(packet,1,1048577) ELSE packet END AS packet
+ FROM blocks WHERE id=?";
 // Retain at most one byte beyond a fixed field's expected width. This is a
 // copy bound, not validation authority: the original shape check still runs in
 // its original order after all SQL conversions. Empty BLOB and SQL NULL remain
@@ -2950,11 +2959,9 @@ impl Node {
     }
     pub fn packet(&self, id: Hash) -> Result<Packet> {
         let row = self.record(id)?;
-        let raw: Option<Vec<u8>> = self.db.query_row(
-            "SELECT packet FROM blocks WHERE id=?",
-            [id.as_slice()],
-            |r| r.get(0),
-        )?;
+        let raw: Option<Vec<u8>> = self
+            .db
+            .query_row(STORED_PACKET_SQL, [id.as_slice()], |r| r.get(0))?;
         let raw = raw.ok_or_else(|| {
             let error = Error::from("GENESIS_HAS_NO_PACKET");
             if id == self.settings.genesis() {
@@ -3574,11 +3581,7 @@ impl Node {
             checkpoint()?;
             let previous: Option<Vec<u8>> = self
                 .db
-                .query_row(
-                    "SELECT packet FROM blocks WHERE id=?",
-                    [id.as_slice()],
-                    |r| r.get(0),
-                )
+                .query_row(STORED_PACKET_SQL, [id.as_slice()], |r| r.get(0))
                 .optional()?;
             if let Some(prior) = previous {
                 let bytes = packet.encode_for_settings(&self.settings)?;
@@ -6068,11 +6071,7 @@ impl Node {
         let expected = packet.encode_for_settings(&self.settings)?;
         let stored: Option<Vec<u8>> = self
             .db
-            .query_row(
-                "SELECT packet FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |row| row.get(0),
-            )
+            .query_row(STORED_PACKET_SQL, [id.as_slice()], |row| row.get(0))
             .optional()?;
         let (tip, generation) = self.active()?;
         let active_tip_record = self.record(tip)?;
