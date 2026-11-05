@@ -6865,3 +6865,41 @@ Full native State replay and the original 4105-block 1800-second public service
 campaign still require separate exact-source observations.
 The historical 2345-returned-import/connection-refused failure remains intact.
 All six P0 domains, independent acceptance, release and activation remain HOLD.
+
+### 2026-11-05 Cell deadline, delta and installed-runtime continuation
+
+The existing candidate preserves concurrent reverse-ancestry and readback
+changes. Classic and PQ discovery directories now spend the caller's original
+deadline while waiting for their Rust owner mutex and SQLite transaction,
+including commit and readback. Twelve actual mutex/SQLite contention controls
+fail on the original production implementation. The fixed path never treats a
+late durable commit as rollback or success. This is a finite local ownership
+repair, not mature DHT, eclipse resistance or independent-administrator evidence.
+
+Delta fetch captures its original relative deadline before metadata work and
+accepts caller cancellation through the existing transport reservation. New
+controls cover no-dial pre-cancellation, a real partial TCP response and owner
+events after actual create-only target publication. Late refusal preserves the
+durable target. A 32-version history control reconstructs from only the direct
+base, explicitly testing TCX1's existing depth-one recipe semantics. It does not
+measure representative model-corpus savings or local reconstruction cost.
+
+The paired ordinary Hepta candidate binds an independently pinned installed
+Python snapshot and the complete thirteen-file project source/configuration
+closure into a new execution namespace. The native host checks installed bytes
+before interpreter startup; the worker uses isolated entry, exact Python source
+loading and a snapshot-bound Ready exchange. Real independent CPython controls
+exposed a distribution-metadata regression and undeclared startup ZIP/`._pth`
+paths; their original observations are retained. Persisted owner and worker
+schemas change explicitly, without promoting historical worker-v1 evidence.
+All hashing and admission still use the original resource/deadline owners.
+
+Execution receipts and exact source identities are maintained in the
+[continuation evidence](../../evidence/cell-contract-continuation-20261105/README.md),
+with separate [discovery controls](../../evidence/cell-discovery-deadline-20261105/README.md),
+[delta semantics](../../evidence/cell-delta-cancellation-20261105/README.md) and
+[independent Python review](../../evidence/cell-python-runtime-review-20261105/README.md).
+Full model architecture/expert ABI, device/VRAM ownership, an ordinary multi-Cell
+model-use loop, independent long WAN/fairness, real coin lock/payment, automated
+paid renewal and long-term independent custody remain unaccepted. No local
+journal, parser, self-reported version or passing byte test closes those gates.

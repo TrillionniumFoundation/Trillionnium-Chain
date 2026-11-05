@@ -165,7 +165,7 @@ class InstalledDeploymentTests(unittest.TestCase):
             environment = handoff.checked_environment(dict(os.environ, CODEX_HOME=str(Path(directory) / "codex-home")))
             code, output = exec_image(image, [str(self.host), "--host-format", "cell-v2", "--help"], environment)
             self.assertEqual(code, 0, output)
-            self.assertIn("--host-format owner-v1|cell-v2", output)
+            self.assertIn("--host-format owner-v2|cell-v2", output)
             code, output = exec_image(image, ["apply_patch", "--host-format", "cell-v2"], environment)
             self.assertEqual(code, 2, output)
             self.assertIn("apply_patch accepts exactly one argument", output)
@@ -177,6 +177,8 @@ class InstalledDeploymentTests(unittest.TestCase):
             plan.close()
             pin = dict(path=f.config_pin["path"], sha256=handoff.checksum(Path(f.config_pin["path"]).read_bytes()))
             argv = [sys.executable, str(SCRIPTS / "run_llm_cell_native_handoff.py"), *CAPS,
+                    "--runtime-snapshot", str(f.args.runtime_snapshot),
+                    "--runtime-snapshot-sha256", f.args.runtime_snapshot_sha256,
                     "--consumer-mode", "cell-host-v2", "--handoff-config", pin["path"],
                     "--handoff-config-sha256", pin["sha256"]]
             for name, value in {"chain": f.args.chain, "hepta": Path(directory) / "not-opened-hepta",

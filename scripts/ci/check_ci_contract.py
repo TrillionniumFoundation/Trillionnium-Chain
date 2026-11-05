@@ -152,6 +152,7 @@ LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
     '    python3 scripts/test_llm_inherited_runtime.py\n'
     '    python3 scripts/test_llm_neural_read_worker.py\n'
+    '    python3 scripts/test_llm_python_runtime_contract.py\n'
 )
 ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
@@ -292,6 +293,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
+    python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
