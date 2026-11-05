@@ -375,3 +375,37 @@ controls. The new fuzz serialization-edge negative control also passes. The
 521-pin HOLD_NO_GO result remains. The added fuzz Cargo.lock is preserved as
 upstream supplied it; no Cargo metadata, native tests, Clippy or Rust formatting
 was run here. Earlier native receipts remain scoped to their original commits.
+
+## PQ required-roster backport after hosted failure
+
+Source before this narrow backport: `2e0f42617f66142fc6d0495bc1f9e65bce71aba9`.
+Run `42026418436`, attempt 1, failed in all four head/prospective-merge x86/ARM
+jobs at the inline Python line 8, `assert len(tests) == 49`. The immutable
+required roster contains 52 unique entries and declares 52. No required-selector
+TSV was written by that step. Later complete-suite and cost steps still ran;
+this failure must not be described as four native rollback test failures.
+
+The assertion correction is reused from PR #723, exact successor
+`254033da23faf10f24a62249f40ce2ddb542645a`; the required roster bytes are identical
+in both sources. Only the assertion, seven parser regressions, their exact source
+pins and these explanatory records change. No selector, budget, production flag,
+protocol, model or Cargo source changes. No workflow rerun was requested for this
+backport, and the previously cancelled macOS cleanup job was not restarted.
+
+Local Python 3.12.14 checks: 44 PQ integration tests pass, including all seven
+new actual-workflow parser controls; 43 raw-source integrity tests pass; the
+CI contract checker passes; 521 exact PQ blob pins validate with HOLD_NO_GO.
+The actual original parser reproduces failure with zero selector rows; the
+corrected parser emits all 52 rows in original order. Negative fixtures reject
+truncation even with a matching declared count, duplicates, a child harness,
+an invalid selector and a promoted whole-chain qualification flag.
+
+No cargo/rustc executable is available on this validation host. Cargo graph,
+Rust tests, strict Clippy and rustfmt on the backport are NOT_RUN locally.
+Existing hosted observations do not qualify the backport. Required CI remains
+pending on its eventual published exact commit; publication is not CI acceptance.
+
+Repository checker also passed on the candidate (3,306 local links, 1,157 Rust
+source files, 26 packages, activation/runtime flags still false); the distributed
+source inventory check passed. These are repository/source checks, not native
+execution. Whitespace validation passed.

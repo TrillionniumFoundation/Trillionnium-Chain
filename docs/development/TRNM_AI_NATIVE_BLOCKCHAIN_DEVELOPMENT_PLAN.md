@@ -7148,3 +7148,18 @@ still requires at least three independently administered operators and failure
 domains with a preregistered, frozen WAN campaign of at least 72 hours. This minimum
 coverage is not sufficient production security. No threshold, denominator,
 resource budget, activation flag or protection is relaxed.
+
+### 2026-11-05 Work-value candidate PQ roster backport
+
+The work-value candidate retains all 52 original required PQ controls. Its four
+hosted head/prospective-merge lanes stopped before selector execution because the
+workflow still asserted 49 while the unchanged manifest declared and contained
+52. The existing integrated PQ successor #723 at
+254033da23faf10f24a62249f40ce2ddb542645a already corrects this assertion. This
+narrow backport reuses that correction, without importing the successor's other
+changes. Seven parser regressions execute the actual workflow selector writer,
+including the retained stale-49 failure and rejection of truncated, duplicate,
+child-harness, malformed-selector and promoted-qualification inputs. This is a
+selector-generation repair, not a new native experiment or a security result.
+Original failed hosted observations remain failed. Native execution on the
+backport is pending; no old Rust or cost receipt is relabeled as a new result.
