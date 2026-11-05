@@ -1312,6 +1312,18 @@ cargo() {
                       f'name = "ed25519-dalek"\nversion = "{version}"',
                       'name = "ed25519-dalek"\nversion = "99.0.0"')
 
+    def test_fuzz_cannot_omit_required_local_serialization_edges(self):
+        path = self.root / 'tests/fuzz/Cargo.lock'
+        text = path.read_text()
+        start = text.index('name = "trnm-data-availability"')
+        end = text.index('[[package]]', start)
+        package = text[start:end]
+        for dependency in ('serde', 'serde_json'):
+            with self.subTest(dependency=dependency):
+                changed = package.replace(' "' + dependency + '",\n', '')
+                self.assertNotEqual(package, changed)
+                self.rejected('tests/fuzz/Cargo.lock', package, changed)
+
     def test_summary_is_derived_and_cannot_promote_a_manual_claim(self):
         path = self.root / DESTINATION
         original = path.read_text()
