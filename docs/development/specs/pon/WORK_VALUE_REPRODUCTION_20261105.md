@@ -358,3 +358,20 @@ earlier native receipt is attributed to this merged tree. This is conflict
 reconciliation and source/Python validation, not a whole-workspace, hosted-CI,
 model-efficacy, economic-value or activation qualification. The full repository
 checker is not claimed green. Later base changes are outside this fixed merge.
+
+### Publication-time base advancement
+
+Before the PR ref was updated, upstream advanced once more to
+`7ae0d1b227853fc75e02334b497f69dd52d50235`, preserving `b9f3390` and adding
+the corrected fuzz-lock dependency graph, its CI contract control and original
+evidence. That exact base is merged normally after the preceding composition.
+All 14 upstream changed paths survive; the candidate's source files remain
+unchanged, and the manifest combines both sets of pins. This second merge has
+no textual conflict.
+
+On this latest composition the 19 utility, 43 raw-source and 37 PQ controls were
+rerun, together with both source/CI checkers and the four selected runtime CI
+controls. The new fuzz serialization-edge negative control also passes. The
+521-pin HOLD_NO_GO result remains. The added fuzz Cargo.lock is preserved as
+upstream supplied it; no Cargo metadata, native tests, Clippy or Rust formatting
+was run here. Earlier native receipts remain scoped to their original commits.
