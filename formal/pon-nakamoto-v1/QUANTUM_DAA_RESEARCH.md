@@ -5,6 +5,140 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## Literal domains, a cheaper legal subset, and source-derived Fast DAA arithmetic
+
+This continuation starts from integration source
+`a9b8602706b66adba82655c3c2ce90bde88620a2`. It changes research implementations
+and their reproduction checks. Native target, required work, branch selection,
+confirmation and activation remain under the existing protocol owners.
+
+### A legal attacker need not search every legal winner
+
+[The prefix-restricted construction](w1_quantum_restricted_oracle.py) searches
+an explicitly named subset of W1. For every noise label it requires the first
+`N*R` raw words to be below `Q`. On that subset, the original rejection sampler
+returns exactly those words, in the same order. The construction therefore keeps
+the complete original challenge, low-rank factors, ordered tiled-prefix trace,
+ticket and inclusive target comparison. Every retained marked candidate has
+the original relation; some otherwise legal winners are deliberately discarded.
+
+This distinction matters for attacker cost accounting. A winning miner needs
+one valid winner, not an implementation that marks every possible valid nonce.
+The old complete construction is one upper bound and cannot be treated as a
+mandatory cost for all attackers.
+
+The restricted phase predicate is:
+
+\[
+ g_{\mathrm{sub}}(x) =
+ \left[\bigwedge_{\ell=0}^{3}\bigwedge_{j=0}^{NR-1}
+       \mathrm{raw}_{\ell,j}(x)<Q\right]
+ \land [\mathrm{ticket}_{\mathrm{W1}}(x)\le T].
+\]
+
+All validity flags, field operations, input copies and reverse operations are
+charged. Invalid raw operands still have total reversible arithmetic and never
+mark a state. There is no free data-dependent address or free rejection branch.
+Preparation and diffusion retain the **original nonce register**. In particular,
+the search denominator is `2**nonce_bits`, not the count of canonical-prefix
+nonces; a filtered initial quantum state is not supplied.
+
+For native `N=64`, `R=8`, `Q=2**32-5`, the restricted construction computes 64
+noise hashes per label, instead of the full unrolled construction's 128, and
+removes its 2,097,152 coherent selection calls. The native classical sampler
+already stops after enough accepted words, normally near 64 counters. Thus
+"half the hashes" compares these two coherent constructions, **not** a measured
+factor-of-two improvement over the classical miner.
+
+| 64-bit nonce construction | Full predicate | Prefix-restricted predicate |
+| --- | ---: | ---: |
+| PNH1 reserved logical qubits | 22,253,173 | 22,029,941 |
+| PNH1 compute/mark/uncompute gates | 17,718,016,715 | 15,992,168,955 |
+| PNH1 phase depth upper bound | 1,969,835,151 | 1,102,032,975 |
+| PGH2 reserved logical qubits | 22,253,429 | 22,030,197 |
+| PGH2 compute/mark/uncompute gates | 17,718,795,839 | 15,992,948,079 |
+| PGH2 phase depth upper bound | 1,969,864,925 | 1,102,062,749 |
+
+These are constructive census comparisons, with the same conservative retained
+intermediate-register schedule. They do not measure physical QPU execution,
+minimum work, a quantum/classical cost advantage or consensus attack viability.
+The restricted strategy must use its own marked count `M_sub` in the success law;
+substituting the full predicate's `M` is invalid.
+
+Under the additional iid-uniform **raw-word** premise only, prefix retention is
+`((2**32-5)/2**32)**2048`, approximately `0.9999976158170497`. This does not prove
+independence from the ticket and cannot be multiplied by ticket probability to
+obtain a W1 success theorem. The [differential campaign](experiments/w1_restricted_oracle_campaign.py)
+retains actual discarded winners in reduced controls, replays literal native-size
+domains, verifies their winning PNW1 proofs, and executes actual leaf gates for
+one retained and one rejected reduced candidate. Native-sized circuit execution
+remains hierarchical macro interpretation.
+
+### Actual fixed-header marked sets
+
+[Literal nonce censuses](w1_marked_domain.py) compute the exact W1 relation for
+every nonce in a bounded declared low-nonce subspace. PNH1 and PGH2 use their
+own challenge domains. Every native-shape winner is serialized from one public
+`A B` precomputation and checked by the retained separate scalar full-proof
+verifier. This is relation verification; native parent/task eligibility, clock,
+required target and state application remain explicit preconditions.
+
+The target itself is inside the challenged header. Changing difficulty requires
+a new challenge/noise/trace/ticket census; merely rethresholding old tickets is
+not a valid retarget experiment. Conversely, changing only the declared nonce
+width does not make overlapping nonce values independent. Their identical
+headers must have identical challenges and tickets.
+
+The [literal-domain campaign](experiments/w1_marked_domain_campaign.py) records
+zero-solution domains, prefix-restricted marked counts, overlap/covariance as
+descriptive finite observations, and predeclared retry schedules. All processors
+condition on the same actual marked set. Retrying `M=0` does not resample a
+solution. Setup, fresh preparation, all measured-candidate checks and winning
+proof construction have explicit cost scopes. Those clocks are caller premises,
+not measurements of a quantum machine. This remains a bounded fixed-context
+bridge; the evolving synthetic network is not silently relabeled a fully native
+chain simulation.
+
+### Interrupted domain preparation remains payable
+
+The event model previously cached a domain when setup began and then returned
+zero setup on reuse, including after participation changes interrupted setup.
+A two-second setup paused at 0.5 seconds and resumed at one second could pay
+only 0.5 seconds yet complete three candidate checks before a four-second
+horizon. The regression now preserves exact rational remaining setup and
+rounds resumed clocks upward. It pays two seconds and completes one check.
+Repeated interruptions retain the same domain and marked count; a changed
+parent pays for a fresh domain. This resumes classical preparation progress,
+not a partially completed coherent search state.
+
+### Fast DAA: inspected retarget component, incomplete protocol
+
+The full revised ePrint PDF remained unavailable. A different primary source is
+now available: Yu Shen's author-linked September 15, 2026 report,
+[Parallel Blockchains and Applications](https://drive.google.com/file/d/11XmEh1BczmuDZhxzjvJW_K_unsCGugdD/view).
+PDF pages 61--63, displayed slides 52--54, give the approximate-agreement
+operation and difficulty formula. The [source manifest](vectors/fast-daa-author-slides-retarget-v1.json)
+pins the PDF hash, author link, inspected pages, version distinction and
+unresolved interpretations. The proceedings version, revised ePrint and author
+slides are not treated as interchangeable algorithm versions.
+
+[The arithmetic component](fast_daa_reference_component.py) implements those
+displayed equations with exact rational arithmetic. Approximate agreement
+removes extremes, selects the first representative of each retained chunk,
+then averages representatives. It is **not** an ordinary trimmed mean.
+For example, after trimming two extremes on each side of
+`[1,2,3,4,10,16,100,200]`, the representatives are `3,10`, giving `13/2`;
+the plain trimmed mean would be `33/4`.
+
+The component explicitly declares ascending grouping and accepts only complete
+chunks, unambiguous odd-length medians and present nonempty referenced histories.
+It refuses unspecified cases. These are research API restrictions, not invented
+production rules. It neither authenticates the input histories nor implements
+the epoch, cross-chain reference, mining, target encoding, fork choice or ledger
+protocol. `fast-daa-2026` therefore still refuses as a complete network backend.
+Common-prefix/growth/quality/liveness and a mixed quantum-resource theorem remain
+open, as do the mappings of security parameters and physical network clocks.
+
 ## Constructed oracle, adversarial strategies and complete bounded protocol model
 
 The next continuation preserves integration source `03163dcb849a15cd267fcaf704a533a88cd54131`

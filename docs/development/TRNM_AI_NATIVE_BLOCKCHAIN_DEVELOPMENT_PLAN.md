@@ -50,7 +50,30 @@ security, public-model efficacy and activation unaccepted. This does not deny th
 development code and controlled entrypoints below. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
 
+Frozen-source observations and reproduction commands are retained in
+[`evidence/pon-quantum-domain-20261104`](../../evidence/pon-quantum-domain-20261104/README.md).
+
 ### Reconstruction and upgrade order
+
+#### Literal W1 domains and restricted legal search — 2026-11-04
+
+Continue PR #688 from `a9b8602706b66adba82655c3c2ce90bde88620a2`.
+The [quantum research continuation](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md)
+now includes literal low-nonce censuses, independently checked native-shape
+winning proofs, and a separately identified reversible legal-subset predicate.
+The latter rejects any noncanonical word in the required raw noise prefix,
+preserves the complete original trace and ticket, and deliberately discards
+some valid winners. It retains the original nonce search dimension and must
+use its own marked count. Its smaller constructive cost is not a lower bound
+or a calibrated quantum advantage.
+
+Retain unpaid classical domain setup across participation interruptions;
+changing the template or parent must not forgive the remaining work. Add the
+actual author-slide Fast DAA retarget arithmetic only under its declared partial
+input domain. The full parallel-chain protocol and its quantum security mapping
+remain unavailable; no new native DAA, sqrt(D) chain weight or activation path
+is introduced. Evidence must pin the final implementation bytes and preserve
+pre-fix failures, subset exclusions, zero marked domains and explicit refusals.
 
 #### Constructive W1 predicate and adversarial DAA closure checks — 2026-11-04
 

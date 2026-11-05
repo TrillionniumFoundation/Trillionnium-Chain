@@ -559,7 +559,7 @@
     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
     "scripts/ci/check_pq_research_integration.py": "ef21ca549861e903dc767b396932cf6c337d8265",
     "scripts/ci/check_public_readiness_evidence.py": "8b7e6fa0ff455cdeffe191a2c0286a7a8359a051",
-    "scripts/ci/ci_job.sh": "629c0db258722c74f6566cf79384b66dca820ddc",
+    "scripts/ci/ci_job.sh": "cf572eb46d453e6661cd74bc764af3a77d7e5cbb",
     "scripts/ci/model-runtime-cpu-requirements.txt": "6796d0737af36e1521d89f6937df288fe67167a1",
     "scripts/ci/pq_authority_surface_scan.py": "8b476094269d3b4c4932b29e4560c3cd9702a73a",
     "scripts/ci/pq_chain_claim_guard.py": "5de9c41be2f68ae5224fdb16ea49eb49ae58d1d7",

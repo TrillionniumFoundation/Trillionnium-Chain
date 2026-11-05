@@ -552,7 +552,10 @@ class OracleProgram:
             "physical_calibration": None, "quantum_work_lower_bound_proved": False,
             "quantum_mining_security_qualified": False, "production_activation": False,
         }
-        return self.resources()
+        # Return the completed base report directly. A separately named legal
+        # subset construction can specialize its identity without recursively
+        # re-entering the subclass while this base report is being built.
+        return json.loads(json.dumps(self._resources))
 
     def diffusion_gates(self):
         """Concrete reusable diffusion sequence; H/Z are Clifford gates."""
