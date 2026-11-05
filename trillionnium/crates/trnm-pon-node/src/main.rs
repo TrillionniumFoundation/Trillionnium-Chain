@@ -645,7 +645,7 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
         return Err("PUBLIC_GROWTH_CLIENT_OPTIONS".into());
     }
     need(args, "--growth-namespace")?;
-    if number(args, "--workers", 1)? != 1 {
+    if ![1, 2, 4, 8].contains(&number(args, "--workers", 1)?) {
         return Err("PUBLIC_GROWTH_WORKERS".into());
     }
     if args.keys().any(|key| {
@@ -1921,7 +1921,11 @@ fn run() -> Result<Value> {
     }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
     let mut node = if growth_network {
-        Node::open_with_permanent_account_growth_v2(Path::new(need(&args, "--store")?), settings)?
+        Node::open_with_permanent_account_growth_v2_and_workers(
+            Path::new(need(&args, "--store")?),
+            settings,
+            number(&args, "--workers", 1)? as usize,
+        )?
     } else {
         open_operator_node(
             Path::new(need(&args, "--store")?),

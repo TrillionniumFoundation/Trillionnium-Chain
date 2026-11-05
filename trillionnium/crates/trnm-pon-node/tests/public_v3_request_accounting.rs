@@ -16,6 +16,7 @@ use trnm_pon_node::{
         self,
         public_v3::{
             self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request,
+            SubmitPhase,
         },
         DevelopmentIdentity,
     },
@@ -163,6 +164,7 @@ fn actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed(
     assert!(!partial.frames[0].complete);
     assert_eq!(partial.dispatch_thread_cpu_ns, None);
     assert_eq!(partial.full_work_thread_cpu_ns, None);
+    assert!(partial.cpu_settlement.is_none());
     for (i, row) in snapshot.records[1..].iter().enumerate() {
         assert!(row.complete && row.task_created && row.task_closed && row.response_frame_complete);
         assert!(row.frames.iter().all(|f| f.complete));
@@ -186,8 +188,31 @@ fn actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed(
         assert!(row.dispatch_started);
         assert_eq!(row.dispatch_accepted, Some(i != 0));
         assert_eq!(row.full_work_started, i < 2);
+        let settlement = row
+            .submit_phases
+            .iter()
+            .find(|phase| phase.phase == SubmitPhase::CpuSettle)
+            .unwrap();
         if i < 2 {
             assert_eq!(row.full_work_accepted, Some(i == 1));
+            // Actual valid and invalid full W1 requests both return their
+            // original reservation. Settlement success is not work acceptance.
+            assert!(settlement.started && settlement.completed);
+            assert_eq!(settlement.accepted, Some(true));
+            assert_eq!(settlement.error_code, None);
+            assert!(settlement.wall_ns.is_some());
+            let actual = row.cpu_settlement.unwrap();
+            assert!(actual.owner_cpu_known && actual.scoped_worker_cpu_known);
+            assert!(actual.live_paid_cpu_known && actual.residual_cpu_known);
+            assert!(actual.budget_settled);
+            assert_eq!(actual.continuous_journal_persisted, None);
+            let response = row
+                .submit_phases
+                .iter()
+                .find(|phase| phase.phase == SubmitPhase::ResponseEncoding)
+                .unwrap();
+            assert!(response.ended_ns.unwrap() <= settlement.started_ns.unwrap());
+            assert!(settlement.ended_ns.unwrap() <= row.response_write.started_ns.unwrap());
             if cfg!(target_os = "linux") {
                 assert!(
                     row.dispatch_thread_cpu_ns.unwrap() >= row.full_work_thread_cpu_ns.unwrap()
@@ -197,6 +222,9 @@ fn actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed(
         } else {
             assert_eq!(row.full_work_thread_cpu_ns, None);
             assert_eq!(row.full_work_accepted, None);
+            assert!(!settlement.started && !settlement.completed);
+            assert_eq!(settlement.accepted, None);
+            assert!(row.cpu_settlement.is_none());
         }
     }
     let id = oracle.admit(&packet, now).unwrap();

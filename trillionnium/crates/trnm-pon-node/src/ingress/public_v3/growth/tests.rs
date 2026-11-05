@@ -17,12 +17,15 @@ fn identity(seed: u8) -> DevelopmentIdentity {
     DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap()
 }
 fn transfer(settings: &Settings) -> Vec<u8> {
+    transfer_nonce(settings, 1)
+}
+fn transfer_nonce(settings: &Settings, nonce: u64) -> Vec<u8> {
     let mut payload = crate::development_public(91).unwrap().to_vec();
     payload.extend(1000u64.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: crate::development_public(0).unwrap(),
-        nonce: 1,
+        nonce,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,
@@ -48,6 +51,103 @@ fn make(node: &Node, parent: Hash, height: u64, txs: Vec<Vec<u8>>) -> GrowthPack
     .unwrap()
 }
 
+#[test]
+fn growth_paid_dispatch_charges_joined_preparation_workers_and_fences_unknown_cpu() {
+    for workers in [2, 4, 8] {
+        for missing_worker_clock in [false, true] {
+            let settings = settings("growth-paid-parallel-preparation");
+            let directory = tempfile::tempdir().unwrap();
+            let node = Node::open_with_permanent_account_growth_v2_and_workers(
+                directory.path(),
+                settings.clone(),
+                workers,
+            )
+            .unwrap();
+            let transactions = (1..=8)
+                .map(|nonce| transfer_nonce(&settings, nonce))
+                .collect();
+            let packet = make(&node, settings.genesis(), 1, transactions);
+            let before = node.growth_current_working().unwrap();
+            let node = Mutex::new(node);
+            let server = PublicServer::new(
+                identity(97),
+                PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            )
+            .unwrap()
+            .with_native_growth()
+            .unwrap();
+            let metrics = Mutex::new(PublicMetrics::default());
+            let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let stop = Arc::new(AtomicBool::new(false));
+            let cancelled = Arc::new(AtomicBool::new(false));
+            permit
+                .live
+                .bind_public_request(deadline, stop.clone(), cancelled.clone())
+                .unwrap();
+            let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+            measurement
+                .workers
+                .fail_next_finish
+                .store(missing_worker_clock, Ordering::Release);
+            let result = dispatch(
+                &node,
+                Request::GrowthSubmitV1 {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                deadline,
+                &stop,
+                &cancelled,
+                &metrics,
+                None,
+                Some(&measurement),
+            );
+            assert_eq!(
+                measurement.workers.spawned.load(Ordering::Acquire),
+                workers as u64
+            );
+            assert_eq!(
+                measurement.workers.started.load(Ordering::Acquire),
+                workers as u64
+            );
+            assert_eq!(
+                measurement.workers.finished.load(Ordering::Acquire),
+                workers as u64
+            );
+            if missing_worker_clock {
+                assert_eq!(
+                    result.unwrap_err().to_string(),
+                    "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+                );
+                assert!(measurement.workers.complete().is_none());
+                let owner = node.lock().unwrap();
+                assert_eq!(owner.active().unwrap(), (before.block, before.generation));
+                assert_eq!(owner.growth_working(before.block).unwrap(), before.working);
+            } else {
+                assert_eq!(result.unwrap()["block"], hex::encode(packet.id().unwrap()));
+                assert!(measurement.workers.complete().unwrap() > 0);
+                assert_eq!(
+                    node.lock().unwrap().active().unwrap().0,
+                    packet.id().unwrap()
+                );
+            }
+            let children = measurement.workers.complete();
+            let outer = permit.finish(&measurement, &server, &metrics);
+            let budget = server.mutation_cpu.lock().unwrap();
+            assert_eq!(budget.in_flight, 0);
+            assert_eq!(budget.unavailable, missing_worker_clock);
+            if !missing_worker_clock {
+                let observed = metrics.lock().unwrap();
+                assert_eq!(
+                    observed.mutation_cpu_charged_ns,
+                    outer.unwrap() + children.unwrap()
+                );
+                assert_eq!(observed.mutation_cpu_clock_failures, 0);
+            }
+        }
+    }
+}
+
 struct Running {
     directory: tempfile::TempDir,
     owner: Option<Arc<Mutex<Node>>>,
@@ -62,15 +162,25 @@ struct Running {
 }
 impl Running {
     fn new(settings: Settings) -> Self {
+        Self::with_workers(settings, 1, false)
+    }
+    fn with_workers(settings: Settings, workers: usize, missing_worker_clock: bool) -> Self {
         let directory = tempfile::tempdir().unwrap();
-        let node = Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
-            .unwrap();
+        let node = Node::open_with_permanent_account_growth_v2_and_workers(
+            directory.path(),
+            settings.clone(),
+            workers,
+        )
+        .unwrap();
         let owner = Arc::new(Mutex::new(node));
         let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
         let server = PublicServer::new(identity(92), policy)
             .unwrap()
             .with_native_growth()
             .unwrap();
+        server
+            .fail_next_worker_cpu_finish
+            .store(missing_worker_clock, Ordering::Release);
         Self::start(directory, owner, settings, server)
     }
     fn start(
@@ -545,5 +655,74 @@ fn public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners()
         assert_eq!(metrics.issued_challenges, 1);
         assert_eq!(metrics.mutation_cpu_reservations, 0);
         assert_eq!(metrics.output_reserved_bytes_after_shutdown, 0);
+    }
+}
+
+#[test]
+fn growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cpu() {
+    for workers in [2, 4, 8] {
+        for missing_worker_clock in [false, true] {
+            let settings = settings("growth-tcp-parallel-preparation");
+            let mut run = Running::with_workers(settings.clone(), workers, missing_worker_clock);
+            let packet = {
+                let owner = run.owner.as_ref().unwrap().lock().unwrap();
+                make(
+                    &owner,
+                    settings.genesis(),
+                    1,
+                    (1..=8)
+                        .map(|nonce| transfer_nonce(&settings, nonce))
+                        .collect(),
+                )
+            };
+            let reply = run.call(&Request::GrowthSubmitV1 {
+                packet: hex::encode(packet.encode().unwrap()),
+            });
+            if missing_worker_clock {
+                assert!(!reply.ok);
+                assert!(
+                    reply
+                        .value
+                        .to_string()
+                        .contains("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
+                    "{}",
+                    reply.value
+                );
+                assert_eq!(
+                    run.owner
+                        .as_ref()
+                        .unwrap()
+                        .lock()
+                        .unwrap()
+                        .active()
+                        .unwrap(),
+                    (settings.genesis(), 0)
+                );
+            } else {
+                assert!(reply.ok, "{}", reply.value);
+                assert_eq!(reply.value["block"], hex::encode(packet.id().unwrap()));
+                let owner = run.owner.as_ref().unwrap().lock().unwrap();
+                assert_eq!(owner.active().unwrap().0, packet.id().unwrap());
+                assert_eq!(
+                    owner
+                        .growth_account(packet.id().unwrap(), crate::development_public(0).unwrap())
+                        .unwrap()
+                        .unwrap()
+                        .nonce,
+                    8
+                );
+            }
+            let metrics = run.finish();
+            assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
+            assert_eq!(
+                metrics.mutation_cpu_unavailable_after_shutdown,
+                missing_worker_clock
+            );
+            assert_eq!(metrics.output_reserved_bytes_after_shutdown, 0);
+            if !missing_worker_clock {
+                assert!(metrics.mutation_cpu_charged_ns > 0);
+                assert_eq!(metrics.mutation_cpu_clock_failures, 0);
+            }
+        }
     }
 }

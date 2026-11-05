@@ -36,6 +36,22 @@ def record_v4():
     return row
 
 
+def settlement_record(**facts):
+    """Synthetic reader control only; no native work or CPU measurement."""
+    row = record_v4()
+    value = dict(schema=reader.CPU_SETTLEMENT_SCHEMA, owner_cpu_known=True,
+        scoped_worker_cpu_known=True, live_paid_cpu_known=True, residual_cpu_known=True,
+        budget_settled=True, continuous_journal_persisted=None, has_control_authority=False,
+        interval_is_additive_to_dispatch_cpu=False)
+    value.update(facts)
+    row['cpu_settlement'] = value
+    accepted = all(value[key] for key in (*reader.CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled')) \
+        and value['continuous_journal_persisted'] is not False
+    row['submit_phases'][reader.PHASES_V4.index('cpu_settle')].update(started=True,
+        completed=True, accepted=accepted, started_ns=100, ended_ns=110, wall_ns=10, thread_cpu_ns=3)
+    return row
+
+
 def attribution_phase(submissions, history, attacks, records):
     """Only role-matching fields vary; this is not a measured native campaign."""
     return {
@@ -332,6 +348,110 @@ class ReaderTests(unittest.TestCase):
             mutate(row)
             with self.subTest(index=index), self.assertRaises(ValueError):
                 reader.execution_summary([row], True, observer_v4=True)
+
+    def test_cpu_settlement_keeps_native_outcomes_unknowns_and_separate_failure_causes(self):
+        success = settlement_record()
+        persisted = settlement_record(continuous_journal_persisted=True)
+        clock_failed = settlement_record(owner_cpu_known=False, residual_cpu_known=False)
+        budget_failed = settlement_record(budget_settled=False)
+        journal_failed = settlement_record(continuous_journal_persisted=False)
+        # Native ACK/rejection is independent of settlement success or failure.
+        clock_failed['dispatch_accepted'] = True
+        journal_failed['dispatch_accepted'] = True
+        rows = [record_v4(), success, persisted, clock_failed, budget_failed, journal_failed]
+        before = copy.deepcopy(rows)
+        result = reader.execution_summary(rows, True, observer_v4=True)
+        self.assertEqual(rows, before)
+        self.assertEqual(result['dispatch_outcomes'], {'rejected': 4, 'accepted': 2})
+        detail = result['cpu_settlement']
+        self.assertEqual((detail['observed_records'], detail['records_without_settlement_extension']), (5, 1))
+        self.assertEqual((detail['succeeded'], detail['failed']), (2, 3))
+        self.assertEqual((detail['budget_settled'], detail['budget_not_settled']), (4, 1))
+        self.assertEqual(detail['cpu_known_counts'], dict(owner_cpu_known=4, scoped_worker_cpu_known=5,
+                                                        live_paid_cpu_known=5, residual_cpu_known=4))
+        self.assertEqual(detail['continuous_journal'], dict(persisted=1, failed=1, no_scope=3))
+        phase = result['submit_phases'][reader.PHASES_V4.index('cpu_settle')]
+        self.assertEqual((phase['started'], phase['not_started'], phase['completed']), (5, 1, 5))
+        self.assertEqual(phase['outcomes'], {'accepted': 2, 'rejected': 3})
+        for row in rows[1:]:
+            del row['cpu_settlement']
+            # An absent historical extension does not invalidate a legacy
+            # accepted/rejected CpuSettle or invent its budget/journal facts.
+            self.assertNotIn('cpu_settlement', reader.execution_summary([row], True, observer_v4=True))
+
+    def test_cpu_settlement_rejects_bad_scope_types_and_inconsistent_or_missing_phase(self):
+        mutations = [
+            lambda r: r.update(cpu_settlement=None),
+            lambda r: r['cpu_settlement'].update(schema='unknown'),
+            lambda r: r['cpu_settlement'].update(has_control_authority=True),
+            lambda r: r['cpu_settlement'].update(has_control_authority=0),
+            lambda r: r['cpu_settlement'].update(interval_is_additive_to_dispatch_cpu=True),
+            lambda r: r['cpu_settlement'].update(interval_is_additive_to_dispatch_cpu=0),
+            lambda r: r['cpu_settlement'].update(continuous_journal_persisted=1),
+            lambda r: r['cpu_settlement'].update(continuous_journal_persisted='true'),
+            lambda r: r['cpu_settlement'].pop('continuous_journal_persisted'),
+            lambda r: r['cpu_settlement'].update(extra=True),
+            lambda r: r.pop('submit_phases'),
+            lambda r: r['submit_phases'].pop(reader.PHASES_V4.index('cpu_settle')),
+            lambda r: r['submit_phases'].__setitem__(reader.PHASES_V4.index('cpu_settle'),
+                           record_v4()['submit_phases'][reader.PHASES_V4.index('cpu_settle')]),
+            lambda r: r['submit_phases'][reader.PHASES_V4.index('cpu_settle')].update(
+                           completed=False, accepted=None),
+            lambda r: r['submit_phases'][reader.PHASES_V4.index('cpu_settle')].update(accepted=False),
+            lambda r: r['cpu_settlement'].update(continuous_journal_persisted=False),
+        ]
+        for key in (*reader.CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled'):
+            for invalid in (False, 1, None, 'true'):
+                mutations.append(lambda r, key=key, invalid=invalid: r['cpu_settlement'].update({key: invalid}))
+        for index, mutate in enumerate(mutations):
+            row = settlement_record()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.execution_summary([row], True, observer_v4=True)
+        for instrumented, observer_v4 in ((True, False), (False, False), (False, True)):
+            with self.subTest(instrumented=instrumented, observer_v4=observer_v4), \
+                    self.assertRaisesRegex(ValueError, 'v4 observer scope'):
+                reader.execution_summary([settlement_record()], instrumented, observer_v4=observer_v4)
+
+    def test_cpu_settlement_scope_changes_only_reports_with_the_optional_extension(self):
+        row = settlement_record()
+        del row['cpu_settlement']
+        phases = [attribution_phase([], [], [], [copy.deepcopy(row)]) for _ in reader.MODES]
+        for phase, mode in zip(phases, reader.MODES):
+            phase['mode'] = mode
+            phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v4',
+                cpu_includes_reactor_authentication_or_response_signing=True,
+                cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+                dispatch_cpu_includes_response_signing=True, phase_parent_links_are_inclusive=True,
+                cpu_wait_is_outside_dispatch=True, monotonic_epoch_is_observer_local=True)
+        report = dict(schema='native-public-v3-separate-process-campaign-v2',
+            state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+            economics_complete=False, best_observed_cold_legal_method=None,
+            preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+        legacy = reader.analyze(report)
+        self.assertTrue(legacy['scope']['submit_phase_cpu_excludes_response_signing'])
+        self.assertNotIn('submit_phase_cpu_scope_is_phase_specific', legacy['scope'])
+        report['phases'][0]['receiver_observation']['records'][0]['cpu_settlement'] = \
+            settlement_record()['cpu_settlement']
+        current = reader.analyze(report)
+        self.assertFalse(current['scope']['submit_phase_cpu_excludes_response_signing'])
+        self.assertFalse(current['scope']['cpu_intervals_are_nested_not_additive'])
+        self.assertTrue(current['scope']['cpu_intervals_are_not_additive'])
+        self.assertTrue(current['scope']['submit_phase_cpu_scope_is_phase_specific'])
+        self.assertTrue(current['phases'][0]['receiver']['all_retained_records']['cpu_settlement'][
+            'scope']['interval_overlaps_dispatch_cpu'])
+        self.assertFalse(current['phases'][0]['receiver']['all_retained_records']['cpu_settlement'][
+            'scope']['interval_is_additive_to_dispatch_cpu'])
+        # The new optional facts and their scope are the only derivation changes;
+        # every old phase measurement, outcome and denominator remains identical.
+        restored = copy.deepcopy(current)
+        restored['scope'] = legacy['scope']
+        receiver = restored['phases'][0]['receiver']
+        del receiver['all_retained_records']['cpu_settlement']
+        del receiver['by_observed_body_role']['unattributed_or_ambiguous']['cpu_settlement']
+        self.assertEqual(json.dumps(restored, sort_keys=True), json.dumps(legacy, sort_keys=True))
+        del report['phases'][0]['receiver_observation']['records'][0]['cpu_settlement']
+        self.assertEqual(json.dumps(reader.analyze(report), sort_keys=True), json.dumps(legacy, sort_keys=True))
 
     def test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators(self):
         row = observed_history_call()

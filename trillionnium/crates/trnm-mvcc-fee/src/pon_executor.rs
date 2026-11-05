@@ -2962,7 +2962,11 @@ fn execute_with_state_inputs<E: Send>(
     let signatures = AtomicUsize::new(0);
     // Same sender means every transaction writes the same nonce. Preserve a serial
     // state path, while independent cryptographic checks may still use the bounded pool.
-    let serial_state = pq_accounts_v2::enabled(cfg)
+    // Authenticated Growth witnesses may be observed only by the canonical
+    // state owner. Parallelize preparation/signatures, never speculative account
+    // access or monetary effects against this partial account view.
+    let serial_state = growth.is_some()
+        || pq_accounts_v2::enabled(cfg)
         || workers == 1
         || (transactions.len() > 1
             && transactions[0].len() >= 68
