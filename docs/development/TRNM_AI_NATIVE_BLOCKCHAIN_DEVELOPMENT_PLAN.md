@@ -6505,3 +6505,12 @@ integrity controls; prior C/N/D passes do not transfer to it. Both plan historie
 all concurrent source and the exact old-parser RED parent are retained. Fresh
 static execution requires its own exact-commit receipt; combined native, Node,
 funded renewal, independent custody, CURRENT/FinalUse and activation stay HOLD.
+
+The repaired storage integration `d6be1198` now has its own complete source
+receipt: 43 integrity controls, formatting, generated inventory, 464 exact pins,
+CI contract, 2,785 local links and a locked/offline 26-member / 175-package Cargo
+graph passed on identical tracked bytes before and after. The preceding `b72d4447`
+missing-log failure is retained; seven original W1 logs were recovered against
+already committed hashes without relabelling them as new executions. This source
+gate does not run native tests or Clippy and does not replace the original Node,
+CURRENT/FinalUse, funded-retention or independently operated WAN acceptance.

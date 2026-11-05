@@ -127,6 +127,29 @@ with an unknown exit code. The lifecycle metadata lacks an execution commit/tree
 so neither its introduction commit nor this recovery is relabelled as a new
 exact-source execution. Unbound extra logs are not assigned acceptance results.
 
+## Completed repaired integration validation
+
+The repaired F checkpoint `d6be11987b44deb0028382bd9f791dc1c4efc37f`
+(tree `4604138f131fed7a68e417c9c3e1a5f074638c23`) completed the unchanged
+full source-check command with **exit 0**. Its [exact before/after receipt](integration-f/final-integration-repair-source-checks.json),
+[raw log](integration-f/final-integration-repair-source-checks.log),
+[step results](integration-f/result.json) and
+[complete locked Cargo metadata](integration-f/cargo-metadata.json.gz) are retained.
+
+The actual result is **43 source-integrity tests passed**, formatting and generated
+inventory passed, **464 exact source pins** checked, CI contract passed and
+**2,785 local links** validated across 1,135 Rust files and 26 workspace packages.
+The locked/offline Cargo graph contains 175 resolved packages; Cargo.lock remains
+unchanged. All 9,305 tracked entries / 950,106,147 bytes matched the same F
+identity before and after execution. Repeating the earlier 43 controls adds no
+new unique test identities. Neither native tests nor Clippy ran in this command.
+
+The [delivery-input projection](final-delivery-input-projection.json) binds the
+subsequent evidence-only packaging to F's unchanged source inputs. It does not
+transfer C's native tests or N's Clippy to the new combined native tree. The
+original Node build-resource failure, failed E repository check and interrupted
+runs remain intact. Combined native and activation acceptance remain **HOLD**.
+
 ## Actual validation
 
 [Artifact hashes](artifact-manifest.json) cover the retained files; the

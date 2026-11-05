@@ -70,5 +70,13 @@
   "CURRENT_or_FinalUse_granted": false,
   "integration_checkpoint_commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
   "integration_checkpoint_tree": "6b2d72dd73957f521c4952d2ece9f53d485a7059",
-  "scope_note": "This source-composition record describes E. Subsequent evidence/documentation corrections retain those exact native/source subtrees; their own outcomes require separate exact-commit receipts."
+  "scope_note": "This source-composition record describes E. Subsequent evidence/documentation corrections retain those exact native/source subtrees; their own outcomes require separate exact-commit receipts.",
+  "completed_static_result": {
+    "commit": "d6be11987b44deb0028382bd9f791dc1c4efc37f",
+    "tree": "4604138f131fed7a68e417c9c3e1a5f074638c23",
+    "result": "PASS",
+    "record": "integration-f/result.json",
+    "raw_receipt": "integration-f/final-integration-repair-source-checks.json",
+    "native_acceptance": "HOLD"
+  }
 }
