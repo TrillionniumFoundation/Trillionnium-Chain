@@ -12,6 +12,9 @@ use std::{
 };
 
 mod directory;
+#[cfg(all(test, unix))]
+mod directory_deadline_tests;
+mod directory_wait;
 pub mod pq;
 mod selection;
 mod transport;

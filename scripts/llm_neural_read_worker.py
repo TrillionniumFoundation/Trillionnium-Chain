@@ -7,6 +7,10 @@ supervisor. It has no optimizer, registry, selector, authority key or journal.
 The socket is private to a create-only owner directory; every use still requires
 the original Hepta host's resource reservation and final-use admission.
 """
+import sys
+if __name__ == '__main__' and not (sys.flags.isolated and sys.flags.no_site):
+    raise SystemExit('NEURAL_READ_ISOLATED_ENTRY')
+
 import argparse
 import hashlib
 import json
@@ -14,15 +18,54 @@ import os
 from pathlib import Path
 import resource
 import socket
-import sys
+import stat
 import time
+import types
 
-import llm_inherited_runtime as inherited
-import llm_runtime_pilot as runtime
-
-SCHEMA = 'hepta-smollm-neural-read-worker-v1'
+SCHEMA = 'hepta-smollm-neural-read-worker-v2'
 MAX_REQUEST = 8192
 MAX_REQUESTS = 64
+
+
+def require(value, reason):
+    if not value:
+        raise ValueError(reason)
+
+
+def unique(pairs):
+    result = {}
+    for key, value in pairs:
+        require(key not in result, 'NEURAL_READ_DUPLICATE_FIELD')
+        result[key] = value
+    return result
+
+
+def bootstrap_bytes(path, maximum):
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), 'rb') as source:
+        require(stat.S_ISREG(os.fstat(source.fileno()).st_mode), 'NEURAL_READ_BOOTSTRAP_FILE')
+        raw = source.read(maximum + 1)
+    require(0 < len(raw) <= maximum, 'NEURAL_READ_BOOTSTRAP_BOUND')
+    return raw
+
+
+def worker_sources():
+    sources = inherited.source_pins()
+    sources['llm_python_runtime_contract.py'] = runtime.file_sha(python_runtime.__file__)
+    for relative in ('formal/pon-nakamoto-v1/contract_wire.py', 'config/pon/devnet-v1.json',
+                     'config/pon/ledger-v1.json', 'config/pon/work-profile-v1.json', 'config/pon/model-family-v1.json'):
+        path = runtime.REPOSITORY / relative
+        sources[path.name] = runtime.file_sha(path)
+    return sources
+
+
+def source_paths(plan):
+    paths = [Path(__file__), Path(python_runtime.__file__), Path(inherited.__file__),
+             Path(runtime.__file__), Path(inherited.parent_material.__file__),
+             Path(runtime.__file__).with_name('llm_base_material.py'),
+             Path(runtime.contract_module().__file__),
+             runtime.REPOSITORY / 'formal/pon-nakamoto-v1/contract_wire.py']
+    pins = dict(plan['inherited_sources'], **{'llm_neural_read_worker.py': plan['worker_source']})
+    return {str(path.resolve()): pins[path.name] for path in paths}
 
 
 def read_request(connection):
@@ -34,12 +77,12 @@ def read_request(connection):
         raw.extend(part)
         if b'\n' in part:
             break
-    runtime.require(0 < len(raw) <= MAX_REQUEST and raw.endswith(b'\n') and
+    require(0 < len(raw) <= MAX_REQUEST and raw.endswith(b'\n') and
                     raw.count(b'\n') == 1, 'NEURAL_READ_FRAME')
-    value = json.loads(raw, object_pairs_hook=runtime.unique)
+    value = json.loads(raw, object_pairs_hook=unique)
     if value == {'schema': SCHEMA, 'stop': True} and type(value.get('stop')) is bool:
         return None, hashlib.sha256(raw[:-1]).hexdigest()
-    runtime.require(type(value) is dict and set(value) == {'schema', 'request_id', 'prompt'} and
+    require(type(value) is dict and set(value) == {'schema', 'request_id', 'prompt'} and
         value['schema'] == 'hepta-smollm-inference-input-v1' and
         type(value['request_id']) is str and 1 <= len(value['request_id'].encode()) <= 128 and
         type(value['prompt']) is str and 1 <= len(value['prompt'].encode()) <= 2048,
@@ -48,24 +91,26 @@ def read_request(connection):
 
 
 def action_profile(value):
-    runtime.require(type(value) is list and 1 <= len(value) <= 128, 'NEURAL_READ_ACTION_LIMIT')
+    require(type(value) is list and 1 <= len(value) <= 128, 'NEURAL_READ_ACTION_LIMIT')
     ids, labels = set(), set()
     for item in value:
-        runtime.require(type(item) is dict and set(item) == {'action_id', 'completion'} and
+        require(type(item) is dict and set(item) == {'action_id', 'completion'} and
             type(item['action_id']) is str and 1 <= len(item['action_id'].encode()) <= 128 and
             type(item['completion']) is str and 1 <= len(item['completion'].encode()) <= 64 and
             item['action_id'] not in ids and item['completion'] not in labels, 'NEURAL_READ_ACTION')
         ids.add(item['action_id']); labels.add(item['completion'])
-    runtime.require(value == sorted(value, key=lambda item: item['action_id']), 'NEURAL_READ_ACTION_ORDER')
+    require(value == sorted(value, key=lambda item: item['action_id']), 'NEURAL_READ_ACTION_ORDER')
     return value
 
 
 def worker(args):
+    python_runtime.verify_files(args.runtime_contract)
     plan = inherited.checked_json(args.plan, args.plan_sha256, 512 * 1024)
     runtime.require(type(plan) is dict and set(plan) == {'schema', 'runtime', 'parent',
-        'inherited_sources', 'worker_source', 'actions'}, 'NEURAL_READ_PLAN')
-    runtime.require(plan['schema'] == SCHEMA and plan['inherited_sources'] == inherited.source_pins()
-        and plan['worker_source'] == runtime.file_sha(__file__), 'NEURAL_READ_SOURCE_CHANGED')
+        'inherited_sources', 'worker_source', 'actions', 'runtime_snapshot_sha256'}, 'NEURAL_READ_PLAN')
+    runtime.require(plan['schema'] == SCHEMA and plan['inherited_sources'] == worker_sources()
+        and plan['worker_source'] == runtime.file_sha(__file__) and
+        plan['runtime_snapshot_sha256'] == args.runtime_snapshot_sha256, 'NEURAL_READ_SOURCE_CHANGED')
     pilot = runtime.validate_plan(plan['runtime'])
     runtime.require(pilot['backend'] == 'cpu' and pilot['threads'] <= 4, 'NEURAL_READ_CPU_ONLY')
     directory, materials = Path(args.output).resolve(), Path(args.materials).resolve()
@@ -90,6 +135,7 @@ def worker(args):
     runtime.require(all(len(tokens) == 1 for tokens in action_tokens) and
                     len({tokens[0] for tokens in action_tokens}) == len(actions), 'NEURAL_READ_SINGLE_TOKEN_ACTIONS')
     model.eval()
+    python_runtime.verify_loaded(args.runtime_contract, source_paths(plan))
     # Bind a relative socket inside the already-private owner directory; this
     # avoids Unix sun_path limits on long project paths without global /tmp state.
     os.chdir(directory)
@@ -102,6 +148,7 @@ def worker(args):
             file_sha256=parent['file_sha256'], contract=parent['contract'], generation=parent['generation'],
             backbone=contract['backbone']['index_root'], tokenizer=contract['tokenizer']['files_root'],
             source_pins=plan['inherited_sources'], worker_source=plan['worker_source'],
+            runtime_snapshot_sha256=args.runtime_snapshot_sha256,
             actions=actions, observed_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,
             authority=inherited.NO_AUTHORITY)
         # Publish only a complete ready observation. The host must never race a
@@ -159,19 +206,25 @@ def serve(args):
     actions = action_profile(inherited.checked_json(args.actions, args.actions_sha256))
     manifest, _ = runtime.verify_materials(args.materials)
     plan = dict(schema=SCHEMA, runtime=runtime.experiment_plan(manifest, threads=args.threads, steps=10),
-                parent=parent, actions=actions, inherited_sources=inherited.source_pins(), worker_source=runtime.file_sha(__file__))
+                parent=parent, actions=actions, inherited_sources=worker_sources(), worker_source=runtime.file_sha(__file__),
+                runtime_snapshot_sha256=args.runtime_snapshot_sha256)
     root = Path(args.output)
     root.mkdir(mode=0o700, parents=False, exist_ok=False)
     plan_path = root/'worker-plan.json'
     runtime.save(plan_path, plan)
-    result = runtime.supervise([sys.executable, str(Path(__file__).resolve()), '_worker',
+    result = runtime.supervise([sys.executable, '-I', '-S', '-B', '-X',
+        'pycache_prefix=' + sys.pycache_prefix, str(Path(__file__).resolve()), '_worker',
         '--materials', str(Path(args.materials).resolve()), '--output', str(root/'worker'),
+        '--runtime-snapshot', str(Path(args.runtime_snapshot).resolve()),
+        '--runtime-snapshot-sha256', args.runtime_snapshot_sha256,
+        '--source-pins', args.source_pins, '--source-pins-sha256', args.source_pins_sha256,
         '--plan', str(plan_path), '--plan-sha256', runtime.file_sha(plan_path)], root/'worker',
         plan['runtime']['inference_budget'])
     runtime.require(result['outcome'] == 'success', 'NEURAL_READ_WORKER_FAILED')
 
 
 def main():
+    global python_runtime, inherited, runtime
     os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
@@ -182,7 +235,30 @@ def main():
     child = commands.add_parser('_worker')
     for name in ('materials', 'output', 'plan', 'plan-sha256'):
         child.add_argument('--'+name, required=True)
+    for command in (runner, child):
+        command.add_argument('--runtime-snapshot', required=True)
+        command.add_argument('--runtime-snapshot-sha256', required=True)
+        command.add_argument('--source-pins', required=True)
+        command.add_argument('--source-pins-sha256', required=True)
     args = parser.parse_args()
+    require(sys.flags.isolated == 1 and sys.flags.no_site == 1, 'NEURAL_READ_ISOLATED_ENTRY')
+    raw = bootstrap_bytes(args.source_pins, 128 * 1024)
+    require(0 < len(raw) <= 128 * 1024 and hashlib.sha256(raw).hexdigest() == args.source_pins_sha256,
+            'NEURAL_READ_SOURCE_PINS')
+    pins = json.loads(raw, object_pairs_hook=unique)
+    helper = Path(__file__).resolve().with_name('llm_python_runtime_contract.py')
+    raw = bootstrap_bytes(helper, 2 * 1024 * 1024)
+    require(len(raw) <= 2 * 1024 * 1024 and hashlib.sha256(raw).hexdigest() == pins.get(str(helper)),
+            'NEURAL_READ_HELPER_PIN')
+    python_runtime = types.ModuleType('llm_python_runtime_contract')
+    python_runtime.__file__ = str(helper)
+    sys.modules[python_runtime.__name__] = python_runtime
+    exec(compile(raw, str(helper), 'exec'), python_runtime.__dict__)
+    args.runtime_contract = python_runtime.load_snapshot(args.runtime_snapshot, args.runtime_snapshot_sha256)
+    python_runtime.configure(args.runtime_contract)
+    python_runtime.install_import_guard(args.runtime_contract, pins)
+    import llm_runtime_pilot as runtime
+    import llm_inherited_runtime as inherited
     worker(args) if args.command == '_worker' else serve(args)
 
 

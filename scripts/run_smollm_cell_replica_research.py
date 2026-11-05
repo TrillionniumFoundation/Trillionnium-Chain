@@ -259,15 +259,30 @@ def socket_request(directory, value, deadline):
 
 
 def actual_forwards(args, parent_path, materials, fixture, directory, actions):
+    from llm_cell_host_handoff import SOURCES
+    pins = {str(CHAIN / relative): sha(CHAIN / relative) for relative in SOURCES.values()}
+    pins_path = directory.parent / (directory.name + "-source-pins.json")
+    write_json(pins_path, pins)
     parent = inherited.validate_parent(runtime.read_json(parent_path))
     deadline = time.monotonic() + 600
-    command = [str(args.python), str(CHAIN / "scripts/llm_neural_read_worker.py"), "serve",
+    command = [str(args.python), "-I", "-S", "-B", "-X",
+        "pycache_prefix=" + str(directory.parent / (directory.name + "-unused-bytecode")),
+        str(CHAIN / "scripts/llm_neural_read_worker.py"), "serve",
+        "--runtime-snapshot", str(args.runtime_snapshot),
+        "--runtime-snapshot-sha256", args.runtime_snapshot_sha256,
+        "--source-pins", str(pins_path), "--source-pins-sha256", sha(pins_path),
         "--materials", str(materials), "--parent", str(parent_path), "--parent-sha256", sha(parent_path),
         "--actions", str(actions), "--actions-sha256", sha(actions), "--output", str(directory),
         "--threads", str(args.threads)]
     stdout = (directory.parent / (directory.name + "-stdout.log")).open("w")
     stderr = (directory.parent / (directory.name + "-stderr.log")).open("w")
-    process = subprocess.Popen(command, stdout=stdout, stderr=stderr)
+    environment = dict(os.environ)
+    if any(name.startswith("LD_") or name == "GLIBC_TUNABLES" for name in environment):
+        raise ValueError("unapproved native loader environment")
+    for name in ("PYTHONPATH", "PYTHONHOME", "PYTHONUSERBASE", "PYTHONPYCACHEPREFIX",
+                 "LD_PRELOAD", "LD_LIBRARY_PATH", "LD_AUDIT"):
+        environment.pop(name, None)
+    process = subprocess.Popen(command, stdout=stdout, stderr=stderr, env=environment)
     observations = []
     ready_path = directory / "worker/ready.json"
     try:
@@ -277,7 +292,9 @@ def actual_forwards(args, parent_path, materials, fixture, directory, actions):
                 raise RuntimeError("original model worker did not become ready")
             time.sleep(0.05)
         ready = runtime.read_json(ready_path)
-        if (ready["actual_loaded_parent"] != parent["adapter"] or ready["file_sha256"] != parent["file_sha256"]
+        if (ready["schema"] != "hepta-smollm-neural-read-worker-v2" or
+                ready["runtime_snapshot_sha256"] != args.runtime_snapshot_sha256 or
+                ready["actual_loaded_parent"] != parent["adapter"] or ready["file_sha256"] != parent["file_sha256"]
                 or ready["contract"] != parent["contract"] or ready["authority"] != NO_AUTHORITY):
             raise ValueError("original loaded model identity mismatch")
         for row in fixture["tasks"]:
@@ -293,7 +310,7 @@ def actual_forwards(args, parent_path, materials, fixture, directory, actions):
             predicted = observed["action_ids"][max(range(2), key=lambda i: observed["scores_q32"][i])]
             observations.append(dict(request=row, observation=observed, predicted=predicted,
                                      correct=predicted == row["expected_output"]))
-        socket_request(directory / "worker", {"schema": "hepta-smollm-neural-read-worker-v1", "stop": True}, deadline)
+        socket_request(directory / "worker", {"schema": "hepta-smollm-neural-read-worker-v2", "stop": True}, deadline)
         process.wait(timeout=min(30, max(1, deadline - time.monotonic())))
         if process.returncode != 0 or (directory / "worker/model.sock").exists():
             raise RuntimeError("original worker did not cleanly stop and unload")
@@ -320,6 +337,8 @@ def main():
     for name in ("materials", "baseline-parent", "candidate-parent", "python", "cell-bin", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--threads", type=int, default=2)
+    parser.add_argument("--runtime-snapshot", type=Path, required=True)
+    parser.add_argument("--runtime-snapshot-sha256", required=True)
     args = parser.parse_args()
     if any(not v.is_absolute() for v in vars(args).values() if isinstance(v, Path)) or not 1 <= args.threads <= 4:
         parser.error("explicit absolute paths and 1..4 CPU threads required")

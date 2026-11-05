@@ -1,7 +1,8 @@
 //! Independent TCP composition checks for the original TCX1/CAS fetch owner.
 
 use std::{
-    fs, io,
+    fs,
+    io::{self, Read, Write},
     net::TcpListener,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -220,6 +221,138 @@ fn invalid_base_or_original_delta_budget_never_dials_or_publishes_target() {
         .manifest(fixture.target.id())
         .unwrap()
         .is_none());
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        io::ErrorKind::WouldBlock
+    );
+}
+
+#[test]
+fn cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins() {
+    let fixture = Fixture::new();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let peer = listener.local_addr().unwrap();
+    let output = fixture.dir.path().join("cancelled-target.weights");
+    let cancel = AtomicBool::new(true);
+    let before = fixture.client.cache_usage().unwrap();
+    let result = fixture.delta.fetch_cancellable_to_file(
+        &fixture.client,
+        fixture.pins(),
+        &[peer],
+        limits(),
+        &output,
+        &cancel,
+    );
+    assert!(matches!(result, Err(CellErrorV1::Io(error))
+        if error.kind() == io::ErrorKind::Interrupted
+            && error.to_string().contains("CELL_OPERATION_CANCELLED")));
+    assert_eq!(fixture.client.cache_usage().unwrap(), before);
+    assert!(fixture
+        .client
+        .manifest(fixture.target.id())
+        .unwrap()
+        .is_none());
+    assert!(!output.exists());
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        io::ErrorKind::WouldBlock
+    );
+
+    // Cancellation does not revoke immutable cached bytes. An explicit new
+    // invocation with a fresh reservation and the same independently pinned
+    // recipe can resume; changing a flag does not revive the returned call.
+    cancel.store(false, Ordering::Release);
+    fixture
+        .client
+        .put_chunk(&fixture.target.chunks()[1], &vec![11; 16_384])
+        .unwrap();
+    let (plan, report) = fixture
+        .delta
+        .fetch_cancellable_to_file(
+            &fixture.client,
+            fixture.pins(),
+            &[],
+            limits(),
+            &output,
+            &cancel,
+        )
+        .unwrap();
+    assert_eq!(plan.reused_bytes, 16_384);
+    assert_eq!(plan.new_bytes, 16_384);
+    assert_eq!(report.connection_attempts, 0);
+    assert_eq!(report.downloaded_bytes, 0);
+    assert_eq!(fs::read(output).unwrap(), fixture.target_bytes);
+}
+
+#[test]
+fn delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication() {
+    let fixture = Fixture::new();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let peer = listener.local_addr().unwrap();
+    let output = fixture.dir.path().join("partial-target.weights");
+    let cancel = AtomicBool::new(false);
+    let done = AtomicBool::new(false);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let mut bounded = limits();
+    bounded.peer.request_timeout = Duration::from_secs(5);
+    bounded.peer.max_connections = 3;
+    thread::scope(|scope| {
+        let provider = scope.spawn(|| {
+            let mut stream = loop {
+                match listener.accept() {
+                    Ok((stream, _)) => break stream,
+                    Err(error)
+                        if error.kind() == io::ErrorKind::WouldBlock
+                            && Instant::now() < deadline =>
+                    {
+                        thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => panic!("delta cancellation provider accept: {error}"),
+                }
+            };
+            stream
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            stream
+                .set_write_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut query = [0; 37];
+            stream.read_exact(&mut query).unwrap();
+            stream.write_all(b"TCS1").unwrap();
+            let started = Instant::now();
+            cancel.store(true, Ordering::Release);
+            while !done.load(Ordering::Acquire) && Instant::now() < deadline {
+                thread::sleep(Duration::from_millis(1));
+            }
+            started.elapsed()
+        });
+        let result = fixture.delta.fetch_cancellable_to_file(
+            &fixture.client,
+            fixture.pins(),
+            &[peer],
+            bounded,
+            &output,
+            &cancel,
+        );
+        done.store(true, Ordering::Release);
+        let stopped_after = provider.join().unwrap();
+        assert!(matches!(result, Err(CellErrorV1::Io(error))
+            if error.kind() == io::ErrorKind::Interrupted
+                && error.to_string().contains("CELL_OPERATION_CANCELLED")));
+        assert!(
+            stopped_after < Duration::from_secs(2),
+            "cancel used request timeout: {stopped_after:?}"
+        );
+    });
+    assert!(!output.exists());
+    assert!(fixture
+        .client
+        .chunk(fixture.target.chunks()[1].sha256)
+        .unwrap()
+        .is_none());
+    fixture.client.verify_complete(&fixture.base).unwrap();
     assert_eq!(
         listener.accept().unwrap_err().kind(),
         io::ErrorKind::WouldBlock

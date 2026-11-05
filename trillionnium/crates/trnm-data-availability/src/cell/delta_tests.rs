@@ -220,3 +220,128 @@ fn valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins() {
     .is_err());
     assert!(!output.exists());
 }
+
+#[test]
+fn delta_reconstruction_requires_only_direct_base_even_after_many_version_steps() {
+    let dir = tempfile::tempdir().unwrap();
+    let origin = CellStoreV1::open(&dir.path().join("origin"), config()).unwrap();
+    let base_part = vec![71; 16_384];
+    let mut history = Vec::new();
+    for version in 1u8..=32 {
+        let payload = [base_part.clone(), vec![version; 16_384]].concat();
+        let manifest = pack(&origin, &dir.path().join("input"), &payload, version);
+        if let Some(previous) = history.last() {
+            // Each published recipe retains a complete target; no recursive
+            // instruction references an older recipe or needs its decoder.
+            let delta = CellChunkDeltaV1::between(previous, &manifest).unwrap();
+            assert_eq!(delta.verify(previous).unwrap().new_bytes, 16_384);
+        }
+        history.push(manifest);
+    }
+    let base = &history[30];
+    let target = &history[31];
+    let consumer = CellStoreV1::open(&dir.path().join("consumer"), config()).unwrap();
+    consumer.put_manifest(base.id(), &base.encode()).unwrap();
+    for chunk in base.chunks().iter().chain(target.chunks()) {
+        consumer
+            .put_chunk(chunk, &origin.chunk(chunk.sha256).unwrap().unwrap())
+            .unwrap();
+    }
+    for ancestor in &history[..30] {
+        assert!(consumer.manifest(ancestor.id()).unwrap().is_none());
+    }
+    let delta = CellChunkDeltaV1::between(base, target).unwrap();
+    let mut bounded = limits();
+    bounded.release.max_payload_bytes = base.size() + target.size();
+    bounded.release.max_chunks = (base.chunks().len() + target.chunks().len()) as u64;
+    let output = dir.path().join("direct-target");
+    let (plan, report) = fetch_delta_to_file(
+        &consumer,
+        &delta,
+        (delta.id(), base.id(), target.id()),
+        &[],
+        bounded,
+        &output,
+    )
+    .unwrap();
+    assert_eq!(plan.reused_chunks, 1);
+    assert_eq!(plan.new_chunks, 1);
+    assert_eq!(report.downloaded_bytes, 0);
+    assert_eq!(report.connection_attempts, 0);
+    assert_eq!(
+        fs::read(output).unwrap(),
+        [base_part, vec![32; 16_384]].concat()
+    );
+    assert_eq!(consumer.cache_usage().unwrap().manifest_rows, 2);
+}
+
+#[test]
+fn delta_late_owner_event_preserves_published_target_but_refuses_success() {
+    use std::sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    };
+
+    for cancel_after_publication in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let store = CellStoreV1::open(&dir.path().join("cache"), config()).unwrap();
+        let bytes = vec![49; 16_384];
+        let base = pack(&store, &dir.path().join("base"), &bytes, 2);
+        let target = pack(&store, &dir.path().join("target"), &bytes, 6);
+        let delta = CellChunkDeltaV1::between(&base, &target).unwrap();
+        let output = dir.path().join("durable-target");
+        let observed_path = output.clone();
+        let expected_bytes = bytes.clone();
+        let cancel = Arc::new(AtomicBool::new(false));
+        let event_cancel = cancel.clone();
+        let mut bounded = limits();
+        bounded.release.deadline = Instant::now() + Duration::from_secs(1);
+        let deadline = bounded.release.deadline;
+        super::delta::AFTER_TARGET_FETCH.with(|hook| {
+            *hook.borrow_mut() = Some(Box::new(move || {
+                assert_eq!(fs::read(&observed_path).unwrap(), expected_bytes);
+                if cancel_after_publication {
+                    event_cancel.store(true, Ordering::Release);
+                } else {
+                    std::thread::sleep(
+                        deadline.saturating_duration_since(Instant::now())
+                            + Duration::from_millis(1),
+                    );
+                }
+            }));
+        });
+        let result = delta.fetch_cancellable_to_file(
+            &store,
+            (delta.id(), base.id(), target.id()),
+            &[],
+            bounded,
+            &output,
+            &cancel,
+        );
+        super::delta::AFTER_TARGET_FETCH.with(|hook| {
+            assert!(
+                hook.borrow().is_none(),
+                "real target publication was not reached"
+            );
+        });
+        if cancel_after_publication {
+            assert!(matches!(result, Err(CellErrorV1::Io(error))
+                if error.kind() == std::io::ErrorKind::Interrupted
+                    && error.to_string().contains("CELL_OPERATION_CANCELLED")));
+        } else {
+            assert!(matches!(
+                result,
+                Err(CellErrorV1::Invalid("delta deadline"))
+            ));
+        }
+        assert_eq!(fs::read(&output).unwrap(), bytes);
+        store.verify_complete(&target).unwrap();
+        assert!(!fs::read_dir(dir.path()).unwrap().any(|entry| {
+            entry
+                .unwrap()
+                .file_name()
+                .to_string_lossy()
+                .ends_with(".partial")
+        }));
+    }
+}

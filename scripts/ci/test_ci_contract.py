@@ -163,6 +163,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_inherited_runtime.py',
             'scripts/test_llm_neural_read_worker.py',
+            'scripts/test_llm_python_runtime_contract.py',
         )
         for path in paths:
             command = '    python3 ' + path + '\n'
@@ -184,7 +185,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
                      'scripts/test_llm_inherited_runtime.py',
-                     'scripts/test_llm_neural_read_worker.py'):
+                     'scripts/test_llm_neural_read_worker.py',
+                     'scripts/test_llm_python_runtime_contract.py'):
             command = '    python3 ' + path + '\n'
             early = self.script.replace(command, '').replace(parent, command + parent)
             with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'runtime owner'):
@@ -195,7 +197,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
                      'scripts/test_llm_inherited_runtime.py',
-                     'scripts/test_llm_neural_read_worker.py'):
+                     'scripts/test_llm_neural_read_worker.py',
+                     'scripts/test_llm_python_runtime_contract.py'):
             command = '    python3 ' + path + '\n'
             early = self.script.replace(command, '').replace(parent_step, command + parent_step)
             with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'runtime owner'):

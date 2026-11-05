@@ -16,10 +16,14 @@ SCHEMA = "hepta-smollm-controlled-cell-release-v1"
 PROFILE = "smollm2-135m-f32-r4-dense-single-adapter-no-fallback-v1"
 MAX_SIDECAR = 65_536
 SOURCE_PATHS = (
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "config/pon/devnet-v1.json", "config/pon/ledger-v1.json",
+    "config/pon/model-family-v1.json", "config/pon/work-profile-v1.json",
     "formal/pon-nakamoto-v1/llm_adapter_contract.py",
     "scripts/llm_inherited_runtime.py", "scripts/llm_neural_read_worker.py",
     "scripts/llm_parent_material.py", "scripts/llm_runtime_pilot.py",
     "scripts/llm_base_material.py",
+    "scripts/llm_python_runtime_contract.py",
     "config/pon/model-family-smollm2-135m-v1.json",
 )
 ACTIONS = [dict(action_id="native-answer-no", completion="no"),
@@ -59,7 +63,11 @@ def prepare_sidecar(args, family, parent, contract, members, release_file, relea
     release_wire = read_regular(release_file, 65_536)
     if digest(b"trnm.cell-release-manifest.v1\0" + release_wire) != release_id:
         raise ValueError("TCR1 domain identity")
-    execution = ["hepta-smollm-single-token-action-score-v1", sources, ACTIONS,
+    snapshot = read_regular(args.runtime_snapshot, 16 * 1024 * 1024)
+    if digest(snapshot) != args.runtime_snapshot_sha256:
+        raise ValueError("independently pinned runtime snapshot changed")
+    execution = ["hepta-smollm-runtime-bound-execution-v2", "hepta-smollm-single-token-action-score-v1", sources, ACTIONS,
+        args.runtime_snapshot_sha256,
         parent["contract"], parent["adapter"], digest(target), digest(wrapped),
         contract["backbone"]["index_root"], contract["tokenizer"]["files_root"], 4]
     sidecar = dict(schema=SCHEMA, scope="controlled-native-load-only", profile=PROFILE,
@@ -112,12 +120,13 @@ def consume_controlled(args, consumer_parent, sidecar):
     out = args.output / "controlled-original-native"
     parent_raw = read_regular(consumer_parent, 2 * 1024 * 1024)
     parent = json.loads(parent_raw, object_pairs_hook=runtime.unique)
-    native = dict(schema="hepta-smollm-neural-native-check-v1", python=str(args.python),
+    native = dict(schema="hepta-smollm-neural-native-check-v2", python=str(args.python),
+        runtime_snapshot=str(args.runtime_snapshot), runtime_snapshot_sha256=args.runtime_snapshot_sha256,
         chain=str(args.chain), materials=str(args.output / "consumer-materials"),
         parent=str(consumer_parent), parent_sha256=digest(parent_raw), output=str(out))
-    config = dict(schema="hepta-smollm-controlled-cell-native-check-v1", native=native,
+    config = dict(schema="hepta-smollm-controlled-cell-native-check-v2", native=native,
         sidecar=sidecar["path"], sidecar_sha256=sidecar["sha256"])
-    path = args.output / "controlled-cell-native-v1.json"
+    path = args.output / "controlled-cell-native-v2.json"
     write_new(path, canonical(config))
     environment = dict(os.environ, CODEX_REPO_ROOT=str(args.hepta),
         CARGO_TARGET_DIR=str(args.hepta_target), PYTHONDONTWRITEBYTECODE="1",
