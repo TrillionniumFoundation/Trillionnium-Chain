@@ -31,6 +31,7 @@ pub(crate) mod public_reader;
 mod reorg_cancellation;
 #[cfg(test)]
 mod reorg_readback_tests;
+mod reverse_path;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
@@ -56,7 +57,7 @@ use std::{
     cell::{Cell, RefCell},
     collections::BTreeMap,
     fs::{self, File, OpenOptions},
-    io::{Read, Seek, SeekFrom, Write},
+    io::{Read, Write},
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -3246,7 +3247,7 @@ impl Node {
         if tip == self.active()?.0 {
             return Ok(self.read_active_with_readback(progress, readback)?.2);
         }
-        let mut path = tempfile::tempfile()?;
+        let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
         let mut count = 0u64;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
@@ -3280,15 +3281,13 @@ impl Node {
                 }
                 break (state, commitment);
             }
-            path.write_all(&cur)?;
+            path.push(cur)?;
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
             cur = self.parent(cur)?;
         };
-        for i in (0..count).rev() {
+        for _ in 0..count {
             progress()?;
-            path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
-            let mut id = [0; 32];
-            path.read_exact(&mut id)?;
+            let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
             for (index, (key, before, after)) in self
                 .delta_rows_with_progress(id, progress)?
                 .into_iter()
