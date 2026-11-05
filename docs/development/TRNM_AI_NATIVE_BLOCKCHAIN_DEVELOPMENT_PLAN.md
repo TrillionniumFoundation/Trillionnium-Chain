@@ -17,6 +17,20 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Complete useful-operator relation, 2026-11-05 America/New_York:** Continue
+the existing #688 candidate with the separately versioned
+[useful-Cell reference relation](specs/pon/USEFUL_CELL_RELATION_V1.md).
+Bind the existing integer source router's complete model, read-only Cell state,
+ordered source-backed inputs, numeric/decision rules, consumer use and fixed
+verifier to an independently retained task contract. Reuse all five complete
+W1 transcripts, require actual source-feature replay, and reject internally
+consistent packages that disagree with the consumer's expected context. Keep
+numeric error, routing/STOP behavior and the original frozen quality protocol
+separate. This is a research relation with explicit disabled STOP/abstention,
+not ordinary Hepta Encoder execution, authenticated owner effects, a succinct
+proof, a W1 consensus replacement, or work-security/production qualification.
+The original negative usefulness/cost results and the native/PQ/WAN gates remain.
+
 **Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
 Continue the existing #688 candidate from
 `6ee529046d295e3175f09112492abee373f1f54c`, preserving the concurrent schema,
