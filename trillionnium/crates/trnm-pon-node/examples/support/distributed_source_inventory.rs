@@ -5755,6 +5755,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

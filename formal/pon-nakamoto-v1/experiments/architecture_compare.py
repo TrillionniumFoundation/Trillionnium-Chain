@@ -78,6 +78,7 @@ def workload_identity(workload, context):
     # against any independently trusted checkpoint.
     work = [(1 << 256) // (int.from_bytes(row['target'], 'big') + 1) for row in headers]
     return dict(transactions=transaction_ids, included=block_ids[0], tip=block_ids[-1],
+                payload_bytes=sum(len(raw) for raw in transactions),
                 required_work=(work[0] * 6).to_bytes(64, 'big').hex(),
                 observed_work=sum(work[1:]).to_bytes(64, 'big').hex())
 
@@ -89,6 +90,10 @@ def identity():
 
 def validate_report(path):
     """Bounded observation consistency, not a second consensus/state oracle."""
+    def number(value):
+        require(type(value) is int and 0 <= value < 1 << 64, 'ARCHITECTURE_NUMBER')
+        return value
+
     path = Path(path)
     require(path.is_file() and not path.is_symlink(), 'ARCHITECTURE_REPORT_REQUIRED')
     with path.open('rb') as stream:
@@ -102,7 +107,7 @@ def validate_report(path):
     for flag in ('architecture_winner_declared', 'protocol_switch_qualified',
                  'independent_accepted', 'wan_tested', 'production_activation'):
         require(report.get(flag) is False, 'ARCHITECTURE_SCOPE_PROMOTION')
-    require(report.get('samples_per_workload_and_mode') == 3, 'ARCHITECTURE_DENOMINATORS')
+    require(number(report.get('samples_per_workload_and_mode')) == 3, 'ARCHITECTURE_DENOMINATORS')
     require(len(report.get('workloads', [])) == 2 and len(report.get('samples', [])) == 18,
             'ARCHITECTURE_DENOMINATORS')
     workloads = {row['scenario']: row for row in report['workloads']}
@@ -112,11 +117,8 @@ def validate_report(path):
     identities = {scenario: workload_identity(workload, context)
                   for scenario, workload in workloads.items()}
 
-    def number(value):
-        require(type(value) is int and 0 <= value < 1 << 64, 'ARCHITECTURE_NUMBER')
-        return value
-
     seen = set()
+    frame_bytes_by_workload = {}
     for row in report['samples']:
         scenario, mode = row.get('scenario'), row.get('mode')
         sample, position = number(row.get('sample')), number(row.get('position'))
@@ -135,32 +137,50 @@ def validate_report(path):
                 and row.get('errors') == [], 'ARCHITECTURE_NATIVE_ERRORS')
         require(number(row.get('signed_transaction_count')) == number(row.get('confirmed_transactions')) == 32,
                 'ARCHITECTURE_BUSINESS_DENOMINATOR')
-        require(number(row.get('whole_trial_wall_ns_including_cold_reopen')) >= number(row.get('full_business_latency_ns')) > 0,
+        expected = identities[scenario]
+        require(number(row.get('application_payload_bytes')) == expected['payload_bytes'],
+                'ARCHITECTURE_PAYLOAD_BYTES')
+        business_wall = number(row.get('full_business_latency_ns'))
+        require(number(row.get('whole_trial_wall_ns_including_cold_reopen')) >= business_wall > 0,
                 'ARCHITECTURE_FULL_COST')
         number(row.get('whole_trial_process_cpu_ns'))
-        require(number(row.get('cold_proof_acquisition_wall_ns')) > 0
+        acquisition_wall = number(row.get('cold_proof_acquisition_wall_ns'))
+        require(acquisition_wall > 0
                 and number(row.get('cold_proof_acquisition_process_cpu_ns')) > 0
                 and number(row.get('work_attempts_including_target_misses')) >= 7, 'ARCHITECTURE_FULL_COST')
         acquisition = workloads[scenario]
         require(row['work_attempts_including_target_misses'] == acquisition['work_attempts_including_target_misses'],
                 'ARCHITECTURE_SAME_WORK')
         material = row.get('dissemination')
-        require(isinstance(material, dict) and material.get('signed_cells') == 8
-                and material.get('durable_copy_count') == 1
+        require(isinstance(material, dict) and number(material.get('signed_cells')) == 8
+                and number(material.get('durable_copy_count')) == 1
                 and material.get('quorum_availability_certified') is False
                 and material.get('physical_network_bytes', 'missing') is None,
                 'ARCHITECTURE_AVAILABILITY_SCOPE')
-        number(material.get('application_frame_bytes'))
-        number(material.get('wall_ns'))
+        frame_bytes = number(material.get('application_frame_bytes'))
+        require(frame_bytes > 0 and frame_bytes_by_workload.get(scenario, frame_bytes) == frame_bytes,
+                'ARCHITECTURE_FRAME_BYTES')
+        frame_bytes_by_workload[scenario] = frame_bytes
+        dissemination_wall = number(material.get('wall_ns'))
         require(len(row.get('pool_calls', [])) == 8 and len(row.get('block_submissions', [])) == 7
                 and 1 <= len(row.get('history_calls', [])) <= 16, 'ARCHITECTURE_NATIVE_CALLS')
         for request in row['pool_calls'] + row['block_submissions'] + row['history_calls']:
             require(request.get('ok') is True and request.get('error', 'missing') is None
                     and request.get('reply', {}).get('ok') is True, 'ARCHITECTURE_NATIVE_ERRORS')
             number(request.get('wall_ns'))
+        # The native trial finishes acquisition, dissemination and pool rounds
+        # before serial block submission, History calls and confirmation. Within
+        # each concurrent pool round, four request intervals can overlap: only
+        # their maximum is a wall-time lower bound, never their waiter sum.
+        pool_walls = [request['wall_ns'] for request in row['pool_calls']]
+        pool_lower_bound = (sum(pool_walls) if mode == MODES[0]
+                            else sum(max(pool_walls[start:start + 4]) for start in (0, 4)))
+        serial_calls_wall = sum(request['wall_ns']
+                                for request in row['block_submissions'] + row['history_calls'])
+        require(acquisition_wall + dissemination_wall + pool_lower_bound + serial_calls_wall <= business_wall,
+                'ARCHITECTURE_WALL_CONTAINMENT')
         confirmations = row.get('independent_confirmations')
         require(isinstance(confirmations, list) and len(confirmations) == 32, 'ARCHITECTURE_CONFIRMATION')
-        expected = identities[scenario]
         require([confirmation.get('transaction') for confirmation in confirmations]
                 == expected['transactions'], 'ARCHITECTURE_TRANSACTION_IDENTITIES')
         view = None
@@ -178,8 +198,8 @@ def validate_report(path):
                         number(confirmation.get('observed_now')))
             require(view is None or view == observed, 'ARCHITECTURE_CONFIRMATION_VIEW')
             view = observed
-            require(confirmation.get('confirmed') is True and confirmation.get('depth') == 6
-                    and confirmation.get('included_height') == 1 and confirmation.get('observed_height') == 7
+            require(confirmation.get('confirmed') is True and number(confirmation.get('depth')) == 6
+                    and number(confirmation.get('included_height')) == 1 and number(confirmation.get('observed_height')) == 7
                     and confirmation.get('finalized') is False and confirmation.get('execution_authority') is False
                     and confirmation.get('reorged') is False,
                     'ARCHITECTURE_CONFIRMATION')

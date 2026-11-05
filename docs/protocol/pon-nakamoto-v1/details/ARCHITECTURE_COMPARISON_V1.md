@@ -34,8 +34,16 @@ Signed dissemination cells bind the native network and parameter context,
 proposer, round, ordered parent references and exact body commitment under a
 fresh research-only domain. All arms send the same cell bytes through real
 framed loopback TCP, sync actual copies to disk and read them back. Frames have
-a 64 KiB bound and two-second socket deadlines. The eight-cell campaign has a
-15-second outer bound. All cell metadata bytes and storage remain in measured
+a 64 KiB bound and one two-second absolute frame budget across connect, header,
+body and acknowledgment. The eight-cell campaign shares a 15-second absolute
+deadline. Every socket retry and final material readback observes that original
+deadline; a failed sender/receiver cancels its peers and all threads are joined.
+Cancellation is polled during read/write, while a pending connect may take its
+remaining frame budget. Filesystem/kernel stalls are not preempted: an overrun
+must be rejected after the operation returns, so this is a cooperative budget,
+not a guarantee that the process returns within 15 seconds. An already durable
+copy is not erased when its acknowledgment is refused. All cell metadata bytes
+and storage remain in measured
 cost; a digest is not treated as a free available body.
 
 | Measured arm | Actual change | Retained consensus owner |
@@ -113,6 +121,8 @@ measurements. Their reported paper throughput is not used as a measurement here.
 | Narwhal with Bullshark | A fixed authenticated committee with `n >= 3f+1`; reliable data dissemination plus a separately defined BFT ordering rule | Actual quorum-certified custody, author/round equivocation rules, leader support/commit/skip logic, synchrony model, membership/rotation, recovery and application execution |
 | Mysticeti | Authenticated Byzantine committee assumptions; signed uncertified DAG vertices interpreted by its specific commit rule | Exact equivocation handling and commit/skip/support relationships, custody, membership, persistent recovery and the application-specific fast-path rules |
 | Prism family | Permissionless work assumptions with separate proposing, voting and transaction-carrying roles | Separate work lotteries, vote chains, leader-order/confirmation rules, payload custody and their actual combined resource and proof costs |
+| OHIE family | Parallel work chains with post-work chain assignment and a global confirmation frontier; variable mining power requires its specified pivot/work-coordinate construction | Complete all-chain parent commitments, post-work sortition, pivot-dependent target and nondecreasing referenced pivot work, partial-confirmation frontiers for every chain, strict rank-below-frontier ordering, recovery and native transaction execution |
+| GHOSTDAG family | A greedy blue-set rule retains a k-cluster and derives an order from a complete block DAG under specified mining/delay assumptions | Exact selected-parent and anticone rules, complete past availability, all-block deterministic ordering, work/difficulty semantics, bounded metadata, reordering/recovery and conflict execution; a topological transport DAG is insufficient |
 
 A committee cardinality bound is not a mining-work fraction. A BFT commit is not
 six Nakamoto successors. The comparison must name each security assumption and
@@ -146,6 +156,76 @@ transaction propagation or ordering could reduce one stage while increasing PQ
 signature traffic, stored history and recovery work. Which tradeoff improves
 this application requires the complete measurements above. The present native
 experiment remains labeled dissemination under the existing PoN consensus.
+
+### Four-candidate continuation and current implementation scope
+
+The 2026-11-05 continuation stays on the existing #688 integration lineage. Its
+[source and execution record](../../../../evidence/pon-architecture-continuation-20261105/README.md)
+separates implemented components from a complete successor:
+
+| Candidate | Executable scope in this checkout | Remaining protocol work |
+| --- | --- | --- |
+| Bitcoin-NG | The common signed dissemination experiment and absolute frame-deadline controls | Work-elected key epochs, current PQ leader authority, microblock ancestry/equivocation, leader loss/censorship, key-work-only fork weight and complete recovery are not implemented as an NG backend |
+| Prism | The same common dissemination/resource baseline; no separate proposer/voter-chain backend | Post-work role assignment, vote-chain reorganization, full dependency closure, confirmation rules and measured metadata/vote costs remain required |
+| OHIE | The existing [bounded 2021 text-profile model](../../../../formal/pon-nakamoto-v1/parallel_variable_ohie.py), including a reorganization-safe executable mempool selection repair | Synthetic token execution and truncated SHA-256 queries do not implement native W1/PQ, WAN bandwidth, long-lived pool reclamation or mixed classical/quantum security; the source's stated text/appendix discrepancies remain explicit |
+| GHOSTDAG | A new [uniform-work paper ordering reference](../../../../formal/pon-nakamoto-v1/ghostdag_order_reference.py), differentially checked against an independent set-based Algorithm 1 oracle | No native W1/PQ validity, weighted/variable-difficulty protocol, transaction execution, pruning/recovery, networking or security qualification is inferred from the ordering kernel |
+
+The OHIE repair selects executable transactions from the current ledger's
+unspent view in stable mempool order. After each selection it rescans, so a child
+that arrived before its parent can follow that parent within the same template.
+Invalid conflicting prefixes no longer occupy every available proposal slot.
+The scan is bounded by the configured block and mempool capacities. It never
+deletes a transaction merely because it is currently unusable: dependency
+arrival and reorganization can make it usable later. Explicit caller-supplied
+transactions, admission, target, rank and ledger rules retain their old meaning.
+
+The GHOSTDAG reference uses the paper's greedy rule rather than solving maximum
+k-cluster. A proposed blue block must preserve the anticone bound for **every**
+current blue block as well as itself. Red blocks still appear in the complete
+order. Missing dependencies, cycles, duplicate identities, unsupported work
+semantics and exhausted model budgets cannot return a successful partial order.
+Its deterministic profile and finite operation/cache limits are explicit in the
+source. Equal final inputs must yield equal order regardless of input arrival
+order; this is not a claim that independent incomplete network views agree or
+that a finite suffix never reorganizes.
+
+The common report reader now checks a lower bound on the measured sequential
+wall interval: proof acquisition, dissemination, pool rounds, block calls and
+History calls must fit within the complete business clock. For concurrent pool
+rounds, it uses the maximum call duration per round, never the sum of overlapping
+waiter durations. Identical workloads must retain positive identical frame-byte
+counts, and the reported transaction payload must equal the bound signed bytes.
+These are observation-consistency checks; a synthetic consistent report does
+not authenticate a native execution or qualify a protocol.
+
+### Congestion and late predecessors are part of the comparison
+
+The NDSS 2024 [congestion/dependency study](https://www.ndss-symposium.org/wp-content/uploads/2024-685-paper.pdf)
+analyzes Prism and OHIE when concurrent traffic increases propagation delay and
+a block cannot be processed before its predecessors arrive. Consequently the
+common fault schedule must include delayed predecessors, withheld bodies,
+partial-frame trickle, overloaded priority queues and recovery after the missing
+dependency arrives. Header arrival, complete dependency availability, full
+validation, ordering, durable commit and independent confirmation are different
+events. Priority for a small vote/header does not make its large dependencies
+available for free. The new socket controls exercise their local I/O boundary;
+they do not reproduce the paper's full network attack or establish WAN safety.
+
+For NG, count work only under its declared key-block rule; microblock count is
+not new PoN work or a replacement for independent confirmation. Test old-leader
+suffixes, equivocation, withholding and leader failure. For Prism, measure vote
+and proposal dependencies and voter-chain reorganization. For OHIE, every chain
+must contribute its actual frontier and `rank == confirmBar` is not fully
+confirmed. For GHOSTDAG, include wide anticones, duplicate transactions, missing
+past and reordering with nonce, reward and supply conflicts.
+
+The original native PoN no-attack and four-second/16-hostile-W1 gates, installed
+depth plus required-work confirmation, and 4,105-block History gate remain
+unchanged. Successor-specific confirmation must disclose its own security
+assumptions; it cannot be called equal risk merely by matching a block count.
+The 2021 variable-difficulty OHIE profile and the CRYPTO 2026 Fast DAA protocol
+are separate constructions. A standalone target-recalculation component cannot
+establish the latter's approximate-agreement, epoch or global-security rules.
 
 The engineering inference motivating this experiment is limited: multiple
 proposers and reference-based dissemination may improve the delivery stage,
@@ -194,6 +274,10 @@ obligations above and independently administered measurements.
 - Spiegelman et al., [Bullshark](https://arxiv.org/abs/2201.05677), and [the partially synchronous description](https://arxiv.org/abs/2209.05633v1). The ordering rules interpret DAG support; a topological sort is not their complete commit algorithm.
 - Babel et al., [Mysticeti](https://arxiv.org/abs/2310.14821v6). Avoiding explicit vertex certification depends on the stated commit and fast-path rules, not on removing signatures or custody requirements.
 - Bagaria et al., [Prism](https://arxiv.org/abs/1810.08092). Separating roles is another permissionless design reference; its confirmation proof is not inherited by useful neural work.
+- Yu et al., [OHIE](https://arxiv.org/abs/1811.12628), and Wang et al., [Securing Parallel-chain Protocols under Variable Mining Power](https://arxiv.org/html/2105.02927v2). Parallel-chain aggregation and the pivot/difficulty-coordinate conditions require their complete stated protocol.
+- Sompolinsky, Wyborski and Zohar, [PHANTOM/GHOSTDAG](https://www.avivz.net/pubs/2021/phantom_ghostdag.pdf), Algorithm 1. This continuation implements a bounded uniform-work ordering reference, not Kaspa's production protocol.
+- Wu et al., [Security-Performance Tradeoff in DAG-based Proof-of-Work Blockchain Protocols](https://www.ndss-symposium.org/wp-content/uploads/2024-685-paper.pdf), NDSS 2024. Its congestion/dependency model motivates the additional common fault obligations above.
+- Garay, Kiayias and Shen, [Fast Difficulty Adjustment in Proof-of-Work Consensus](https://eprint.iacr.org/2026/1116), revised 2026-09-10. Its parallel-chain and approximate-agreement construction is not supplied by the current arithmetic component.
 
 ## Reproduction
 

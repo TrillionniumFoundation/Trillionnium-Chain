@@ -391,9 +391,29 @@ class State:
         if timestamp <= max(self.records[parent].timestamp for parent in parents):
             raise ValueError("TEMPLATE_NOT_AFTER_PARENTS")
         if transactions is None:
-            applied = set(self.ledger().transactions)
-            transactions = tuple(tx for txid, tx in self.mempool.items() if txid not in applied)
-            transactions = transactions[:self.profile.max_block_transactions]
+            ledger = self.ledger()
+            applied, unspent = set(ledger.transactions), set(ledger.unspent)
+            candidates = tuple((txid, tx) for txid, tx in self.mempool.items() if txid not in applied)
+            selected: list[Transaction] = []
+            selected_ids: set[str] = set()
+            # Restart the bounded scan after each selection so an earlier child
+            # can follow its later-inserted parent. Spent or unavailable inputs
+            # do not fill every block ahead of an executable transaction.
+            for _ in range(self.profile.max_block_transactions):
+                for txid, tx in candidates:
+                    if txid in selected_ids or tx.spends not in unspent:
+                        continue
+                    unspent.remove(tx.spends)
+                    unspent.add(txid)
+                    selected.append(tx)
+                    selected_ids.add(txid)
+                    break
+                else:
+                    break
+            # This is a local proposal view, not finality or permanent eviction:
+            # every pool entry can be reconsidered after dependency arrival or
+            # reorganization. Explicit transaction tuples retain their contract.
+            transactions = tuple(selected)
         return Template(self.identity, parents, trailing, timestamp, self.required_target(parents[0]),
                         miner, transactions)
 

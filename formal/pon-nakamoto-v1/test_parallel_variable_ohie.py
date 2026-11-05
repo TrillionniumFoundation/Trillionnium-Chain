@@ -320,6 +320,111 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(set(ledger.unspent), {"gen:1", child.txid})
 
 
+class TemplateSelectionTests(unittest.TestCase):
+    def state(self, *, capacity: int = 2) -> State:
+        return State(replace(SMALL, epoch_blocks=4096, max_block_transactions=capacity))
+
+    def test_spent_conflict_prefix_does_not_starve_an_executable_transaction(self):
+        state = self.state()
+        spent = Transaction("spent", "gen:0")
+        extend(state, 0, 1, txs=(spent,), now=1)
+        extend(state, 1, 2, now=2)
+        state.advance(4)
+        self.assertEqual(state.ledger().transactions, (spent.txid,))
+        for index in range(2):
+            state.add_transaction(Transaction(f"conflict_{index}", "gen:0"))
+        ready = Transaction("ready", "gen:1")
+        state.add_transaction(ready)
+        original_pool = dict(state.mempool)
+        self.assertEqual(state.template(5, "honest").transactions, (ready,))
+        for timestamp in range(5, 11):
+            proposed = state.template(timestamp, "honest").transactions
+            extend(state, timestamp % 2, timestamp, txs=proposed, now=timestamp)
+        state.advance(12)
+        self.assertIn(ready.txid, state.ledger().transactions)
+        self.assertEqual(state.mempool, original_pool)
+
+    def test_reverse_inserted_dependencies_are_selected_in_executable_order(self):
+        state = self.state(capacity=3)
+        parent = Transaction("parent", "gen:0")
+        child = Transaction("child", parent.txid)
+        grandchild = Transaction("grandchild", child.txid)
+        for tx in (grandchild, child, parent):
+            state.add_transaction(tx)
+        self.assertEqual(state.template(1, "honest").transactions, (parent, child, grandchild))
+
+    def test_intrablock_conflict_does_not_consume_independent_transaction_capacity(self):
+        state = self.state()
+        first = Transaction("first", "gen:0")
+        conflict = Transaction("conflict", "gen:0")
+        independent = Transaction("independent", "gen:1")
+        for tx in (first, conflict, independent):
+            state.add_transaction(tx)
+        self.assertEqual(state.template(1, "honest").transactions, (first, independent))
+
+    def test_capacity_and_selection_order_are_stable_without_pool_mutation(self):
+        state = self.state()
+        parent = Transaction("parent", "gen:0")
+        child = Transaction("child", parent.txid)
+        independent = Transaction("independent", "gen:1")
+        for tx in (child, parent, independent):
+            state.add_transaction(tx)
+        original_pool = tuple(state.mempool.items())
+        original_ledger = state.ledger()
+        # After its parent is selected, the earlier child is reconsidered before
+        # the later independent input. The exact block capacity still applies.
+        for _ in range(3):
+            self.assertEqual(state.template(1, "honest").transactions, (parent, child))
+        self.assertEqual(tuple(state.mempool.items()), original_pool)
+        self.assertEqual(state.ledger(), original_ledger)
+
+    def test_missing_parent_is_retained_and_reconsidered_when_available(self):
+        state = self.state()
+        parent = Transaction("parent", "gen:0")
+        child = Transaction("child", parent.txid)
+        state.add_transaction(child)
+        self.assertEqual(state.template(1, "honest").transactions, ())
+        self.assertIn(child.txid, state.mempool)
+        state.add_transaction(parent)
+        self.assertEqual(state.template(1, "honest").transactions, (parent, child))
+
+    def test_confirmed_entry_is_retained_and_can_be_reproposed_after_reorg(self):
+        state = self.state()
+        tx = Transaction("reorged", "gen:0")
+        state.add_transaction(tx)
+        original = extend(state, 0, 1, txs=(tx,), now=1)
+        extend(state, 1, 2, now=2)
+        state.advance(4)
+        self.assertIn(tx.txid, state.ledger().transactions)
+        self.assertEqual(state.template(5, "honest").transactions, ())
+        self.assertIn(tx.txid, state.mempool)
+        fork = extend(state, 0, 5, parent=state.genesis[0], miner="fork", now=5)
+        extend(state, 0, 6, parent=fork.block_id, miner="fork", now=6)
+        state.advance(8)
+        self.assertNotIn(original.block_id, state.ledger().blocks)
+        self.assertNotIn(tx.txid, state.ledger().transactions)
+        self.assertEqual(state.template(9, "honest").transactions, (tx,))
+        self.assertIn(tx.txid, state.mempool)
+
+    def test_full_pool_is_scanned_but_not_evicted_or_expanded(self):
+        state = self.state()
+        for index in range(state.limits.max_mempool - 1):
+            state.add_transaction(Transaction(f"unavailable_{index}", "gen:missing"))
+        ready = Transaction("ready", "gen:1")
+        state.add_transaction(ready)
+        original_pool = tuple(state.mempool.items())
+        self.assertEqual(state.template(1, "honest").transactions, (ready,))
+        self.assertEqual(tuple(state.mempool.items()), original_pool)
+        with self.assertRaisesRegex(ModelLimit, "MEMPOOL_LIMIT"):
+            state.add_transaction(Transaction("over_capacity", "gen:0"))
+
+    def test_explicit_transaction_tuple_retains_the_existing_interface(self):
+        state = self.state()
+        explicit = (Transaction("first", "gen:0"), Transaction("conflict", "gen:0"))
+        self.assertIs(state.template(1, "honest", explicit).transactions, explicit)
+        self.assertEqual(state.mempool, {})
+
+
 class SimulationTests(unittest.TestCase):
     def scenario(self, **updates) -> Scenario:
         return replace(Scenario("control", profile=replace(SMALL, epoch_blocks=8), rounds=60), **updates)
