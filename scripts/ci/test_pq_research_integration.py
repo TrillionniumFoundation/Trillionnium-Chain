@@ -427,6 +427,52 @@ class CorpusGateTests(unittest.TestCase):
                     check(self.root)
                 path.write_bytes(original)
 
+    def growth_read_dependency_fixture(self):
+        # These plain-named dependencies take part in the actual Growth read
+        # boundary. Populate them independently of the checker's required set so
+        # the omission controls also exercise a checker that forgot their scope.
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+        )
+        for name in dependencies:
+            self.put(name, name.encode())
+            if name not in self.manifest["required_paths"]:
+                self.manifest["required_paths"].append(name)
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+        return dependencies
+
+    def test_growth_read_dependencies_cannot_omit_requirements_or_pins(self):
+        dependencies = self.growth_read_dependency_fixture()
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+
+    def test_growth_read_dependency_changes_cannot_reuse_original_pins(self):
+        for name in self.growth_read_dependency_fixture():
+            with self.subTest(path=name):
+                path = self.root / name
+                original = path.read_bytes()
+                path.write_bytes(original + b"changed authenticated read boundary")
+                with self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+                path.write_bytes(original)
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+
     def test_native_evidence_must_exist_but_never_grants_acceptance(self):
         report = self.manifest["native_network_owner_slice_v2"]["evidence"]
         del self.manifest["pinned_blobs"][report]
