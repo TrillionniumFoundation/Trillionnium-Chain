@@ -1,0 +1,118 @@
+{
+  "schema": "pon-w1-upstream-soundness-formula-observation-v1",
+  "model_input_kind": "execution_only_metadata",
+  "execution_observation_sha256": "931dad8f5cbf56ab8a36568aa6d0fef64279c0c1b73894e227274d1479291864",
+  "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+  "no_completed_proof_is_established": true,
+  "receipt_was_not_cryptographically_verified_by_this_calculator": true,
+  "source_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+  "source_sha256": {
+    "risc0/zkp/src/prove/soundness.rs": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921",
+    "risc0/circuit/rv32im/src/zirgen/taps.rs": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2",
+    "risc0/zkp/src/lib.rs": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d",
+    "risc0/core/src/field/baby_bear.rs": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3",
+    "risc0/zkp/src/adapter.rs": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d",
+    "risc0/zkp/src/prove/prover.rs": "bf63f227fe515dfa8b1edce90b6475a33369fb44fe66c5784a1d70d5947c4368",
+    "LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+  },
+  "upstream_rust_formulas_executed_verbatim": true,
+  "descriptor_harness_is_not_a_proof_backend": true,
+  "calculator_arithmetic": "upstream f32, then float64 union-bound summation; numerical estimate, not a machine-checked real bound",
+  "parameters": {
+    "group_widths_accum_code_data": [
+      103,
+      1,
+      211
+    ],
+    "biggest_combo": 6,
+    "field_prime": 2013265921,
+    "extension_degree": 4,
+    "queries": 50,
+    "expansion": 4,
+    "folding_factor": 16,
+    "final_degree": 256,
+    "maximum_constraint_degree": 5,
+    "degree_scope": "hardcoded assumption in upstream calculator, with an upstream FIXME; not independently derived here"
+  },
+  "actual_segment_po2_histogram": {
+    "18": 62
+  },
+  "per_segment_estimates": [
+    {
+      "po2": 13,
+      "toy_model_bits": 99.93122,
+      "proven_list_decoding_bits": 47.773865,
+      "conjectured_strict_bits": 85.05716
+    },
+    {
+      "po2": 14,
+      "toy_model_bits": 99.86557,
+      "proven_list_decoding_bits": 47.75474,
+      "conjectured_strict_bits": 84.17544
+    },
+    {
+      "po2": 15,
+      "toy_model_bits": 99.74261,
+      "proven_list_decoding_bits": 47.68069,
+      "conjectured_strict_bits": 83.08546
+    },
+    {
+      "po2": 16,
+      "toy_model_bits": 99.524254,
+      "proven_list_decoding_bits": 47.417496,
+      "conjectured_strict_bits": 81.78512
+    },
+    {
+      "po2": 17,
+      "toy_model_bits": 99.16709,
+      "proven_list_decoding_bits": 46.680206,
+      "conjectured_strict_bits": 80.2784
+    },
+    {
+      "po2": 18,
+      "toy_model_bits": 98.64242,
+      "proven_list_decoding_bits": 45.3014,
+      "conjectured_strict_bits": 78.59309
+    },
+    {
+      "po2": 19,
+      "toy_model_bits": 97.955574,
+      "proven_list_decoding_bits": 43.509853,
+      "conjectured_strict_bits": 76.77656
+    },
+    {
+      "po2": 20,
+      "toy_model_bits": 97.14198,
+      "proven_list_decoding_bits": 41.56704,
+      "conjectured_strict_bits": 74.87678
+    },
+    {
+      "po2": 24,
+      "toy_model_bits": 93.34174,
+      "proven_list_decoding_bits": 33.58654,
+      "conjectured_strict_bits": 66.97681
+    }
+  ],
+  "conservative_sum_of_segment_error_estimates_bits": {
+    "toy_model_bits": 92.68822368961312,
+    "proven_list_decoding_bits": 39.347203689613124,
+    "conjectured_strict_bits": 72.63889368961313
+  },
+  "accepted_research_profile": {
+    "host_bounds_source_sha256": "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37",
+    "po2_min": 13,
+    "po2_max": 20,
+    "maximum_segments": 2048,
+    "maximum_padded_cycles": 268435456,
+    "maximum_receipt_bytes": 134217728
+  },
+  "conservative_superset_of_accepted_profile_bits": {
+    "toy_model_bits": 86.14198,
+    "proven_list_decoding_bits": 30.56704,
+    "conjectured_strict_bits": 63.87678
+  },
+  "superset_scope": "min of the conditional per-segment numerical estimates over po2=13..20, minus log2(2048). Deliberately ignores the joint cycle/byte limits and makes no claim this worst combination is feasible or is an attack.",
+  "composition_scope": "union bound conditional on the upstream per-segment model; not a complete FS, adaptive-query, hash or QROM proof",
+  "pq128_qualified": false,
+  "consensus_authority": false
+}

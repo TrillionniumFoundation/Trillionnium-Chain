@@ -1,0 +1,13 @@
+test_complete_native_tail_remains_finite (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_complete_native_tail_remains_finite) ... ok
+test_correct_product_fact_cannot_be_promoted_to_full_work (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_correct_product_fact_cannot_be_promoted_to_full_work) ... ok
+test_field_failure_cannot_be_reported_as_replay (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_field_failure_cannot_be_reported_as_replay) ... ok
+test_missing_final_product_position_is_rejected (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_missing_final_product_position_is_rejected) ... ok
+test_no_missing_control_or_qualification_promotion (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_no_missing_control_or_qualification_promotion) ... ok
+test_trace_must_pass_native_target_and_is_only_a_digest_position (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_trace_must_pass_native_target_and_is_only_a_digest_position) ... ok
+test_unknown_cpu_is_not_zero_and_propagates_into_max_and_percentile (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_unknown_cpu_is_not_zero_and_propagates_into_max_and_percentile) ... ok
+test_wrong_product_index_cannot_relabel_an_early_mismatch (test_check_pure_pon_rejection_tail.RejectionTailEvidenceTests.test_wrong_product_index_cannot_relabel_an_early_mismatch) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.817s
+
+OK

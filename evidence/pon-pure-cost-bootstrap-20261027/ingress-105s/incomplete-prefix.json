@@ -1,0 +1,11 @@
+{
+  "schema": "pon-retained-incomplete-prefix-v1",
+  "complete": false,
+  "origin": "unattributed raw sibling observed during evidence inventory; exact prefix of authoritative complete capture",
+  "uncompressed_bytes": 7560711,
+  "uncompressed_sha256": "b7170b568cf160176b60b6b81b5ae306c012ee1b769db59f394c77017227c3cf",
+  "gzip_sha256": "75d02aed8553a6bd3c24d758260c82d0e1d3449062f2ff9f468671b31ddfe4ae",
+  "complete_capture": "stdout.jsonl.gz",
+  "relation": "strict byte prefix; not counted as a separate run or passing campaign",
+  "production_qualified": false
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+    "-p",
+    "test_observations.py",
+    "-v"
+  ],
+  "started_utc": "2026-10-27T09:53:49.248452+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.0646597209997708,
+  "user_cpu_seconds": 0.039744999999999996,
+  "system_cpu_seconds": 0.019771999999999998,
+  "max_waited_descendant_rss_kib": 12288,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T09:53:49.313152+00:00"
+}

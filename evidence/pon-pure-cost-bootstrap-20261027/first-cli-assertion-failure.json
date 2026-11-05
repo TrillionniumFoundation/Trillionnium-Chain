@@ -1,0 +1,9 @@
+{
+  "schema": "pon-pure-cli-failure-v1",
+  "source_commit": "da423cc5fcd959af68b087143003d4bb6517b600",
+  "exit_code": 101,
+  "test_binary_sha256": "3f0c8b5814c806c5b1939a79d8b6db77db6aa4fa9336c71f2c2c4cf88bc53c30",
+  "failure": "test helper incorrectly expected a result wrapper on early-return CLI commands; public-task-export returned the documented top-level object",
+  "log": "first-cli-assertion-failure.log",
+  "production_qualified": false
+}

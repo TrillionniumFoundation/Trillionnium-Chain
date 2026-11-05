@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo",
+    "metadata",
+    "--locked",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "--offline"
+  ],
+  "returncode": 101,
+  "scope": "all-target metadata; separate from successful locked host build/tests/Clippy"
+}

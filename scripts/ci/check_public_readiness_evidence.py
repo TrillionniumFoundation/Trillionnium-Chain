@@ -209,8 +209,8 @@ def native_durable_schema(root):
     """Extract the legacy evidence schema from one explicitly supported contract.
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
-    backend, including its exact held-I/O delegation, are supported.
-    Authenticated and permanent-account growth storage
+    backend, including its exact held-I/O and physical-layout delegation, are supported.
+    Authenticated, shared-account and permanent-account growth storage
     are different evidence scopes; recognizing their exact backend mappings
     must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
@@ -249,6 +249,20 @@ def native_durable_schema(root):
         start = code.find('{',found[0].end())
         require(start >= 0, 'durable source header '+name)
         return text[found[0].start():start]
+    def item_prefix(text, kind, name, terminator):
+        # Include attributes and visibility, not only the text after `mod`,
+        # `enum` or `impl`: a cfg-disabled exact body is not an active owner.
+        code = rust_code(text)
+        found = [match for match in re.finditer(r'\b'+kind+r'\s+'+re.escape(name)+r'\b',code)
+                 if direct(code,match.start())]
+        require(len(found) == 1, 'durable source item '+name)
+        match = found[0]
+        boundaries = [item.end() for item in re.finditer(r'[;}]',code[:match.start()])
+                      if direct(code,item.end())]
+        start = max(boundaries,default=0)
+        end = code.find(terminator,match.end())
+        require(end >= 0, 'durable source item '+name)
+        return text[start:end]
     def layout(actual, expected, message):
         # String payloads are not compared by whitespace normalization. Each
         # schema-affecting literal is also checked, byte for byte, with value().
@@ -271,9 +285,66 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|native_io_shared_snapshots)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
+    def shared_layout_contract():
+        # The implicit Rust submodule path is part of this one supported join.
+        # A path/cfg attribute, inline module or nested decoy cannot replace it.
+        modules = [match for match in re.finditer(r'\bmod\s+shared_snapshot\b',code)
+                   if direct(code,match.start())]
+        require(len(modules) == 1
+                and re.match(r'mod\s+shared_snapshot\s*;',code[modules[0].start():]),
+                'durable shared layout source')
+        layout(item_prefix(source,'mod','shared_snapshot',';'),'mod shared_snapshot',
+               'durable shared layout source')
+        shared = safe(root,'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs').read_text()
+        layout(item_prefix(shared,'enum','Layout','{'),
+               '#[derive(Clone, Copy, Debug, PartialEq, Eq)] pub(super) enum Layout',
+               'durable shared layout enum owner')
+        layout(body(shared,'enum','Layout'),'CanonicalJson, SharedAccountsV1,',
+               'durable shared layout variants')
+        layout(item_prefix(shared,'impl','Layout','{'),'impl Layout',
+               'durable shared layout impl owner')
+        implementation = body(shared,'impl','Layout')
+        layout(implementation, '''
+            pub(super) fn for_opening(backend: StateBackend, io: Option<&NativeIoLease>) -> Self {
+                if backend == StateBackend::AuthenticatedV1 && io.is_some() {
+                    Self::SharedAccountsV1
+                } else {
+                    Self::CanonicalJson
+                }
+            }
+            pub(super) fn is_shared(self) -> bool { self == Self::SharedAccountsV1 }
+            pub(super) fn ddl(self, base: String) -> String {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => format!("{base}{DDL}"),
+                }
+            }
+            pub(super) fn schema_id(self, base: Hash) -> Hash {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => hash(
+                        b"native-io-shared-authenticated-branch-schema-v1",
+                        &[&base, DDL.as_bytes(), SCHEMA.as_bytes()],
+                    ),
+                }
+            }
+        ''', 'durable shared layout composition/selection')
+        for name in ('DDL','SCHEMA'):
+            layout(item_prefix(shared,'const',name,'='),'const '+name+': &str',
+                   'durable shared layout literal owner')
+        require(literal(shared,'DDL') ==
+                'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);',
+                'durable shared layout DDL')
+        require(literal(shared,'SCHEMA') == 'native-io-shared-authenticated-snapshot-v1',
+                'durable shared layout schema')
+        require(value(body(implementation,'fn','ddl'),r'\bformat!\s*\(') == '{base}{DDL}',
+                'durable shared layout composition')
+        require(value(body(implementation,'fn','schema_id'),r'\bhash\s*\(\s*b') ==
+                'native-io-shared-authenticated-branch-schema-v1',
+                'durable shared layout domain')
     code = rust_code(source)
     if re.search(r'\bconst\s+BASE_DDL\b',code):
         base = literal(source,'BASE_DDL')
@@ -378,11 +449,23 @@ def native_durable_schema(root):
                 selected = selected[unpack.end():]
             else:
                 selected = rust_code(selected)
-            bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
+            shared_layout = re.search(r'\b(?:mod\s+shared_snapshot|shared_snapshot\s*::\s*Layout)\b',code)
+            if shared_layout:
+                shared_layout_contract()
+                require(not re.search(r'\b(?:use|mod|extern|type|struct|enum|trait|macro_rules)\b',selected),
+                        'durable shared layout local scope')
+                binding = (r'\blet\s+storage_layout\s*=\s*shared_snapshot\s*::\s*Layout\s*::\s*'
+                    r'for_opening\(\s*state_backend\s*,\s*native_io\.as_ref\(\)\s*\)\s*;\s*'
+                    r'let\s+ddl\s*=\s*storage_layout\.ddl\(\s*state_backend\.ddl\(\)\s*\)\s*;\s*'
+                    r'let\s+schema_id\s*=\s*storage_layout\.schema_id\(\s*state_backend\.'
+                    r'selected_schema_id\(\s*&\s*settings\s*\)\s*\)\s*;')
+            else:
+                binding = r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;'
+            bindings = list(re.finditer(binding,selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
             remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
-            names = r'\b(?:state_backend|settings|ddl|schema_id)\b'
+            names = r'\b(?:state_backend|settings|ddl|schema_id|native_io|storage_layout)\b'
             places = names+r'(?:\s*\.\s*[A-Za-z_]\w*|\s*\[[^\]]*\])*'
             require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
                     and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)

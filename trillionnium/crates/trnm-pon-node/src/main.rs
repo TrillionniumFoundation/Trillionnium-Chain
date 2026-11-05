@@ -580,11 +580,15 @@ fn public_profile(args: &BTreeMap<String, String>) -> bool {
             ingress::public_v2::PROFILE
                 | ingress::public_v3::PROFILE
                 | ingress::public_v3::GROWTH_PROFILE
+                | ingress::public_v3::PURE_PON_PROFILE
         )
     )
 }
 fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
-    args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
+    matches!(
+        args.get("--admission-profile").map(String::as_str),
+        Some(ingress::public_v3::PROFILE | ingress::public_v3::PURE_PON_PROFILE)
+    )
 }
 
 fn public_growth_profile(args: &BTreeMap<String, String>) -> bool {
@@ -729,6 +733,19 @@ fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::
         Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
     )
 }
+fn public_v3_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v3::PublicPolicy> {
+    let pure = args.get("--admission-profile").map(String::as_str)
+        == Some(ingress::public_v3::PURE_PON_PROFILE);
+    let bits = u8::try_from(number(args, "--admission-bits", if pure { 0 } else { 16 })?)
+        .map_err(|_| "PUBLIC_POLICY")?;
+    if pure != (bits == 0) {
+        return Err("PUBLIC_PURE_PON_PROFILE".into());
+    }
+    ingress::public_v3::PublicPolicy::new(
+        bits,
+        Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
+    )
+}
 /// Ordinary client commands keep the original protected TCP implementation.
 /// The explicit profile pins PNP2/context and never opens a local Node/store.
 fn growth_network_call(
@@ -737,10 +754,7 @@ fn growth_network_call(
     settings: &Settings,
     started: Instant,
 ) -> Result<Value> {
-    let policy = ingress::public_v3::PublicPolicy::new(
-        u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
-        Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
-    )?;
+    let policy = public_v3_policy(args)?;
     let profile = digest(need(args, "--resource-profile-sha256")?)?;
     if profile != policy.growth_id() {
         return Err("PUBLIC_GROWTH_RESOURCE_PIN".into());
@@ -868,10 +882,7 @@ fn public_pool_call(
         settings,
         need(args, "--server-public")?,
         &public_identity(args)?,
-        ingress::public_v3::PublicPolicy::new(
-            u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
-            Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
-        )?,
+        public_v3_policy(args)?,
     );
     if args.contains_key("--client-observations") {
         eprintln!(
@@ -1300,7 +1311,9 @@ fn run() -> Result<Value> {
         "pool-push" => "--peer --transactions --pool-context",
         "pool-status-remote" => "--peer",
         "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance",
-        "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
+        "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance --public-task-bundle",
+        "public-task-export" => "--output",
+        "public-task-fetch" => "--peer --output",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --packet-stdin --peer",
         "packet-status" => "--packet --packet-stdin --peer",
@@ -1319,7 +1332,7 @@ fn run() -> Result<Value> {
             "--authenticated-development-network --public-development-network --auth-secret --peer-roster --session-generation"
         }
         "push" | "sync" => "--auth-secret --server-public --session-generation",
-        "head" | "history" | "pool-push" | "pool-status-remote" | "packet-status" => "--auth-secret --server-public",
+        "head" | "history" | "pool-push" | "pool-status-remote" | "packet-status" | "public-task-fetch" => "--auth-secret --server-public",
         _ => "",
     };
     let admission_options = match command.as_str() {
@@ -1327,7 +1340,7 @@ fn run() -> Result<Value> {
         "push" | "head" | "packet-status" => {
             "--admission-profile --admission-bits --admission-ttl-ms --client-observations --growth-namespace --resource-profile-sha256 --request-deadline-ms"
         }
-        "sync" | "history" | "pool-push" | "pool-status-remote" => {
+        "sync" | "history" | "pool-push" | "pool-status-remote" | "public-task-fetch" => {
             "--admission-profile --admission-bits --admission-ttl-ms --client-observations"
         }
         _ => "",
@@ -1662,8 +1675,13 @@ fn run() -> Result<Value> {
         )?)
         .map_err(|_| "PEER_CONFIG_LIMIT")?;
         config.validate(&settings)?;
+        let configured_policy = public_v3_policy(&args)?;
         if config.bits
-            != u8::try_from(number(&args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?
+            != if configured_policy.is_pure_pon() {
+                0
+            } else {
+                u8::try_from(number(&args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?
+            }
             || config.lifetime_ms != number(&args, "--admission-ttl-ms", 2000)?
         {
             return Err("PEER_CONFIG_CONTEXT".into());
@@ -1715,6 +1733,39 @@ fn run() -> Result<Value> {
             &args, &request, &settings,
         )?)?);
     }
+    if matches!(command.as_str(), "public-task-export" | "public-task-fetch") {
+        let (bundle, trials) = if command == "public-task-fetch" {
+            if args.get("--admission-profile").map(String::as_str)
+                != Some(ingress::public_v3::PURE_PON_PROFILE)
+                || number(&args, "--admission-bits", 0)? != 0
+            {
+                return Err("PUBLIC_PURE_PON_PROFILE".into());
+            }
+            let policy = ingress::public_v3::PublicPolicy::pure_pon(Duration::from_millis(
+                number(&args, "--admission-ttl-ms", 2000)?,
+            ))?;
+            let caller = public_identity(&args)?;
+            let address = need(&args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?;
+            let (result, metrics) = ingress::public_v3::fetch_public_task_bootstrap(
+                address,
+                &settings,
+                need(&args, "--server-public")?,
+                &caller,
+                policy,
+                None,
+            );
+            (result?, metrics.solution_trials)
+        } else {
+            (settings.public_task_bootstrap()?, 0)
+        };
+        let wire = bundle.encode()?;
+        output(need(&args, "--output")?, &wire)?;
+        return Ok(json!({"schema":"pon-public-task-bootstrap-export-v1",
+            "output":need(&args,"--output")?, "bytes":wire.len(),
+            "matrix_task":bundle.matrix_task,"transport_hash_trials":trials,
+            "useful_output_credit":0,"hardness_accepted":false,
+            "production_activation":false}));
+    }
     if command == "task-fixture" {
         if settings.task_profile() != "signed-task-dev-v1" {
             return Err("SIGNED_TASK_PROFILE_REQUIRED".into());
@@ -1757,11 +1808,7 @@ fn run() -> Result<Value> {
             let pinned_server = need(&args, "--server-public")?;
             digest(pinned_server)?;
             let identity = public_identity(&args)?;
-            let policy = ingress::public_v3::PublicPolicy::new(
-                u8::try_from(number(&args, "--admission-bits", 16)?)
-                    .map_err(|_| "PUBLIC_POLICY")?,
-                Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
-            )?;
+            let policy = public_v3_policy(&args)?;
             let store = Path::new(need(&args, "--store")?);
             if !store.join("native.sqlite").is_file() {
                 return Err("SUBMIT_RECOVERY_EXISTING_PRODUCER_REQUIRED".into());
@@ -1944,7 +1991,30 @@ fn run() -> Result<Value> {
                 let files_present = ["--task-manifest", "--task-model", "--task-input"]
                     .map(|key| args.contains_key(key));
                 let bootstrap = args.contains_key("--task-bootstrap");
-                if args.contains_key("--consensus-maintenance") {
+                if let Some(path) = args.get("--public-task-bundle") {
+                    if bootstrap
+                        || args.contains_key("--consensus-maintenance")
+                        || files_present.iter().any(|present| *present)
+                    {
+                        return Err("TASK_MATERIAL_OPTIONS".into());
+                    }
+                    let wire = read(
+                        path,
+                        trnm_pon_node::public_task_bootstrap::MAX_BOOTSTRAP_BYTES as u64,
+                    )?;
+                    let bundle = trnm_pon_node::public_task_bootstrap::PublicTaskBootstrap::decode(
+                        &wire,
+                        node.settings(),
+                    )?;
+                    node.make_public_bootstrap(
+                        &bundle,
+                        parent,
+                        transactions,
+                        miner,
+                        timestamp,
+                        4096,
+                    )?
+                } else if args.contains_key("--consensus-maintenance") {
                     if bootstrap || files_present.iter().any(|present| *present) {
                         return Err("TASK_OPTIONS".into());
                     }
@@ -2196,11 +2266,7 @@ fn run() -> Result<Value> {
                     } else {
                         None
                     };
-                    let policy = ingress::public_v3::PublicPolicy::new(
-                        u8::try_from(number(&args, "--admission-bits", 16)?)
-                            .map_err(|_| "PUBLIC_POLICY")?,
-                        Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
-                    )?;
+                    let policy = public_v3_policy(&args)?;
                     let polling_identity = identity.clone();
                     let polling_context = polling
                         .as_ref()
@@ -2224,6 +2290,8 @@ fn run() -> Result<Value> {
                     let resource_profile = server.resource_profile();
                     let profile = if growth_network {
                         ingress::public_v3::GROWTH_PROFILE
+                    } else if policy.is_pure_pon() {
+                        ingress::public_v3::PURE_PON_PROFILE
                     } else {
                         ingress::public_v3::PROFILE
                     };

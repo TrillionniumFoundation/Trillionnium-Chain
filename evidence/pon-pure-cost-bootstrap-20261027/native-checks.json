@@ -1,0 +1,24 @@
+{
+  "schema": "pon-pure-bootstrap-native-check-v1",
+  "source_commit": "da423cc5fcd959af68b087143003d4bb6517b600",
+  "test_binary_sha256_before": "edca43c03e6562d16946fcedaa94cb8165b246f8e32fcc8839f781ed58378189",
+  "test_binary_sha256_after": "edca43c03e6562d16946fcedaa94cb8165b246f8e32fcc8839f781ed58378189",
+  "stable_binary": true,
+  "records": [
+    {
+      "filter": "pure_pon::tests",
+      "exit_code": 0,
+      "stdout_stderr_file": "native-pure_pon-tests.log",
+      "sha256": "52412d6384c7a1fb4655a1a35b9ce8d06b7ab2eca4e604f47da86a1d902c271c"
+    },
+    {
+      "filter": "public_task_bootstrap::tests",
+      "exit_code": 0,
+      "stdout_stderr_file": "native-public_task_bootstrap-tests.log",
+      "sha256": "0e801dc2cc0ce55ad602c381f0f3c23c81d012719001e23820e414aaeefc9c4e"
+    }
+  ],
+  "scope": "direct execution of the native test binary built with Rust 1.95 at this source; not the full repository gate or SQLite I/O boundary qualification",
+  "production_qualified": false,
+  "hardness_proved": false
+}

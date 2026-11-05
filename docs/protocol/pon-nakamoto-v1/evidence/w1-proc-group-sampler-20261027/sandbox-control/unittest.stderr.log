@@ -1,0 +1,14 @@
+test_optional_flag_preserves_default_and_normal_exit_last_sample (test_proc_group_sampler.ActualProcessControls.test_optional_flag_preserves_default_and_normal_exit_last_sample) ... FAIL
+
+======================================================================
+FAIL: test_optional_flag_preserves_default_and_normal_exit_last_sample (test_proc_group_sampler.ActualProcessControls.test_optional_flag_preserves_default_and_normal_exit_last_sample)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_proc_group_sampler.py", line 129, in test_optional_flag_preserves_default_and_normal_exit_last_sample
+    self.assertGreaterEqual(len(report["proc_group_sampling"]["last_observed_processes"]), 1)
+AssertionError: 0 not greater than or equal to 1
+
+----------------------------------------------------------------------
+Ran 1 test in 0.266s
+
+FAILED (failures=1)

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "-p",
+    "trnm-protocol",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "exit_code": 0,
+  "seconds": 8.834417610996752,
+  "source_commit": "400f034e611073da7259d62b57e2ba3a93904762",
+  "final_source_commit": "400f034e611073da7259d62b57e2ba3a93904762"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "pon-pure-rejection-tail-build-observation-v1",
+  "source_commit": "bfcc21c08f14685dce27b7e4f99b567f3b6f34f0",
+  "source_identity_scope": "Example was built immediately before this source commit; captured file SHA-256 is identical. Capture records both source and binary hashes.",
+  "command": "cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_pure_rejection_tail_campaign",
+  "rust": "1.95.0",
+  "build_jobs": 1,
+  "exit_code": 0,
+  "tool_output_chunks": [
+    "   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/20f5e808bfa5/chain-cost/trillionnium/crates/trnm-crypto-primitives)\n",
+    "    Finished `test` profile [unoptimized] target(s) in 10.17s\n"
+  ],
+  "retention_scope": "verbatim output chunks returned by native execution tools; first build completed successfully",
+  "production_qualified": false
+}

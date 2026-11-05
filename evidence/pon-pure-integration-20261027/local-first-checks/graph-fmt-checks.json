@@ -1,0 +1,34 @@
+{
+  "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+  "checks": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 31.457058708998375
+    },
+    {
+      "name": "graph",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "exit_code": 101,
+      "seconds": 0.11185704400122631
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-codeql-export-timeout-observation-v1",
+  "source_commit": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "run_id": 40482711973,
+  "job_id": 122116969627,
+  "conclusion": "failure",
+  "reason": "Exact-source analyses/checks did not complete and stabilize before the 1200-second deadline. Exporter unit tests (16) and before/after source checks passed; completed CodeQL assessment is not claimed.",
+  "artifact_id": 12725066471,
+  "artifact_zip_sha256": "6660ba0e63a80ed194c9f0b3f8f7d13523e2780a8b7a9e15d1e402b41ce54aa4",
+  "retained_log": {
+    "path": "codeql-d961-job.json.gz",
+    "gzip_bytes": 16324,
+    "gzip_sha256": "354ba89f2270687aaeb1afde363da9d7471607a88a8927137594c476a368f874",
+    "original_json_sha256": "f356c468d80c87686b0326b25a65e5442a22776c2823b35164bc99dd5f194674"
+  }
+}

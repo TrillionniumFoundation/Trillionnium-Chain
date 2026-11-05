@@ -1,0 +1,12 @@
+   Compiling proc-macro2 v1.0.107
+error: the self-contained linker was requested, but it wasn't found in the target's sysroot, or in rustc's sysroot
+
+error: could not compile `proc-macro2` (build script) due to 1 previous error
+Traceback (most recent call last):
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py", line 66, in <module>
+    main()
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py", line 61, in main
+    subprocess.run(command, env=environment, check=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo', 'build', '--release', '--target', 'riscv32im-risc0-zkvm-elf', '--manifest-path', '/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml', '-p', 'trnm-w1-risc0-guest', '--locked']' returned non-zero exit status 101.

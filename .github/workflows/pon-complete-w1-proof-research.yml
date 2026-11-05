@@ -1,0 +1,121 @@
+name: PoN complete W1 transparent proof research
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation*
+      - trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_complete_relation.rs
+      - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
+      - .github/workflows/pon-complete-w1-proof-research.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-complete-w1-proof-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  real-composite-proof:
+    name: full W1 real Composite STARK (research only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      RAYON_NUM_THREADS: "4"
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve output and record exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/complete-w1-proof-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          work="$RUNNER_TEMP/complete-w1-build-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out" "$work"
+          printf 'OUT=%s\nWORK=%s\n' "$out" "$work" >> "$GITHUB_ENV"
+          printf 'BACKEND=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo\nCARGO_TARGET_DIR=%s/host-target\n' "$work" "$work" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1
+          cat /proc/meminfo > "$out/meminfo.txt"
+          python3 - "$out/cgroup-observations.json" <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          observed = {}
+          for name in ["/proc/self/cgroup", "/sys/fs/cgroup/memory.max",
+                       "/sys/fs/cgroup/cpu.max", "/sys/fs/cgroup/memory/memory.limit_in_bytes",
+                       "/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "/sys/fs/cgroup/cpu/cpu.cfs_period_us"]:
+              try:
+                  observed[name] = {"status": "read", "raw": Path(name).read_text()}
+              except OSError as error:
+                  observed[name] = {"status": "unavailable", "errno": error.errno, "raw": None}
+          Path(sys.argv[1]).write_text(json.dumps({"schema": "pon-w1-cgroup-observation-v1",
+              "observations": observed, "missing_means_unlimited": False,
+              "requested_rayon_threads": int(os.environ["RAYON_NUM_THREADS"]),
+              "logical_cpu_count": os.cpu_count(),
+              "process_cpu_affinity": sorted(os.sched_getaffinity(0)),
+              "resource_qualification": False}, indent=2) + "\n")
+          PY
+          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+      - name: Install pinned native toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          printf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"
+          printf 'NATIVE_CARGO=%s\n' "$(rustup which --toolchain 1.95.0 cargo)" >> "$GITHUB_ENV"
+          rustc +1.95.0 -Vv > "$OUT/native-rustc.txt"
+      - name: Run native differential controls and produce independent fixture
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name log-result-controls --timeout 60 -- python3 -m unittest discover -s "$BACKEND" -p test_observations.py -v
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name proc-group-controls --timeout 60 -- python3 -m unittest discover -s "$BACKEND" -p test_proc_group_sampler.py -v
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-tests --timeout 1800 -- "$NATIVE_CARGO" test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives full_relation
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-fixture --timeout 1800 -- "$NATIVE_CARGO" run --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_w1_complete_relation -- fixture "$OUT/input.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-execute --timeout 60 -- "$CARGO_TARGET_DIR/release/examples/pon_w1_complete_relation" execute "$OUT/input.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-benchmark --timeout 60 -- "$CARGO_TARGET_DIR/release/examples/pon_w1_complete_relation" benchmark "$OUT/input.bin"
+      - name: Download and verify actual backend and guest compiler
+        run: |
+          set -euo pipefail
+          cp "$BACKEND/backend-manifest.json" "$OUT/backend-manifest.json"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name install --timeout 900 -- python3 "$BACKEND/install_backend.py" --dest "$WORK/backend"
+      - name: Build locked full guest and verifier
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name guest-build --timeout 1800 -- python3 "$BACKEND/build_guest.py" --cargo "$NATIVE_CARGO" --guest-rustc "$WORK/backend/guest-compiler/bin/rustc" --target-dir "$WORK/guest-target" --cargo-home "$CARGO_HOME" --host-linker "$BACKEND/host_linker_bfd.sh" --jobs 2
+          cp "$WORK/guest-target/riscv32im-risc0-zkvm-elf/release/trnm-w1-risc0-guest" "$OUT/guest.raw.elf"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-build --timeout 1800 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-boundary-tests --timeout 1800 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name backend-clippy --timeout 1800 -- "$NATIVE_CARGO" clippy --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host -p trnm-w1-guest-relation --all-targets -- -D warnings
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name bake --timeout 60 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" bake "$OUT/guest.raw.elf" "$OUT/guest.bin"
+          python3 "$BACKEND/check_observations.py" --out "$OUT" --build-only
+          rm -rf "$WORK/backend/guest-compiler" "$WORK/guest-target"
+      - name: Execute the full pinned W1 image
+        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name execute --timeout 300 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" execute "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18
+      - name: Produce actual transparent proof with no development receipt
+        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name prove --timeout 5400 --sample-proc-group -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" prove "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18 "$OUT/receipt.bin"
+      - name: Independently verify and attack the actual proof
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name verify --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" verify "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name audit --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" audit "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name soundness --timeout 120 -- python3 "$BACKEND/soundness_report.py" --receipt "$OUT/receipt.bin" --out "$OUT/soundness" --rustc "$RUSTC" --upstream-source "$GITHUB_WORKSPACE/docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/soundness-profile/upstream"
+          python3 "$BACKEND/check_observations.py" --out "$OUT"
+      - name: Verify source did not change
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
+      - name: Retain actual proof, ELF, inputs, costs and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: complete-w1-real-proof-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/complete-w1-proof-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

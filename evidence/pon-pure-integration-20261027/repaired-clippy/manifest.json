@@ -1,0 +1,27 @@
+{
+  "schema": "pon-pure-repaired-clippy-v1",
+  "source_commit": "400f034e611073da7259d62b57e2ba3a93904762",
+  "scope": "Actual strict Clippy commands after the constant-assert repair. Both source commit readings match. These lint results are not runtime tests and are not transferred to later source commits. First failures remain in ../local-first-checks/.",
+  "files": [
+    {
+      "path": "crypto-protocol-clippy-repaired.json",
+      "bytes": 451,
+      "sha256": "d8a6a27d611006ea3a48d578d6c0c75461505b878cbe95042b0a306c9bf4032e"
+    },
+    {
+      "path": "crypto-protocol-clippy-repaired.log",
+      "bytes": 306,
+      "sha256": "c9e46ce384fb4c542366e3832b0f2db2195f2715d96a7dd4d2a22648b9e3f20b"
+    },
+    {
+      "path": "node-clippy.json",
+      "bytes": 411,
+      "sha256": "fdd87086dfe48e8527886874697770f559d83159fca1b75ca593b5e076532174"
+    },
+    {
+      "path": "node-clippy.log",
+      "bytes": 2263,
+      "sha256": "e53b1ae97a41b23d65b9fa21617f4b77188dccac3776d5ebe047fe7dcdb5b203"
+    }
+  ]
+}

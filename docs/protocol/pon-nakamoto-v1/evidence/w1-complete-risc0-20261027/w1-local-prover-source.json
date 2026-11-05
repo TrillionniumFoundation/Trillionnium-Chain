@@ -1,0 +1,28 @@
+{
+  "source_state": "working-tree source pinned by file hashes, not a claim that base HEAD contains these changes",
+  "base_commit": "576b3864256b61e8b5c27255f06b22ff7029dc84",
+  "host_sha256": "7fd12c9a39b6bda292fc3154abf3b18780d5fb10036fdfc41aae8f908bd2d003",
+  "file_sha256": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py": "703bb5439c845e0081652e73fc76681f2e69d41cdaea8f6d3328af6ff3ee1085",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json": "bad4b221989b6ff774fa97064847c6942ff4552950ef110a4f3d604effae4e51",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh": "5235ef26dd3b0b9c26fe7b2d47c5159e127b85fae8c7d33fb8948654ff2d4ba3",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml": "315b2227e5dc453328a4627727911ebcf4df7ada2d024dacd838d4864faf3861",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py": "254b4473a2c9469d028f7185ddfae36643df388df63d443fe874d78e3b0201de",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py": "708a17fcb3133a05ca9d49f0b7fe15796aca829609a41fe0d3719262b7bb0177",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/install_backend.py": "28166bda2e5f3eece75a806d9f9793c1dcf98b5e79b53aa456d6f35b7e6d65db",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.lock": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml": "6fa5e8fd94edf7fd0ad00da772a18d4b75dc4f0a9f0be458afb463fab34c4fd4",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/Cargo.toml": "d54c76ef1f5d5a5682ad63e1b3d9afb87b869551d113ff0718bdd0d6904faeb5",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml": "c750dd4c1551df139880dda3583c6f1af27b3d01e3aadfc6a84441c06710104c",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs": "4c79af0b7b1463637f5a39614e3e9c177dc2ad0b70b61e7f177392561da15e12",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs": "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs": "fb3f7c6bb4c048f18e43ec5c34adbdf44c3c24ff8470ce4c9525a32e5b374e8f",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs": "53d9d680fe76ac57203e10c7642b5add2da07dd05f2c76d036d59cb420360428",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/lib.rs": "afe2f2cb5a0605eae3b6cd643e4a7bbb09fa0b0fe4db36fd2fe1155875152fb7",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs": "ed51cb82d417d35a0f8af636422d10abff913c868032dc3e414af63f30449c97",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs": "3c85efae06acc62d5fdbce3d8b1e0f8a65e59675da0a6e741885952ccaad513b"
+  },
+  "cgroup_memory_current_before_prove": 6356393984,
+  "tmpfs_free_before_prove": 2275414016
+}

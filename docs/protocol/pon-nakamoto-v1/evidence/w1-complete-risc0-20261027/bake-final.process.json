@@ -1,0 +1,21 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/dev/shm/trnm-pure-pon-20261027/risc0-tools/trnm-w1-risc0-host-bounded-final",
+    "bake",
+    "/workspace/scratch/20f5e808bfa5/pon-proof-artifacts/w1-complete-folded-risc0-3.0.6.raw.elf",
+    "/workspace/scratch/20f5e808bfa5/pon-proof-artifacts/w1-final-baked.bin"
+  ],
+  "started_utc": "2026-10-27T10:06:06.717970+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.06581817400001455,
+  "user_cpu_seconds": 0.035551,
+  "system_cpu_seconds": 0.016898999999999997,
+  "max_waited_descendant_rss_kib": 10368,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T10:06:06.783833+00:00"
+}

@@ -1,0 +1,22 @@
+{
+  "operation": "build-complete-w1-folded-guest",
+  "command": [
+    "python3",
+    "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py",
+    "--cargo",
+    "/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo",
+    "--guest-rustc",
+    "/dev/shm/trnm-pure-pon-20261027/risc0-rust-r0.1.97.0/bin/rustc",
+    "--target-dir",
+    "/dev/shm/trnm-pure-pon-20261027/risc0-guest-target",
+    "--cargo-home",
+    "/dev/shm/trnm-pure-pon-20261027/pon-cargo-home",
+    "--host-linker",
+    "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh",
+    "--jobs",
+    "1"
+  ],
+  "returncode": 1,
+  "wall_seconds": 1.2311430900008418,
+  "cryptographic_proof_generated": false
+}

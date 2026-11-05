@@ -8,7 +8,10 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod intake;
+mod pure_pon;
 use intake::{ConnectionLease, ListenerIntake};
+pub use pure_pon::fetch_public_task_bootstrap;
+pub use pure_pon::PROFILE as PURE_PON_PROFILE;
 mod growth;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
@@ -81,6 +84,7 @@ pub enum Request {
         packet: String,
     },
     GrowthHeadV1,
+    PublicTaskBootstrap,
 }
 pub const PROFILE: &str = "public-protected-development-v3";
 const HELLO_BYTES: usize = 108;
@@ -385,7 +389,7 @@ impl PublicPolicy {
     pub fn new(bits: u8, lifetime: Duration) -> Result<Self> {
         let lifetime_ms = u64::try_from(lifetime.as_millis()).map_err(|_| "PUBLIC_POLICY")?;
         ensure(
-            (8..=20).contains(&bits) && (100..=2000).contains(&lifetime_ms),
+            (bits == 0 || (8..=20).contains(&bits)) && (100..=2000).contains(&lifetime_ms),
             "PUBLIC_POLICY",
         )?;
         Ok(Self { bits, lifetime_ms })
@@ -396,7 +400,7 @@ impl PublicPolicy {
             lifetime_ms: 2000,
         }
     }
-    pub fn id(self) -> Hash {
+    fn original_resource_id(self) -> Hash {
         hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r13/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-intent-retained-no-post-commit-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
@@ -551,6 +555,9 @@ fn equal_mac(a: Hash, b: Hash) -> bool {
     a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
 }
 fn winner(cookie: Hash, nonce: u64, bits: u8) -> bool {
+    if bits == 0 {
+        return nonce == 0;
+    }
     let h = hash(b"public-ticket-v3", &[&cookie, &nonce.to_le_bytes()]);
     u32::from_be_bytes(h[..4].try_into().expect("fixed hash")).leading_zeros() >= u32::from(bits)
 }
@@ -569,11 +576,14 @@ fn request_op(request: &Request) -> Result<u8> {
         Request::GrowthSubmitV1 { .. } => Ok(6),
         Request::GrowthPacketStatusV1 { .. } => Ok(7),
         Request::GrowthHeadV1 => Ok(8),
+        Request::PublicTaskBootstrap => Ok(9),
     }
 }
 fn response_maximum(op: u8) -> usize {
     if op == 3 {
         MAX_RESPONSE
+    } else if op == 9 {
+        crate::public_task_bootstrap::MAX_BOOTSTRAP_BYTES + 4096
     } else {
         16384
     }
@@ -586,7 +596,7 @@ fn body_maximum(op: u8) -> Result<usize> {
     match op {
         1 | 6 | 7 => Ok(MAX_BODY),
         4 => Ok(MAX_POOL_BODY),
-        2 | 3 | 5 | 8 => Ok(MAX_READ_BODY),
+        2 | 3 | 5 | 8 | 9 => Ok(MAX_READ_BODY),
         _ => Err("PUBLIC_OPERATION".into()),
     }
 }
@@ -656,7 +666,7 @@ impl Hello {
         let op = raw[4];
         let len = u32::from_le_bytes(raw[8..12].try_into().map_err(|_| "PUBLIC_HELLO")?) as usize;
         ensure(
-            matches!(op, 1..=8) && len > 0 && len <= body_maximum(op)?,
+            matches!(op, 1..=9) && len > 0 && len <= body_maximum(op)?,
             "PUBLIC_BODY_LIMIT",
         )?;
         Ok(Self {
@@ -688,6 +698,7 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    public_product: Option<trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -711,6 +722,7 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            public_product: pure_pon::public_product(policy)?,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -1393,6 +1405,7 @@ struct PublicDispatchObservation<'a> {
     mutation_cpu: Option<&'a MutationCpuMeasurement>,
     arithmetic_facts:
         Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    public_product: Option<&'a trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
 }
 fn public_dispatch(
     node: &Mutex<Node>,
@@ -1407,6 +1420,7 @@ fn public_dispatch(
         observation,
         mutation_cpu,
         arithmetic_facts,
+        public_product,
     } = observation;
     if matches!(
         &request,
@@ -1434,6 +1448,14 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
+        Request::PublicTaskBootstrap => {
+            task_alive(deadline, stop, cancelled)?;
+            let bundle = lock_owner(node, &mut progress)?
+                .settings()
+                .public_task_bootstrap()?;
+            task_alive(deadline, stop, cancelled)?;
+            Ok(serde_json::to_value(bundle)?)
+        }
         Request::Submit { packet } => {
             let continuous_progress = {
                 let owner = lock_owner(node, &mut progress)?;
@@ -1497,7 +1519,17 @@ fn public_dispatch(
                         }
                         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
                     };
-                    let result = match arithmetic_facts {
+                    let filtered = public_product.map_or(Ok(()), |fact| {
+                        fact.precheck(
+                            packet.header.challenge(),
+                            packet.header.work_task,
+                            packet.header.target,
+                            &packet.proof,
+                        )
+                        .map(|_| ())
+                        .map_err(|error| crate::Error::from(format!("WORK:{error:?}")))
+                    });
+                    let result = filtered.and_then(|()| match arithmetic_facts {
                         None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
                         Some(facts) => {
                             if let Some(record) = observation {
@@ -1519,7 +1551,7 @@ fn public_dispatch(
                             }
                             result
                         }
-                    };
+                    });
                     let cpu = cpu.and_then(ThreadCpuStamp::finish);
                     if let Some(charge) = mutation_cpu {
                         charge.full_work_ns.set(cpu);
@@ -2024,6 +2056,9 @@ fn serve_public_protected_v3_inner(
                                                         mutation_cpu,
                                                         arithmetic_facts: server
                                                             .arithmetic_facts
+                                                            .as_ref(),
+                                                        public_product: server
+                                                            .public_product
                                                             .as_ref(),
                                                     },
                                                 )
@@ -2919,7 +2954,10 @@ fn call_public_protected_v3_with_profile(
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
         ensure(
-            client_profile.operation_allowed(op),
+            client_profile.operation_allowed(op)
+                || (op == 9
+                    && policy.is_pure_pon()
+                    && matches!(client_profile, ClientProfile::Legacy)),
             "PUBLIC_OPERATION_PROFILE",
         )?;
         canonical_request(&raw, op)?;
@@ -2975,8 +3013,13 @@ fn call_public_protected_v3_with_profile(
         phase_start = Instant::now();
         let started = Instant::now();
         let id = cookie.id()?;
-        let mut solved = None;
-        for nonce in 0..1_048_576u64 {
+        let mut solved = policy.is_pure_pon().then_some(0);
+        let search_budget = if policy.is_pure_pon() {
+            0
+        } else {
+            1_048_576u64
+        };
+        for nonce in 0..search_budget {
             if nonce % 256 == 0 {
                 if outer_deadline.is_some() {
                     ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -3033,20 +3076,15 @@ fn call_public_protected_v3_with_profile(
             total_deadline.min(Instant::now() + Duration::from_millis(WORK_MS + OUTPUT_MS)),
         )?;
         let r: Response = serde_json::from_slice(&bytes)?;
-        ensure(
-            serde_json::to_vec(&r)? == bytes
-                && r.schema == "public-protected-response-v3"
-                && r.profile == hex::encode(expected_profile)
-                && r.network == hex::encode(settings.network())
-                && r.parameters == hex::encode(settings.parameters())
-                && r.genesis == hex::encode(settings.genesis())
-                && r.server == pinned_server
-                && r.cookie_digest == hex::encode(id)
-                && r.request_digest == hex::encode(hello.digest),
-            "PUBLIC_RESPONSE_CONTEXT",
+        validate_response_context(
+            &bytes,
+            &r,
+            settings,
+            pinned_server,
+            expected_profile,
+            id,
+            hello.digest,
         )?;
-        verify_hex_strict(pinned_server, &r.message()?, &r.signature)
-            .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
         if outer_deadline.is_some() {
             ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }
@@ -3055,7 +3093,7 @@ fn call_public_protected_v3_with_profile(
         Ok(PublicReply {
             ok: r.ok,
             value: r.value,
-            solve_trials: nonce + 1,
+            solve_trials: metrics.solution_trials,
             solve_elapsed_ns,
             body_bytes_sent: raw.len(),
             public_network_ready: false,
@@ -3067,6 +3105,31 @@ fn call_public_protected_v3_with_profile(
     }
     metrics.total_elapsed_ns = elapsed_ns(call_start);
     (result, metrics)
+}
+
+fn validate_response_context(
+    raw: &[u8],
+    response: &Response,
+    settings: &Settings,
+    pinned_server: &str,
+    expected_profile: Hash,
+    cookie: Hash,
+    request: Hash,
+) -> Result<()> {
+    ensure(
+        serde_json::to_vec(response)? == raw
+            && response.schema == "public-protected-response-v3"
+            && response.profile == hex::encode(expected_profile)
+            && response.network == hex::encode(settings.network())
+            && response.parameters == hex::encode(settings.parameters())
+            && response.genesis == hex::encode(settings.genesis())
+            && response.server == pinned_server
+            && response.cookie_digest == hex::encode(cookie)
+            && response.request_digest == hex::encode(request),
+        "PUBLIC_RESPONSE_CONTEXT",
+    )?;
+    verify_hex_strict(pinned_server, &response.message()?, &response.signature)
+        .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE".into())
 }
 
 fn validate_challenge_context(
@@ -4429,6 +4492,7 @@ mod tests {
                     observation: None,
                     mutation_cpu: None,
                     arithmetic_facts: None,
+                    public_product: None,
                 },
             )
             .unwrap_err();
@@ -6423,7 +6487,23 @@ mod tests {
         assert!(Hello::parse(&hello(1, MAX_BODY + 1).encode()).is_err());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY).encode()).is_ok());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY + 1).encode()).is_err());
-        assert!(Hello::parse(&hello(9, 1).encode()).is_err());
+        // Opcode 9 is the separately profiled public task-bootstrap read.
+        // Framing accepts its read-sized body; cookie/profile admission still
+        // rejects this operation on legacy, arithmetic and growth servers.
+        assert!(Hello::parse(&hello(9, MAX_READ_BODY).encode()).is_ok());
+        assert!(Hello::parse(&hello(9, MAX_READ_BODY + 1).encode()).is_err());
+        for unsupported in [0, 10, u8::MAX] {
+            assert!(Hello::parse(&hello(unsupported, 1).encode()).is_err());
+        }
+        let settings = Settings::development(Some(1)).unwrap();
+        assert_eq!(
+            server()
+                .cookie(&settings, hello(9, 1), "127.0.0.1:1".parse().unwrap())
+                .err()
+                .expect("legacy profile must reject the bootstrap opcode")
+                .to_string(),
+            "PUBLIC_OPERATION_PROFILE"
+        );
         assert!(Hello::parse(&hello(1, 0).encode()).is_err());
         let mut bytes = hello(1, 1).encode();
         bytes[5] = 1;
@@ -6889,6 +6969,7 @@ mod paid_settlement_consistency_tests {
                     observation: None,
                     mutation_cpu: Some(&measurement),
                     arithmetic_facts: None,
+                    public_product: None,
                 },
             )
             .unwrap_err();

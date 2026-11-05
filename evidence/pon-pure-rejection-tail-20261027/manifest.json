@@ -1,0 +1,53 @@
+{
+  "schema": "pon-pure-rejection-tail-evidence-manifest-v1",
+  "measured_source_commit": "bfcc21c08f14685dce27b7e4f99b567f3b6f34f0",
+  "earlier_eafaa_evidence_unchanged": true,
+  "manifest_excludes_itself": true,
+  "files": [
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/.gitattributes",
+      "bytes": 85,
+      "sha256": "d7587edd0cd64a13a025fa930e3f0838ef0fa2cebfbdce456bc4715ed5b3d977"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/README.md",
+      "bytes": 8991,
+      "sha256": "3233f91f8a7591ca5bb36c011ba5717cb25ef99f4950b6cf4843915eefb22265"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/build-observation.json",
+      "bytes": 906,
+      "sha256": "3fb0c9a9b434f940ff4f9e9e86ad1cd5f65431a6217a59376cd8c20df8800f7f"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/evidence-reader-tests.log",
+      "bytes": 1540,
+      "sha256": "9461750960d49e3af701e28c5eadf4529e5eda975c850be9954e08017d242dcc"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/native-run/capture.json",
+      "bytes": 3509,
+      "sha256": "a8fef61aaf007bc6defef41885c8892c38b5cddb0505e7e51f81455f900b230a"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/native-run/consistency.json",
+      "bytes": 111406,
+      "sha256": "b6e004f25e2468e27b3e4c9045d5f8572b444520fc6ad56b36e2f166c8b466af"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/native-run/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pure-rejection-tail-20261027/native-run/stdout.jsonl.gz",
+      "bytes": 95938,
+      "sha256": "bf0b4c48b5948e2f02e7d457db65b68d6e0297e3abbf6e1f3e7db512c9488914",
+      "uncompressed_bytes": 915061,
+      "uncompressed_sha256": "8d2634492024dec31a1f76b2a7a930706fc84d398f3f0d046f2c801cbeaf899b"
+    }
+  ],
+  "scope": "integrity inventory for one finite native experiment; no hardware attestation or global bound",
+  "global_upper_bound_proved": false,
+  "production_qualified": false
+}

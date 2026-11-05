@@ -1,0 +1,25 @@
+{
+  "schema": "trnm-pure-pon-observed-source-publication-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "mappings": [
+    {
+      "local": "a26623359d01ba6b9429726f3b05cb2e4145d4e6",
+      "remote": "dcd027ffa0ac1ac77bdfa0da9f13ab8ee43ba2d7",
+      "tree": "446b9d1411888324588ec4aeb971104aab1e4a10",
+      "parent": "c96022b897c1235fdbdbfcfa32764403511c6aab"
+    },
+    {
+      "local": "bfcc21c08f14685dce27b7e4f99b567f3b6f34f0",
+      "remote": "b1ff52da07618b8bb3506c653fa8c4855c0580c8",
+      "tree": "9cd8fee8e5faa6ebf688400e6f52aed67a7317eb",
+      "parent": "dcd027ffa0ac1ac77bdfa0da9f13ab8ee43ba2d7"
+    },
+    {
+      "local": "9e9939b2d9ac97c7172ef141c9920225d2516236",
+      "remote": "5c8cd8bd59cd9d8197617239664e66dd8b086baa",
+      "tree": "fb4ec104a54451829f666cfba752083118f19f58",
+      "parent": "c96022b897c1235fdbdbfcfa32764403511c6aab"
+    }
+  ],
+  "scope": "These API-created commits preserve exact source trees. They do not replace the original local commit identities in measurements. The optimized W1 run started at local 576b3864256b61e8b5c27255f06b22ff7029dc84 with dirty runtime files; all 19 runtime file hashes were subsequently matched to local 9e9939b2d9ac97c7172ef141c9920225d2516236. No new proof or production acceptance is asserted."
+}

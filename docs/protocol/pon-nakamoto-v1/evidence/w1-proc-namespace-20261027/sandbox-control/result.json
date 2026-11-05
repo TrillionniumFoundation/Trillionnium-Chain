@@ -1,0 +1,13 @@
+{
+  "schema": "pon-proc-sampler-namespace-controls-v1",
+  "environment": "default sandbox with actual PID/proc namespace mismatch",
+  "tests_run": 1,
+  "success": true,
+  "wall_seconds": 0.2686543830059236,
+  "source_sha256": {
+    "measure_step.py": "538aa032af5e6a391b59bed18f7d6f8d469d5fe3673f55bd57b8d4e564efc90b",
+    "proc_group_sampler.py": "53ff70f41aed8e15e9b4127ce2c9e4708b0acc8b0dff9d59cfc7f6807a5b36ce",
+    "test_proc_group_sampler.py": "10fbe883835a13d2732070caee0a2faff7638bb82dc6063e7cba31480450ce8d"
+  },
+  "scope": "Actual non-proof command succeeds while optional resource sampler refuses unavailable namespace identity and reports null costs."
+}

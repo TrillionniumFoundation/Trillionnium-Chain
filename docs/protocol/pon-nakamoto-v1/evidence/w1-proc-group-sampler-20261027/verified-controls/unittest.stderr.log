@@ -1,0 +1,11 @@
+test_optional_flag_preserves_default_and_normal_exit_last_sample (test_proc_group_sampler.ActualProcessControls.test_optional_flag_preserves_default_and_normal_exit_last_sample) ... ok
+test_real_grandchild_is_sampled_before_timeout_without_child_cpu_double_count (test_proc_group_sampler.ActualProcessControls.test_real_grandchild_is_sampled_before_timeout_without_child_cpu_double_count) ... ok
+test_missing_proc_identity_is_unavailable_not_zero_cost (test_proc_group_sampler.ParserAndIdentityControls.test_missing_proc_identity_is_unavailable_not_zero_cost) ... ok
+test_only_owned_members_count_and_repeated_samples_do_not_double_count (test_proc_group_sampler.ParserAndIdentityControls.test_only_owned_members_count_and_repeated_samples_do_not_double_count) ... ok
+test_pid_reuse_has_a_distinct_identity_and_exit_retains_last_actual_data (test_proc_group_sampler.ParserAndIdentityControls.test_pid_reuse_has_a_distinct_identity_and_exit_retains_last_actual_data) ... ok
+test_stat_framing_and_self_ticks_exclude_names_and_child_cpu (test_proc_group_sampler.ParserAndIdentityControls.test_stat_framing_and_self_ticks_exclude_names_and_child_cpu) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 16.556s
+
+OK

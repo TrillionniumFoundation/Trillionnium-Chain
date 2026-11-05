@@ -1,0 +1,1 @@
+{"schema":"pon-w1-risc0-research-v1","operation":"execute","guest_matches_native":true,"user_cycles":129931331,"segments":1396,"segment_po2_limit":17,"execute_wall_ns":4338421073,"image_id":"c4882af18d381d7a6c36cea135dbe417e730dd3522255d2a32c8942ef57dfa2d","cryptographic_proof_verified":false,"consensus_authority":false}

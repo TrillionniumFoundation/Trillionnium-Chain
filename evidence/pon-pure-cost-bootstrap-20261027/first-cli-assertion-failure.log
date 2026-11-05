@@ -1,0 +1,17 @@
+
+running 1 test
+test explicit_pure_cli_fetch_mine_push_and_invalid_profile_have_no_fallback ... FAILED
+
+failures:
+
+failures:
+    explicit_pure_cli_fetch_mine_push_and_invalid_profile_have_no_fallback
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+thread 'explicit_pure_cli_fetch_mine_push_and_invalid_profile_have_no_fallback' (685986) panicked at crates/trnm-pon-node/tests/pure_pon_cli.rs:115:9:
+assertion `left == right` failed
+  left: Null
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

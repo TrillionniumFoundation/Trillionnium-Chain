@@ -1,0 +1,63 @@
+{
+  "schema": "pon-integration-local-checks-v1",
+  "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+  "scope": "executed checks only; repository checkout excludes historical evidence",
+  "checks": [
+    {
+      "name": "ci-contract",
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+      "exit_code": 0,
+      "wall_seconds": 0.2268882280040998,
+      "log": "ci-contract.log"
+    },
+    {
+      "name": "inventory",
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+      "exit_code": 0,
+      "wall_seconds": 0.09109655900101643,
+      "log": "inventory.log"
+    },
+    {
+      "name": "source-negatives",
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+      "exit_code": 0,
+      "wall_seconds": 3.3802437970007304,
+      "log": "source-negatives.log"
+    },
+    {
+      "name": "cost-reader-negatives",
+      "command": [
+        "python3",
+        "scripts/ci/test_check_pure_pon_cost_campaign.py"
+      ],
+      "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+      "exit_code": 0,
+      "wall_seconds": 0.08645017100207042,
+      "log": "cost-reader-negatives.log"
+    },
+    {
+      "name": "repository",
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+      "exit_code": 2,
+      "wall_seconds": 0.7642836050072219,
+      "log": "repository.log"
+    }
+  ]
+}

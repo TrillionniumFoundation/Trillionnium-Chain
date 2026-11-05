@@ -1,0 +1,31 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "python3",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py",
+    "--cargo",
+    "/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo",
+    "--guest-rustc",
+    "/dev/shm/trnm-pure-pon-20261027/risc0-rust-r0.1.97.0/bin/rustc",
+    "--target-dir",
+    "/dev/shm/trnm-pure-pon-20261027/risc0-guest-target",
+    "--cargo-home",
+    "/dev/shm/trnm-pure-pon-20261027/pon-cargo-home",
+    "--host-linker",
+    "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh",
+    "--jobs",
+    "1"
+  ],
+  "started_utc": "2026-10-27T09:03:59.063843+00:00",
+  "timeout_seconds": 1800,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 162.19629910799267,
+  "user_cpu_seconds": 148.004549,
+  "system_cpu_seconds": 12.082817,
+  "max_waited_descendant_rss_kib": 480976,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T09:06:41.260189+00:00"
+}

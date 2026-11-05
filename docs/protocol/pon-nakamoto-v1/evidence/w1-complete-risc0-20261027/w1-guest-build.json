@@ -1,0 +1,11 @@
+{
+  "full_n": 64,
+  "full_r": 8,
+  "intermediate_tiles": 512,
+  "guest_compiler": "rustc 1.97.0-dev (e638c6cfe 2026-07-15)",
+  "raw_guest_sha256": "4c7b9760f9a21355431ed0f1dcea4b68a4d88a69a592e892de8e2046b3874fe5",
+  "raw_guest_bytes": 267592,
+  "raw_elf_is_not_wrapped_v3_program": true,
+  "proof_generated": false,
+  "source_stage_1_commit": "576b3864256b61e8b5c27255f06b22ff7029dc84"
+}

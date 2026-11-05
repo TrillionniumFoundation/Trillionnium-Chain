@@ -1,0 +1,66 @@
+{
+  "schema": "pon-w1-upstream-soundness-formula-observation-v1",
+  "model_input_kind": "execution_only_metadata",
+  "execution_observation_sha256": "931dad8f5cbf56ab8a36568aa6d0fef64279c0c1b73894e227274d1479291864",
+  "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+  "no_completed_proof_is_established": true,
+  "receipt_was_not_cryptographically_verified_by_this_calculator": true,
+  "source_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+  "source_sha256": {
+    "risc0/zkp/src/prove/soundness.rs": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921",
+    "risc0/circuit/rv32im/src/zirgen/taps.rs": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2",
+    "risc0/zkp/src/lib.rs": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d",
+    "risc0/core/src/field/baby_bear.rs": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3",
+    "LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+  },
+  "upstream_rust_formulas_executed_verbatim": true,
+  "descriptor_harness_is_not_a_proof_backend": true,
+  "calculator_arithmetic": "upstream f32, then float64 union-bound summation; numerical estimate, not a machine-checked real bound",
+  "parameters": {
+    "group_widths_accum_code_data": [
+      103,
+      1,
+      211
+    ],
+    "biggest_combo": 6,
+    "field_prime": 2013265921,
+    "extension_degree": 4,
+    "queries": 50,
+    "expansion": 4,
+    "folding_factor": 16,
+    "final_degree": 256,
+    "maximum_constraint_degree": 5,
+    "degree_scope": "hardcoded assumption in upstream calculator, with an upstream FIXME; not independently derived here"
+  },
+  "actual_segment_po2_histogram": {
+    "18": 62
+  },
+  "per_segment_estimates": [
+    {
+      "po2": 18,
+      "toy_model_bits": 98.64242,
+      "proven_list_decoding_bits": 45.3014,
+      "conjectured_strict_bits": 78.59309
+    },
+    {
+      "po2": 20,
+      "toy_model_bits": 97.14198,
+      "proven_list_decoding_bits": 41.56704,
+      "conjectured_strict_bits": 74.87678
+    },
+    {
+      "po2": 24,
+      "toy_model_bits": 93.34174,
+      "proven_list_decoding_bits": 33.58654,
+      "conjectured_strict_bits": 66.97681
+    }
+  ],
+  "conservative_sum_of_segment_error_estimates_bits": {
+    "toy_model_bits": 92.68822368961312,
+    "proven_list_decoding_bits": 39.347203689613124,
+    "conjectured_strict_bits": 72.63889368961313
+  },
+  "composition_scope": "union bound conditional on the upstream per-segment model; not a complete FS, adaptive-query, hash or QROM proof",
+  "pq128_qualified": false,
+  "consensus_authority": false
+}

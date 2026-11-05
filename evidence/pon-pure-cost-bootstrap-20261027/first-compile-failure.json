@@ -1,0 +1,18 @@
+{
+  "schema": "pon-local-development-failure-v1",
+  "command": "cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib pure_pon::tests -- --nocapture",
+  "rust": "1.95.0",
+  "exit_code": 101,
+  "diagnostics": {
+    "E0308_wrong_client_return_type": 2,
+    "E0063_unset_new_public_product_field_in_existing_tests": 6
+  },
+  "qualification": false,
+  "source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_pon.rs": "ad7c3c7492ea38ec613723daaef3227d9e1284e0ed1f98a4988e4afcefc66f90",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "24b43a7d7189bd4f6c9ae629ed6dd73f29a09a6f94c68358a43d044b1b8f6add",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": "377766a920b8eab35aecc34c2b2df5850cf13a49b5d9d9d59f8a625096774c8b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "0d20830a68d447a8b48d095cbc3d713c08ff676ea015d515ca63a6a42cf1709f"
+  },
+  "scope": "compact transcription of observed compiler failure; not a replacement for the tool session output or a successful build"
+}

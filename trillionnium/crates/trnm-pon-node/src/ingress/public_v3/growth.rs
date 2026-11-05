@@ -50,6 +50,11 @@ impl PublicServer {
         Ok(self)
     }
     pub(super) fn operation_allowed(&self, op: u8) -> bool {
+        if op == 9 {
+            return self.policy.is_pure_pon()
+                && !self.native_growth
+                && self.arithmetic_facts.is_none();
+        }
         if self.native_growth {
             ClientProfile::NativeGrowthV1.operation_allowed(op)
         } else {

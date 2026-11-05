@@ -1,0 +1,25 @@
+{
+  "schema": "trnm-retained-github-focused-success-v1",
+  "source_commit": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "source_tree": "bcf061827dd81cbd4c29378ef53ebac23cd976be",
+  "run_id": 40482711707,
+  "job_id": 122116758256,
+  "workflow_conclusion": "success",
+  "artifact": {
+    "id": 12724159202,
+    "bytes": 7749304,
+    "zip_sha256": "a4cbe3809e854a83416b35a42902371ac3530209cbe915af4ce7ae56fb3ae087",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40482711707/artifacts/12724159202",
+    "expires_at": "2026-11-26T10:03:14Z"
+  },
+  "retained_log": {
+    "path": "focused-d961-job.json.gz",
+    "bytes": 86481,
+    "sha256": "02b3034ee429bb99a37e58018130f04bf68020cb5b5222792e2b4486066443b3",
+    "json_bytes": 959084,
+    "json_sha256": "ffec691beaf1f3caeb7c8113af530fca9fc9819a5c60ea2a78a7526e42205fb7",
+    "decoded_log_utf8_bytes": 953501,
+    "decoded_log_sha256": "feec15943a3515832f01e180ddcccb11010c7ff05b2dc110cb96d2647533eb00"
+  },
+  "scope": "Exact-source native tests, strict Clippy, finite rejection tails, long fixed cost matrix and actual TCP service experiment; not a real STARK receipt, worst-case mathematical bound, WAN throughput, or whole-system PQ qualification."
+}

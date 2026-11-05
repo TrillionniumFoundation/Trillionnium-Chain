@@ -323,6 +323,7 @@ fn warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_contex
                 observation: None,
                 mutation_cpu: None,
                 arithmetic_facts: Some(facts),
+                public_product: None,
             },
         );
         assert_eq!(result.unwrap_err().to_string(), expected);
@@ -345,6 +346,7 @@ fn warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_contex
             observation: None,
             mutation_cpu: None,
             arithmetic_facts: Some(facts),
+            public_product: None,
         },
     );
     assert!(result.is_err());
