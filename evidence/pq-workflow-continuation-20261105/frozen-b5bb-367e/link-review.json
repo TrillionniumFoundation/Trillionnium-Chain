@@ -1,0 +1,94 @@
+{
+  "schema": "fixed-pair-evidence-link-review-v1",
+  "scope": "New README local file/directory destinations only; existing b5bb source or exact pending evidence entries. Not native execution, full-repository revalidation, external URL fetch, or prospective-merge acceptance.",
+  "document_sha256": "edbeb0b5880b68020ff30f0b0cd85cdc55dd902d22f5aab300c2853fdd14b062",
+  "source_head_observed": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "links": [
+    {
+      "link": "../../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "repository_path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "fixed-pair.json",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/fixed-pair.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "gate-ledger.json",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/gate-ledger.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../runtime-29-to-d206-source-map.json",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/runtime-29-to-d206-source-map.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "late-integration.json",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/late-integration.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+      "repository_path": "evidence/pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+      "repository_path": "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-quantum-exact-resource-budget-20261105/README.md",
+      "repository_path": "evidence/pon-quantum-exact-resource-budget-20261105/README.md",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../initial-checkpoint",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/initial-checkpoint",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../additional-checkpoint",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-prospective-source-b5bb-20261105/manifest.json",
+      "repository_path": "evidence/pon-prospective-source-b5bb-20261105/manifest.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+      "repository_path": "evidence/pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-growth-persistence-control-20261105/checkpoint-resource-waiter-retry2.json",
+      "repository_path": "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-waiter-retry2.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+      "repository_path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-fixed-host-root-f0-b5bb-readback-20261105/source-trace.json",
+      "repository_path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/source-trace.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "../../pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json",
+      "repository_path": "evidence/pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json",
+      "known_existing_or_pending": true
+    },
+    {
+      "link": "gate-ledger.json",
+      "repository_path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/gate-ledger.json",
+      "known_existing_or_pending": true
+    }
+  ],
+  "result": "PASS"
+}

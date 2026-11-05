@@ -1,0 +1,38 @@
+{
+  "schema": "growth-resource-waiter-outcome-v1",
+  "observed_utc": "2026-11-05T04:48:39.104830+00:00",
+  "scheduler_receipt_sha256": "dbbf3a9ef2644e10fc734080fe51a50e81dc8ea63264a70b5f5b3e06bcebd0c2",
+  "scheduler_receipt_bytes": 9449,
+  "state": "OOM_DURING_WAIT",
+  "wait_elapsed_seconds": 160.16535,
+  "new_native_attempt_started": false,
+  "native_attempt_output_directory_exists": false,
+  "new_native_test_count": 0,
+  "shared_oom_delta": {
+    "oom": 1,
+    "oom_kill": 1
+  },
+  "previous_attempt_oom_deltas_unchanged": true,
+  "source_checks": {
+    "red_source": {
+      "path": "/workspace/scratch/822cc50e24f0/round2-chain",
+      "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+      "status": "M trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs\n?? trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs"
+    },
+    "green_source": {
+      "path": "/workspace/scratch/822cc50e24f0/round2-chain-green",
+      "head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+      "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+      "status": ""
+    },
+    "red_expected_head_matches": true,
+    "green_expected_head_matches": true,
+    "green_source_clean": true
+  },
+  "qualification": "HOLD",
+  "native_red_qualified": "NOT_COMPLETED",
+  "native_green2": "NOT_RUN",
+  "native_b1_account_prefix": "NOT_RUN",
+  "scope": "The approved single finite scheduling window stopped before any new native command due to shared OOM counter growth. No victim attribution, no production-gate result, and no rewrite of prior attempts."
+}

@@ -1,0 +1,404 @@
+{
+  "schema": "pq-workflow-continuation-publication-v1",
+  "selected_observation_pair": {
+    "chain": {
+      "sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+      "tree": "8be28a72673ce318d60a464898ab610d9ba39216"
+    },
+    "runtime": {
+      "sha": "367e27fb6bf30443641b9e23a063d24e49eda9f7",
+      "tree": "6a2465606f0270eeecec83c2b7d9dbef5dc96076"
+    }
+  },
+  "expected_publication_parent": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+  "parent_tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+  "production_code_changed_by_this_publication": false,
+  "native_workspace_or_workflow_changed": false,
+  "prior_executions_relabelled": false,
+  "status": "HOLD_NO_GO",
+  "all_blockers_closed": false,
+  "production_activation": false,
+  "sole_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "entries_excluding_this_manifest": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca6da9087ce0a22639d5c1acd1541aee1e930d22"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/analysis.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab774d5bb8b532dcd08dc069c23e8e877c6d0a00"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact-inventory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f05eb285b814e8e7751de4e1a5eb36ac58b91ef8"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/predeclared.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "125e6bde9d4586f7486bad00c5138e7ee94f2fad"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "308d7336bec986b922cd8440760d5fa420277f84"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1de5df9ef0ba1bdac6bbf9abe46dfed901799369"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d913f1b7ae0fcd1602a32993602b6a3e0134954e"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be93d09ad0e1158cd4b6ec47728feeb0c2d50dc2"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/predeclared-denominators.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "115f89c7390b610ada3f232735a411acccc2d01f"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54ce501749dc86809022b1dd1ca59fb3baa8b544"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d251a2c78d7878fc595a68eb7343497f85f046ae"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2dd792f1eb916d82d00a92c61b7ddeed75e52109"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbd561022ac56f4acc6c44f51fa67fa689ba0208"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/results.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3fb17ef5649f566271cd2bb485bcdc8bb4fefe1"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stderr.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d0b5e279747b8c56015add2a95798fee66e0d51"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stdout.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56f014821d8e5480e591827faa51e14c4d793b35"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/finalization/result.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "02cebd9c899bede4dbe302df33fbf7ab87a91361"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/build.step.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2476f05280fe24023c2744eae413925bf8f0a41d"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/hardware.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "464d125363b24da8231f02261f170cf28c068762"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/prepared.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91161c05221d08964fffb1f159dc450e31b08682"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/SCOPE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "08fdcfa27e063171e00c26bdbf1a394402ba3ea5"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-after.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e009659910e4f1b1ca876fc604b5ac6ba673e030"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-before.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e009659910e4f1b1ca876fc604b5ac6ba673e030"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stderr.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1483842b674f6a28e10b5f3d0373285f889e1942"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stdout.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efa147ae56ad75f645717881557de36a1fd214b9"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-outcomes.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "579dd17538e06ad8afd6d936333bd2a5ea80814c"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-predeclared.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c581ee4c44cd185a65dbb93387a2a70a981c935a"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/client-import-summary.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bc773aca79536e7de6472ae639980a60dda37d1"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/extract_analysis.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d94df590e77a3a12c98d5c975fda8f4bfd9000a4"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/issue-639-observation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae943fba6e45b1bcd3ae8cabd3fd5d9ebc4def99"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbd7e8f73017c7804f90cb54b8c5864bb45c91f1"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-client-import-extracts.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "08bd464409b11737b70672b97880f534229430f6"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-performance-summary.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f94c40b4d870795566495e86e63bcea30886a629"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac7b4e2ff9adddf300480b23f33960d626c60764"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/source-trace.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "659dd12d19b303350583283841f3d4c5dfbbeb78"
+    },
+    {
+      "path": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/workflow-job-127038806677.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bfbd2d804ff28cc693e74ae9d5e8dfeff62a84e"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/b5bb-f0-backend-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "169e40c6b5ac50c682103af1f0e0148695af9506"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/b5bb-f0-growth-coverage.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32bff8ae09b6b147b3f09572b47e4b985d4dc9a8"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52935de1c6726ecc9b359800e2feb15ceae784b0"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-waiter-retry2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d41126f13066bd9da965d874ec42cc58f0d7802"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/frozen-b5bb-component-binding.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb03e6da1a10f4df666f87375744c32ee398b945"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/post-runtime-idle-process-observation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "161e52a3fd7249f59b1aba5d51b7a36cd4a8c8cc"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2-outcome.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67299fca917104bbb0ce5fdaedde29fd72097973"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e6774b241ba95274e01f8d8833e9551353d2bdd"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-after-ef1fa4d.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29d82707b0869632d1a2f73472eb081ef07a4e6a"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-followup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c458722ed9b656c13ee04ab1e641bc043424adcb"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-latest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "786a979aa310730c6ddc9b3f09ed03ae239cae57"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-account-prefix-bounded.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "384a1eb7c6fb3d361935f6a441c89b402a670e3a"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-bounded.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25426a744175cb9f9d16b78ff4f7df2728a0ee09"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/wait-canonical-red-retry2.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba52801029cb36d2e5e14ee99a3ee8e7ccd14875"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/cargo-graph-storage.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12cc7283027e07cd5819c52f0d5b5b7c2b3538b2"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/run-strict-clippy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5b0b5eb30379019c1a3747b417ce6bcf4fe2e19"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/static/cargo-graph.log.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bd3ac510e25503b7bb57461d645c2777b1e32be"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/cargo.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2f9dc15aec771be16fa9b10ce64a7ce13e9e252"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/preflight.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9762af90658b6e9a33e367cc9d815acf544d6e9e"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/result.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a2c642ede6a60216f4bab4466d68ddcf5f1ac3a"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/fixed-pair.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77216e9966bfdb3e4881e4f5e75d557714f9910d"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/gate-ledger.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b6814823662976c973277c86d77ba4c4d6b3aea5"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/late-integration.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef2652c643d464ca724e79b5a54d768a32f7826c"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/link-review.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb1d4e16b9a523893bfd3ca78809fc5db39a6297"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13bb3b35c2b33f6dc42d28afe712a48d59dcd558"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-state-scheduling.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfedc3436015de1db365dc206f6dec4e9b1e86d1"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-work-proofs.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "148ad767ec3aa068ee66fcc680c03e3b0a812e31"
+    }
+  ],
+  "entry_count_excluding_this_manifest": 63,
+  "scope": "Content-addressed evidence and sole-plan update only. Two runner paths already exist with identical blobs; unchanged entries may not appear in the commit diff. Selected b5bb observations do not certify the different preserved 04be source. Native/code/workflow acceptance remains as recorded in the gate ledger."
+}
