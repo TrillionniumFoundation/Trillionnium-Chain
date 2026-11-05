@@ -1,0 +1,43 @@
+{
+  "implementation": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+  "incoming": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "composed_tree": "c395733dbafc2e8ed875879cacb2e9512985ba8d",
+  "implementation_exact_paths": [
+    "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "evidence/cell-storage-continuation-20261104/boundary-followup/README.md"
+  ],
+  "incoming_exact_paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md",
+    "evidence/pq-historical-migration-20261104/README.md",
+    "evidence/pq-historical-migration-20261104/registered-nonce-green-to-red.patch",
+    "evidence/pq-historical-migration-20261104/reproduction.json",
+    "formal/pon-nakamoto-v1/pq_seed_recovery_v1.py",
+    "formal/pon-nakamoto-v1/test_pq_seed_recovery_v1.py",
+    "scripts/ci/ci_job.sh",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory_tests.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_migration_inventory.rs"
+  ],
+  "merged_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "m09_and_direct_workspace_dependencies_equal_implementation": true
+}

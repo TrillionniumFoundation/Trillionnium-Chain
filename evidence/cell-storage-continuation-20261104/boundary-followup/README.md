@@ -1,43 +1,190 @@
 # Storage boundary follow-up
 
-This continues the existing [sole plan](../../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [model storage contract](../../../docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md)
-on integration source `a9b8602706b66adba82655c3c2ce90bde88620a2`, tree
-`2f7e0eb7bf56d9bc4154177018764218ae3b3f31`. It preserves the preceding
-[source-bound storage observations](../README.md), including the previously
-unexecuted late Node composition checks and resource failures.
+This continues the existing [sole plan](../../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
+[model storage contract](../../../docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md)
+and [previous source-bound storage evidence](../README.md).
+The delivered implementation closes four concrete boundary gaps across the
+same eight-layer candidate. Funding, custody and actual-use authority retain
+their existing owners.
 
-## Changes to verify
+## What changed
 
-- Tensor entries require named JSON objects. Positional arrays cannot satisfy
-  the exact safetensors metadata profile even when their complete payload hash
-  and declared tensor values match. Field order remains free; duplicate, unknown,
-  missing and incorrectly typed fields still reject.
-- Persistent serving stops connection/frame admission after actual response
-  bytes exhaust the original quota. Temporary reservations remain refundable;
-  admitted workers keep their original deadlines and accounting. Availability
-  manifest reads inherit the same original request deadline.
-- New release intents reject permanent aligned-capacity, record-history and
-  retired/funding-identity contradictions before leaving a pending root. Existing
-  partial or impossible pending history remains readable and protects the complete
-  closure. Real physical-writer contention still leaves a recoverable intent.
-- Node paid storage rejects already expired requests before opening budgets and
-  uses the original deadline for M09 physical writer acquisition and readback.
-  Exact original claims/effects remain charged on uncertain outcomes and are
-  reconciled without redispatch. M12's internal SQLite calls remain cooperative;
-  this does not claim every journal wait has a hard wall-time bound.
+1. **Require named tensor metadata objects.** A positional array such as
+   `["F32", [2], [0, 8]]` no longer substitutes for the named safetensors
+   object, even when the full container hash and independent tensor pins match.
+   Reordered object fields remain legal; duplicate, unknown, missing and
+   incorrectly typed fields still reject.
+2. **Stop persistent intake when actual egress is spent.** New connections and
+   frames stop after the actual response-byte limit is consumed. Temporary
+   reservations remain refundable and do not impersonate permanently exhausted
+   bytes. Already admitted workers retain their original deadlines and charges.
+   Availability manifest reads now receive the original request deadline.
+3. **Refuse known permanent contradictions before a new retained root is written.**
+   Aligned capacity, immutable physical history, retired operation IDs and
+   historical funding aliases are checked before creating a new catalog intent.
+   This read-only precheck allocates nothing and does not replace the actual
+   physical writer's audit. A genuine writer-lock failure still leaves a
+   recoverable complete pending root. Historical impossible pending roots stay
+   readable and protected; no migration or silent history deletion occurs.
+4. **Carry Node's original storage deadline into the physical owner.** Already
+   expired requests reject before new budget/physical obligations. The M09 writer
+   uses that same deadline; uncertain committed outcomes retain the original
+   charged claim/effect for same-ID reconciliation. Checks also cover completion,
+   repair and retirement boundaries. M12's internal journal still has its
+   existing cooperative intervals, including its SQLite busy timeout: this is
+   not a hard wall-time limit on every M12 call.
 
-## Counterexample source
+## Exact sources
 
-The isolated test-only commit
-[`8992e87ab14d6905303b9a813656a591621a49bd`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/8992e87ab14d6905303b9a813656a591621a49bd)
-keeps the old parser and adds the exact complete-container regression
-`cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object`.
-Each hostile container is independently repinned to its actual bytes. The
-F32/F16/BF16 examples are assertions within one test, not three separate tests.
-This counterexample source is not an accepted implementation candidate.
+| Role | Commit | Tree |
+| --- | --- | --- |
+| R: old parser plus the exact regression test | `8992e87ab14d6905303b9a813656a591621a49bd` | `b0f6c1d4f57b9c434f01fcf983f1aa3abbc88530` |
+| C: frozen storage implementation | `211e330fd1cfbdaf3e9ff552714df29c840ce675` | `a18dc9ffc20efe435ae8ebceecdca537b7013261` |
+| N: published composition with migration/research | `568c97590eee9e95e6b5021a49fd0a5d20716fa7` | `ea600542130341144d697776d92048988d44572b` |
 
-The frozen-source command receipts and their actual execution verdicts are
-recorded after the corresponding runs. Source review or successful compilation
-alone is not a passing native test, independently funded retention, public-WAN
-qualification, selected model installation or CURRENT/FinalUse acceptance.
+R and C derive from `a9b8602706b66adba82655c3c2ce90bde88620a2`.
+N preserves the migration head `7a88207d` through intermediate `20cdab3b`,
+then the research head `f8d65e96`. Its ordered parents are `f8d65e96` and
+`20cdab3b`. The evidence delivery retains R as an additional parent; merging its test-only change into N produces exactly N's original tree.
+
+[Complete composition checks](research-composition-preservation.json) passed
+25/25 static conditions: 22 incoming paths and 12 implementation paths are
+byte-exact, the plan contains both original insertions, and all **460 pins**
+were checked by reading and rehashing 11,350,669 actual Git blob bytes. N's
+whole Rust subtree equals `20cdab3b`; the M09 component and its direct workspace
+dependencies equal C. These are source comparisons, not extra runtime tests.
+The delivery also preserves the later `c57c2432` evidence update. Its
+[34 static preservation checks](incoming-c57-preservation.json) confirm exactly
+four changed historical evidence files, no pinned/native input change and
+unchanged source trees. Those JSON/Markdown files remain inputs to the repository
+structure checker, so that gate is checked again on the delivery. The
+evidence-only successor keeps native source, Cargo graph, runtime readers and
+test conditions of N unchanged.
+
+## Actual validation
+
+[Artifact hashes](artifact-manifest.json) cover the retained files; the
+[delivery source projection](delivery-source-projection.json) identifies unchanged
+native inputs. [Structured results](delivery-results.json) retain the exact commands, source
+identities, counts, log digests and limitations. Every completed recorder below
+verified the full tracked bytes before and after its command and found equal
+source identities.
+
+| Tested source | Scope | Actual result |
+| --- | --- | --- |
+| C | M09 library | **295 passed / 0 failed / 0 ignored** |
+| C | CLI integration | **29 passed / 0 failed / 0 ignored** |
+| C | Compile-fail documentation | **8 passed / 0 failed / 0 ignored** |
+| C | Python controls | **106 distinct passed**: 34 + 35 + 22 + 11 + 4 |
+| N | Python controls and source checks | **106 distinct passed**; formatting, inventory, 460 source pins, CI contract and repository checks passed |
+| N | Whole workspace / all targets strict Clippy | **PASS**, `-D warnings`, locked/offline, default features and original dev profile |
+| N | Selected Node storage/Legacy tests | **NOT_RUN**: compilation failed with `No space left on device`, exit 101; **0 test harnesses / 0 tests executed** |
+
+The C [native receipt](final/storage-native.json) and
+[raw log](final/storage-native.log), C [source receipt](final/storage-source-controls-corrected.json),
+N [source receipt](composed-final/composed-source-controls.json) and
+N [Clippy receipt](composed-final/composed-workspace-clippy.json) provide the
+completed observations. The qualified [Node attempt](composed-final/composed-node-selected-qualified.json) and [raw compiler log](composed-final/composed-node-selected-qualified.log) retain the resource failure; its source checks completed but no selected test ran.
+
+The separate [four-case oracle run](final/model-root-oracle.json) repeats the
+same four identities and adds no unique coverage. Two zero-test binary harnesses
+also add none. [Retained-test coverage](final/retained-test-coverage.json)
+checks every original 186 library name, every historical 281-name set and all
+288 a9 names against the completed 295-name run. This round adds **7** M09
+tests: archive 4, persistent transport 2 and tensor 1. The other seven added
+since the historical 281 already existed in a9. Process-child output is not
+counted twice. The M09 command used `--tests` and `--doc`; it does not claim
+execution of example test targets.
+
+Both complete Cargo metadata snapshots resolve 26 workspace members and
+175 packages; Cargo.lock contains 180 package entries. The unchanged lockfile
+SHA256 is `00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61`.
+The complete compressed JSON is retained for [C](final/cargo-metadata.json.gz)
+and [N](composed-final/cargo-metadata.json.gz).
+
+## Preserved counterexample, failed invocations and interruptions
+
+- **R executed one actual failing test**, 0 passed / 1 failed / exit 101:
+  `cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object`.
+  Its [receipt](red/tensor-old-parser-red.json) and
+  [raw log](red/tensor-old-parser-red.log) retain the old parser's acceptance of
+  a correctly hashed hostile container. R changes only the test file; the
+  parser equals a9 and the test bytes equal C. The identical test passes on C.
+  F32/F16/BF16 are subcases of one test.
+- The first [C source-control invocation](final/storage-source-controls.json)
+  exited 5 because an incorrect oracle filename selected zero tests. The
+  corrected selector `test_model_release_root.py` completed successfully.
+  The failed zero-selector result is not counted as a pass.
+- The first [Node baseline](baseline/baseline-node-composition.json) used an
+  unqualified loader environment and was interrupted, tool exit 130 and zero
+  tests. Its original running/null receipt is preserved with the separate
+  [interruption record](baseline/initial-runtime-interruption.json).
+- A later environment transport failure interrupted C's workspace Clippy and
+  intermediate M's source revalidation. Both original receipts remain
+  running/null, with no complete before/after pair. The
+  [environment interruption](environment-interruption.json) records unknown
+  exit codes and no PASS; successful later N runs do not rewrite those attempts.
+- The first N Node attempt replayed the initial test-profile SQLite boundary's
+  stale unqualified build-script output. The exact
+  [cache diagnosis](runtime-cache-diagnosis.json) preserves eight original
+  output/fingerprint files and proves the library depended on the old failed
+  result. Its [interruption](node-unqualified-cache-interruption.json) records
+  exit 130 and **zero executed tests**. The same corrected Rustup launcher was
+  retained. A package-only [clean](runtime-package-clean.json) removed 61
+  rebuildable files / 28.9 MiB from this task's target; no source, qualification
+  guard, profile, selector or deadline changed. The [fresh build result](runtime-cache-requalification.json) passed the unchanged original qualification guard and the current SQLite library bound that new result. The subsequent original Node test-profile build then failed with ENOSPC before any test executed. The actual compiler command retained `opt-level=3`, `debuginfo=2` and debug assertions.
+
+After the ENOSPC failure also prevented saving the final summary, a
+[completed-target cleanup](completed-owned-target-cleanup.json) removed 4,009
+rebuildable files / 1.0 GiB from this task's target. Sources and all logs were
+retained. Resource snapshots and owned-cache cleanup are observations of this shared
+execution environment, not performance benchmarks or a causal OOM diagnosis.
+The preserved diagnostic receipts explain incomplete work; they do not grant
+native I/O, full Node, public network or release qualification.
+
+## Eight-layer status
+
+
+| Layer | Implemented candidate scope | Remaining actual gate or profile boundary |
+| --- | --- | --- |
+| Objects | Canonical, versioned manifest/hash domains; complete payload hashes; bounded TMT1/TMA1 dense tensor validation. This follow-up requires named tensor objects and preserves strict field checks. | Supported tensor types are F32/F16/BF16. Other codecs, quantization, architecture and model quality need explicit admission. |
+| Deduplication | Raw chunk CAS, TCX1 exact chunk reuse and shared original manifest duties support incremental byte publication. | Semantic adapter rebasing and an Expert ABI are absent. Changed contexts can reuse equal raw chunks but do not establish shared physical obligations. |
+| Dependencies | TCD1 checks the complete declared graph; TMR1 binds router and direct-parent metadata; loader context is independently pinned. | The release owner must enumerate every real dependency. Bytes cannot reveal an omitted external requirement. |
+| Transfer | Bounded sources, verified-prefix resume, observed-rarity scheduling and explicit persistent reuse retain aggregate budgets. Actual egress exhaustion stops new intake; temporary reservations can be refunded. | WAN fairness, confidentiality and performance require deployment evidence. Blocking I/O remains cooperative. |
+| Discovery | Signed rendezvous hints retain TTL, replay, query-budget and observed source/prefix-diversity checks. | No DHT implementation or proof of eclipse/Sybil resistance, endpoint control or operator independence is established. |
+| Retention | TCA2 binds complete roots, immutable funding/operation identities, terms and repair deadlines. New permanently impossible reservations reject before intent publication; old pending history remains protected. | Replica declarations need independent complete-copy evidence. Funding, lease extension, current height and successor authority remain separate owners; automatic funded renewal and erasure coding are absent. |
+| Collection | Pending, acknowledged and expired-but-unretired roots protect all members; unsettled repairs block physical retirement. | Explicit retirement still needs the original owner conditions. Cache eviction neither releases paid duties nor proves filesystem blocks were freed. |
+| Use | Fresh closure/payload and declared tensor checks precede exact create-only TMA1 completion publication. | Actual selected-runtime compatibility, CURRENT/withdrawal, resource admission and FinalUse must still succeed at use time. |
+
+Node source now carries the original deadline into M09 physical reservation and
+checks owner boundaries around completion. Unknown committed outcomes keep the
+same charged claim/effect and permit reconciliation without redispatch. The selected Node runtime checks remain **NOT_RUN** because the qualified test binary could not be built within available disk space. M12's existing journal intervals
+remain cooperative; this follow-up does not impose a hard deadline on every
+internal M12 SQLite wait.
+
+## Reproduction and remaining acceptance
+
+The actual [runtime wrapper](qualified-runtime.sh) records Rust 1.95.0, the
+original profiles, one Cargo build worker, disabled incremental compilation,
+one test thread and the observed OpenSSL 3.5.9 provider identity. Its absolute
+paths are an execution snapshot; use a matching checked-out source and runtime
+installation when reproducing. Commands and full arguments are in each receipt.
+The [original Node selector list](run-node-selected.sh) contains all 12 exact
+names; the final runner changes only log destinations. Never overwrite a prior
+failed/incomplete record to present a new result as its replacement.
+
+[Publication readback](published-N-readback.json) confirms N reached draft
+PR #688 by expected-head, non-forced update. It also records the actually created
+original-workspace and required-baseline CI runs as pending at observation time.
+No remote success or prospective-merge acceptance is inferred, and the local
+work does not wait for those jobs.
+
+Complete original-workspace/all-feature and platform execution, actual
+model/loader compatibility with CURRENT/withdrawal/FinalUse, funded renewal,
+independent complete-copy or specified erasure-code evidence and the original
+independently operated WAN repair/loss/eclipse/hot-model campaigns remain
+separate requirements. Expert/quantized/erasure-coded extensions need explicit
+profiles and their own tests. Production activation, public-WAN acceptance,
+independent acceptance, automatic funded renewal, new Expert ABI acceptance,
+whole-chain quantum-security qualification and CURRENT/FinalUse grants remain
+false.
