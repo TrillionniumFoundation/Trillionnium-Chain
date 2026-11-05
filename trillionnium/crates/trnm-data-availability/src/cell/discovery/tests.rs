@@ -941,6 +941,7 @@ fn oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attemp
     let requests = AtomicU64::new(2);
     let responses = ResponseBudget::new(12);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_millis(200),
         overall: deadline(),
         requests_left: &requests,
@@ -982,6 +983,7 @@ fn slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes() {
     let started = Instant::now();
     let original = started + Duration::from_millis(65);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall: original,
         requests_left: &requests,
@@ -1040,6 +1042,7 @@ fn bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate() {
     let requests = AtomicU64::new(8);
     let responses = ResponseBudget::new(4096);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_millis(200),
         overall: deadline(),
         requests_left: &requests,
@@ -1104,6 +1107,7 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
     let requests = AtomicU64::new(100);
     let responses = ResponseBudget::new(100_000);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_millis(200),
         overall: deadline(),
         requests_left: &requests,
@@ -1147,6 +1151,7 @@ fn discovery_actual_response_exhaustion_stops_before_dial() {
         let attempts = AtomicU64::new(4);
         let responses = ResponseBudget::new(budget);
         let transport = RequestContext {
+            cancelled: None,
             timeout: Duration::from_secs(2),
             overall: deadline(),
             requests_left: &attempts,

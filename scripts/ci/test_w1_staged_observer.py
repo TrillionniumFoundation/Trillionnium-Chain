@@ -7,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -18,9 +19,11 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 EXPERIMENTS = ROOT / "formal/pon-nakamoto-v1/experiments"
 sys.path.insert(0, str(EXPERIMENTS))
+sys.path.insert(0, str(ROOT / "scripts"))
 import w1_stage_measure as stage
 import w1_full_staged_run as coordinator
 import w1_local_payload as local
+import w1_v2_receipt_controls as receipt_controls
 
 FROZEN = ROOT / "evidence/pon-w1-complete-succinct-20261028/full-proof"
 
@@ -291,6 +294,91 @@ class BindingAndLocalCostTests(unittest.TestCase):
                 path.write_bytes(bytes(length))
                 with self.subTest(length=length), self.assertRaises(ValueError):
                     local.serialize(FROZEN / "input.bin", FROZEN / "succinct.bin", path, 2, temp / f"out-{length}")
+
+
+class ReceiptControlReportTests(unittest.TestCase):
+    def setUp(self):
+        # Report-parser controls only: no receipt verification or proof evidence
+        # is produced. Read the expected image from the independent Rust pin.
+        source = (ROOT / "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs").read_text()
+        match = re.search(r"pub const IMAGE_ID: \[u32; 8\] = \[([^]]+)\];", source)
+        self.assertIsNotNone(match)
+        self.image_id = [int(word.strip()) for word in match[1].split(",") if word.strip()]
+        self.assertEqual(len(self.image_id), 8)
+        self.baseline = {"receipt": b"report-parser-only", "header": bytes(318), "artifacts": bytes(64)}
+        self.location = {"work_id": "1" * 64, "journal_sha256": "2" * 64}
+        self.row = {"schema": "TRNM-W1-V2-FULL-VERIFY1",
+                    "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2", "sdk": "3.0.6",
+                    "iterations": 1, "independent_proof_trials": 1,
+                    "image_id": self.image_id, **self.location,
+                    "header_sha256": receipt_controls.digest(self.baseline["header"]),
+                    "receipt_sha256": receipt_controls.digest(self.baseline["receipt"]),
+                    "expected_artifacts_sha256": receipt_controls.digest(self.baseline["artifacts"]),
+                    "receipt_bytes": len(self.baseline["receipt"]),
+                    "parent_eligibility_checked": False, "admission_authorized": False,
+                    "decode_and_verify_ns": [100]}
+
+    def validate(self, row):
+        return receipt_controls.validate_positive(json.dumps(row), self.baseline, self.location)
+
+    def test_positive_report_retains_independent_image_and_original_bindings(self):
+        self.assertEqual(self.validate(self.row), self.row)
+
+    def test_missing_and_noncanonical_image_are_rejected(self):
+        missing = dict(self.row)
+        del missing["image_id"]
+        with self.assertRaisesRegex(ValueError, "image_id"):
+            self.validate(missing)
+        images = [None, {}, "0" * 64, [], self.image_id[:-1], self.image_id + [0]]
+        for index in range(8):
+            for value in (True, False, float(self.image_id[index]), -1, 2**32,
+                          str(self.image_id[index]), None):
+                image = list(self.image_id)
+                image[index] = value
+                images.append(image)
+        for image in images:
+            with self.subTest(image=image), self.assertRaisesRegex(ValueError, "image_id"):
+                self.validate({**self.row, "image_id": image})
+
+    def test_same_profile_cannot_substitute_any_image_word_or_historical_guest(self):
+        images = [[0] * 8, list(reversed(self.image_id)),
+                  coordinator.read_json(FROZEN / "manifest.json")["image_id"]]
+        for index in range(8):
+            image = list(self.image_id)
+            image[index] ^= 1
+            images.append(image)
+        for image in images:
+            self.assertNotEqual(image, self.image_id)
+            with self.subTest(image=image), self.assertRaisesRegex(ValueError, "image_id"):
+                self.validate({**self.row, "image_id": image})
+
+    def test_image_duplicate_or_escaped_alias_keys_cannot_override_the_pin(self):
+        original = json.dumps(self.row)
+        for alias in ('"image_id"', '"\\u0069mage_id"'):
+            extra = alias + ":" + json.dumps([0] * 8)
+            for data in (original[:-1] + "," + extra + "}", "{" + extra + "," + original[1:]):
+                with self.subTest(data=data), self.assertRaisesRegex(ValueError, "duplicate JSON key"):
+                    receipt_controls.validate_positive(data, self.baseline, self.location)
+
+    def test_valid_image_cannot_bypass_existing_identity_scope_or_sample_checks(self):
+        for field in self.row:
+            if field == "image_id":
+                continue
+            missing = dict(self.row)
+            del missing[field]
+            with self.subTest(missing=field), self.assertRaises(ValueError):
+                self.validate(missing)
+        mutations = {"schema": "TRNM-W1-V2-NATIVE1", "profile_id": "other-profile", "sdk": "3.0.3",
+                     "iterations": True, "independent_proof_trials": True, "receipt_bytes": True,
+                     "work_id": "0" * 64, "header_sha256": "0" * 64, "receipt_sha256": "0" * 64,
+                     "journal_sha256": "0" * 64, "expected_artifacts_sha256": "0" * 64,
+                     "parent_eligibility_checked": 0, "admission_authorized": True}
+        for field, value in mutations.items():
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate({**self.row, field: value})
+        for samples in (None, [], [True], [0], [-1], [1.0], [2**63], [1, 2], "100"):
+            with self.subTest(samples=samples), self.assertRaises(ValueError):
+                self.validate({**self.row, "decode_and_verify_ns": samples})
 
 
 class CoordinatorFailureTests(unittest.TestCase):

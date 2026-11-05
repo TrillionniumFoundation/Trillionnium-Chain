@@ -17,6 +17,12 @@ handoff = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(handoff)
 
 
+def controlled_provider_events():
+    return [({"schema": schema, "address": "127.0.0.1:12345"},
+             json.dumps({"schema": schema, "address": "127.0.0.1:12345"}) + "\n")
+            for schema in ("trnm.cell.listen.v1", "trnm.cell.ready.v1")]
+
+
 def controlled_release(command, flags, payloads):
     """Mock CLI framing only; real TCR1 validation is tested by the native CLI."""
     if command[1] == "prepare-release":
@@ -170,6 +176,7 @@ class CellHandoffDeadlineTests(unittest.TestCase):
                     mock.patch.object(handoff, "sha", side_effect=controlled_sha), \
                     mock.patch.object(handoff.subprocess, "run", side_effect=controlled_run), \
                     mock.patch.object(handoff.subprocess, "Popen", return_value=producer), \
+                    mock.patch.object(handoff, "read_provider_event", side_effect=controlled_provider_events()), \
                     mock.patch.object(handoff.selectors, "DefaultSelector", return_value=selector), \
                     mock.patch("sys.stdout", new=io.StringIO()):
                 with self.assertRaisesRegex(TimeoutError, "after consumer readback"):
@@ -282,6 +289,7 @@ class CellHandoffConsumerTests(unittest.TestCase):
                 mock.patch.object(handoff.time, "monotonic", return_value=100.0), \
                 mock.patch.object(handoff.subprocess, "run", side_effect=controlled_run), \
                 mock.patch.object(handoff.subprocess, "Popen", return_value=producer), \
+                mock.patch.object(handoff, "read_provider_event", side_effect=controlled_provider_events()), \
                 mock.patch.object(handoff.selectors, "DefaultSelector", return_value=selector), \
                 mock.patch("sys.stdout", new=io.StringIO()):
             try:

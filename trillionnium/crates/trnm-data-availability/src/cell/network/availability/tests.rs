@@ -161,6 +161,7 @@ fn complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session() {
     let requests_left = AtomicU64::new(10);
     let responses = ResponseBudget::new(200_000);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall: Instant::now() + Duration::from_secs(10),
         requests_left: &requests_left,
@@ -191,6 +192,7 @@ fn wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch() {
     let requests_left = AtomicU64::new(10);
     let responses = ResponseBudget::new(200_000);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall: Instant::now() + Duration::from_secs(10),
         requests_left: &requests_left,
@@ -236,6 +238,7 @@ fn absence_and_interrupted_io_do_not_quarantine_or_renew_the_original_budget() {
         let requests_left = AtomicU64::new(2);
         let responses = ResponseBudget::new(64);
         let transport = RequestContext {
+            cancelled: None,
             timeout: Duration::from_secs(2),
             overall: Instant::now() + Duration::from_secs(10),
             requests_left: &requests_left,
@@ -321,6 +324,7 @@ fn malformed_inventory_padding_is_quarantined_and_oversize_page_never_dials() {
     let requests_left = AtomicU64::new(2);
     let responses = ResponseBudget::new(64);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall: Instant::now() + Duration::from_secs(10),
         requests_left: &requests_left,

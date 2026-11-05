@@ -18,10 +18,13 @@ use std::{
 use sha2::{Digest, Sha256};
 
 use super::{
-    fetch_closure, require, CellClosureFetchReportV1, CellDigestV1, CellErrorV1, CellFileRoleV1,
-    CellLoaderContextV1, CellReleaseClosureV1, CellReleaseFetchLimitsV1, CellResultV1, CellStoreV1,
-    MAX_CELL_BYTES,
+    fetch_closure_cancellable, require, CellClosureFetchReportV1, CellDigestV1, CellErrorV1,
+    CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1, CellReleaseFetchLimitsV1,
+    CellResultV1, CellStoreV1, MAX_CELL_BYTES,
 };
+
+mod tensor;
+pub use tensor::{CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1};
 
 static RESIDENCY_OWNER_SEQUENCE: AtomicU64 = AtomicU64::new(1);
 
@@ -215,9 +218,9 @@ impl CellResidencyV1 {
     /// Explicit routing prediction or cold-load preparation. A caller chooses
     /// the pinned closure; this method cannot substitute a peer's version.
     /// One original download deadline includes fetch, verification and staging.
-    /// Cancellation is observed before/after the complete fetch phase and at
-    /// local staging checkpoints. Fetch retains its original deadline/budgets;
-    /// it does not yet accept this caller's cancellation token.
+    /// Cancellation shares the existing fetch owner and local staging
+    /// checkpoints. Fetch retains its original absolute deadline and budgets;
+    /// cancellation does not undo already verified disposable cache writes.
     pub fn prefetch(
         &mut self,
         store: &CellStoreV1,
@@ -250,7 +253,7 @@ impl CellResidencyV1 {
             });
         }
         self.check_slot()?;
-        let fetch = fetch_closure(store, closure, &bounded, peers, limits)?;
+        let fetch = fetch_closure_cancellable(store, closure, &bounded, peers, limits, cancelled)?;
         self.prepare_cached(store, closure, &bounded, limits.release.deadline, cancelled)?;
         Ok(CellResidencyPrepareReportV1 {
             closure_id: bounded.closure_id,

@@ -279,8 +279,9 @@ impl Peer {
 
     /// A fixed-response TCP peer, with one finite deadline for every accept,
     /// read and write. Cancellation is requested only after a complete actual
-    /// chunk response has been written; the transport does not observe this
-    /// external flag until the caller's complete-fetch phase has returned.
+    /// chunk response has been written. Keep offering the remaining exact
+    /// bytes until the caller stops, so cancellation cannot borrow a provider
+    /// failure as evidence that the downloader stopped itself.
     fn cancel_after_first_chunk(fixture: &Fixture, cancelled: Arc<AtomicBool>) -> Self {
         let mut replies = BTreeMap::new();
         for (manifest, payload) in fixture.manifests.iter().zip(&fixture.payloads) {
@@ -306,7 +307,7 @@ impl Peer {
             for _ in 0..expected_requests {
                 let mut stream = loop {
                     if shutdown.load(Ordering::Acquire) {
-                        return Err(CellErrorV1::Invalid("fixed response peer stopped"));
+                        return Ok(chunk_responses);
                     }
                     crate::cell::network::remaining(cutoff)?;
                     match listener.accept() {
@@ -318,7 +319,16 @@ impl Peer {
                     }
                 };
                 let mut query = [0; 37];
-                crate::cell::network::read_deadline(&mut stream, &mut query, cutoff, None)?;
+                if let Err(error) =
+                    crate::cell::network::read_deadline(&mut stream, &mut query, cutoff, None)
+                {
+                    // A connection can already be queued when the client
+                    // observes cancellation and closes it before sending.
+                    if cancelled.load(Ordering::Acquire) {
+                        return Ok(chunk_responses);
+                    }
+                    return Err(error.into());
+                }
                 assert_eq!(&query[..4], b"TCQ1");
                 let digest: CellDigestV1 = query[5..].try_into().unwrap();
                 let bytes = replies
@@ -327,8 +337,16 @@ impl Peer {
                 let mut header = [0; 9];
                 header[..4].copy_from_slice(b"TCS1");
                 header[5..].copy_from_slice(&(bytes.len() as u32).to_be_bytes());
-                crate::cell::network::write_deadline(&mut stream, &header, cutoff)?;
-                crate::cell::network::write_deadline(&mut stream, &bytes, cutoff)?;
+                let sent = crate::cell::network::write_deadline(&mut stream, &header, cutoff)
+                    .and_then(|()| {
+                        crate::cell::network::write_deadline(&mut stream, &bytes, cutoff)
+                    });
+                if let Err(error) = sent {
+                    if cancelled.load(Ordering::Acquire) {
+                        return Ok(chunk_responses);
+                    }
+                    return Err(error.into());
+                }
                 if query[4] == 2 {
                     chunk_responses += 1;
                     if chunk_responses == 1 {
@@ -1008,7 +1026,7 @@ fn residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal() 
 }
 
 #[test]
-fn residency_tcp_mid_download_cancellation_is_observed_after_bounded_complete_fetch() {
+fn residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry() {
     let directory = tempfile::tempdir().unwrap();
     let origin =
         CellStoreV1::open(&directory.path().join("origin.sqlite"), cache_config()).unwrap();
@@ -1036,16 +1054,18 @@ fn residency_tcp_mid_download_cancellation_is_observed_after_bounded_complete_fe
         bounded,
         &cancelled,
     );
-    // This is deliberately a phase-boundary cancellation contract: subsequent
-    // bounded socket work completes after the first chunk triggers cancellation.
-    // It must not be described as immediate interruption of an in-flight fetch.
+    // The original owner token now reaches transport checkpoints. In-flight
+    // verified bytes may survive in the disposable cache; cancellation never
+    // selects or admits the new resident, and does not finish the whole fetch.
     let chunk_responses = provider.finish();
-    assert_eq!(chunk_responses, b.references() as u64);
-    assert!(chunk_responses > 1);
+    assert!(chunk_responses >= 1);
+    assert!(chunk_responses < b.references() as u64);
     assert!(cancelled.load(Ordering::Acquire));
     assert!(matches!(
         result,
-        Err(CellErrorV1::Invalid("resident operation cancelled"))
+        Err(CellErrorV1::Io(error))
+            if error.kind() == io::ErrorKind::Interrupted
+                && error.to_string().contains("CELL_OPERATION_CANCELLED")
     ));
     assert_eq!(
         manager.chunks.keys().copied().collect::<Vec<_>>(),
@@ -1055,25 +1075,44 @@ fn residency_tcp_mid_download_cancellation_is_observed_after_bounded_complete_fe
     assert_eq!(manager.selection(), Some(selected));
     assert!(manager.with_local(&b.expected, deadline(), |_| ()).is_err());
     a.assert_local(&manager);
-    consumer
+    assert!(consumer
         .verify_release_complete(b.closure.release(), limits().release)
-        .unwrap();
+        .is_err());
+    let mut cached_chunks = 0;
+    let mut missing_bytes = 0;
+    for chunk in b.manifests.iter().flat_map(CellManifestV1::chunks) {
+        if consumer.chunk(chunk.sha256).unwrap().is_some() {
+            cached_chunks += 1;
+        } else {
+            missing_bytes += u64::from(chunk.size);
+        }
+    }
+    assert!(missing_bytes > 0);
     cancelled.store(false, Ordering::Release);
+    let retry_provider = Peer::start(&directory.path().join("origin.sqlite"));
     let retry = manager
         .prefetch(
             &consumer,
             &b.closure,
             &b.expected,
-            &[],
+            &[retry_provider.address],
             limits(),
             &cancelled,
         )
         .unwrap()
         .fetch
         .expect("a new resident closure retains its acquisition report");
-    assert_eq!(retry.release.connection_attempts, 0);
-    assert_eq!(retry.release.downloaded_bytes, 0);
-    assert_eq!(retry.release.cached_chunks, b.references());
+    assert!(retry_provider.finish() > 0);
+    assert!(retry.release.connection_attempts > 0);
+    assert_eq!(retry.release.downloaded_bytes, missing_bytes);
+    assert_eq!(retry.release.cached_chunks, cached_chunks);
+    assert_eq!(
+        retry.release.cached_chunks + retry.release.downloaded_chunks,
+        b.references()
+    );
+    consumer
+        .verify_release_complete(b.closure.release(), limits().release)
+        .unwrap();
     assert_eq!(manager.selection(), Some(selected));
     assert_eq!(
         usage(&manager),

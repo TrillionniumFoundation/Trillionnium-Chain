@@ -154,6 +154,7 @@ fn real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets(
     let responses = ResponseBudget::new(bytes);
     let overall = Instant::now() + Duration::from_secs(10);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall,
         requests_left: &requests_left,

@@ -80,6 +80,7 @@ pub fn fetch_discovered_cell_to_file(
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.request_timeout,
         overall,
         requests_left: &requests_left,
@@ -367,6 +368,7 @@ pub fn announce_cell_provider(
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.request_timeout,
         overall,
         requests_left: &requests_left,

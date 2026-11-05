@@ -276,26 +276,69 @@ The local replica declarations are not proof of the declared complete copies.
 No erasure-code threshold, automatic renewal service or infinite retention
 promise is implemented.
 
-## Ordinary owner integration still required
+## Ordinary owner composition and remaining runtime integration
 
-The Node's current funded adapter in `store/storage_service.rs` accepts the
-per-object `CellRetentionStoreV1` and its original physical contract. It does not
-yet select the complete `CellReleaseRetentionStoreV2` catalog for an ordinary
-funded release lifecycle. The local catalog's complete-root protection is real,
-but it is not a claim that every external payment or release owner has admitted
-the complete graph. Existing task-escrow observations do not themselves lock
-coins against cancellation/reorganization or pay a provider after ACK.
+The Node's `retain_native_cell_release` composes its existing funding owner and
+M12 journal with the complete `CellReleaseRetentionStoreV2` catalog. A distinct
+complete-release task binds the exact TCA2 commitment and responsible owner;
+each physical member retains its own original task, claim, subject, operation
+and immutable lease. These are separately priced obligations, not additional
+copies or two observations of the same payment. No indivisible task is silently
+split or reused to fund multiple members. The entire canonical member set,
+lease coverage, identities and current funding are checked before a new
+reservation. M12 preflight reuses its original event validator on an in-memory
+snapshot and grants no reservation or authority: actual mutations repeat their
+original checks.
 
-Similarly, `CellResidencyV1` supplies immutable TCD1 byte views and process-local
-selection hints. The ordinary Hepta owner must verify the independently required
-material roster and tensor/runtime compatibility on those same bytes, then
-enforce current generation/withdrawal, resource admission and FinalUse at actual
-use. Neither a TMA1 completion marker nor a local retained root grants this
-authority. Independent custody, funded renewals and actual loader integration
-retain their original qualification gates.
+The complete pending root protects its dependencies before member dispatch.
+An original `New` member can copy once; `Pending` and `Done` only reread the
+retained target. An uncertain outer effect cannot redispatch previously
+unrecorded work. Missing bytes require a separately funded repair bound to the
+same complete root, original member and repair cutoff. Retirement reobserves
+the original completed effects and one current native anchor before using the
+existing rooted GC. Reorganization does not erase local effects or turn a
+historical task into new funding. These cooperating stores are not one atomic
+transaction. Partial effects and reservations remain charged and reviewable.
+Existing task-escrow observations still do not lock coins against cancellation
+or reorganization, pay a provider after ACK, or automatically extend a lease.
+
+`CellResidencyV1::admit_local_tensor_model` now verifies an independently pinned
+TMA1 and the supplied loader context directly against already resident immutable
+chunks. It reuses the complete strict tensor parser and full-file hash checks,
+returning borrowed file/tensor views with exact dtype, shape and byte ranges.
+The ranges exclude headers and other tensors and can span chunk boundaries.
+The borrow prevents eviction or switching while those views are used; no
+payload `Arc`, cache handle or network capability escapes. Safe F32 scalar
+decoding is provided without aligned pointer casts. F16/BF16 remain exact dense
+bytes for a separately chosen numerical backend. Failed full-model admission
+returns no partial typed handle and changes no residency or local selection.
+
+This is tensor byte admission and local CPU consumption, not a GPU/device
+allocation owner or a complete Hepta model executor. The ordinary Hepta owner
+must still check architecture/runtime policy, current generation/withdrawal,
+resource admission and FinalUse at actual use. Neither a TMA1 completion marker
+nor a borrowed typed view grants that authority. Independent custody, funded
+renewals and real model load/query/unload retain their original gates.
+
+The explicit prefetch transport now observes the caller's cancellation in its
+original shared request owner. Once observed, cancellation remains terminal for
+that session even if the external flag is cleared. It stops later frames and
+members without quarantining an honest peer or refunding already received
+bytes. Short socket polls do not renew deadlines, redial or create new budgets.
+Connect, filesystem and SQLite work retain their cooperative bounded semantics.
+
+Bounded V1, inventory and persistent V2 providers expose an optional Ready
+callback after all reader checks and nonblocking listener setup. CLI
+`--announce-ready true` emits a separate `trnm.cell.ready.v1` event; the default
+CLI transcript is unchanged. No probe connection is consumed. Ready is a local
+startup observation within the original service budget, not sustained
+availability, proof of possession or independent custody.
 
 The [completion-boundary regression record](../../../../evidence/cell-storage-owner-boundaries-20261104/README.md)
 keeps the original failed cases and exact-source reproduction entry point.
+The [runtime composition record](../../../../evidence/cell-storage-runtime-20261104/README.md)
+records this continuation's original cancellation failure, typed admission,
+funded release composition, Ready handoff and finite TCX1 workload observations.
 
 ## Verification and remaining acceptance
 

@@ -1,0 +1,231 @@
+{
+  "schema": "trnm-cell-storage-runtime-verification-v1",
+  "status": "development_observations_retained_exact_source_verification_pending",
+  "original_source_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+  "concurrent_evidence_parent_preserved": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "original_cancellation_failure": {
+    "baseline": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+    "scope": "working-tree test-only regression on original source",
+    "selector": "cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels",
+    "result": "FAIL",
+    "passed": 0,
+    "failed": 1,
+    "expected_and_observed_failure": "original prefetch acquired second payload after external cancellation",
+    "input_files": {
+      "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs": "6032171ccb22582e3f4c70704282616824ee03e9840fe3abba9bcaa65f341078",
+      "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "1c0c626f1c9671106ca559925e948e290c8c67086f8565c1c76c83de2b3248a5",
+      "trillionnium/crates/trnm-data-availability/src/cell/residency.rs": "83eac45643808a0fc579c7b8642f35af0e6d4d671564daa15162da5a2f37ee72",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+    },
+    "logs": {
+      "cancellation-red.log": "70c5e3356e4e4baf0d15daa2333b6995c7acba17cd6f15f283ffa0fa313eb55e",
+      "cancellation-red.patch": "68d0100eca88559fe446b39593d9caf951e417d57fd66997ef1b45dbd450c7d2"
+    }
+  },
+  "development_m09": {
+    "scope": "working-tree development, not final committed source",
+    "passed": 350,
+    "failed": 0,
+    "ignored": 0,
+    "log_sha256": "c95dd1139f38cb315c4829420d18cf028365874813308c54ccc337fa4c9b3f7a"
+  },
+  "development_workloads": {
+    "scope": "finite synthetic loopback, not final committed source",
+    "source_sha256": "0498e64644c31c62c10ced7ce7c77d16349b55c017c336b6cd47f62085e13ea5",
+    "status": "complete",
+    "groups": [
+      {
+        "workload": "identical",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 331776,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 299008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 0
+            }
+          },
+          "key_logical_bytes": 544,
+          "manifest_rows": 1,
+          "manifest_wire_bytes": 827,
+          "total_logical_bytes": 263515,
+          "unique_chunk_rows": 16,
+          "unique_payload_bytes": 262144
+        },
+        "provider_response_bytes": 0
+      },
+      {
+        "workload": "single-chunk-sparse-change",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 495840,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 430080
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 32992
+            }
+          },
+          "key_logical_bytes": 1056,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 401715,
+          "unique_chunk_rows": 24,
+          "unique_payload_bytes": 393216
+        },
+        "provider_response_bytes": 131144
+      },
+      {
+        "workload": "chunk-reordering",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 360600,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 307200
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 20632
+            }
+          },
+          "key_logical_bytes": 800,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 270387,
+          "unique_chunk_rows": 16,
+          "unique_payload_bytes": 262144
+        },
+        "provider_response_bytes": 0
+      },
+      {
+        "workload": "one-to-eight-byte-shift",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 2536368,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 2347008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 156592
+            }
+          },
+          "key_logical_bytes": 4896,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 2371635,
+          "unique_chunk_rows": 144,
+          "unique_payload_bytes": 2359296
+        },
+        "provider_response_bytes": 2098304
+      },
+      {
+        "workload": "dense-full-change",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 2536368,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 2347008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 156592
+            }
+          },
+          "key_logical_bytes": 4896,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 2371635,
+          "unique_chunk_rows": 144,
+          "unique_payload_bytes": 2359296
+        },
+        "provider_response_bytes": 2098304
+      }
+    ]
+  },
+  "qualifications": {
+    "whole_model_semantics": false,
+    "ordinary_model_runtime": false,
+    "device_residency": false,
+    "independent_wan": false,
+    "mature_dht_and_independent_administration": false,
+    "automatic_funded_renewal": false,
+    "independent_holding_proof": false,
+    "native_coin_lock_or_payout": false,
+    "production_activation": false
+  },
+  "concurrent_source_preserved": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+  "precomposition_source": {
+    "commit": "7f766ae867ddb73653cc98d386c74e21bb4d3b48",
+    "tree": "094208d174a571aed90910aead625fa7bb7ccd4c",
+    "clippy": "PASS workspace/all-targets -D warnings",
+    "python_controls": 138,
+    "native_m09_passed": 350,
+    "native_docs_passed": 9,
+    "native_m12_passed": 46,
+    "node_tests_executed": 0,
+    "native_exit_code": 101,
+    "native_recorder_status": "record_failed",
+    "node_compile_signal": "SIGKILL",
+    "shared_cgroup_oom_kill_before": 4,
+    "shared_cgroup_oom_kill_after": 5,
+    "scope": "precomposition observations only; no composed-source native acceptance"
+  },
+  "attempt_files": {
+    "cell-runtime-checks.json": "af1335dfc1bdd06daa5e1d1c5ac7097e6fc64ba1b3555ee2020131b886fe1eb8",
+    "cell-runtime-clippy-canonical.json": "893790366aefc04da7da1e876c868235f97cf20db8c832c3080be79af7ed5490",
+    "cell-runtime-clippy-canonical.log": "d38da737ec06bccc612352e87cc9c50158b17697d95b4b434e6357ea448b6485",
+    "cell-runtime-native-canonical.json": "0c18b5034f6a5955806f6475f2be7ce374dd2c25d977ba49a260c6fce92f60ae",
+    "cell-runtime-native-canonical.log": "1c9b0e46b5913d07648904ad6012319c2f2ba6c3cab42f720a2588c03036ac15",
+    "node-storage-development.log": "24eb2f84563aed8b8a79df894784e428175299dbe2a48c7153cf76f59c3df112",
+    "object-recovery.json": "50a35d415d8c5bc66dc7cb9e3f906b2c53068195b9daae77472428902ab4300a",
+    "source-after-object-recovery.json": "4df3536a25afefd526f2e29b62fba65aabd4b8506b9aaf1357742192eaf0b3d2",
+    "sqlite-canonical-build.log": "a2913e2f4ad50a6871f47beeebf5f7262cfcff2bbd95dd7592d89f5a969afe4f",
+    "sqlite-rustup-build.log": "71b9ebdaf71c12f76856c238472c74db68712926cdfe1a5c711bb0b336d2141e",
+    "cell-runtime-checks.log": "4691556b01eb8547b8f183bfa89f3a62e500bacbe0e7e89602455bff3cf0314e"
+  }
+}

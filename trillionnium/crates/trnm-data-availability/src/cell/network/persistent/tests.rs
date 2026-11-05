@@ -289,6 +289,7 @@ fn interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allo
     let connections_left = AtomicU64::new(2);
     let responses = ResponseBudget::new(12);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.peer.request_timeout,
         overall: Instant::now() + Duration::from_secs(5),
         requests_left: &connections_left,
@@ -326,6 +327,7 @@ fn old_response_magic_is_rejected_without_namespace_fallback_or_redial() {
     let connections_left = AtomicU64::new(1);
     let responses = ResponseBudget::new(64);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.peer.request_timeout,
         overall: Instant::now() + Duration::from_secs(5),
         requests_left: &connections_left,
@@ -365,6 +367,7 @@ fn reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial() 
     let responses = ResponseBudget::new(64);
     let overall = Instant::now() + Duration::from_secs(5);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(1),
         overall,
         requests_left: &connections_left,
@@ -629,6 +632,7 @@ fn exhausted_while_waiting_for_connection(reused: bool, quarantined: bool) {
     let connections_left = AtomicU64::new(limits.peer.max_connections);
     let responses = ResponseBudget::new(if reused { 20 } else { 10 });
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.peer.request_timeout,
         overall: Instant::now() + Duration::from_secs(10),
         requests_left: &connections_left,
@@ -774,6 +778,7 @@ fn temporary_response_reservation_after_connection_wait_is_not_exhaustion() {
     let deadline = Instant::now() + Duration::from_secs(5);
     let reserved = responses.reserve(10, deadline).unwrap();
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(5),
         overall: deadline,
         requests_left: &connections_left,
@@ -947,4 +952,64 @@ fn exhausted_service_still_joins_an_already_admitted_incomplete_frame() {
     assert_eq!(report.serving.peak_active_workers, 2);
     assert_eq!(report.serving.completed_requests, 1);
     assert_eq!(report.serving.sent_response_bytes, 9 + 16_384);
+}
+
+#[test]
+fn original_cancellation_stops_waiting_pool_request_without_new_frame_or_dial() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let mut limits = client_limits();
+    limits.peer.request_timeout = Duration::from_secs(2);
+    let pool = ConnectionPool::new(&[address], limits);
+    let connections_left = AtomicU64::new(limits.peer.max_connections);
+    let responses = ResponseBudget::new(limits.peer.max_response_bytes);
+    let flag = AtomicBool::new(false);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let transport = RequestContext {
+        timeout: limits.peer.request_timeout,
+        overall: deadline,
+        requests_left: &connections_left,
+        responses: &responses,
+        cancelled: Some(&flag),
+    };
+    // Hold the actual pool slot throughout cancellation. No socket exists,
+    // but the frame attempt has already consumed its original reservation.
+    let slot = pool.peers[0].1.lock().unwrap();
+    let (observed_reserved, result) = thread::scope(|scope| {
+        let worker = scope.spawn(|| pool.request(address, 2, [1; 32], 64, &transport));
+        while pool.requests_left.load(Ordering::Relaxed) == limits.max_requests
+            && Instant::now() < deadline
+        {
+            thread::sleep(Duration::from_millis(1));
+        }
+        let observed_reserved = pool.requests_left.load(Ordering::Relaxed);
+        flag.store(true, Ordering::Release);
+        (observed_reserved, worker.join().unwrap())
+    });
+    drop(slot);
+    assert_eq!(observed_reserved, limits.max_requests - 1);
+    assert_eq!(result.1, 1);
+    assert!(matches!(result.0, Err(CellErrorV1::Io(error))
+        if error.kind() == io::ErrorKind::Interrupted
+            && error.to_string().contains("CELL_OPERATION_CANCELLED")));
+    flag.store(false, Ordering::Release);
+    assert!(matches!(
+        pool.request(address, 2, [1; 32], 64, &transport).0,
+        Err(CellErrorV1::Io(error)) if error.kind() == io::ErrorKind::Interrupted
+    ));
+    assert_eq!(
+        pool.requests_left.load(Ordering::Relaxed),
+        limits.max_requests - 1
+    );
+    assert_eq!(
+        connections_left.load(Ordering::Relaxed),
+        limits.peer.max_connections
+    );
+    assert_eq!(responses.received().unwrap(), 0);
+    assert!(!responses.is_quarantined(address).unwrap());
+    listener.set_nonblocking(true).unwrap();
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        io::ErrorKind::WouldBlock
+    );
 }

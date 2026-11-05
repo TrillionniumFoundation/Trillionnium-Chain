@@ -20,16 +20,19 @@ use super::{
 };
 
 mod availability;
+#[cfg(test)]
+mod cancellation_tests;
 mod persistent;
 mod serving;
 pub use persistent::{
     fetch_cell_persistent, fetch_cell_persistent_to_file, serve_cells_persistent,
-    CellPersistentFetchReportV2, CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2,
-    CellPersistentServeReportV2,
+    serve_cells_persistent_with_ready, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
+    CellPersistentServeLimitsV2, CellPersistentServeReportV2,
 };
 pub use serving::{
-    serve_cells_bounded, serve_cells_bounded_with_availability, CellServeLimitsV1,
-    CellServeReportV1,
+    serve_cells_bounded, serve_cells_bounded_with_availability,
+    serve_cells_bounded_with_availability_and_ready, serve_cells_bounded_with_ready,
+    CellServeLimitsV1, CellServeReportV1,
 };
 
 /// Explicit finite limits for this configured-peer pilot. There is no peer
@@ -194,6 +197,7 @@ fn fetch_cell_inner(
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.request_timeout,
         overall: deadline,
         requests_left: &requests_left,
@@ -304,7 +308,7 @@ impl CellFetchTransportV2 {
 
 /// One owned reservation and connection pool for an entire release closure.
 /// Member calls borrow this state; they cannot renew any counter or deadline.
-pub(super) struct NetworkFetchSession {
+pub(super) struct NetworkFetchSession<'a> {
     peers: Vec<SocketAddr>,
     limits: CellPeerLimitsV1,
     profile: CellFetchTransportV2,
@@ -312,14 +316,16 @@ pub(super) struct NetworkFetchSession {
     connections_left: AtomicU64,
     responses: ResponseBudget,
     pool: Option<persistent::ConnectionPool>,
+    cancelled: Option<&'a AtomicBool>,
 }
 
-impl NetworkFetchSession {
+impl<'a> NetworkFetchSession<'a> {
     pub(super) fn new(
         peers: &[SocketAddr],
         limits: CellPeerLimitsV1,
         profile: CellFetchTransportV2,
         deadline: Instant,
+        cancelled: Option<&'a AtomicBool>,
     ) -> CellResultV1<Self> {
         profile.validate(limits)?;
         require(
@@ -349,6 +355,7 @@ impl NetworkFetchSession {
             connections_left: AtomicU64::new(limits.max_connections),
             responses: ResponseBudget::new(limits.max_response_bytes),
             pool,
+            cancelled,
         })
     }
 
@@ -358,7 +365,12 @@ impl NetworkFetchSession {
             overall: self.deadline,
             requests_left: &self.connections_left,
             responses: &self.responses,
+            cancelled: self.cancelled,
         }
+    }
+
+    pub(super) fn check_cancelled(&self) -> CellResultV1<()> {
+        Ok(self.context().check_cancelled()?)
     }
 
     pub(super) fn manifest(
@@ -424,6 +436,7 @@ fn fetch_cell_with_schedule(
     schedule: FetchSchedule<'_>,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
     let deadline = transport.overall;
+    transport.check_cancelled()?;
     let requests_left = transport.requests_left;
     let responses = transport.responses;
     let (manifest, rejected) = match schedule.requests {
@@ -454,6 +467,7 @@ fn fetch_cell_with_schedule(
     // declared lengths must not be hidden by the deduplication.
     let mut seen: BTreeMap<CellDigestV1, (u32, bool, usize)> = BTreeMap::new();
     for (index, expected) in manifest.chunks().iter().enumerate() {
+        transport.check_cancelled()?;
         require(Instant::now() <= deadline, "cache scan deadline")?;
         if let Some((size, cached, positions)) = seen.get_mut(&expected.sha256) {
             require(*size == expected.size, "chunk digest length conflict")?;
@@ -475,6 +489,7 @@ fn fetch_cell_with_schedule(
         }
     }
     let availability = if schedule.rarest_first && !missing.is_empty() {
+        transport.check_cancelled()?;
         let (available, rejected) = availability::observe(&manifest, &missing, peers, transport)?;
         report.rejected_responses += rejected;
         // An unavailable/stale hint cannot prevent an ordinary fallback fetch.
@@ -500,6 +515,9 @@ fn fetch_cell_with_schedule(
             let requests = schedule.requests;
             scope.spawn(move || {
                 while !cancelled.load(Ordering::Relaxed) {
+                    if transport.check_cancelled().is_err() {
+                        break;
+                    }
                     let index = next.fetch_add(1, Ordering::Relaxed);
                     let Some((order, chunk)) = missing.get(index) else {
                         break;
@@ -525,12 +543,14 @@ fn fetch_cell_with_schedule(
         let mut pending: Vec<(&CellChunkV1, Vec<u8>, SocketAddr, usize)> =
             Vec::with_capacity(MAX_CHUNK_COMMIT_BATCH);
         let mut flush = |pending: &mut Vec<(&CellChunkV1, Vec<u8>, SocketAddr, usize)>| {
+            transport.check_cancelled()?;
             require(Instant::now() <= deadline, "chunk persistence deadline")?;
             let chunks: Vec<_> = pending
                 .iter()
                 .map(|(chunk, bytes, _, _)| (*chunk, bytes.as_slice()))
                 .collect();
             store.put_chunk_batch_with_deadline(&chunks, Some(deadline))?;
+            transport.check_cancelled()?;
             for (chunk, bytes, peer, rejected) in pending.drain(..) {
                 report.downloaded_bytes += bytes.len() as u64;
                 report.downloaded_chunks += seen[&chunk.sha256].2;
@@ -578,6 +598,7 @@ fn fetch_cell_with_schedule(
         CellErrorV1::Io(error) => unavailable_with_transport_cause(transport, Some(error)),
         error => responses.annotate_error(error),
     })?;
+    transport.check_cancelled()?;
     require(Instant::now() <= deadline, "fetch deadline")?;
     if let Some(output) = output {
         // Materialization itself freshly hashes every cached chunk, verifies
@@ -588,6 +609,7 @@ fn fetch_cell_with_schedule(
         store.verify_complete_until(&manifest, deadline)?;
         require(Instant::now() <= deadline, "fetch deadline")?;
     }
+    transport.check_cancelled()?;
     report.connection_attempts = limits.max_connections - requests_left.load(Ordering::Relaxed);
     report.received_response_bytes = responses.received()?;
     Ok((manifest, report))
@@ -624,6 +646,7 @@ fn fetch_manifest_via(
     transport: &RequestContext<'_>,
     requests: &dyn ObjectRequests,
 ) -> CellResultV1<(CellManifestV1, usize, bool)> {
+    transport.check_cancelled()?;
     let mut rejected = 0;
     let cached = store.manifest_with_deadline(pinned, Some(transport.overall))?;
     let (manifest, initial_cache_hit) = match cached {
@@ -632,6 +655,7 @@ fn fetch_manifest_via(
             let mut received = None;
             let mut last_io = None;
             for peer in peers {
+                transport.check_cancelled()?;
                 if transport.responses.is_quarantined(*peer)? {
                     continue;
                 }
@@ -639,7 +663,9 @@ fn fetch_manifest_via(
                     requests.request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport);
                 rejected += attempts - 1;
                 let candidate = candidate.and_then(|wire| {
+                    transport.check_cancelled()?;
                     remaining(transport.overall)?;
+                    transport.check_cancelled()?;
                     // A complete supplied object failed its pinned contract.
                     // This is distinct from missing bytes or interrupted I/O.
                     let manifest = CellManifestV1::decode(&wire).and_then(|manifest| {
@@ -662,6 +688,7 @@ fn fetch_manifest_via(
                 });
                 match candidate {
                     Ok(wire) => {
+                        transport.check_cancelled()?;
                         // A valid response cannot turn a local persistence
                         // failure into peer unavailability or budget exhaustion.
                         received = Some(store.put_manifest_with_deadline(
@@ -689,6 +716,7 @@ fn fetch_manifest_via(
         manifest.size() <= limits.max_cell_bytes,
         "cell exceeds byte budget",
     )?;
+    transport.check_cancelled()?;
     Ok((manifest, rejected, initial_cache_hit))
 }
 
@@ -726,6 +754,7 @@ fn download_chunk_via(
         .collect();
     indices.sort_by_key(|index| preferred & (1_u8 << *index) == 0);
     for index in indices {
+        transport.check_cancelled()?;
         let peer = peers[index];
         if transport.responses.is_quarantined(peer)? {
             continue;
@@ -734,6 +763,7 @@ fn download_chunk_via(
             requests.request(peer, 2, chunk.sha256, chunk.size as usize, transport);
         rejected += attempts - 1;
         let candidate = candidate.and_then(|bytes| {
+            transport.check_cancelled()?;
             if let Err(error) = verify_chunk_with_deadline(chunk, &bytes, Some(transport.overall)) {
                 // Local work expiry is not evidence that the peer supplied bad
                 // bytes. Keep quarantine tied to the pinned chunk contract.
@@ -745,6 +775,7 @@ fn download_chunk_via(
                 }
                 return Err(error);
             }
+            transport.check_cancelled()?;
             Ok(bytes)
         });
         match candidate {
@@ -765,6 +796,9 @@ fn unavailable_with_transport_cause(
     transport: &RequestContext<'_>,
     last_io: Option<io::Error>,
 ) -> CellErrorV1 {
+    if let Err(error) = transport.check_cancelled() {
+        return CellErrorV1::Io(error);
+    }
     match transport.responses.annotate_error(CellErrorV1::Unavailable) {
         CellErrorV1::Unavailable => last_io
             .map(CellErrorV1::Io)
@@ -908,12 +942,22 @@ pub(super) struct RequestContext<'a> {
     pub(super) overall: Instant,
     pub(super) requests_left: &'a AtomicU64,
     pub(super) responses: &'a ResponseBudget,
+    pub(super) cancelled: Option<&'a AtomicBool>,
+}
+
+impl RequestContext<'_> {
+    fn check_cancelled(&self) -> io::Result<()> {
+        self.responses.check_cancelled(self.cancelled)
+    }
 }
 
 pub(super) struct ResponseBudget {
     maximum: u64,
     state: Mutex<ResponseBytes>,
     returned: Condvar,
+    // Cancellation belongs to the original reservation, so resetting the
+    // caller's flag cannot revive a session after any worker observed it.
+    cancelled: AtomicBool,
 }
 
 struct ResponseBytes {
@@ -938,7 +982,22 @@ impl ResponseBudget {
                 quarantined: BTreeSet::new(),
             }),
             returned: Condvar::new(),
+            cancelled: AtomicBool::new(false),
         }
+    }
+
+    fn check_cancelled(&self, external: Option<&AtomicBool>) -> io::Result<()> {
+        if external.is_some_and(|flag| flag.load(Ordering::Acquire)) {
+            self.cancelled.store(true, Ordering::Release);
+            self.returned.notify_all();
+        }
+        if self.cancelled.load(Ordering::Acquire) {
+            return Err(io::Error::new(
+                io::ErrorKind::Interrupted,
+                "CELL_OPERATION_CANCELLED",
+            ));
+        }
+        Ok(())
     }
 
     pub(super) fn received(&self) -> io::Result<u64> {
@@ -991,11 +1050,21 @@ impl ResponseBudget {
     }
 
     fn reserve(&self, maximum: usize, deadline: Instant) -> io::Result<usize> {
+        self.reserve_controlled(maximum, deadline, None)
+    }
+
+    fn reserve_controlled(
+        &self,
+        maximum: usize,
+        deadline: Instant,
+        cancelled: Option<&AtomicBool>,
+    ) -> io::Result<usize> {
         let mut state = self
             .state
             .lock()
             .map_err(|_| io::Error::other("cell response budget poisoned"))?;
         loop {
+            self.check_cancelled(cancelled)?;
             let count = state.available.min(maximum as u64);
             if count != 0 {
                 state.available -= count;
@@ -1010,7 +1079,7 @@ impl ResponseBudget {
             // temporary reservations are not proof of actual exhaustion.
             state = self
                 .returned
-                .wait_timeout(state, remaining(deadline)?)
+                .wait_timeout(state, io_interval(deadline, cancelled.is_some())?)
                 .map_err(|_| io::Error::other("cell response budget poisoned"))?
                 .0;
         }
@@ -1034,12 +1103,23 @@ impl ResponseBudget {
         bytes: &mut [u8],
         deadline: Instant,
     ) -> io::Result<usize> {
-        let reserved = self.reserve(bytes.len(), deadline)?;
+        self.read_controlled(stream, bytes, deadline, None)
+    }
+
+    fn read_controlled(
+        &self,
+        stream: &mut TcpStream,
+        bytes: &mut [u8],
+        deadline: Instant,
+        cancelled: Option<&AtomicBool>,
+    ) -> io::Result<usize> {
+        let reserved = self.reserve_controlled(bytes.len(), deadline, cancelled)?;
         // No mutex is held during blocking socket I/O. Limit the actual read
         // buffer before receiving bytes, so concurrent workers cannot overshoot.
         // Always refund unused capacity, including EOF, Interrupted and errors.
         let result = (|| {
-            stream.set_read_timeout(Some(remaining(deadline)?))?;
+            self.check_cancelled(cancelled)?;
+            stream.set_read_timeout(Some(io_interval(deadline, cancelled.is_some())?))?;
             stream.read(&mut bytes[..reserved])
         })();
         self.complete(reserved, result.as_ref().copied().unwrap_or(0))?;
@@ -1145,6 +1225,7 @@ fn request_frame(
     transport: &RequestContext<'_>,
     phase: &mut &'static str,
 ) -> CellResultV1<Vec<u8>> {
+    transport.check_cancelled()?;
     require(
         !transport.responses.is_quarantined(peer)?,
         "cell peer quarantined",
@@ -1161,6 +1242,7 @@ fn request_frame(
     let deadline = transport.overall.min(Instant::now() + transport.timeout);
     *phase = "connect";
     let mut stream = TcpStream::connect_timeout(&peer, remaining(deadline)?)?;
+    transport.check_cancelled()?;
     exchange_frame(
         &mut stream,
         ObjectFrame {
@@ -1198,10 +1280,16 @@ fn exchange_frame(
         maximum,
     } = frame;
     *phase = "request-write";
-    write_deadline(stream, query, deadline)?;
+    write_request_deadline(stream, query, deadline, transport)?;
     let mut header = [0; 9];
     *phase = "response-header";
-    read_deadline(stream, &mut header, deadline, Some(transport.responses))?;
+    read_deadline_controlled(
+        stream,
+        &mut header,
+        deadline,
+        Some(transport.responses),
+        transport.cancelled,
+    )?;
     let length = u32::from_be_bytes(
         header[5..]
             .try_into()
@@ -1220,7 +1308,14 @@ fn exchange_frame(
     }
     let mut bytes = vec![0; length];
     *phase = "response-body";
-    read_deadline(stream, &mut bytes, deadline, Some(transport.responses))?;
+    read_deadline_controlled(
+        stream,
+        &mut bytes,
+        deadline,
+        Some(transport.responses),
+        transport.cancelled,
+    )?;
+    transport.check_cancelled()?;
     Ok(bytes)
 }
 
@@ -1233,14 +1328,42 @@ pub(super) fn remaining(deadline: Instant) -> io::Result<Duration> {
 
 pub(super) fn read_deadline(
     stream: &mut TcpStream,
-    mut bytes: &mut [u8],
+    bytes: &mut [u8],
     deadline: Instant,
     budget: Option<&ResponseBudget>,
 ) -> io::Result<()> {
+    read_deadline_controlled(stream, bytes, deadline, budget, None)
+}
+
+// This interval observes a caller's cancellation without changing the
+// absolute request deadline. A polling timeout is never a retry, redial or
+// new response allowance. Connect, filesystem and SQLite calls remain
+// cooperative under their original finite deadlines.
+fn io_interval(deadline: Instant, controlled: bool) -> io::Result<Duration> {
+    remaining(deadline).map(|remaining| {
+        if controlled {
+            remaining.min(Duration::from_millis(10))
+        } else {
+            remaining
+        }
+    })
+}
+
+fn read_deadline_controlled(
+    stream: &mut TcpStream,
+    mut bytes: &mut [u8],
+    deadline: Instant,
+    budget: Option<&ResponseBudget>,
+    cancelled: Option<&AtomicBool>,
+) -> io::Result<()> {
     while !bytes.is_empty() {
-        stream.set_read_timeout(Some(remaining(deadline)?))?;
+        if let Some(budget) = budget {
+            budget.check_cancelled(cancelled)?;
+        }
+        stream.set_read_timeout(Some(io_interval(deadline, cancelled.is_some())?))?;
         let read = match budget {
-            Some(budget) => budget.read(stream, bytes, deadline),
+            Some(budget) if cancelled.is_none() => budget.read(stream, bytes, deadline),
+            Some(budget) => budget.read_controlled(stream, bytes, deadline, cancelled),
             None => stream.read(bytes),
         };
         match read {
@@ -1252,10 +1375,57 @@ pub(super) fn read_deadline(
             }
             Ok(count) => bytes = &mut bytes[count..],
             Err(error) if error.kind() == io::ErrorKind::Interrupted => (),
+            Err(error)
+                if cancelled.is_some()
+                    && matches!(
+                        error.kind(),
+                        io::ErrorKind::WouldBlock | io::ErrorKind::TimedOut
+                    ) =>
+            {
+                // Recheck the original cancellation/deadline at the loop
+                // boundary, retaining the same partially filled frame.
+            }
             Err(error) => return Err(error),
         }
     }
+    if let Some(budget) = budget {
+        budget.check_cancelled(cancelled)?;
+    }
     Ok(())
+}
+
+fn write_request_deadline(
+    stream: &mut TcpStream,
+    mut bytes: &[u8],
+    deadline: Instant,
+    transport: &RequestContext<'_>,
+) -> io::Result<()> {
+    transport.check_cancelled()?;
+    if transport.cancelled.is_none() {
+        return write_deadline(stream, bytes, deadline);
+    }
+    while !bytes.is_empty() {
+        transport.check_cancelled()?;
+        stream.set_write_timeout(Some(io_interval(deadline, true)?))?;
+        match stream.write(bytes) {
+            Ok(0) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::WriteZero,
+                    "cell response stalled",
+                ))
+            }
+            Ok(count) => bytes = &bytes[count..],
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    io::ErrorKind::Interrupted
+                        | io::ErrorKind::WouldBlock
+                        | io::ErrorKind::TimedOut
+                ) => {}
+            Err(error) => return Err(error),
+        }
+    }
+    transport.check_cancelled()
 }
 
 pub(super) fn write_deadline(
@@ -1360,6 +1530,7 @@ mod budget_tests {
             let responses = ResponseBudget::new(1024);
             let requests_left = AtomicU64::new(2);
             let transport = RequestContext {
+                cancelled: None,
                 timeout: Duration::from_secs(1),
                 overall: Instant::now() + Duration::from_secs(2),
                 requests_left: &requests_left,
@@ -1706,6 +1877,7 @@ mod budget_tests {
             let responses = ResponseBudget::new(64);
             let requests_left = AtomicU64::new(connections);
             let transport = RequestContext {
+                cancelled: None,
                 timeout: Duration::from_secs(1),
                 overall: Instant::now() + window,
                 requests_left: &requests_left,
@@ -1744,6 +1916,7 @@ mod budget_tests {
             let responses = ResponseBudget::new(maximum);
             let requests_left = AtomicU64::new(2);
             let transport = RequestContext {
+                cancelled: None,
                 timeout: Duration::from_secs(1),
                 overall: Instant::now() + Duration::from_secs(2),
                 requests_left: &requests_left,
@@ -1784,6 +1957,7 @@ mod budget_tests {
             let responses = ResponseBudget::new(64);
             let requests_left = AtomicU64::new(2);
             let transport = RequestContext {
+                cancelled: None,
                 timeout: Duration::from_secs(1),
                 overall: Instant::now() + Duration::from_secs(2),
                 requests_left: &requests_left,
@@ -1816,6 +1990,7 @@ mod budget_tests {
         let responses = ResponseBudget::new(64);
         let requests_left = AtomicU64::new(10);
         let transport = RequestContext {
+            cancelled: None,
             timeout: Duration::from_secs(1),
             overall: Instant::now() + Duration::from_secs(2),
             requests_left: &requests_left,
@@ -1871,6 +2046,7 @@ mod budget_tests {
             let responses = ResponseBudget::new(maximum);
             let requests_left = AtomicU64::new(4);
             let transport = RequestContext {
+                cancelled: None,
                 timeout: Duration::from_secs(2),
                 overall: Instant::now() + Duration::from_secs(5),
                 requests_left: &requests_left,

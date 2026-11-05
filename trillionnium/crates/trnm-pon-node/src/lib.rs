@@ -54,7 +54,10 @@ pub use store::native_budget::{
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{
-    native_cell_repair_subject_v1, NativeCellEffectReadbackV1, NativeCellRepairCpuObservationV1,
+    native_cell_release_repair_subject_v2, native_cell_repair_subject_v1,
+    NativeCellEffectReadbackV1, NativeCellReleaseEffectReadbackV2,
+    NativeCellReleaseRepairRequestV2, NativeCellReleaseRetentionRequestV2,
+    NativeCellReleaseRetirementReadbackV2, NativeCellRepairCpuObservationV1,
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::{
