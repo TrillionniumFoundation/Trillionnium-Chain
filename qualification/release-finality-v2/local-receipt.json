@@ -1,0 +1,45 @@
+{
+  "schema": "release-finality-local-conformance-v2",
+  "passed": true,
+  "tests": 54,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration_seconds": 2.9501255010000023,
+  "python": "3.13.5",
+  "cryptography": "46.0.4",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "sources": {
+    "formal/release-finality-v2/campaign_gate.py": "bd522a2bd832d3781f0365a3546591b5e22399c3f51627d34ccfda376c31bfbb",
+    "formal/release-finality-v2/check_existing_learning_owner.py": "9a00b4c80ac1a94d5232a102ac33e31d7b39523f17499e0b1a090a5589ccc9b4",
+    "formal/release-finality-v2/protocol.py": "6fbb4549c30e78128d8270d98943933951b0656bed9f1cdaee0abe3594549025",
+    "formal/release-finality-v2/run_conformance.py": "082ce5bf087cede35516cc89e202d2483f5adc008ae028ee316670dc22f072e6",
+    "formal/release-finality-v2/test_campaign_gate.py": "9c18970de54e4c905e7a83ff1c83269303196281f2c568963d0e4eaa6e37c8c0",
+    "formal/release-finality-v2/test_protocol.py": "92eb95463d81a7626bb634a8079eacce90b90aac9206e1cf3704194bcf5034e5",
+    "formal/release-finality-v2/verify_certificate.py": "52b56d48ba45c0dc7f24f25a217c7150a640b40b1c973417b623af94089d01d7",
+    "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+  },
+  "vectors": [
+    {
+      "n": 4,
+      "q": 3,
+      "value": "f176746b38ba34d43e50c02f7d9edaff953cef8939e453a9dcaf2d80f59a4ff1",
+      "accepted": true
+    },
+    {
+      "n": 5,
+      "q": 4,
+      "value": "da77c5545cfdd59364ad2c1eb241b2770fe422c7e23e6d934620d1a1dd84435a",
+      "accepted": true
+    }
+  ],
+  "scope": "controlled same-author reference and separate-reader tests",
+  "native_tests_executed": false,
+  "full_checkout_verified": false,
+  "independent_review": false,
+  "physical_power_loss": false,
+  "real_neural_generations": 0,
+  "wan_tps_measured": false,
+  "activation": false
+}

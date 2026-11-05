@@ -53,6 +53,26 @@ class FrozenEvaluationTests(unittest.TestCase):
         self.assertFalse(result['public_reward_eligible'])
         self.assertFalse(result['ordinary_hepta_entry'])
 
+    def test_empirical_optimum_certificate_is_bound_to_only_the_committed_dataset(self):
+        claim=self.evaluate()['value_claim']
+        self.assertEqual(claim['kind'],'fixed-dataset-comparison')
+        self.assertEqual(claim['candidate_value'],['1','1'])
+        self.assertEqual(claim['marginal_value'],['1','1'])
+        self.assertEqual(claim['optimality_bound']['gap'],['0','1'])
+        self.assertTrue(claim['optimality_bound']['exact_on_committed_dataset'])
+        self.assertIn('general-circuit-optimality',claim['excluded_claims'])
+        self.assertIn('prospective-generalization',claim['excluded_claims'])
+        self.assertEqual(claim['verification']['evaluation_prediction_rows'],24*8)
+        self.assertEqual(claim['verification']['calibration_prediction_rows'],24*4)
+
+    def test_empirical_optimality_gap_is_recomputed_not_inferred_from_positive_gain(self):
+        self.partitions['evaluation'][-1]['label']=2
+        self.raw,self.digest=self.freeze()
+        claim=self.evaluate()['value_claim']
+        self.assertEqual(claim['candidate_value'],['23','24'])
+        self.assertEqual(claim['optimality_bound']['gap'],['1','24'])
+        self.assertFalse(claim['optimality_bound']['exact_on_committed_dataset'])
+
     def test_every_control_parameter_is_bound_before_inference(self):
         for control in CONTROL_ORDER:
             raw=self.alter(lambda b:b['controls'][control]['base'][0].__setitem__(0,1))
@@ -279,6 +299,24 @@ class SettlementObservationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'OBSERVED_EVALUATION_MISMATCH'):verify_observation(self.root,self.digest)
         finally:
             for p,raw in zip(paths,old):p.write_bytes(raw)
+    def test_rehashed_value_claim_cannot_promote_future_or_general_optimality(self):
+        from experiments.settle_model import verify_observation
+        paths=[self.root/'report.json',self.root/'evaluation_a-result.json']
+        old=[p.read_bytes()for p in paths]
+        changes=[lambda c:c.update(kind='prospective-generalization'),
+                 lambda c:c.update(general_circuit_optimality=True),
+                 lambda c:c['optimality_bound'].update(upper_bound=['2','1']),
+                 lambda c:c['optimality_bound'].update(exact_on_committed_dataset=1)]
+        try:
+            for mutate in changes:
+                summary=json.loads(old[0]);record=json.loads(old[1])
+                mutate(record['value_claim']);mutate(summary['results']['evaluation_a']['value_claim'])
+                paths[0].write_text(json.dumps(summary));paths[1].write_text(json.dumps(record))
+                with self.assertRaisesRegex(ValueError,'OBSERVED_EVALUATION_MISMATCH'):
+                    verify_observation(self.root,self.digest)
+        finally:
+            for p,raw in zip(paths,old):p.write_bytes(raw)
+
     def test_undeclared_bundle_cannot_be_read_from_summary_as_authority(self):
         from experiments.settle_model import verify_observation
         with self.assertRaisesRegex(ValueError,'BUNDLE_IDENTITY'):verify_observation(self.root,'00'*32)
