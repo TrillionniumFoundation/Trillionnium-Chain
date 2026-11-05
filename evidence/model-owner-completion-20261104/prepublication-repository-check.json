@@ -1,0 +1,36 @@
+{
+  "schema": "model-owner-prepublication-repository-observation-v1",
+  "source": "359e7783f350a2cee0819a407bd43a80acaf4dc3",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "stderr_or_stdout": "Repository check failed: broken link evidence/pon-w1-statement-v2-20261105/README.md -> lifecycle21-direct.log\n",
+  "log_sha256": "793e7791e215d9831285d388119f60ec23ee04406023b4a8cb789e083656421e",
+  "repair": "Reference the already retained lifecycle21-result.json and explicitly identify the absent raw transcript; no new test result is claimed.",
+  "registration_published": false,
+  "real_model_trial_started": false,
+  "repaired_candidate_check": {
+    "exit_code": 0,
+    "result": {
+      "activation": false,
+      "head": "359e7783f350a2cee0819a407bd43a80acaf4dc3",
+      "local_links": 2715,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1131,
+      "source_state": "dirty-candidate",
+      "tree": "b73bbf7b91969716cc80311432250ca7e6691fbf",
+      "workspace_packages": 26
+    },
+    "log_sha256": "af33b18dc2f6206d796bb339ff7203537146edbd18cab2591be5ee6ae31f0f49",
+    "scope": "Same source plus explicit evidence edits; no fresh lifecycle test was run."
+  },
+  "prepublication_storage_failure": {
+    "error": "ENOSPC writing an uncommitted evidence JSON and staging; no remote ref updated, authority unchanged",
+    "recovery": "Reconstructed this one uncommitted JSON from retained original command logs after deleting task-owned reproducible materials."
+  }
+}
